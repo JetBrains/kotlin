@@ -208,13 +208,13 @@ public final class CallTranslator extends AbstractTranslator {
         super(context);
         this.receiver = receiver;
         this.arguments = arguments;
-        this.callee = callee;
         this.resolvedCall = resolvedCall;
         if (descriptorToCall != null) {
             this.descriptor = descriptorToCall;
         } else {
             this.descriptor = resolvedCall.getCandidateDescriptor().getOriginal();
         }
+        this.callee = callee;
     }
 
     @NotNull

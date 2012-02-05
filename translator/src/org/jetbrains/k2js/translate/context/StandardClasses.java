@@ -91,8 +91,6 @@ public final class StandardClasses {
         standardClasses.declare().forFQ("jet.Any.toString").kotlinFunction("toString");
 
         standardClasses.declare().forFQ("java.util.Collections.<no name provided>.max").kotlinFunction("collectionsMax");
-
-        standardClasses.declare().forFQ("jet.CharSequence.get").kotlinFunction("getChar");
     }
 
 

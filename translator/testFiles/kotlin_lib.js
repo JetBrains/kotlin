@@ -477,10 +477,6 @@
         };
     };
 
-    Kotlin.getChar = function(str, index) {
-        return str.charAt(index);
-    };
-
     Kotlin.collectionsMax = function (col, comp) {
         var it = col.iterator();
         if (col.isEmpty()) {

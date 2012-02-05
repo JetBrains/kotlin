@@ -12,6 +12,7 @@ import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.*;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
+import org.jetbrains.k2js.translate.intrinsic.string.GetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
@@ -119,6 +120,9 @@ public final class Intrinsics {
         PropertyDescriptor lengthProperty =
                 getPropertyByName(library.getString().getDefaultType().getMemberScope(), "length");
         functionIntrinsics.put(lengthProperty.getGetter(), LengthIntrinsic.INSTANCE);
+        FunctionDescriptor getFunction =
+                getFunctionByName(library.getCharSequence().getDefaultType().getMemberScope(), "get");
+        functionIntrinsics.put(getFunction, GetIntrinsic.INSTANCE);
     }
 
     private void declareTupleIntrinsicAccessors(@NotNull ClassifierDescriptor tupleDescriptor,
