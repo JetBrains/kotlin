@@ -145,10 +145,26 @@ public class JetCompiler implements TranslatingCompiler {
             };
 
             processHandler.addProcessListener(new ProcessAdapter() {
+                StringBuilder stderr = null;
+
+                @Override
+                public void processTerminated(ProcessEvent event) {
+                    super.processTerminated(event);
+                    if(stderr != null) {
+                        compileContext.addMessage(ERROR, "stderr output:\r\n" + stderr.toString(), "", -1, -1);
+                    }
+                }
+
                 @Override
                 public void onTextAvailable(ProcessEvent event, Key outputType) {
                     String text = event.getText();
                     String levelCode = parsePrefix(text);
+                    if(outputType.toString().equals("stderr")) {
+                        if(stderr == null)
+                            stderr = new StringBuilder();
+                        stderr.append(text);
+                        return;
+                    }
                     if (levelCode != null) {
                         CompilerMessageCategory category = categories.get(levelCode);
                         text = text.substring(levelCode.length());
