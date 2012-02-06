@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="junit 3.8">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/junit.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

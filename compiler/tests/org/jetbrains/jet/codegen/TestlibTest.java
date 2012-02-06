@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -82,8 +81,7 @@ public class TestlibTest extends CodegenTestCase {
                                        TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
-            MyTestSuite suite = new MyTestSuite();
-            suite.setLoader(loader);
+            TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
@@ -135,23 +133,5 @@ public class TestlibTest extends CodegenTestCase {
     public void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithFullJdk();
-    }
-
-    private static class MyTestSuite extends TestSuite {
-        private GeneratedClassLoader loader;
-
-        public MyTestSuite() {
-            super("StandardLibrary");
-        }
-
-        public void setLoader(GeneratedClassLoader loader) {
-            this.loader = loader;
-        }
-
-        @Override
-        public void run(TestResult result) {
-            super.run(result);
-            loader.dispose();
-        }
     }
 }
