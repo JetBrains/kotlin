@@ -14,17 +14,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Will provide both java elements from jet context and some special declarations special to jet.
@@ -68,7 +72,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if (fqnToShortName(fqName).equals(name)) {
+            if (QualifiedNamesUtil.fqnToShortName(fqName).equals(name)) {
                 final PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
                 if (psiClass != null) {
                     result.add(psiClass);
@@ -84,56 +88,18 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         // TODO: Implement it. Is it called somewhere?
     }
 
-    public static String fqnToShortName(String fqName) {
-        int lastDotIndex = fqName.lastIndexOf('.');
-
-        if (lastDotIndex != -1) {
-            return fqName.substring(lastDotIndex + 1, fqName.length());
-        }
-
-        return fqName;
-    }
-
     public Collection<String> getALlJetClassFQNames() {
-        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, GlobalSearchScope.allScope(project));
+        final BindingContext context = getResolutionContext(GlobalSearchScope.allScope(project));
         return context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR);
     }
 
-//    public Collection<ClassDescriptor> getClassDescriptors() {
-//        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, GlobalSearchScope.allScope(project));
-//
-//        final Collection<String> fqNames = context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR);
-//        return Collections2.transform(fqNames, new Function<String, ClassDescriptor>() {
-//            @Override
-//            public ClassDescriptor apply(String fqName) {
-//                return context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName);
-//            }
-//        });
-//    }
-    
-//    public List<JetClass> getJetClassesByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
-//        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
-//        final ArrayList<JetClass> classesResult = new ArrayList<JetClass>();
-//
-//        for (String fqn : getFQNamesByName(name, scope)) {
-//            final ClassDescriptor descriptor = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqn);
-//            final PsiElement declaration = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-//
-//            if (declaration instanceof JetClass) {
-//                classesResult.add((JetClass) declaration);
-//            }
-//        }
-//
-//        return classesResult;
-//    }
-
     @NotNull
     public Collection<String> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
-        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+        final BindingContext context = getResolutionContext(scope);
         return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<String>() {
             @Override
             public boolean apply(@Nullable String fqName) {
-                return fqName != null && (fqName.endsWith('.' + name) || fqName.equals(name));
+                return fqName != null && QualifiedNamesUtil.isShortNameForFQN(name, fqName);
             }
         });
     }
@@ -160,7 +126,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         final Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
         
-        final BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+        final BindingContext context = getResolutionContext(scope);
 
         final HashSet<NamedFunctionDescriptor> result = new HashSet<NamedFunctionDescriptor>();
 
@@ -174,20 +140,52 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return result;
     }
 
+    @NotNull
+    public BindingContext getResolutionContext(final @NotNull GlobalSearchScope scope) {
+        return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+    }
+
     public Collection<JetNamedFunction> getTopLevelFunctionsByName(final @NotNull String name, @NotNull GlobalSearchScope scope) {
         return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
     }
 
+    /**
+     * Get jet extensions top-level function names. Method is allowed to give invalid names - all result should be
+     * checked with getAllJetExtensionFunctionsByName().
+     *
+     * @return
+     */
     @NotNull
     public Collection<String> getAllJetExtensionFunctionsNames(@NotNull GlobalSearchScope scope) {
-        
-        
-        JetExtensionFunctionNameIndex.getInstance().getKey();
-        return JetFromJavaDescriptorHelper.getTopExtensionFunctionNames(null, project, scope);
+        final Set<String> extensionFunctionNames = new HashSet<String>();
+
+        extensionFunctionNames.addAll(JetExtensionFunctionNameIndex.getInstance().getAllKeys(project));
+        extensionFunctionNames.addAll(JetFromJavaDescriptorHelper.getTopExtensionFunctionNames(null, project, scope));
+
+        return extensionFunctionNames;
     }
 
-    public Collection<JetNamedFunction> getAllJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
-        return JetExtensionFunctionNameIndex.getInstance().get(name, project, scope);
+    public Collection<NamedFunctionDescriptor> getAllJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
+        // TODO: Add jet extension functions in jar-dependencies (those functions are missing in BindingContext and stubs)
+
+        final Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
+
+        final BindingContext context = getResolutionContext(scope);
+
+        final HashSet<NamedFunctionDescriptor> result = new HashSet<NamedFunctionDescriptor>();
+
+        for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
+            final NamedFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
+            if (functionDescriptor != null) {
+                if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                    if (functionDescriptor.getExpectedThisObject() != ReceiverDescriptor.NO_RECEIVER) {
+                        result.add(functionDescriptor);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     @NotNull

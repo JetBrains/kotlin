@@ -107,17 +107,6 @@ public class JetPsiUtil {
         }
     }
 
-//    public static String getFQName(JetNamespace jetNamespace) {
-//        JetNamespace parent = PsiTreeUtil.getParentOfType(jetNamespace, JetNamespace.class);
-//        if (parent != null) {
-//            String parentFQName = getFQName(parent);
-//            if (parentFQName.length() > 0) {
-//                return parentFQName + "." + getFQName(jetNamespace.getNamespaceHeader());
-//            }
-//        }
-//        return getFQName(jetNamespace.getNamespaceHeader()); // TODO: Must include module root namespace
-//    }
-
     private static String getFQName(JetNamespaceHeader header) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression nameExpression : header.getParentNamespaceNames()) {

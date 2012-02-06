@@ -88,11 +88,14 @@ public class AnalyzingUtils {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull BindingTraceContext bindingTraceContext,
             @NotNull JetSemanticServices semanticServices) {
+
         JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
-        final WritableScope scope = new WritableScopeImpl(JetScope.EMPTY, owner, new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
-//        configuration.addImports(project, semanticServices, bindingTraceContext, scope);
+        final WritableScope scope = new WritableScopeImpl(
+                JetScope.EMPTY, owner,
+                new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
+
         scope.importScope(libraryScope);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
@@ -136,6 +139,7 @@ public class AnalyzingUtils {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
         }, files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
+
         return bindingTraceContext.getBindingContext();
     }
 

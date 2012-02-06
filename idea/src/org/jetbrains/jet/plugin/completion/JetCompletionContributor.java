@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetUserType;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
@@ -52,12 +53,11 @@ public class JetCompletionContributor extends CompletionContributor {
                        final JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
                            for (Object variant : jetReference.getVariants()) {
-                               addReferenceVariant(result, variant, positions);
+                               addReferenceVariant(result, variant, positions, parameters.getPosition().getProject());
                            }
                        }
 
                        if (shouldRunTopLevelCompletion(parameters)) {
-                           // Jet classes will be added as java completions for unification
                            addClasses(parameters, result, positions);
                            addJetTopLevelFunctions(result, position, positions);
                        }
@@ -67,13 +67,17 @@ public class JetCompletionContributor extends CompletionContributor {
                });
     }
 
-    private static void addReferenceVariant(@NotNull CompletionResultSet result, @NotNull Object variant,
-                                            @NotNull final HashSet<LookupPositionObject> positions) {
+    private static void addReferenceVariant(
+            @NotNull CompletionResultSet result, 
+            @NotNull Object variant,
+            @NotNull final HashSet<LookupPositionObject> positions,
+            @NotNull final Project project) {
+
         if (variant instanceof LookupElement) {
-            addCompletionToResult(result, (LookupElement) variant, positions);
+            addCompletionToResult(result, (LookupElement) variant, positions, project);
         }
         else {
-            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions);
+            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions, project);
         }
     }
 
@@ -88,16 +92,25 @@ public class JetCompletionContributor extends CompletionContributor {
         final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         final Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
+        BindingContext resolutionContext = namesCache.getResolutionContext(scope);
+
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
                 for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
-                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(null, function, null), positions);
+                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), positions, project);
                 }
             }
         }
     }
 
-    private static void addClasses(@NotNull CompletionParameters parameters, @NotNull final CompletionResultSet result, final HashSet<LookupPositionObject> positions) {
+    /**
+     * Jet classes will be added as java completions for unification
+     */
+    private static void addClasses(
+            @NotNull final CompletionParameters parameters,
+            @NotNull final CompletionResultSet result,
+            @NotNull final HashSet<LookupPositionObject> positions) {
+
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
 
         JavaClassNameCompletionContributor.addAllClasses(
@@ -113,7 +126,7 @@ public class JetCompletionContributor extends CompletionContributor {
                             javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
                         }
 
-                        addCompletionToResult(result, element, positions);
+                        addCompletionToResult(result, element, positions, parameters.getPosition().getProject());
                     }
                 });
     }
@@ -162,18 +175,31 @@ public class JetCompletionContributor extends CompletionContributor {
         return null;
     }
 
-    private static void addCompletionToResult(@NotNull final CompletionResultSet result, LookupElement element, HashSet<LookupPositionObject> positions) {
-        if (element.getObject() instanceof LookupPositionObject) {
-            final LookupPositionObject positionObject = (LookupPositionObject) element.getObject();
+    private static void addCompletionToResult(
+            @NotNull final CompletionResultSet result,
+            @NotNull LookupElement element,
+            @NotNull HashSet<LookupPositionObject> positions,
+            @NotNull Project project) {
 
-            if (positions.contains(positionObject)) {
-                return;
-            }
-            else {
-                positions.add(positionObject);
+        final LookupPositionObject lookupPosition = getLookupPosition(element, project);
+        if (lookupPosition != null && !positions.contains(lookupPosition)) {
+            positions.add(lookupPosition);
+            result.addElement(element);    
+        }
+    }
+
+    private static LookupPositionObject getLookupPosition(LookupElement element, Project project) {
+        final Object lookupObject = element.getObject();
+        if (lookupObject instanceof PsiElement) {
+            return new LookupPositionObject((PsiElement) lookupObject);
+        }
+        else if (lookupObject instanceof JetLookupObject) {
+            final PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
+            if (psiElement != null) {
+                return new LookupPositionObject(psiElement);
             }
         }
 
-        result.addElement(element);
+        return null;
     }
 }

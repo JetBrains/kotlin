@@ -2,15 +2,13 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.List;
 
@@ -43,6 +41,12 @@ public class ImportClassHelper {
      * @param file File where directive should be added.
      */
     public static void addImportDirective(@NotNull String importString, @NotNull JetFile file) {
+        
+        // Check that import is useless
+        if (JetPsiUtil.getFQName(file).equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
+            return;
+        }
+        
         List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importString);

@@ -29,17 +29,9 @@ public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
 
     @NotNull
-    public static LookupElement createLookupElement(@Nullable BindingContext context, @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
+    public static LookupElement createLookupElement(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
-        Object lookupObject = descriptor;
-        if (context != null) {
-            final PsiElement psiElement = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-            if (psiElement != null) {
-                lookupObject = new LookupPositionObject(psiElement);
-            }
-        }
-        
-        LookupElementBuilder element = LookupElementBuilder.create(lookupObject, descriptor.getName());
+        LookupElementBuilder element = LookupElementBuilder.create(new JetLookupObject(descriptor, declaration), descriptor.getName());
         String typeText = "";
         String tailText = "";
         boolean tailTextGrayed = false;
@@ -89,6 +81,6 @@ public final class DescriptorLookupConverter {
 
     @NotNull    
     public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
-        return createLookupElement(bindingContext, descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor.getOriginal()));
+        return createLookupElement(descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
     }
 }

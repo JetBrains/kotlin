@@ -4,7 +4,6 @@
 package org.jetbrains.jet.asJava;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -74,7 +74,7 @@ public class JavaElementFinder extends PsiElementFinder {
         for (JetFile file : filesInScope) {
             final String packageName = JetPsiUtil.getFQName(file);
             if (packageName != null && qualifiedName.startsWith(packageName)) {
-                if (qualifiedName.equals(fqn(packageName, JvmAbi.PACKAGE_CLASS))) {
+                if (qualifiedName.equals(QualifiedNamesUtil.combine(packageName, JvmAbi.PACKAGE_CLASS))) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
                 else {
@@ -91,7 +91,7 @@ public class JavaElementFinder extends PsiElementFinder {
         if (declaration instanceof JetClassOrObject) {
             String localName = getLocalName(declaration);
             if (localName != null) {
-                String fqn = fqn(containerFqn, localName);
+                String fqn = QualifiedNamesUtil.combine(containerFqn, localName);
                 if (qualifiedName.equals(fqn)) {
                     answer.add(new JetLightClass(psiManager, file, qualifiedName));
                 }
@@ -136,11 +136,6 @@ public class JavaElementFinder extends PsiElementFinder {
         return answer;
     }
 
-    private static String fqn(String packageName, String className) {
-        if (StringUtil.isEmpty(packageName)) return className;
-        return packageName + "." + className;
-    }
-
     @Override
     public PsiPackage findPackage(@NotNull String qualifiedName) {
         final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
@@ -163,7 +158,10 @@ public class JavaElementFinder extends PsiElementFinder {
 
         for (JetFile psiFile : psiFiles) {
             String jetRootNamespace = JetPsiUtil.getFQName(psiFile);
-            if (isInPackage(psiPackage.getQualifiedName(), jetRootNamespace)) {
+
+            if (QualifiedNamesUtil.isSubpackageOf(jetRootNamespace, psiPackage.getQualifiedName())) {
+
+                // TODO: wrong package here
                 answer.add(new JetLightPackage(psiFile.getManager(), jetRootNamespace));
             }
         }
@@ -179,34 +177,16 @@ public class JavaElementFinder extends PsiElementFinder {
         String packageFQN = psiPackage.getQualifiedName();
         for (JetFile file : filesInScope) {
             if (packageFQN.equals(JetPsiUtil.getFQName(file))) {
-                answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, JvmAbi.PACKAGE_CLASS)));
+                answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, JvmAbi.PACKAGE_CLASS)));
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
-                        answer.add(new JetLightClass(psiManager, file, fqn(packageFQN, getLocalName(declaration))));
+                        answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, getLocalName(declaration))));
                     }
                 }
             }
         }
 
         return answer.toArray(new PsiClass[answer.size()]);
-    }
-
-    private static boolean isInPackage(String packageName, String fqn) {
-        return fqn.startsWith(packageName + ".");
-    }
-
-    private static String subPackageName(String packageName, String packageFQN) {
-        if (!isInPackage(packageName, packageFQN)) {
-            return null;
-        }
-
-        int nextDotIndex = packageFQN.indexOf('.', (packageName + ".").length());
-
-        if (nextDotIndex != -1) {
-            return packageFQN.substring((packageName + ".").length(), nextDotIndex);
-        }
-
-        return packageFQN.substring((packageName + ".").length());
     }
 
     private synchronized void invalidateJetFilesCache() {
