@@ -41,7 +41,6 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
 
     public static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        builder.setDebugMode(true);
         JetParsing jetParsing = new JetParsing(builder);
         jetParsing.myExpressionParsing = new JetExpressionParsing(builder, jetParsing);
         return jetParsing;
