@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -27,9 +28,9 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy() {
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner) {
         return new NamedFunctionDescriptorImpl(
-                getContainingDeclaration(),
+                newOwner,
                 this,
                 // TODO : safeSubstitute
                 getAnnotations(),
@@ -39,16 +40,6 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
     @NotNull
     @Override
     public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
-        NamedFunctionDescriptorImpl copy = new NamedFunctionDescriptorImpl(newOwner, getOriginal(), Lists.newArrayList(getAnnotations()), getName());
-        copy.initialize(
-                getReceiverParameter().exists() ? getReceiverParameter().getType() : null,
-                expectedThisObject,
-                DescriptorUtils.copyTypeParameters(copy, typeParameters),
-                DescriptorUtils.copyValueParameters(copy, unsubstitutedValueParameters),
-                unsubstitutedReturnType,
-                DescriptorUtils.convertModality(modality, makeNonAbstract),
-                visibility
-        );
-        return copy;
+        return (NamedFunctionDescriptor) doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract));
     }
 }
