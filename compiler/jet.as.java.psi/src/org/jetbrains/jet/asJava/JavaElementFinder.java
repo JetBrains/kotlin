@@ -9,7 +9,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPackage;
-import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +141,7 @@ public class JavaElementFinder extends PsiElementFinder {
 
         for (JetFile psiFile : psiFiles) {
             if (JetPsiUtil.getFQName(psiFile).startsWith(qualifiedName)) {
-                return new PsiPackageImpl(psiFile.getManager(), qualifiedName);
+                return new JetLightPackage(psiManager, qualifiedName);
             }
         }
 
@@ -159,10 +158,9 @@ public class JavaElementFinder extends PsiElementFinder {
         for (JetFile psiFile : psiFiles) {
             String jetRootNamespace = JetPsiUtil.getFQName(psiFile);
 
-            if (QualifiedNamesUtil.isSubpackageOf(jetRootNamespace, psiPackage.getQualifiedName())) {
-
-                // TODO: wrong package here
-                answer.add(new JetLightPackage(psiFile.getManager(), jetRootNamespace));
+            final String subPackageFQN = QualifiedNamesUtil.plusOneSegment(psiPackage.getQualifiedName(), jetRootNamespace);
+            if (subPackageFQN != null) {
+                answer.add(new JetLightPackage(psiManager, subPackageFQN));
             }
         }
 

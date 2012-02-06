@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -55,8 +56,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public String getName() {
-        int idx = qualifiedName.lastIndexOf('.');
-        return idx > 0 ? qualifiedName.substring(idx + 1) : qualifiedName;
+        return QualifiedNamesUtil.fqnToShortName(qualifiedName);
     }
 
     @Override
@@ -72,6 +72,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
+            // TODO: What is the reason for this?
             delegate = findClass(qualifiedName, getStub());
             if (delegate == null) {
                 delegate = findClass(qualifiedName, getStub());

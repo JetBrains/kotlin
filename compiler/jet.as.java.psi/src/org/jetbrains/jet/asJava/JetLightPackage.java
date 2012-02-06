@@ -1,9 +1,12 @@
 package org.jetbrains.jet.asJava;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 
 /**
+ * TODO: make more accurate wrapper
+ *
  * @author Nikolay Krasko
  */
 public class JetLightPackage extends PsiPackageImpl {
@@ -12,7 +15,13 @@ public class JetLightPackage extends PsiPackageImpl {
     }
 
     @Override
+    public PsiElement copy() {
+        return new JetLightPackage(getManager(), getQualifiedName());
+    }
+
+    @Override
     public boolean isValid() {
-        return true;
+        // TODO: invalidate properly
+        return super.isValid();
     }
 }

@@ -4,4 +4,8 @@ public class Testing {
     }
 }
 
-// EXIST: jet
+// EXIST: jet1
+// ABSENT: jet2
+
+// Only two proposals expected
+// NUMBER: 1

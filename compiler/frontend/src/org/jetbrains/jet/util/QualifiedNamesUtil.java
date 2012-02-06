@@ -15,12 +15,12 @@ public final class QualifiedNamesUtil {
         return subpackageName.equals(packageName) ||
                (subpackageName.startsWith(packageName) && subpackageName.charAt(packageName.length()) == '.');
     }
-    
+
     public static boolean isShortNameForFQN(@NotNull final String name, @NotNull final String fqn) {
         return fqn.equals(name) ||
                (fqn.endsWith(name) && fqn.charAt(fqn.length() - name.length() - 1) == '.');
     }
-    
+
     public static boolean isOneSegmentFQN(@NotNull final String fqn) {
         if (fqn.isEmpty()) {
             return false;
@@ -30,14 +30,20 @@ public final class QualifiedNamesUtil {
     }
 
     @NotNull
-    public static String fqnToShortName(@NotNull String fqName) {
-        int lastDotIndex = fqName.lastIndexOf('.');
+    public static String fqnToShortName(@NotNull String fqn) {
+        return getLastSegment(fqn);
+    }
 
-        if (lastDotIndex != -1) {
-            return fqName.substring(lastDotIndex + 1, fqName.length());
-        }
+    @NotNull
+    public static String getLastSegment(@NotNull String fqn) {
+        int lastDotIndex = fqn.lastIndexOf('.');
+        return (lastDotIndex != -1) ? fqn.substring(lastDotIndex + 1, fqn.length()) : fqn;
+    }
 
-        return fqName;
+    @NotNull
+    public static String getFirstSegment(@NotNull String fqn) {
+        int dotIndex = fqn.indexOf('.');
+        return (dotIndex != -1) ? fqn.substring(0, dotIndex) : fqn;
     }
 
     @NotNull
@@ -55,17 +61,43 @@ public final class QualifiedNamesUtil {
         return first + "." + second;
     }
 
-//    private static String subPackageName(String packageName, String packageFQN) {
-//        if (!isInPackage(packageName, packageFQN)) {
-//            return null;
-//        }
-//
-//        int nextDotIndex = packageFQN.indexOf('.', (packageName + ".").length());
-//
-//        if (nextDotIndex != -1) {
-//            return packageFQN.substring((packageName + ".").length(), nextDotIndex);
-//        }
-//
-//        return packageFQN.substring((packageName + ".").length());
-//    }
+    /**
+     * Get tail part of the full fqn by subtracting head part.
+     *
+     * @param headFQN
+     * @param fullFQN
+     * @return tail fqn. If first part is not a begging of the full fqn, fullFQN will be returned.
+     */
+    @NotNull
+    public static String tail(@NotNull String headFQN, @NotNull String fullFQN) {
+        if (!isSubpackageOf(fullFQN, headFQN)) {
+            return fullFQN;
+        }
+
+        return fullFQN.equals(headFQN) ?
+               "" :
+               fullFQN.substring(headFQN.length() + 1); // (headFQN + '.').length
+    }
+
+    /**
+     * Add one segment of nesting to given qualified name according to the full qualified name.
+     *
+     * @param fqn
+     * @param fullFQN
+     * @return qualified name with one more segment or null if fqn is not head part of fullFQN or there's no additional segment.
+     */
+    @Nullable
+    public static String plusOneSegment(String fqn, String fullFQN) {
+        if (!isSubpackageOf(fullFQN, fqn)) {
+            return null;
+        }
+
+        final String nextSegment = getFirstSegment(tail(fqn, fullFQN));
+
+        if (isOneSegmentFQN(nextSegment)) {
+            return combine(fqn, nextSegment);
+        }
+
+        return null;
+    }
 }
