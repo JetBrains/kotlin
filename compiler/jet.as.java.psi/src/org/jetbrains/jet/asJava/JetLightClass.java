@@ -3,6 +3,8 @@
  */
 package org.jetbrains.jet.asJava;
 
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -170,6 +172,11 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         state.getFactory().files();
 
         return answer;
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 
     @Override
