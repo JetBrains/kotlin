@@ -135,12 +135,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality);
-    }
-
-    protected FunctionDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
-            DeclarationDescriptor newOwner, Modality newModality) {
-        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner);
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy();
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -152,7 +147,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
                 return null;
             }
         }
-
+        
         ReceiverDescriptor substitutedExpectedThis = NO_RECEIVER;
         if (expectedThisObject.exists()) {
             JetType substitutedType = substitutor.substitute(expectedThisObject.getType(), Variance.INVARIANT);
@@ -178,7 +173,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
-                newModality, 
+                modality,
                 visibility
         );
         for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
@@ -187,7 +182,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         return substitutedDescriptor;
     }
 
-    protected abstract FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner);
+    protected abstract FunctionDescriptorImpl createSubstitutedCopy();
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {

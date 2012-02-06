@@ -23,8 +23,8 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         this.isPrimary = isPrimary;
     }
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, original, annotations, "<init>");
+    public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
+        super(original.getContainingDeclaration(), original, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
 
@@ -85,9 +85,8 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner) {
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
         return new ConstructorDescriptorImpl(
-                (ClassDescriptor) newOwner,
                 this,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 isPrimary);

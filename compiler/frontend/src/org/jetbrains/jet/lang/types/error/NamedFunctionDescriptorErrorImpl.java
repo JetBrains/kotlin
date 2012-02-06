@@ -25,7 +25,7 @@ public class NamedFunctionDescriptorErrorImpl extends NamedFunctionDescriptorImp
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner) {
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
         return this;
     }
 

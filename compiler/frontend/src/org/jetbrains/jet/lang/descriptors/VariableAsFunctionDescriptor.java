@@ -36,7 +36,7 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner) {
+    protected FunctionDescriptorImpl createSubstitutedCopy() {
         throw new IllegalStateException();
     }
 }
