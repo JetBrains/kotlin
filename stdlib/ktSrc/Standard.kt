@@ -69,3 +69,23 @@ inline fun <T> Iterator<T>.toTreeSet() = to(TreeSet<T>())
 Run function f
 */
 inline fun <T> run(f: () -> T) = f()
+
+/*
+Allow a default value to be provided when converting a nullable type to a non-nullable type
+*/
+inline fun <T> T?.getOrElse(defaultValue: T): T {
+    return if (this != null)
+        this
+    else
+        defaultValue
+}
+
+/*
+Allow a default value to be lazily provided from a function when converting a nullable type to a non-nullable type
+*/
+inline fun <T> T?.getOrElse(defaultValueFactory: ()-> T): T {
+    return if (this != null)
+        this
+    else
+        defaultValueFactory()
+}
