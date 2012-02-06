@@ -9,6 +9,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="stdlib" exported="" />
+    <orderEntry type="library" name="junit 3.8" level="project" />
   </component>
 </module>
 
