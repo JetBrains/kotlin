@@ -20,7 +20,7 @@ public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy() {
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal) {
         throw new IllegalStateException();
     }
 
