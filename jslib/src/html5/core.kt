@@ -51,12 +51,11 @@ class TextMetrics() {
     val width : Int = 0
 }
 
+/*custom helpers*/
 native
 fun getContext() : Context = Context();
-
-native
-fun random() : Double = 0.0
-
+//native
+//fun random() : Double = 0.0
 native
 fun getCanvasWidth() : Double = 0.0
 native

@@ -31,8 +31,9 @@ public abstract class Config {
             PATH_TO_JS_LIB_SRC + "\\core\\javautil.kt",
             PATH_TO_JS_LIB_SRC + "\\core\\javalang.kt",
             PATH_TO_JS_LIB_SRC + "\\core\\core.kt",
-            PATH_TO_JS_LIB_SRC + "\\raphael\\raphael.kt",
+            PATH_TO_JS_LIB_SRC + "\\core\\math.kt",
             PATH_TO_JS_LIB_SRC + "\\core\\json.kt",
+            PATH_TO_JS_LIB_SRC + "\\raphael\\raphael.kt",
             PATH_TO_JS_LIB_SRC + "\\html5\\core.kt"
     );
 
