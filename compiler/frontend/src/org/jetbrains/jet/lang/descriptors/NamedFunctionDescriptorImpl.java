@@ -16,13 +16,20 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
         super(containingDeclaration, annotations, name);
     }
 
-    private NamedFunctionDescriptorImpl(@NotNull NamedFunctionDescriptor original, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
-        super(original, annotations, name);
+    private NamedFunctionDescriptorImpl(@NotNull DeclarationDescriptor containingDeclaration, @NotNull NamedFunctionDescriptor original, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
+        super(containingDeclaration, original, annotations, name);
+    }
+
+    @NotNull
+    @Override
+    public NamedFunctionDescriptor getOriginal() {
+        return (NamedFunctionDescriptor) super.getOriginal();
     }
 
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy() {
         return new NamedFunctionDescriptorImpl(
+                getContainingDeclaration(),
                 this,
                 // TODO : safeSubstitute
                 getAnnotations(),
@@ -32,7 +39,7 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
     @NotNull
     @Override
     public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
-        NamedFunctionDescriptorImpl copy = new NamedFunctionDescriptorImpl(newOwner, Lists.newArrayList(getAnnotations()), getName());
+        NamedFunctionDescriptorImpl copy = new NamedFunctionDescriptorImpl(newOwner, getOriginal(), Lists.newArrayList(getAnnotations()), getName());
         copy.initialize(
                 getReceiverParameter().exists() ? getReceiverParameter().getType() : null,
                 expectedThisObject,
