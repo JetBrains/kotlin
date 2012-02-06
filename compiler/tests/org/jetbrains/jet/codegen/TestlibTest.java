@@ -29,14 +29,6 @@ import java.util.Set;
 public class TestlibTest extends CodegenTestCase {
 
     public static Test suite() {
-        try {
-            Class.forName("test.collections.CollectionTest");
-            System.out.println("Tests in Kotlin found in classpath. This test suite shall not be run, since testlib tests will run normally.");
-            return new TestSuite("Empty.StandardLibrary");
-        }
-        catch (Throwable e) {
-            System.out.println("Tests in Kotlin haven't been found in classpath. This test suite is valid.");
-        }
         return new TestlibTest().buildSuite();
     }
 
@@ -90,7 +82,8 @@ public class TestlibTest extends CodegenTestCase {
                                        TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
-            TestSuite suite = new MyTestSuite(loader);
+            MyTestSuite suite = new MyTestSuite();
+            suite.setLoader(loader);
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
@@ -145,10 +138,13 @@ public class TestlibTest extends CodegenTestCase {
     }
 
     private static class MyTestSuite extends TestSuite {
-        private final GeneratedClassLoader loader;
+        private GeneratedClassLoader loader;
 
-        public MyTestSuite(GeneratedClassLoader loader) {
+        public MyTestSuite() {
             super("StandardLibrary");
+        }
+
+        public void setLoader(GeneratedClassLoader loader) {
             this.loader = loader;
         }
 
