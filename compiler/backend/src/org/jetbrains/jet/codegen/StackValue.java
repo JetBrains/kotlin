@@ -1059,8 +1059,7 @@ public abstract class StackValue {
                         return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
                     }
                     else {
-                        JetType thisType = callableMethod.getThisType();
-                        return codegen.typeMapper.mapType(thisType);
+                        return codegen.typeMapper.mapType(callableMethod.getThisType());
                     }
                 }
                 else {
