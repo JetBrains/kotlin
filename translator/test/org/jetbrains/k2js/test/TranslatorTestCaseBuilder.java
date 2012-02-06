@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author PavelTalanov
+ * @author Pavel Talanov
  */
 public abstract class TranslatorTestCaseBuilder {
     public static FilenameFilter emptyFilter = new FilenameFilter() {
@@ -24,16 +24,18 @@ public abstract class TranslatorTestCaseBuilder {
 
     public interface NamedTestFactory {
         @NotNull
-        Test createTest(@NotNull String dataPath, @NotNull String name);
+        Test createTest(@NotNull String filename);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath,
+                                              boolean recursive, @NotNull NamedTestFactory factory) {
         return suiteForDirectory(baseDataDir, dataPath, recursive, emptyFilter, factory);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
+                                              final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
         return suite;
@@ -82,7 +84,7 @@ public abstract class TranslatorTestCaseBuilder {
             String fileName = file.getName();
             assert fileName != null;
             String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
-            suite.addTest(factory.createTest(dataPath, fileName));
+            suite.addTest(factory.createTest(fileName));
         }
     }
 }

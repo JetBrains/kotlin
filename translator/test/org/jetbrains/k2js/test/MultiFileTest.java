@@ -21,7 +21,7 @@ public final class MultiFileTest extends TranslationTest {
     }
 
     @Override
-    protected void testFooBoxIsTrue(String dirName) throws Exception {
+    public void testFooBoxIsTrue(String dirName) throws Exception {
         testMultiFile(dirName, "foo", "box", true);
     }
 }

@@ -28,19 +28,19 @@ public abstract class TranslationTest extends BaseTest {
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
     private static final String EXPECTED = "expected/";
 
-    protected abstract String mainDirectory();
-
     protected String kotlinLibraryPath() {
         return KOTLIN_JS_LIB;
     }
 
-    private String casesDirectoryName() {
+    protected static String casesDirectoryName() {
         return CASES;
     }
 
-    private String outDirectoryName() {
+    private static String outDirectoryName() {
         return OUT;
     }
+
+    protected abstract String mainDirectory();
 
     private String testFilesPath() {
         return TEST_FILES + suiteDirectoryName() + mainDirectory();
@@ -54,7 +54,7 @@ public abstract class TranslationTest extends BaseTest {
         return testFilesPath() + outDirectoryName();
     }
 
-    private String getInputPath() {
+    protected String getInputPath() {
         return testFilesPath() + casesDirectoryName();
     }
 
@@ -136,11 +136,11 @@ public abstract class TranslationTest extends BaseTest {
         Context.exit();
     }
 
-    protected void testFooBoxIsTrue(String filename) throws Exception {
+    public void testFooBoxIsTrue(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", true);
     }
 
-    protected void testFooBoxIsOk(String filename) throws Exception {
+    public void testFooBoxIsOk(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", "OK");
     }
 
