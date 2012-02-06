@@ -1,5 +1,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -19,6 +20,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     protected final ClassOrNamespaceDescriptor descriptor;
     protected final JavaSemanticServices semanticServices;
+    private Ref<PsiClassWrapper> myPsiClassMemo;
 
     protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices) {
         this.descriptor = descriptor;
@@ -39,7 +41,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        PsiClassWrapper psiClass = psiClass();
+        PsiClassWrapper psiClass = memoPsiClass();
 
         if (psiClass == null) {
             return Collections.emptySet();
@@ -50,10 +52,17 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                 descriptor, psiClass.getPsiClass(), name, staticMembers());
     }
 
+    private PsiClassWrapper memoPsiClass() {
+        if (myPsiClassMemo != null) return myPsiClassMemo.get();
+        PsiClassWrapper answer = psiClass();
+        myPsiClassMemo = new Ref<PsiClassWrapper>(answer);
+        return answer;
+    }
+
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        PsiClassWrapper psiClassForPackage = psiClass();
+        PsiClassWrapper psiClassForPackage = memoPsiClass();
 
         if (psiClassForPackage == null) {
             return Collections.emptySet();
