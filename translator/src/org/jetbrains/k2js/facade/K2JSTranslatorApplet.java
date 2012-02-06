@@ -2,6 +2,7 @@ package org.jetbrains.k2js.facade;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.utils.ErrorSender;
 
@@ -35,6 +36,12 @@ public final class K2JSTranslatorApplet extends Applet {
             reportException(e);
             return EXCEPTION + "Unexpected exception.";
         }
+    }
+
+    @NotNull
+    public BindingContext getBindingContext(@NotNull String programText) {
+        K2JSTranslator k2JSTranslator = new K2JSTranslator(new TestConfig());
+        return k2JSTranslator.analyzeProgramCode(programText);
     }
 
     @NotNull

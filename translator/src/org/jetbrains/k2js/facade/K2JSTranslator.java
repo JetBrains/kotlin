@@ -95,6 +95,13 @@ public final class K2JSTranslator {
     }
 
     @NotNull
+    public BindingContext analyzeProgramCode(@NotNull String programText) {
+        JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
+        return Analyzer.analyzeFiles(Arrays.asList(file), config);
+    }
+
+
+    @NotNull
     private JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
         JetFile file = filesToTranslate.iterator().next();

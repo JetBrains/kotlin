@@ -28,19 +28,26 @@ public final class Analyzer {
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
                                                             @NotNull Config config) {
-        final List<JetFile> jsLibFiles = config.getLibFiles();
-        List<JetFile> allFiles = withJsLibAdded(files, config);
-        BindingContext bindingContext = AnalyzingUtils.analyzeFiles(config.getProject(),
-                JsConfiguration.jsLibConfiguration(config.getProject()),
-                allFiles, notLibFiles(jsLibFiles), JetControlFlowDataTraceFactory.EMPTY);
-        checkForErrors(allFiles, bindingContext);
+        BindingContext bindingContext = analyzeFiles(files, config);
+        checkForErrors(withJsLibAdded(files, config), bindingContext);
         return bindingContext;
     }
 
+    @NotNull
+    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
+                                              @NotNull Config config) {
+        Project project = config.getProject();
+        return AnalyzingUtils.analyzeFiles(project,
+                JsConfiguration.jsLibConfiguration(project),
+                withJsLibAdded(files, config),
+                notLibFiles(config.getLibFiles()),
+                JetControlFlowDataTraceFactory.EMPTY);
+    }
+
     private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         }
     }
 
