@@ -24,7 +24,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     public ConstructorDescriptorImpl(@NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(original, annotations, "<init>");
+        super(original.getContainingDeclaration(), original, annotations, "<init>");
         this.isPrimary = isPrimary;
     }
 
