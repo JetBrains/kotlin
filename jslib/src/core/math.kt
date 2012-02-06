@@ -4,7 +4,6 @@ import js.annotations.native
 
 native
 val Math = object {
-    native
     fun random() : Double = 0.0;
     fun abs(value : Double) = 0.0
     fun acos(value : Double) = 0.0
@@ -18,6 +17,7 @@ val Math = object {
     fun min(vararg values : Double) = 0.0
     fun sqrt(value : Double) = 0.0
     fun tan(value : Double) = 0.0
+
     fun log(value : Double) = 0.0
     fun pow(base : Double, exp : Double) = 0.0
     fun round(value : Double) = 0.0

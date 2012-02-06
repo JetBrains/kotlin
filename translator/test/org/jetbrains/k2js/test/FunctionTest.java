@@ -86,4 +86,8 @@ public class FunctionTest extends AbstractExpressionTest {
             System.out.println(e);
         }
     }
+
+    public void testFunctionInsideFunction() throws Exception {
+        testFooBoxIsTrue("functionInsideFunction.kt");
+    }
 }

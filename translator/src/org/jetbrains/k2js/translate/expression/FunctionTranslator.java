@@ -56,9 +56,17 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.functionBodyContext = functionBodyContext().innerBlock(functionBody);
     }
 
+
+    @NotNull
+    public JsFunction translateAsLocalFunction() {
+        JsName functionName = context().getNameForElement(functionDeclaration);
+        JsFunction function = generateFunctionObject();
+        function.setName(functionName);
+        return function;
+    }
+
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
-        assert functionDeclaration instanceof JetElement;
         JsName functionName = context().getNameForElement(functionDeclaration);
         JsFunction function = generateFunctionObject();
         return new JsPropertyInitializer(functionName.makeRef(), function);

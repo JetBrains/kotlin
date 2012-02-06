@@ -395,4 +395,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsExpression value = ClassTranslator.generateClassCreationExpression(expression, context);
         return AstUtil.newVar(propertyName, value);
     }
+
+    @Override
+    @NotNull
+    public JsNode visitNamedFunction(@NotNull JetNamedFunction function,
+                                     @NotNull TranslationContext context) {
+        return FunctionTranslator.newInstance(function, context).translateAsLocalFunction();
+    }
 }
