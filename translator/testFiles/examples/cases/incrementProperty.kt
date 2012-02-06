@@ -1,5 +1,3 @@
-package foo
-
 class Slot() {
   var vitality: Int = 10000
 

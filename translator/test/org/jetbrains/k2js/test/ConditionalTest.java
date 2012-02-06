@@ -5,6 +5,7 @@ import org.mozilla.javascript.JavaScriptException;
 /**
  * @author Pavel Talanov
  */
+//TODO: remove class
 public class ConditionalTest extends AbstractExpressionTest {
 
     final private static String MAIN = "conditional/";
@@ -12,18 +13,6 @@ public class ConditionalTest extends AbstractExpressionTest {
     @Override
     protected String mainDirectory() {
         return MAIN;
-    }
-
-    public void testIfElseAsExpression() throws Exception {
-        testFooBoxIsTrue("ifElseAsExpression.kt");
-    }
-
-    public void testIfElse() throws Exception {
-        testFunctionOutput("if.kt", "foo", "box", 5);
-    }
-
-    public void testIfElseIf() throws Exception {
-        testFunctionOutput("elseif.kt", "foo", "box", 5);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {

@@ -1,6 +1,6 @@
 package foo
 
-fun box() : Int {
+fun bor() : Int {
     val a = 2;
     val b = 3;
     var c = 4;
@@ -14,3 +14,5 @@ fun box() : Int {
         return 5;
     }
 }
+
+fun box() = bor() == 5

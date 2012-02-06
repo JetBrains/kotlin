@@ -5,3 +5,5 @@ fun f(): Int {
   x = x + 1
   return x
 }
+
+fun box() =     f() == 2
