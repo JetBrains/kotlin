@@ -1,12 +1,12 @@
 package org.jetbrains.k2js.test;
 
 import junit.framework.Test;
-import junit.framework.TestResult;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Pavel Talanov
  */
+//TODO: this class has strange behaviour. Should be refactored.
 public final class Suite extends TranslationTest {
 
     private String name;
@@ -21,6 +21,19 @@ public final class Suite extends TranslationTest {
         this.testMain = suiteDirName;
     }
 
+    public Suite() {
+        this("dummy", "dummy", new SingleFileTester() {
+            @Override
+            public void performTest(@NotNull Suite test, @NotNull String filename) throws Exception {
+                //do nothing
+            }
+        });
+    }
+
+    //NOTE: just to avoid warning
+    public void testNothing() {
+    }
+
     @Override
     protected String mainDirectory() {
         return testMain;
@@ -28,20 +41,6 @@ public final class Suite extends TranslationTest {
 
     public void runTest() throws Exception {
         tester.performTest(this, name);
-    }
-
-    public static Test suite() {
-        return new Test() {
-            @Override
-            public int countTestCases() {
-                return 0;
-            }
-
-            @Override
-            public void run(TestResult testResult) {
-                //do nothing
-            }
-        };
     }
 
     public static Test suiteForDirectory(@NotNull final String mainName, @NotNull final SingleFileTester testMethod) {
@@ -56,8 +55,7 @@ public final class Suite extends TranslationTest {
         });
     }
 
-    protected interface SingleFileTester {
+    protected static interface SingleFileTester {
         void performTest(@NotNull Suite test, @NotNull String filename) throws Exception;
-
     }
 }
