@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script src="/prototype.js" ></script>
+    <script language="javascript">
+        function onLoad() {
+            new Ajax.Request('/sayhello', {
+                method: 'get',
+                    onSuccess: function(transport) {
+                        $('notice').update(transport.responseText)
+                }
+            });
+        }
+        function sayHello() {
+            new Ajax.Request('/sayhello', {
+                method: 'post',
+                postBody: $('input').value,
+                onSuccess: function(transport) {
+                    var div = document.createElement('div')
+                    div.innerHTML = transport.responseText
+                    $('interactions').insert(div)
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="onLoad()">
+    <div id="notice"><i>Waiting...</i></div>
+    <input type="text" id="input"><button onclick="sayHello();">Say Hello</button>
+    <div id="interactions"></div>
+</body>
+</html>
