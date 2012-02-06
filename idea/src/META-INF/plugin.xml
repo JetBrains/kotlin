@@ -68,6 +68,7 @@
                               implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.GlobalMemberCompletionContributor"/>
+      <completion.confidence language="jet" implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionConfidence"/>
 
       <psi.referenceContributor language="jet" order="after JetCompletionContributor" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>
 
