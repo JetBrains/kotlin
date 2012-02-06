@@ -43,11 +43,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     protected FunctionDescriptorImpl(
-            @NotNull DeclarationDescriptor containigDeclaration,
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name) {
-        super(containigDeclaration, annotations, name);
+        super(original.getContainingDeclaration(), annotations, name);
         this.original = original;
     }
 
