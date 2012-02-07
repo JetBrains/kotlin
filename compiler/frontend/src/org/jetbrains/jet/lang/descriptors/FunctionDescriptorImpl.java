@@ -66,6 +66,21 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         this.visibility = visibility;
         this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         this.expectedThisObject = expectedThisObject;
+        
+        for (int i = 0; i < typeParameters.size(); ++i) {
+            if (typeParameters.get(i).getIndex() != i) {
+                throw new IllegalStateException();
+            }
+        }
+
+        for (int i = 0; i < unsubstitutedValueParameters.size(); ++i) {
+            // TODO fill me
+            int firstValueParameterOffset = 0; // receiver.exists() ? 1 : 0;
+            if (unsubstitutedValueParameters.get(i).getIndex() != i + firstValueParameterOffset) {
+                //throw new IllegalStateException();
+            }
+        }
+
         return this;
     }
 
