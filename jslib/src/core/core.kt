@@ -27,5 +27,9 @@ native
 fun setInterval(callback : ()-> Unit) {}
 
 
-library("collectionsMax")
-public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
+native
+open class DomElement() {
+    val offsetLeft = 0.0;
+    val offsetTop = 0.0;
+    val offsetParent : DomElement? = DomElement();
+}

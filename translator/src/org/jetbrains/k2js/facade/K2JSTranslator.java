@@ -19,10 +19,7 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNamespaceName;
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
@@ -47,34 +44,30 @@ public final class K2JSTranslator {
         writer.close();
     }
 
-    public static void testTranslateFile(@NotNull String inputFile, @NotNull String outputFile) throws Exception {
+    public static void testTranslateFile(@NotNull String inputFile,
+                                         @NotNull String outputFile) throws Exception {
+        testTranslateFiles(Collections.singletonList(inputFile), outputFile);
+    }
+
+    public static void testTranslateFiles(@NotNull List<String> inputFiles,
+                                          @NotNull String outputFile) throws Exception {
         K2JSTranslator translator = new K2JSTranslator(new TestConfig());
-        JetFile psiFile = JetFileUtils.loadPsiFile(inputFile, translator.getProject());
-        translator.generateAndSaveProgram(psiFile, outputFile);
+        List<JetFile> psiFiles = createPsiFileList(inputFiles, translator.getProject());
+        JsProgram program = translator.generateProgram(psiFiles);
+        saveProgramToFile(outputFile, program);
+    }
+
+    private static void saveProgramToFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
+        CodeGenerator generator = new CodeGenerator();
+        generator.generateToFile(program, new File(outputFile));
     }
 
     @NotNull
     private Config config;
 
+
     public K2JSTranslator(@NotNull Config config) {
         this.config = config;
-    }
-
-
-    private void generateAndSaveProgram(@NotNull JetFile psiFile,
-                                        @NotNull String outputFile) throws IOException {
-        JsProgram program = generateProgram(Arrays.asList(psiFile));
-        CodeGenerator generator = new CodeGenerator();
-        generator.generateToFile(program, new File(outputFile));
-    }
-
-    public static void testTranslateFiles(@NotNull List<String> inputFiles, @NotNull String outputFile)
-            throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new TestConfig());
-        List<JetFile> psiFiles = createPsiFileList(inputFiles, translator.getProject());
-        JsProgram program = translator.generateProgram(psiFiles);
-        CodeGenerator generator = new CodeGenerator();
-        generator.generateToFile(program, new File(outputFile));
     }
 
     @NotNull

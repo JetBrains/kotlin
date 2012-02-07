@@ -81,7 +81,8 @@ public abstract class TranslationTest extends BaseTest {
     }
 
     protected void translateFile(String filename) throws Exception {
-        K2JSTranslator.testTranslateFile(getInputFilePath(filename), getOutputFilePath(filename));
+        K2JSTranslator.testTranslateFile(getInputFilePath(filename),
+                getOutputFilePath(filename));
     }
 
     protected void translateFilesInDir(String dirName) throws Exception {
@@ -92,7 +93,8 @@ public abstract class TranslationTest extends BaseTest {
             fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
         }
         assert dir.isDirectory();
-        K2JSTranslator.testTranslateFiles(fullFilePaths, getOutputFilePath(dirName + ".kt"));
+        K2JSTranslator.testTranslateFiles(fullFilePaths,
+                getOutputFilePath(dirName + ".kt"));
     }
 
     protected List<String> generateFilenameList(String inputFile) {

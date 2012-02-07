@@ -67,12 +67,6 @@ public final class OperatorOverloadingTest extends TranslationTest {
         testFooBoxIsTrue("plusAssignNoReassign.kt");
     }
 
-
-    public void testPlusAssignReassign() throws Exception {
-        testFooBoxIsTrue("plusAssignReassign.kt");
-    }
-
-
     public void testNotOverload() throws Exception {
         testFooBoxIsTrue("notOverload.kt");
     }

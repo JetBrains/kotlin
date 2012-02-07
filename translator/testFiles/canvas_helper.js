@@ -1,15 +1,7 @@
 function getContext() {
-    return document.getElementsByTagName('canvas')[0].getContext('2d');
+    return getCanvas().getContext('2d');
 }
 
-function random() {
-    return Math.random();
-}
-
-function getCanvasWidth() {
-    return document.getElementsByTagName('canvas')[0].width;
-}
-
-function getCanvasHeight() {
-    return document.getElementsByTagName('canvas')[0].height;
+function getCanvas() {
+    return document.getElementsByTagName('canvas')[0];
 }

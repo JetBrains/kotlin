@@ -19,7 +19,7 @@ public abstract class AccessTranslator extends AbstractTranslator {
     public static AccessTranslator getAccessTranslator(@NotNull JetExpression referenceExpression,
                                                        @NotNull TranslationContext context) {
         assert ((referenceExpression instanceof JetReferenceExpression) ||
-                (referenceExpression instanceof JetDotQualifiedExpression));
+                (referenceExpression instanceof JetQualifiedExpression));
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
             if (referenceExpression instanceof JetQualifiedExpression) {
                 return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);

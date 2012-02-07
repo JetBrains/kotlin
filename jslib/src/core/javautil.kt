@@ -2,6 +2,10 @@ package java.util
 
 import js.annotations.*;
 
+
+library("collectionsMax")
+public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
+
 library
 public trait Comparator<T> {
     fun compare(obj1 : T, obj2 : T) : Int;

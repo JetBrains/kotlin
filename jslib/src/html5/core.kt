@@ -1,6 +1,7 @@
 package html5
 
 import js.annotations.native
+import js.DomElement
 
 native
 class Context() {
@@ -11,6 +12,7 @@ class Context() {
     fun rotate(angle : Double) {}
     fun translate(x : Double, y : Double) {}
 
+    fun clearRect(x : Double, y : Double, w : Double, h : Double) {}
     fun fillRect(x : Double, y : Double, w : Double, h : Double) {}
     fun strokeRect(x : Double, y : Double, w : Double, h : Double) {}
 
@@ -47,6 +49,12 @@ class Context() {
 }
 
 native
+class Canvas() : DomElement() {
+    val width = 0.0;
+    val height = 0.0;
+}
+
+native
 class TextMetrics() {
     val width : Int = 0
 }
@@ -54,9 +62,5 @@ class TextMetrics() {
 /*custom helpers*/
 native
 fun getContext() : Context = Context();
-//native
-//fun random() : Double = 0.0
 native
-fun getCanvasWidth() : Double = 0.0
-native
-fun getCanvasHeight() : Double = 0.0
+fun getCanvas() : Canvas = Canvas();

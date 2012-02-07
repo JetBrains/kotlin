@@ -1,6 +1,7 @@
 package jquery;
 
 import js.annotations.*;
+import js.DomElement
 
 native
 class JQuery() {
@@ -19,8 +20,16 @@ class JQuery() {
     fun removeClass(className : String) = this
     fun height() = 0
     fun width() = 0
+
     fun click() = this;
-    fun click(handler : DomElement.()->Unit) = this;
+
+    fun mousedown(handler : DomElement.(MouseEvent)->Unit) = this;
+    fun mouseup(handler : DomElement.(MouseEvent)->Unit) = this;
+    fun mousemove(handler : DomElement.(MouseEvent)->Unit) = this;
+
+    fun dblclick(handler : DomElement.(MouseClickEvent)->Unit) = this;
+    fun click(handler : DomElement.(MouseClickEvent)->Unit) = this;
+
     fun append(str : String) = this;
     fun ready(handler : ()->Unit) = this;
     fun text(text : String) = this;
@@ -29,11 +38,20 @@ class JQuery() {
     fun hover(handlerIn : DomElement.() -> Unit, handlerOut : DomElement.() -> Unit) = this;
 }
 
-open class DomElement() {
-
+native
+open class MouseEvent() {
+    val pageX : Double = 0.0;
+    val pageY : Double = 0.0;
+    fun preventDefault() {}
+    fun isDefaultPrevented() : Boolean = true;
 }
 
-//val document = object : DomElement() {}
+native
+class MouseClickEvent() : MouseEvent() {
+    val which : Int = 0;
+}
+
+
 
 native("$")
 fun jq(selector : String) = JQuery();
