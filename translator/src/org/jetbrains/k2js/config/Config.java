@@ -45,7 +45,7 @@ public abstract class Config {
             List<String> lines = Files.readLines(file, Charsets.UTF_8);
             return lines.get(0);
         } catch (Exception ex) {
-            return "jslib\\src";
+            return "/src";
         }
     }
 
