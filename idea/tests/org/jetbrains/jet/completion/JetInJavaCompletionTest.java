@@ -7,16 +7,23 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
  */
 public class JetInJavaCompletionTest extends JetCompletionMultiTestBase {
 
-    public void testJetClassInJava() throws Exception {
+    public void testJetClassInJava() {
         doFileTest();
     }
 
-    public void testJetSubpackage() throws Exception {
+    public void testJetSubpackage() {
         doFileTest();
     }
 
-    // TODO: fix and uncomment
-    public void skiptestTopLevelPackages() throws Exception {
+    public void testClassFromNamespace() {
+        doFileTest();
+    }
+
+    public void testJetFunction() {
+        doFileTest();
+    }
+
+    public void testTraitInJava() {
         doFileTest();
     }
 

@@ -17,23 +17,27 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
      * @param completionLevel {@see CompletionParameters.getInvocationCount()} javadoc
      * @throws Exception
      */
-    protected void doFileTest(int completionLevel) throws Exception {
-        configureByFiles(null, getFileNameList());
-        complete(completionLevel);
+    protected void doFileTest(int completionLevel) {
+        try {
+            configureByFiles(null, getFileNameList());
+            complete(completionLevel);
 
-        final String fileText = getFile().getText();
-        final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
+            final String fileText = getFile().getText();
+            final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
 
-        assertContainsItems(completionUtils.itemsShouldExist(fileText));
-        assertNotContainItems(completionUtils.itemsShouldAbsent(fileText));
+            assertContainsItems(completionUtils.itemsShouldExist(fileText));
+            assertNotContainItems(completionUtils.itemsShouldAbsent(fileText));
 
-        Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
-        if (itemsNumber != null) {
-            assertEquals(itemsNumber.intValue(), myItems.length);
+            Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
+            if (itemsNumber != null) {
+                assertEquals(itemsNumber.intValue(), myItems.length);
+            }
+        } catch (Exception e) {
+            throw new AssertionError(e);
         }
     }
 
-    protected void doFileTest() throws Exception {
+    protected void doFileTest() {
         doFileTest(1);
     }
 
