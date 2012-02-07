@@ -153,24 +153,30 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return classOrObject != null;
     }
 
-    @Override
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file) {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file,
+                       boolean implementAll) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
-        if (missingImplementations.isEmpty()) {
+        if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, "No methods to implement have been found");
             return;
         }
         List<DescriptorClassMember> members = membersFromDescriptors(missingImplementations);
-        final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(project,
-                                                                                          members.toArray(new DescriptorClassMember[members.size()]));
-        if (chooser == null) {
-            return;
-        }
 
-        final List<DescriptorClassMember> selectedElements = chooser.getSelectedElements();
-        if (selectedElements == null || selectedElements.isEmpty()) return;
+        final List<DescriptorClassMember> selectedElements;
+        if (implementAll) {
+            selectedElements = members;
+        } else {
+            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(project,
+                                                                                              members.toArray(new DescriptorClassMember[members.size()]));
+            if (chooser == null) {
+                return;
+            }
+
+            selectedElements = chooser.getSelectedElements();
+            if (selectedElements == null || selectedElements.isEmpty()) return;
+        }
 
         new WriteCommandAction(project, file) {
           protected void run(final Result result) throws Throwable {
@@ -178,6 +184,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
           }
         }.execute();
 
+    }
+
+    @Override
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file) {
+        invoke(project, editor, file, false);
     }
 
     @Override

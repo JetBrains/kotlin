@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.util.HashMap;
@@ -60,9 +61,14 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
     public void templateFinished(Template template, boolean brokenOff) {
         ourAddedListeners.remove(editor);
 
-        if (classDescriptor != null && classDescriptor.getKind() == ClassKind.CLASS) {
-            int placeToInsert = classRef.getTextRange().getEndOffset();
-            PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile).insertString(placeToInsert, "()");
+        if (classDescriptor != null) {
+            if (classDescriptor.getKind() == ClassKind.CLASS) {
+                int placeToInsert = classRef.getTextRange().getEndOffset();
+                PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile).insertString(placeToInsert, "()");
+                editor.getCaretModel().moveToOffset(placeToInsert + 1);
+            }
+
+            new ImplementMethodsHandler().invoke(psiFile.getProject(), editor, psiFile, true);
         }
     }
     
