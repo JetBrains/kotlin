@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,19 +55,20 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
 
        for (DescriptorClassMember selectedElement : selectedElements) {
-            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
-            if (descriptor instanceof NamedFunctionDescriptor) {
-                JetElement target = overrideFunction(project, (NamedFunctionDescriptor) descriptor);
-                body.addBefore(target, body.getRBrace());
-            }
-            else if (descriptor instanceof PropertyDescriptor) {
-                JetElement target = overrideProperty(project, (PropertyDescriptor) descriptor);
-                body.addBefore(target, body.getRBrace());
-            }
-        }
+           final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
+           JetFile containingFile = (JetFile) classOrObject.getContainingFile();
+           if (descriptor instanceof NamedFunctionDescriptor) {
+               JetElement target = overrideFunction(project, containingFile, (NamedFunctionDescriptor) descriptor);
+               body.addBefore(target, body.getRBrace());
+           }
+           else if (descriptor instanceof PropertyDescriptor) {
+               JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor) descriptor);
+               body.addBefore(target, body.getRBrace());
+           }
+       }
     }
 
-    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
+    private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder("override ");
         if (descriptor.isVar()) {
             bodyBuilder.append("var ");
@@ -75,6 +77,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append("val ");
         }
         bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getOutType());
+        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getOutType(), file);
         String initializer = defaultInitializer(descriptor.getOutType(), JetStandardLibrary.getJetStandardLibrary(project));
         if (initializer != null) {
             bodyBuilder.append("=").append(initializer);
@@ -85,7 +88,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, NamedFunctionDescriptor descriptor) {
+    private static JetElement overrideFunction(Project project, JetFile file, NamedFunctionDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder("override fun ");
         bodyBuilder.append(descriptor.getName());
         bodyBuilder.append("(");
@@ -98,12 +101,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append(parameterDescriptor.getName());
             bodyBuilder.append(": ");
             bodyBuilder.append(parameterDescriptor.getOutType().toString());
+
+            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getOutType(), file);
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getJetStandardLibrary(project);
         if (!returnType.equals(stdlib.getTuple0Type())) {
             bodyBuilder.append(": ").append(returnType.toString());
+            ImportClassHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 
         final String initializer = defaultInitializer(returnType, stdlib);
