@@ -62,7 +62,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String VAR_WITH_GETTER_AND_SETTER_TEMPLATE = "var <#<name>#> : <#<varType>#>\nget() {\n<#<body>#>\n}\nset(value) {\n<#<body>#>\n}";
     private static final String TRAIT_TEMPLATE = "trait <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_TEMPLATE = "class <#<name>#> {\n<#<body>#>\n}";
-    private static final String OBJECT_NAMED_TEMPLATE = "object <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_OBJECT_TEMPLATE = "class object {\n<#<body>#>\n}";
     private static final String FOR_TEMPLATE = "for (<#<i>#> in <#<elements>#>) {\n<#<body>#>\n}";
     private static final String WHEN_TEMPLATE = "when (<#<expression>#>) {\n<#<condition>#> -> <#<value>#>\n" +
@@ -224,7 +223,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                 ABSTRACT_KEYWORD,
                 FINAL_KEYWORD, GET_KEYWORD,
-                INLINE_KEYWORD, INTERNAL_KEYWORD,
+                INLINE_KEYWORD, INTERNAL_KEYWORD, OBJECT_KEYWORD,
                 OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                 PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
                 TYPE_KEYWORD);
@@ -236,7 +235,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                 FALSE_KEYWORD, FINALLY_KEYWORD,
                 GET_KEYWORD,
                 IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
-                IS_KEYWORD, NULL_KEYWORD,
+                IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
                 PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
                 RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
                 CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
@@ -260,12 +259,12 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
                                         FUN_TEMPLATE, VAL_WITH_TYPE_TEMPLATE, VAL_WITH_GETTER_TEMPLATE,
                                         VAR_WITH_TYPE_TEMPLATE, VAR_WITH_GETTER_AND_SETTER_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, CLASS_OBJECT_TEMPLATE,
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, CLASS_OBJECT_TEMPLATE,
                                         ENUM_CLASS_TEMPLATE);
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
                                         IF_TEMPLATE, IF_ELSE_TEMPLATE, IF_ELSE_ONELINE_TEMPLATE,
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
-                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, OBJECT_NAMED_TEMPLATE, FOR_TEMPLATE,
+                                        TRAIT_TEMPLATE, CLASS_TEMPLATE, FOR_TEMPLATE,
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
