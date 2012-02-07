@@ -130,7 +130,7 @@ public class JetCompiler implements TranslatingCompiler {
         }
         
         params.getVMParametersList().addParametersString("-Djava.awt.headless=true -Xmx512m");
-        //params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
+//        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
 
         Sdk sdk = params.getJdk();
 
@@ -191,6 +191,13 @@ public class JetCompiler implements TranslatingCompiler {
                     }
                     else {
                         compileContext.addMessage(INFORMATION, text, "", -1, -1);
+                    }
+                }
+
+                @Override
+                public void processTerminated(ProcessEvent event) {
+                    if (event.getExitCode() != 0) {
+                        compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + event.getExitCode(), "", -1, -1);
                     }
                 }
             });
