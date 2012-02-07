@@ -1,9 +1,5 @@
 package org.jetbrains.jet.completion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -15,26 +11,85 @@ import java.io.File;
  */
 public class KeywordsCompletionTest extends JetCompletionTestBase {
 
-    protected KeywordsCompletionTest(@NotNull String path, @NotNull String name) {
-        super(path, name);
+    public void testAfterClassProperty() {
+        doTest();
     }
 
-    @NotNull
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
+    public void testAfterDot() {
+        doTest();
+    }
 
-        JetTestCaseBuilder.appendTestsInDirectory(
-                PluginTestCaseBase.getTestDataPathBase(), "/completion/keywords/", false,
-                JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+    public void testAfterSpaceAndDot() {
+        doTest();
+    }
 
+    public void testclassObject() {
+        doTest();
+    }
 
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new KeywordsCompletionTest(dataPath, name);
-            }
-        }, suite);
+    public void testInBlockComment() {
+        doTest();
+    }
 
-        return suite;
+    public void testInChar() {
+        doTest();
+    }
+
+    public void testInClassBeforeFun() {
+        doTest();
+    }
+
+    public void testInClassProperty() {
+        doTest();
+    }
+
+    public void testInClassScope() {
+        doTest();
+    }
+
+    public void testInFunctionScope() {
+        doTest();
+    }
+
+    public void testInParametersList() {
+        doTest();
+    }
+
+    public void testInMethodParametersList() {
+        doTest();
+    }
+
+    public void testInString() {
+        doTest();
+    }
+
+    public void testInTopProperty() {
+        doTest();
+    }
+
+    public void testInTopScopeAfterPackage() {
+        doTest();
+    }
+
+    public void testInTypeScope() {
+        doTest();
+    }
+
+    public void testLineComment() {
+        doTest();
+    }
+
+    public void testPropertySetterGetter() {
+        doTest();
+    }
+
+    public void testTopScope() {
+        doTest();
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/keywords").getPath() +
+               File.separator;
     }
 }

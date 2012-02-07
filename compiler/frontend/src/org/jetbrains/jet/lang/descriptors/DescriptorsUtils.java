@@ -1,6 +1,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 /**
  * @author Nikolay Krasko
@@ -28,7 +29,7 @@ public final class DescriptorsUtils {
     public static String getFQName(@NotNull NamedFunctionDescriptor functionDescriptor) {
         if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
             final String namespaceFQN = getFQName((NamespaceDescriptor) functionDescriptor.getContainingDeclaration());
-            return !namespaceFQN.isEmpty() ? namespaceFQN + "." + functionDescriptor.getName() : functionDescriptor.getName();
+            return QualifiedNamesUtil.combine(namespaceFQN, functionDescriptor.getName());
         }
 
         throw new IllegalArgumentException("Currently supported only for top level functions");

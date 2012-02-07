@@ -1,9 +1,5 @@
 package org.jetbrains.jet.completion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -13,25 +9,66 @@ import java.io.File;
  */
 public class JetBasicCompletionTest extends JetCompletionTestBase {
 
-    protected JetBasicCompletionTest(@NotNull String path, @NotNull String name) {
-        super(path, name);
+    public void testBeforeDotInCall() {
+        doTest();
     }
 
-    @NotNull
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
+    public void testExtendClassName() {
+        doTest();
+    }
 
-        JetTestCaseBuilder.appendTestsInDirectory(
-                PluginTestCaseBase.getTestDataPathBase(), "/completion/basic/", false,
-                JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+    public void testExtendQualifiedClassName() {
+        doTest();
+    }
 
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetBasicCompletionTest(dataPath, name);
-            }
-        }, suite);
+    public void testFromImports() {
+        doTest();
+    }
 
-        return suite;
+    public void testInCallExpression() {
+        doTest();
+    }
+
+    public void testInEmptyImport() {
+        doTest();
+    }
+
+    public void testInImport() {
+        doTest();
+    }
+
+    // TODO: activate this test
+    public void todotestInMiddleOfNamespace() {
+        doTest();
+    }
+
+    public void testJavaClassNames() {
+        doTest();
+    }
+
+    public void testJavaPackage() {
+        doTest();
+    }
+
+    public void testNamedObject() {
+        doTest();
+    }
+
+    public void testOverloadFunctions() {
+        doTest();
+    }
+
+    public void testSubpackageInFun() {
+        doTest();
+    }
+
+    public void testVariableClassName() {
+        doTest();
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic").getPath() +
+               File.separator;
     }
 }

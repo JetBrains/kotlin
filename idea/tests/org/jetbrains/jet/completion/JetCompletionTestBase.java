@@ -7,60 +7,48 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.Sdk;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-
-import java.io.File;
 
 /**
  * @author Nikolay.Krasko
  */
 public abstract class JetCompletionTestBase extends LightCompletionTestCase {
-    private final String myPath;
-    private final String myName;
 
-    protected JetCompletionTestBase(@NotNull String path, @NotNull String name) {
-        myPath = path;
-        myName = name;
-
-        // Set name explicitly because otherwise there will be "TestCase.fName cannot be null"
-        setName("testCompletionExecute");
-    }
-
-    public void testCompletionExecute() throws Exception {
-        doTest();
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), myPath).getPath() +
-               File.separator;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return "test" + myName;
-    }
+    private final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
 
     private CompletionType type;
 
-    protected void doTest() throws Exception {
-        final String testName = getTestName(false);
+    @Override
+    protected abstract String getTestDataPath();
 
-        type = (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
+    protected void doTest() {
+        try {
+            final String testName = getTestName(false);
 
-        configureByFile(testName + ".kt");
+            type = (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
 
-        final String fileText = getFile().getText();
-        final ExpectedCompletionUtils completionUtils = new ExpectedCompletionUtils();
+            configureByFileNoComplete(testName + ".kt");
 
-        assertContainsItems(completionUtils.itemsShouldExist(fileText));
-        assertNotContainItems(completionUtils.itemsShouldAbsent(fileText));
-        
-        Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
-        if (itemsNumber != null) {
-            assertEquals(itemsNumber.intValue(), myItems.length);
+            final String fileText = getFile().getText();
+
+            Integer completionTime = completionUtils.getExecutionTime(fileText);
+            
+            complete(completionTime == null ? 1 : completionTime);
+
+            final String[] expected = completionUtils.itemsShouldExist(fileText);
+            final String[] unexpected = completionUtils.itemsShouldAbsent(fileText);
+            Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
+
+            assertTrue("Should be some assertions about completion", expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
+
+            assertContainsItems(expected);
+            assertNotContainItems(unexpected);
+
+            if (itemsNumber != null) {
+                assertEquals(itemsNumber.intValue(), myItems.length);
+            }
+        } catch (Exception e) {
+            throw new AssertionError(e);
         }
     }
 

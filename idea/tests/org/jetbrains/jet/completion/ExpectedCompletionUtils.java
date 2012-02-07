@@ -20,20 +20,22 @@ public class ExpectedCompletionUtils {
     public static final String EXIST_LINE_PREFIX = "// EXIST:";
     public static final String ABSENT_LINE_PREFIX = "// ABSENT:";
     public static final String NUMBER_LINE_PREFIX = "// NUMBER:";
+    public static final String EXECUTION_TIME_PREFIX = "// TIME:";
 
     private final String existLinePrefix;
     private final String absentLinePrefix;
     private final String numberLinePrefix;
+    private final String executionTimePrefix;
 
     public ExpectedCompletionUtils() {
-        this(EXIST_LINE_PREFIX, ABSENT_LINE_PREFIX, NUMBER_LINE_PREFIX);
+        this(EXIST_LINE_PREFIX, ABSENT_LINE_PREFIX, NUMBER_LINE_PREFIX, EXECUTION_TIME_PREFIX);
     }
     
-    public ExpectedCompletionUtils(String existLinePrefix, String absentLinePrefix, String numberLinePrefix) {
-
+    public ExpectedCompletionUtils(String existLinePrefix, String absentLinePrefix, String numberLinePrefix, String execitionTimePrefix) {
         this.existLinePrefix = existLinePrefix;
         this.absentLinePrefix = absentLinePrefix;
         this.numberLinePrefix = numberLinePrefix;
+        this.executionTimePrefix = execitionTimePrefix;
     }
 
     @NotNull
@@ -49,6 +51,16 @@ public class ExpectedCompletionUtils {
     @Nullable
     public Integer getExpectedNumber(String fileText) {
         final String[] numberStrings = findListWithPrefix(numberLinePrefix, fileText);
+        if (numberStrings.length > 0) {
+            return Integer.parseInt(numberStrings[0]);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public Integer getExecutionTime(String fileText) {
+        final String[] numberStrings = findListWithPrefix(executionTimePrefix, fileText);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }
@@ -88,7 +100,6 @@ public class ExpectedCompletionUtils {
     private static List<String> fileNonEmptyLines(String fileText) {
         ArrayList<String> result = new ArrayList<String>();
 
-
         try {
             BufferedReader reader = new BufferedReader(new StringReader(fileText));
             try {
@@ -103,7 +114,7 @@ public class ExpectedCompletionUtils {
                 reader.close();
             }
         } catch(IOException e) {
-            assert false;
+            throw new AssertionError(e);
         }
 
         return result;

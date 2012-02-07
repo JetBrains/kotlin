@@ -1,9 +1,5 @@
 package org.jetbrains.jet.completion;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -13,31 +9,45 @@ import java.io.File;
  */
 public class ExtensionsCompletionTest extends JetCompletionTestBase {
 
-//    public ExtensionsCompletionTest() {
-//        this("/completion/basic/extensions", "IrrelevantExtension");
-//        // this("/completion/basic/extensions", "InvalidTypeParameters");
-//        // this("/completion/basic/extensions", "ExtensionInExtensionThis");
-//    }
-
-    protected ExtensionsCompletionTest(@NotNull String path, @NotNull String name) {
-        super(path, name);
+    public void testExtensionInExtendedClass() {
+        doTest();
     }
 
-    @NotNull
-    public static TestSuite suite() {
-        TestSuite suite = new TestSuite();
+    public void testExtensionInExtendedClassThis() {
+        doTest();
+    }
 
-        JetTestCaseBuilder.appendTestsInDirectory(
-                PluginTestCaseBase.getTestDataPathBase(), "/completion/basic/extensions", false,
-                JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+    public void testExtensionInExtension() {
+        doTest();
+    }
 
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new ExtensionsCompletionTest(dataPath, name);
-            }
-        }, suite);
+    public void testExtensionInExtensionThis() {
+        doTest();
+    }
 
-        return suite;
+    public void testInvalidTypeParameters() {
+        doTest();
+    }
+
+    public void testIrrelevantExtension() {
+        doTest();
+    }
+
+    public void testJavaTypeExtension() {
+        doTest();
+    }
+
+    public void testKotlinGenericTypeExtension() {
+        doTest();
+    }
+
+    public void testKotlinTypeExtension() {
+        doTest();
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic/extensions").getPath() +
+               File.separator;
     }
 }

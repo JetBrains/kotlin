@@ -20,6 +20,8 @@ public class JavaCompletionHandlerTest extends CompletionTestCase {
             configureByFiles(null, fileName + ".java", fileName + ".kt");
             complete(2);
             checkResultByFile(fileName + ".after.java");
+        } catch (@SuppressWarnings("CaughtExceptionImmediatelyRethrown") AssertionError assertionError) {
+            throw assertionError;
         } catch (Exception e) {
             throw new AssertionError(e);
         }
