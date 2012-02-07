@@ -282,6 +282,9 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
+            if (!(supertype.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+                throw new IllegalStateException();
+            }
             supertypes.add(supertype);
         }
     }
