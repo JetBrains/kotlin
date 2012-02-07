@@ -38,10 +38,15 @@ public final class K2JSTranslatorApplet extends Applet {
         }
     }
 
-    @NotNull
+    @Nullable
     public BindingContext getBindingContext(@NotNull String programText) {
-        K2JSTranslator k2JSTranslator = new K2JSTranslator(new TestConfig());
-        return k2JSTranslator.analyzeProgramCode(programText);
+        try {
+            K2JSTranslator k2JSTranslator = new K2JSTranslator(new TestConfig());
+            return k2JSTranslator.analyzeProgramCode(programText);
+        } catch (Throwable e) {
+            reportException(e);
+            return null;
+        }
     }
 
     @NotNull
