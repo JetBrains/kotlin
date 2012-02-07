@@ -1389,6 +1389,18 @@ public class JetExpressionParsing extends AbstractJetParsing {
              declType = myJetParsing.parseTypeDef();
          }
          else if (keywordToken == OBJECT_KEYWORD) {
+             // Object expression may appear at the statement position: should parse it
+             // as expression instead of object declaration
+             // sample:
+             // {
+             //   object : Thread() {
+             //   }
+             // }
+             IElementType lookahead = lookahead(1);
+             if (lookahead == COLON || lookahead == LBRACE) {
+                 return null;
+             }
+             
              myJetParsing.parseObject(true, true);
              declType = OBJECT_DECLARATION;
          }
