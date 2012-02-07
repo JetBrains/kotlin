@@ -2,19 +2,14 @@ package org.jetbrains.jet.plugin.liveTemplates.macro;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.ExpressionContext;
-import com.intellij.codeInsight.template.Macro;
-import com.intellij.codeInsight.template.Result;
+import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -44,8 +39,10 @@ public class JetAnonymousSuperMacro extends Macro {
     }
 
     @Override
-    public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
-        final PsiNamedElement[] vars = getSupertypes(params, context);
+    public Result calculateResult(@NotNull Expression[] params, final ExpressionContext context) {
+        AnonymousTemplateEditingListener.registerListener(context.getEditor(), context.getProject());
+
+        PsiNamedElement[] vars = getSupertypes(params, context);
         if (vars == null || vars.length == 0) return null;
         return new JetPsiElementResult(vars[0]);
     }
@@ -77,18 +74,22 @@ public class JetAnonymousSuperMacro extends Macro {
         if (scope == null) {
             return null;
         }
-        
+
         List<PsiNamedElement> result = new ArrayList<PsiNamedElement>();
 
         for (DeclarationDescriptor descriptor : scope.getAllDescriptors()) {
-            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getModality().isOverridable()) {
+            if (!(descriptor instanceof ClassDescriptor)) continue;
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            if (!classDescriptor.getModality().isOverridable()) continue;
+            ClassKind kind = classDescriptor.getKind();
+            if (kind == ClassKind.TRAIT || kind == ClassKind.CLASS) {
                 PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
                 if (declaration != null) {
                     result.add((PsiNamedElement) declaration);
                 }
             }
         }
-        
+
         return result.toArray(new PsiNamedElement[result.size()]);
     }
 }
