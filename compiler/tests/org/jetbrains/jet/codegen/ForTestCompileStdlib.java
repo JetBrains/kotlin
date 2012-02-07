@@ -29,6 +29,9 @@ import java.util.jar.JarOutputStream;
 public class ForTestCompileStdlib {
     private static File stdlibJarFile;
 
+    private ForTestCompileStdlib() {
+    }
+
     private static File doCompile() throws Exception {
         File tmpDir = JetTestUtils.tmpDir("stdlibjar");
 
