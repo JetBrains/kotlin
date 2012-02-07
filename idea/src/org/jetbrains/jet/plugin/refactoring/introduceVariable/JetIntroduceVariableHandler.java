@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
@@ -18,10 +19,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.refactoring.JetIntroduceHandlerBase;
-import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
-import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
+import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.refactoring.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +81,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     allReplaces = Collections.singletonList(expression);
                 }
                 
-                String[] suggestedNames = JetNameSuggester.suggestNames(expression); //todo: add name validator
+                String[] suggestedNames = JetNameSuggester.suggestNames(expression, new JetNameValidatorImpl(expression));
                 final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
                 Collections.addAll(suggestedNamesSet, suggestedNames);
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
@@ -103,13 +102,14 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                             editor.getCaretModel().moveToOffset(property.getTextOffset());
                             editor.getSelectionModel().removeSelection();
                             if (isInplaceAvailableOnDataContext) {
+                                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                                PsiDocumentManager.getInstance(project).
+                                        doPostponedOperationsAndUnblockDocument(editor.getDocument());
                                 JetInplaceVariableIntroducer variableIntroducer =
                                         new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
                                                                          references.toArray(new JetExpression[references.size()]),
                                                                          reference.get(), finalReplaceOccurrence,
                                                                          property);
-                                PsiDocumentManager.getInstance(project).
-                                        doPostponedOperationsAndUnblockDocument(editor.getDocument());
                                 variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
                             }
                         }
@@ -163,7 +163,6 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                }
                boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
                            commonContainer instanceof JetClassBody ||
-                           commonContainer instanceof JetFile ||
                            commonContainer instanceof JetClassInitializer);
                if (!needBraces) {
                    property = (JetProperty) commonContainer.addBefore(property, anchor);
@@ -174,7 +173,33 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                    emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
                    property = (JetProperty) emptyBody.addAfter(property, firstChild);
                    emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                   anchor.replace(emptyBody);
+                   emptyBody = (JetExpression) anchor.replace(emptyBody);
+                   for (PsiElement child : emptyBody.getChildren()) {
+                       if (child instanceof JetProperty) {
+                           property = (JetProperty) child;
+                       }
+                   }
+                   if (commonContainer instanceof JetNamedFunction) {
+                       //we should remove equals sign
+                       JetNamedFunction function = (JetNamedFunction) commonContainer;
+                       if (!function.hasDeclaredReturnType()) {
+                           //todo: add return type
+                       }
+                       function.getEqualsToken().delete();
+                   } else if (commonContainer instanceof  JetContainerNode) {
+                       JetContainerNode node = (JetContainerNode) commonContainer;
+                       if (node.getParent() instanceof JetIfExpression) {
+                           PsiElement next = node.getNextSibling();
+                           if (next != null) {
+                               PsiElement nextnext = next.getNextSibling();
+                               if (nextnext != null && nextnext.getNode().getElementType() == JetTokens.ELSE_KEYWORD) {
+                                   if (next instanceof PsiWhiteSpace) {
+                                       next.replace(JetPsiFactory.createWhiteSpace(project, " ")) ;
+                                   }
+                               }
+                           }
+                       }
+                   }
                }
                for (JetExpression replace : allReplaces) {
                    if (replaceOccurrence) {
@@ -230,7 +255,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
     @Nullable
     private static PsiElement getContainer(PsiElement place) {
-        if (place instanceof JetBlockExpression || place instanceof JetClassBody || place instanceof JetFile ||
+        if (place instanceof JetBlockExpression || place instanceof JetClassBody ||
                 place instanceof JetClassInitializer) {
             return place;
         }
@@ -242,7 +267,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     return parent;
               }
             } if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry ||
-                parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
+                parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
                 return parent;
             } else if (parent instanceof JetNamedFunction) {
                 JetNamedFunction function = (JetNamedFunction) parent;

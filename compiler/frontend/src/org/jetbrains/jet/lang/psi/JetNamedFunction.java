@@ -42,7 +42,12 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
 
     @Override
     public boolean hasBlockBody() {
-        return findChildByType(JetTokens.EQ) == null;
+        return getEqualsToken() == null;
+    }
+
+    @Nullable
+    public PsiElement getEqualsToken() {
+        return findChildByType(JetTokens.EQ);
     }
 
     @NotNull

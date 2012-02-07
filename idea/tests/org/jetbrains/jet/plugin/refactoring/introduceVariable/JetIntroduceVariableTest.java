@@ -21,13 +21,9 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
-    /*public void testFileLevel() {
-        doTest();
-    }
-
     public void testFunctionAddBlock() {
         doTest();
-    }*/
+    }
 
     public void testIfCondition() {
         doTest();
@@ -37,17 +33,17 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
-    /*public void testIfThenAddBlock() {
+    public void testIfThenAddBlock() {
         doTest();
-    }*/
+    }
 
     public void testSimple() {
         doTest();
     }
 
-    /*public void testWhenAddBlock() {
+    public void testWhenAddBlock() {
         doTest();
-    }*/
+    }
 
     public void testWhileAddBlock() {
         doTest();
