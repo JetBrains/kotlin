@@ -16,6 +16,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.compiler.PathUtil;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -89,15 +90,18 @@ public class CompileEnvironment {
 
     public static void ensureRuntime(JetCoreEnvironment env) {
         Project project = env.getProject();
-        if (JavaPsiFacade.getInstance(project).findClass("java.lang.Obect", GlobalSearchScope.allScope(project)) == null) {
+        if (JavaPsiFacade.getInstance(project).findClass("java.lang.Object", GlobalSearchScope.allScope(project)) == null) {
             // TODO: prepend
             env.addToClasspath(findRtJar());
         }
 
         if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", GlobalSearchScope.allScope(project)) == null) {
             // TODO: prepend
-            File kotlin = getUnpackedRuntimePath();
-            if (kotlin == null) kotlin = getRuntimeJarPath();
+            File kotlin = PathUtil.getDefaultRuntimePath();
+            if (kotlin == null || !kotlin.exists()) {
+                kotlin = getUnpackedRuntimePath();
+                if (kotlin == null) kotlin = getRuntimeJarPath();
+            }
             env.addToClasspath(kotlin);
         }
     }
@@ -174,7 +178,8 @@ public class CompileEnvironment {
     }
 
     private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        GeneratedClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib}, AllModules.class.getClassLoader())) : new GeneratedClassLoader(factory);
+        GeneratedClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib}, AllModules.class.getClassLoader()))
+                                                       : new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
             final Method method = namespaceClass.getDeclaredMethod("project");

@@ -73,6 +73,10 @@ public class KotlinCompiler {
     }
 
     public static int exec(String... args) {
+        return exec(System.out, args);
+    }
+
+    public static int exec(PrintStream errStream, String... args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
         try {
@@ -88,12 +92,13 @@ public class KotlinCompiler {
         }
 
         if (arguments.help) {
-            usage(System.out);
+            usage(errStream);
             return 0;
         }
 
         CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
         environment.setIgnoreErrors(arguments.ignoreErrors);
+        environment.setErrorStream(errStream);
 
         if (arguments.stdlib != null) {
             environment.setStdlib(arguments.stdlib);
