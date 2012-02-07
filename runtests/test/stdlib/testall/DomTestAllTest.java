@@ -7,6 +7,6 @@ import test.dom.*;
  */
 public class DomTestAllTest {
   public static TestSuite suite() {
-    return new TestSuite(DomTest.class);
+    return new TestSuite(DomBuilderTest.class, DomTest.class);
   }
 }
