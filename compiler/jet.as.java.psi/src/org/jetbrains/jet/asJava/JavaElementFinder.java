@@ -140,8 +140,8 @@ public class JavaElementFinder extends PsiElementFinder {
         final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));
 
         for (JetFile psiFile : psiFiles) {
-            if (JetPsiUtil.getFQName(psiFile).startsWith(qualifiedName)) {
-                return new JetLightPackage(psiManager, qualifiedName);
+            if (QualifiedNamesUtil.isSubpackageOf(JetPsiUtil.getFQName(psiFile), qualifiedName)) {
+                return new JetLightPackage(psiManager, qualifiedName, psiFile.getNamespaceHeader());
             }
         }
 
@@ -160,7 +160,7 @@ public class JavaElementFinder extends PsiElementFinder {
 
             final String subPackageFQN = QualifiedNamesUtil.plusOneSegment(psiPackage.getQualifiedName(), jetRootNamespace);
             if (subPackageFQN != null) {
-                answer.add(new JetLightPackage(psiManager, subPackageFQN));
+                answer.add(new JetLightPackage(psiManager, subPackageFQN, psiFile.getNamespaceHeader()));
             }
         }
 

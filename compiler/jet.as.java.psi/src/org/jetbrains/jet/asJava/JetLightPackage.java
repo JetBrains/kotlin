@@ -10,18 +10,21 @@ import com.intellij.psi.impl.file.PsiPackageImpl;
  * @author Nikolay Krasko
  */
 public class JetLightPackage extends PsiPackageImpl {
-    public JetLightPackage(PsiManager manager, String qualifiedName) {
+
+    private final PsiElement namespaceElement;
+
+    public JetLightPackage(PsiManager manager, String qualifiedName, PsiElement namespaceElement) {
         super(manager, qualifiedName);
+        this.namespaceElement = namespaceElement;
     }
 
     @Override
     public PsiElement copy() {
-        return new JetLightPackage(getManager(), getQualifiedName());
+        return new JetLightPackage(getManager(), getQualifiedName(), namespaceElement);
     }
 
     @Override
     public boolean isValid() {
-        // TODO: invalidate properly
-        return super.isValid();
+        return namespaceElement.isValid();
     }
 }
