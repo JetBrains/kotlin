@@ -27,6 +27,14 @@ public class JetInJavaCompletionTest extends JetCompletionMultiTestBase {
         doFileTest();
     }
 
+    public void testJetEnums() {
+        doFileTest();
+    }
+
+    public void testJetEnumFields() {
+        doFileTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/completion/injava/";
