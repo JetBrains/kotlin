@@ -24,9 +24,6 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
             boolean hasBody,
             boolean isDefault) {
         super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
-        if (isDefault) {
-            initializeDefault();
-        }
     }
 
     public void initialize(@NotNull ValueParameterDescriptor parameter) {

@@ -730,6 +730,7 @@ public class DescriptorResolver {
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
                 false, true);
+        setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
 
