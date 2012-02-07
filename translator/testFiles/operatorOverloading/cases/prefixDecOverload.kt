@@ -3,8 +3,10 @@ package foo
 class MyInt() {
   var b = 0
 
-    fun dec() {
-      b = b + 1;
+    fun dec()  : MyInt {
+      val res = MyInt()
+      res.b++;
+      return res;
     }
 }
 

@@ -7,11 +7,8 @@ class ArrayWrapper<T>() {
         contents.add(item)
     }
 
-    fun plusAssign(rhs: ArrayWrapper<T>): ArrayWrapper<T> {
-        val result = ArrayWrapper<T>()
-        result.contents.addAll(contents)
-        result.contents.addAll(rhs.contents)
-        return result
+    fun plusAssign(rhs: ArrayWrapper<T>) {
+        contents.addAll(rhs.contents)
     }
 
     fun get(index: Int): T {
@@ -26,5 +23,5 @@ fun box(): String {
     val v3 = v1
     v2.add("bar")
     v1 += v2
-    return if (v1.contents.size() == 2 && v3.contents.size() == 1) "OK" else "fail"
+    return if (v1.contents.size() == 2 && v3.contents.size() == 2) "OK" else "fail"
 }

@@ -23,7 +23,7 @@ public open class Iterator<T>() {
 
 library
 val Collections = object {
-    library("max")
+    library("collectionsMax")
     public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
 }
 

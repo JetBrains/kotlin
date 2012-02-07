@@ -23,7 +23,7 @@ public final class OperatorOverloadingTest extends TranslationTest {
     }
 
 
-    public void testPrefixInc() throws Exception {
+    public void testPrefixDecOverload() throws Exception {
         testFooBoxIsTrue("prefixDecOverload.kt");
     }
 

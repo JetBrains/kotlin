@@ -1,6 +1,5 @@
 package org.jetbrains.k2js.utils;
 
-import com.google.common.io.ByteStreams;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -13,10 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +29,7 @@ public final class JetFileUtils {
 
     @NotNull
     private static String doLoadFile(@NotNull String path) throws IOException {
-        path = path.replace("\\", "/");
-        InputStreamReader reader = new InputStreamReader(JetFileUtils.class.getResourceAsStream(path));
-        StringBuilder response = new StringBuilder();
-        BufferedReader bufferedReader = new BufferedReader(reader);
-
-        String tmp;
-        while ((tmp = bufferedReader.readLine()) != null) {
-            response.append(tmp);
-            response.append(System.getProperty("line.separator"));
-        }
-
-        reader.close();
-        String text =  response.toString();
-//        String text = FileUtil.loadFile(new File(path), CharsetToolkit.UTF8).trim();
+        String text = FileUtil.loadFile(new File(path), CharsetToolkit.UTF8).trim();
         text = StringUtil.convertLineSeparators(text);
         return text;
     }
