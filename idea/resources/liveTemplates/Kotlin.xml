@@ -119,7 +119,7 @@
     </template>
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.anonymous"
               name="anonymous" toReformat="true" toShortenFQNames="true" value="object : $SUPERTYPE$ {&#10;$END$&#10;}">
-        <variable alwaysStopAt="true" defaultValue="" expression="" name="SUPERTYPE" />
+        <variable alwaysStopAt="true" defaultValue="&quot;Object&quot;" expression="anonymousSuper()" name="SUPERTYPE" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>
             <option name="KOTLIN_EXPRESSION" value="true"/>
