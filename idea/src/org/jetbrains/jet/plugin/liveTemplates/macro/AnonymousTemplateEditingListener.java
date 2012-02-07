@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -65,7 +66,16 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
             if (classDescriptor.getKind() == ClassKind.CLASS) {
                 int placeToInsert = classRef.getTextRange().getEndOffset();
                 PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile).insertString(placeToInsert, "()");
-                editor.getCaretModel().moveToOffset(placeToInsert + 1);
+
+                boolean hasConstructorsParameters = false;
+                for (ConstructorDescriptor cd : classDescriptor.getConstructors()) {
+                    // TODO check for visibility
+                    hasConstructorsParameters |= cd.getValueParameters().size() != 0;
+                }
+
+                if (hasConstructorsParameters) {
+                    editor.getCaretModel().moveToOffset(placeToInsert + 1);
+                }
             }
 
             new ImplementMethodsHandler().invoke(psiFile.getProject(), editor, psiFile, true);
