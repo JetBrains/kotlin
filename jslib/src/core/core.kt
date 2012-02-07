@@ -1,8 +1,7 @@
 package js;
 
-import js.annotations.library
-import js.annotations.library
-import js.annotations.native
+import js.library
+import js.native
 import java.util.*;
 
 library("println")

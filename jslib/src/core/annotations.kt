@@ -1,4 +1,4 @@
-package js.annotations;
+package js;
 
-annotation class native(name : String = "")
+annotation class native(name : String = "") {}
 annotation class library(name : String = "") {}

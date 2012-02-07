@@ -1,6 +1,6 @@
 package java.util
 
-import js.annotations.*;
+import js.*;
 
 
 library("collectionsMax")

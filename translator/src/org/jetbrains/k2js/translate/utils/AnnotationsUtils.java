@@ -16,9 +16,9 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingCl
 public final class AnnotationsUtils {
 
     @NotNull
-    public static final String NATIVE_ANNOTATION_FQNAME = "js.annotations.native";
+    public static final String NATIVE_ANNOTATION_FQNAME = "js.native";
     @NotNull
-    public static final String LIBRARY_ANNOTATION_FQNAME = "js.annotations.library";
+    public static final String LIBRARY_ANNOTATION_FQNAME = "js.library";
 
     private AnnotationsUtils() {
     }

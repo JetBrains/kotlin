@@ -1,6 +1,6 @@
 package js;
 
-import js.annotations.native
+import js.native
 
 native
 val Math = object {

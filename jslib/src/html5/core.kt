@@ -1,6 +1,6 @@
 package html5
 
-import js.annotations.native
+import js.native
 import js.DomElement
 
 native

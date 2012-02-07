@@ -3,12 +3,13 @@ package org.jetbrains.k2js.config;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.intellij.openapi.project.Project;
+import core.Dummy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,15 +27,15 @@ public abstract class Config {
     //TODO: provide some generic way to get the files of the project
     @NotNull
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            PATH_TO_JS_LIB_SRC + "\\core\\annotations.kt",
-            PATH_TO_JS_LIB_SRC + "\\jquery\\common.kt",
-            PATH_TO_JS_LIB_SRC + "\\core\\javautil.kt",
-            PATH_TO_JS_LIB_SRC + "\\core\\javalang.kt",
-            PATH_TO_JS_LIB_SRC + "\\core\\core.kt",
-            PATH_TO_JS_LIB_SRC + "\\core\\math.kt",
-            PATH_TO_JS_LIB_SRC + "\\core\\json.kt",
-            PATH_TO_JS_LIB_SRC + "\\raphael\\raphael.kt",
-            PATH_TO_JS_LIB_SRC + "\\html5\\core.kt"
+            "/core/annotations.kt",
+            "/jquery/common.kt",
+            "/core/javautil.kt",
+            "/core/javalang.kt",
+            "/core/core.kt",
+            "/core/math.kt",
+            "/core/json.kt",
+            "/raphael/raphael.kt",
+            "/html5/core.kt"
     );
 
 
@@ -45,7 +46,7 @@ public abstract class Config {
             List<String> lines = Files.readLines(file, Charsets.UTF_8);
             return lines.get(0);
         } catch (Exception ex) {
-            return "jslib\\src";
+            return "jslib/src";
         }
     }
 
@@ -53,7 +54,16 @@ public abstract class Config {
     private static List<JetFile> initLibFiles(@NotNull Project project) {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         for (String libFileName : LIB_FILE_NAMES) {
-            libFiles.add(JetFileUtils.loadPsiFile(libFileName, project));
+            InputStream stream = Dummy.class.getResourceAsStream(libFileName);
+            //noinspection IOResourceOpenedButNotSafelyClosed
+            JetFile file = null;
+            try {
+                String text = readString(stream);
+                file = JetFileUtils.createPsiFile(libFileName, text, project);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            libFiles.add(file);
         }
         return libFiles;
     }
@@ -73,4 +83,19 @@ public abstract class Config {
 
         return jsLibFiles;
     }
+
+    static String readString(InputStream is) throws IOException {
+        char[] buf = new char[2048];
+        Reader r = new InputStreamReader(is, "UTF-8");
+        StringBuilder s = new StringBuilder();
+        while (true) {
+            int n = r.read(buf);
+            if (n < 0)
+                break;
+            s.append(buf, 0, n);
+        }
+        return s.toString();
+    }
+
+
 }

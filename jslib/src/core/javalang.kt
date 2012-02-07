@@ -1,7 +1,7 @@
 package java.lang
 
 import java.util.Iterator;
-import js.annotations.library
+import js.library
 
 library
 trait Iterable<T> {

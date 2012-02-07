@@ -1,7 +1,7 @@
 package js
 
 import java.util.*;
-import js.annotations.library
+import js.library
 
 class Json() {
 

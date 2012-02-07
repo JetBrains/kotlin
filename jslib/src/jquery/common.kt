@@ -1,6 +1,6 @@
 package jquery;
 
-import js.annotations.*;
+import js.*;
 import js.DomElement
 
 native

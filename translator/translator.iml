@@ -27,6 +27,7 @@
     <orderEntry type="library" name="idea-full" level="application" />
     <orderEntry type="module" module-name="js" />
     <orderEntry type="module" module-name="compiler-tests" />
+    <orderEntry type="module" module-name="jslib" />
   </component>
 </module>
 

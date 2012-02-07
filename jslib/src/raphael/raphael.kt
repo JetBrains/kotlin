@@ -1,6 +1,6 @@
 package raphael
 
-import js.annotations.*;
+import js.*;
 import js.*;
 
 native
