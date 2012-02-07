@@ -9,7 +9,6 @@
       <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend/frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/idea_fix/idea_fix.iml" filepath="$PROJECT_DIR$/idea_fix/idea_fix.iml" />
       <module fileurl="file://$PROJECT_DIR$/js/js.iml" filepath="$PROJECT_DIR$/js/js.iml" />
       <module fileurl="file://$PROJECT_DIR$/jslib/jslib.iml" filepath="$PROJECT_DIR$/jslib/jslib.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" />
