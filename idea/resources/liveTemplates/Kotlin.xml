@@ -39,6 +39,15 @@
             <option name="KOTLIN_STATEMENT" value="true"/>
         </context>
     </template>
+    <template resource-bundle="messages.CodeInsightBundle" key="livetemplate.description.iter"
+              name="iter" toReformat="true" toShortenFQNames="true"
+              value="for ($VAR$ in $ITERABLE$) {&#10;$END$&#10;}">
+        <variable alwaysStopAt="false" defaultValue="kotlinIterableVariable()" expression="" name="ITERABLE" />
+        <variable alwaysStopAt="false" defaultValue="kotlinSuggestVariableName()" expression="" name="VAR" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true" />
+        </context>
+    </template>
 
     <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.void"
               name="void" toReformat="true" toShortenFQNames="true" value="fun $NAME$($PARAMS$) {&#10;$END$&#10;}">
