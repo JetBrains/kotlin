@@ -170,9 +170,10 @@ public class JetTestUtils {
         deleteOnShutdown(answer);
         return answer;
     }
-    
+
     public static File tmpDir(String name) throws IOException {
-        File answer = FileUtil.createTempDirectory(name, "");
+        // we should use this form. otherwise directory will be deleted on each test
+        File answer = FileUtil.createTempDirectory(new File(System.getProperty("java.io.tmpdir")), name, "");
         deleteOnShutdown(answer);
         return answer;
     }

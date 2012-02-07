@@ -107,7 +107,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testAbstractClass() throws Exception {
         loadText("abstract class SimpleClass() { }");
 
-        final Class aClass = loadAllClasses(generateClassesInFile()).get("SimpleClass");
+        final Class aClass = createClassLoader(generateClassesInFile()).loadClass("SimpleClass");
         assertTrue((aClass.getModifiers() & Modifier.ABSTRACT) != 0);
     }
 
@@ -148,7 +148,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
-        final Class direction = loadAllClasses(generateClassesInFile()).get("Direction");
+        final Class direction = createClassLoader(generateClassesInFile()).loadClass("Direction");
 //        System.out.println(generateToText());
         final Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
@@ -157,7 +157,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testEnumConstantConstructors() throws Exception {
         loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000); GREEN: Color(0x00FF00); }");
-        final Class colorClass = loadAllClasses(generateClassesInFile()).get("Color");
+        final Class colorClass = createClassLoader(generateClassesInFile()).loadClass("Color");
         final Field redField = colorClass.getField("RED");
         final Object redValue = redField.get(null);
         final Method rgbMethod = colorClass.getMethod("getRgb");

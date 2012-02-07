@@ -1,10 +1,14 @@
 package org.jetbrains.jet.codegen;
 
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileSession;
 
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 /**
  * @author alex.tkachman
@@ -14,46 +18,16 @@ public class StdlibTest extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithFullJdk();
-    }
-    
-    protected String generateToText() {
-        CompileSession session = new CompileSession(myEnvironment);
-
-        session.addSources(myFile.getVirtualFile());
-        try {
-            session.addStdLibSources(true);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-
-        if (!session.analyze(System.out)) {
-            return null;
-        }
-
-        return session.generateText();
+        myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
+        CompileEnvironment.ensureRuntime(myEnvironment);
     }
 
-    @NotNull
-    protected ClassFileFactory generateClassesInFile() {
-        try {
-            CompileSession session = new CompileSession(myEnvironment);
-
-            session.addStdLibSources(true);
-            session.addSources(myFile.getVirtualFile());
-
-            CompileEnvironment.ensureRuntime(myEnvironment);
-
-            if (!session.analyze(System.out)) {
-                throw new RuntimeException();
-            }
-
-            return session.generate();
-        } catch (RuntimeException e) {
-            System.out.println(generateToText());
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
+        return new GeneratedClassLoader(
+                codegens,
+                new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL()},
+                                   getClass().getClassLoader()));
     }
 
     public void testKt533 () {

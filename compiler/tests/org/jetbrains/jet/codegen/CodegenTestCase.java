@@ -12,6 +12,7 @@ import org.jetbrains.jet.parsing.JetParsingTest;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,6 @@ import java.util.Map;
  * @author yole
  */
 public abstract class CodegenTestCase extends JetLiteFixture {
-    private MyClassLoader myClassLoader;
 
     protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
         boolean caught = false;
@@ -36,13 +36,11 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        myClassLoader = new MyClassLoader(NamespaceGenTest.class.getClassLoader());
     }
 
     @Override
     protected void tearDown() throws Exception {
         myFile = null;
-        myClassLoader = null;
         super.tearDown();
     }
 
@@ -89,7 +87,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected String blackBox() throws Exception {
         ClassFileFactory codegens = generateClassesInFile();
-        GeneratedClassLoader loader = new GeneratedClassLoader(codegens);
+        GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
             String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
@@ -99,6 +97,10 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         } finally {
            loader.dispose();
         }
+    }
+
+    protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
+        return new GeneratedClassLoader(codegens);
     }
 
     protected String generateToText() {
@@ -121,32 +123,25 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
     protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
         String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
-        Map<String, Class> classMap = loadAllClasses(state);
-        return classMap.get(fqName);
+        try {
+            return createClassLoader(state).loadClass(fqName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     protected Class loadClass(String fqName, @NotNull ClassFileFactory state) {
-        List<String> files = state.files();
-        for (String file : files) {
-            if (file.equals(fqName.replace('.', '/') + ".class")) {
-                final byte[] data = state.asBytes(file);
-                return myClassLoader.doDefineClass(fqName, data);
-            }
+        try {
+            return createClassLoader(state).loadClass(fqName);
+        } catch (ClassNotFoundException e) {
+        } catch (MalformedURLException e) {
         }
 
         fail("No classfile was generated for: " + fqName);
         return null;
-    }
-
-    protected Map<String, Class> loadAllClasses(@NotNull ClassFileFactory state) {
-        Map<String, Class> result = new HashMap<String, Class>();
-        for (String fileName : state.files()) {
-            String className = StringUtil.trimEnd(fileName, ".class").replace('/', '.');
-            byte[] data = state.asBytes(fileName);
-            Class aClass = myClassLoader.doDefineClass(className, data);
-            result.put(className, aClass);
-        }
-        return result;
     }
 
     @NotNull
