@@ -1,10 +1,13 @@
 package org.jetbrains.jet.plugin.completion.handlers;
 
+import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DescriptorsUtils;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
@@ -34,14 +37,26 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         }
 
         int startOffset = context.getStartOffset();
+        PsiElement element = context.getFile().findElementAt(startOffset);
+        if (element == null) return;
         int lookupStringLength = item.getLookupString().length();
         int endOffset = startOffset + lookupStringLength;
+        Document document = context.getDocument();
 
-        context.getDocument().insertString(endOffset, "()");
+        boolean bothParentheses = false;
+        String documentText = document.getText();
+        if (documentText.charAt(endOffset) != '(') {
+            //do not insert () if it already exists.
+            document.insertString(endOffset, "()");
+            bothParentheses = true;
+        } else if (documentText.charAt(endOffset + 1) == ')') {
+            bothParentheses = true;
+        }
 
         Editor editor = context.getEditor();
-        if (caretPosition == CaretPosition.IN_BRACKETS) {
+        if (caretPosition == CaretPosition.IN_BRACKETS || !bothParentheses) {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 1);
+            AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, element);
         } else {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 2);
         }

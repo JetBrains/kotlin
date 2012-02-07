@@ -11,6 +11,10 @@ import java.io.File;
  */
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
+    public void testExistingNoParamsFunction() {
+        doTest();
+    }
+
     public void testNoParamsFunction() {
         doTest();
     }
@@ -31,6 +35,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         configureByFile("SingleBrackets.kt");
         type('(');
         checkResultByFile("SingleBrackets.kt.after");
+    }
+
+    public void testExistingSingleBrackets() {
+        doTest();
     }
 
     public void doTest() {
