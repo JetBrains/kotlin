@@ -148,14 +148,6 @@ public class JetCompiler implements TranslatingCompiler {
                 StringBuilder stderr = null;
 
                 @Override
-                public void processTerminated(ProcessEvent event) {
-                    super.processTerminated(event);
-                    if(stderr != null) {
-                        compileContext.addMessage(ERROR, "stderr output:\r\n" + stderr.toString(), "", -1, -1);
-                    }
-                }
-
-                @Override
                 public void onTextAvailable(ProcessEvent event, Key outputType) {
                     String text = event.getText();
                     String levelCode = parsePrefix(text);
@@ -198,6 +190,10 @@ public class JetCompiler implements TranslatingCompiler {
                 public void processTerminated(ProcessEvent event) {
                     if (event.getExitCode() != 0) {
                         compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + event.getExitCode(), "", -1, -1);
+                    }
+                    // By alex.tkachman:
+                    if(stderr != null) {
+                        compileContext.addMessage(ERROR, "stderr output:\r\n" + stderr.toString(), "", -1, -1);
                     }
                 }
             });
