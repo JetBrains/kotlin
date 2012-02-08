@@ -5,3 +5,7 @@ function getContext() {
 function getCanvas() {
     return document.getElementsByTagName('canvas')[0];
 }
+
+function getJBLogo() {
+    return document.getElementsByTagName('img')[0];
+}

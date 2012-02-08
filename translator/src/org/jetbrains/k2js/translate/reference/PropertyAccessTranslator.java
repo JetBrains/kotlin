@@ -105,8 +105,27 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
         return canBePropertyGetterCall(expression, context);
     }
 
+    public enum CallType {
+        SAFE,
+        //TODO: bang qualifier is not implemented in frontend for now
+        BANG,
+        NORMAL
+    }
+
+    //TODO: we use normal by default but may cause bugs
+    private /*var*/ CallType callType = CallType.NORMAL;
+
     protected PropertyAccessTranslator(@NotNull TranslationContext context) {
         super(context);
     }
 
+    public void setCallType(@NotNull CallType callType) {
+        this.callType = callType;
+    }
+
+    @NotNull
+    protected CallType getCallType() {
+        assert callType != null : "CallType not set";
+        return callType;
+    }
 }

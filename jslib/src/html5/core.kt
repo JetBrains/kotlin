@@ -34,7 +34,7 @@ class Context() {
     fun quadraticCurveTo(cpx : Double, cpy : Double, x : Double, y : Double) {}
     fun bezierCurveTo(cp1x : Double, cp1y : Double, cp2x : Double, cp2y : Double, x : Double, y : Double) {}
     fun arcTo(x1 : Double, y1 : Double, x2 : Double, y2 : Double, radius : Double) {}
-    fun arc(x : Double, y : Double, radius : Double, startAngle : Double, endAngle : Double, anticlockwise : Boolean= false) {}
+    fun arc(x : Double, y : Double, radius : Double, startAngle : Double, endAngle : Double, anticlockwise : Boolean) {}
 
     fun rect(x : Double, y : Double, w : Double, h : Double) {}
     fun fill() {}
@@ -46,7 +46,15 @@ class Context() {
     fun strokeText(text : String, x : Double, y : Double, maxWidth : Double) {}
 
     fun measureText(text : String)  : TextMetrics = TextMetrics();
+
+    fun drawImage(image : HTMLImageElement, dx : Double, dy : Double) {}
+    fun drawImage(image : HTMLImageElement, dx: Double, dy: Double, dw: Double, dh: Double) {}
+    fun drawImage(image : HTMLImageElement, sx: Double, sy: Double,
+    sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) {}
 }
+
+native
+class HTMLImageElement() : DomElement() {}
 
 native
 class Canvas() : DomElement() {
@@ -64,3 +72,5 @@ native
 fun getContext() : Context = Context();
 native
 fun getCanvas() : Canvas = Canvas();
+native
+fun getJBLogo() : HTMLImageElement = HTMLImageElement();

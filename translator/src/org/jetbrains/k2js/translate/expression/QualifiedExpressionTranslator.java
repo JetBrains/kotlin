@@ -28,11 +28,18 @@ public final class QualifiedExpressionTranslator {
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
                                                        @NotNull TranslationContext context) {
-        if (expression instanceof JetDotQualifiedExpression) {
-            JsExpression receiver = translateReceiver(expression, context);
-            return PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver, context);
+
+        JsExpression receiver = translateReceiver(expression, context);
+        PropertyAccessTranslator result =
+                PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver, context);
+        //TODO: util if this code duplicates
+        if (expression instanceof JetSafeQualifiedExpression) {
+            result.setCallType(PropertyAccessTranslator.CallType.SAFE);
         }
-        throw new UnsupportedOperationException();
+        if (expression instanceof JetDotQualifiedExpression) {
+            result.setCallType(PropertyAccessTranslator.CallType.NORMAL);
+        }
+        return result;
     }
 
     @NotNull
