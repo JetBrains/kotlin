@@ -32,9 +32,7 @@ import java.util.Set;
 public abstract class BaseJetVariableMacro extends Macro {
     @Nullable
     private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
-        if (params.length != 1) return null;
-        final Result result = params[0].calculateResult(context);
-        if (result == null) return null;
+        if (params.length != 0) return null;
 
         Project project = context.getProject();
         PsiDocumentManager.getInstance(project).commitAllDocuments();
