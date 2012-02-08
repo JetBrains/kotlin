@@ -20,7 +20,9 @@ import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
 
 /**
- * Inserts '()' after function proposal insert.
+ * Performs number of code modification after insertion jet function:
+ * - Insert ()
+ * - Add import directive if necessary for top level functions
  *
  * @author Nikolay Krasko
  */
