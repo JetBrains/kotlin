@@ -24,6 +24,7 @@
             <element id="module-output" name="idea" />
             <element id="module-output" name="jet.as.java.psi" />
             <element id="module-output" name="stdlib" />
+            <element id="module-output" name="util" />
           </element>
         </element>
         <element id="directory" name="kotlinc">
