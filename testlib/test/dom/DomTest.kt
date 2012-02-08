@@ -2,11 +2,8 @@ package test.dom
 
 import std.*
 import std.dom.*
-import stdhack.test.TestSupport
 import stdhack.test.*
-import stdhack.test.assertNull
 import org.w3c.dom.*
-import stdhack.test.assertEquals
 import std.dom.toXmlString
 
 class DomTest() : TestSupport() {

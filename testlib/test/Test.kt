@@ -89,8 +89,12 @@ fun assertFalse(actual: Boolean, message: String = "") {
     return assertEquals(false, actual, message)
 }
 
-fun assertEquals(expected: Any, actual: Any?, message: String = "") {
+fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
   Assert.assertEquals(message, expected, actual)
+}
+
+fun assertNotNull(actual: Any?, message: String = "") {
+  Assert.assertNotNull(message, actual)
 }
 
 fun assertNull(actual: Any?, message: String = "") {
