@@ -6,6 +6,7 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 
@@ -1647,10 +1648,18 @@ public class JetParsing extends AbstractJetParsing {
     * "<#<" expression ">#>"
     */
     boolean parseIdeTemplate() {
+        @Nullable JetNodeType nodeType = IDE_TEMPLATE_EXPRESSION;
         if (at(IDE_TEMPLATE_START)) {
+            PsiBuilder.Marker mark = null;
+            if (nodeType != null) {
+                mark = mark();
+            }
             advance();
             expect(IDENTIFIER, "Expecting identifier inside template");
             expect(IDE_TEMPLATE_END, "Expecting IDE template end after identifier");
+            if (nodeType != null) {
+                mark.done(nodeType);
+            }
             return true;
         } else {
             return false;
