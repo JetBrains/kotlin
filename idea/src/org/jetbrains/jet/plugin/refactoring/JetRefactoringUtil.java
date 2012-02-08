@@ -13,12 +13,19 @@ import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 /**
  * User: Alefas
@@ -63,7 +70,31 @@ public class JetRefactoringUtil {
         while (element != null && !(element instanceof JetBlockExpression) && !(element instanceof JetNamedFunction)
                && !(element instanceof JetClassBody) && !(element instanceof JetSecondaryConstructor)) {
             if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
-                expressions.add((JetExpression) element);
+                boolean addExpression = true;
+                if (element.getParent() instanceof JetQualifiedExpression) {
+                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) element.getParent();
+                    if (qualifiedExpression.getReceiverExpression() != element) {
+                        addExpression = false;
+                    }
+                } else if (element.getParent() instanceof JetCallElement) {
+                    addExpression = false;
+                } else if (element.getParent() instanceof JetOperationExpression) {
+                    JetOperationExpression operationExpression = (JetOperationExpression) element.getParent();
+                    if (operationExpression.getOperationReference() == element) {
+                        addExpression = false;
+                    }
+                }
+                if (addExpression) {
+                    JetExpression expression = (JetExpression) element;
+                    BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                                        AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+                    JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
+                    if (expressionType == null || !(expressionType instanceof NamespaceType) &&
+                                                  !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.
+                            getJetStandardLibrary(element.getProject()).getTuple0Type(), expressionType)) {
+                        expressions.add(expression);
+                    }
+                }
             }
             element = element.getParent();
         }
@@ -138,6 +169,14 @@ public class JetRefactoringUtil {
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
         } else if (!(element instanceof JetExpression)) {
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
+        } else if (element instanceof JetBlockExpression) {
+            List<JetElement> statements = ((JetBlockExpression) element).getStatements();
+            if (statements.size() == 1) {
+                JetElement elem = statements.get(0);
+                if (elem.getText().equals(element.getText()) && elem instanceof JetExpression) {
+                    return (JetExpression) elem;
+                }
+            }
         }
         return (JetExpression) element;
     }

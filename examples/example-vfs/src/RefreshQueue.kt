@@ -12,6 +12,7 @@ import java.util.Timer
 import java.util.TimerTask
 
 import org.jetbrains.jet.samples.vfs.utils.*
+import org.jetbrains.jet.samples.vfs.utils.listDifference
 
 /**
  * Singleton which creates thread for periodically checking if there are changes in
@@ -54,6 +55,7 @@ internal object RefreshQueue {
             val fileInfo = fileToInfo[file.path]
             val oldChildren = fileInfo.children
             val newChildren = file.children()
+
 
             val addedChildren = listDifference(newChildren, oldChildren)
             val deletedChildren = listDifference(oldChildren, newChildren)

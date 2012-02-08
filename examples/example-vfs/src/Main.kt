@@ -17,7 +17,8 @@ fun main(args : Array<String>) {
     // add watched directory
     FileSystem.write {
         for (arg in args) {
-            FileSystem.addWatchedDirectory(FileSystem.getFileByPath(arg))
+            val virtualFile = FileSystem.getFileByPath(arg)
+            FileSystem.addWatchedDirectory(virtualFile)
         }
     }
 

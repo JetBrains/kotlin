@@ -1,5 +1,8 @@
-fun x(x: Int = 1) {}
-/*
-val i = 1
-fun x(x: Int = i) {}
-*/
+fun a(op: (Int) -> Int) {}
+fun b() {
+    a {it}
+    a {
+      it
+    }
+    2 + 2
+}

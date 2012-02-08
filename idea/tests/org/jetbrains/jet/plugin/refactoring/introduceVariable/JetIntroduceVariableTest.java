@@ -21,6 +21,10 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testFewOccurrences() {
+        doTest();
+    }
+
     public void testFunctionAddBlock() {
         doTest();
     }
@@ -37,7 +41,35 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testIt() {
+        doTest();
+    }
+
+    /*public void testLoopRange() {
+        doTest();
+    }*/
+
+    public void testManyInnerOccurences() {
+        doTest();
+    }
+
+    public void testManyOccurrences() {
+        doTest();
+    }
+
+    public void testReplaceOccurence() {
+        doTest();
+    }
+
     public void testSimple() {
+        doTest();
+    }
+
+    public void testSimpleCreateValue() {
+        doTest();
+    }
+
+    public void testStringInjection() {
         doTest();
     }
 
@@ -45,7 +77,15 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testWhenParts() {
+        doTest();
+    }
+
     public void testWhileAddBlock() {
+        doTest();
+    }
+
+    public void testWhileCondition() {
         doTest();
     }
 

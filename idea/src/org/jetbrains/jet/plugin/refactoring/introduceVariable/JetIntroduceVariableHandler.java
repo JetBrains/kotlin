@@ -18,14 +18,18 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.refactoring.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * User: Alefas
@@ -59,6 +63,33 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             _expression = (JetExpression) _expression.getParent();
         }
         final JetExpression expression = _expression;
+        if (expression.getParent() instanceof JetQualifiedExpression) {
+            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression.getParent();
+            if (qualifiedExpression.getReceiverExpression() != expression) {
+                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+                return;
+            }
+        } else if (expression.getParent() instanceof JetCallElement || expression instanceof JetStatementExpression) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+            return;
+        } else if (expression.getParent() instanceof JetOperationExpression) {
+            JetOperationExpression operationExpression = (JetOperationExpression) expression.getParent();
+            if (operationExpression.getOperationReference() == expression) {
+                showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
+                return;
+            }
+        }
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                            AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
+        if (expressionType instanceof NamespaceType) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
+            return;
+        } if (expressionType != null &&
+              JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getJetStandardLibrary(project).getTuple0Type(), expressionType)) {
+            showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
+            return;
+        }
         final PsiElement container = getContainer(expression);
         final PsiElement occurrenceContainer = getOccurrenceContainer(expression);
         if (container == null) {
@@ -228,6 +259,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
         final ArrayList<JetExpression> result = new ArrayList<JetExpression>();
 
+        final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                            AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
             public void visitJetElement(JetElement element) {
@@ -236,8 +270,26 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             }
 
             @Override
-            public void visitExpression(JetExpression expression) {
-                if (PsiEquivalenceUtil.areElementsEquivalent(expression, actualExpression)) {
+            public void visitExpression(final JetExpression expression) {
+                if (PsiEquivalenceUtil.areElementsEquivalent(expression, actualExpression, null, new Comparator<PsiElement>() {
+                    @Override
+                    public int compare(PsiElement element1, PsiElement element2) {
+                        if (element1.getNode().getElementType() == JetTokens.IDENTIFIER &&
+                            element2.getNode().getElementType() == JetTokens.IDENTIFIER) {
+                            if (element1.getParent() instanceof JetSimpleNameExpression &&
+                                element2.getParent() instanceof  JetSimpleNameExpression) {
+                                JetSimpleNameExpression expr1 = (JetSimpleNameExpression) element1.getParent();
+                                JetSimpleNameExpression expr2 = (JetSimpleNameExpression) element2.getParent();
+                                DeclarationDescriptor descr1 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr1);
+                                DeclarationDescriptor descr2 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr2);
+                                if (descr1 != descr2) return 1;
+                                else return 0;
+                            }
+                        }
+                        if (!element1.textMatches(element2)) return 1;
+                        else return 0;
+                    }
+                }, null, false)) {
                     PsiElement parent = expression.getParent();
                     if (parent instanceof JetParenthesizedExpression) {
                         result.add((JetParenthesizedExpression) parent);
@@ -262,10 +314,9 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         while (place != null) {
             PsiElement parent = place.getParent();
             if (parent instanceof JetContainerNode) {
-                if (!(parent.getParent() instanceof JetIfExpression &&
-                      ((JetIfExpression) parent.getParent()).getCondition() == place)) {
+                if (!isBadContainerNode((JetContainerNode) parent, place)) {
                     return parent;
-              }
+                }
             } if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry ||
                 parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
                 return parent;
@@ -284,6 +335,17 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
         return null;
     }
+    
+    private static boolean isBadContainerNode(JetContainerNode parent, PsiElement place) {
+        if (parent.getParent() instanceof JetIfExpression &&
+            ((JetIfExpression) parent.getParent()).getCondition() == place) {
+            return true;
+        } else if (parent.getParent() instanceof JetLoopExpression &&
+                   ((JetLoopExpression) parent.getParent()).getBody() != place) {
+            return true;
+        }
+        return false;
+    }
 
     @Nullable
     private static PsiElement getOccurrenceContainer(PsiElement place) {
@@ -291,8 +353,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         while (place != null) {
             PsiElement parent = place.getParent();
             if (parent instanceof JetContainerNode) {
-                if (!(place instanceof JetBlockExpression) && !(parent.getParent() instanceof JetIfExpression &&
-                                                                ((JetIfExpression) parent.getParent()).getCondition() == place)) {
+                if (!(place instanceof JetBlockExpression) && !isBadContainerNode((JetContainerNode) parent, place)) {
                     result = parent;
                 }
             } else if (parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
