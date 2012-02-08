@@ -79,10 +79,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {
         JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
-        if (selector == null) {
-            //TODO: never get there. review
-            return false;
-        }
+        assert selector != null : "Only names are allowed after the dot";
         return canBePropertyGetterCall(selector, context);
     }
 
