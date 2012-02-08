@@ -1,5 +1,7 @@
 package org.jetbrains.jet.plugin.liveTemplates.macro;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
@@ -17,5 +19,9 @@ public class JetVariableOfTypeMacro extends BaseJetVariableMacro {
         return JetBundle.message("macro.variable.of.type");
     }
 
+    @Override
+    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor) {
+        return true;
+    }
 }
                           

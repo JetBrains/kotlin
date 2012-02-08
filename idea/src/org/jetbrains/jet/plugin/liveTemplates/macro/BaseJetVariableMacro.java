@@ -14,6 +14,7 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -30,7 +31,7 @@ import java.util.Set;
  */
 public abstract class BaseJetVariableMacro extends Macro {
     @Nullable
-    private static JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
+    private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
         if (params.length != 1) return null;
         final Result result = params[0].calculateResult(context);
         if (result == null) return null;
@@ -53,19 +54,23 @@ public abstract class BaseJetVariableMacro extends Macro {
         List<JetNamedDeclaration> elements = new ArrayList<JetNamedDeclaration>();
 
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-            PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
-            assert declaration == null || declaration instanceof PsiNamedElement;
+            if (declarationDescriptor instanceof VariableDescriptor && isSuitable((VariableDescriptor) declarationDescriptor)) {
+                PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+                assert declaration == null || declaration instanceof PsiNamedElement;
 
-            if (declaration instanceof JetProperty) {
-                elements.add((JetProperty) declaration);
-            }
-            else if (declaration instanceof JetParameter) {
-                elements.add((JetParameter) declaration);
+                if (declaration instanceof JetProperty) {
+                    elements.add((JetProperty) declaration);
+                }
+                else if (declaration instanceof JetParameter) {
+                    elements.add((JetParameter) declaration);
+                }
             }
         }
 
         return elements.toArray(new JetNamedDeclaration[elements.size()]);
     }
+
+    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor);
 
     @Nullable
     private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {
