@@ -138,6 +138,17 @@ public class JetPsiUtil {
         return jetClass.getName();
     }
 
+    @Nullable @JetElement.IfNotParsed
+    public static String getImportPath(JetImportDirective importDirective) {
+        final JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference == null) {
+            return null;
+        }
+
+        final String text = importedReference.getText();
+        return text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : "");
+    }
+
     private static String makeFQName(String prefix, JetClassOrObject jetClass) {
         return ((prefix == null || prefix.length() == 0) ? "" : prefix + ".") + jetClass.getName();
     }

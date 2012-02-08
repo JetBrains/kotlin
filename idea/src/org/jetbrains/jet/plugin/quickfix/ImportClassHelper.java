@@ -52,10 +52,11 @@ public class ImportClassHelper {
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importString);
 
         if (!importDirectives.isEmpty()) {
-
+            
             // Check if import is already present
             for (JetImportDirective directive : importDirectives) {
-                if (directive.getText().endsWith(importString) || directive.getText().endsWith(importString + ";")) {
+                String importPath = JetPsiUtil.getImportPath(directive);
+                if (importPath != null && QualifiedNamesUtil.isImported(importPath, importString)) {
                     return;
                 }
             }

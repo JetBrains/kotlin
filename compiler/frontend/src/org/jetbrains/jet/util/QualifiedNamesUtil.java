@@ -100,4 +100,19 @@ public final class QualifiedNamesUtil {
 
         return null;
     }
+
+    /**
+     * Check that given fqn could be imported with import.
+     *
+     * @param importPath path from the import. Could contain .* part
+     * @param fqn
+     * @return
+     */
+    public static boolean isImported(@NotNull String importPath, @NotNull String fqn) {
+        if (importPath.endsWith("*")) {
+            return withoutLastSegment(importPath).equals(withoutLastSegment(fqn));
+        }
+
+        return importPath.equals(fqn);
+    }
 }
