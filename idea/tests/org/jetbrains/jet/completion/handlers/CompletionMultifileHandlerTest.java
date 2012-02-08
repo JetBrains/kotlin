@@ -14,6 +14,10 @@ public class CompletionMultifileHandlerTest extends CompletionTestCase {
         doTest();
     }
 
+    public void testTopLevelFunctionInQualifiedExpr() {
+        doTest();
+    }
+
     public void doTest() {
         String fileName = getTestName(false);
         try {

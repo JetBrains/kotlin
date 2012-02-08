@@ -4,14 +4,18 @@ import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DescriptorsUtils;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
 import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
 
@@ -38,7 +42,10 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
         int startOffset = context.getStartOffset();
         PsiElement element = context.getFile().findElementAt(startOffset);
-        if (element == null) return;
+        if (element == null) {
+            return;
+        }
+
         int lookupStringLength = item.getLookupString().length();
         int endOffset = startOffset + lookupStringLength;
         Document document = context.getDocument();
@@ -63,22 +70,43 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
 
-        // Should be done after all string insertions and document commitment.
         addImport(context, item);
     }
 
-    private static void addImport(InsertionContext context, LookupElement item) {
-        if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
-            final DeclarationDescriptor descriptor = ((JetLookupObject) item.getObject()).getDescriptor();
-            if (descriptor instanceof NamedFunctionDescriptor) {
+    private static void addImport(final InsertionContext context, final @NotNull LookupElement item) {
+        ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+                int startOffset = context.getStartOffset();
+                PsiElement element = context.getFile().findElementAt(startOffset);
+                if (element == null) {
+                    return;
+                }
 
-                JetFile file = (JetFile) context.getFile();
-                NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) descriptor;
+                // No auto import for qualified expressions
+                if (PsiTreeUtil.getParentOfType(element, JetQualifiedExpression.class) != null) {
+                    return;
+                }
 
-                if (DescriptorsUtils.isTopLevelFunction(functionDescriptor)) {
-                    ImportClassHelper.addImportDirective(DescriptorsUtils.getFQName(functionDescriptor), file);
+                if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
+                    final DeclarationDescriptor descriptor = ((JetLookupObject) item.getObject()).getDescriptor();
+                    if (descriptor instanceof NamedFunctionDescriptor) {
+
+                        final JetFile file = (JetFile) context.getFile();
+                        NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) descriptor;
+                        final String fqn = DescriptorUtils.getFQName(functionDescriptor);
+
+                        if (DescriptorUtils.isTopLevelFunction(functionDescriptor)) {
+                            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ImportClassHelper.addImportDirective(fqn, file);
+                                }
+                            });
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 }
