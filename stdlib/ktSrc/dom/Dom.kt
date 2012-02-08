@@ -7,20 +7,20 @@ import org.w3c.dom.*
 // Properties
 
 var Element.id : String
-get() = this.getAttribute("id").getOrElse("")
+get() = this.getAttribute("id")?: ""
 set(value) {
     this.setAttribute("id", value)
 }
 
 var Element.style : String
-get() = this.getAttribute("style").getOrElse("")
+get() = this.getAttribute("style")?: ""
 set(value) {
     this.setAttribute("style", value)
 }
 
 // TODO can we come up with a better name; 'class' is a reserved word?
 var Element.cssClass : String
-get() = this.getAttribute("class").getOrElse("")
+get() = this.getAttribute("class")?: ""
 set(value) {
     this.setAttribute("class", value)
 }
@@ -33,6 +33,10 @@ inline fun Node.plus(child: Node?): Node {
     }
     return this
 }
+
+inline fun Element.plus(text: String?): Element = this.addText(text)
+
+inline fun Element.plusAssign(text: String?): Element = this.addText(text)
 
 
 // Builder
@@ -58,8 +62,11 @@ fun Element.createElement(name: String, doc: Document? = null, init: Element.()-
 /*
 Returns the owner document of the element or uses the provided document
 */
-fun Element.ownerDocument(doc: Document? = null): Document {
-    val answer = if (doc == null) this.getOwnerDocument() else doc
+fun Node.ownerDocument(doc: Document? = null): Document {
+    val answer = if (this is Document) this as Document
+    else if (doc == null) this.getOwnerDocument()
+    else doc
+
     if (answer == null) {
         throw IllegalArgumentException("Element does not have an ownerDocument and none was provided for: ${this}")
     } else {
@@ -88,8 +95,10 @@ fun Element.addElement(name: String, doc: Document? = null, init: Element.()-> U
 /*
 Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
 */
-fun Element.addText(text: String, doc: Document? = null): Element {
-    val child = ownerDocument(doc).createTextNode(text)
-    this.appendChild(child)
+fun Element.addText(text: String?, doc: Document? = null): Element {
+    if (text != null) {
+        val child = ownerDocument(doc).createTextNode(text)
+        this.appendChild(child)
+    }
     return this
 }

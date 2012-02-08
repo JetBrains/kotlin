@@ -19,6 +19,8 @@ class DomBuilderTest() : TestSupport() {
                 addElement("grandChild") {
                     cssClass = "tiny"
                     addText("Hello World!")
+                    // TODO support neater syntax sugar for adding text?
+                    // += "Hello World!"
                 }
             }
         }

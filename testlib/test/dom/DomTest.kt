@@ -4,7 +4,6 @@ import std.*
 import std.dom.*
 import stdhack.test.*
 import org.w3c.dom.*
-import std.dom.toXmlString
 
 class DomTest() : TestSupport() {
 
