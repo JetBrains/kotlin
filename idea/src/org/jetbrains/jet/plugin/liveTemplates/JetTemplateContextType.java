@@ -122,7 +122,9 @@ public abstract class JetTemplateContextType extends TemplateContextType {
 
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
-            return element.getParent() instanceof JetExpression;
+            return element.getParent() instanceof JetExpression && !(element.getParent() instanceof JetConstantExpression) &&
+                    !(element.getParent().getParent() instanceof JetDotQualifiedExpression)
+                    && !(element.getParent() instanceof JetParameter);
         }
     }
 }

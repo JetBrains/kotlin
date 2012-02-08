@@ -8,18 +8,18 @@ fun foo() {
 // EXIST: break
 // EXIST: by
 // EXIST: catch
-// EXIST: class
+// EXIST: class ... {...}
 // EXIST: continue
-// EXIST: do
+// EXIST: do {...} while (...)
 // EXIST: else
-// EXIST: enum
+// EXIST: enum class ... {...}
 // EXIST: false
 // ABSENT: final
 // EXIST: finally
-// EXIST: for
-// EXIST: fun
+// EXIST: for (... in ...) {...}
+// EXIST: fun ...(...) : ... {...}
 // EXIST: get
-// EXIST: if
+// EXIST: if (...) {...}
 // ABSENT: import
 // EXIST: in
 // EXIST: inline
@@ -40,13 +40,13 @@ fun foo() {
 // EXIST: This
 // EXIST: this
 // EXIST: throw
-// EXIST: trait
+// EXIST: trait ... {...}
 // EXIST: true
 // EXIST: try
 // EXIST: type
-// EXIST: val
-// EXIST: var
+// EXIST: val ... = ...
+// EXIST: var ... = ...
 // EXIST: vararg
-// EXIST: when
+// EXIST: when (...) {... -> ...else -> ...}
 // EXIST: where
-// EXIST: while
+// EXIST: while (...) {...}

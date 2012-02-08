@@ -73,7 +73,7 @@ public class JetTemplateInsertHandler implements InsertHandler<LookupElement> {
     }
     
     public static LookupElementBuilder lookup(String template) {
-        String presentation = template.replaceAll("<#<(\\w+)>#>", "...");
+        String presentation = template.replaceAll("<#<(\\w+)>#>", "...").replace("\n", "");
         LookupElementBuilder builder = LookupElementBuilder.create(presentation).setBold();
         return builder.setInsertHandler(new JetTemplateInsertHandler(template));
     }

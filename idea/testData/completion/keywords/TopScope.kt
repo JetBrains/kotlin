@@ -6,17 +6,17 @@
 // ABSENT: break
 // ABSENT: by
 // ABSENT: catch
-// EXIST:  class
+// EXIST:  class ... {...}
 // ABSENT: continue
 // ABSENT: default
 // ABSENT: do
 // ABSENT: else
-// EXIST:  enum
+// EXIST:  enum class ... {...}
 // ABSENT: false
 // EXIST:  final
 // ABSENT: finally
 // ABSENT: for
-// EXIST:  fun
+// EXIST:  fun ...(...) : ... {...}
 // EXIST:  get
 // ABSENT: if
 // EXIST:  import
@@ -25,7 +25,6 @@
 // EXIST:  internal
 // ABSENT: is
 // ABSENT: null
-// ABSENT: object
 // EXIST:  open
 // ABSENT: out
 // ABSENT: override
@@ -40,12 +39,14 @@
 // ABSENT: This
 // ABSENT: this
 // ABSENT: throw
-// EXIST:  trait
+// EXIST:  trait ... {...}
 // ABSENT: true
 // ABSENT: try
 // EXIST:  type
-// EXIST:  val
-// EXIST:  var
+// EXIST:  val ... : ... = ...
+// EXIST:  val ... : ...get() {...}
+// EXIST:  var ... : ... = ...
+// EXIST:  var ... : ...get() {...}set(value) {...}
 // ABSENT: vararg
 // ABSENT: when
 // ABSENT: where
