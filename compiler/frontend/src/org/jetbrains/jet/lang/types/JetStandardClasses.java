@@ -122,7 +122,9 @@ public class JetStandardClasses {
                 parameters.add(typeParameterDescriptor);
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(classDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, false, "_" + (j + 1));
                 propertyDescriptor.setType(typeParameterDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), classDescriptor.getImplicitReceiver(), ReceiverDescriptor.NO_RECEIVER);
-                propertyDescriptor.initialize(new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, true), null);
+                PropertyGetterDescriptor getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.FINAL, Visibility.PUBLIC, false, true);
+                getterDescriptor.initialize(typeParameterDescriptor.getDefaultType());
+                propertyDescriptor.initialize(getterDescriptor, null);
                 writableScope.addPropertyDescriptor(propertyDescriptor);
             }
             writableScope.changeLockLevel(WritableScope.LockLevel.READING);
