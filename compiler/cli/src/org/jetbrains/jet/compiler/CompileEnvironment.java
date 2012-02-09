@@ -9,6 +9,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
@@ -67,6 +68,7 @@ public class CompileEnvironment {
         Disposer.dispose(myRootDisposable);
     }
 
+    @Nullable
     public static File getUnpackedRuntimePath() {
         URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("file")) {
@@ -75,6 +77,7 @@ public class CompileEnvironment {
         return null;
     }
 
+    @Nullable
     public static File getRuntimeJarPath() {
         URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("jar")) {
@@ -88,7 +91,7 @@ public class CompileEnvironment {
         ensureRuntime(myEnvironment);
     }
 
-    public static void ensureRuntime(JetCoreEnvironment env) {
+    public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
         Project project = env.getProject();
         if (JavaPsiFacade.getInstance(project).findClass("java.lang.Object", GlobalSearchScope.allScope(project)) == null) {
             // TODO: prepend
@@ -101,6 +104,9 @@ public class CompileEnvironment {
             if (kotlin == null || !kotlin.exists()) {
                 kotlin = getUnpackedRuntimePath();
                 if (kotlin == null) kotlin = getRuntimeJarPath();
+            }
+            if (kotlin == null) {
+                throw new IllegalStateException("kotlin runtime not found");
             }
             env.addToClasspath(kotlin);
         }

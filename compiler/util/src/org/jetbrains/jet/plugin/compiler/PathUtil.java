@@ -7,6 +7,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class PathUtil {
         return null;
     }
 
+    @Nullable
     public static File getDefaultRuntimePath() {
         File compilerPath = getDefaultCompilerPath();
         if (compilerPath == null) return null;
