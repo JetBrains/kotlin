@@ -144,6 +144,9 @@ public class JetPsiChecker implements Annotator {
     ) {
         List<TextRange> textRanges = diagnostic.getFactory().getTextRanges(diagnostic);
         if (diagnostic.getSeverity() == Severity.ERROR) {
+            if (diagnostic.getFactory() == Errors.UNRESOLVED_IDE_TEMPLATE) {
+                return;
+            }
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
                 JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getPsiElement();

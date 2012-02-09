@@ -20,6 +20,11 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
  */
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetType, ExpressionTypingContext> implements ExpressionTypingInternals {
 
+    @Override
+    public JetType visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext data) {
+        return basic.visitIdeTemplateExpression(expression, data);
+    }
+
     @NotNull
     public static ExpressionTypingFacade create() {
         return new ExpressionTypingVisitorDispatcher(null);

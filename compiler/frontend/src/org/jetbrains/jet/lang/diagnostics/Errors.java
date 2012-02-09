@@ -470,6 +470,7 @@ public interface Errors {
         }
     };
 
+    ParameterizedDiagnosticFactory1<String> UNRESOLVED_IDE_TEMPLATE = new ParameterizedDiagnosticFactory1<String>(ERROR, "Unresolved IDE template: {0}");
 
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
     @SuppressWarnings("UnusedDeclaration")

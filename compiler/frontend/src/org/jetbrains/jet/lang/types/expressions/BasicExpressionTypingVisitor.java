@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -732,6 +733,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (variable == null) {
             trace.report(VARIABLE_EXPECTED.on(expression != null ? expression : expressionWithParenthesis));
         }
+    }
+
+    @Override
+    public JetType visitIdeTemplateExpression(JetIdeTemplateExpression expression, ExpressionTypingContext context) {
+        context.trace.report(UNRESOLVED_IDE_TEMPLATE.on(expression, ObjectUtils.notNull(expression.getText(), "<no name>")));
+        return null;
     }
 
     @Override

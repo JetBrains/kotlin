@@ -1,0 +1,42 @@
+fun main(args : Array<String>) {
+    if (<!UNRESOLVED_IDE_TEMPLATE!><#<condition>#><!>) {
+        <!UNRESOLVED_IDE_TEMPLATE!><#<block>#><!>
+    } else {
+        <!UNRESOLVED_IDE_TEMPLATE!><#<block>#><!>
+    }
+
+    fun <!UNRESOLVED_IDE_TEMPLATE!><#<name>#><!>(<#<params>#>) : <#<returnType>#> {
+        <#<body>#>
+    }
+
+    for (<#<i>#> in <!UNRESOLVED_IDE_TEMPLATE!><#<elements>#><!>) {
+        <!UNRESOLVED_IDE_TEMPLATE!><#<body>#><!>
+    }
+
+    when (<!UNRESOLVED_IDE_TEMPLATE!><#<expression>#><!>) {
+        <!UNRESOLVED_IDE_TEMPLATE!><#<condition>#><!> -> <#<value>#>
+        else -> <!UNRESOLVED_IDE_TEMPLATE!><#<elseValue>#><!>
+    }
+
+    var <#<name>#> = <!UNRESOLVED_IDE_TEMPLATE!><#<value>#><!>
+
+    class <#<name>#> {
+        <#<body>#>
+    }
+
+    class <#<name>#> {
+        var <#<name>#> : <#<varType>#>
+        get() {
+            <#<body>#>
+        }
+        set(value) {
+            <#<body>#>
+        }
+
+        val <#<name>#> : <#<valType>#>
+        get() {
+            <#<body>#>
+        }
+    }
+}
+
