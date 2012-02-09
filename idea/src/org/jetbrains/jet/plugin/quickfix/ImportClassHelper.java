@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -41,9 +42,16 @@ public class ImportClassHelper {
      * @param file File where directive should be added.
      */
     public static void addImportDirective(@NotNull String importString, @NotNull JetFile file) {
-        
+
+        // TODO: hack
+        if (importString.startsWith(JavaDescriptorResolver.JAVA_ROOT + ".")) {
+            importString = importString.substring((JavaDescriptorResolver.JAVA_ROOT + ".").length());
+        }
+
         // Check that import is useless
-        if (JetPsiUtil.getFQName(file).equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
+        if (QualifiedNamesUtil.isOneSegmentFQN(importString) ||
+                JetPsiUtil.getFQName(file).equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
+
             return;
         }
         
