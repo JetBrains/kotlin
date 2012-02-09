@@ -10,6 +10,10 @@ import java.io.File;
  */
 public class JetTypingIndentationTest extends LightCodeInsightTestCase {
 
+    public void testAfterImport() {
+        doFileNewlineTest();
+    }
+
     public void testConsecutiveCallsAfterDot() {
         doFileNewlineTest();
     }

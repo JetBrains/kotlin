@@ -24,6 +24,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testParameters() throws Exception {
+        doTest();
+    }
+
     public void testWhen() throws Exception {
         doTest();
     }

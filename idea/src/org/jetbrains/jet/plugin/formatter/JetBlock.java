@@ -112,7 +112,21 @@ public class JetBlock extends AbstractBlock {
             childIndent = Indent.getNormalIndent();
         }
         else if (childParent != null && childParent.getElementType() == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
-            if (childParent.getFirstChildNode() != this) {
+            if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
+                childIndent = Indent.getContinuationWithoutFirstIndent(false);
+            }
+        }
+        else if (childParent != null && childParent.getElementType() == JetNodeTypes.VALUE_PARAMETER_LIST) {
+            String childText = child.getText();
+
+            if (!(childText.equals("(") || childText.equals(")"))) {
+                childIndent = Indent.getContinuationWithoutFirstIndent(false);
+            }
+        }
+        else if (childParent != null && childParent.getElementType() == JetNodeTypes.TYPE_PARAMETER_LIST) {
+            String childText = child.getText();
+
+            if (!(childText.equals("<") || childText.equals(">"))) {
                 childIndent = Indent.getContinuationWithoutFirstIndent(false);
             }
         }
@@ -157,7 +171,7 @@ public class JetBlock extends AbstractBlock {
             return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
         }
 
-        return super.getChildAttributes(newChildIndex);
+        return new ChildAttributes(Indent.getNoneIndent(), null);
     }
 
     @Override
