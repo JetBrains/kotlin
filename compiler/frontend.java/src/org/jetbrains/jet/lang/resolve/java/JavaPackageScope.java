@@ -1,7 +1,9 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +13,15 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * @author abreslav
  */
 public class JavaPackageScope extends JavaClassOrPackageScope {
+
+    private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.migration.PsiMigrationImpl");
+
     private final String packageFQN;
 
     private Collection<DeclarationDescriptor> allDescriptors;
@@ -86,12 +92,30 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 }
 
                 for (PsiClass psiClass : javaPackage.getClasses()) {
-                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) continue;
+                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                        continue;
+                    }
 
                     // If this is a Kotlin class, we have already taken it through a containing namespace descriptor
                     ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(psiClass.getQualifiedName());
                     if (kotlinClassDescriptor != null) {
                         continue;
+                    }
+
+                    // TODO: Temp hack for collection function descriptors from java
+                    if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                        HashSet<String> methodNames = new HashSet<String>();
+                        for (PsiMethod psiMethod : psiClass.getMethods()) {
+                            methodNames.add(psiMethod.getName());
+                        }
+
+                        for (String methodName : methodNames) {
+                            try {
+                                allDescriptors.addAll(getFunctions(methodName));
+                            } catch (RuntimeException ex) {
+                                LOG.error(ex);
+                            }
+                        }
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
