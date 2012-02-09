@@ -76,8 +76,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         for (int i = 0; i < unsubstitutedValueParameters.size(); ++i) {
             // TODO fill me
             int firstValueParameterOffset = 0; // receiver.exists() ? 1 : 0;
-            if (unsubstitutedValueParameters.get(i).getIndex() != i + firstValueParameterOffset) {
-                //throw new IllegalStateException();
+            ValueParameterDescriptor valueParameterDescriptor = unsubstitutedValueParameters.get(i);
+            if (valueParameterDescriptor.getIndex() != i + firstValueParameterOffset) {
+                throw new IllegalStateException(valueParameterDescriptor + "index is " + valueParameterDescriptor.getIndex() + " but position is " + i);
             }
         }
 
