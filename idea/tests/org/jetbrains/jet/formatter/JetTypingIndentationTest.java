@@ -9,15 +9,8 @@ import java.io.File;
  * @author Nikolay Krasko
  */
 public class JetTypingIndentationTest extends LightCodeInsightTestCase {
-    public void testWhile() {
-        doFileNewlineTest();
-    }
 
-    public void testFor() {
-        doFileNewlineTest();
-    }
-
-    public void testIf() {
+    public void testConsecutiveCallsAfterDot() {
         doFileNewlineTest();
     }
 
@@ -25,9 +18,31 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         doFileNewlineTest();
     }
 
-    // TODO: fix and uncomment
-    public void testFunctionBlock() {
-        // doFileNewlineTest();
+    // TODO
+    public void enabletestEmptyParameters() {
+        doFileNewlineTest();
+    }
+
+    public void testFor() {
+        doFileNewlineTest();
+    }
+
+    // TODO
+    public void enabletestFunctionBlock() {
+        doFileNewlineTest();
+    }
+
+    public void testIf() {
+        doFileNewlineTest();
+    }
+
+    // TODO
+    public void enabletestNotFirstParameter() {
+        doFileNewlineTest();
+    }
+
+    public void testWhile() {
+        doFileNewlineTest();
     }
 
     public void doFileNewlineTest() {

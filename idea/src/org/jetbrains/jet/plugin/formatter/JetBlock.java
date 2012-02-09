@@ -85,11 +85,15 @@ public class JetBlock extends AbstractBlock {
         Indent childIndent = Indent.getNoneIndent();
         Alignment childAlignment = null;
 
+        ASTNode childParent = child.getTreeParent();
+
         if (CODE_BLOCKS.contains(myNode.getElementType())) {
             childIndent = indentIfNotBrace(child);
         }
-        else if (child.getTreeParent() != null && child.getTreeParent().getElementType() == JetNodeTypes.BODY &&
+        else if (childParent != null &&
+                 childParent.getElementType() == JetNodeTypes.BODY &&
                  child.getElementType() != JetNodeTypes.BLOCK) {
+
             // For a single statement if 'for'
             childIndent = Indent.getNormalIndent();
         }
@@ -98,7 +102,7 @@ public class JetBlock extends AbstractBlock {
             // TODO: Add an option for configuration?
             childIndent = Indent.getNormalIndent();
         }
-        else if (child.getTreeParent() != null && child.getTreeParent().getElementType() == JetNodeTypes.WHEN_ENTRY) {
+        else if (childParent != null && childParent.getElementType() == JetNodeTypes.WHEN_ENTRY) {
             ASTNode prev = getPrevWithoutWhitespace(child);
             if (prev != null && prev.getText().equals("->")) {
                 childIndent = indentIfNotBrace(child);
@@ -106,6 +110,11 @@ public class JetBlock extends AbstractBlock {
         }
         else if (STATEMENT_PARTS.contains(myNode.getElementType()) && child.getElementType() != JetNodeTypes.BLOCK) {
             childIndent = Indent.getNormalIndent();
+        }
+        else if (childParent != null && childParent.getElementType() == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
+            if (childParent.getFirstChildNode() != this) {
+                childIndent = Indent.getContinuationWithoutFirstIndent(false);
+            }
         }
 
         return new JetBlock(child, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
@@ -130,7 +139,7 @@ public class JetBlock extends AbstractBlock {
     public Spacing getSpacing(Block child1, Block child2) {
         return mySpacingBuilder.getSpacing(this, child1, child2);
     }
-
+    
     @NotNull
     @Override
     public ChildAttributes getChildAttributes(int newChildIndex) {
@@ -144,8 +153,11 @@ public class JetBlock extends AbstractBlock {
 
             return new ChildAttributes(Indent.getNormalIndent(), null);
         }
+        else if (type == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
+            return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
+        }
 
-        return new ChildAttributes(Indent.getNoneIndent(), null);
+        return super.getChildAttributes(newChildIndex);
     }
 
     @Override
