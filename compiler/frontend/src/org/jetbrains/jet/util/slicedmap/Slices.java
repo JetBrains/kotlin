@@ -105,9 +105,8 @@ public class Slices {
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
                             for (ReadOnlySlice<K, V> slice : furtherLookupSlices) {
-                                if (map.containsKey(slice, key)) {
-                                    return map.get(slice, key);
-                                }
+                                V v = map.get(slice, key);
+                                if (v != null) return v;
                             }
                             return defaultValue;
                         }
@@ -178,8 +177,8 @@ public class Slices {
 
         @Override
         public Boolean computeValue(SlicedMap map, K key, Boolean value, boolean valueNotFound) {
-            if (valueNotFound) return false;
-            return super.computeValue(map, key, value, valueNotFound);
+            Boolean result = super.computeValue(map, key, value, valueNotFound);
+            return result != null ? result : false;
         }
 
         @Override

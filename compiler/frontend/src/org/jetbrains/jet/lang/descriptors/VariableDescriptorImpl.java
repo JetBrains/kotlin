@@ -20,7 +20,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
-            @NotNull JetType outType) {
+            @Nullable JetType outType) {
         super(containingDeclaration, annotations, name);
 
         this.outType = outType;
@@ -40,7 +40,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         return outType;
     }
 
-    protected void setOutType(JetType outType) {
+    public void setOutType(JetType outType) {
         assert this.outType == null;
         this.outType = outType;
     }

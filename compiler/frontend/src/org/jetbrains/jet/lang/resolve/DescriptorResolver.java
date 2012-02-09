@@ -425,13 +425,15 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property, DataFlowInfo dataFlowInfo) {
-        JetType type = getVariableType(scope, property, dataFlowInfo, false); // For a local variable the type must not be deferred
+        VariableDescriptorImpl variableDescriptor = resolveLocalVariableDescriptorWithType(containingDeclaration, property, null);
 
-        return resolveLocalVariableDescriptorWithType(containingDeclaration, property, type);
+        JetType type = getVariableType(scope, property, dataFlowInfo, false); // For a local variable the type must not be deferred
+        variableDescriptor.setOutType(type);
+        return variableDescriptor;
     }
 
     @NotNull
-    public VariableDescriptor resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type) {
+    public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(property.getModifierList()),

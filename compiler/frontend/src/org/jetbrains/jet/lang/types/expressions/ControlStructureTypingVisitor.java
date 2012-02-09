@@ -4,7 +4,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -420,27 +422,51 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitReturnExpression(JetReturnExpression expression, ExpressionTypingContext context) {
-        context.labelResolver.recordLabel(expression, context);
-        if (context.expectedReturnType == TypeUtils.FORBIDDEN) {
-            context.trace.report(RETURN_NOT_ALLOWED.on(expression));
-            return null;
-        }
+        JetElement element = context.labelResolver.resolveLabel(expression, context);
+
         JetExpression returnedExpression = expression.getReturnedExpression();
 
-        JetType expectedType = context.expectedReturnType;
+        JetType expectedType = TypeUtils.NO_EXPECTED_TYPE;
+        JetExpression parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
+        if (parentDeclaration instanceof JetFunctionLiteral) {
+            parentDeclaration = (JetFunctionLiteralExpression) parentDeclaration.getParent();
+        }
+        if (parentDeclaration instanceof JetParameter) {
+            context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+        }
+        assert parentDeclaration != null;
+        DeclarationDescriptor declarationDescriptor = context.trace.get(DECLARATION_TO_DESCRIPTOR, parentDeclaration);
+        FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, FunctionDescriptor.class, false);
+
         if (expression.getTargetLabel() == null) {
-            if (PsiTreeUtil.getParentOfType(expression, JetFunctionLiteral.class) ==
-                PsiTreeUtil.getParentOfType(expression, JetDeclaration.class)) {  // expression is located in function literal
-                JetNamedFunction function = JetPsiUtil.getSurroundingFunction(expression);
-                if (function != null && function.getReturnTypeRef() != null) {
-                    expectedType = BindingContextUtils.getFunctionReturnType(context.trace.getBindingContext(), function);
+            if (containingFunctionDescriptor != null) {
+                PsiElement containingFunction = context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor);
+                assert containingFunction != null;
+                if (containingFunction instanceof JetFunctionLiteralExpression) {
+                    do {
+                        containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
+                        containingFunction = containingFunctionDescriptor != null ? context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor) : null;
+                    } while (containingFunction instanceof JetFunctionLiteralExpression);
+                    context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                }
+                if (containingFunctionDescriptor != null) {
+                    expectedType = DescriptorUtils.getFunctionExpectedReturnType(containingFunctionDescriptor, (JetElement) containingFunction);
                 }
             }
+            else {
+                context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+            }
         }
-        else {
-            PsiElement element = context.trace.get(LABEL_TARGET, expression.getTargetLabel());
-            if (element instanceof JetFunction && ((JetFunction) element).getReturnTypeRef() != null) {
-                expectedType = BindingContextUtils.getFunctionReturnType(context.trace.getBindingContext(), (JetFunction) element);
+        else if (element != null) {
+            NamedFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
+            if (functionDescriptor != null) {
+                expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
+                if (functionDescriptor != containingFunctionDescriptor) {
+                    context.trace.report(RETURN_NOT_ALLOWED.on(expression));
+                }
+            }
+            else {
+                context.trace.report(NOT_A_RETURN_LABEL.on(expression, expression.getLabelName()));
             }
         }
         if (returnedExpression != null) {
@@ -456,13 +482,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitBreakExpression(JetBreakExpression expression, ExpressionTypingContext context) {
-        context.labelResolver.recordLabel(expression, context);
+        context.labelResolver.resolveLabel(expression, context);
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 
     @Override
     public JetType visitContinueExpression(JetContinueExpression expression, ExpressionTypingContext context) {
-        context.labelResolver.recordLabel(expression, context);
+        context.labelResolver.resolveLabel(expression, context);
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }
 }

@@ -578,25 +578,12 @@ public class JetControlFlowProcessor {
             if (subroutine instanceof JetFunctionLiteralExpression) {
                 subroutine = ((JetFunctionLiteralExpression) subroutine).getFunctionLiteral();
             }
-            boolean error = false;
-            if (builder.getCurrentSubroutine() != subroutine) {
-                trace.report(RETURN_NOT_ALLOWED.on(expression));
-                error = true;
-            }
             if (subroutine instanceof JetFunction || subroutine instanceof JetPropertyAccessor || subroutine instanceof JetSecondaryConstructor) {
                 if (returnedExpression == null) {
                     builder.returnNoValue(expression, subroutine);
                 }
                 else {
                     builder.returnValue(expression, subroutine);
-                }
-            }
-            else if (!error) {
-                if (labelElement != null) {
-                    trace.report(NOT_A_RETURN_LABEL.on(expression, labelName));
-                }
-                else {
-                    trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }
             }
         }

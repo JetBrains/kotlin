@@ -57,8 +57,13 @@ public class DelegatingBindingTrace implements BindingTrace {
 
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        if (map.containsKey(slice, key)) {
-            return map.get(slice, key);
+        V value = map.get(slice, key);
+        if (slice instanceof Slices.SetSlice) {
+            assert value != null;
+            if (value.equals(true)) return value;
+        }
+        else {
+            if (value != null) return value;
         }
         return parentContext.get(slice, key);
     }

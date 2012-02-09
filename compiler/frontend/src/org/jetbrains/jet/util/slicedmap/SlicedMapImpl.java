@@ -80,11 +80,6 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
 
     @Override
-    public <K, V> boolean containsKey(ReadOnlySlice<K, V> slice, K key) {
-        return map.containsKey(slice.makeKey(key));
-    }
-
-    @Override
     public <K, V> V remove(RemovableSlice<K, V> slice, K key) {
         //noinspection unchecked
         return (V) map.remove(slice.makeKey(key));

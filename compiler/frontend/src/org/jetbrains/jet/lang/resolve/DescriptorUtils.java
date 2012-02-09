@@ -5,6 +5,8 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 
@@ -219,5 +221,25 @@ public class DescriptorUtils {
             return descriptor;
         }
         return descriptor.getClassObjectDescriptor();
+    }
+    
+    @NotNull
+    public static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
+        JetType expectedType;
+        if (function instanceof JetFunction) {
+            if (((JetFunction) function).getReturnTypeRef() != null || ((JetFunction) function).hasBlockBody()) {
+                expectedType = descriptor.getReturnType();
+            }
+            else {
+                expectedType = TypeUtils.NO_EXPECTED_TYPE;
+            }
+        }
+        else if (function instanceof JetSecondaryConstructor) {
+            expectedType = JetStandardClasses.getUnitType();
+        }
+        else {
+            expectedType = descriptor.getReturnType();
+        }
+        return expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE;
     }
 }

@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -57,6 +58,7 @@ public class LabelResolver {
         }
     }
 
+    @Nullable
     private JetElement resolveControlLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
@@ -80,13 +82,15 @@ public class LabelResolver {
         return null;
     }
 
-    public void recordLabel(JetLabelQualifiedExpression expression, ExpressionTypingContext context) {
+    @Nullable
+    public JetElement resolveLabel(JetLabelQualifiedExpression expression, ExpressionTypingContext context) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement != null) {
             String labelName = expression.getLabelName();
             assert labelName != null;
-            resolveControlLabel(labelName, labelElement, true, context);
+            return resolveControlLabel(labelName, labelElement, true, context);
         }
+        return null;
     }
 
     private JetElement resolveNamedLabel(@NotNull String labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {

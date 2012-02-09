@@ -17,11 +17,6 @@ public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
         }
 
         @Override
-        public <K, V> boolean containsKey(ReadOnlySlice<K, V> slice, K key) {
-            return false;
-        }
-
-        @Override
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             return Collections.emptySet();
         }
@@ -33,8 +28,6 @@ public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
     };
 
     <K, V> V get(ReadOnlySlice<K, V> slice, K key);
-
-    <K, V> boolean containsKey(ReadOnlySlice<K, V> slice, K key);
 
     // slice.isCollective() must return true
     <K, V> Collection<K> getKeys(WritableSlice<K, V> slice);
