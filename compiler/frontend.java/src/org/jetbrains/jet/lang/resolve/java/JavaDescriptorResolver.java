@@ -1369,6 +1369,22 @@ public class JavaDescriptorResolver {
 
             @NotNull
             @Override
+            public TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name) {
+                for (TypeParameterDescriptorInitialization typeParameter : methodTypeParametersInitialization) {
+                    if (typeParameter.psiTypeParameter.getName().equals(name)) {
+                        return typeParameter.descriptor;
+                    }
+                }
+                for (TypeParameterDescriptorInitialization typeParameter : classTypeParameterDescriptorsInitialization) {
+                    if (typeParameter.psiTypeParameter.getName().equals(name)) {
+                        return typeParameter.descriptor;
+                    }
+                }
+                throw new IllegalStateException("unresolved PsiTypeParameter " + name + " in method " + method.getName() + " in class " + psiClass.getQualifiedName()); // TODO: report properly
+            }
+
+            @NotNull
+            @Override
             public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
                 for (TypeParameterDescriptorInitialization typeParameter : methodTypeParametersInitialization) {
                     if (typeParameter.descriptor.getName().equals(name)) {

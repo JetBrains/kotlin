@@ -36,4 +36,17 @@ public class TypeVariableByPsiResolverImpl implements TypeVariableByPsiResolver 
         throw new RuntimeException("type parameter not found by PsiTypeParameter " + psiTypeParameter.getName()); // TODO report properly
     }
 
+    @NotNull
+    @Override
+    public TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name) {
+        for (JavaDescriptorResolver.TypeParameterDescriptorInitialization typeParameter : typeParameters) {
+            if (typeParameter.psiTypeParameter.getName().equals(name)) {
+                return typeParameter.descriptor;
+            }
+        }
+        if (parent != null) {
+            return parent.getTypeVariableByPsiByName(name);
+        }
+        throw new RuntimeException("type parameter not found by PsiTypeParameter " + name); // TODO report properly
+    }
 }

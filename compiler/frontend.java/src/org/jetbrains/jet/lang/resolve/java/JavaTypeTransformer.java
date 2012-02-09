@@ -142,12 +142,24 @@ public class JavaTypeTransformer {
                                                 return typeParameter;
                                             }
                                         }
-                                        throw new IllegalStateException();
+                                        return typeVariableByPsiResolver.getTypeVariableByPsiByName(psiTypeParameter.getName());
                                     } else if (classData instanceof JavaDescriptorResolver.ResolverBinaryClassData) {
                                         return new TypeVariableByPsiResolverImpl(((JavaDescriptorResolver.ResolverBinaryClassData) classData).typeParameters, typeVariableByPsiResolver).getTypeVariable(psiTypeParameter);
                                     } else {
                                         throw new IllegalStateException();
                                     }
+                                }
+
+                                @NotNull
+                                @Override
+                                public TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name) {
+                                    for (TypeParameterDescriptor typeParameter : classData.getClassDescriptor().getTypeConstructor().getParameters()) {
+                                        if (typeParameter.getName().equals(name)) {
+                                            // TODO?
+                                            return typeParameter;
+                                        }
+                                    }
+                                    throw new IllegalStateException();
                                 }
                             };
                             arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableByPsiResolver2));

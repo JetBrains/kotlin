@@ -12,4 +12,8 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 public interface TypeVariableByPsiResolver {
     @NotNull
     TypeParameterDescriptor getTypeVariable(@NotNull PsiTypeParameter psiTypeParameter);
+
+    /** @deprecated */
+    @NotNull
+    TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name);
 }
