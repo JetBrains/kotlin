@@ -106,7 +106,6 @@
             $(function () {
                     {
                         (new testhtml.Test_0).run();
-                        (new testhtml.HelloKotlin_0).run();
                     }
                 }
             );

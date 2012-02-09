@@ -7,7 +7,7 @@ import jquery.*;
 fun main() {
     jq {
         Test().run();
-        HelloKotlin().run();
+       // HelloKotlin().run();
     }
 }
 
