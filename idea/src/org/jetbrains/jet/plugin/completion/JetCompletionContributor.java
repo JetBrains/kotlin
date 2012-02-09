@@ -115,8 +115,8 @@ public class JetCompletionContributor extends CompletionContributor {
 
         JavaClassNameCompletionContributor.addAllClasses(
                 parameters,
-                JavaCompletionSorting.addJavaSorting(parameters, tempResult),
                 parameters.getInvocationCount() <= 2,
+                JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
                 new Consumer<LookupElement>() {
                     @Override
                     public void consume(@NotNull LookupElement element) {
