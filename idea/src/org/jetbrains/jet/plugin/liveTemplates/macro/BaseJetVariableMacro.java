@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -20,10 +21,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -49,26 +47,30 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        List<JetNamedDeclaration> elements = new ArrayList<JetNamedDeclaration>();
-
+        List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
-            if (declarationDescriptor instanceof VariableDescriptor && isSuitable((VariableDescriptor) declarationDescriptor)) {
-                PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
-                assert declaration == null || declaration instanceof PsiNamedElement;
-
-                if (declaration instanceof JetProperty) {
-                    elements.add((JetProperty) declaration);
-                }
-                else if (declaration instanceof JetParameter) {
-                    elements.add((JetParameter) declaration);
+            if (declarationDescriptor instanceof VariableDescriptor) {
+                VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
+                if (isSuitable(variableDescriptor, scope, project)) {
+                    filteredDescriptors.add(variableDescriptor);
                 }
             }
         }
 
-        return elements.toArray(new JetNamedDeclaration[elements.size()]);
+        List<JetNamedDeclaration> declarations = new ArrayList<JetNamedDeclaration>();
+        for (DeclarationDescriptor declarationDescriptor : TipsManager.excludeNotCallableExtensions(filteredDescriptors, scope)) {
+            PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+            assert declaration == null || declaration instanceof PsiNamedElement;
+
+            if (declaration instanceof JetProperty || declaration instanceof JetParameter) {
+                declarations.add((JetNamedDeclaration) declaration);
+            }
+        }
+
+        return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
     }
 
-    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor);
+    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project);
 
     @Nullable
     private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {

@@ -76,8 +76,8 @@ public final class TipsManager {
         return Collections.emptyList();
     }
 
-    private static Collection<DeclarationDescriptor> excludeNotCallableExtensions(
-            @NotNull Collection<DeclarationDescriptor> descriptors, @NotNull final JetScope scope
+    public static Collection<DeclarationDescriptor> excludeNotCallableExtensions(
+            @NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull final JetScope scope
     ) {
         final Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);
 
