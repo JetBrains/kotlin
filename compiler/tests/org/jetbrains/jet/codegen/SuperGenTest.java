@@ -11,8 +11,13 @@ public class SuperGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
-    public void testBasicMethod () {
-        blackBoxFile("/super/basicmethod.jet");
+    public void testBasicMethodSuperTrait () {
+        blackBoxFile("/super/basicmethodSuperTrait.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testBasicMethodSuperClass () {
+        blackBoxFile("/super/basicmethodSuperClass.jet");
 //        System.out.println(generateToText());
     }
 
