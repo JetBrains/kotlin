@@ -6,6 +6,6 @@ function getCanvas() {
     return document.getElementsByTagName('canvas')[0];
 }
 
-function getJBLogo() {
+function getKotlinLogo() {
     return document.getElementsByTagName('img')[0];
 }

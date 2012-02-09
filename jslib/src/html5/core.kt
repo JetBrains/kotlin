@@ -110,4 +110,4 @@ fun getContext() : Context = Context();
 native
 fun getCanvas() : Canvas = Canvas();
 native
-fun getJBLogo() : HTMLImageElement = HTMLImageElement();
+fun getKotlinLogo() : HTMLImageElement = HTMLImageElement();
