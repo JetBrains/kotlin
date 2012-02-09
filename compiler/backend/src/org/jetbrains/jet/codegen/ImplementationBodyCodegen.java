@@ -486,6 +486,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 AnnotationVisitor jetValueParameterAnnotation =
                         mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
                 jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, valueParameter.getName());
+                if(valueParameter.hasDefaultValue())
+                    jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, Boolean.TRUE);
                 jetValueParameterAnnotation.visitEnd();
             }
         }
@@ -574,7 +576,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         final ClassDescriptor outerDescriptor = getOuterClassDescriptor();
-        if (outerDescriptor != null && outerDescriptor.getKind() != ClassKind.OBJECT) {
+        if (outerDescriptor != null && !CodegenUtil.isClassObject(outerDescriptor)) {
             final Type type = typeMapper.mapType(outerDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
