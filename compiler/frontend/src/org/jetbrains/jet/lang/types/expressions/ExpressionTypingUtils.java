@@ -11,16 +11,24 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPattern;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
+
+import java.util.HashMap;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.RESULT_TYPE_MISMATCH;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -125,5 +133,23 @@ public class ExpressionTypingUtils {
         trace.record(PROCESSED, expression);
         trace.record(EXPRESSION_TYPE, expression, type);
         return expression;
+    }
+
+    public static boolean isVariableIterable(@NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
+        JetExpression expression = JetPsiFactory.createExpression(project, "fake");
+        ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getOutType());
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                JetSemanticServices.createSemanticServices(project),
+                new HashMap<JetPattern, DataFlowInfo>(),
+                new HashMap<JetPattern, List<VariableDescriptor>>(),
+                new LabelResolver(),
+                new BindingTraceContext(),
+                scope,
+                DataFlowInfo.EMPTY,
+                TypeUtils.NO_EXPECTED_TYPE,
+                TypeUtils.NO_EXPECTED_TYPE,
+                false
+        );
+        return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
     }
 }

@@ -264,7 +264,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
+    /*package*/ static JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
         JetExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
@@ -328,7 +328,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    private OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver, ExpressionTypingContext context, String name) {
+    private static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver, ExpressionTypingContext context, String name) {
         JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.getProject(), "fake");
         BindingTrace fakeTrace = new BindingTraceContext();
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
@@ -336,7 +336,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
+    private static FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
         OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
@@ -353,7 +353,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
+    private static VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
         VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties("hasNext"));
         if (hasNextProperty == null) {
             return null;
