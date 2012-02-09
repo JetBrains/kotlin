@@ -118,13 +118,19 @@ public class ForTestCompileStdlib {
         }
     }
 
+
+    private static Throwable compilationException;
     
     public static File stdlibJarForTests() {
         synchronized (ForTestCompileStdlib.class) {
+            if (compilationException != null) {
+                throw new RuntimeException("stdlib compilation failed in previous tests: " + compilationException, compilationException);
+            }
             if (stdlibJarFile == null || !stdlibJarFile.exists()) {
                 try {
                     stdlibJarFile = doCompile();
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    compilationException = e;
                     throw new RuntimeException(e);
                 }
             }
