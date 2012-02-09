@@ -456,7 +456,7 @@
         }, drawLogo:function (state) {
             {
                 this.set_size(this.get_imageSize().times(state.get_size().get_x() / this.get_imageSize().get_x()).times(this.get_relSize()));
-                state.get_context().drawImage(getJBLogo(), 0, 0, this.get_imageSize().get_x(), this.get_imageSize().get_y(), this.get_position().get_x(), this.get_position().get_y(), this.get_size().get_x(), this.get_size().get_y());
+                state.get_context().drawImage(getKotlinLogo(), 0, 0, this.get_imageSize().get_x(), this.get_imageSize().get_y(), this.get_position().get_x(), this.get_position().get_y(), this.get_size().get_x(), this.get_size().get_y());
             }
         }, draw:function (state) {
             {

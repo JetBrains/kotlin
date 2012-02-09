@@ -217,7 +217,7 @@
         }, draw:function (state) {
             {
                 var context = state.get_context();
-                context.drawImage(getJBLogo(), 0, 0, this.get_imageSize().get_x(), this.get_imageSize().get_y(), this.get_pos().get_x(), this.get_pos().get_y(), this.get_canvasSize().get_x(), this.get_canvasSize().get_y());
+                context.drawImage(getKotlinLogo(), 0, 0, this.get_imageSize().get_x(), this.get_imageSize().get_y(), this.get_pos().get_x(), this.get_pos().get_y(), this.get_canvasSize().get_x(), this.get_canvasSize().get_y());
             }
         }, contains:function (mousePos) {
             {

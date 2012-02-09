@@ -7,7 +7,7 @@ import js.*
 import js.Math
 import js.setInterval
 import html5.getCanvas
-import html5.getJBLogo
+import html5.getKotlinLogo
 import jquery.jq
 import js.setTimeout
 import java.util.List
@@ -53,7 +53,7 @@ var relSize : Double = 0.25)
 
     fun drawLogo(state : CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
-        state.context.drawImage(getJBLogo(), 0.0, 0.0, imageSize.x, imageSize.y, position.x, position.y, size.x, size.y)
+        state.context.drawImage(getKotlinLogo(), 0.0, 0.0, imageSize.x, imageSize.y, position.x, position.y, size.x, size.y)
     }
 
     override fun draw(state : CanvasState) {

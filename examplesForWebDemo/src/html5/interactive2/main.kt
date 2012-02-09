@@ -7,7 +7,7 @@ import js.*;
 import js.Math;
 import js.setInterval
 import html5.getCanvas
-import html5.getJBLogo
+import html5.getKotlinLogo
 import jquery.jq
 import js.setTimeout
 
@@ -34,7 +34,7 @@ class Logo(override var pos : Vector,
 
     override fun draw(state : CanvasState) {
         val context = state.context;
-        context.drawImage(getJBLogo(), 0.0, 0.0, imageSize.x, imageSize.y, pos.x, pos.y, canvasSize.x, canvasSize.y)
+        context.drawImage(getKotlinLogo(), 0.0, 0.0, imageSize.x, imageSize.y, pos.x, pos.y, canvasSize.x, canvasSize.y)
     }
 
     override fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, canvasSize)
