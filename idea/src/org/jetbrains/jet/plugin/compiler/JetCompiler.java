@@ -171,22 +171,12 @@ public class JetCompiler implements TranslatingCompiler {
             Class<?> kompiler = Class.forName("org.jetbrains.jet.cli.KotlinCompiler", true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            Thread curThread = Thread.currentThread();
-
-            ClassLoader previousLoader = curThread.getContextClassLoader();
-            curThread.setContextClassLoader(loader);
-
-            try {
-                Object rc = exec.invoke(null, out, new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir)});
-                if (rc instanceof Integer) {
-                    return ((Integer) rc).intValue();
-                }
-                else {
-                    throw new RuntimeException("Unexpected return: " + rc);
-                }
+            Object rc = exec.invoke(null, out, new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir)});
+            if (rc instanceof Integer) {
+                return ((Integer) rc).intValue();
             }
-            finally {
-                curThread.setContextClassLoader(previousLoader);
+            else {
+                throw new RuntimeException("Unexpected return: " + rc);
             }
         } catch (Throwable e) {
             LOG.error(e);
@@ -216,7 +206,7 @@ public class JetCompiler implements TranslatingCompiler {
             }
         }
 
-        return new URLClassLoader(urls);
+        return new URLClassLoader(urls, null);
     }
 
     private static void runOutOfProcess(CompileContext compileContext, VirtualFile outputDir, File kotlinHome, File scriptFile) {
