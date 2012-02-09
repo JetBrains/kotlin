@@ -1,0 +1,19 @@
+fun reformat(
+  str : String,
+  normalizeCase : Boolean = true,
+  uppercaseFirstLetter : Boolean = true,
+  divideByCamelHumps : Boolean = true,
+  wordSeparator : String = " "
+) =
+  #(normalizeCase, uppercaseFirstLetter, divideByCamelHumps, wordSeparator)
+
+
+fun box() : String {
+    val expected = #(true, true, true, " ")
+    if(reformat("", true, true, true, " ") != expected) return "fail"
+    if(reformat("", true, true, true) != expected) return "fail"
+    if(reformat("", true, true) != expected) return "fail"
+    if(reformat("", true) != expected) return "fail"
+    if(reformat("") != expected) return "fail"
+    return "OK"
+}

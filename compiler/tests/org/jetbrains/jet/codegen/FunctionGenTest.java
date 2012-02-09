@@ -12,6 +12,31 @@ public class FunctionGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testDefaultArgs1() throws Exception {
+        blackBoxFile("functions/defaultargs1.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testDefaultArgs2() throws Exception {
+        blackBoxFile("functions/defaultargs2.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testDefaultArgs3() throws Exception {
+        blackBoxFile("functions/defaultargs3.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testDefaultArgs4() throws Exception {
+        blackBoxFile("functions/defaultargs4.jet");
+//        System.out.println(generateToText());
+    }
+
+    public void testDefaultArgs5() throws Exception {
+        blackBoxFile("functions/defaultargs5.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testNoThisNoClosure() throws Exception {
         blackBoxFile("functions/nothisnoclosure.jet");
 //        System.out.println(generateToText());
