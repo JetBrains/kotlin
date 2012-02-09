@@ -76,8 +76,8 @@ public class JetCompiler implements TranslatingCompiler {
             compileContext.addMessage(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", "", -1, -1);
             return;
         }
-        
-        
+
+
         StringBuilder script = new StringBuilder();
 
         script.append("import kotlin.modules.*\n");
@@ -170,12 +170,23 @@ public class JetCompiler implements TranslatingCompiler {
         try {
             Class<?> kompiler = Class.forName("org.jetbrains.jet.cli.KotlinCompiler", true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
-            Object rc = exec.invoke(null, out, new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir)});
-            if (rc instanceof Integer) {
-                return ((Integer) rc).intValue();
+
+            Thread curThread = Thread.currentThread();
+
+            ClassLoader previousLoader = curThread.getContextClassLoader();
+            curThread.setContextClassLoader(loader);
+
+            try {
+                Object rc = exec.invoke(null, out, new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir)});
+                if (rc instanceof Integer) {
+                    return ((Integer) rc).intValue();
+                }
+                else {
+                    throw new RuntimeException("Unexpected return: " + rc);
+                }
             }
-            else {
-                throw new RuntimeException("Unexpected return: " + rc);
+            finally {
+                curThread.setContextClassLoader(previousLoader);
             }
         } catch (Throwable e) {
             LOG.error(e);
@@ -316,7 +327,7 @@ public class JetCompiler implements TranslatingCompiler {
         }
         return null;
     }
-    
+
     private static String path(VirtualFile root) {
         String path = root.getPath();
         if (path.endsWith("!/")) {
