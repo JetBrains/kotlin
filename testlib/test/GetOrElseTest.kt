@@ -6,6 +6,7 @@ import stdhack.test.*
 class GetOrElseTest() : TestSupport() {
     val v1: String? = "hello"
     val v2: String? = null
+    var counter = 0
 
     fun testDefaultValue() {
         assertEquals("hello", v1?: "bar")
@@ -23,26 +24,18 @@ class GetOrElseTest() : TestSupport() {
         }
     }
 
-    /** TODO not supported yet?
-    
-    fun testLazyDefaultValue() {
-        var counter = 0
-
-        assertEquals("hello", v1?: { counter++; "bar"})
-        assertEquals(counter, 0, "counter should not be incremented yet")
-
-        assertEquals("bar", v2?: { counter++; "bar"})
-        assertEquals(counter, 1, "counter should be incremented in the default function")
+    fun calculateBar(): String {
+        counter++
+        return "bar"
     }
-    */
 
-    fun testLazyDefaultValueUsingMethod() {
-        var counter = 0
+    fun testLazyDefaultValue() {
+        counter = 0
 
-        assertEquals("hello", v1.getOrElse{ counter++; "bar"})
+        assertEquals("hello", v1?: calculateBar())
         assertEquals(counter, 0, "counter should not be incremented yet")
 
-        assertEquals("bar", v2.getOrElse{ counter++; "bar"})
+        assertEquals("bar", v2?: calculateBar())
         assertEquals(counter, 1, "counter should be incremented in the default function")
     }
 }

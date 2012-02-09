@@ -69,14 +69,3 @@ inline fun <T> Iterator<T>.toTreeSet() = to(TreeSet<T>())
 Run function f
 */
 inline fun <T> run(f: () -> T) = f()
-
-/*
-Allow a default value to be lazily provided from a function when converting a nullable type to a non-nullable type
-*/
-// TODO would be nice to replace this with the ?: notation instead allowing a function as an argument for the default :)
-inline fun <T> T?.getOrElse(defaultValueFactory: ()-> T): T {
-    return if (this != null)
-        this
-    else
-        defaultValueFactory()
-}
