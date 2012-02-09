@@ -105,6 +105,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             } else if (innerClass.getModality() == Modality.ABSTRACT) {
                 innerClassAccess |= ACC_ABSTRACT;
             }
+
+            if (innerClass.getKind() == ClassKind.TRAIT) {
+                innerClassAccess |= ACC_INTERFACE;
+            }
+
             // TODO: cache internal names
             String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
             String innerClassInternalName = typeMapper.mapType(innerClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
