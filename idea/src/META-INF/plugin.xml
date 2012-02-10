@@ -14,12 +14,6 @@
   </project-components>
 
   <actions>
-      <group>
-          <reference id="NextSelectorParameter"/>
-          <reference id="PrevSelectorParameter"/>
-          <add-to-group group-id="EditMenu" anchor="last"/>
-      </group>
-
      <action id="Kotlin.NewFile" class="org.jetbrains.jet.plugin.actions.NewKotlinFileAction">
         <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
      </action>
