@@ -1,11 +1,11 @@
 package std.concurrent
 
-abstract class FunctionalList<T>(val size: Int) {
-    abstract val head: T
-    abstract val tail: FunctionalList<T>
+abstract class FunctionalList<T>(public val size: Int) {
+    public abstract val head: T
+    public abstract val tail: FunctionalList<T>
 
     val empty : Boolean
-    get() = size == 0
+        get() = size == 0
 
     fun add(element: T) : FunctionalList<T> = FunctionalList.Standard(element, this)
 
