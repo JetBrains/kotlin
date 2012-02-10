@@ -1,5 +1,5 @@
 package interactive3
-
+// importing some of the API defined
 import jquery.*
 import html5.*
 import java.util.ArrayList
@@ -12,17 +12,17 @@ import jquery.jq
 import js.setTimeout
 import java.util.List
 
-val gradientGenerator = RadialGradientGenerator(getContext())
-val Kotlin = Logo(v(20.0, 20.0))
 
 abstract class Shape() {
 
     abstract fun draw(state : CanvasState)
+    // these two abstract methods defines that our shapes can be dragged
     abstract fun contains(mousePos : Vector) : Boolean
     abstract var pos : Vector
 
     var selected : Boolean = false
 
+    // a couple of helper extension methods we'll be using in the derived classes
     fun Context.shadowed(shadowOffset : Vector, alpha : Double, render : Context.() -> Unit) {
         save()
         shadowColor = "rgba(100, 100, 100, $alpha)"
@@ -41,24 +41,29 @@ abstract class Shape() {
     }
 }
 
+val Kotlin = Logo(v(20.0, 20.0))
+
 class Logo(override var pos : Vector,
-var relSize : Double = 0.25)
-: Shape()
+           var relSize : Double = 0.25)
+                        : Shape()
 {
     val shadowOffset = v(-3.0, 3.0)
     val imageSize = v(377.0, 393.0)
     var size : Vector = imageSize * relSize
+    // get-only properties like this saves you lots of typing and are very expressive
     val position : Vector
-    get() = if (selected) pos - shadowOffset else pos
+       get() = if (selected) pos - shadowOffset else pos
 
     fun drawLogo(state : CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
+        // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
         state.context.drawImage(getKotlinLogo(), 0.0, 0.0, imageSize.x, imageSize.y, position.x, position.y, size.x, size.y)
     }
 
     override fun draw(state : CanvasState) {
         val context = state.context
         if (selected) {
+            // using helper we defined in Shape class
             context.shadowed(shadowOffset, 0.2) {
                 drawLogo(state)
             }
@@ -70,28 +75,33 @@ var relSize : Double = 0.25)
     override fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, size)
 
     val centre : Vector
-    get() = pos + size * 0.5
+       get() = pos + size * 0.5
 }
 
-class Creature(override var pos : Vector,
-var state : CanvasState) : Shape() {
+val gradientGenerator = RadialGradientGenerator(getContext())
+
+class Creature(override var pos : Vector, val state : CanvasState) : Shape() {
 
     val shadowOffset = v(-5.0, 5.0)
     val colorStops = gradientGenerator.getNext()
     val relSize = 0.05
-         val radius : Double
-    get() = state.width * relSize
+    // these properties have no backing fields and in java/javascript they could be represented as little helper functions
+    val radius : Double
+         get() = state.width * relSize
     val position : Vector
          get() = if (selected) pos - shadowOffset else pos
     val directionToLogo : Vector
-        get() = (Kotlin.centre - position).normalized
+         get() = (Kotlin.centre - position).normalized
 
+    //notice how the infix call can make some expressions extremely expressive
     override fun contains(mousePos : Vector) = pos distanceTo mousePos < radius
 
+    // defining more nice extension functions
     fun Context.circlePath(position : Vector, rad : Double) {
         arc(position.x, position.y, rad, 0.0, 2 * Math.PI, false)
     }
 
+    //notice we can use an extension function we just defined inside another extension function
     fun Context.fillCircle(position : Vector, rad : Double) {
         fillPath {
             circlePath(position, rad)
@@ -162,8 +172,8 @@ var state : CanvasState) : Shape() {
 }
 
 class CanvasState(val canvas : Canvas) {
-    val width = canvas.width
-    val height = canvas.height
+    var width = canvas.width
+    var height = canvas.height
     val size : Vector
         get() = v(width, height)
     val context = getContext()
@@ -213,6 +223,15 @@ class CanvasState(val canvas : Canvas) {
         setInterval({
             draw()
         }, interval)
+
+        setInterval({
+            updateSize(canvas)
+        }, 500)
+    }
+
+    fun updateSize(canvas : Canvas) {
+        width = canvas.width
+        height = canvas.height
     }
 
     fun mousePos(e : MouseEvent) : Vector {

@@ -114,6 +114,7 @@
             this.$dragOff = new interactive3.Vector_0(0, 0);
             this.$interval = 1000 / 30;
             {
+                var tmp$5;
                 var tmp$4;
                 var tmp$3;
                 var tmp$2;
@@ -175,13 +176,23 @@
                     }
                 }
                     ), this.get_interval());
+                setInterval((tmp$5 = this , function () {
+                    {
+                        tmp$5.updateSize(tmp$5.get_canvas());
+                    }
+                }
+                    ), 500);
             }
         }, get_canvas:function () {
             return this.$canvas;
         }, get_width:function () {
             return this.$width;
+        }, set_width:function (tmp$0) {
+            this.$width = tmp$0;
         }, get_height:function () {
             return this.$height;
+        }, set_height:function (tmp$0) {
+            this.$height = tmp$0;
         }, get_size:function () {
             {
                 return interactive3.v_0(this.get_width(), this.get_height());
@@ -206,6 +217,11 @@
             this.$dragOff = tmp$0;
         }, get_interval:function () {
             return this.$interval;
+        }, updateSize:function (canvas) {
+            {
+                this.set_width(canvas.width);
+                this.set_height(canvas.height);
+            }
         }, mousePos_0:function (e) {
             {
                 var offset = new interactive3.Vector_0(0, 0);
@@ -294,8 +310,6 @@
             this.$pos = tmp$0;
         }, get_state:function () {
             return this.$state;
-        }, set_state:function (tmp$0) {
-            this.$state = tmp$0;
         }, get_shadowOffset:function () {
             return this.$shadowOffset;
         }, get_colorStops:function () {
@@ -488,12 +502,12 @@
     }
         ();
     var interactive3 = Kotlin.Namespace.create({initialize:function () {
-        interactive3.$gradientGenerator = new interactive3.RadialGradientGenerator_0(getContext());
         interactive3.$Kotlin = new interactive3.Logo_0(interactive3.v_0(20, 20), 0.25);
-    }, get_gradientGenerator:function () {
-        return interactive3.$gradientGenerator;
+        interactive3.$gradientGenerator = new interactive3.RadialGradientGenerator_0(getContext());
     }, get_Kotlin:function () {
         return interactive3.$Kotlin;
+    }, get_gradientGenerator:function () {
+        return interactive3.$gradientGenerator;
     }, v_0:function (x, y) {
         {
             return new interactive3.Vector_0(x, y);
