@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collections;
 
@@ -17,6 +18,8 @@ import java.util.Collections;
  * @author abreslav
  */
 public class JavaBridgeConfiguration implements Configuration {
+
+    public static final String[] DEFAULT_JAVA_IMPORTS = new String[] { "java.lang" };
 
     public static Configuration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, Configuration delegateConfiguration) {
         return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
@@ -33,7 +36,10 @@ public class JavaBridgeConfiguration implements Configuration {
     @Override
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
         rootScope.importScope(new JavaPackageScope("", createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
-        importer.addScopeImport(new JavaPackageScope("java.lang", createNamespaceDescriptor("lang", "java.lang"), javaSemanticServices));
+        for (String importFQN : DEFAULT_JAVA_IMPORTS) {
+            importer.addScopeImport(new JavaPackageScope(
+                importFQN, createNamespaceDescriptor(QualifiedNamesUtil.fqnToShortName(importFQN), importFQN), javaSemanticServices));
+        }
         delegateConfiguration.addDefaultImports(trace, rootScope, importer);
     }
 

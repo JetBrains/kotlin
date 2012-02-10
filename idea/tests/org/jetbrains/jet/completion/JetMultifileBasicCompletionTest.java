@@ -8,7 +8,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
 
     public void testTopLevelFunction() throws Exception {
-        doFileTest();
+        doFileTest(2);
     }
 
     public void testExtensionFunction() throws Exception {

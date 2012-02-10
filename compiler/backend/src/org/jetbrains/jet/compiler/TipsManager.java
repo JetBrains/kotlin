@@ -4,14 +4,11 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
@@ -57,17 +54,23 @@ public final class TipsManager {
         } else {
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
             if (resolutionScope != null) {
-                if (expression.getParent() instanceof JetImportDirective) {
+                if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
                     return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
                 } else {
                     java.util.HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
+
                     ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
                     resolutionScope.getImplicitReceiversHierarchy(result);
+
                     for (ReceiverDescriptor receiverDescriptor : result) {
                         JetType receiverType = receiverDescriptor.getType();
                         descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
                     }
+
                     descriptorsSet.addAll(resolutionScope.getAllDescriptors());
+
+                    ClassDescriptor anInt = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, "Int");
+
                     return excludeNotCallableExtensions(descriptorsSet, resolutionScope);
                 }
             }

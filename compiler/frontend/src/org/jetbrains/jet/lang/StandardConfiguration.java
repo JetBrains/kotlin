@@ -13,6 +13,8 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
  * @author svtk
  */
 public class StandardConfiguration implements Configuration {
+    public static final String[] DEFAULT_JET_IMPORTS = new String[] { "std.*", "std.io.*" };
+
     private Project project;
 
     public static StandardConfiguration createStandardConfiguration(Project project) {
@@ -26,8 +28,9 @@ public class StandardConfiguration implements Configuration {
     @Override
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
         ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(trace, true);
-        importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "std.*"), rootScope, importer);
-        importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "std.io.*"), rootScope, importer);
+        for (String defaultJetImport : DEFAULT_JET_IMPORTS) {
+            importResolver.processImportReference(JetPsiFactory.createImportDirective(project, defaultJetImport), rootScope, importer);
+        }
     }
 
     @Override

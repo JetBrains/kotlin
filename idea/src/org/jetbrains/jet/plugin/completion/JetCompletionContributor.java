@@ -146,10 +146,8 @@ public class JetCompletionContributor extends CompletionContributor {
                 }
 
                 if (PsiTreeUtil.getParentOfType(nameExpression, JetUserType.class) != null) {
-                    return true;
+                    return parameters.getInvocationCount() == 1;
                 }
-
-                return parameters.getInvocationCount() == 1;
             }
         }
 

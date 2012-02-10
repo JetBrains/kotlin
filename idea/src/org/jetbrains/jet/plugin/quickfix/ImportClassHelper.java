@@ -2,9 +2,11 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.StandardConfiguration;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -48,13 +50,10 @@ public class ImportClassHelper {
             importString = importString.substring((JavaDescriptorResolver.JAVA_ROOT + ".").length());
         }
 
-        // Check that import is useless
-        if (QualifiedNamesUtil.isOneSegmentFQN(importString) ||
-                JetPsiUtil.getFQName(file).equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
-
+        if (isImportedByDefault(importString, JetPsiUtil.getFQName(file))) {
             return;
         }
-        
+
         List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importString);
@@ -78,5 +77,27 @@ public class ImportClassHelper {
             JetDeclaration firstDeclaration = declarations.iterator().next();
             firstDeclaration.getParent().addBefore(newDirective, firstDeclaration);
         }
+    }
+
+    // Check that import is useless
+    private static boolean isImportedByDefault(@NotNull String importString, @NotNull String filePackageFqn) {
+        if (QualifiedNamesUtil.isOneSegmentFQN(importString) ||
+            filePackageFqn.equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
+
+            return true;
+        }
+
+        for (String defaultJetImport : StandardConfiguration.DEFAULT_JET_IMPORTS) {
+            if (QualifiedNamesUtil.isImported(defaultJetImport, importString)) {
+                return true;
+            }
+        }
+
+        for (String defaultJavaImport : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
+            if (QualifiedNamesUtil.isImported(defaultJavaImport + ".*", importString)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
