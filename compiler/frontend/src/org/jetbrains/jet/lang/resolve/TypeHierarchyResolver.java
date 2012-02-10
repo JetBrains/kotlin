@@ -57,9 +57,6 @@ public class TypeHierarchyResolver {
         checkSupertypesForConsistency();
 //        computeSuperclasses();
 
-        // Add supertypes to resolution scopes of classes
-        addSupertypesToScopes();
-
         checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
     }
 
@@ -440,15 +437,6 @@ public class TypeHierarchyResolver {
         public abstract boolean removeNeeded(JetType subject, JetType other);
     }
     
-    private void addSupertypesToScopes() {
-        for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
-            mutableClassDescriptor.addSupertypesToScopeForMemberLookup();
-        }
-        for (MutableClassDescriptor mutableClassDescriptor : context.getObjects().values()) {
-            mutableClassDescriptor.addSupertypesToScopeForMemberLookup();
-        }
-    }
-
     private void checkTypesInClassHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();

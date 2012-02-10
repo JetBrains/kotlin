@@ -11,5 +11,9 @@ public interface NamedFunctionDescriptor extends FunctionDescriptor {
 
     @NotNull
     @Override
-    NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract);
+    NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
+
+    @NotNull
+    @Override
+    NamedFunctionDescriptor getOriginal();
 }

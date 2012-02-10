@@ -36,7 +36,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
 
-    private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
+    private static final List<String> PRIMITIVE_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
+    private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Byte", "Char", "Short", "Int", "Float", "Long", "Double");
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
@@ -56,17 +57,20 @@ public class IntrinsicMethods {
         List<String> primitiveCastMethods = ImmutableList.of("dbl", "flt", "lng", "int", "chr", "sht", "byt");
         for (String method : primitiveCastMethods) {
             declareIntrinsicProperty("Number", method, NUMBER_CAST);
+            for (String type : PRIMITIVE_NUMBER_TYPES) {
+                declareIntrinsicProperty(type, method, NUMBER_CAST);
+            }
         }
 
         for (String type : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(type, "plus", 0, UNARY_PLUS);
-            declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS);
-            declareIntrinsicFunction(type, "inv", 0, INV);
-            declareIntrinsicFunction(type, "rangeTo", 1, UP_TO);
-            declareIntrinsicFunction(type, "upto", 1, UP_TO);
-            declareIntrinsicFunction(type, "downto", 1, DOWN_TO);
-            declareIntrinsicFunction(type, "inc", 0, INC);
-            declareIntrinsicFunction(type, "dec", 0, DEC);
+            declareIntrinsicFunction(type, "plus", 0, UNARY_PLUS, false);
+            declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS, false);
+            declareIntrinsicFunction(type, "inv", 0, INV, false);
+            declareIntrinsicFunction(type, "rangeTo", 1, UP_TO, false);
+            declareIntrinsicFunction(type, "upto", 1, UP_TO, false);
+            declareIntrinsicFunction(type, "downto", 1, DOWN_TO, false);
+            declareIntrinsicFunction(type, "inc", 0, INC, false);
+            declareIntrinsicFunction(type, "dec", 0, DEC, false);
         }
 
         final Set<FunctionDescriptor> typeInfoFunctionGroup = stdlib.getTypeInfoFunctions();
@@ -85,10 +89,11 @@ public class IntrinsicMethods {
         declareBinaryOp("or", Opcodes.IOR);
         declareBinaryOp("xor", Opcodes.IXOR);
 
-        declareIntrinsicFunction("Boolean", "not", 0, new Not());
+        declareIntrinsicFunction("Boolean", "not", 0, new Not(), true);
 
-        declareIntrinsicFunction("String", "plus", 1, new Concat());
-        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
+        declareIntrinsicFunction("String", "plus", 1, new Concat(), true);
+        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar(), true);
+        declareIntrinsicFunction("String", "get", 1, new StringGetChar(), true);
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
@@ -99,22 +104,23 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 2, new StupidSync());
         declareOverload(myStdLib.getLibraryScope().getFunctions("iterator"), 0, new IteratorIterator());
 
-        declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("IntIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("LongIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("CharIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("BooleanIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT);
-        declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT);
+        declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("IntIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("LongIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("CharIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("BooleanIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT, false);
 
-        for (String type : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(type, "compareTo", 1, new CompareTo());
+        for (String type : PRIMITIVE_TYPES) {
+            declareIntrinsicFunction(type, "compareTo", 1, new CompareTo(), false);
         }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicStringMethods();
         declareIntrinsicProperty("CharSequence", "length", new StringLength());
+        declareIntrinsicProperty("String", "length", new StringLength());
 
         declareArrayMethods();
     }
@@ -127,8 +133,8 @@ public class IntrinsicMethods {
 
         declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
         declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
-        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
+        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET, true);
+        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET, true);
         declareIterator(myStdLib.getArray());
     }
 
@@ -136,8 +142,8 @@ public class IntrinsicMethods {
         PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
         declareIntrinsicProperty(primitiveType.getArrayTypeName(), "size", ARRAY_SIZE);
         declareIntrinsicProperty(primitiveType.getArrayTypeName(), "indices", ARRAY_INDICES);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "set", 2, ARRAY_SET);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "get", 1, ARRAY_GET);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "set", 2, ARRAY_SET, true);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "get", 1, ARRAY_GET, true);
         declareIterator(myStdLib.getPrimitiveArrayClassDescriptor(primitiveType));
     }
 
@@ -173,8 +179,8 @@ public class IntrinsicMethods {
 
     private void declareBinaryOp(String methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
-        for (String type : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(type, methodName, 1, op);
+        for (String type : PRIMITIVE_TYPES) {
+            declareIntrinsicFunction(type, methodName, 1, op, false);
         }
     }
 
@@ -186,12 +192,12 @@ public class IntrinsicMethods {
         myMethods.put(property.getOriginal(), implementation);
     }
 
-    private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation) {
+    private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation, boolean original) {
         JetScope memberScope = getClassMemberScope(className);
         final Set<FunctionDescriptor> group = memberScope.getFunctions(functionName);
         for (FunctionDescriptor descriptor : group) {
             if (className.equals(descriptor.getContainingDeclaration().getName()) && descriptor.getValueParameters().size() == arity) {
-                myMethods.put(descriptor.getOriginal(), implementation);
+                myMethods.put(original ? descriptor.getOriginal() : descriptor, implementation);
             }
         }
     }

@@ -97,7 +97,8 @@ public class CodegenUtil {
         NamedFunctionDescriptorImpl invokeDescriptor = new NamedFunctionDescriptorImpl(
                 fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
-                "invoke");
+                "invoke",
+                CallableMemberDescriptor.Kind.DECLARATION);
 
         invokeDescriptor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                    fd.getExpectedThisObject(),

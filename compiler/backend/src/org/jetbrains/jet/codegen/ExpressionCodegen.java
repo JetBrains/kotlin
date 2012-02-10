@@ -983,7 +983,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         else if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement declaration = null;
+            if (((PropertyDescriptor) descriptor).getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            }
             if (declaration instanceof JetObjectDeclarationName) {
                 // todo: we have property here but not in containing class/namespace
                 JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(declaration, JetObjectDeclaration.class);
@@ -1013,7 +1016,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
                 final StackValue.Property iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
                 if(!directToField && resolvedCall != null && !isSuper) {
-                    receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic? receiver.type : Type.getObjectType(iValue.owner), v);
+                    receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic? receiver.type : Type.getObjectType(iValue.methodOwner), v);
                     pushTypeArguments(resolvedCall);
                 }
                 else {
@@ -1097,7 +1100,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     public void invokeFunctionNoParams(FunctionDescriptor functionDescriptor, Type type, InstructionAdapter v) {
-        DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
+        DeclarationDescriptor containingDeclaration = functionDescriptor.getOriginal().getContainingDeclaration();
         boolean isStatic = containingDeclaration instanceof NamespaceDescriptor;
         functionDescriptor = functionDescriptor.getOriginal();
         String owner;
@@ -1190,18 +1193,26 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
         }
 
+        int invokeOpcode;
+
         String owner;
+        String ownerParam;
         boolean isInterface;
-        if (isInsideClass || isStatic) {
-            owner = typeMapper.getOwner(propertyDescriptor, contextKind());
+        if (isInsideClass || isStatic || propertyDescriptor.getGetter() == null) {
+            owner = ownerParam = typeMapper.getOwner(propertyDescriptor, contextKind());
             isInterface = false;
+            invokeOpcode = isStatic ? Opcodes.INVOKESTATIC : Opcodes.INVOKEVIRTUAL;
         }
         else {
-            owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
             isInterface = CodegenUtil.isInterface(containingDeclaration);
+            // TODO ugly
+            CallableMethod callableMethod = typeMapper.mapToCallableMethod(propertyDescriptor.getGetter(), isSuper, contextKind());
+            invokeOpcode = callableMethod.getInvokeOpcode();
+            owner = callableMethod.getOwner();
+            ownerParam = callableMethod.getDefaultImplParam();
         }
 
-        return StackValue.property(propertyDescriptor.getName(), owner, asmType(propertyDescriptor.getOutType()), isStatic, isInterface, isSuper, getter, setter);
+        return StackValue.property(propertyDescriptor.getName(), owner, ownerParam, asmType(propertyDescriptor.getOutType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);
     }
 
     @Override
@@ -1442,13 +1453,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes) {
         @SuppressWarnings("unchecked")
-        Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
+        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
+
+        if (fd.getValueParameters().size() != valueArguments.size()) {
+            throw new IllegalStateException();
+        }
 
         int index = 0;
         int mask  = 0;
+
         for (ValueParameterDescriptor valueParameterDescriptor : fd.getValueParameters()) {
-            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameterDescriptor);
+            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameterDescriptor.getIndex());
             if(resolvedValueArgument instanceof ExpressionValueArgument) {
                 ExpressionValueArgument valueArgument = (ExpressionValueArgument) resolvedValueArgument;
                 gen(valueArgument.getExpression(), valueParameterTypes.get(index));

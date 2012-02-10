@@ -11,6 +11,7 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,29 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @NotNull
     public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
         return valueArguments;
+    }
+
+    @NotNull
+    @Override
+    public List<ResolvedValueArgument> getValueArgumentsByIndex() {
+        List<ResolvedValueArgument> arguments = new ArrayList<ResolvedValueArgument>(candidateDescriptor.getValueParameters().size());
+        for (int i = 0; i < candidateDescriptor.getValueParameters().size(); ++i) {
+            arguments.add(null);
+        }
+        
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
+            if (arguments.set(entry.getKey().getIndex(), entry.getValue()) != null) {
+                throw new IllegalStateException();
+            }
+        }
+
+        for (Object o : arguments) {
+            if (o == null) {
+                throw new IllegalStateException();
+            }
+        }
+        
+        return arguments;
     }
 
     public void argumentHasNoType() {

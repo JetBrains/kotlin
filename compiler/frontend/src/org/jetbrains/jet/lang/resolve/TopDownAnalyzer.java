@@ -8,7 +8,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.NamespaceLike;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -66,8 +72,8 @@ public class TopDownAnalyzer {
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
         new DeclarationResolver(context).process();
         new DelegationResolver(context).process();
-        lockScopes(context);
         new OverrideResolver(context).process();
+        lockScopes(context);
         new OverloadResolver(context).process();
         if (!context.analyzingBootstrapLibrary()) {
             new BodyResolver(context).resolveBehaviorDeclarationBodies();
@@ -78,6 +84,7 @@ public class TopDownAnalyzer {
         context.debug("Exit");
         context.printDebugOutput(System.out);
     }
+
 
     private static void lockScopes(TopDownAnalysisContext context) {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {

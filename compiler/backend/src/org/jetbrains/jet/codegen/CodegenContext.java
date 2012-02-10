@@ -211,8 +211,9 @@ public abstract class CodegenContext {
 
         if(descriptor instanceof NamedFunctionDescriptor) {
             NamedFunctionDescriptorImpl myAccessor = new NamedFunctionDescriptorImpl(contextType,
-                                                                           Collections.<AnnotationDescriptor>emptyList(),
-                                                                           descriptor.getName() + "$bridge$" + accessors.size());
+                    Collections.<AnnotationDescriptor>emptyList(),
+                    descriptor.getName() + "$bridge$" + accessors.size(),
+                    CallableMemberDescriptor.Kind.DECLARATION);
             FunctionDescriptor fd = (NamedFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                   fd.getExpectedThisObject(),
@@ -231,7 +232,8 @@ public abstract class CodegenContext {
                     pd.getVisibility(),
                     pd.isVar(),
                     pd.isObjectDeclaration(),
-                    pd.getName()  + "$bridge$" + accessors.size()
+                    pd.getName()  + "$bridge$" + accessors.size(),
+                    CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
             myAccessor.setType(pd.getOutType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
@@ -239,13 +241,13 @@ public abstract class CodegenContext {
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
                         myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
                         myAccessor.getVisibility(),
-                    false, false);
+                    false, false, CallableMemberDescriptor.Kind.DECLARATION);
             pgd.initialize(myAccessor.getOutType());
             
             PropertySetterDescriptor psd = new PropertySetterDescriptor(
                     myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
                         myAccessor.getVisibility(),
-                    false, false);
+                    false, false, CallableMemberDescriptor.Kind.DECLARATION);
             myAccessor.initialize(pgd, psd);
             accessor = myAccessor;
         }

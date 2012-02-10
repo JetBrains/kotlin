@@ -1045,15 +1045,16 @@ public class JavaDescriptorResolver {
                     resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
                     isVar,
                     false,
-                    propertyName);
+                    propertyName,
+                    CallableMemberDescriptor.Kind.DECLARATION);
 
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;
             if (members.getter != null) {
-                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false);
+                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
             if (members.setter != null) {
-                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false);
+                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
 
             propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
@@ -1111,7 +1112,7 @@ public class JavaDescriptorResolver {
                 getterDescriptor.initialize(propertyType);
             }
             if (setterDescriptor != null) {
-                // TODO: initialize
+                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getOutType(), false, null));
             }
 
             semanticServices.getTrace().record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
@@ -1337,7 +1338,8 @@ public class JavaDescriptorResolver {
         NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
                 owner,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                method.getName()
+                method.getName(),
+                CallableMemberDescriptor.Kind.DECLARATION
         );
         methodDescriptorCache.put(method.getPsiMethod(), functionDescriptorImpl);
 

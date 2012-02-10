@@ -104,15 +104,9 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-    private WritableScope getScopeForMemberLookupAsWritableScope() {
+    public WritableScope getScopeForMemberLookupAsWritableScope() {
         // hack
         return (WritableScope) scopeForMemberLookup;
-    }
-
-    public void addSupertypesToScopeForMemberLookup() {
-        for (JetType supertype : supertypes) {
-            getScopeForMemberLookupAsWritableScope().importScope(supertype.getMemberScope());
-        }
     }
 
     @NotNull

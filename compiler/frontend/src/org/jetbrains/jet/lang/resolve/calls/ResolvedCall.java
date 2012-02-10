@@ -7,6 +7,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +33,10 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     /** Values (arguments) for value parameters */
     @NotNull
     Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments();
+
+    /** Values (arguments) for value parameters indexed by parameter index */
+    @NotNull
+    List<ResolvedValueArgument> getValueArgumentsByIndex();
 
     /** What's substituted for type parameters */
     @NotNull

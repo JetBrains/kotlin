@@ -142,7 +142,8 @@ public class ErrorUtils {
             null,
             ReceiverDescriptor.NO_RECEIVER,
             "<ERROR PROPERTY>",
-            ERROR_PROPERTY_TYPE);
+            ERROR_PROPERTY_TYPE,
+            CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
     private static NamedFunctionDescriptor createErrorFunction(ErrorScope ownerScope) {

@@ -11,7 +11,7 @@ fun f9(a : A?) {
   a?.<error descr="Unresolved reference: bar">bar</error>()
   if (a is B) {
     <info descr="Automatically cast to B">a</info>.bar()
-    <info descr="Automatically cast to A">a</info>.foo()
+    <info descr="Automatically cast to B">a</info>.foo()
   }
   a?.foo()
   a?.<error descr="Unresolved reference: bar">bar</error>()
@@ -26,7 +26,7 @@ fun f9(a : A?) {
     return;
   }
   <info descr="Automatically cast to B">a</info>.bar()
-  <info descr="Automatically cast to A">a</info>.foo()
+  <info descr="Automatically cast to B">a</info>.foo()
 }
 
 fun f10(a : A?) {
@@ -77,7 +77,7 @@ fun f12(a : A?) {
     b?.foo()
   }
   if (a is val b is B) {
-    <info descr="Automatically cast to A">b</info>.foo()
+    <info descr="Automatically cast to B">b</info>.foo()
     <info descr="Automatically cast to B">a</info>.bar()
     <info descr="Automatically cast to B">b</info>.bar()
   }
@@ -85,7 +85,7 @@ fun f12(a : A?) {
 
 fun f13(a : A?) {
   if (a is val c is B) {
-    <info descr="Automatically cast to A">c</info>.foo()
+    <info descr="Automatically cast to B">c</info>.foo()
     <info descr="Automatically cast to B">c</info>.bar()
   }
   else {
@@ -99,13 +99,13 @@ fun f13(a : A?) {
     <error descr="Unresolved reference: c">c</error>.bar()
   }
   else {
-    <info descr="Automatically cast to A">a</info>.foo()
+    <info descr="Automatically cast to B">a</info>.foo()
     <error descr="Unresolved reference: c">c</error>.bar()
   }
 
   a?.foo()
-  if (a is val c is B && <info descr="Automatically cast to A">a</info>.foo() == #() && <info descr="Automatically cast to B">c</info>.bar() == #()) {
-    <info descr="Automatically cast to A">c</info>.foo()
+  if (a is val c is B && <info descr="Automatically cast to B">a</info>.foo() == #() && <info descr="Automatically cast to B">c</info>.bar() == #()) {
+    <info descr="Automatically cast to B">c</info>.foo()
     <info descr="Automatically cast to B">c</info>.bar()
   }
   else {

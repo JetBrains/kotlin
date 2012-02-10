@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -19,21 +20,6 @@ import java.util.*;
 public class OverridingUtil {
 
     private OverridingUtil() {
-    }
-
-    public static Set<CallableDescriptor> getEffectiveMembers(@NotNull ClassDescriptor classDescriptor) {
-        Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getDefaultType().getMemberScope().getAllDescriptors();
-        Set<CallableDescriptor> allMembers = Sets.newLinkedHashSet();
-        for (DeclarationDescriptor descriptor : allDescriptors) {
-            assert !(descriptor instanceof ConstructorDescriptor);
-            if (descriptor instanceof CallableDescriptor && descriptor instanceof MemberDescriptor) {
-                CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
-                if (((MemberDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
-                    allMembers.add(callableDescriptor);
-                }
-            }
-        }
-        return filterOverrides(allMembers);
     }
 
     public static <D extends CallableDescriptor> Set<D> filterOverrides(Set<D> candidateSet) {
@@ -196,6 +182,30 @@ public class OverridingUtil {
         }
 
         return true;
+    }
+
+    /**
+     * Get overriden descriptors that are declarations or delegations.
+     *
+     * @see CallableMemberDescriptor.Kind#isReal()
+     */
+    public static Collection<CallableMemberDescriptor> getOverridenDeclarations(CallableMemberDescriptor descriptor) {
+        Map<ClassDescriptor, CallableMemberDescriptor> result = Maps.newHashMap();
+        getOverridenDeclarations(descriptor, result);
+        return result.values();
+    }
+
+    private static void getOverridenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
+        if (descriptor.getKind().isReal()) {
+            r.put((ClassDescriptor) descriptor.getContainingDeclaration(), descriptor);
+        } else {
+            if (descriptor.getOverriddenDescriptors().isEmpty()) {
+                throw new IllegalStateException();
+            }
+            for (CallableMemberDescriptor overriden : descriptor.getOverriddenDescriptors()) {
+                getOverridenDeclarations(overriden, r);
+            }
+        }
     }
 
     public static class OverrideCompatibilityInfo {

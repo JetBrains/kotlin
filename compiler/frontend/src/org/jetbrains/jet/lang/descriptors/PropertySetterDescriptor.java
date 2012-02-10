@@ -22,8 +22,9 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
             @NotNull Modality modality,
             @NotNull Visibility visibility,
             boolean hasBody,
-            boolean isDefault) {
-        super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault);
+            boolean isDefault,
+            Kind kind) {
+        super(modality, visibility, correspondingProperty, annotations, "set-" + correspondingProperty.getName(), hasBody, isDefault, kind);
     }
 
     public void initialize(@NotNull ValueParameterDescriptor parameter) {
@@ -45,6 +46,9 @@ public class PropertySetterDescriptor extends PropertyAccessorDescriptor {
     @NotNull
     @Override
     public List<ValueParameterDescriptor> getValueParameters() {
+        if (parameter == null) {
+            throw new IllegalStateException();
+        }
         return Collections.singletonList(parameter);
     }
 

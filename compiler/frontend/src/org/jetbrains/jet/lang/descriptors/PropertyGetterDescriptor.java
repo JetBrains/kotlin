@@ -18,9 +18,9 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     private JetType returnType;
 
     public PropertyGetterDescriptor(@NotNull PropertyDescriptor correspondingProperty, @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull Modality modality, @NotNull Visibility visibility, boolean hasBody, boolean isDefault)
+            @NotNull Modality modality, @NotNull Visibility visibility, boolean hasBody, boolean isDefault, Kind kind)
     {
-        super(modality, visibility, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault);
+        super(modality, visibility, correspondingProperty, annotations, "get-" + correspondingProperty.getName(), hasBody, isDefault, kind);
     }
     
     public void initialize(JetType returnType) {

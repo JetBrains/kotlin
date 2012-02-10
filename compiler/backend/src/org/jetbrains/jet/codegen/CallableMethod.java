@@ -1,5 +1,6 @@
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -16,22 +17,36 @@ import java.util.List;
  * @author alex.tkacman
  */
 public class CallableMethod implements Callable {
-    private String owner;
+    @NotNull
+    private final String owner;
+    @NotNull
+    private final String defaultImplOwner;
+    @NotNull
+    private final String defaultImplParam;
     private final JvmMethodSignature signature;
-    private int invokeOpcode;
+    private final int invokeOpcode;
     private ClassDescriptor thisClass = null;
 
     private CallableDescriptor receiverFunction = null;
     private Type generateCalleeType = null;
 
-    public CallableMethod(String owner, JvmMethodSignature signature, int invokeOpcode) {
+    public CallableMethod(@NotNull String owner, @NotNull String defaultImplOwner, @NotNull String defaultImplParam,
+            JvmMethodSignature signature, int invokeOpcode) {
         this.owner = owner;
+        this.defaultImplOwner = defaultImplOwner;
+        this.defaultImplParam = defaultImplParam;
         this.signature = signature;
         this.invokeOpcode = invokeOpcode;
     }
 
+    @NotNull
     public String getOwner() {
         return owner;
+    }
+
+    @NotNull
+    public String getDefaultImplParam() {
+        return defaultImplParam;
     }
 
     public JvmMethodSignature getSignature() {
@@ -75,16 +90,20 @@ public class CallableMethod implements Callable {
     }
 
     public void invokeWithDefault(InstructionAdapter v, int mask) {
+        if (defaultImplOwner.length() == 0 || defaultImplParam.length() == 0) {
+            throw new IllegalStateException();
+        }
+
         v.iconst(mask);
         String desc = getSignature().getAsmMethod().getDescriptor().replace(")", "I)");
         if("<init>".equals(getSignature().getAsmMethod().getName())) {
-            v.visitMethodInsn(Opcodes.INVOKESPECIAL, getOwner(), "<init>", desc);
+            v.visitMethodInsn(Opcodes.INVOKESPECIAL, defaultImplOwner, "<init>", desc);
         }
         else {
             if(getInvokeOpcode() != Opcodes.INVOKESTATIC)
-                desc = desc.replace("(", "(L" + getOwner() + ";");
-            v.visitMethodInsn(Opcodes.INVOKESTATIC, getInvokeOpcode() == Opcodes.INVOKEINTERFACE ? getOwner() + JvmAbi.TRAIT_IMPL_SUFFIX
-                                                                                                 : getOwner(), getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
+                desc = desc.replace("(", "(L" + defaultImplParam + ";");
+            v.visitMethodInsn(Opcodes.INVOKESTATIC, defaultImplOwner,
+                    getSignature().getAsmMethod().getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, desc);
         }
     }
 

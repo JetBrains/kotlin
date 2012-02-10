@@ -36,7 +36,16 @@ public class CompilationException extends RuntimeException {
             col = -1;
         }
 
-        return "Internal error: (" + (line+1) + "," + col + ") " + (getCause().getMessage() != null ? getCause().getMessage() : getCause().toString()) + "\n@" + getCause().getStackTrace()[0].getFileName() + ":" + getCause().getStackTrace()[0].getLineNumber();
+        String s2 = getCause().getMessage() != null ? getCause().getMessage() : getCause().toString();
+        return "Internal error: (" + (line+1) + "," + col + ") " + s2 + "\n@" + where();
+    }
+    
+    private String where() {
+        if (getCause().getStackTrace().length > 0) {
+            return getCause().getStackTrace()[0].getFileName() + ":" + getCause().getStackTrace()[0].getLineNumber();
+        } else {
+            return "far away in cyberspace";
+        }
     }
 
     @Override

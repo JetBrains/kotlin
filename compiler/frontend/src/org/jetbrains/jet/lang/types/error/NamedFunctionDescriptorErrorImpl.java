@@ -9,7 +9,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -20,18 +19,18 @@ public class NamedFunctionDescriptorErrorImpl extends NamedFunctionDescriptorImp
     private final ErrorUtils.ErrorScope ownerScope;
 
     public NamedFunctionDescriptorErrorImpl(ErrorUtils.ErrorScope ownerScope) {
-        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>");
+        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>", Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
         return this;
     }
 
     @NotNull
     @Override
-    public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+    public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         return this;
     }
 }

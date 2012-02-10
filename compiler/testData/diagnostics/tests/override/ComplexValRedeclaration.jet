@@ -1,0 +1,9 @@
+package override.generics
+
+abstract class MyAbstractClass<T> {
+    abstract val <!REDECLARATION!>pr<!> : T
+}
+
+abstract class MyLegalAbstractClass2<T>(t : T) : MyAbstractClass<Int>() {
+    val <R> <!REDECLARATION!>pr<!> : T = t
+}

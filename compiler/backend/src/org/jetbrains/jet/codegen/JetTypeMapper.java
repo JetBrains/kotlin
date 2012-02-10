@@ -110,7 +110,11 @@ public class JetTypeMapper {
                     kind = OwnerKind.IMPLEMENTATION;
                 }
             }
-            owner = mapType(classDescriptor.getDefaultType(), kind).getInternalName();
+            Type asmType = mapType(classDescriptor.getDefaultType(), kind);
+            if (asmType.getSort() != Type.OBJECT) {
+                throw new IllegalStateException();
+            }
+            owner = asmType.getInternalName();
         }
         else {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
@@ -118,11 +122,11 @@ public class JetTypeMapper {
         return owner;
     }
 
-    @NotNull public Type mapReturnType(final JetType jetType) {
+    @NotNull public Type mapReturnType(@NotNull final JetType jetType) {
         return mapReturnType(jetType, null);
     }
 
-    @NotNull private Type mapReturnType(final JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
+    @NotNull private Type mapReturnType(@NotNull final JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
         if (jetType.equals(JetStandardClasses.getUnitType())) {
             if (signatureVisitor != null) {
                 signatureVisitor.writeAsmType(Type.VOID_TYPE, false);
@@ -355,9 +359,11 @@ public class JetTypeMapper {
         if(functionDescriptor == null)
             return null;
 
-        final DeclarationDescriptor functionParent = functionDescriptor.getContainingDeclaration();
+        final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
         String owner;
+        String ownerForDefaultImpl;
+        String ownerForDefaultParam;
         int invokeOpcode;
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
@@ -367,6 +373,7 @@ public class JetTypeMapper {
                 namespace = ((JavaNamespaceDescriptor) functionParent).isNamespace();
             }
             owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent), namespace);
+            ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;
         }
@@ -374,34 +381,67 @@ public class JetTypeMapper {
             assert !superCall;
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
             owner = mapType(containingClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
         }
         else if (functionParent instanceof ClassDescriptor) {
+            
+            FunctionDescriptor declarationFunctionDescriptor = findAnyDeclaration(functionDescriptor);
+
+            ClassDescriptor currentOwner = (ClassDescriptor) functionParent;
+            ClassDescriptor declarationOwner = (ClassDescriptor) declarationFunctionDescriptor.getContainingDeclaration();
+
+            boolean originalIsInterface = CodegenUtil.isInterface(declarationOwner);
+            boolean currentIsInterface = CodegenUtil.isInterface(currentOwner);
+
+            ClassDescriptor receiver;
+            if (currentIsInterface && !originalIsInterface) {
+                receiver = declarationOwner;
+            } else {
+                receiver = currentOwner;
+            }
+
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            boolean isInterface = CodegenUtil.isInterface(containingClass);
+            boolean isInterface = originalIsInterface && currentIsInterface;
             OwnerKind kind1 = isInterface && superCall ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
-            Type type = mapType(containingClass.getDefaultType(), kind1);
+            Type type = mapType(receiver.getDefaultType(), OwnerKind.IMPLEMENTATION);
             owner = type.getInternalName();
+            ownerForDefaultParam = mapType(((ClassDescriptor) declarationOwner).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            ownerForDefaultImpl = ownerForDefaultParam
+                    + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : "");
+
             invokeOpcode = isInterface
                     ? (superCall ? Opcodes.INVOKESTATIC : Opcodes.INVOKEINTERFACE)
                     : (superCall ? Opcodes.INVOKESPECIAL : Opcodes.INVOKEVIRTUAL);
             if(isInterface && superCall) {
-                descriptor = mapSignature(functionDescriptor.getOriginal(), false, OwnerKind.TRAIT_IMPL);
+                descriptor = mapSignature(functionDescriptor, false, OwnerKind.TRAIT_IMPL);
+                owner += JvmAbi.TRAIT_IMPL_SUFFIX;
             }
-            thisClass = (ClassDescriptor) functionParent;
+            thisClass = receiver;
         }
         else {
             throw new UnsupportedOperationException("unknown function parent");
         }
 
-        final CallableMethod result = new CallableMethod(owner, descriptor, invokeOpcode);
+        final CallableMethod result = new CallableMethod(owner, ownerForDefaultImpl, ownerForDefaultParam, descriptor, invokeOpcode);
         result.setNeedsThis(thisClass);
         if(functionDescriptor.getReceiverParameter().exists()) {
             result.setNeedsReceiver(functionDescriptor);
         }
 
         return result;
+    }
+    
+    @NotNull
+    private static FunctionDescriptor findAnyDeclaration(@NotNull FunctionDescriptor function) {
+        //if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+        if (function.getOverriddenDescriptors().isEmpty()) {
+            return function;
+        } else {
+            // TODO: prefer class to interface
+            return findAnyDeclaration(function.getOverriddenDescriptors().iterator().next());
+        }
     }
 
     private JvmMethodSignature mapSignature(FunctionDescriptor f, boolean needGenericSignature, OwnerKind kind) {
@@ -676,7 +716,7 @@ public class JetTypeMapper {
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor);
         String owner = mapType(descriptor.getContainingDeclaration().getDefaultType(), kind).getInternalName();
-        return new CallableMethod(owner, method, INVOKESPECIAL);
+        return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
 
     public static int getAccessModifiers(DeclarationDescriptorWithVisibility p, int defaultFlags) {

@@ -32,6 +32,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private final boolean isObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
     private final PropertyDescriptor original;
+    private final Kind kind;
 
     private ReceiverDescriptor expectedThisObject;
     private ReceiverDescriptor receiver;
@@ -46,6 +47,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.isVar = false;
         this.isObject = false;
         this.original = null;
+        this.kind = Kind.DECLARATION;
     }
 
     private PropertyDescriptor(
@@ -56,13 +58,15 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
-            @NotNull String name) {
+            @NotNull String name,
+            Kind kind) {
         super(containingDeclaration, annotations, name);
         this.isVar = isVar;
         this.isObject = isObject;
         this.modality = modality;
         this.visibility = visibility;
         this.original = original == null ? this : original.getOriginal();
+        this.kind = kind;
     }
 
     public PropertyDescriptor(
@@ -72,8 +76,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
-            @NotNull String name) {
-        this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name);
+            @NotNull String name,
+            Kind kind) {
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
     }
 
     public PropertyDescriptor(
@@ -86,9 +91,10 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull String name,
-            @NotNull JetType outType
+            @NotNull JetType outType,
+            Kind kind
         ) {
-        this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name);
+        this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
         setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
@@ -171,7 +177,13 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(this, getContainingDeclaration(), getAnnotations(), getModality(), getVisibility(), isVar(), isObjectDeclaration(), getName());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, true, true, getKind());
+    }
+
+    private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
+            DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
+        PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(preserveOriginal ? getOriginal() : this, newOwner,
+                getAnnotations(), newModality, getVisibility(), isVar(), isObjectDeclaration(), getName(), kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -202,6 +214,36 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
         substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
 
+        PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
+                substitutedDescriptor, Lists.newArrayList(getter.getAnnotations()),
+                DescriptorUtils.convertModality(getter.getModality(), false), getter.getVisibility(),
+                getter.hasBody(), getter.isDefault(), kind);
+        if (newGetter != null) {
+            JetType returnType = getter.getReturnType();
+            newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
+        }
+        PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
+                substitutedDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), false), setter.getVisibility(),
+                setter.hasBody(), setter.isDefault(), kind);
+        if (newSetter != null) {
+            List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorUtil.getSubstitutedValueParameters(newSetter, setter, substitutor);
+            if (substitutedValueParameters == null) {
+                return null;
+            }
+            if (substitutedValueParameters.size() != 1) {
+                throw new IllegalStateException();
+            }
+            newSetter.initialize(substitutedValueParameters.get(0));
+        }
+
+        substitutedDescriptor.initialize(newGetter, newSetter);
+
+        if (copyOverrides) {
+            for (PropertyDescriptor propertyDescriptor : overriddenProperties) {
+                substitutedDescriptor.addOverriddenDescriptor(propertyDescriptor.substitute(substitutor));
+            }
+        }
+
         return substitutedDescriptor;
     }
 
@@ -216,6 +258,11 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return original;
     }
 
+    @Override
+    public Kind getKind() {
+        return kind;
+    }
+
     public void addOverriddenDescriptor(PropertyDescriptor overridden) {
         overriddenProperties.add(overridden);
     }
@@ -228,30 +275,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     @NotNull
     @Override
-    public PropertyDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
-                newOwner,
-                Lists.newArrayList(getAnnotations()),
-                DescriptorUtils.convertModality(modality, makeNonAbstract), visibility, isVar, isObject,
-                getName());
-
-        propertyDescriptor.setType(getOutType(), DescriptorUtils.copyTypeParameters(propertyDescriptor, getTypeParameters()), expectedThisObject, receiver.exists() ? receiver.getType() : null);
-
-        PropertyGetterDescriptor newGetter = getter == null ? null : new PropertyGetterDescriptor(
-                propertyDescriptor, Lists.newArrayList(getter.getAnnotations()),
-                DescriptorUtils.convertModality(getter.getModality(), makeNonAbstract), getter.getVisibility(),
-                getter.hasBody(), getter.isDefault());
-        if (newGetter != null) {
-            newGetter.initialize(getter.getReturnType());
-        }
-        PropertySetterDescriptor newSetter = setter == null ? null : new PropertySetterDescriptor(
-                propertyDescriptor, Lists.newArrayList(setter.getAnnotations()), DescriptorUtils.convertModality(setter.getModality(), makeNonAbstract), setter.getVisibility(),
-                setter.hasBody(), setter.isDefault());
-        if (newSetter != null) {
-            newSetter.initialize(setter.getValueParameters().get(0).copy(newSetter));
-        }
-        propertyDescriptor.initialize(newGetter, newSetter);
-        return propertyDescriptor;
+    public PropertyDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
     }
     
     public static PropertyDescriptor createDummy() {

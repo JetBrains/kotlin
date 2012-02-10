@@ -31,24 +31,29 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
 
     protected Modality modality;
     protected Visibility visibility;
-    private final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
+    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
     private final FunctionDescriptor original;
+    private final Kind kind;
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name) {
+            @NotNull String name,
+            Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = this;
+        this.kind = kind;
     }
 
     protected FunctionDescriptorImpl(
-            @NotNull DeclarationDescriptor containigDeclaration,
+            @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name) {
-        super(containigDeclaration, annotations, name);
+            @NotNull String name,
+            Kind kind) {
+        super(containingDeclaration, annotations, name);
         this.original = original;
+        this.kind = kind;
     }
 
     public FunctionDescriptorImpl initialize(
@@ -147,16 +152,21 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     @Override
+    public Kind getKind() {
+        return kind;
+    }
+
+    @Override
     public final FunctionDescriptor substitute(TypeSubstitutor originalSubstitutor) {
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, true);
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, true, true, getKind());
     }
 
     protected FunctionDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
-            DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal) {
-        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, preserveOriginal);
+            DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
+        FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, preserveOriginal, kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -197,13 +207,15 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
                 newModality, 
                 visibility
         );
-        for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-            substitutedDescriptor.addOverriddenFunction(overriddenFunction);
+        if (copyOverrides) {
+            for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
+                substitutedDescriptor.addOverriddenFunction(overriddenFunction.substitute(substitutor));
+            }
         }
         return substitutedDescriptor;
     }
 
-    protected abstract FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal);
+    protected abstract FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind);
 
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {

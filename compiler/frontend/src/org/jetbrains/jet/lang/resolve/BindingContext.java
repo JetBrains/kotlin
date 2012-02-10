@@ -16,6 +16,7 @@ import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.slicedmap.*;
 
 import java.util.Collection;
+import java.util.Set;
 
 import static org.jetbrains.jet.util.slicedmap.RewritePolicy.DO_NOTHING;
 
@@ -65,6 +66,9 @@ public interface BindingContext {
     WritableSlice<PropertyDescriptor, Boolean> BACKING_FIELD_REQUIRED = new Slices.SetSlice<PropertyDescriptor>(DO_NOTHING) {
         @Override
         public Boolean computeValue(SlicedMap map, PropertyDescriptor propertyDescriptor, Boolean backingFieldRequired, boolean valueNotFound) {
+            if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                return false;
+            }
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             assert backingFieldRequired != null;
             PsiElement declarationPsiElement = map.get(DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
@@ -105,6 +109,18 @@ public interface BindingContext {
     Slices.KeyNormalizer<DeclarationDescriptor> DECLARATION_DESCRIPTOR_NORMALIZER = new Slices.KeyNormalizer<DeclarationDescriptor>() {
         @Override
         public DeclarationDescriptor normalize(DeclarationDescriptor declarationDescriptor) {
+            if (declarationDescriptor instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
+                if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+                    if (overriddenDescriptors.size() != 1) {
+                        throw new IllegalStateException(
+                                "cannot find declaration: fake descriptor" +
+                                " has more then one overriden descriptor: " + declarationDescriptor);
+                    }
+                    return normalize(overriddenDescriptors.iterator().next());
+                }
+            }
             if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
                 VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
                 return descriptor.getVariableDescriptor().getOriginal();

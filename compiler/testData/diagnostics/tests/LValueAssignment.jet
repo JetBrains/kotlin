@@ -12,7 +12,7 @@ class C() : B() {
         this.b = 123
         super.b = 23
         <!VAL_REASSIGNMENT!>this.c<!> = 34
-        super.c = 3535 //repeat for 'c'
+        <!VAL_REASSIGNMENT!>super.c<!> = 3535 //repeat for 'c'
 
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }

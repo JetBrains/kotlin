@@ -19,12 +19,12 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     private final boolean isPrimary;
 
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, annotations, "<init>");
+        super(containingDeclaration, annotations, "<init>", Kind.DECLARATION);
         this.isPrimary = isPrimary;
     }
 
     public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull List<AnnotationDescriptor> annotations, boolean isPrimary) {
-        super(containingDeclaration, original, annotations, "<init>");
+        super(containingDeclaration, original, annotations, "<init>", Kind.DECLARATION);
         this.isPrimary = isPrimary;
     }
 
@@ -85,7 +85,10 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+        if (kind != Kind.DECLARATION) {
+            throw new IllegalStateException();
+        }
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
@@ -95,7 +98,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     @NotNull
     @Override
-    public ConstructorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+    public ConstructorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Constructors should not be copied for overriding");
     }
 }

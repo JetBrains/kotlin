@@ -12,6 +12,22 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
 
+    public enum Kind {
+        DECLARATION,
+        FAKE_OVERRIDE,
+        DELEGATION,
+        ;
+        
+        public boolean isReal() {
+            return this == DECLARATION || this == DELEGATION;
+        }
+    }
+
+    /**
+     * Is this a real function or function projection.
+     */
+    Kind getKind();
+
     @NotNull
-    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract);
+    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
 }

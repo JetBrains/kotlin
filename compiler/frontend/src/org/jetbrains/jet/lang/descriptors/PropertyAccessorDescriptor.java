@@ -20,6 +20,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     private final Modality modality;
     private final Visibility visibility;
     private final PropertyDescriptor correspondingProperty;
+    private final Kind kind;
 
     public PropertyAccessorDescriptor(
             @NotNull Modality modality,
@@ -28,13 +29,15 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             boolean hasBody,
-            boolean isDefault) {
+            boolean isDefault,
+            Kind kind) {
         super(correspondingProperty.getContainingDeclaration(), annotations, name);
         this.modality = modality;
         this.visibility = visibility;
         this.correspondingProperty = correspondingProperty;
         this.hasBody = hasBody;
         this.isDefault = isDefault;
+        this.kind = kind;
     }
 
     public boolean hasBody() {
@@ -43,6 +46,11 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     public boolean isDefault() {
         return isDefault;
+    }
+
+    @Override
+    public Kind getKind() {
+        return kind;
     }
 
     @NotNull
@@ -94,7 +102,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
 
     @NotNull
     @Override
-    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+    public PropertyAccessorDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Accessors must be copied by the corresponding property");
     }
 

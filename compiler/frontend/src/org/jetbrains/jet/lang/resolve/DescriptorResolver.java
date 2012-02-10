@@ -142,7 +142,8 @@ public class DescriptorResolver {
         final NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
                 containingDescriptor,
                 annotationResolver.resolveAnnotations(scope, function.getModifierList()),
-                JetPsiUtil.safeName(function.getName())
+                JetPsiUtil.safeName(function.getName()),
+                CallableMemberDescriptor.Kind.DECLARATION
         );
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
@@ -470,7 +471,8 @@ public class DescriptorResolver {
                 visibility,
                 false,
                 true,
-                JetPsiUtil.safeName(objectDeclaration.getName())
+                JetPsiUtil.safeName(objectDeclaration.getName()),
+                CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
@@ -527,7 +529,8 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
                 false,
-                JetPsiUtil.safeName(property.getName())
+                JetPsiUtil.safeName(property.getName()),
+                CallableMemberDescriptor.Kind.DECLARATION
         );
 
         List<TypeParameterDescriptor> typeParameterDescriptors;
@@ -677,7 +680,7 @@ public class DescriptorResolver {
             setterDescriptor = new PropertySetterDescriptor(
                     propertyDescriptor, annotations, resolveModalityFromModifiers(setter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(setter.getModifierList(), propertyDescriptor.getVisibility()),
-                    setter.getBodyExpression() != null, false);
+                    setter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
             if (parameter != null) {
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
@@ -731,7 +734,7 @@ public class DescriptorResolver {
         setterDescriptor = new PropertySetterDescriptor(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                false, true);
+                false, true, CallableMemberDescriptor.Kind.DECLARATION);
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
@@ -757,7 +760,7 @@ public class DescriptorResolver {
             getterDescriptor = new PropertyGetterDescriptor(
                     propertyDescriptor, annotations, resolveModalityFromModifiers(getter.getModifierList(), propertyDescriptor.getModality()),
                     resolveVisibilityFromModifiers(getter.getModifierList(), propertyDescriptor.getVisibility()),
-                    getter.getBodyExpression() != null, false);
+                    getter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
@@ -773,7 +776,7 @@ public class DescriptorResolver {
         getterDescriptor = new PropertyGetterDescriptor(
                 propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), propertyDescriptor.getModality(),
                 propertyDescriptor.getVisibility(),
-                false, true);
+                false, true, CallableMemberDescriptor.Kind.DECLARATION);
         return getterDescriptor;
     }
 
@@ -845,7 +848,8 @@ public class DescriptorResolver {
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 false,
-                name == null ? "<no name>" : name
+                name == null ? "<no name>" : name,
+                CallableMemberDescriptor.Kind.DECLARATION
         );
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
 

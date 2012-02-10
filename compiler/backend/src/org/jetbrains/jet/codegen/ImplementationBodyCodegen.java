@@ -1,6 +1,9 @@
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -405,7 +408,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             signatureWriter.writeVoidReturn();
 
             constructorMethod = signatureWriter.makeJvmMethodSignature("<init>");
-            callableMethod = new CallableMethod("", constructorMethod, INVOKESPECIAL);
+            callableMethod = new CallableMethod("", "", "", constructorMethod, INVOKESPECIAL);
         }
         else {
             callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
@@ -651,62 +654,65 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods(ExpressionCodegen codegen) {
         if(!(myClass instanceof JetClass) || ((JetClass)myClass).isTrait() || ((JetClass)myClass).hasModifier(JetTokens.ABSTRACT_KEYWORD))
             return;
+        
+        for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
+            CallableMemberDescriptor callableDescriptor = needDelegates.first;
+            FunctionDescriptor fun = (FunctionDescriptor) needDelegates.second;
+            generateDelegationToTraitImpl(codegen, fun);
+        }
+    }
 
-        for (CallableDescriptor callableDescriptor : OverridingUtil.getEffectiveMembers(descriptor)) {
-            if(callableDescriptor instanceof FunctionDescriptor) {
-                FunctionDescriptor fun = (FunctionDescriptor) callableDescriptor;
-                DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
-                if(containingDeclaration instanceof ClassDescriptor) {
-                    ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
-                    PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaration);
-                    if(psiElement instanceof JetClass) {
-                        JetClass jetClass = (JetClass) psiElement;
-                        if(jetClass.isTrait()) {
-                            int flags = ACC_PUBLIC; // TODO.
+    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun) {
+        DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
+        if(containingDeclaration instanceof ClassDescriptor) {
+            ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
+            PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaration);
+            if(psiElement instanceof JetClass) {
+                JetClass jetClass = (JetClass) psiElement;
+                if(jetClass.isTrait()) {
+                    int flags = ACC_PUBLIC; // TODO.
 
-                            Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
-                            Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
+                    Method function = typeMapper.mapSignature(fun.getName(), fun).getAsmMethod();
+                    Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
 
-                            final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
-                            if (v.generateCode()) {
-                                mv.visitCode();
+                    final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
+                    if (v.generateCode()) {
+                        mv.visitCode();
 
-                                codegen.generateThisOrOuter(descriptor);
+                        codegen.generateThisOrOuter(descriptor);
 
-                                Type[] argTypes = function.getArgumentTypes();
-                                InstructionAdapter iv = new InstructionAdapter(mv);
-                                iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                                for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                                    Type argType = argTypes[i];
-                                    iv.load(reg, argType);
-                                    //noinspection AssignmentToForLoopParameter
-                                    reg += argType.getSize();
-                                }
-
-                                JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, bindingContext);
-                                Type type = typeMapper.mapType(jetType);
-                                if(type.getInternalName().equals("java/lang/Object")) {
-                                    jetType = declaration.getDefaultType();
-                                    type = typeMapper.mapType(jetType);
-                                }
-
-                                String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
-                                iv.invokestatic(typeMapper.mapType(((ClassDescriptor) fun.getContainingDeclaration()).getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName(), function.getName(), fdescriptor);
-                                if(function.getReturnType().getSort() == Type.OBJECT) {
-                                    iv.checkcast(function.getReturnType());
-                                }
-                                iv.areturn(function.getReturnType());
-                                FunctionCodegen.endVisit(iv, "trait method", bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fun));
-                            }
-
-                            FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
+                        Type[] argTypes = function.getArgumentTypes();
+                        InstructionAdapter iv = new InstructionAdapter(mv);
+                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                            Type argType = argTypes[i];
+                            iv.load(reg, argType);
+                            //noinspection AssignmentToForLoopParameter
+                            reg += argType.getSize();
                         }
+
+                        JetType jetType = TraitImplBodyCodegen.getSuperClass(declaration, bindingContext);
+                        Type type = typeMapper.mapType(jetType);
+                        if(type.getInternalName().equals("java/lang/Object")) {
+                            jetType = declaration.getDefaultType();
+                            type = typeMapper.mapType(jetType);
+                        }
+
+                        String fdescriptor = functionOriginal.getDescriptor().replace("(","(" +  type.getDescriptor());
+                        iv.invokestatic(typeMapper.mapType(((ClassDescriptor) fun.getContainingDeclaration()).getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName(), function.getName(), fdescriptor);
+                        if(function.getReturnType().getSort() == Type.OBJECT) {
+                            iv.checkcast(function.getReturnType());
+                        }
+                        iv.areturn(function.getReturnType());
+                        FunctionCodegen.endVisit(iv, "trait method", bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fun));
                     }
+
+                    FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);
                 }
             }
         }
     }
-    
+
     @Nullable
     private ClassDescriptor getOuterClassDescriptor() {
         if (myClass.getParent() instanceof JetClassObject) {
@@ -891,7 +897,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         String owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                        StackValue.property(propertyDescriptor.getName(), owner, typeMapper.mapType(propertyDescriptor.getOutType()), false, false, false, null, null).store(iv);
+                        StackValue.property(propertyDescriptor.getName(), owner, owner, typeMapper.mapType(propertyDescriptor.getOutType()), false, false, false, null, null, 0).store(iv);
                     }
 
                 }
@@ -998,4 +1004,43 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         });
     }
+
+
+    /**
+     * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
+     * second is member of trait that contain implementation.
+     */
+    public static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
+        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
+        
+        root:
+        for (DeclarationDescriptor decl : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(decl instanceof CallableMemberDescriptor)) {
+                continue;
+            }
+
+            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) decl;
+            if (callableMemberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                continue;
+            }
+
+            Collection<CallableMemberDescriptor> overridenDeclarations = OverridingUtil.getOverridenDeclarations(callableMemberDescriptor);
+            for (CallableMemberDescriptor overridenDeclaration : overridenDeclarations) {
+                if (overridenDeclaration.getModality() != Modality.ABSTRACT) {
+                    if (!CodegenUtil.isInterface(overridenDeclaration.getContainingDeclaration())) {
+                        continue root;
+                    }
+                }
+            }
+            
+            for (CallableMemberDescriptor overridenDeclaration : overridenDeclarations) {
+                if (overridenDeclaration.getModality() != Modality.ABSTRACT) {
+                    r.add(Pair.create(callableMemberDescriptor, overridenDeclaration));
+                }
+            }
+        }
+
+        return r;
+    }
+
 }

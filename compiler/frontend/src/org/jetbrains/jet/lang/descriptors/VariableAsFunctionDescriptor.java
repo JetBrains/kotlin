@@ -21,7 +21,7 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     private final VariableDescriptor variableDescriptor;
 
     private VariableAsFunctionDescriptor(VariableDescriptor variableDescriptor) {
-        super(variableDescriptor.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), variableDescriptor.getName());
+        super(variableDescriptor.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), variableDescriptor.getName(), Kind.DECLARATION);
         this.variableDescriptor = variableDescriptor;
     }
 
@@ -31,12 +31,12 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
 
     @NotNull
     @Override
-    public VariableAsFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract) {
+    public VariableAsFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         throw new UnsupportedOperationException("Should not be copied for overriding");
     }
 
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
         throw new IllegalStateException();
     }
 }

@@ -1,15 +1,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -106,8 +105,8 @@ public abstract class StackValue {
         return new Field(type, owner, name, isStatic);
     }
 
-    public static Property property(String name, String owner, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter) {
-        return new Property(name, owner, getter, setter, isStatic, isInterface, isSuper, type);
+    public static Property property(String name, String methodOwner, String methodOwnerParam, Type type, boolean isStatic, boolean isInterface, boolean isSuper, Method getter, Method setter, int invokeOpcode) {
+        return new Property(name, methodOwner, methodOwnerParam, getter, setter, isStatic, isInterface, isSuper, type, invokeOpcode);
     }
 
     public static StackValue expression(Type type, JetExpression expression, ExpressionCodegen generator) {
@@ -770,38 +769,50 @@ public abstract class StackValue {
     }
 
     static class Property extends StackValue {
+        @NotNull
         private final String name;
         @Nullable
         private final Method getter;
         @Nullable
         private final Method setter;
-        public final String owner;
+        @NotNull
+        public final String methodOwner;
+        @NotNull
+        private final String methodOwnerParam;
         private final boolean isStatic;
         private final boolean isInterface;
-        private boolean isSuper;
+        private final boolean isSuper;
+        private final int invokeOpcode;
 
-        public Property(String name, String owner, Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type) {
+        public Property(@NotNull String name, @NotNull String methodOwner, @NotNull String methodOwnerParam, Method getter, Method setter, boolean aStatic, boolean isInterface, boolean isSuper, Type type, int invokeOpcode) {
             super(type);
             this.name = name;
-            this.owner = owner;
+            this.methodOwner = methodOwner;
+            this.methodOwnerParam = methodOwnerParam;
             this.getter = getter;
             this.setter = setter;
             isStatic = aStatic;
             this.isInterface = isInterface;
             this.isSuper = isSuper;
+            this.invokeOpcode = invokeOpcode;
+            if (invokeOpcode == 0) {
+                if (setter != null || getter != null) {
+                    throw new IllegalArgumentException();
+                }
+            }
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + JvmAbi.TRAIT_IMPL_SUFFIX, getter.getName(), getter.getDescriptor().replace("(","(L" + owner + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, getter.getName(), getter.getDescriptor().replace("(", "(L" + methodOwnerParam + ";"));
             }
             else {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, owner, name, this.type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.GETSTATIC : Opcodes.GETFIELD, methodOwner, name, this.type.getDescriptor());
             }
             else {
-                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, getter.getName(), getter.getDescriptor());
+                v.visitMethodInsn(invokeOpcode, methodOwner, getter.getName(), getter.getDescriptor());
             }
             }
             coerce(type, v);
@@ -810,14 +821,14 @@ public abstract class StackValue {
         @Override
         public void store(InstructionAdapter v) {
             if(isSuper && isInterface) {
-                v.visitMethodInsn(Opcodes.INVOKESTATIC, owner + JvmAbi.TRAIT_IMPL_SUFFIX, setter.getName(), setter.getDescriptor().replace("(","(L" + owner + ";"));
+                v.visitMethodInsn(Opcodes.INVOKESTATIC, methodOwner, setter.getName(), setter.getDescriptor().replace("(", "(L" + methodOwnerParam + ";"));
             }
             else {
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, owner, name, this.type.getDescriptor());
+                v.visitFieldInsn(isStatic ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD, methodOwner, name, this.type.getDescriptor());
             }
             else {
-                    v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isSuper ? Opcodes.INVOKESPECIAL : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, setter.getName(), setter.getDescriptor());
+                v.visitMethodInsn(invokeOpcode, methodOwner, setter.getName(), setter.getDescriptor());
                 }
             }
         }

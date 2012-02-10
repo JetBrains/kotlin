@@ -1,7 +1,7 @@
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -45,7 +45,7 @@ public class DelegationResolver {
                         if (declarationDescriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
                             if (propertyDescriptor.getModality().isOverridable()) {
-                                PropertyDescriptor copy = propertyDescriptor.copy(classDescriptor, true);
+                                PropertyDescriptor copy = propertyDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.addPropertyDescriptor(copy);
                                 context.getTrace().record(DELEGATED, copy);
                             }
@@ -53,7 +53,7 @@ public class DelegationResolver {
                         else if (declarationDescriptor instanceof NamedFunctionDescriptor) {
                             NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) declarationDescriptor;
                             if (functionDescriptor.getModality().isOverridable()) {
-                                NamedFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true);
+                                NamedFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.addFunctionDescriptor(copy);
                                 context.getTrace().record(DELEGATED, copy);
                             }

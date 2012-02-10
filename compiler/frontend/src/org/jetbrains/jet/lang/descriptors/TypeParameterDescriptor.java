@@ -238,7 +238,8 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
     @NotNull
     public TypeParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
         TypeParameterDescriptor copy = new TypeParameterDescriptor(newOwner, Lists.newArrayList(getAnnotations()), reified, variance, getName(), index);
+        copy.upperBounds.addAll(this.upperBounds);
         copy.initialized = this.initialized;
-        return  copy;
+        return copy;
     }
 }

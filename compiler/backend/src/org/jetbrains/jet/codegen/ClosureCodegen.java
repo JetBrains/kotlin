@@ -71,7 +71,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     public static CallableMethod asCallableMethod(FunctionDescriptor fd) {
         JvmMethodSignature descriptor = erasedInvokeSignature(fd);
         String owner = getInternalClassName(fd);
-        final CallableMethod result = new CallableMethod(owner, descriptor, INVOKEVIRTUAL);
+        final CallableMethod result = new CallableMethod(owner, "", "", descriptor, INVOKEVIRTUAL);
         if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(fd);
         }
