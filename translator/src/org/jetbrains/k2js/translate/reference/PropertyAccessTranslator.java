@@ -29,8 +29,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
         if (isNativeObject(descriptor)) {
             return new NativePropertyAccessTranslator(descriptor, /*qualifier = */ null, context);
         } else {
-            return new KotlinPropertyAccessTranslator(descriptor, /*qualifier = */ null, /*backingFieldAccess = */ false,
-                    resolvedCall, context);
+            return new KotlinPropertyAccessTranslator(descriptor, /*qualifier = */ null, resolvedCall, context);
         }
     }
 
@@ -39,13 +38,11 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
                                                        @Nullable JsExpression qualifier,
                                                        @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
-        if (isNativeObject(propertyDescriptor)) {
+        if (isNativeObject(propertyDescriptor) || isBackingFieldReference(expression)) {
             return new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
         }
         ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
-        boolean backingFieldAccess = isBackingFieldReference(expression);
-        return new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier,
-                backingFieldAccess, resolvedCall, context);
+        return new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier, resolvedCall, context);
     }
 
     @NotNull
@@ -103,13 +100,6 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     public static boolean canBePropertyAccess(@NotNull JetExpression expression,
                                               @NotNull TranslationContext context) {
         return canBePropertyGetterCall(expression, context);
-    }
-
-    public enum CallType {
-        SAFE,
-        //TODO: bang qualifier is not implemented in frontend for now
-        BANG,
-        NORMAL
     }
 
     //TODO: we use normal by default but may cause bugs

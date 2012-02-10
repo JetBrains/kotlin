@@ -19,6 +19,7 @@ import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;

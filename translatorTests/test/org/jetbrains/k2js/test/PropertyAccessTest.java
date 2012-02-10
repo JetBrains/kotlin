@@ -62,8 +62,13 @@ public final class PropertyAccessTest extends TranslationTest {
     }
 
 
-    public void classUsesNamespaceProperties() throws Exception {
+    public void testClassUsesNamespaceProperties() throws Exception {
         testFooBoxIsTrue("classUsesNamespaceProperties.kt");
+    }
+
+
+    public void testSafeAccess() throws Exception {
+        testFooBoxIsTrue("safeAccess.kt");
     }
 
 }

@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.expression.QualifiedExpressionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 /**

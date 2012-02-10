@@ -114,7 +114,6 @@
             this.$dragOff = new creatures.Vector_0(0, 0);
             this.$interval = 1000 / 30;
             {
-                var tmp$5;
                 var tmp$4;
                 var tmp$3;
                 var tmp$2;
@@ -170,15 +169,9 @@
                     }
                 }
                     ));
-                $(this.get_canvas()).resize((tmp$4 = this , function () {
+                setInterval((tmp$4 = this , function () {
                     {
-                        tmp$4.updateSize();
-                    }
-                }
-                    ));
-                setInterval((tmp$5 = this , function () {
-                    {
-                        tmp$5.draw();
+                        tmp$4.draw();
                     }
                 }
                     ), this.get_interval());
@@ -217,11 +210,6 @@
             this.$dragOff = tmp$0;
         }, get_interval:function () {
             return this.$interval;
-        }, updateSize:function () {
-            {
-                this.set_width(this.get_canvas().width);
-                this.set_height(this.get_canvas().height);
-            }
         }, mousePos_0:function (e) {
             {
                 var offset = new creatures.Vector_0(0, 0);

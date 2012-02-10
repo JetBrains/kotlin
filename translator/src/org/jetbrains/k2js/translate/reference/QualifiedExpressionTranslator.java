@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.expression;
+package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
@@ -8,9 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.AccessTranslator;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
-import org.jetbrains.k2js.translate.reference.PropertyAccessTranslator;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
@@ -32,13 +29,7 @@ public final class QualifiedExpressionTranslator {
         JsExpression receiver = translateReceiver(expression, context);
         PropertyAccessTranslator result =
                 PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver, context);
-        //TODO: util if this code duplicates
-        if (expression instanceof JetSafeQualifiedExpression) {
-            result.setCallType(PropertyAccessTranslator.CallType.SAFE);
-        }
-        if (expression instanceof JetDotQualifiedExpression) {
-            result.setCallType(PropertyAccessTranslator.CallType.NORMAL);
-        }
+        result.setCallType(CallType.getCallTypeForQualifierExpression(expression));
         return result;
     }
 
