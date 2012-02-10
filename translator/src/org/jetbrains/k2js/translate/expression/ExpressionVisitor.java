@@ -17,10 +17,7 @@ import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
-import org.jetbrains.k2js.translate.reference.AccessTranslator;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
-import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
-import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
+import org.jetbrains.k2js.translate.reference.*;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -135,7 +132,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitCallExpression(@NotNull JetCallExpression expression,
                                       @NotNull TranslationContext context) {
-        return CallTranslator.translate(expression, null, context);
+        return CallTranslator.translate(expression, null, CallType.NORMAL, context);
     }
 
     @Override
@@ -260,7 +257,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
                                               @NotNull TranslationContext context) {
-        return QualifiedExpressionTranslator.translateDotQualifiedExpression(expression, context);
+        return QualifiedExpressionTranslator.translateQualifiedExpression(expression, context);
     }
 
     @Override
@@ -289,7 +286,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression,
                                                @NotNull TranslationContext context) {
-        return QualifiedExpressionTranslator.translateSafeQualifiedExpression(expression, context);
+        return QualifiedExpressionTranslator.translateQualifiedExpression(expression, context);
     }
 
     @Override

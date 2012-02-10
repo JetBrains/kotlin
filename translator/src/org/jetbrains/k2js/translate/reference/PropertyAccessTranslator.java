@@ -36,13 +36,18 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     @NotNull
     public static PropertyAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
                                                        @Nullable JsExpression qualifier,
+                                                       @NotNull CallType callType,
                                                        @NotNull TranslationContext context) {
+        PropertyAccessTranslator result;
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
         if (isNativeObject(propertyDescriptor) || isBackingFieldReference(expression)) {
-            return new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
+            result = new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
+        } else {
+            ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
+            result = new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier, resolvedCall, context);
         }
-        ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
-        return new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier, resolvedCall, context);
+        result.setCallType(callType);
+        return result;
     }
 
     @NotNull
@@ -67,8 +72,9 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     @NotNull
     public static JsExpression translateAsPropertyGetterCall(@NotNull JetSimpleNameExpression expression,
                                                              @Nullable JsExpression qualifier,
+                                                             @NotNull CallType callType,
                                                              @NotNull TranslationContext context) {
-        return (newInstance(expression, qualifier, context))
+        return (newInstance(expression, qualifier, callType, context))
                 .translateAsGet();
     }
 

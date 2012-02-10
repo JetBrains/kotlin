@@ -111,7 +111,7 @@ public final class DescriptorUtils {
     }
 
 
-    public static boolean isVariableDescriptor(@Nullable DeclarationDescriptor referencedDescriptor) {
+    public static boolean isVariableAsFunction(@Nullable DeclarationDescriptor referencedDescriptor) {
         return referencedDescriptor instanceof VariableAsFunctionDescriptor;
     }
 

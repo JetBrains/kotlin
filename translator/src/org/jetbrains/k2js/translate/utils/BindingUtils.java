@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isVariableDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isVariableAsFunction;
 
 /**
  * @author Pavel Talanov
@@ -191,7 +191,7 @@ public final class BindingUtils {
     private static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
                                                                                      @NotNull JetReferenceExpression reference) {
         DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
-        if (isVariableDescriptor(referencedDescriptor)) {
+        if (isVariableAsFunction(referencedDescriptor)) {
             assert referencedDescriptor != null;
             return getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) referencedDescriptor);
         }

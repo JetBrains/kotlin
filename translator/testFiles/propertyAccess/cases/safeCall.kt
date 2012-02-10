@@ -2,7 +2,6 @@ package foo
 
 class A() {
   fun doSomething() {
-
   }
 }
 

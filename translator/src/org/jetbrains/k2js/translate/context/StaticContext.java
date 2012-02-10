@@ -126,6 +126,14 @@ public class StaticContext {
 
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+
+        //TODO: refactor
+        if (descriptor instanceof PropertyDescriptor) {
+            return null;
+        }
+        if (isVariableAsFunction(descriptor)) {
+            return null;
+        }
         //TODO: hack!
         if (AnnotationsUtils.isNativeObject(descriptor)) {
             return null;

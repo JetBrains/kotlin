@@ -37,24 +37,15 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        return getterCall();
-    }
-
-    @NotNull
-    private JsExpression getterCall() {
-        return CallTranslator.translate(qualifier, resolvedCall, propertyDescriptor.getGetter(), context());
+        return CallTranslator.translate(qualifier, resolvedCall, propertyDescriptor.getGetter(), getCallType(), context());
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
 
-        return setterCall(toSetTo);
+        return CallTranslator.translate(qualifier, Arrays.asList(toSetTo),
+                resolvedCall, propertyDescriptor.getSetter(), getCallType(), context());
     }
 
-    @NotNull
-    private JsExpression setterCall(@NotNull JsExpression toSetTo) {
-        return CallTranslator.translate(qualifier, Arrays.asList(toSetTo),
-                resolvedCall, propertyDescriptor.getSetter(), context());
-    }
 }

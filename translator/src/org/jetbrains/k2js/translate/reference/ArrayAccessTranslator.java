@@ -44,7 +44,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
         ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context().bindingContext(), expression);
         List<JsExpression> arguments = translateIndexExpressions();
         return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
-                methodDescriptor, context());
+                methodDescriptor, CallType.NORMAL, context());
     }
 
     @Override
@@ -54,7 +54,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
         List<JsExpression> arguments = translateIndexExpressions();
         arguments.add(expression);
         return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
-                methodDescriptor, context());
+                methodDescriptor, CallType.NORMAL, context());
     }
 
     @NotNull

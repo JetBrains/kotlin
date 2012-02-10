@@ -19,7 +19,7 @@ public final class ReferenceTranslator {
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
                                                    @NotNull TranslationContext context) {
         if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
-            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, null, context);
+            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, null, CallType.NORMAL, context);
         }
         DeclarationDescriptor referencedDescriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);

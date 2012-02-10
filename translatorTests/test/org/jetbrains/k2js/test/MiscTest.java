@@ -14,7 +14,7 @@ public final class MiscTest extends AbstractExpressionTest {
         return MAIN;
     }
 
-    public void testNamespaceProperties() throws Exception {
+    public void testLocalPropertys() throws Exception {
         testFunctionOutput("localProperty.jet", "foo", "box", 50);
     }
 

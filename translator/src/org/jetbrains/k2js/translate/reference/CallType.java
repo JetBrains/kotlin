@@ -6,6 +6,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNullLiteral;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression;
@@ -21,20 +22,16 @@ public enum CallType {
     SAFE {
         @NotNull
         @Override
-        JsExpression mutateSelector(@NotNull JsExpression selector, @NotNull TranslationContext context) {
-            TemporaryVariable temporaryVariable = context.declareTemporary(selector);
-            return newSequence(temporaryVariable.assignmentExpression(), temporaryVariable.nameReference());
-        }
-
-        @NotNull
-        @Override
-        JsExpression mutateExpression(@NotNull JsExpression mutatedSelector,
-                                      @NotNull JsExpression expressionWithMutatedSelector,
-                                      @NotNull TranslationContext context) {
+        JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+                                   @NotNull TranslationContext context) {
+            assert receiver != null;
+            TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
             JsNullLiteral nullLiteral = context.program().getNullLiteral();
             //TODO: find similar not null checks
-            JsBinaryOperation notNullCheck = AstUtil.notEqual(expressionWithMutatedSelector, nullLiteral);
-            return new JsConditional(notNullCheck, expressionWithMutatedSelector, nullLiteral);
+            JsBinaryOperation notNullCheck = AstUtil.notEqual(temporaryVariable.nameReference(), nullLiteral);
+            JsConditional callMethodIfNotNullElseNull =
+                    new JsConditional(notNullCheck, constructor.construct(temporaryVariable.nameReference()), nullLiteral);
+            return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);
         }
     },
     //TODO: bang qualifier is not implemented in frontend for now
@@ -42,36 +39,28 @@ public enum CallType {
     NORMAL {
         @NotNull
         @Override
-        JsExpression mutateSelector(@NotNull JsExpression selector, @NotNull TranslationContext context) {
-            // do not mutate
-            return selector;
-        }
-
-        @NotNull
-        @Override
-        JsExpression mutateExpression(@NotNull JsExpression mutatedSelector,
-                                      @NotNull JsExpression expression,
-                                      @NotNull TranslationContext context) {
-            // do not mutate
-            return expression;
+        JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+                                   @NotNull TranslationContext context) {
+            return constructor.construct(receiver);
         }
     };
 
     @NotNull
-    abstract JsExpression mutateSelector(@NotNull JsExpression selector, @NotNull TranslationContext context);
+    abstract JsExpression constructCall(@Nullable JsExpression receiver, @NotNull CallConstructor constructor,
+                                        @NotNull TranslationContext context);
 
     @NotNull
-    abstract JsExpression mutateExpression(@NotNull JsExpression mutatedSelector,
-                                           @NotNull JsExpression expression,
-                                           @NotNull TranslationContext context);
-
-    @NotNull
-    public static CallType getCallTypeForQualifierExpression(@NotNull JetQualifiedExpression expression) {
+    public static CallType getCallTypeForQualifiedExpression(@NotNull JetQualifiedExpression expression) {
         if (expression instanceof JetSafeQualifiedExpression) {
             return SAFE;
         }
         assert expression instanceof JetDotQualifiedExpression;
         return NORMAL;
+    }
+
+    public interface CallConstructor {
+        @NotNull
+        JsExpression construct(@Nullable JsExpression receiver);
     }
 
 }

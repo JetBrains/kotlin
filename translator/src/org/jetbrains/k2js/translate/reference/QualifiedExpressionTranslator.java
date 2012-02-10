@@ -1,18 +1,16 @@
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNullLiteral;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelector;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.notNullCheck;
 
 /**
  * @author Pavel Talanov
@@ -28,44 +26,38 @@ public final class QualifiedExpressionTranslator {
 
         JsExpression receiver = translateReceiver(expression, context);
         PropertyAccessTranslator result =
-                PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver, context);
-        result.setCallType(CallType.getCallTypeForQualifierExpression(expression));
+                PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver,
+                        CallType.getCallTypeForQualifiedExpression(expression), context);
+        result.setCallType(CallType.getCallTypeForQualifiedExpression(expression));
         return result;
     }
 
     @NotNull
-    public static JsExpression translateSafeQualifiedExpression(@NotNull JetSafeQualifiedExpression expression,
-                                                                @NotNull TranslationContext context) {
-        TemporaryVariable receiver = context.declareTemporary(translateReceiver(expression, context));
-        JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        JetExpression selector = getSelector(expression);
-        JsExpression thenExpression = translate(receiver.nameReference(), selector, context);
-        JsConditional callMethodIfNotNullConditional
-                = new JsConditional(notNullCheck(context, receiver.nameReference()), thenExpression, nullLiteral);
-        return AstUtil.newSequence(receiver.assignmentExpression(), callMethodIfNotNullConditional);
-    }
-
-    @NotNull
-    public static JsExpression translateDotQualifiedExpression(@NotNull JetDotQualifiedExpression expression,
-                                                               @NotNull TranslationContext context) {
+    public static JsExpression translateQualifiedExpression(@NotNull JetQualifiedExpression expression,
+                                                            @NotNull TranslationContext context) {
         JsExpression receiver = translateReceiver(expression, context);
         JetExpression selector = getSelector(expression);
-        return translate(receiver, selector, context);
+        CallType callType = CallType.getCallTypeForQualifiedExpression(expression);
+        return dispatchToCorrectTranslator(receiver, selector, callType, context);
     }
 
     @NotNull
-    private static JsExpression translate(@NotNull JsExpression receiver, @NotNull JetExpression selector,
-                                          @NotNull TranslationContext context) {
+    private static JsExpression dispatchToCorrectTranslator(@NotNull JsExpression receiver,
+                                                            @NotNull JetExpression selector,
+                                                            @NotNull CallType callType,
+                                                            @NotNull TranslationContext context) {
         if (PropertyAccessTranslator.canBePropertyGetterCall(selector, context)) {
+            assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
             return PropertyAccessTranslator.translateAsPropertyGetterCall
-                    ((JetSimpleNameExpression) selector, receiver, context);
+                    ((JetSimpleNameExpression) selector, receiver, callType, context);
         }
         if (selector instanceof JetCallExpression) {
-            return CallTranslator.translate((JetCallExpression) selector, receiver, context);
+            return CallTranslator.translate((JetCallExpression) selector, receiver, callType, context);
         }
         throw new AssertionError("Unexpected qualified expression");
     }
 
+    //TODO: if has duplications
     @NotNull
     private static JsExpression translateReceiver(@NotNull JetQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {

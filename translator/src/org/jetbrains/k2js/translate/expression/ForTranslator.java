@@ -13,6 +13,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallTranslator;
+import org.jetbrains.k2js.translate.reference.CallType;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
@@ -66,13 +67,13 @@ public final class ForTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression nextMethodInvocation(@NotNull TemporaryVariable iterator) {
         FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange());
-        return CallTranslator.translate(iterator.nameReference(), nextFunction, context());
+        return CallTranslator.translate(iterator.nameReference(), nextFunction, CallType.NORMAL, context());
     }
 
     @NotNull
     private JsExpression hasNextMethodInvocation(@NotNull TemporaryVariable iterator) {
         CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange());
-        return CallTranslator.translate(iterator.nameReference(), hasNextFunction, context());
+        return CallTranslator.translate(iterator.nameReference(), hasNextFunction, CallType.NORMAL, context());
     }
 
     @NotNull
@@ -80,7 +81,7 @@ public final class ForTranslator extends AbstractTranslator {
         JetExpression rangeExpression = getLoopRange();
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
         FunctionDescriptor iteratorFunction = getIteratorFunction(context().bindingContext(), rangeExpression);
-        return CallTranslator.translate(range, iteratorFunction, context());
+        return CallTranslator.translate(range, iteratorFunction, CallType.NORMAL, context());
     }
 
     @NotNull
