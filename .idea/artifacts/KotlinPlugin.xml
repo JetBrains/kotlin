@@ -25,6 +25,7 @@
             <element id="module-output" name="jet.as.java.psi" />
             <element id="module-output" name="stdlib" />
             <element id="module-output" name="util" />
+            <element id="module-output" name="j2k" />
           </element>
         </element>
         <element id="directory" name="kotlinc">
