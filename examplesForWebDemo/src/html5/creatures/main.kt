@@ -187,7 +187,6 @@ class CanvasState(val canvas : Canvas) {
     var dragOff = Vector()
     val interval = 1000 / 30
 
-
     {
         jq(canvas).mousedown {
             valid = false
@@ -224,18 +223,9 @@ class CanvasState(val canvas : Canvas) {
             valid = false
         }
 
-        jq(canvas).resize {
-            updateSize()
-        }
-
         setInterval({
             draw()
         }, interval)
-    }
-
-    fun updateSize() {
-        width = canvas.width
-        height = canvas.height
     }
 
     fun mousePos(e : MouseEvent) : Vector {
