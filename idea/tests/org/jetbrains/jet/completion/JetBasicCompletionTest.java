@@ -9,6 +9,14 @@ import java.io.File;
  */
 public class JetBasicCompletionTest extends JetCompletionTestBase {
 
+    public void testBasicAny() {
+        doTest();
+    }
+
+    public void testBasicInt() {
+        doTest();
+    }
+
     public void testBeforeDotInCall() {
         doTest();
     }

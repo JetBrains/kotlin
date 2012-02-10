@@ -11,10 +11,6 @@ import java.io.File;
  */
 public class CompletionHandlerTest extends LightCompletionTestCase {
 
-    public void testExistingNoParamsFunction() {
-        doTest();
-    }
-
     public void testNoParamsFunction() {
         doTest();
     }

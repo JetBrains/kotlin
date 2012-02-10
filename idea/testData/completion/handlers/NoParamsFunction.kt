@@ -1,10 +1,10 @@
 package testing.handlers
 
-fun test() {
+fun testFun() {
 }
 
 fun other() {
-    te<caret>
+    testFu<caret>
 }
 
 // INSERT: test

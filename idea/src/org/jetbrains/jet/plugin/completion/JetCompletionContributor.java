@@ -74,10 +74,10 @@ public class JetCompletionContributor extends CompletionContributor {
             @NotNull final Project project) {
 
         if (variant instanceof LookupElement) {
-            addCompletionToResult(result, (LookupElement) variant, positions, project);
+            addCompletionToResult(result, (LookupElement) variant, positions);
         }
         else {
-            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions, project);
+            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions);
         }
     }
 
@@ -97,7 +97,7 @@ public class JetCompletionContributor extends CompletionContributor {
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
                 for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
-                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), positions, project);
+                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), positions);
                 }
             }
         }
@@ -126,7 +126,7 @@ public class JetCompletionContributor extends CompletionContributor {
                             javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
                         }
 
-                        addCompletionToResult(result, element, positions, parameters.getPosition().getProject());
+                        addCompletionToResult(result, element, positions);
                     }
                 });
     }
@@ -176,17 +176,23 @@ public class JetCompletionContributor extends CompletionContributor {
     private static void addCompletionToResult(
             @NotNull final CompletionResultSet result,
             @NotNull LookupElement element,
-            @NotNull HashSet<LookupPositionObject> positions,
-            @NotNull Project project) {
+            @NotNull HashSet<LookupPositionObject> positions) {
 
-        final LookupPositionObject lookupPosition = getLookupPosition(element, project);
-        if (lookupPosition != null && !positions.contains(lookupPosition)) {
-            positions.add(lookupPosition);
-            result.addElement(element);    
+        final LookupPositionObject lookupPosition = getLookupPosition(element);
+        if (lookupPosition != null) {
+            if (!positions.contains(lookupPosition)) {
+                positions.add(lookupPosition);
+                result.addElement(element);
+            }
+
+            // There is already an element with same position - ignore duplicate
+        }
+        else {
+            result.addElement(element);
         }
     }
 
-    private static LookupPositionObject getLookupPosition(LookupElement element, Project project) {
+    private static LookupPositionObject getLookupPosition(LookupElement element) {
         final Object lookupObject = element.getObject();
         if (lookupObject instanceof PsiElement) {
             return new LookupPositionObject((PsiElement) lookupObject);
