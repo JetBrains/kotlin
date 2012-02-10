@@ -21,8 +21,6 @@ import java.util.List;
  */
 public abstract class Config {
 
-    @NotNull
-    private static final String PATH_TO_JS_LIB_SRC = getPathToJsLibSrc();
 
     //TODO: provide some generic way to get the files of the project
     @NotNull
@@ -38,17 +36,6 @@ public abstract class Config {
             "/html5/core.kt"
     );
 
-
-    @NotNull
-    private static String getPathToJsLibSrc() {
-        try {
-            File file = new File("config.txt");
-            List<String> lines = Files.readLines(file, Charsets.UTF_8);
-            return lines.get(0);
-        } catch (Exception ex) {
-            return "jslib/src";
-        }
-    }
 
     @NotNull
     private static List<JetFile> initLibFiles(@NotNull Project project) {
