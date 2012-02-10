@@ -1,12 +1,4 @@
 <idea-plugin version="2">
-    <actions>
-        <action id="NextSelectorParameter" class="org.jetbrains.jet.plugin.completion.NextPrevParameterAction$Next" text="Next Parameter">
-            <keyboard-shortcut first-keystroke="ctrl alt TAB" keymap="$default"/>
-        </action>
-        <action id="PrevSelectorParameter" class="org.jetbrains.jet.plugin.completion.NextPrevParameterAction$Prev" text="Previous Parameter">
-            <keyboard-shortcut first-keystroke="ctrl alt shift TAB" keymap="$default"/>
-        </action>
-    </actions>
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
@@ -72,6 +64,8 @@
       <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
       <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
+
+      <templateParameterTraversalPolicy implementation="org.jetbrains.jet.plugin.completion.JetTemplateParameterTraversalPolicy"/>
 
       <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
