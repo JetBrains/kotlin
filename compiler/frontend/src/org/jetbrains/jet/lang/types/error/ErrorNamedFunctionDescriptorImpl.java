@@ -13,12 +13,12 @@ import java.util.Collections;
 /**
  * @author Stepan Koltsov
  */
-public class NamedFunctionDescriptorErrorImpl extends NamedFunctionDescriptorImpl {
+public class ErrorNamedFunctionDescriptorImpl extends NamedFunctionDescriptorImpl {
     // used for diagnostic only
     @NotNull
     private final ErrorUtils.ErrorScope ownerScope;
 
-    public NamedFunctionDescriptorErrorImpl(ErrorUtils.ErrorScope ownerScope) {
+    public ErrorNamedFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
         super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>", Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
