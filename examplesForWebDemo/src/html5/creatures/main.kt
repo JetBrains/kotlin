@@ -1,4 +1,8 @@
-package interactive3
+/*
+In this example strange creatures are watching the kotlin logo. You can drag'n'drop them as well as the logo.
+Doubleclick to add more creatures but be careful. They may be watching you!
+*/
+package creatures
 // importing some of the API defined
 import jquery.*
 import html5.*
@@ -41,18 +45,18 @@ abstract class Shape() {
     }
 }
 
-val Kotlin = Logo(v(20.0, 20.0))
+val Kotlin = Logo(v(300.0, 100.0))
 
-class Logo(override var pos : Vector,
-           var relSize : Double = 0.25)
-                        : Shape()
+class Logo(override var pos : Vector) : Shape()
 {
+    val relSize : Double = 0.25
     val shadowOffset = v(-3.0, 3.0)
     val imageSize = v(377.0, 393.0)
     var size : Vector = imageSize * relSize
     // get-only properties like this saves you lots of typing and are very expressive
     val position : Vector
        get() = if (selected) pos - shadowOffset else pos
+
 
     fun drawLogo(state : CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
@@ -220,16 +224,16 @@ class CanvasState(val canvas : Canvas) {
             valid = false
         }
 
+        jq(canvas).resize {
+            updateSize()
+        }
+
         setInterval({
             draw()
         }, interval)
-
-        setInterval({
-            updateSize(canvas)
-        }, 500)
     }
 
-    fun updateSize(canvas : Canvas) {
+    fun updateSize() {
         width = canvas.width
         height = canvas.height
     }

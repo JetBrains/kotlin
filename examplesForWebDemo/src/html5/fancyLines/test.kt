@@ -1,18 +1,24 @@
-package testhtml;
+/*
+This example is based on example from html5 canvas2D docs:
+    http://www.w3.org/TR/2dcontext/
+Note that only a subset of the api is supported for now.
+*/
+
+package fancylines
 
 import js.*;
 import html5.*;
 import jquery.*;
 
 fun main() {
+    //jq is a name for JQuery function
     jq {
-        Test().run();
-       // HelloKotlin().run();
+        FancyLines().run();
     }
 }
 
-
-class Test() {
+class FancyLines() {
+    // we use two 'magic' functions here getContext() and getCanvas()
     val context = getContext();
     val height = getCanvas().height;
     val width = getCanvas().width;
@@ -22,7 +28,9 @@ class Test() {
 
     fun line() {
         context.save();
+
         context.beginPath();
+
         context.lineWidth = 20.0 * Math.random();
         context.moveTo(x, y);
 
@@ -33,12 +41,14 @@ class Test() {
             width * Math.random(), height * Math.random(), x, y);
 
         hue += Math.random() * 10;
+
         context.strokeStyle = "hsl($hue, 50%, 50%)";
 
         context.shadowColor = "white";
         context.shadowBlur = 10.0;
 
         context.stroke();
+
         context.restore();
     }
 
@@ -50,28 +60,5 @@ class Test() {
     fun run() {
         setInterval({line()}, 40);
         setInterval({blank()}, 100);
-    }
-}
-
-class HelloKotlin() {
-    val context = getContext();
-    val height = getCanvas().height;
-    val width = getCanvas().width;
-
-    fun run() {
-        setInterval({
-            greet();
-        }, 2000);
-    }
-
-    fun greet() {
-        context.save();
-        val message = "Hello Kotlin";
-        context.font = "bold 20px Georgia, serif";
-        context.scale(5.0, 5.0);
-        context.strokeStyle = "rgba(0,0,0, 0.8)";
-        context.strokeText(message, /*(width / 3) + */ (width / 7) * Math.random(),
-                                    /*(height / 3) + */ (height / 7) * Math.random());
-        context.restore();
     }
 }

@@ -9,19 +9,19 @@
             return this.$y;
         }, plus:function (v) {
             {
-                return interactive3.v_0(this.get_x() + v.get_x(), this.get_y() + v.get_y());
+                return creatures.v_0(this.get_x() + v.get_x(), this.get_y() + v.get_y());
             }
         }, minus:function () {
             {
-                return interactive3.v_0(-this.get_x(), -this.get_y());
+                return creatures.v_0(-this.get_x(), -this.get_y());
             }
         }, minus$0:function (v) {
             {
-                return interactive3.v_0(this.get_x() - v.get_x(), this.get_y() - v.get_y());
+                return creatures.v_0(this.get_x() - v.get_x(), this.get_y() - v.get_y());
             }
         }, times:function (koef) {
             {
-                return interactive3.v_0(this.get_x() * koef, this.get_y() * koef);
+                return creatures.v_0(this.get_x() * koef, this.get_y() * koef);
             }
         }, distanceTo:function (v) {
             {
@@ -31,7 +31,7 @@
             {
                 var sin = Math.sin(theta);
                 var cos = Math.cos(theta);
-                return interactive3.v_0(this.get_x() * cos - this.get_y() * sin, this.get_x() * sin + this.get_y() * cos);
+                return creatures.v_0(this.get_x() * cos - this.get_y() * sin, this.get_x() * sin + this.get_y() * cos);
             }
         }, isInRect:function (topLeft, size) {
             {
@@ -111,7 +111,7 @@
             this.$valid = false;
             this.$shapes = new Kotlin.ArrayList;
             this.$selection = null;
-            this.$dragOff = new interactive3.Vector_0(0, 0);
+            this.$dragOff = new creatures.Vector_0(0, 0);
             this.$interval = 1000 / 30;
             {
                 var tmp$5;
@@ -164,24 +164,24 @@
                     ));
                 $(this.get_canvas()).dblclick((tmp$3 = this , function (it) {
                     {
-                        var newCreature = new interactive3.Creature_0(tmp$3.mousePos_0(it), tmp$3);
+                        var newCreature = new creatures.Creature_0(tmp$3.mousePos_0(it), tmp$3);
                         tmp$3.addShape(newCreature);
                         tmp$3.set_valid(false);
                     }
                 }
                     ));
-                setInterval((tmp$4 = this , function () {
+                $(this.get_canvas()).resize((tmp$4 = this , function () {
                     {
-                        tmp$4.draw();
+                        tmp$4.updateSize();
+                    }
+                }
+                    ));
+                setInterval((tmp$5 = this , function () {
+                    {
+                        tmp$5.draw();
                     }
                 }
                     ), this.get_interval());
-                setInterval((tmp$5 = this , function () {
-                    {
-                        tmp$5.updateSize(tmp$5.get_canvas());
-                    }
-                }
-                    ), 500);
             }
         }, get_canvas:function () {
             return this.$canvas;
@@ -195,7 +195,7 @@
             this.$height = tmp$0;
         }, get_size:function () {
             {
-                return interactive3.v_0(this.get_width(), this.get_height());
+                return creatures.v_0(this.get_width(), this.get_height());
             }
         }, get_context:function () {
             return this.$context;
@@ -217,21 +217,21 @@
             this.$dragOff = tmp$0;
         }, get_interval:function () {
             return this.$interval;
-        }, updateSize:function (canvas) {
+        }, updateSize:function () {
             {
-                this.set_width(canvas.width);
-                this.set_height(canvas.height);
+                this.set_width(this.get_canvas().width);
+                this.set_height(this.get_canvas().height);
             }
         }, mousePos_0:function (e) {
             {
-                var offset = new interactive3.Vector_0(0, 0);
+                var offset = new creatures.Vector_0(0, 0);
                 var element = this.get_canvas();
                 while (element != null) {
                     var el = Kotlin.sure(element);
-                    offset = offset.plus(new interactive3.Vector_0(el.offsetLeft, el.offsetTop));
+                    offset = offset.plus(new creatures.Vector_0(el.offsetLeft, el.offsetTop));
                     element = el.offsetParent;
                 }
-                return (new interactive3.Vector_0(e.pageX, e.pageY)).minus$0(offset);
+                return (new creatures.Vector_0(e.pageX, e.pageY)).minus$0(offset);
             }
         }, addShape:function (shape) {
             {
@@ -253,7 +253,7 @@
                     return;
                 this.clear();
                 {
-                    tmp$0 = interactive3.reversed(this.get_shapes()).iterator();
+                    tmp$0 = creatures.reversed(this.get_shapes()).iterator();
                     while (tmp$0.hasNext()) {
                         var shape = tmp$0.next();
                         {
@@ -261,7 +261,7 @@
                         }
                     }
                 }
-                interactive3.get_Kotlin().draw(this);
+                creatures.get_Kotlin().draw(this);
                 this.set_valid(true);
             }
         }
@@ -301,8 +301,8 @@
             this.$pos = pos;
             this.$state = state;
             this.super_init();
-            this.$shadowOffset = interactive3.v_0(-5, 5);
-            this.$colorStops = interactive3.get_gradientGenerator().getNext();
+            this.$shadowOffset = creatures.v_0(-5, 5);
+            this.$colorStops = creatures.get_gradientGenerator().getNext();
             this.$relSize = 0.05;
         }, get_pos:function () {
             return this.$pos;
@@ -331,7 +331,7 @@
             }
         }, get_directionToLogo:function () {
             {
-                return interactive3.get_Kotlin().get_centre().minus$0(this.get_position()).get_normalized();
+                return creatures.get_Kotlin().get_centre().minus$0(this.get_position()).get_normalized();
             }
         }, contains:function (mousePos) {
             {
@@ -435,12 +435,12 @@
             }
         }
         });
-        var Logo = Kotlin.Class.create(Shape, {initialize:function (pos, relSize) {
+        var Logo = Kotlin.Class.create(Shape, {initialize:function (pos) {
             this.$pos = pos;
-            this.$relSize = relSize;
             this.super_init();
-            this.$shadowOffset = interactive3.v_0(-3, 3);
-            this.$imageSize = interactive3.v_0(377, 393);
+            this.$relSize = 0.25;
+            this.$shadowOffset = creatures.v_0(-3, 3);
+            this.$imageSize = creatures.v_0(377, 393);
             this.$size = this.get_imageSize().times(this.get_relSize());
         }, get_pos:function () {
             return this.$pos;
@@ -448,8 +448,6 @@
             this.$pos = tmp$0;
         }, get_relSize:function () {
             return this.$relSize;
-        }, set_relSize:function (tmp$0) {
-            this.$relSize = tmp$0;
         }, get_shadowOffset:function () {
             return this.$shadowOffset;
         }, get_imageSize:function () {
@@ -501,23 +499,23 @@
         return {Shape_0:Shape, Logo_0:Logo, Creature_0:Creature, RadialGradientGenerator_0:RadialGradientGenerator, CanvasState_0:CanvasState, Vector_0:Vector};
     }
         ();
-    var interactive3 = Kotlin.Namespace.create({initialize:function () {
-        interactive3.$Kotlin = new interactive3.Logo_0(interactive3.v_0(20, 20), 0.25);
-        interactive3.$gradientGenerator = new interactive3.RadialGradientGenerator_0(getContext());
+    var creatures = Kotlin.Namespace.create({initialize:function () {
+        creatures.$Kotlin = new creatures.Logo_0(creatures.v_0(300, 100));
+        creatures.$gradientGenerator = new creatures.RadialGradientGenerator_0(getContext());
     }, get_Kotlin:function () {
-        return interactive3.$Kotlin;
+        return creatures.$Kotlin;
     }, get_gradientGenerator:function () {
-        return interactive3.$gradientGenerator;
+        return creatures.$gradientGenerator;
     }, v_0:function (x, y) {
         {
-            return new interactive3.Vector_0(x, y);
+            return new creatures.Vector_0(x, y);
         }
     }, main:function () {
         {
-            var state = new interactive3.CanvasState_0(getCanvas());
-            state.addShape(interactive3.get_Kotlin());
-            state.addShape(new interactive3.Creature_0(state.get_size().times(0.25), state));
-            state.addShape(new interactive3.Creature_0(state.get_size().times(0.75), state));
+            var state = new creatures.CanvasState_0(getCanvas());
+            state.addShape(creatures.get_Kotlin());
+            state.addShape(new creatures.Creature_0(state.get_size().times(0.25), state));
+            state.addShape(new creatures.Creature_0(state.get_size().times(0.75), state));
             setTimeout(function () {
                     {
                         state.set_valid(false);
@@ -536,8 +534,8 @@
         }
     }
     }, classes);
-    interactive3.initialize();
+    creatures.initialize();
 }
 
 var args = [];
-interactive3.main(args);
+creatures.main(args);

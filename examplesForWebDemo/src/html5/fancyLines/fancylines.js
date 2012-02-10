@@ -1,38 +1,6 @@
 {
     var classes = function () {
-        var HelloKotlin = Kotlin.Class.create({initialize:function () {
-            this.$context = getContext();
-            this.$height = getCanvas().height;
-            this.$width = getCanvas().width;
-        }, get_context:function () {
-            return this.$context;
-        }, get_height:function () {
-            return this.$height;
-        }, get_width:function () {
-            return this.$width;
-        }, run:function () {
-            {
-                var tmp$0;
-                setInterval((tmp$0 = this , function () {
-                    {
-                        tmp$0.greet();
-                    }
-                }
-                    ), 2000);
-            }
-        }, greet:function () {
-            {
-                this.get_context().save();
-                var message = 'Hello Kotlin';
-                this.get_context().font = 'bold 20px Georgia, serif';
-                this.get_context().scale(5, 5);
-                this.get_context().strokeStyle = 'rgba(0,0,0, 0.8)';
-                this.get_context().strokeText(message, this.get_width() / 7 * Math.random(), this.get_height() / 7 * Math.random());
-                this.get_context().restore();
-            }
-        }
-        });
-        var Test = Kotlin.Class.create({initialize:function () {
+        var FancyLines = Kotlin.Class.create({initialize:function () {
             this.$context = getContext();
             this.$height = getCanvas().height;
             this.$width = getCanvas().width;
@@ -97,23 +65,23 @@
             }
         }
         });
-        return {Test_0:Test, HelloKotlin_0:HelloKotlin};
+        return {FancyLines_0:FancyLines};
     }
         ();
-    var testhtml = Kotlin.Namespace.create({initialize:function () {
+    var fancylines = Kotlin.Namespace.create({initialize:function () {
     }, main:function () {
         {
             $(function () {
                     {
-                        (new testhtml.Test_0).run();
+                        (new fancylines.FancyLines_0).run();
                     }
                 }
             );
         }
     }
     }, classes);
-    testhtml.initialize();
+    fancylines.initialize();
 }
 
 var args = [];
-testhtml.main(args);
+fancylines.main(args);
