@@ -2,6 +2,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
@@ -112,6 +113,8 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                         for (String methodName : methodNames) {
                             try {
                                 allDescriptors.addAll(getFunctions(methodName));
+                            } catch (ProcessCanceledException cancelException) {
+                                throw cancelException;
                             } catch (RuntimeException ex) {
                                 LOG.error(ex);
                             }
