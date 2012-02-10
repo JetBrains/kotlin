@@ -13,6 +13,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testPrintTest() {
+        doTest();
+    }
+
     public void testBasicInt() {
         doTest();
     }
@@ -45,8 +49,7 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
-    // TODO: activate this test
-    public void todotestInMiddleOfNamespace() {
+    public void testInMiddleOfNamespace() {
         doTest();
     }
 
