@@ -12,7 +12,7 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
 
-    public enum Kind {
+    enum Kind {
         DECLARATION,
         FAKE_OVERRIDE,
         DELEGATION,

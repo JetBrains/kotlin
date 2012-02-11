@@ -980,73 +980,76 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 return StackValue.local(index, TYPE_OBJECT);
             }
         }
-        else if (descriptor instanceof PropertyDescriptor) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
-            PsiElement declaration = null;
-            if (((PropertyDescriptor) descriptor).getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-                declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-            }
-            if (declaration instanceof JetObjectDeclarationName) {
-                // todo: we have property here but not in containing class/namespace
-                JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(declaration, JetObjectDeclaration.class);
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, objectDeclaration);
-                assert classDescriptor != null;
-                return StackValue.field(typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION),
-                                        typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(),
-                        "$instance",
-                        true);
-            }
-            else {
-                boolean isStatic = container instanceof NamespaceDescriptor;
-                final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
-                JetExpression r = getReceiverForSelector(expression);
-                final boolean isSuper = r instanceof JetSuperExpression;
-                if(propertyDescriptor.getVisibility() == Visibility.PRIVATE && !CodegenUtil.isClassObject(propertyDescriptor.getContainingDeclaration())) {
-                    if(context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
-                        DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
-                        if(enclosed != null && enclosed != context.getThisDescriptor()) {
-                            CodegenContext c = context;
-                            while(c.getContextDescriptor() != enclosed) {
-                                c = c.getParentContext();
-                            }
-                            propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
-                        }
-                    }
-                }
-                final StackValue.Property iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
-                if(!directToField && resolvedCall != null && !isSuper) {
-                    receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic? receiver.type : Type.getObjectType(iValue.methodOwner), v);
-                    pushTypeArguments(resolvedCall);
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+            
+            if(propertyDescriptor.isObjectDeclaration()) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) propertyDescriptor.getReturnType().getConstructor().getDeclarationDescriptor();
+                if(classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
+                    ClassDescriptor containing = (ClassDescriptor) classDescriptor.getContainingDeclaration().getContainingDeclaration();
+                    Type type = typeMapper.mapType(containing.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    StackValue.field(type, type.getInternalName(), classDescriptor.getName(), true).put(TYPE_OBJECT, v);
+
+                    // todo: for now we don't generate classes for enum entries, so we need this hack
+                    type = typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    return StackValue.onStack(type);
                 }
                 else {
-                    if (!isStatic) {
-                        if (receiver == StackValue.none()) {
-                            if(resolvedCall == null)
-                                receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
-                            else {
-                                if(resolvedCall.getThisObject() instanceof ExtensionReceiver)
-                                    receiver = generateReceiver(((ExtensionReceiver)resolvedCall.getThisObject()).getDeclarationDescriptor());
-                                else
-                                    receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
-                            }
+                    Type type = typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    return StackValue.field(type, type.getInternalName(), "$instance", true);
+                }
+            }
+
+            boolean isStatic = container instanceof NamespaceDescriptor;
+            final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
+            JetExpression r = getReceiverForSelector(expression);
+            final boolean isSuper = r instanceof JetSuperExpression;
+            if(propertyDescriptor.getVisibility() == Visibility.PRIVATE && !CodegenUtil.isClassObject(propertyDescriptor.getContainingDeclaration())) {
+                if(context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
+                    DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
+                    if(enclosed != null && enclosed != context.getThisDescriptor()) {
+                        CodegenContext c = context;
+                        while(c.getContextDescriptor() != enclosed) {
+                            c = c.getParentContext();
                         }
-                        JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
-                        receiver.put(receiverType != null && !isSuper? asmType(receiverType) : TYPE_OBJECT, v);
-                        if(receiverType != null) {
-                            ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
-                            if(!CodegenUtil.isInterface(propReceiverDescriptor) && CodegenUtil.isInterface(receiverType.getConstructor().getDeclarationDescriptor())) {
-                                // I hope it happens only in case of required super class for traits
-                                assert propReceiverDescriptor != null;
-                                v.checkcast(asmType(propReceiverDescriptor.getDefaultType()));
-                            }
+                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor);
+                    }
+                }
+            }
+            final StackValue.Property iValue = intermediateValueForProperty(propertyDescriptor, directToField, isSuper ? (JetSuperExpression)r : null);
+            if(!directToField && resolvedCall != null && !isSuper) {
+                receiver.put(propertyDescriptor.getReceiverParameter().exists() || isStatic? receiver.type : Type.getObjectType(iValue.methodOwner), v);
+                pushTypeArguments(resolvedCall);
+            }
+            else {
+                if (!isStatic) {
+                    if (receiver == StackValue.none()) {
+                        if(resolvedCall == null)
+                            receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
+                        else {
+                            if(resolvedCall.getThisObject() instanceof ExtensionReceiver)
+                                receiver = generateReceiver(((ExtensionReceiver)resolvedCall.getThisObject()).getDeclarationDescriptor());
+                            else
+                                receiver = generateThisOrOuter((ClassDescriptor) propertyDescriptor.getContainingDeclaration());
+                        }
+                    }
+                    JetType receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, r);
+                    receiver.put(receiverType != null && !isSuper? asmType(receiverType) : TYPE_OBJECT, v);
+                    if(receiverType != null) {
+                        ClassDescriptor propReceiverDescriptor = (ClassDescriptor) propertyDescriptor.getContainingDeclaration();
+                        if(!CodegenUtil.isInterface(propReceiverDescriptor) && CodegenUtil.isInterface(receiverType.getConstructor().getDeclarationDescriptor())) {
+                            // I hope it happens only in case of required super class for traits
+                            assert propReceiverDescriptor != null;
+                            v.checkcast(asmType(propReceiverDescriptor.getDefaultType()));
                         }
                     }
                 }
-                return iValue;
             }
+            return iValue;
         }
-        else if (descriptor instanceof ClassDescriptor) {
+
+        if (descriptor instanceof ClassDescriptor) {
             PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             if(declaration instanceof JetClass) {
                 final JetClassObject classObject = ((JetClass) declaration).getClassObject();
@@ -1066,7 +1069,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 return StackValue.none();
             }
         }
-        else if (descriptor instanceof TypeParameterDescriptor) {
+
+        if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) descriptor;
             loadTypeParameterTypeInfo(typeParameterDescriptor, null);
             v.invokevirtual("jet/TypeInfo", "getClassObject", "()Ljava/lang/Object;");
@@ -1074,25 +1078,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
             return StackValue.onStack(TYPE_OBJECT);
         }
-        else {
-            // receiver
-            StackValue value = context.lookupInContext(descriptor, v, StackValue.local(0, TYPE_OBJECT));
-            if (value == null) {
-                throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
-            }
 
-            if(value instanceof StackValue.Composed) {
-                StackValue.Composed composed = (StackValue.Composed) value;
-                composed.prefix.put(TYPE_OBJECT, v);
-                value = composed.suffix;
-            }
-            if(value instanceof StackValue.FieldForSharedVar) {
-                StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
-                Type sharedType = StackValue.sharedTypeForType(value.type);
-                v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner, fieldForSharedVar.name, sharedType.getDescriptor());
-            }
-            return value;
+        StackValue value = context.lookupInContext(descriptor, v, StackValue.local(0, TYPE_OBJECT));
+        if (value == null) {
+            throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
         }
+
+        if(value instanceof StackValue.Composed) {
+            StackValue.Composed composed = (StackValue.Composed) value;
+            composed.prefix.put(TYPE_OBJECT, v);
+            value = composed.suffix;
+        }
+
+        if(value instanceof StackValue.FieldForSharedVar) {
+            StackValue.FieldForSharedVar fieldForSharedVar = (StackValue.FieldForSharedVar) value;
+            Type sharedType = StackValue.sharedTypeForType(value.type);
+            v.visitFieldInsn(Opcodes.GETFIELD, fieldForSharedVar.owner, fieldForSharedVar.name, sharedType.getDescriptor());
+        }
+
+        return value;
     }
 
     public int lookupLocal(DeclarationDescriptor descriptor) {
