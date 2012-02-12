@@ -942,11 +942,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateGetTypeInfo() {
-        if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
-            return;
-
         JetType defaultType = descriptor.getDefaultType();
         if(CodegenUtil.requireTypeInfoConstructorArg(defaultType)) {
+            if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
+                return;
+
             if(!CodegenUtil.hasDerivedTypeInfoField(defaultType)) {
                 v.newField(myClass, ACC_PROTECTED, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;", null, null);
 
@@ -975,7 +975,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
         else {
-            genGetStaticGetTypeInfoMethod();
+            if (!(myClass instanceof JetClass) || !((JetClass) myClass).isTrait()) {
+                genGetStaticGetTypeInfoMethod();
+            }
+
             staticTypeInfoField();
         }
     }
