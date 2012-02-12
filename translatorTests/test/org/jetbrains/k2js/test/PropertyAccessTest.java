@@ -43,6 +43,7 @@ public final class PropertyAccessTest extends TranslationTest {
     }
 
 
+    //TODO: place safecalls under distinkt category
     public void testSafeCallReturnsNullIfFails() throws Exception {
         testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
@@ -69,6 +70,14 @@ public final class PropertyAccessTest extends TranslationTest {
 
     public void testSafeAccess() throws Exception {
         testFooBoxIsTrue("safeAccess.kt");
+    }
+
+    public void testSafeExtensionFunctionCall() throws Exception {
+        testFooBoxIsOk("safeExtensionFunctionCall.kt");
+    }
+
+    public void testExtensionLiteralSafeCall() throws Exception {
+        testFooBoxIsTrue("extensionLiteralSafeCall.kt");
     }
 
 }

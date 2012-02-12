@@ -41,6 +41,7 @@ public final class CallTranslator extends AbstractTranslator {
         public /*var*/ JsExpression functionReference;
     }
 
+    //NOTE: receiver may mean this object as well
     @Nullable
     private /*var*/ JsExpression receiver;
 
@@ -130,14 +131,26 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression extensionFunctionLiteralCall() {
-        //TODO: call type
-        receiver = getExtensionFunctionCallReceiver();
-        List<JsExpression> callArguments = generateExtensionCallArgumentList();
+        JsExpression realReceiver = getExtensionFunctionCallReceiver();
+        return callType.constructCall(realReceiver, new CallType.CallConstructor() {
+            @NotNull
+            @Override
+            public JsExpression construct(@Nullable JsExpression receiver) {
+                assert receiver != null : "Could not be null for extensions";
+                return constructExtensionLiteralCall(receiver);
+            }
+        }, context());
+    }
+
+    @NotNull
+    private JsExpression constructExtensionLiteralCall(@NotNull JsExpression realReceiver) {
+        List<JsExpression> callArguments = generateExtensionCallArgumentList(realReceiver);
         JsInvocation callMethodInvocation = generateCallMethodInvocation();
         callMethodInvocation.setArguments(callArguments);
         return callMethodInvocation;
     }
 
+    @NotNull
     private JsInvocation generateCallMethodInvocation() {
         JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
         JsInvocation callMethodInvocation = new JsInvocation();
@@ -154,17 +167,24 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression extensionFunctionCall() {
-        receiver = getExtensionFunctionCallReceiver();
-        List<JsExpression> argumentList = generateExtensionCallArgumentList();
-        JsExpression functionReference = callParameters().functionReference;
-        AstUtil.setQualifier(functionReference, callParameters().receiver);
-        return AstUtil.newInvocation(functionReference, argumentList);
+        JsExpression realReceiver = getExtensionFunctionCallReceiver();
+        return callType.constructCall(realReceiver, new CallType.CallConstructor() {
+            @NotNull
+            @Override
+            public JsExpression construct(@Nullable JsExpression receiver) {
+                assert receiver != null : "Could not be null for extensions";
+                return constructExtensionFunctionCall(receiver);
+            }
+        }, context());
     }
 
     @NotNull
     private JsExpression getExtensionFunctionCallReceiver() {
         if (receiver != null) {
-            return receiver;
+            JsExpression result = receiver;
+            //Now the rest of the code can work as if it was simple method invocation
+            receiver = null;
+            return result;
         }
         DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
         assert expectedReceiverDescriptor != null;
@@ -172,12 +192,19 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsExpression> generateExtensionCallArgumentList() {
+    private JsExpression constructExtensionFunctionCall(@NotNull JsExpression receiver) {
+        List<JsExpression> argumentList = generateExtensionCallArgumentList(receiver);
+        JsExpression functionReference = callParameters().functionReference;
+        AstUtil.setQualifier(functionReference, callParameters().receiver);
+        return AstUtil.newInvocation(functionReference, argumentList);
+    }
+
+    @NotNull
+    private List<JsExpression> generateExtensionCallArgumentList(@NotNull JsExpression receiver) {
         List<JsExpression> argumentList = new ArrayList<JsExpression>();
+        assert this.receiver == null : "Should be null at that point";
         argumentList.add(receiver);
         argumentList.addAll(arguments);
-        //Now the rest of the code can work as if it was simple method invocation
-        receiver = null;
         return argumentList;
     }
 
