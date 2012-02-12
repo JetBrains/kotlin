@@ -11,7 +11,6 @@ import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
-import org.jetbrains.k2js.translate.reference.CallTranslator;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
@@ -70,7 +69,7 @@ public final class CompareToTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression overloadedCompareTo() {
         JsBinaryOperator correspondingOperator = OperatorTable.getBinaryOperator(getOperationToken(expression));
-        JsExpression methodCall = CallTranslator.translate(expression, context());
+        JsExpression methodCall = BinaryOperationTranslator.translateAsOverloadedCall(expression, context());
         return new JsBinaryOperation(correspondingOperator, methodCall, TranslationUtils.zeroLiteral(context()));
     }
 

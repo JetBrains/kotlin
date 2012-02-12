@@ -52,7 +52,7 @@ public final class QualifiedExpressionTranslator {
                     ((JetSimpleNameExpression) selector, receiver, callType, context);
         }
         if (selector instanceof JetCallExpression) {
-            return CallTranslator.translate((JetCallExpression) selector, receiver, callType, context);
+            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, callType, context);
         }
         throw new AssertionError("Unexpected qualified expression");
     }

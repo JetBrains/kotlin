@@ -25,7 +25,7 @@ class HelloKotlin() {
     var relYVelocity = randomVelocity()
 
 
-    val message = "Hello Kotlin"
+    val message = "Hello, Kotlin!"
     val textHeightInPixels = 60
     {
         context.font = "bold ${textHeightInPixels}px Georgia, serif"

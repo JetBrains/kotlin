@@ -5,7 +5,7 @@
             this.$relY = 0.4 + 0.2 * Math.random();
             this.$relXVelocity = this.randomVelocity();
             this.$relYVelocity = this.randomVelocity();
-            this.$message = 'Hello Kotlin';
+            this.$message = 'Hello, Kotlin!';
             this.$textHeightInPixels = 60;
             {
                 hello.get_context().font = 'bold ' + this.get_textHeightInPixels() + 'px Georgia, serif';
