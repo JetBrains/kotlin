@@ -66,6 +66,8 @@ public class StaticContext {
     private final Generator<NamingScope> scopes = new ScopeGenerator();
     @NotNull
     private final Generator<JsNameRef> qualifiers = new QualifierGenerator();
+    @NotNull
+    private final Generator<Boolean> qualifierIsNull = new QualifierIsNullGenerator();
 
 
     //TODO: too many parameters in constructor
@@ -124,23 +126,6 @@ public class StaticContext {
         return namingScope;
     }
 
-    @Nullable
-    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-
-        //TODO: refactor
-        if (descriptor instanceof PropertyDescriptor) {
-            return null;
-        }
-        if (isVariableAsFunction(descriptor)) {
-            return null;
-        }
-        //TODO: hack!
-        if (AnnotationsUtils.isNativeObject(descriptor)) {
-            return null;
-        }
-
-        return qualifiers.get(descriptor.getOriginal());
-    }
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
@@ -150,7 +135,7 @@ public class StaticContext {
     }
 
 
-    private class NameGenerator extends Generator<JsName> {
+    private final class NameGenerator extends Generator<JsName> {
         public NameGenerator() {
             Rule<JsName> aliasOverridesNames = new Rule<JsName>() {
                 @Override
@@ -306,7 +291,7 @@ public class StaticContext {
     }
 
 
-    private class ScopeGenerator extends Generator<NamingScope> {
+    private final class ScopeGenerator extends Generator<NamingScope> {
 
         public ScopeGenerator() {
             Rule<NamingScope> generateNewScopesForNamespaceDescriptors = new Rule<NamingScope>() {
@@ -328,11 +313,17 @@ public class StaticContext {
             addRule(generateNewScopesForNamespaceDescriptors);
             addRule(generateInnerScopesForMembers);
         }
-
     }
 
+    @Nullable
+    public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (qualifierIsNull.get(descriptor) != null) {
+            return null;
+        }
+        return qualifiers.get(descriptor.getOriginal());
+    }
 
-    private class QualifierGenerator extends Generator<JsNameRef> {
+    private final class QualifierGenerator extends Generator<JsNameRef> {
         public QualifierGenerator() {
             Rule<JsNameRef> namespacesHaveNoQualifiers = new Rule<JsNameRef>() {
                 @Override
@@ -393,6 +384,43 @@ public class StaticContext {
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(namespacesHaveNoQualifiers);
             addRule(namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);
+        }
+    }
+
+    private class QualifierIsNullGenerator extends Generator<Boolean> {
+
+        private QualifierIsNullGenerator() {
+            Rule<Boolean> propertiesHaveNoQualifiers = new Rule<Boolean>() {
+                @Override
+                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof PropertyDescriptor)) {
+                        return null;
+                    }
+                    return true;
+                }
+            };
+            Rule<Boolean> variableAsFunctionsHaveNoQualifiers = new Rule<Boolean>() {
+                @Override
+                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!isVariableAsFunction(descriptor)) {
+                        return null;
+                    }
+                    return true;
+                }
+            };
+            //TODO: hack!
+            Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
+                @Override
+                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!AnnotationsUtils.isNativeObject(descriptor)) {
+                        return null;
+                    }
+                    return true;
+                }
+            };
+            addRule(propertiesHaveNoQualifiers);
+            addRule(variableAsFunctionsHaveNoQualifiers);
+            addRule(nativeObjectsHaveNoQualifiers);
         }
     }
 }
