@@ -17,7 +17,6 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
@@ -41,25 +40,6 @@ public final class CallTranslator extends AbstractTranslator {
         public /*var*/ JsExpression receiver;
         @NotNull
         public /*var*/ JsExpression functionReference;
-    }
-
-    @NotNull
-    public static JsExpression translate(@Nullable JsExpression receiver,
-                                         @NotNull ResolvedCall<?> resolvedCall,
-                                         @Nullable CallableDescriptor descriptorToCall,
-                                         @NotNull CallType callType,
-                                         @NotNull TranslationContext context) {
-        return (new CallTranslator(receiver, null, Collections.<JsExpression>emptyList(), resolvedCall,
-                descriptorToCall, CallType.SAFE, context)).translate();
-    }
-
-    @NotNull
-    public static JsExpression translate(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
-                                         @NotNull ResolvedCall<?> resolvedCall,
-                                         @Nullable CallableDescriptor descriptorToCall,
-                                         @NotNull CallType callType,
-                                         @NotNull TranslationContext context) {
-        return (new CallTranslator(receiver, null, arguments, resolvedCall, descriptorToCall, callType, context)).translate();
     }
 
     @Nullable

@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
@@ -17,6 +16,8 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForRe
 /**
  * @author Pavel Talanov
  */
+
+//TODO: inspect not clear how the class handles set and get operations differently
 public final class ArrayAccessTranslator extends AccessTranslator {
 
     /*package*/
@@ -34,6 +35,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
+        //TODO: that is strange
         this.methodDescriptor = (FunctionDescriptor)
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
     }
@@ -41,20 +43,27 @@ public final class ArrayAccessTranslator extends AccessTranslator {
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context().bindingContext(), expression);
         List<JsExpression> arguments = translateIndexExpressions();
-        return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
-                methodDescriptor, CallType.NORMAL, context());
+        return translateAsMethodCall(arguments);
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression expression) {
-        ResolvedCall<?> resolvedCall = BindingUtils.getResolvedCall(context().bindingContext(), this.expression);
+
         List<JsExpression> arguments = translateIndexExpressions();
         arguments.add(expression);
-        return CallTranslator.translate(translateArrayExpression(), arguments, resolvedCall,
-                methodDescriptor, CallType.NORMAL, context());
+        return translateAsMethodCall(arguments);
+    }
+
+    @NotNull
+    private JsExpression translateAsMethodCall(@NotNull List<JsExpression> arguments) {
+        return CallBuilder.build(context())
+                .receiver(translateArrayExpression())
+                .args(arguments)
+                .resolvedCall(BindingUtils.getResolvedCall(context().bindingContext(), expression))
+                .descriptor(methodDescriptor)
+                .translate();
     }
 
     @NotNull

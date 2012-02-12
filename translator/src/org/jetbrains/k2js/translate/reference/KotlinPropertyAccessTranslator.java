@@ -4,10 +4,10 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-
-import java.util.Arrays;
 
 /**
  * @author Pavel Talanov
@@ -37,15 +37,32 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        return CallTranslator.translate(qualifier, resolvedCall, propertyDescriptor.getGetter(), getCallType(), context());
+        //TODO: check for duplication
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        assert getter != null : "Getter for kotlin properties should bot be null.";
+        return callBuilderForAccessor()
+                .descriptor(getter)
+                .translate();
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
+        //TODO: check for duplication
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        assert setter != null : "Getter for kotlin properties should bot be null.";
+        return callBuilderForAccessor()
+                .args(toSetTo)
+                .descriptor(setter)
+                .translate();
+    }
 
-        return CallTranslator.translate(qualifier, Arrays.asList(toSetTo),
-                resolvedCall, propertyDescriptor.getSetter(), getCallType(), context());
+    @NotNull
+    private CallBuilder callBuilderForAccessor() {
+        return CallBuilder.build(context())
+                .receiver(qualifier)
+                .resolvedCall(resolvedCall)
+                .type(getCallType());
     }
 
 }
