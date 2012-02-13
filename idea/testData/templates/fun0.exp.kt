@@ -1,0 +1,3 @@
+fun foo() : Unit {
+    <caret>
+}

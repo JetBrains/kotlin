@@ -52,13 +52,39 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         paremeterless();
     }
 
+    public void testFun0() {
+        start();
+
+        type("foo");
+        nextTab(2);
+
+        checkAfter();
+    }
+
+    public void testFun1() {
+        start();
+
+        type("foo");
+        nextTab(4);
+
+        checkAfter();
+    }
+
+    public void testFun2() {
+        start();
+
+        type("foo");
+        nextTab(6);
+
+        checkAfter();
+    }
+
     public void testIter() {
         start();
 
         assertStringItems("args", "collection", "myList", "str", "stream");
         type("args");
-        nextTab();
-        nextTab();
+        nextTab(2);
 
         checkAfter();
     }
@@ -89,6 +115,12 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     private void nextTab() {
         getTemplateState().nextTab();
+    }
+
+    private void nextTab(int times) {
+        for (int i = 0; i < times; i++) {
+            nextTab();
+        }
     }
 
     private TemplateState getTemplateState() {
