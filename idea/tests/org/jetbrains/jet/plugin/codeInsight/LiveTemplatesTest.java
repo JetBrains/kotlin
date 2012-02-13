@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
@@ -31,6 +32,17 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
         doAction("ExpandLiveTemplateByTab");
         assertStringItems("args", "collection", "myList", "str", "stream");
+
+        myFixture.type("args");
+
+        getTemplateState().nextTab();
+        getTemplateState().nextTab();
+        assertNull(getTemplateState());
+        myFixture.checkResultByFile(getTestName(false) + ".exp.kt");
+    }
+
+    private TemplateState getTemplateState() {
+        return TemplateManagerImpl.getTemplateState(myFixture.getEditor());
     }
 
     @NotNull
