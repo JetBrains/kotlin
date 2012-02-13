@@ -13,10 +13,6 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
-    public void testPrintTest() {
-        doTest();
-    }
-
     public void testBasicInt() {
         doTest();
     }
