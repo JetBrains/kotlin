@@ -793,7 +793,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         if(closureCodegen.superCall != null) {
-            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) closureCodegen.superCall).getCalleeExpression().getConstructorReferenceExpression());
+            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, closureCodegen.superCall.getCalleeExpression().getConstructorReferenceExpression());
             CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
             Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
             Collections.addAll(consArgTypes, argumentTypes);

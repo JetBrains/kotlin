@@ -385,7 +385,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JvmMethodSignature constructorMethod;
         CallableMethod callableMethod;
         if (constructorDescriptor == null) {
-            
             BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
             
             signatureWriter.writeFormalTypeParametersStart();
@@ -417,10 +416,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ObjectOrClosureCodegen closure = context.closure;
         int firstSuperArgument = -1;
-        if(closure != null) {
-            final LinkedList<JvmMethodParameterSignature> consArgTypes = new LinkedList<JvmMethodParameterSignature>(constructorMethod.getKotlinParameterTypes());
+        final LinkedList<JvmMethodParameterSignature> consArgTypes = new LinkedList<JvmMethodParameterSignature>(constructorMethod.getKotlinParameterTypes());
 
-            int insert = 0;
+        int insert = 0;
+        if(closure != null) {
             if(closure.captureThis) {
                 if(!CodegenUtil.hasThis0(descriptor))
                     consArgTypes.add(insert, new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName()), "", JvmMethodParameterKind.THIS0));
@@ -444,21 +443,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     assert closure.captureReceiver != null;
                 }
             }
+        }
 
-            if(myClass instanceof JetObjectDeclaration) {
-                if(superCall instanceof JetDelegatorToSuperCall) {
+        if(myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isObjectLiteral()) {
+            if(superCall instanceof JetDelegatorToSuperCall) {
+                if(closure != null)
                     closure.superCall = (JetDelegatorToSuperCall) superCall;
-                    ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
-                    CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
-                    firstSuperArgument = insert;
-                    for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
-                        consArgTypes.add(insert++, new JvmMethodParameterSignature(t, "", JvmMethodParameterKind.SHARED_VAR));
-                    }
+                DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
+                if(declarationDescriptor instanceof ClassDescriptor) {
+                    declarationDescriptor = ((ClassDescriptor)declarationDescriptor).getUnsubstitutedPrimaryConstructor();
+                }
+                ConstructorDescriptor superConstructor = (ConstructorDescriptor) declarationDescriptor;
+                CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+                firstSuperArgument = insert;
+                for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
+                    consArgTypes.add(insert++, new JvmMethodParameterSignature(t, "", JvmMethodParameterKind.SHARED_VAR));
                 }
             }
-            
-            constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
         }
+
+        constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
 
         int flags = ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(), constructorMethod.getGenericsSignature(), null);
@@ -547,7 +551,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "<init>", superCallMethod.getDescriptor());
         }
         else {
-            iv.load(0, classType);
             ConstructorDescriptor constructorDescriptor1 = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
             generateDelegatorToConstructorCall(iv, codegen, (JetDelegatorToSuperCall) superCall, constructorDescriptor1, frameMap, firstSuperArgument);
         }
@@ -726,17 +729,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                     ConstructorDescriptor constructorDescriptor,
                                                     ConstructorFrameMap frameMap, int firstSuperArgument) {
         ClassDescriptor classDecl = constructorDescriptor.getContainingDeclaration();
-        Type type = typeMapper.mapType(classDecl.getDefaultType(), OwnerKind.IMPLEMENTATION);
 
-        iv.load(0, type);
+        iv.load(0, TYPE_OBJECT);
 
         if (classDecl.getContainingDeclaration() instanceof ClassDescriptor) {
             iv.load(frameMap.getOuterThisIndex(), typeMapper.mapType(((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION));
         }
 
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
-        if(myClass instanceof JetObjectDeclaration && superCall instanceof JetDelegatorToSuperCall) {
-            iv.load(0, TYPE_OBJECT);
+
+        if(myClass instanceof JetObjectDeclaration && superCall instanceof JetDelegatorToSuperCall && ((JetObjectDeclaration) myClass).isObjectLiteral()) {
             ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
             CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
             int nextVar = firstSuperArgument+1;
