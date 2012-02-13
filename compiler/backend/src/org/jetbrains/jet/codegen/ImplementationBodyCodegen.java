@@ -460,9 +460,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     consArgTypes.add(insert++, new JvmMethodParameterSignature(t, "", JvmMethodParameterKind.SHARED_VAR));
                 }
             }
-        }
 
-        constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
+            constructorMethod = JvmMethodSignature.simple("<init>", Type.VOID_TYPE, consArgTypes);
+        }
 
         int flags = ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(), constructorMethod.getGenericsSignature(), null);
