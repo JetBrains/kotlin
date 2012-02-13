@@ -7,11 +7,14 @@ import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -153,6 +156,22 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         checkAfter();
     }
 
+    public void testAnonymous_1() {
+        start();
+
+        typeAndNextTab("Runnable");
+
+        checkAfter();
+    }
+
+    public void testAnonymous_2() {
+        start();
+
+        typeAndNextTab("Thread");
+
+        checkAfter();
+    }
+
 
 
     private void paremeterless() {
@@ -163,19 +182,42 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     private void start() {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        myFixture.type(getTestName(true));
+        myFixture.type(getTemplateName());
 
         doAction("ExpandLiveTemplateByTab");
     }
 
+    private String getTemplateName() {
+        String testName = getTestName(true);
+        if (testName.contains("_")) {
+            return testName.substring(0, testName.indexOf("_"));
+        }
+        return testName;
+    }
+
     private void checkAfter() {
         assertNull(getTemplateState());
-        myFixture.checkResultByFile(getTestName(true) + ".exp.kt");
+        myFixture.checkResultByFile(getTestName(true) + ".exp.kt", true);
     }
 
     private void typeAndNextTab(String s) {
         type(s);
-        nextTab();
+        UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+                CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                    @Override
+                    public void run() {
+                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                nextTab();
+                            }
+                        });
+                    }
+                }, "nextTab", null);
+            }
+        });
     }
 
     private void type(String s) {
