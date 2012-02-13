@@ -18,9 +18,12 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     @NotNull
     @Override
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
-        final JetBlock block = new JetBlock(element.getNode(), null, Indent.getNoneIndent(), null, settings,
-                                            createSpacingBuilder(settings));
-        return FormattingModelProvider.createFormattingModelForPsiFile(element.getContainingFile(), block, settings);
+        final JetBlock block = new JetBlock(
+            element.getNode(), null, Indent.getNoneIndent(), null, settings,
+            createSpacingBuilder(settings));
+
+        return FormattingModelProvider.createFormattingModelForPsiFile(
+            element.getContainingFile(), block, settings);
     }
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {

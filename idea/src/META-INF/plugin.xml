@@ -59,6 +59,9 @@
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
       <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
 
+      <codeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetCodeStyleSettingsProvider"/>
+      <langCodeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetLanguageCodeStyleSettingsProvider"/>
+
       <templateParameterTraversalPolicy implementation="org.jetbrains.jet.plugin.completion.JetTemplateParameterTraversalPolicy"/>
 
       <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
@@ -100,7 +103,6 @@
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
-      <fileTypeIndentOptionsProvider implementation="org.jetbrains.jet.plugin.formatter.JetIndentOptionsProvider"/>
       <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
       <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
       <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
