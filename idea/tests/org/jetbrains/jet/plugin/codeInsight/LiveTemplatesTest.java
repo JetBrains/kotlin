@@ -42,8 +42,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         start();
         
         assertStringItems("args", "x", "y");
-        type("y");
-        nextTab();
+        typeAndNext("y");
 
         checkAfter();
     }
@@ -77,6 +76,42 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         nextTab(6);
 
         checkAfter();
+    }
+
+    public void testExfun() {
+        start();
+
+        typeAndNext("Int");
+        typeAndNext("foo");
+        typeAndNext("arg : Int");
+        nextTab();
+
+        checkAfter();
+    }
+
+    public void testExval() {
+        start();
+
+        typeAndNext("Int");
+        nextTab();
+        typeAndNext("Int");
+
+        checkAfter();
+    }
+
+    public void testExvar() {
+        start();
+
+        typeAndNext("Int");
+        nextTab();
+        typeAndNext("Int");
+
+        checkAfter();
+    }
+
+    private void typeAndNext(String s) {
+        type(s);
+        nextTab();
     }
 
     public void testIter() {
