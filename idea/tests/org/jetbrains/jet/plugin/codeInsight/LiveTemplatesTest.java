@@ -38,6 +38,16 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         paremeterless();
     }
 
+    public void testSoutv() {
+        start();
+        
+        assertStringItems("args", "x", "y");
+        type("y");
+        nextTab();
+
+        checkAfter();
+    }
+
     public void testIter() {
         start();
 
