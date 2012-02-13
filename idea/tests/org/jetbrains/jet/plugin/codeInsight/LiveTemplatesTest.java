@@ -48,6 +48,10 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         checkAfter();
     }
 
+    public void testSoutp() {
+        paremeterless();
+    }
+
     public void testIter() {
         start();
 
