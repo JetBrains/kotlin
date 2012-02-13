@@ -134,6 +134,15 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         checkAfter();
     }
 
+    public void testVoid() {
+        start();
+
+        typeAndNextTab("foo");
+        typeAndNextTab("x : Int");
+
+        checkAfter();
+    }
+
     public void testIter() {
         start();
 
