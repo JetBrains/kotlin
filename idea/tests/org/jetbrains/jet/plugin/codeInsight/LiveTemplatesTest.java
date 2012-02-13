@@ -109,9 +109,13 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         checkAfter();
     }
 
-    private void typeAndNext(String s) {
-        type(s);
+    public void testClosure() {
+        start();
+
+        typeAndNext("param");
         nextTab();
+
+        checkAfter();
     }
 
     public void testIter() {
@@ -142,6 +146,11 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     private void checkAfter() {
         assertNull(getTemplateState());
         myFixture.checkResultByFile(getTestName(true) + ".exp.kt");
+    }
+
+    private void typeAndNext(String s) {
+        type(s);
+        nextTab();
     }
 
     private void type(String s) {
