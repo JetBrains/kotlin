@@ -11,4 +11,4 @@ Then, you need to run
 
     ant -f build.xml
     
-which will put the binaries into the 'dist' directory.
+which will build the binaries and put them into the 'dist' directory.
