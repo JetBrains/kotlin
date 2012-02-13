@@ -27,18 +27,34 @@ import java.util.Arrays;
  */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testIter() {
+        start();
+
+        assertStringItems("args", "collection", "myList", "str", "stream");
+        type("args");
+        nextTab();
+        nextTab();
+
+        checkAfter();
+    }
+
+    private void start() {
         myFixture.configureByFile(getTestName(false) + ".kt");
-        myFixture.type("iter");
+        myFixture.type(getTestName(true));
 
         doAction("ExpandLiveTemplateByTab");
-        assertStringItems("args", "collection", "myList", "str", "stream");
+    }
 
-        myFixture.type("args");
-
-        getTemplateState().nextTab();
-        getTemplateState().nextTab();
+    private void checkAfter() {
         assertNull(getTemplateState());
         myFixture.checkResultByFile(getTestName(false) + ".exp.kt");
+    }
+
+    private void type(String s) {
+        myFixture.type(s);
+    }
+
+    private void nextTab() {
+        getTemplateState().nextTab();
     }
 
     private TemplateState getTemplateState() {
@@ -71,10 +87,8 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() +
                                   File.separator);
-
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
     }
 
