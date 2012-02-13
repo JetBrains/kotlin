@@ -5,7 +5,11 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
@@ -23,10 +27,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.Variance;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.RECEIVER;
 
@@ -48,7 +49,7 @@ public final class TipsManager {
 
             if (expressionType != null && resolutionScope != null) {
                 return includeExternalCallableExtensions(
-                        expressionType.getMemberScope().getAllDescriptors(),
+                        excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors()),
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
             }
         } else {
@@ -57,7 +58,7 @@ public final class TipsManager {
                 if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
                     return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
                 } else {
-                    java.util.HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
+                    HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
                     ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
                     resolutionScope.getImplicitReceiversHierarchy(result);
@@ -68,15 +69,36 @@ public final class TipsManager {
                     }
 
                     descriptorsSet.addAll(resolutionScope.getAllDescriptors());
-
-                    ClassDescriptor anInt = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, "Int");
-
-                    return excludeNotCallableExtensions(descriptorsSet, resolutionScope);
+                    return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope);
                 }
             }
         }
 
         return Collections.emptyList();
+    }
+
+
+
+    public static Collection<DeclarationDescriptor> excludePrivateDescriptors(
+            @NotNull Collection<DeclarationDescriptor> descriptors) {
+
+        return Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                if (descriptor == null) {
+                    return false;
+                }
+
+                if (descriptor instanceof NamespaceDescriptor) {
+                    NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) descriptor;
+                    if (namespaceDescriptor.getName().isEmpty()) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        });
     }
 
     public static Collection<DeclarationDescriptor> excludeNotCallableExtensions(

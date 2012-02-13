@@ -1,5 +1,7 @@
 package org.jetbrains.jet.completion;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,14 +75,14 @@ public class ExpectedCompletionUtils {
         ArrayList<String> result = new ArrayList<String>();
 
         for (String line : findLinesWithPrefixRemoved(prefix, fileText)) {
-            String[] completions = line.split(",");
+            String[] variants = line.split(",");
 
-            for (String completion : completions) {
-                result.add(completion.trim());
+            for (String variant : variants) {
+                result.add(StringUtil.unquoteString(variant.trim()));
             }
         }
 
-        return result.toArray(new String[result.size()]);
+        return ArrayUtil.toStringArray(result);
     }
 
     @NotNull

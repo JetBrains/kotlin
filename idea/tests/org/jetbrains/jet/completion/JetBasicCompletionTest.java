@@ -61,6 +61,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoEmptyNamespace() {
+        doTest();
+    }
+
     public void testOverloadFunctions() {
         doTest();
     }
