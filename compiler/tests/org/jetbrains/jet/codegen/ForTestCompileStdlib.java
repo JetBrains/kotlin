@@ -55,7 +55,7 @@ public class ForTestCompileStdlib {
         finally {
             stdlibJar.close();
         }
-
+        
         FileUtil.delete(classesDir);
         return jarFile;
 
@@ -82,12 +82,7 @@ public class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        Process exec = Runtime.getRuntime().exec(new String[]{System.getProperty("java.home") + "/bin/java", "-cp", System.getProperty("java.class.path"), KotlinCompiler.class.getName(), "-output", destdir.getPath(), "-src", new File("./stdlib/ktSrc").getAbsolutePath()});
-        try {
-            assert exec.waitFor() == 0;
-        } catch (InterruptedException e) {
-            throw new AssertionError(e);
-        }
+        KotlinCompiler.exec("-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
     }
     
     private static List<File> javaFilesInDir(File dir) {
