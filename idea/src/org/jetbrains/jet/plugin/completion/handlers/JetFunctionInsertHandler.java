@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
@@ -48,31 +49,44 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
             return;
         }
 
+        if (shouldAddParenthesis(element)) {
+            addParenthesis(context, item, element);
+        }
+
+        addImport(context, item);
+    }
+
+    private static boolean shouldAddParenthesis(PsiElement element) {
+        return PsiTreeUtil.getParentOfType(element, JetImportDirective.class) == null;
+    }
+
+    private void addParenthesis(InsertionContext context, LookupElement item, PsiElement offsetElement) {
+        int startOffset = context.getStartOffset();
+
         int lookupStringLength = item.getLookupString().length();
         int endOffset = startOffset + lookupStringLength;
         Document document = context.getDocument();
 
         boolean bothParentheses = false;
         String documentText = document.getText();
-        if (documentText.charAt(endOffset) != '(') {
-            //do not insert () if it already exists.
+
+        if (!(endOffset < documentText.length() && documentText.charAt(endOffset) == '(')) {
+            // Insert () if it's not already exist
             document.insertString(endOffset, "()");
             bothParentheses = true;
-        } else if (documentText.charAt(endOffset + 1) == ')') {
+        } else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset) == ')') {
             bothParentheses = true;
         }
 
         Editor editor = context.getEditor();
         if (caretPosition == CaretPosition.IN_BRACKETS || !bothParentheses) {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 1);
-            AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, element);
+            AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, offsetElement);
         } else {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 2);
         }
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument());
-
-        addImport(context, item);
     }
 
     private static void addImport(final InsertionContext context, final @NotNull LookupElement item) {
