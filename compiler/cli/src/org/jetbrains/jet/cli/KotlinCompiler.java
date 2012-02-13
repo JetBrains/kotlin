@@ -97,23 +97,27 @@ public class KotlinCompiler {
         }
 
         CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
-        environment.setIgnoreErrors(arguments.ignoreErrors);
-        environment.setErrorStream(errStream);
+        try {
+            environment.setIgnoreErrors(arguments.ignoreErrors);
+            environment.setErrorStream(errStream);
 
-        if (arguments.stdlib != null) {
-            environment.setStdlib(arguments.stdlib);
-        }
-
-        if (arguments.module != null) {
-            environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
-            return 0;
-        }
-        else {
-            if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
-                return 1;
+            if (arguments.stdlib != null) {
+                environment.setStdlib(arguments.stdlib);
             }
-        }
 
-        return 0;
+            if (arguments.module != null) {
+                environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                return 0;
+            }
+            else {
+                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
+                    return 1;
+                }
+            }
+
+            return 0;
+        } finally {
+            environment.dispose();
+        }
     }
 }
