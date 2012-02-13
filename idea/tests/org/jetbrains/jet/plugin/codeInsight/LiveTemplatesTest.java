@@ -27,9 +27,15 @@ import java.util.Arrays;
  */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testSout() {
-        start();
+        paremeterless();
+    }
 
-        checkAfter();
+    public void testSerr() {
+        paremeterless();
+    }
+
+    public void testMain() {
+        paremeterless();
     }
 
     public void testIter() {
@@ -39,6 +45,14 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         type("args");
         nextTab();
         nextTab();
+
+        checkAfter();
+    }
+
+
+
+    private void paremeterless() {
+        start();
 
         checkAfter();
     }
