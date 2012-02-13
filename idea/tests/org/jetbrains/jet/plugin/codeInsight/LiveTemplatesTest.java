@@ -26,6 +26,12 @@ import java.util.Arrays;
  * @since 2/10/12
  */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+    public void testSout() {
+        start();
+
+        checkAfter();
+    }
+
     public void testIter() {
         start();
 
