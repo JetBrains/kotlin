@@ -38,7 +38,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void start() {
-        myFixture.configureByFile(getTestName(false) + ".kt");
+        myFixture.configureByFile(getTestName(true) + ".kt");
         myFixture.type(getTestName(true));
 
         doAction("ExpandLiveTemplateByTab");
@@ -46,7 +46,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     private void checkAfter() {
         assertNull(getTemplateState());
-        myFixture.checkResultByFile(getTestName(false) + ".exp.kt");
+        myFixture.checkResultByFile(getTestName(true) + ".exp.kt");
     }
 
     private void type(String s) {
