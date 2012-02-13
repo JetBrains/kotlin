@@ -42,7 +42,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         start();
         
         assertStringItems("args", "x", "y");
-        typeAndNext("y");
+        typeAndNextTab("y");
 
         checkAfter();
     }
@@ -81,9 +81,9 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testExfun() {
         start();
 
-        typeAndNext("Int");
-        typeAndNext("foo");
-        typeAndNext("arg : Int");
+        typeAndNextTab("Int");
+        typeAndNextTab("foo");
+        typeAndNextTab("arg : Int");
         nextTab();
 
         checkAfter();
@@ -92,9 +92,9 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testExval() {
         start();
 
-        typeAndNext("Int");
+        typeAndNextTab("Int");
         nextTab();
-        typeAndNext("Int");
+        typeAndNextTab("Int");
 
         checkAfter();
     }
@@ -102,9 +102,9 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testExvar() {
         start();
 
-        typeAndNext("Int");
+        typeAndNextTab("Int");
         nextTab();
-        typeAndNext("Int");
+        typeAndNextTab("Int");
 
         checkAfter();
     }
@@ -112,8 +112,24 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     public void testClosure() {
         start();
 
-        typeAndNext("param");
+        typeAndNextTab("param");
         nextTab();
+
+        checkAfter();
+    }
+
+    public void testInterface() {
+        start();
+
+        typeAndNextTab("SomeTrait");
+
+        checkAfter();
+    }
+
+    public void testSingleton() {
+        start();
+
+        typeAndNextTab("MySingleton");
 
         checkAfter();
     }
@@ -148,7 +164,7 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         myFixture.checkResultByFile(getTestName(true) + ".exp.kt");
     }
 
-    private void typeAndNext(String s) {
+    private void typeAndNextTab(String s) {
         type(s);
         nextTab();
     }
