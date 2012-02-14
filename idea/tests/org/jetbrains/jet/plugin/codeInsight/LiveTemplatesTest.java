@@ -5,12 +5,16 @@ import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
@@ -25,12 +29,213 @@ import java.util.Arrays;
  * @since 2/10/12
  */
 public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+    public void testSout() {
+        paremeterless();
+    }
+
+    public void testSerr() {
+        paremeterless();
+    }
+
+    public void testMain() {
+        paremeterless();
+    }
+
+    public void testSoutv() {
+        start();
+        
+        assertStringItems("args", "x", "y");
+        typeAndNextTab("y");
+
+        checkAfter();
+    }
+
+    public void testSoutp() {
+        paremeterless();
+    }
+
+    public void testFun0() {
+        start();
+
+        type("foo");
+        nextTab(2);
+
+        checkAfter();
+    }
+
+    public void testFun1() {
+        start();
+
+        type("foo");
+        nextTab(4);
+
+        checkAfter();
+    }
+
+    public void testFun2() {
+        start();
+
+        type("foo");
+        nextTab(6);
+
+        checkAfter();
+    }
+
+    public void testExfun() {
+        start();
+
+        typeAndNextTab("Int");
+        typeAndNextTab("foo");
+        typeAndNextTab("arg : Int");
+        nextTab();
+
+        checkAfter();
+    }
+
+    public void testExval() {
+        start();
+
+        typeAndNextTab("Int");
+        nextTab();
+        typeAndNextTab("Int");
+
+        checkAfter();
+    }
+
+    public void testExvar() {
+        start();
+
+        typeAndNextTab("Int");
+        nextTab();
+        typeAndNextTab("Int");
+
+        checkAfter();
+    }
+
+    public void testClosure() {
+        start();
+
+        typeAndNextTab("param");
+        nextTab();
+
+        checkAfter();
+    }
+
+    public void testInterface() {
+        start();
+
+        typeAndNextTab("SomeTrait");
+
+        checkAfter();
+    }
+
+    public void testSingleton() {
+        start();
+
+        typeAndNextTab("MySingleton");
+
+        checkAfter();
+    }
+
+    public void testVoid() {
+        start();
+
+        typeAndNextTab("foo");
+        typeAndNextTab("x : Int");
+
+        checkAfter();
+    }
+
     public void testIter() {
-        myFixture.configureByFile(getTestName(false) + ".kt");
-        myFixture.type("iter");
+        start();
+
+        assertStringItems("args", "collection", "myList", "str", "stream");
+        type("args");
+        nextTab(2);
+
+        checkAfter();
+    }
+
+    public void testAnonymous_1() {
+        start();
+
+        typeAndNextTab("Runnable");
+
+        checkAfter();
+    }
+
+    public void testAnonymous_2() {
+        start();
+
+        typeAndNextTab("Thread");
+
+        checkAfter();
+    }
+
+
+
+    private void paremeterless() {
+        start();
+
+        checkAfter();
+    }
+
+    private void start() {
+        myFixture.configureByFile(getTestName(true) + ".kt");
+        myFixture.type(getTemplateName());
 
         doAction("ExpandLiveTemplateByTab");
-        assertStringItems("args", "collection", "myList", "str", "stream");
+    }
+
+    private String getTemplateName() {
+        String testName = getTestName(true);
+        if (testName.contains("_")) {
+            return testName.substring(0, testName.indexOf("_"));
+        }
+        return testName;
+    }
+
+    private void checkAfter() {
+        assertNull(getTemplateState());
+        myFixture.checkResultByFile(getTestName(true) + ".exp.kt", true);
+    }
+
+    private void typeAndNextTab(String s) {
+        type(s);
+        UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+                CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
+                    @Override
+                    public void run() {
+                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                nextTab();
+                            }
+                        });
+                    }
+                }, "nextTab", null);
+            }
+        });
+    }
+
+    private void type(String s) {
+        myFixture.type(s);
+    }
+
+    private void nextTab() {
+        getTemplateState().nextTab();
+    }
+
+    private void nextTab(int times) {
+        for (int i = 0; i < times; i++) {
+            nextTab();
+        }
+    }
+
+    private TemplateState getTemplateState() {
+        return TemplateManagerImpl.getTemplateState(myFixture.getEditor());
     }
 
     @NotNull
@@ -59,10 +264,8 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() +
                                   File.separator);
-
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
     }
 

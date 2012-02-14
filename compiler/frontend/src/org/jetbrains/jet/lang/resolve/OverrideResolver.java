@@ -357,7 +357,15 @@ public class OverrideResolver {
                     abstractNoImpl.add(single);
                 }
             } else {
-                manyImpl.addAll(overridenDeclarations);
+                List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
+                for (CallableMemberDescriptor overriden : overridenDeclarations) {
+                    if (overriden.getModality() != Modality.ABSTRACT) {
+                        nonAbstractManyImpl.add(overriden);
+                    }
+                }
+                if (nonAbstractManyImpl.size() > 1) {
+                    manyImpl.addAll(nonAbstractManyImpl);
+                }
             }
         }
     }
