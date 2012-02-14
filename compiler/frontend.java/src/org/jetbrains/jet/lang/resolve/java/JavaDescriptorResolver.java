@@ -687,7 +687,8 @@ public class JavaDescriptorResolver {
         }
     }
 
-    public NamespaceDescriptor resolveNamespace(String qualifiedName) {
+    @Nullable
+    public NamespaceDescriptor resolveNamespace(@NotNull String qualifiedName) {
         // First, let's check that there is no Kotlin package:
         NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinNamespaceDescriptor != null) {

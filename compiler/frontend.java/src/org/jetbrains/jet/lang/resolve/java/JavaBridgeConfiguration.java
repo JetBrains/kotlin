@@ -53,8 +53,10 @@ public class JavaBridgeConfiguration implements Configuration {
     public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
         rootScope.importScope(new JavaPackageScope("", createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
         for (String importFQN : DEFAULT_JAVA_IMPORTS) {
-            importer.addScopeImport(new JavaPackageScope(
-                importFQN, createNamespaceDescriptor(QualifiedNamesUtil.fqnToShortName(importFQN), importFQN), javaSemanticServices));
+            NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(importFQN);
+            if (namespaceDescriptor != null) {
+                importer.addScopeImport(namespaceDescriptor.getMemberScope());
+            }
         }
         delegateConfiguration.addDefaultImports(trace, rootScope, importer);
     }
