@@ -16,15 +16,25 @@
 
 package org.jetbrains.jet.plugin.refactoring.introduceVariable;
 
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
+import com.intellij.ui.NonFocusableCheckBox;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.types.JetType;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * User: Alefas
@@ -34,14 +44,88 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
 
     private boolean myReplaceOccurrence;
     private JetProperty myProperty;
+    private boolean isVar;
+    private boolean myDoNotChangeVar;
+    private @Nullable JetType myExprType;
+    private JCheckBox myVarCheckbox;
+    private JCheckBox myExprTypeCheckbox;
 
     public JetInplaceVariableIntroducer(PsiNamedElement elementToRename, Editor editor, Project project,
                                         String title, JetExpression[] occurrences,
                                         @Nullable JetExpression expr, boolean replaceOccurrence,
-                                        JetProperty property) {
+                                        JetProperty property, boolean isVar, boolean doNotChangeVar,
+                                        @Nullable JetType exprType) {
         super(elementToRename, editor, project, title, occurrences, expr);
         this.myReplaceOccurrence = replaceOccurrence;
         myProperty = property;
+        this.isVar = isVar;
+        myDoNotChangeVar = doNotChangeVar;
+        myExprType = exprType;
+    }
+
+    @Nullable
+    protected JComponent getComponent() {
+        if (!myDoNotChangeVar) {
+            myVarCheckbox = new NonFocusableCheckBox("Declare variable");
+            myVarCheckbox.setSelected(isVar);
+            myVarCheckbox.setMnemonic('v');
+            myVarCheckbox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
+                        @Override
+                        protected void run(Result result) throws Throwable {
+                            PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
+                            JetChangePropertyActions.declareValueOrVariable(myProject, myVarCheckbox.isSelected(),
+                                                                            myProperty);
+                        }
+                    }.execute();
+                }
+            });
+        }
+
+        if (myExpr != null) {
+            myExprTypeCheckbox = new NonFocusableCheckBox("Add type annotation");
+            myExprTypeCheckbox.setSelected(false);
+            myExprTypeCheckbox.setMnemonic('t');
+            myExprTypeCheckbox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
+                        @Override
+                        protected void run(Result result) throws Throwable {
+                            PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
+                            if (myExprTypeCheckbox.isSelected()) {
+                                JetChangePropertyActions.addTypeAnnotation(myProject, myProperty, myExprType);
+                            } else {
+                                JetChangePropertyActions.removeTypeAnnotation(myProject, myProperty);
+                            }
+                        }
+                    }.execute();
+                }
+            });
+        }
+
+        final JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(null);
+        int count = 1;
+        if (myVarCheckbox != null) {
+            panel.add(myVarCheckbox, new GridBagConstraints(0, count, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
+                                                            GridBagConstraints.HORIZONTAL,
+                                                            new Insets(5, 5, 5, 5), 0, 0));
+            ++count;
+        }
+
+        if (myExprTypeCheckbox != null) {
+            panel.add(myExprTypeCheckbox, new GridBagConstraints(0, count, 1, 1, 1, 0, GridBagConstraints.NORTHWEST,
+                                                            GridBagConstraints.HORIZONTAL,
+                                                            new Insets(5, 5, 5, 5), 0, 0));
+            ++count;
+        }
+        panel.add(Box.createVerticalBox(), new GridBagConstraints(0, count, 1, 1, 1, 1, GridBagConstraints.NORTHWEST,
+                                                                  GridBagConstraints.BOTH,
+                                                                  new Insets(0, 0, 0, 0), 0, 0));
+        return panel;
     }
 
     @Override

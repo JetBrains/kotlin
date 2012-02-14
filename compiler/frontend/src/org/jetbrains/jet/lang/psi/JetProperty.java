@@ -137,4 +137,9 @@ public class JetProperty extends JetTypeParameterListOwner implements JetModifie
     public ASTNode getValOrVarNode() {
         return getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
     }
+
+    @Nullable
+    public ASTNode getEqualsSign() {
+        return getNode().findChildByType(TokenSet.create(EQ));
+    }
 }

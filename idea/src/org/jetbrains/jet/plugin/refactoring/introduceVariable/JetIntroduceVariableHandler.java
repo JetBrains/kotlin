@@ -97,7 +97,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
         BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
                                                                             AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
-        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
+        final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         if (expressionType instanceof NamespaceType) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
             return;
@@ -156,7 +156,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                         new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
                                                                          references.toArray(new JetExpression[references.size()]),
                                                                          reference.get(), finalReplaceOccurrence,
-                                                                         property);
+                                                                         property, /*todo*/false, /*todo*/false,
+                                                                         expressionType);
                                 variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
                             }
                         }
