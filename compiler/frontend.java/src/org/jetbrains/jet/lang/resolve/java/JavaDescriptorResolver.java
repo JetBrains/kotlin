@@ -1377,7 +1377,6 @@ public class JavaDescriptorResolver {
         }
 
         ClassOrNamespaceDescriptor classDescriptor;
-        final List<TypeParameterDescriptor> classTypeParameters = scopeData.getTypeParameters();
         if (scopeData instanceof ResolverBinaryClassData) {
             ClassDescriptor classClassDescriptor = resolveClass(method.getPsiMethod().getContainingClass());
             classDescriptor = classClassDescriptor;
@@ -1388,6 +1387,7 @@ public class JavaDescriptorResolver {
         if (classDescriptor == null) {
             return null;
         }
+
         NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
                 owner,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
@@ -1396,41 +1396,20 @@ public class JavaDescriptorResolver {
         );
         methodDescriptorCache.put(method.getPsiMethod(), functionDescriptorImpl);
 
-        TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(classDescriptor);
+        final TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(classDescriptor);
 
-        final List<TypeParameterDescriptor> methodTypeParametersInitialization = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
-        List<TypeParameterDescriptor> methodTypeParameters = new ArrayList<TypeParameterDescriptor>();
-        for (TypeParameterDescriptor typeParameterDescriptorInitialization : methodTypeParametersInitialization) {
-            methodTypeParameters.add(typeParameterDescriptorInitialization);
-        }
+        final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
 
-        class MethodTypeVariableResolver implements TypeVariableResolver {
-            @NotNull
-            @Override
-            public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                for (TypeParameterDescriptor typeParameter : methodTypeParametersInitialization) {
-                    if (typeParameter.getName().equals(name)) {
-                        return typeParameter;
-                    }
-                }
-                for (TypeParameterDescriptor typeParameter : classTypeParameters) {
-                    if (typeParameter.getName().equals(name)) {
-                        return typeParameter;
-                    }
-                }
-                throw new IllegalStateException("unresolver variable: " + name); // TODO: report properly
-            }
-
-        }
+        TypeVariableResolver methodTypeVariableResolver = new TypeVariableResolverFromTypeDescriptors(methodTypeParameters, typeVariableResolverForParameters);
 
 
-        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), new MethodTypeVariableResolver());
+        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
-                makeReturnType(returnType, method, new MethodTypeVariableResolver()),
+                makeReturnType(returnType, method, methodTypeVariableResolver),
                 Modality.convertFromFlags(method.getPsiMethod().hasModifierProperty(PsiModifier.ABSTRACT), !method.isFinal()),
                 resolveVisibilityFromPsiModifiers(method.getPsiMethod())
         );
