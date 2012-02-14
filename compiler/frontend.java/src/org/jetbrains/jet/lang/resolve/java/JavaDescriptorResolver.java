@@ -1159,7 +1159,7 @@ public class JavaDescriptorResolver {
         namedMembers.functionDescriptors = functionDescriptors;
     }
 
-    private ResolverScopeData getResolverScopeData(ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
+    private ResolverScopeData getResolverScopeData(@NotNull ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
         ResolverScopeData scopeData;
         boolean staticMembers;
         if (owner instanceof JavaNamespaceDescriptor) {
@@ -1169,7 +1169,7 @@ public class JavaDescriptorResolver {
             scopeData = classDescriptorCache.get(psiClass.getQualifiedName());
             staticMembers = false;
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("unknown owner: " + owner.getClass().getName());
         }
         if (scopeData == null) {
             throw new IllegalStateException();
