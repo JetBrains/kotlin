@@ -36,7 +36,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private Modality modality;
     private Visibility visibility;
 
-    private MutableClassDescriptor classObjectDescriptor;
+    private MutableClassDescriptorLite classObjectDescriptor;
     private JetType classObjectType;
     private JetType defaultType;
     private final ClassKind kind;
@@ -65,7 +65,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
 
     @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
         if (this.classObjectDescriptor != null) return ClassObjectStatus.DUPLICATE;
         if (!isStatic(this.getContainingDeclaration())) {
             return ClassObjectStatus.NOT_ALLOWED;
@@ -226,7 +226,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     @Override
     @Nullable
-    public MutableClassDescriptor getClassObjectDescriptor() {
+    public MutableClassDescriptorLite getClassObjectDescriptor() {
         return classObjectDescriptor;
     }
 
@@ -251,7 +251,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
         getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
         innerClassesAndObjects.put(classDescriptor.getName(), classDescriptor);
     }
@@ -269,7 +269,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
         getScopeForMemberLookupAsWritableScope().addObjectDescriptor(objectDescriptor);
         innerClassesAndObjects.put(objectDescriptor.getName(), objectDescriptor);
     }

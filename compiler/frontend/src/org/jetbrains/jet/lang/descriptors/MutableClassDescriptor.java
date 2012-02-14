@@ -50,7 +50,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
 
 
     @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull final MutableClassDescriptor classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull final MutableClassDescriptorLite classObjectDescriptor) {
         ClassObjectStatus r = super.setClassObjectDescriptor(classObjectDescriptor);
         if (r != ClassObjectStatus.OK) {
             return r;
@@ -122,7 +122,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
         super.addClassifierDescriptor(classDescriptor);
         scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
     }

@@ -133,7 +133,7 @@ public class DeclarationResolver {
                 @Override
                 public void visitEnumEntry(JetEnumEntry enumEntry) {
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                        MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) namespaceLike).getClassObjectDescriptor();
+                        MutableClassDescriptorLite classObjectDescriptor = ((MutableClassDescriptor) namespaceLike).getClassObjectDescriptor();
                         assert classObjectDescriptor != null;
                         PropertyDescriptor propertyDescriptor = context.getDescriptorResolver().resolveObjectDeclarationAsPropertyDescriptor(classObjectDescriptor, enumEntry, context.getClasses().get(enumEntry));
                         classObjectDescriptor.addPropertyDescriptor(propertyDescriptor);

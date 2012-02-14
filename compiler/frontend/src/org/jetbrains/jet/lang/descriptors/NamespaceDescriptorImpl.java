@@ -39,12 +39,12 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
         memberScope.addClassifierDescriptor(classDescriptor);
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
         memberScope.addObjectDescriptor(objectDescriptor);
     }
 
@@ -59,7 +59,7 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
         throw new IllegalStateException("Must be guaranteed not to happen by the parser");
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
@@ -136,12 +137,12 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
 
             }
 
             @Override
-            public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+            public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
 
             }
 
@@ -156,7 +157,7 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                 return ClassObjectStatus.NOT_ALLOWED;
             }
         }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, Configuration.EMPTY, true);

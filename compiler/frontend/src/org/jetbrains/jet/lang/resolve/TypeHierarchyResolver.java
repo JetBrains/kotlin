@@ -108,7 +108,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitEnumEntry(JetEnumEntry enumEntry) {
-                    MutableClassDescriptor classObjectDescriptor = ((MutableClassDescriptor) owner).getClassObjectDescriptor();
+                    MutableClassDescriptorLite classObjectDescriptor = ((MutableClassDescriptor) owner).getClassObjectDescriptor();
                     assert classObjectDescriptor != null : enumEntry.getParent().getText();
                     if (enumEntry.getPrimaryConstructorParameterList() == null) {
                         createClassDescriptorForObject(enumEntry, classObjectDescriptor, outerScopeForStatic, ClassKind.ENUM_ENTRY);
@@ -126,7 +126,7 @@ public class TypeHierarchyResolver {
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, classKind) {
                         @Override
-                        public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+                        public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
                         }
                     };

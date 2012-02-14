@@ -63,9 +63,9 @@ public interface NamespaceLike extends DeclarationDescriptor {
 
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
-    void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor);
+    void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor);
 
-    void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor);
+    void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor);
 
     void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor);
 
@@ -77,5 +77,5 @@ public interface NamespaceLike extends DeclarationDescriptor {
         NOT_ALLOWED
     }
 
-    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor);
+    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor);
 }

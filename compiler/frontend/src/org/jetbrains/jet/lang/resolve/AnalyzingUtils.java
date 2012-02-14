@@ -115,12 +115,12 @@ public class AnalyzingUtils {
             }
 
             @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
+            public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
                 scope.addClassifierDescriptor(classDescriptor);
             }
 
             @Override
-            public void addObjectDescriptor(@NotNull MutableClassDescriptor objectDescriptor) {
+            public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
 
             }
 
@@ -135,7 +135,7 @@ public class AnalyzingUtils {
             }
 
             @Override
-            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
+            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                 throw new IllegalStateException("Must be guaranteed not to happen by the parser");
             }
         }, files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
