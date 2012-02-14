@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.HierarchicalMethodSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +27,8 @@ class PropertyAccessorData {
 
     @NotNull
     private final PsiMemberWrapper member;
+
+    // for methods
     private final boolean getter;
 
     @NotNull

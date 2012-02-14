@@ -18,7 +18,19 @@ package org.jetbrains.jet.compiler;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -32,7 +44,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -166,8 +183,11 @@ class NamespaceComparator {
                 case TRAIT:
                     sb.append("trait");
                     break;
+                case OBJECT:
+                    sb.append("object");
+                    break;
                 default:
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("unknown class kind: " + kind);
             }
         }
 
@@ -184,6 +204,10 @@ class NamespaceComparator {
         public void serialize(FunctionDescriptor fun) {
             serialize(fun.getModality());
             sb.append(" ");
+            
+            if (!fun.getOverriddenDescriptors().isEmpty()) {
+                sb.append("override /*" + fun.getOverriddenDescriptors().size() + "*/ ");
+            }
 
             if (fun instanceof ConstructorDescriptor) {
                 sb.append("/*constructor*/ ");
@@ -472,6 +496,12 @@ class NamespaceComparator {
 
             for (String memberString : memberStrings) {
                 sb.append(indent(memberString));
+            }
+            
+            if (klass.getClassObjectDescriptor() != null) {
+                StringBuilder sbForClassObject = new StringBuilder();
+                new FullContentSerialier(sbForClassObject).serialize(klass.getClassObjectDescriptor());
+                sb.append(indent(sbForClassObject.toString()));
             }
 
             sb.append("}\n");

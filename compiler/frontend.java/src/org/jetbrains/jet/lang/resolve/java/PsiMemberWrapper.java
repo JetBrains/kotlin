@@ -32,6 +32,11 @@ public abstract class PsiMemberWrapper {
         this.psiMember = psiMember;
     }
 
+    @NotNull
+    public PsiMember getPsiMember() {
+        return psiMember;
+    }
+
     public boolean isStatic() {
         return psiMember.hasModifierProperty(PsiModifier.STATIC);
     }

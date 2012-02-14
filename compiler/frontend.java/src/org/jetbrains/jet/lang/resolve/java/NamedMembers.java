@@ -30,7 +30,7 @@ import java.util.Set;
 */
 class NamedMembers {
     String name;
-    List<PsiMethodWrapper> methods;
+    List<PsiMethodWrapper> methods = new ArrayList<PsiMethodWrapper>(0);
 
     @Nullable
     PsiFieldWrapper field;
@@ -41,12 +41,10 @@ class NamedMembers {
     private PsiClass nestedClasses;
     
     Set<VariableDescriptor> propertyDescriptors;
+    /** Including from supertypes */
     Set<FunctionDescriptor> functionDescriptors;
 
     void addMethod(PsiMethodWrapper method) {
-        if (methods == null) {
-            methods = new ArrayList<PsiMethodWrapper>();
-        }
         methods.add(method);
     }
     

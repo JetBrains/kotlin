@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -81,7 +83,7 @@ public class JavaDescriptorResolver {
         JAVA,
         KOTLIN,
     }
-    
+
     public static class TypeParameterDescriptorInitialization {
         @NotNull
         private final TypeParameterDescriptorOrigin origin;
@@ -170,7 +172,7 @@ public class JavaDescriptorResolver {
     protected final Map<String, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
-    protected final Map<PsiMethod, FunctionDescriptor> methodDescriptorCache = Maps.newHashMap();
+    protected final Map<PsiMethod, FunctionDescriptorImpl> methodDescriptorCache = Maps.newHashMap();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
     protected final JavaSemanticServices semanticServices;
@@ -394,9 +396,27 @@ public class JavaDescriptorResolver {
             }
         }
 
+        // TODO
+        //classData.classDescriptor.setClassObjectDescriptor(createClassObjectDescriptor(classData.classDescriptor));
+
         semanticServices.getTrace().record(BindingContext.CLASS, psiClass, classData.classDescriptor);
 
         return classData;
+    }
+
+    /**
+     * TODO
+     * @see #createJavaNamespaceDescriptor(com.intellij.psi.PsiClass)
+     */
+    @Nullable
+    private MutableClassDescriptorLite createClassObjectDescriptor(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
+        MutableClassDescriptorLite classObjectDescriptor = new MutableClassDescriptorLite(containing, ClassKind.OBJECT);
+        classObjectDescriptor.setName("<TODO>"); // TODO
+        classObjectDescriptor.setModality(Modality.FINAL);
+        classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
+        classObjectDescriptor.createTypeConstructor();
+        classObjectDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classObjectDescriptor, psiClass, semanticServices, true));
+        return classObjectDescriptor;
     }
 
     private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData, TypeVariableByNameResolver typeVariableByNameResolver) {
@@ -767,6 +787,10 @@ public class JavaDescriptorResolver {
         return resolveNamespace(parentPackage);
     }
 
+    /**
+     * TODO
+     * @see #createClassObjectDescriptor(org.jetbrains.jet.lang.descriptors.ClassDescriptor, com.intellij.psi.PsiClass)
+     */
     private ResolverNamespaceData createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
         ResolverNamespaceData namespaceData = new ResolverNamespaceData();
         namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
@@ -789,30 +813,6 @@ public class JavaDescriptorResolver {
             this.receiverType = receiverType;
             this.descriptors = descriptors;
         }
-    }
-
-    private ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
-            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver) {
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
-        JetType receiverType = null;
-        int indexDelta = 0;
-        for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
-            PsiParameterWrapper parameter = parameters.get(i);
-            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
-            if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
-                // TODO
-                --indexDelta;
-            } else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
-                result.add(meaning.valueParameterDescriptor);
-            } else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
-                if (receiverType != null) {
-                    throw new IllegalStateException("more then one receiver");
-                }
-                --indexDelta;
-                receiverType = meaning.receiverType;
-            }
-        }
-        return new ValueParameterDescriptors(receiverType, result);
     }
 
     private enum JvmMethodParameterKind {
@@ -907,10 +907,17 @@ public class JavaDescriptorResolver {
         if (namedMembers == null) {
             return Collections.emptySet();
         }
+        Set<VariableDescriptor> r = new HashSet<VariableDescriptor>();
 
         resolveNamedGroupProperties(owner, scopeData, staticMembers, namedMembers, fieldName);
 
-        return namedMembers.propertyDescriptors;
+        r.addAll(namedMembers.propertyDescriptors);
+
+        for (JetType supertype : getSupertypes(scopeData)) {
+            r.addAll(supertype.getMemberScope().getProperties(fieldName));
+        }
+
+        return r;
     }
     
     @NotNull
@@ -931,6 +938,16 @@ public class JavaDescriptorResolver {
             resolveNamedGroupProperties(owner, scopeData, staticMembers, namedMembers, propertyName);
             descriptors.addAll(namedMembers.propertyDescriptors);
         }
+
+        for (JetType supertype : getSupertypes(scopeData)) {
+            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
+                // TODO: ugly
+                if (descriptor instanceof VariableDescriptor) {
+                    descriptors.add((VariableDescriptor) descriptor);
+                }
+            }
+        }
+        
         return descriptors;
     }
     
@@ -1140,24 +1157,50 @@ public class JavaDescriptorResolver {
         namedMembers.propertyDescriptors = r;
     }
 
-    private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers) {
+    private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
+        
+        final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
-        if (namedMembers.methods == null) {
-            namedMembers.functionDescriptors = Collections.emptySet();
-            return;
-        }
-
-        Set<FunctionDescriptor> functionDescriptors = new HashSet<FunctionDescriptor>(namedMembers.methods.size());
+        Set<NamedFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
-            FunctionDescriptor function = resolveMethodToFunctionDescriptor(owner, psiClass, typeSubstitutorForGenericSuperclasses, method);
+            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
+                    typeSubstitutorForGenericSuperclasses,
+                    method);
             if (function != null) {
-                functionDescriptors.add(function);
+                functionsFromCurrent.add((NamedFunctionDescriptor) function);
             }
         }
-        namedMembers.functionDescriptors = functionDescriptors;
+
+        if (owner instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) owner;
+
+            Set<NamedFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
+
+            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, new OverrideResolver.DescriptorSink<NamedFunctionDescriptor>() {
+                @Override
+                public void addToScope(NamedFunctionDescriptor fakeOverride) {
+                    functions.add(fakeOverride);
+                }
+            });
+
+        }
+
+        functions.addAll(functionsFromCurrent);
+
+        namedMembers.functionDescriptors = functions;
+    }
+    
+    private Set<NamedFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, String methodName) {
+        Set<NamedFunctionDescriptor> r = new HashSet<NamedFunctionDescriptor>();
+        for (JetType supertype : getSupertypes(scopeData)) {
+            for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
+                r.add((NamedFunctionDescriptor) function);
+            }
+        }
+        return r;
     }
 
     private ResolverScopeData getResolverScopeData(@NotNull ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
@@ -1191,19 +1234,15 @@ public class JavaDescriptorResolver {
         Map<String, NamedMembers> namedMembersMap = resolverScopeData.namedMembersMap;
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
-        if (namedMembers == null || namedMembers.methods == null) {
+        if (namedMembers != null && namedMembers.methods != null) {
+            TypeSubstitutor typeSubstitutor = typeSubstitutorForGenericSupertypes(resolverScopeData);
+
+            resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, namedMembers, methodName, resolverScopeData);
+
+            return namedMembers.functionDescriptors;
+        } else {
             return Collections.emptySet();
         }
-
-        TypeSubstitutor typeSubstitutor;
-        if (descriptor instanceof ClassDescriptor && !staticMembers) {
-            typeSubstitutor = createSubstitutorForGenericSupertypes((ClassDescriptor) descriptor);
-        } else {
-            typeSubstitutor = TypeSubstitutor.EMPTY;
-        }
-        resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, namedMembers);
-        
-        return namedMembers.functionDescriptors;
     }
 
     private TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
@@ -1274,17 +1313,42 @@ public class JavaDescriptorResolver {
         return equal(p1.getOwner(), p2.getOwner());
     }
 
+    private ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
+            List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver) {
+        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
+        JetType receiverType = null;
+        int indexDelta = 0;
+        for (int i = 0, parametersLength = parameters.size(); i < parametersLength; i++) {
+            PsiParameterWrapper parameter = parameters.get(i);
+            JvmMethodParameterMeaning meaning = resolveParameterDescriptor(containingDeclaration, i + indexDelta, parameter, typeVariableResolver);
+            if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
+                // TODO
+                --indexDelta;
+            } else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
+                result.add(meaning.valueParameterDescriptor);
+            } else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
+                if (receiverType != null) {
+                    throw new IllegalStateException("more then one receiver");
+                }
+                --indexDelta;
+                receiverType = meaning.receiverType;
+            }
+        }
+        return new ValueParameterDescriptors(receiverType, result);
+    }
+
     @Nullable
-    private FunctionDescriptor resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, final PsiMethodWrapper method) {
-        
+    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, final PsiMethodWrapper method) {
+
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;
         }
-        FunctionDescriptor functionDescriptor = methodDescriptorCache.get(method.getPsiMethod());
+        FunctionDescriptorImpl functionDescriptor = methodDescriptorCache.get(method.getPsiMethod());
         if (functionDescriptor != null) {
             if (method.getPsiMethod().getContainingClass() != psiClass) {
-                functionDescriptor = functionDescriptor.substitute(typeSubstitutorForGenericSuperclasses);
+                //functionDescriptor = functionDescriptor.substitute(typeSubstitutorForGenericSuperclasses);
+                throw new IllegalStateException();
             }
             return functionDescriptor;
         }
@@ -1434,36 +1498,52 @@ public class JavaDescriptorResolver {
         semanticServices.getTrace().record(BindingContext.FUNCTION, method.getPsiMethod(), functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
         if (method.getPsiMethod().getContainingClass() != psiClass) {
-            substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
+            //substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
+            throw new IllegalStateException();
         }
-        return substitutedFunctionDescriptor;
+        return (FunctionDescriptorImpl) substitutedFunctionDescriptor;
     }
-    
+
     public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, ClassOrNamespaceDescriptor containingDeclaration) {
         ResolverScopeData scopeData = getResolverScopeData(containingDeclaration, new PsiClassWrapper(psiClass));
 
-        TypeSubstitutor substitutorForGenericSupertypes;
-        if (scopeData instanceof ResolverBinaryClassData) {
-            substitutorForGenericSupertypes = createSubstitutorForGenericSupertypes(((ResolverBinaryClassData) scopeData).classDescriptor);
-        } else {
-            substitutorForGenericSupertypes = TypeSubstitutor.EMPTY;
-        }
+        TypeSubstitutor substitutorForGenericSupertypes = typeSubstitutorForGenericSupertypes(scopeData);
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
-        
-        for (NamedMembers namedMembers : scopeData.namedMembersMap.values()) {
-            resolveNamedGroupFunctions(containingDeclaration, psiClass, substitutorForGenericSupertypes, namedMembers);
+
+        for (Map.Entry<String, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
+            String methodName = entry.getKey();
+            NamedMembers namedMembers = entry.getValue();
+            resolveNamedGroupFunctions(containingDeclaration, psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.functionDescriptors);
         }
 
         return functions;
     }
 
+    private Collection<JetType> getSupertypes(ResolverScopeData scope) {
+        if (scope instanceof ResolverBinaryClassData) {
+            return ((ResolverBinaryClassData) scope).classDescriptor.getSupertypes();
+        } else if (scope instanceof ResolverNamespaceData) {
+            return Collections.emptyList();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private TypeSubstitutor typeSubstitutorForGenericSupertypes(ResolverScopeData scopeData) {
+        if (scopeData instanceof ResolverClassData) {
+            return createSubstitutorForGenericSupertypes(((ResolverClassData) scopeData).getClassDescriptor());
+        } else {
+            return TypeSubstitutor.EMPTY;
+        }
+    }
+
     private List<TypeParameterDescriptorInitialization> resolveMethodTypeParameters(
             @NotNull PsiMethodWrapper method,
             @NotNull DeclarationDescriptor functionDescriptor,
-            @NotNull TypeVariableResolver classTypeVariableResolver
-    ) {
+            @NotNull TypeVariableResolver classTypeVariableResolver) {
+
         List<TypeParameterDescriptorInitialization> typeParameters;
         if (method.getJetMethod().typeParameters().length() > 0) {
             typeParameters = resolveMethodTypeParametersFromJetSignature(
@@ -1477,13 +1557,13 @@ public class JavaDescriptorResolver {
     }
 
     /**
-     * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, MutableClassDescriptorLite)
+     * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, org.jetbrains.jet.lang.descriptors.ClassDescriptor, TypeVariableResolver)
      */
     private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(String jetSignature, final PsiMethod method,
             final DeclarationDescriptor functionDescriptor, final TypeVariableByNameResolver classTypeVariableByNameResolver)
     {
         final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
-        
+
         class MyTypeVariableByNameResolver implements TypeVariableByNameResolver {
 
             @NotNull

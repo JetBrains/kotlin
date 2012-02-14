@@ -139,7 +139,7 @@ public class JavaTypeTransformer {
                         for (int i = 0; i < parameters.size(); i++) {
                             PsiType psiArgument = psiArguments[i];
                             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-                            
+
                             TypeVariableResolver typeVariableByPsiResolver2 = new TypeVariableResolver() {
                                 @NotNull
                                 @Override

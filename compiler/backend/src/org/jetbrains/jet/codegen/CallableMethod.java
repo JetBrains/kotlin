@@ -94,7 +94,7 @@ public class CallableMethod implements Callable {
     }
 
     void invoke(InstructionAdapter v) {
-        v.visitMethodInsn(getInvokeOpcode(), getOwner(), getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
+        v.visitMethodInsn(getInvokeOpcode(), owner, getSignature().getAsmMethod().getName(), getSignature().getAsmMethod().getDescriptor());
     }
 
     public void requestGenerateCallee(Type objectType) {

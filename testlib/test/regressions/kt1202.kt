@@ -2,6 +2,7 @@ package testeval
 
 import java.util.*
 import junit.framework.TestCase.*
+import junit.framework.Assert.* // TODO unnecessary import
 
 trait Expression
 class Num(val value : Int) : Expression

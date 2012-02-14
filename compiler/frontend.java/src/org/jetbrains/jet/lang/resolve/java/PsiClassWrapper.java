@@ -37,32 +37,36 @@ public class PsiClassWrapper {
         this.psiClass = psiClass;
     }
     
-    private List<PsiMethodWrapper> methods;
+    private List<PsiMethodWrapper> ownMethods;
     @NotNull
-    public List<PsiMethodWrapper> getMethods() {
-        if (methods == null) {
+    public List<PsiMethodWrapper> getOwnMethods() {
+        if (ownMethods == null) {
             PsiMethod[] psiMethods = psiClass.getMethods();
             List<PsiMethodWrapper> methods = new ArrayList<PsiMethodWrapper>(psiMethods.length);
             for (PsiMethod psiMethod : psiMethods) {
+                if (psiMethod.getContainingClass() != psiClass)
+                    continue;
                 methods.add(new PsiMethodWrapper(psiMethod));
             }
-            this.methods = methods;
+            this.ownMethods = methods;
         }
-        return methods;
+        return ownMethods;
     }
     
-    private List<PsiFieldWrapper> fields;
+    private List<PsiFieldWrapper> ownFields;
     @NotNull
-    public List<PsiFieldWrapper> getFields() {
-        if (fields == null) {
+    public List<PsiFieldWrapper> getOwnFields() {
+        if (ownFields == null) {
             PsiField[] psiFields = psiClass.getFields();
             List<PsiFieldWrapper> fields = new ArrayList<PsiFieldWrapper>(psiFields.length);
             for (PsiField psiField : psiFields) {
+                if (psiField.getContainingClass() != psiClass)
+                    continue;
                 fields.add(new PsiFieldWrapper(psiField));
             }
-            this.fields = fields;
+            this.ownFields = fields;
         }
-        return fields;
+        return ownFields;
     }
     
     public String getQualifiedName() {
