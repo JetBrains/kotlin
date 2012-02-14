@@ -140,26 +140,7 @@ public class JavaTypeTransformer {
                             PsiType psiArgument = psiArguments[i];
                             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
 
-                            TypeVariableResolver typeVariableByPsiResolver2 = new TypeVariableResolver() {
-                                @NotNull
-                                @Override
-                                public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                                    if (classData instanceof JavaDescriptorResolver.ResolverSrcClassData) {
-                                        for (TypeParameterDescriptor typeParameter : classData.getClassDescriptor().getTypeConstructor().getParameters()) {
-                                            if (name.equals(typeParameter.getName())) {
-                                                // TODO?
-                                                return typeParameter;
-                                            }
-                                        }
-                                        return typeVariableResolver.getTypeVariable(name);
-                                    } else if (classData instanceof JavaDescriptorResolver.ResolverBinaryClassData) {
-                                        return typeVariableResolver.getTypeVariable(name);
-                                    } else {
-                                        throw new IllegalStateException();
-                                    }
-                                }
-                            };
-                            arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableByPsiResolver2));
+                            arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableResolver));
                         }
                     }
                     return new JetTypeImpl(
