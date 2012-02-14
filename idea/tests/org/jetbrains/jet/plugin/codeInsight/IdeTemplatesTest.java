@@ -1,8 +1,15 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.codeInsight.folding.CodeFoldingManager;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.FoldRegion;
+import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.ArrayList;
@@ -14,13 +21,38 @@ import java.util.regex.Pattern;
  * @since 2/14/12
  */
 public class IdeTemplatesTest extends LightCodeInsightFixtureTestCase {
+    private ArrayList<Region> myExpectedRegions;
+
     public void testAll() {
         myFixture.configureByFile(PluginTestCaseBase.getTestDataPathBase() + "/templates/IdeTemplates.kt");
         CodeFoldingManager.getInstance(myFixture.getProject()).buildInitialFoldings(myFixture.getEditor());
 
-        ArrayList<Region> regions = getExpectedRegions();
-        assertEquals(regions.toString(), getActualRegions().toString());
+        myExpectedRegions = getExpectedRegions();
+        assertEquals(myExpectedRegions.toString(), getActualRegions().toString());
 
+        for (int i = 0; i <= myExpectedRegions.size(); i++) {
+            nextParam();
+            checkSelectedRegion(i % myExpectedRegions.size());
+        }
+
+        for (int i = myExpectedRegions.size() - 1; i >= 0; i--) {
+            prevParam();
+            checkSelectedRegion(i);
+        }
+    }
+
+    private void checkSelectedRegion(int region) {
+        SelectionModel selectionModel = myFixture.getEditor().getSelectionModel();
+        assertEquals(myExpectedRegions.get(region).start, selectionModel.getSelectionStart());
+        assertEquals(myExpectedRegions.get(region).end, selectionModel.getSelectionEnd());
+    }
+
+    private void prevParam() {
+        doAction("PrevTemplateParameter");
+    }
+
+    private void nextParam() {
+        doAction("NextTemplateParameter");
     }
 
     private ArrayList<Region> getExpectedRegions() {
@@ -42,6 +74,13 @@ public class IdeTemplatesTest extends LightCodeInsightFixtureTestCase {
             }
         }
         return actual;
+    }
+
+    private void doAction(@NotNull String actionId) {
+        AnAction action = ActionManager.getInstance().getAction(actionId);
+        action.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()),
+                                                 ActionPlaces.UNKNOWN, action.getTemplatePresentation(),
+                                                 ActionManager.getInstance(), 0));
     }
 
     private static class Region {

@@ -244,11 +244,10 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
         return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
-    @SuppressWarnings("MethodOverridesPrivateMethodOfSuperclass")
     private void doAction(@NotNull String actionId) {
         EditorActionManager actionManager = EditorActionManager.getInstance();
         EditorActionHandler actionHandler = actionManager.getActionHandler(actionId);
-        actionHandler.execute(myFixture.getEditor(), DataManager.getInstance().getDataContext());
+        actionHandler.execute(myFixture.getEditor(), DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()));
     }
 
     @Override
