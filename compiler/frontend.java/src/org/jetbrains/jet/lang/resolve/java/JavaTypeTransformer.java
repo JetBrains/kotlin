@@ -51,7 +51,7 @@ public class JavaTypeTransformer {
     @NotNull
     public TypeProjection transformToTypeProjection(@NotNull final PsiType javaType,
             @NotNull final TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull final TypeVariableByPsiResolver typeVariableByPsiResolver) {
+            @NotNull final TypeVariableResolver typeVariableByPsiResolver) {
         TypeProjection result = javaType.accept(new PsiTypeVisitor<TypeProjection>() {
 
             @Override
@@ -80,9 +80,9 @@ public class JavaTypeTransformer {
     }
 
     @NotNull
-    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableByNameResolver typeVariableByNameResolver) {
+    public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, standardLibrary, typeVariableByNameResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, standardLibrary, typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
@@ -94,7 +94,7 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull PsiType javaType,
-            @NotNull final TypeVariableByPsiResolver typeVariableByPsiResolver) {
+            @NotNull final TypeVariableResolver typeVariableResolver) {
         return javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
             public JetType visitClassType(PsiClassType classType) {
@@ -106,7 +106,7 @@ public class JavaTypeTransformer {
 
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
-                    TypeParameterDescriptor typeParameterDescriptor = typeVariableByPsiResolver.getTypeVariable(typeParameter);
+                    TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
 //                    return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
                     return typeParameterDescriptor.getDefaultType();
                 }
@@ -144,38 +144,19 @@ public class JavaTypeTransformer {
                                 @NotNull
                                 @Override
                                 public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                                    throw new RuntimeException(); // TODO
-                                }
-
-                                @NotNull
-                                @Override
-                                public TypeParameterDescriptor getTypeVariable(@NotNull PsiTypeParameter psiTypeParameter) {
                                     if (classData instanceof JavaDescriptorResolver.ResolverSrcClassData) {
-                                        // hack for TypeInfoImpl
                                         for (TypeParameterDescriptor typeParameter : classData.getClassDescriptor().getTypeConstructor().getParameters()) {
-                                            if (psiTypeParameter.getName().equals(typeParameter.getName())) {
+                                            if (name.equals(typeParameter.getName())) {
                                                 // TODO?
                                                 return typeParameter;
                                             }
                                         }
-                                        return typeVariableByPsiResolver.getTypeVariableByPsiByName(psiTypeParameter.getName());
+                                        return typeVariableResolver.getTypeVariable(name);
                                     } else if (classData instanceof JavaDescriptorResolver.ResolverBinaryClassData) {
-                                        return new TypeVariableByPsiResolverImpl(((JavaDescriptorResolver.ResolverBinaryClassData) classData).typeParameters, typeVariableByPsiResolver).getTypeVariable(psiTypeParameter);
+                                        return typeVariableResolver.getTypeVariable(name);
                                     } else {
                                         throw new IllegalStateException();
                                     }
-                                }
-
-                                @NotNull
-                                @Override
-                                public TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name) {
-                                    for (TypeParameterDescriptor typeParameter : classData.getClassDescriptor().getTypeConstructor().getParameters()) {
-                                        if (typeParameter.getName().equals(name)) {
-                                            // TODO?
-                                            return typeParameter;
-                                        }
-                                    }
-                                    throw new IllegalStateException();
                                 }
                             };
                             arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableByPsiResolver2));
@@ -207,7 +188,7 @@ public class JavaTypeTransformer {
                         return TypeUtils.makeNullable(jetType);
                 }
 
-                JetType type = transformToType(componentType, typeVariableByPsiResolver);
+                JetType type = transformToType(componentType, typeVariableResolver);
                 return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
             }
 

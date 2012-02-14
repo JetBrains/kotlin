@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,14 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class TypeVariableResoverFromTypeDescriptorsInitialization extends TypeVariableByPsiResolverImpl implements TypeVariableResolver {
+public class TypeVariableResolverFromTypeDescriptors implements TypeVariableResolver {
 
     @NotNull
-    private final List<JavaDescriptorResolver.TypeParameterDescriptorInitialization> typeParameters;
+    private final List<TypeParameterDescriptor> typeParameters;
     @Nullable
     private final TypeVariableResolver parent;
 
-    public TypeVariableResoverFromTypeDescriptorsInitialization(@NotNull List<JavaDescriptorResolver.TypeParameterDescriptorInitialization> typeParameters, @Nullable TypeVariableResolver parent) {
-        super(typeParameters, parent);
+    public TypeVariableResolverFromTypeDescriptors(@NotNull List<TypeParameterDescriptor> typeParameters, @Nullable TypeVariableResolver parent) {
         this.typeParameters = typeParameters;
         this.parent = parent;
     }
@@ -41,9 +40,9 @@ public class TypeVariableResoverFromTypeDescriptorsInitialization extends TypeVa
     @NotNull
     @Override
     public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-        for (JavaDescriptorResolver.TypeParameterDescriptorInitialization typeParameter : typeParameters) {
-            if (typeParameter.descriptor.getName().equals(name)) {
-                return typeParameter.descriptor;
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            if (typeParameter.getName().equals(name)) {
+                return typeParameter;
             }
         }
         if (parent != null) {

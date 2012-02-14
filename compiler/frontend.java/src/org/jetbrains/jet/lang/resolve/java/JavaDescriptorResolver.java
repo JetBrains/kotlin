@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -118,12 +117,21 @@ public class JavaDescriptorResolver {
         protected boolean kotlin;
         
         private Map<String, NamedMembers> namedMembersMap;
+        
+        @NotNull
+        public abstract List<TypeParameterDescriptor> getTypeParameters();
     }
 
     static abstract class ResolverClassData extends ResolverScopeData {
 
         @NotNull
         public abstract ClassDescriptor getClassDescriptor();
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getTypeParameters() {
+            return getClassDescriptor().getTypeConstructor().getParameters();
+        }
     }
 
     /** Class with instance members */
@@ -165,6 +173,12 @@ public class JavaDescriptorResolver {
         @NotNull
         public NamespaceDescriptor getNamespaceDescriptor() {
             return namespaceDescriptor;
+        }
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getTypeParameters() {
+            return new ArrayList<TypeParameterDescriptor>(0);
         }
     }
 
@@ -257,23 +271,15 @@ public class JavaDescriptorResolver {
         String name = psiClass.getName();
         ResolverBinaryClassData classData = new ResolverBinaryClassData();
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
-        classData.classDescriptor = new MutableClassDescriptorLite(
-                resolveParentDescriptor(psiClass), kind
-        );
+        DeclarationDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
+        classData.classDescriptor = new MutableClassDescriptorLite(containingDeclaration, kind);
         classData.classDescriptor.setName(name);
         
-        class OuterClassTypeVariableByNameResolver implements TypeVariableByNameResolver {
-
-            @NotNull
-            @Override
-            public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                throw new IllegalStateException("not implemented"); // TODO
-            }
-        }
-
         List<JetType> supertypes = new ArrayList<JetType>();
 
-        classData.typeParameters = createUninitializedClassTypeParameters(psiClass, classData, new OuterClassTypeVariableByNameResolver());
+        TypeVariableResolverFromOuters outerTypeVariableByNameResolver = new TypeVariableResolverFromOuters(containingDeclaration);
+
+        classData.typeParameters = createUninitializedClassTypeParameters(psiClass, classData, outerTypeVariableByNameResolver);
         
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptorInitialization typeParameter : classData.typeParameters) {
@@ -291,12 +297,12 @@ public class JavaDescriptorResolver {
         classDescriptorCache.put(psiClass.getQualifiedName(), classData);
         classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
 
-        initializeTypeParameters(classData.typeParameters, new TypeVariableResoverFromTypeDescriptorsInitialization(new ArrayList<TypeParameterDescriptorInitialization>(), null));
+        initializeTypeParameters(classData.typeParameters, new TypeVariableResolverFromTypeDescriptors(new ArrayList<TypeParameterDescriptor>(), outerTypeVariableByNameResolver));
 
-        TypeVariableResoverFromTypeDescriptorsInitialization resolverForTypeParameters = new TypeVariableResoverFromTypeDescriptorsInitialization(classData.typeParameters, null);
+        TypeVariableResolverFromTypeDescriptors resolverForTypeParameters = new TypeVariableResolverFromTypeDescriptors(classData.getTypeParameters(), null);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.typeParameters));
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.getTypeParameters()));
 
         if (psiClass.isInterface()) {
             //classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
@@ -383,7 +389,7 @@ public class JavaDescriptorResolver {
                         false);
                 ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
                         constructor.getParameters(),
-                        new TypeVariableResoverFromTypeDescriptorsInitialization(classData.typeParameters, null) // TODO: outer too
+                        new TypeVariableResolverFromTypeDescriptors(classData.getTypeParameters(), null) // TODO: outer too
                     );
                 if (valueParameterDescriptors.receiverType != null) {
                     throw new IllegalStateException();
@@ -419,13 +425,13 @@ public class JavaDescriptorResolver {
         return classObjectDescriptor;
     }
 
-    private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData, TypeVariableByNameResolver typeVariableByNameResolver) {
+    private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData, TypeVariableResolver typeVariableResolver) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
         classData.kotlin = jetClassAnnotation.isDefined();
         
         if (jetClassAnnotation.signature().length() > 0) {
             return resolveClassTypeParametersFromJetSignature(
-                    jetClassAnnotation.signature(), psiClass, classData.classDescriptor, typeVariableByNameResolver);
+                    jetClassAnnotation.signature(), psiClass, classData.classDescriptor, typeVariableResolver);
         }
 
         return makeUninitializedTypeParameters(classData.classDescriptor, psiClass.getTypeParameters());
@@ -466,10 +472,10 @@ public class JavaDescriptorResolver {
         private final boolean reified;
         private final int index;
         private final TypeInfoVariance variance;
-        private final TypeVariableByNameResolver typeVariableByNameResolver;
+        private final TypeVariableResolver typeVariableResolver;
 
         protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
-                String name, boolean reified, int index, TypeInfoVariance variance, TypeVariableByNameResolver typeVariableByNameResolver)
+                String name, boolean reified, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
@@ -481,7 +487,7 @@ public class JavaDescriptorResolver {
             this.reified = reified;
             this.index = index;
             this.variance = variance;
-            this.typeVariableByNameResolver = typeVariableByNameResolver;
+            this.typeVariableResolver = typeVariableResolver;
         }
 
         List<JetType> upperBounds = new ArrayList<JetType>();
@@ -489,7 +495,7 @@ public class JavaDescriptorResolver {
         
         @Override
         public JetSignatureVisitor visitClassBound() {
-            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableByNameResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     if (isJavaLangObject(jetType)) {
@@ -502,7 +508,7 @@ public class JavaDescriptorResolver {
 
         @Override
         public JetSignatureVisitor visitInterfaceBound() {
-            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableByNameResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     upperBounds.add(jetType);
@@ -531,10 +537,10 @@ public class JavaDescriptorResolver {
      * @see #resolveMethodTypeParametersFromJetSignature(String, FunctionDescriptor)
      */
     private List<TypeParameterDescriptorInitialization> resolveClassTypeParametersFromJetSignature(String jetSignature, final PsiClass clazz,
-            final ClassDescriptor classDescriptor, final TypeVariableByNameResolver outerClassTypeVariableByNameResolver) {
+            final ClassDescriptor classDescriptor, final TypeVariableResolver outerClassTypeVariableResolver) {
         final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
         
-        class MyTypeVariableByNameResolver implements TypeVariableByNameResolver {
+        class MyTypeVariableResolver implements TypeVariableResolver {
 
             @NotNull
             @Override
@@ -544,7 +550,7 @@ public class JavaDescriptorResolver {
                         return typeParameter.descriptor;
                     }
                 }
-                return outerClassTypeVariableByNameResolver.getTypeVariable(name);
+                return outerClassTypeVariableResolver.getTypeVariable(name);
             }
         }
         
@@ -553,7 +559,7 @@ public class JavaDescriptorResolver {
             
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableByNameResolver()) {
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -609,7 +615,7 @@ public class JavaDescriptorResolver {
         return new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter);
     }
 
-    private void initializeTypeParameter(TypeParameterDescriptorInitialization typeParameter, TypeVariableByPsiResolver typeVariableByPsiResolver) {
+    private void initializeTypeParameter(TypeParameterDescriptorInitialization typeParameter, TypeVariableResolver typeVariableByPsiResolver) {
         TypeParameterDescriptor typeParameterDescriptor = typeParameter.descriptor;
         if (typeParameter.origin == TypeParameterDescriptorOrigin.KOTLIN) {
             List<?> upperBounds = typeParameter.upperBoundsForKotlin;
@@ -640,18 +646,18 @@ public class JavaDescriptorResolver {
     }
 
     private void initializeTypeParameters(List<TypeParameterDescriptorInitialization> typeParametersInitialization, TypeVariableResolver typeVariableByPsiResolver) {
-        List<TypeParameterDescriptorInitialization> prevTypeParameters = new ArrayList<TypeParameterDescriptorInitialization>();
+        List<TypeParameterDescriptor> prevTypeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
-            prevTypeParameters.add(psiTypeParameter);
-            initializeTypeParameter(psiTypeParameter, new TypeVariableResoverFromTypeDescriptorsInitialization(prevTypeParameters, typeVariableByPsiResolver));
+            prevTypeParameters.add(psiTypeParameter.descriptor);
+            initializeTypeParameter(psiTypeParameter, new TypeVariableResolverFromTypeDescriptors(prevTypeParameters, typeVariableByPsiResolver));
         }
     }
 
-    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, List<TypeParameterDescriptorInitialization> typeParameters) {
+    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, List<TypeParameterDescriptor> typeParameters) {
         final List<JetType> result = new ArrayList<JetType>();
 
         if (psiClass.getJetClass().signature().length() > 0) {
-            final TypeVariableResolver typeVariableResolver = new TypeVariableResoverFromTypeDescriptorsInitialization(typeParameters, null);
+            final TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(typeParameters, null);
             
             new JetSignatureReader(psiClass.getJetClass().signature()).accept(new JetSignatureExceptionsAdapter() {
                 @Override
@@ -685,8 +691,8 @@ public class JavaDescriptorResolver {
                 }
             });
         } else {
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), new TypeVariableResoverFromTypeDescriptorsInitialization(typeParameters, null));
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), new TypeVariableResoverFromTypeDescriptorsInitialization(typeParameters, null));
+            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
+            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
         }
         if (result.isEmpty()) {
             result.add(JetStandardClasses.getAnyType());
@@ -992,14 +998,9 @@ public class JavaDescriptorResolver {
             return;
         }
 
-        final List<TypeParameterDescriptorInitialization> classTypeParameterDescriptorInitialization;
-        if (scopeData instanceof ResolverBinaryClassData) {
-            classTypeParameterDescriptorInitialization = ((ResolverBinaryClassData) scopeData).typeParameters;
-        } else {
-            classTypeParameterDescriptorInitialization = new ArrayList<TypeParameterDescriptorInitialization>(0);
-        }
+        final List<TypeParameterDescriptor> classTypeParameterDescriptorInitialization = scopeData.getTypeParameters();
 
-        TypeVariableResolver typeVariableResolver = new TypeVariableResoverFromTypeDescriptorsInitialization(classTypeParameterDescriptorInitialization, null);
+        TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(scopeData.getTypeParameters(), null);
 
         class GroupingValue {
             PropertyAccessorData getter;
@@ -1093,7 +1094,7 @@ public class JavaDescriptorResolver {
 
             propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
 
-            List<TypeParameterDescriptorInitialization> typeParametersInitialization = new ArrayList<TypeParameterDescriptorInitialization>(0);
+            List<TypeParameterDescriptor> typeParametersInitialization = new ArrayList<TypeParameterDescriptor>(0);
 
             if (members.setter != null) {
                 PsiMethodWrapper method = (PsiMethodWrapper) members.setter.getMember();
@@ -1111,14 +1112,14 @@ public class JavaDescriptorResolver {
             }
 
             List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>();
-            for (TypeParameterDescriptorInitialization typeParameter : typeParametersInitialization) {
-                typeParameters.add(typeParameter.descriptor);
+            for (TypeParameterDescriptor typeParameter : typeParametersInitialization) {
+                typeParameters.add(typeParameter);
             }
 
-            List<TypeParameterDescriptorInitialization> typeParametersForReceiver = new ArrayList<TypeParameterDescriptorInitialization>();
+            List<TypeParameterDescriptor> typeParametersForReceiver = new ArrayList<TypeParameterDescriptor>();
             typeParametersForReceiver.addAll(classTypeParameterDescriptorInitialization);
             typeParametersForReceiver.addAll(typeParametersInitialization);
-            TypeVariableResolver typeVariableResolverForPropertyInternals = new TypeVariableResoverFromTypeDescriptorsInitialization(typeParametersForReceiver, null);
+            TypeVariableResolver typeVariableResolverForPropertyInternals = new TypeVariableResolverFromTypeDescriptors(typeParametersForReceiver, null);
 
             JetType propertyType;
             if (anyMember.getType().getTypeString().length() > 0) {
@@ -1255,28 +1256,6 @@ public class JavaDescriptorResolver {
         }
         return typeSubstitutor;
     }
-
-    // this method won't be necessary as soon as we resolve only local methods
-    private void getAllTypeParameterDescriptorInitialization(PsiClass psiClass, List<TypeParameterDescriptorInitialization> dest) {
-        ResolverClassData classData = resolveClassData(psiClass);
-
-        if (classData instanceof ResolverSrcClassData) {
-            // TODO hack
-            return;
-        }
-
-        ResolverBinaryClassData binaryClassData = (ResolverBinaryClassData) classData;
-        if (binaryClassData == null) {
-            return;
-        }
-        if (binaryClassData.typeParameters == null) {
-            throw new RuntimeException();
-        }
-        dest.addAll(binaryClassData.typeParameters);
-        for (PsiClass supr : psiClass.getSupers()) {
-            getAllTypeParameterDescriptorInitialization(supr, dest);
-        }
-    }
     
     private static boolean equal(@NotNull PsiClass c1, @NotNull PsiClass c2) {
         return c1.getQualifiedName().equals(c2.getQualifiedName());
@@ -1397,21 +1376,14 @@ public class JavaDescriptorResolver {
             }
         }
 
-        DeclarationDescriptor classDescriptor;
-        final List<TypeParameterDescriptor> classTypeParameters;
-        final List<TypeParameterDescriptorInitialization> classTypeParameterDescriptorsInitialization;
+        ClassOrNamespaceDescriptor classDescriptor;
+        final List<TypeParameterDescriptor> classTypeParameters = scopeData.getTypeParameters();
         if (scopeData instanceof ResolverBinaryClassData) {
             ClassDescriptor classClassDescriptor = resolveClass(method.getPsiMethod().getContainingClass());
             classDescriptor = classClassDescriptor;
-            classTypeParameters = classClassDescriptor.getTypeConstructor().getParameters();
-            classTypeParameterDescriptorsInitialization = new ArrayList<TypeParameterDescriptorInitialization>();
-            getAllTypeParameterDescriptorInitialization(psiClass, classTypeParameterDescriptorsInitialization);
-            //classTypeParameterDescriptorsInitialization = ((ResolverClassData) scopeData).typeParameters;
         }
         else {
             classDescriptor = resolveNamespace(method.getPsiMethod().getContainingClass());
-            classTypeParameters = new ArrayList<TypeParameterDescriptor>(0);
-            classTypeParameterDescriptorsInitialization = new ArrayList<TypeParameterDescriptorInitialization>(0);
         }
         if (classDescriptor == null) {
             return null;
@@ -1424,54 +1396,21 @@ public class JavaDescriptorResolver {
         );
         methodDescriptorCache.put(method.getPsiMethod(), functionDescriptorImpl);
 
-        // TODO: add outer classes
-        TypeVariableResolver typeVariableResolverForParameters = new TypeVariableResoverFromTypeDescriptorsInitialization(classTypeParameterDescriptorsInitialization, null);
+        TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(classDescriptor);
 
-        final List<TypeParameterDescriptorInitialization> methodTypeParametersInitialization = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
+        final List<TypeParameterDescriptor> methodTypeParametersInitialization = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
         List<TypeParameterDescriptor> methodTypeParameters = new ArrayList<TypeParameterDescriptor>();
-        for (TypeParameterDescriptorInitialization typeParameterDescriptorInitialization : methodTypeParametersInitialization) {
-            methodTypeParameters.add(typeParameterDescriptorInitialization.descriptor);
+        for (TypeParameterDescriptor typeParameterDescriptorInitialization : methodTypeParametersInitialization) {
+            methodTypeParameters.add(typeParameterDescriptorInitialization);
         }
 
         class MethodTypeVariableResolver implements TypeVariableResolver {
             @NotNull
             @Override
-            public TypeParameterDescriptor getTypeVariable(@NotNull PsiTypeParameter psiTypeParameter) {
-                for (TypeParameterDescriptorInitialization typeParameter : methodTypeParametersInitialization) {
-                    if (equal(typeParameter.psiTypeParameter, psiTypeParameter)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                for (TypeParameterDescriptorInitialization typeParameter : classTypeParameterDescriptorsInitialization) {
-                    if (equal(typeParameter.psiTypeParameter, psiTypeParameter)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                throw new IllegalStateException("unresolved PsiTypeParameter " + psiTypeParameter.getName() + " in method " + method.getName() + " in class " + psiClass.getQualifiedName()); // TODO: report properly
-            }
-
-            @NotNull
-            @Override
-            public TypeParameterDescriptor getTypeVariableByPsiByName(@NotNull String name) {
-                for (TypeParameterDescriptorInitialization typeParameter : methodTypeParametersInitialization) {
-                    if (typeParameter.psiTypeParameter.getName().equals(name)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                for (TypeParameterDescriptorInitialization typeParameter : classTypeParameterDescriptorsInitialization) {
-                    if (typeParameter.psiTypeParameter.getName().equals(name)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                throw new IllegalStateException("unresolved PsiTypeParameter " + name + " in method " + method.getName() + " in class " + psiClass.getQualifiedName()); // TODO: report properly
-            }
-
-            @NotNull
-            @Override
             public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                for (TypeParameterDescriptorInitialization typeParameter : methodTypeParametersInitialization) {
-                    if (typeParameter.descriptor.getName().equals(name)) {
-                        return typeParameter.descriptor;
+                for (TypeParameterDescriptor typeParameter : methodTypeParametersInitialization) {
+                    if (typeParameter.getName().equals(name)) {
+                        return typeParameter;
                     }
                 }
                 for (TypeParameterDescriptor typeParameter : classTypeParameters) {
@@ -1539,20 +1478,27 @@ public class JavaDescriptorResolver {
         }
     }
 
-    private List<TypeParameterDescriptorInitialization> resolveMethodTypeParameters(
+    private List<TypeParameterDescriptor> resolveMethodTypeParameters(
             @NotNull PsiMethodWrapper method,
             @NotNull DeclarationDescriptor functionDescriptor,
             @NotNull TypeVariableResolver classTypeVariableResolver) {
 
-        List<TypeParameterDescriptorInitialization> typeParameters;
+        List<TypeParameterDescriptorInitialization> typeParametersIntialization;
         if (method.getJetMethod().typeParameters().length() > 0) {
-            typeParameters = resolveMethodTypeParametersFromJetSignature(
+            typeParametersIntialization = resolveMethodTypeParametersFromJetSignature(
                     method.getJetMethod().typeParameters(), method.getPsiMethod(), functionDescriptor, classTypeVariableResolver);
         } else {
-            typeParameters = makeUninitializedTypeParameters(functionDescriptor, method.getPsiMethod().getTypeParameters());
+            typeParametersIntialization = makeUninitializedTypeParameters(functionDescriptor, method.getPsiMethod().getTypeParameters());
         }
 
-        initializeTypeParameters(typeParameters, classTypeVariableResolver);
+        initializeTypeParameters(typeParametersIntialization, classTypeVariableResolver);
+        
+        List<TypeParameterDescriptor> typeParameters = Lists.newArrayListWithCapacity(typeParametersIntialization.size());
+        
+        for (TypeParameterDescriptorInitialization tpdi : typeParametersIntialization) {
+            typeParameters.add(tpdi.descriptor);
+        }
+        
         return typeParameters;
     }
 
@@ -1560,11 +1506,11 @@ public class JavaDescriptorResolver {
      * @see #resolveClassTypeParametersFromJetSignature(String, com.intellij.psi.PsiClass, org.jetbrains.jet.lang.descriptors.ClassDescriptor, TypeVariableResolver)
      */
     private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(String jetSignature, final PsiMethod method,
-            final DeclarationDescriptor functionDescriptor, final TypeVariableByNameResolver classTypeVariableByNameResolver)
+            final DeclarationDescriptor functionDescriptor, final TypeVariableResolver classTypeVariableResolver)
     {
         final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
 
-        class MyTypeVariableByNameResolver implements TypeVariableByNameResolver {
+        class MyTypeVariableResolver implements TypeVariableResolver {
 
             @NotNull
             @Override
@@ -1574,7 +1520,7 @@ public class JavaDescriptorResolver {
                         return typeParameter.descriptor;
                     }
                 }
-                return classTypeVariableByNameResolver.getTypeVariable(name);
+                return classTypeVariableResolver.getTypeVariable(name);
             }
         }
         
@@ -1584,7 +1530,7 @@ public class JavaDescriptorResolver {
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
                 
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableByNameResolver()) {
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
                     @Override
                     protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
@@ -1622,6 +1568,10 @@ public class JavaDescriptorResolver {
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
+        if (staticMembers) {
+            return new ArrayList<ClassDescriptor>(0);
+        }
+
         PsiClass[] innerPsiClasses = psiClass.getInnerClasses();
         List<ClassDescriptor> r = new ArrayList<ClassDescriptor>(innerPsiClasses.length);
         for (PsiClass innerPsiClass : innerPsiClasses) {

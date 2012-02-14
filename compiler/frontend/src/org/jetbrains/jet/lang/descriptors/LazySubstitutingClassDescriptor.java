@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -112,7 +114,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @NotNull
     @Override
     public Set<ConstructorDescriptor> getConstructors() {
-        throw new UnsupportedOperationException(); // TODO
+        Set<ConstructorDescriptor> r = Sets.newHashSet();
+        for (ConstructorDescriptor constructor : original.getConstructors()) {
+            r.add((ConstructorDescriptor) constructor.substitute(getSubstitutor()));
+        }
+        return r;
     }
 
     @Override

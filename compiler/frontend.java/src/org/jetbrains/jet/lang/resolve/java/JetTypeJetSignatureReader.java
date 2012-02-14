@@ -38,13 +38,13 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
     private final JavaSemanticServices javaSemanticServices;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JetStandardLibrary jetStandardLibrary;
-    private final TypeVariableByNameResolver typeVariableByNameResolver;
+    private final TypeVariableResolver typeVariableResolver;
 
-    public JetTypeJetSignatureReader(JavaSemanticServices javaSemanticServices, JetStandardLibrary jetStandardLibrary, TypeVariableByNameResolver typeVariableByNameResolver) {
+    public JetTypeJetSignatureReader(JavaSemanticServices javaSemanticServices, JetStandardLibrary jetStandardLibrary, TypeVariableResolver typeVariableResolver) {
         this.javaSemanticServices = javaSemanticServices;
         this.javaDescriptorResolver = javaSemanticServices.getDescriptorResolver();
         this.jetStandardLibrary = jetStandardLibrary;
-        this.typeVariableByNameResolver = typeVariableByNameResolver;
+        this.typeVariableResolver = typeVariableResolver;
     }
     
     
@@ -132,7 +132,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitTypeArgument(final JetSignatureVariance variance) {
-        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableByNameResolver) {
+        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableResolver) {
 
             @Override
             protected void done(@NotNull JetType jetType) {
@@ -143,7 +143,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public JetSignatureVisitor visitArrayType(final boolean nullable) {
-        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableByNameResolver) {
+        return new JetTypeJetSignatureReader(javaSemanticServices, jetStandardLibrary, typeVariableResolver) {
             @Override
             public void visitBaseType(char descriptor, boolean nullable) {
                 JetType primitiveType = getPrimitiveType(descriptor, nullable);
@@ -166,7 +166,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitTypeVariable(String name, boolean nullable) {
-        JetType r = TypeUtils.makeNullableAsSpecified(typeVariableByNameResolver.getTypeVariable(name).getDefaultType(), nullable);
+        JetType r = TypeUtils.makeNullableAsSpecified(typeVariableResolver.getTypeVariable(name).getDefaultType(), nullable);
         done(r);
     }
 

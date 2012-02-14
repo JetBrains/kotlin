@@ -68,6 +68,12 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
             throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + debugName);
         }
     }
+    
+    protected void checkMayNotWrite() {
+        if (lockLevel == LockLevel.WRITING || lockLevel == LockLevel.BOTH) {
+            throw new IllegalStateException("cannot write with lock level " + lockLevel + " at " + debugName);
+        }
+    }
 
 
 
