@@ -534,35 +534,26 @@ public class JavaDescriptorResolver {
     }
 
     /**
-     * @see #resolveMethodTypeParametersFromJetSignature(String, FunctionDescriptor)
+     * @see #resolveMethodTypeParametersFromJetSignature(String, com.intellij.psi.PsiMethod, org.jetbrains.jet.lang.descriptors.DeclarationDescriptor, TypeVariableResolver) 
      */
     private List<TypeParameterDescriptorInitialization> resolveClassTypeParametersFromJetSignature(String jetSignature, final PsiClass clazz,
             final ClassDescriptor classDescriptor, final TypeVariableResolver outerClassTypeVariableResolver) {
         final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
-        
-        class MyTypeVariableResolver implements TypeVariableResolver {
 
-            @NotNull
-            @Override
-            public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                for (TypeParameterDescriptorInitialization typeParameter : r) {
-                    if (typeParameter.descriptor.getName().equals(name)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                return outerClassTypeVariableResolver.getTypeVariable(name);
-            }
-        }
-        
+        final List<TypeParameterDescriptor> previousTypeParameters = new ArrayList<TypeParameterDescriptor>();
+        // note changes state in this method
+        final TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(previousTypeParameters, outerClassTypeVariableResolver);
+
         new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
             private int formalTypeParameterIndex = 0;
             
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, typeVariableResolver) {
                     @Override
                     protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
+                        previousTypeParameters.add(typeParameterDescriptor.descriptor);
                     }
                 };
             }
@@ -1489,30 +1480,21 @@ public class JavaDescriptorResolver {
     {
         final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
 
-        class MyTypeVariableResolver implements TypeVariableResolver {
+        final List<TypeParameterDescriptor> previousTypeParameters = new ArrayList<TypeParameterDescriptor>();
+        // note changes state in this method
+        final TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(previousTypeParameters, classTypeVariableResolver);
 
-            @NotNull
-            @Override
-            public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
-                for (TypeParameterDescriptorInitialization typeParameter : r) {
-                    if (typeParameter.descriptor.getName().equals(name)) {
-                        return typeParameter.descriptor;
-                    }
-                }
-                return classTypeVariableResolver.getTypeVariable(name);
-            }
-        }
-        
         new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
             private int formalTypeParameterIndex = 0;
             
             @Override
             public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
                 
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, new MyTypeVariableResolver()) {
+                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, typeVariableResolver) {
                     @Override
                     protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
                         r.add(typeParameterDescriptor);
+                        previousTypeParameters.add(typeParameterDescriptor.descriptor);
                     }
                 };
 
