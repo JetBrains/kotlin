@@ -81,6 +81,14 @@ public final class DescriptorLookupConverter {
 
     @NotNull    
     public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
+            while (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                // TODO: need to know all of them
+                callableMemberDescriptor = callableMemberDescriptor.getOverriddenDescriptors().iterator().next();
+            }
+            descriptor = callableMemberDescriptor;
+        }
         return createLookupElement(descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
     }
 }
