@@ -1,7 +1,5 @@
 package org.jetbrains.k2js.config;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.intellij.openapi.project.Project;
 import core.Dummy;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +34,10 @@ public abstract class Config {
             "/core/math.kt",
             "/core/json.kt",
             "/raphael/raphael.kt",
-            "/html5/core.kt"
+            "/html5/canvas.kt",
+            "/html5/files.kt",
+            "/html5/image.kt",
+            "/helper/ip.kt"
     );
 
 

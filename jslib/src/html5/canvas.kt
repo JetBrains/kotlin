@@ -84,7 +84,7 @@ class Context() {
 }
 
 native
-class HTMLImageElement() : DomElement() {
+open class HTMLImageElement() : DomElement() {
 }
 
 native
@@ -95,8 +95,12 @@ class CanvasGradient() {
 
 native
 class Canvas() : DomElement() {
-    val width = 0.0;
-    val height = 0.0;
+    var width = 0.0;
+    var height = 0.0;
+
+    //DOMString toDataURL(in optional DOMString type, in any... args);
+    fun toDataURL() : String = js.noImpl
+    fun toDataURL(typ : String) : String = js.noImpl
 }
 
 native

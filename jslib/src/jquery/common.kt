@@ -30,6 +30,9 @@ class JQuery() {
     fun dblclick(handler : DomElement.(MouseClickEvent)->Unit) = this;
     fun click(handler : DomElement.(MouseClickEvent)->Unit) = this;
 
+    fun load(handler : DomElement.()->Unit) = this;
+    fun change(handler : DomElement.()->Unit) = this;
+
     fun append(str : String) = this;
     fun ready(handler : ()->Unit) = this;
     fun text(text : String) = this;

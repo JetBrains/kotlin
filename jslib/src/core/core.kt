@@ -4,6 +4,10 @@ import js.library
 import js.native
 import java.util.*;
 
+
+
+val noImpl : Nothing = throw Exception();
+
 library("println")
 fun println() {}
 library("println")

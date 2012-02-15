@@ -86,6 +86,10 @@ public final class BindingUtils {
                                                                    @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
         for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
+            //TODO:
+            if (descriptor instanceof NamespaceDescriptor) {
+                continue;
+            }
             JetDeclaration declaration = BindingUtils.getDeclarationForDescriptor(bindingContext, descriptor);
             if (declaration != null) {
                 declarations.add(declaration);
