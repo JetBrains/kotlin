@@ -39,8 +39,14 @@ import java.util.regex.Pattern;
 public class IdeTemplatesTest extends LightCodeInsightFixtureTestCase {
     private ArrayList<Region> myExpectedRegions;
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/templates/");
+    }
+
     public void testAll() {
-        myFixture.configureByFile(PluginTestCaseBase.getTestDataPathBase() + "/templates/IdeTemplates.kt");
+        myFixture.configureByFile("IdeTemplates.kt");
         CodeFoldingManager.getInstance(myFixture.getProject()).buildInitialFoldings(myFixture.getEditor());
 
         myExpectedRegions = getExpectedRegions();
