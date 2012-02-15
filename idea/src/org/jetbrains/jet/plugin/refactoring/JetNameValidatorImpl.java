@@ -17,8 +17,22 @@
 package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * User: Alefas
@@ -39,18 +53,76 @@ public class JetNameValidatorImpl implements JetNameValidator {
         };
     }
 
-    private final PsiElement myPlace;
+    private final PsiElement myContainer;
+    private PsiElement myAnchor;
+    BindingContext myBindingContext;
 
-    public JetNameValidatorImpl(PsiElement place) {
-        myPlace = place;
+    public JetNameValidatorImpl(PsiElement container, PsiElement anchor) {
+        myContainer = container;
+        myAnchor = anchor;
     }
 
     @Nullable
     public String validateName(String name) {
-        return name;
+        if (validateInner(name)) return name;
+        int i = 1;
+        while (true) {
+            if (validateInner(name + i)) return name + i;
+            ++i;
+        }
+    }
+
+    private boolean validateInner(String name) {
+        PsiElement sibling;
+        if (myAnchor != null) {
+            sibling = myAnchor;
+        } else {
+            if (myContainer instanceof JetExpression) {
+                return checkElement(name, myContainer);
+            }
+            sibling = myContainer.getFirstChild();
+        }
+
+        while (sibling != null) {
+            if (!checkElement(name, sibling)) return false;
+            sibling = sibling.getNextSibling();
+        }
+
+        return true;
+    }
+
+    private boolean checkElement(final String name, PsiElement sibling) {
+        if (myBindingContext == null) {
+            myBindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
+                    (JetFile) myContainer.getContainingFile());
+        }
+        final Ref<Boolean> result = new Ref<Boolean>(true);
+        JetVisitorVoid visitor = new JetVisitorVoid() {
+            @Override
+            public void visitElement(PsiElement element) {
+                if (result.get()) {
+                    element.acceptChildren(this);
+                }
+            }
+
+            @Override
+            public void visitExpression(JetExpression expression) {
+                Collection<DeclarationDescriptor> variants =
+                        TipsManager.getVariantsNoReceiver(expression, myBindingContext);
+                for (DeclarationDescriptor variant : variants) {
+                    if (variant.getName().equals(name)) {
+                        result.set(false);
+                        return;
+                    }
+                }
+                super.visitExpression(expression);
+            }
+        };
+        sibling.accept(visitor);
+        return result.get();
     }
 
     public Project getProject() {
-        return myPlace.getProject();
+        return myContainer.getProject();
     }
 }

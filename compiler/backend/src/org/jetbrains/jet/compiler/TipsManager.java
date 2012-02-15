@@ -68,32 +68,34 @@ public final class TipsManager {
                         excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors()),
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
             }
+            return Collections.emptyList();
         } else {
-            JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
-            if (resolutionScope != null) {
-                if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
-                    return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
-                } else {
-                    HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
-
-                    ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
-                    resolutionScope.getImplicitReceiversHierarchy(result);
-
-                    for (ReceiverDescriptor receiverDescriptor : result) {
-                        JetType receiverType = receiverDescriptor.getType();
-                        descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
-                    }
-
-                    descriptorsSet.addAll(resolutionScope.getAllDescriptors());
-                    return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope);
-                }
-            }
+            return getVariantsNoReceiver(expression, context);
         }
-
-        return Collections.emptyList();
     }
 
+    public static Collection<DeclarationDescriptor> getVariantsNoReceiver(JetExpression expression, BindingContext context) {
+        JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+        if (resolutionScope != null) {
+            if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
+                return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
+            } else {
+                HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
+                ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();
+                resolutionScope.getImplicitReceiversHierarchy(result);
+
+                for (ReceiverDescriptor receiverDescriptor : result) {
+                    JetType receiverType = receiverDescriptor.getType();
+                    descriptorsSet.addAll(receiverType.getMemberScope().getAllDescriptors());
+                }
+
+                descriptorsSet.addAll(resolutionScope.getAllDescriptors());
+                return excludeNotCallableExtensions(excludePrivateDescriptors(descriptorsSet), resolutionScope);
+            }
+        }
+        return Collections.emptyList();
+    }
 
     public static Collection<DeclarationDescriptor> excludePrivateDescriptors(
             @NotNull Collection<DeclarationDescriptor> descriptors) {

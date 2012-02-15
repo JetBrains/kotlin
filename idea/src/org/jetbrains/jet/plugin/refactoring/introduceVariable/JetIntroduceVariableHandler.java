@@ -128,11 +128,15 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     allReplaces = Collections.singletonList(expression);
                 }
                 
-                String[] suggestedNames = JetNameSuggester.suggestNames(expression, new JetNameValidatorImpl(expression));
-                final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
-                Collections.addAll(suggestedNamesSet, suggestedNames);
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
+                JetNameValidatorImpl validator = new JetNameValidatorImpl(commonContainer,
+                                                                          calculateAnchor(commonParent,
+                                                                                          commonContainer,
+                                                                                          allReplaces));
+                String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator);
+                final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
+                Collections.addAll(suggestedNamesSet, suggestedNames);
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
@@ -192,23 +196,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                } else variableText += expression.getText();
                JetProperty property = JetPsiFactory.createProperty(project, variableText);
                if (property == null) return;
-               PsiElement anchor = commonParent;
-               if (anchor != commonContainer) {
-                   while (anchor.getParent() != commonContainer) {
-                       anchor = anchor.getParent();
-                   }
-               } else {
-                   anchor = commonContainer.getFirstChild();
-                   int startOffset = commonContainer.getTextRange().getEndOffset();
-                   for (JetExpression expr : allReplaces) {
-                       int offset = expr.getTextRange().getStartOffset();
-                       if (offset < startOffset) startOffset = offset;
-                   }
-                   while (anchor != null && !anchor.getTextRange().contains(startOffset)) {
-                       anchor = anchor.getNextSibling();
-                   }
-                   if (anchor == null) return;
-               }
+               PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
+               if (anchor == null) return;
                boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
                            commonContainer instanceof JetClassBody ||
                            commonContainer instanceof JetClassInitializer);
@@ -263,7 +252,29 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
            }
        };
     }
-    
+
+    private static PsiElement calculateAnchor(PsiElement commonParent, PsiElement commonContainer,
+                                              List<JetExpression> allReplaces) {
+        PsiElement anchor = commonParent;
+        if (anchor != commonContainer) {
+            while (anchor.getParent() != commonContainer) {
+                anchor = anchor.getParent();
+            }
+        } else {
+            anchor = commonContainer.getFirstChild();
+            int startOffset = commonContainer.getTextRange().getEndOffset();
+            for (JetExpression expr : allReplaces) {
+                int offset = expr.getTextRange().getStartOffset();
+                if (offset < startOffset) startOffset = offset;
+            }
+            while (anchor != null && !anchor.getTextRange().contains(startOffset)) {
+                anchor = anchor.getNextSibling();
+            }
+            if (anchor == null) return null;
+        }
+        return anchor;
+    }
+
     private static ArrayList<JetExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull JetExpression expression) {
         if (expression instanceof JetParenthesizedExpression) {
             JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
