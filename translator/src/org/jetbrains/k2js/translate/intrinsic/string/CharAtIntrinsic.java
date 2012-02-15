@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public enum GetIntrinsic implements FunctionIntrinsic {
+public enum CharAtIntrinsic implements FunctionIntrinsic {
 
     INSTANCE;
 
