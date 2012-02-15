@@ -14,7 +14,6 @@ import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
@@ -67,9 +66,8 @@ public final class CallExpressionTranslator extends AbstractTranslator {
     private List<JsExpression> translateArguments() {
         List<JsExpression> result = new ArrayList<JsExpression>();
         ResolvedCall<?> resolvedCall = getResolvedCallForCallExpression(context().bindingContext(), expression);
-        Map<ValueParameterDescriptor, ResolvedValueArgument> formalToActualArguments = resolvedCall.getValueArguments();
         for (ValueParameterDescriptor parameterDescriptor : resolvedCall.getResultingDescriptor().getValueParameters()) {
-            ResolvedValueArgument actualArgument = formalToActualArguments.get(parameterDescriptor);
+            ResolvedValueArgument actualArgument = resolvedCall.getValueArgumentsByIndex().get(parameterDescriptor.getIndex());
             result.add(translateSingleArgument(actualArgument, parameterDescriptor));
         }
         return result;

@@ -120,7 +120,7 @@ public final class Intrinsics {
 
     private void declareStringIntrinsics() {
         PropertyDescriptor lengthProperty =
-                getPropertyByName(library.getString().getDefaultType().getMemberScope(), "length");
+                getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), "length");
         functionIntrinsics.put(lengthProperty.getGetter(), LengthIntrinsic.INSTANCE);
         FunctionDescriptor getFunction =
                 getFunctionByName(library.getCharSequence().getDefaultType().getMemberScope(), "get");
