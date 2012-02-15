@@ -12,11 +12,9 @@ import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getVariableDescriptorForVariableAsFunction;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isVariableAsFunction;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -118,28 +116,6 @@ public final class BindingUtils {
         return (JetParameter) result;
     }
 
-    @NotNull
-    public static List<ClassDescriptor> getSuperclassDescriptors(@NotNull ClassDescriptor classDescriptor) {
-        Collection<? extends JetType> superclassTypes = classDescriptor.getTypeConstructor().getSupertypes();
-        List<ClassDescriptor> superClassDescriptors = new ArrayList<ClassDescriptor>();
-        for (JetType type : superclassTypes) {
-            ClassDescriptor result = getClassDescriptorForType(type);
-            if (isNotAny(result)) {
-                superClassDescriptors.add(result);
-            }
-        }
-        return superClassDescriptors;
-    }
-
-    @NotNull
-    private static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
-        DeclarationDescriptor superClassDescriptor =
-                type.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor instanceof ClassDescriptor
-                : "Superclass descriptor of a type should be of type ClassDescriptor";
-        return (ClassDescriptor) superClassDescriptor;
-    }
-
     public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClassOrObject classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
         List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(classDescriptor);
@@ -202,7 +178,7 @@ public final class BindingUtils {
         return referencedDescriptor;
     }
 
-    private static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
+    public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.equals(JetStandardClasses.getAny());
     }
 

@@ -10,7 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getSuperclassDescriptors;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getSuperclassDescriptors;
+
 
 //TODO: can optimise using less dumb implementation
 

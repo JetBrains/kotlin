@@ -15,6 +15,8 @@ import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 
+import java.util.Set;
+
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
@@ -23,7 +25,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
  *         <p/>
  *         Aggregates all the static parts of the context.
  */
-public class StaticContext {
+public final class StaticContext {
 
     public static StaticContext generateStaticContext(@NotNull JetStandardLibrary library,
                                                       @NotNull BindingContext bindingContext) {
@@ -272,6 +274,25 @@ public class StaticContext {
 
                 }
             };
+            Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
+                @Override
+                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
+                    //TODO: refactor
+                    if (descriptor instanceof FunctionDescriptor) {
+                        Set<? extends FunctionDescriptor> overriddenDescriptors = ((FunctionDescriptor) descriptor).getOverriddenDescriptors();
+                        if (overriddenDescriptors.isEmpty()) {
+                            return null;
+                        } else {
+                            //assert overriddenDescriptors.size() == 1;
+                            //TODO: for now translator can't deal with multiple inheritance good enough
+                            for (FunctionDescriptor overriddenDescriptor : overriddenDescriptors) {
+                                return getNameForDescriptor(overriddenDescriptor);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            };
             addRule(namesForStandardClasses);
             addRule(aliasOverridesNames);
             addRule(constructorHasTheSameNameAsTheClass);
@@ -281,6 +302,7 @@ public class StaticContext {
             addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
             addRule(accessorsHasNamesWithSpecialPrefixes);
+            addRule(overridingDescriptorsReferToOriginalName);
             addRule(memberDeclarationsInsideParentsScope);
         }
     }
@@ -294,6 +316,31 @@ public class StaticContext {
     private final class ScopeGenerator extends Generator<NamingScope> {
 
         public ScopeGenerator() {
+            Rule<NamingScope> generateNewScopesForClassesWithNoAncestors = new Rule<NamingScope>() {
+                @Override
+                public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof ClassDescriptor)) {
+                        return null;
+                    }
+                    if (getSuperclass((ClassDescriptor) descriptor) == null) {
+                        return getRootScope().innerScope("Scope for class " + descriptor.getName());
+                    }
+                    return null;
+                }
+            };
+            Rule<NamingScope> generateInnerScopesForDerivedClasses = new Rule<NamingScope>() {
+                @Override
+                public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof ClassDescriptor)) {
+                        return null;
+                    }
+                    ClassDescriptor superclass = getSuperclass((ClassDescriptor) descriptor);
+                    if (superclass == null) {
+                        return null;
+                    }
+                    return getScopeForDescriptor(superclass).innerScope("Scope for class " + descriptor.getName());
+                }
+            };
             Rule<NamingScope> generateNewScopesForNamespaceDescriptors = new Rule<NamingScope>() {
                 @Override
                 public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
@@ -307,9 +354,11 @@ public class StaticContext {
                 @Override
                 public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    return enclosingScope.innerScope("scope for member " + descriptor.getName());
+                    return enclosingScope.innerScope("Scope for member " + descriptor.getName());
                 }
             };
+            addRule(generateNewScopesForClassesWithNoAncestors);
+            addRule(generateInnerScopesForDerivedClasses);
             addRule(generateNewScopesForNamespaceDescriptors);
             addRule(generateInnerScopesForMembers);
         }
