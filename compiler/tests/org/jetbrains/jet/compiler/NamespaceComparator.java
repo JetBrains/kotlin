@@ -74,7 +74,7 @@ class NamespaceComparator {
             if (false) {
                 Files.write(serialized, txtFile, Charset.forName("utf-8"));
             } else {
-                String expected = Files.toString(txtFile, Charset.forName("utf-8"));
+                String expected = Files.toString(txtFile, Charset.forName("utf-8")).replace("\r\n", "\n");
                 // compare with hardcopy: make sure nothing is lost in output
                 Assert.assertEquals(expected, serialized);
             }
