@@ -1,0 +1,10 @@
+namespace test
+
+final class test.Inh : test.Base<jet.String> {
+    final /*constructor*/ fun <init>(): test.Inh
+    final override /*1*/ fun foo(): jet.String
+}
+open class test.Base</*0,r*/ T : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ T : jet.Any?><init>(): test.Base</*0,r*/ T : jet.Any?>
+    final fun foo(): /*0,r*/ T : jet.Any?
+}

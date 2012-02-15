@@ -52,9 +52,11 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
     private JetCoreEnvironment jetCoreEnvironment;
 
     private final File testFile;
+    private final File txtFile;
 
     public ReadKotlinBinaryClassTest(@NotNull File testFile) {
         this.testFile = testFile;
+        this.txtFile = new File(testFile.getPath().replaceFirst("\\.kt$", ".txt"));
         setName(testFile.getName());
     }
 
@@ -94,7 +96,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
         NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace("test");
         
-        NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false);
+        NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false, txtFile);
     }
 
     public static Test suite() {

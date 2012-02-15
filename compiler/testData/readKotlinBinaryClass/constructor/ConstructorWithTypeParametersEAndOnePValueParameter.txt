@@ -1,0 +1,5 @@
+namespace test
+
+final class test.OneTypeParameterErased</*0,r*/ P : jet.Any?, /*1*/ Q : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ P : jet.Any?, /*1*/ Q : jet.Any?><init>(/*0*/ q: Q): test.OneTypeParameterErased</*0,r*/ P : jet.Any?, /*1*/ Q : jet.Any?>
+}

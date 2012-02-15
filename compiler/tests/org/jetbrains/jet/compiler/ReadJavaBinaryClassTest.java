@@ -56,11 +56,13 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     
     private final File ktFile;
     private final File javaFile;
+    private final File txtFile;
 
     public ReadJavaBinaryClassTest(File ktFile) {
         this.ktFile = ktFile;
         Assert.assertTrue(ktFile.getName().endsWith(".kt"));
         this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".java"));
+        this.txtFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".txt"));
         setName(javaFile.getName());
     }
 
@@ -69,7 +71,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     public void runTest() throws Exception {
         NamespaceDescriptor nsa = compileKotlin();
         NamespaceDescriptor nsb = compileJava();
-        NamespaceComparator.compareNamespaces(nsa, nsb, false);
+        NamespaceComparator.compareNamespaces(nsa, nsb, false, txtFile);
     }
 
     private NamespaceDescriptor compileKotlin() throws Exception {

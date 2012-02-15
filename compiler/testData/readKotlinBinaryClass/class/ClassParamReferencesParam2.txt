@@ -1,0 +1,5 @@
+namespace test
+
+final class test.ClassParamReferencesParam</*0,r*/ A : jet.Any?, /*1,r*/ in B : A> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ A : jet.Any?, /*1,r*/ in B : A><init>(): test.ClassParamReferencesParam</*0,r*/ A : jet.Any?, /*1,r*/ in B : A>
+}

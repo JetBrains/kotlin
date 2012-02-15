@@ -1,0 +1,5 @@
+namespace test
+
+final class test.Clock</*0,r*/ A : java.lang.Number> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ A : java.lang.Number><init>(): test.Clock</*0,r*/ A : java.lang.Number>
+}

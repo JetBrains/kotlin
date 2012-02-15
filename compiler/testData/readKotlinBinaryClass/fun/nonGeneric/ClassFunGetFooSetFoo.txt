@@ -1,0 +1,7 @@
+namespace test
+
+final class test.ClassFunGetFoo : jet.Any {
+    final /*constructor*/ fun <init>(): test.ClassFunGetFoo
+    final fun getFoo(): jet.Int
+    final fun setFoo(/*0*/ p: jet.Int): jet.Tuple0
+}

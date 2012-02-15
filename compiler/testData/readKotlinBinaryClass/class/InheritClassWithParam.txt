@@ -1,0 +1,8 @@
+namespace test
+
+abstract class test.Aaa</*0,r*/ P : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ P : jet.Any?><init>(): test.Aaa</*0,r*/ P : jet.Any?>
+}
+final class test.Bbb : test.Aaa<java.util.Random> {
+    final /*constructor*/ fun <init>(): test.Bbb
+}

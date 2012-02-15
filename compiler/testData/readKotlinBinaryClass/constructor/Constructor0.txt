@@ -1,0 +1,5 @@
+namespace test
+
+final class test.ClassWithConstructor0 : jet.Any {
+    final /*constructor*/ fun <init>(): test.ClassWithConstructor0
+}
