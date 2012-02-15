@@ -13,17 +13,13 @@
         <url name="sonatype-repo" m2compatible="true">
             <artifact pattern="https://oss.sonatype.org/content/repositories/central/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
         </url>
-        <url name='kotlin-repo' alwaysCheckExactRevision='yes' checkmodified='true'>
-            <ivy      pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
-            <artifact pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
-        </url>
-        <url name='idea-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
+        <url name='jetbrains-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
             <ivy      pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
             <artifact pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
         </url>
     </resolvers>
     <modules>
-        <module organisation='org' name='bt2'   matcher='regexp' resolver='kotlin-repo'/>
-        <module organisation='org' name='bt343' matcher='regexp' resolver='idea-repo'/>
+        <module organisation='org' name='bt343' matcher='regexp' resolver='jetbrains-repo'/>
+        <module organisation='org' name='bt344' matcher='regexp' resolver='jetbrains-repo'/>
     </modules>
 </ivysettings>

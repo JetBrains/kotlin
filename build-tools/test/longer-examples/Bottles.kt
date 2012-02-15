@@ -73,6 +73,7 @@ fun bottlesOfBeer(count : Int) : String =
  * An excerpt from the Standard Library
  */
 
+
 // From the std package
 // This is an extension property, i.e. a property that is defined for the
 // type Array<T>, but does not sit inside the class Array

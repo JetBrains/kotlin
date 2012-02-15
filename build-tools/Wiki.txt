@@ -37,19 +37,14 @@ Another way to define Ant's {{*<kotlinc>*}} task is by using Ivy:
         <url name="sonatype-repo" m2compatible="true">
             <artifact pattern="https://oss.sonatype.org/content/repositories/central/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
         </url>
-        <url name='kotlin-repo' alwaysCheckExactRevision='yes' checkmodified='true'>
-            <!-- Temporary URL until Kotlin artifacts become available in http://teamcity.jetbrains.com -->
-            <ivy      pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
-            <artifact pattern='http://localhost:8111/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
-        </url>
-        <url name='idea-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
+        <url name='jetbrains-repo'   alwaysCheckExactRevision='yes' checkmodified='true'>
             <ivy      pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'/>
             <artifact pattern='http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'/>
         </url>
     </resolvers>
     <modules>
-        <module organisation='org' name='bt2'   matcher='regexp' resolver='kotlin-repo'/>
-        <module organisation='org' name='bt343' matcher='regexp' resolver='idea-repo'/>
+        <module organisation='org' name='bt343' matcher='regexp' resolver='jetbrains-repo'/>
+        <module organisation='org' name='bt344' matcher='regexp' resolver='jetbrains-repo'/>
     </modules>
 </ivysettings>
 {code}
@@ -60,11 +55,13 @@ Another way to define Ant's {{*<kotlinc>*}} task is by using Ivy:
 <ivy-module version="1.3">
     <info organisation="com.jetbrains" module="kotlin"/>
     <dependencies>
-        <dependency org="org" name="bt2" rev="latest.lastSuccessful">
+        <!-- Kotlin build: http://teamcity.jetbrains.com/viewType.html?buildTypeId=bt344 -->
+        <!--               http://teamcity.jetbrains.com/guestAuth/repository/download/bt344/latest.lastSuccessful/teamcity-ivy.xml -->
+        <dependency org="org" name="bt344" rev="latest.lastSuccessful">
             <include ext="jar" matcher="exactOrRegexp"/>
         </dependency>
-        <!-- http://teamcity.jetbrains.com/viewType.html?tab=buildTypeStatusDiv&buildTypeId=bt343 -->
-        <!-- http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/latest.lastSuccessful/teamcity-ivy.xml -->
+        <!-- IDEA build: http://teamcity.jetbrains.com/viewType.html?buildTypeId=bt343 -->
+        <!--             http://teamcity.jetbrains.com/guestAuth/repository/download/bt343/latest.lastSuccessful/teamcity-ivy.xml -->
         <dependency org="org" name="bt343" rev="latest.lastSuccessful">
             <include name="core/.*" ext="jar" matcher="exactOrRegexp"/>
         </dependency>
@@ -167,3 +164,10 @@ h3. Classpath examples
     </classpath>
 </kotlinc>
 {code}
+
+
+h1. Maven
+
+See [{{"kotlin-maven-plugin"}}|http://evgeny-goldin.com/wiki/Kotlin-maven-plugin].
+
+h1. Gradle
