@@ -58,6 +58,7 @@
       <lang.formatter language="jet" implementationClass="org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder"/>
       <lang.findUsagesProvider language="jet" implementationClass="org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider"/>
       <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider"/>
+      <treeStructureProvider implementation="org.jetbrains.jet.plugin.projectView.JetProjectViewProvider"/>
 
       <codeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetCodeStyleSettingsProvider"/>
       <langCodeStyleSettingsProvider implementation="org.jetbrains.jet.plugin.formatter.JetLanguageCodeStyleSettingsProvider"/>

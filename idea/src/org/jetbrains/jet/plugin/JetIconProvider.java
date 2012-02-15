@@ -59,6 +59,9 @@ public class JetIconProvider extends IconProvider {
             }
             return icon;
         }
+        if (psiElement instanceof JetObjectDeclaration) {
+            return ICON_FOR_OBJECT;
+        }
         if (psiElement instanceof JetParameter) {
             if (((JetParameter) psiElement).getValOrVarNode() != null) {
                 JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
