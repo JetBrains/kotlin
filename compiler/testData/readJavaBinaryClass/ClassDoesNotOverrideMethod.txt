@@ -1,0 +1,27 @@
+namespace test
+
+abstract class test.ClassDoesNotOverrideMethod : java.util.Date {
+    final /*constructor*/ fun <init>(): test.ClassDoesNotOverrideMethod
+    open override /*1*/ fun after(/*0*/ p0: java.util.Date?): jet.Boolean
+    open override /*1*/ fun before(/*0*/ p0: java.util.Date?): jet.Boolean
+    open override /*1*/ fun compareTo(/*0*/ p0: java.util.Date?): jet.Int
+    open override /*1*/ fun compareTo(/*0*/ p0: jet.Any?): jet.Int
+    open override /*1*/ fun getDate(): jet.Int
+    open override /*1*/ fun getDay(): jet.Int
+    open override /*1*/ fun getHours(): jet.Int
+    open override /*1*/ fun getMinutes(): jet.Int
+    open override /*1*/ fun getMonth(): jet.Int
+    open override /*1*/ fun getSeconds(): jet.Int
+    open override /*1*/ fun getTime(): jet.Long
+    open override /*1*/ fun getTimezoneOffset(): jet.Int
+    open override /*1*/ fun getYear(): jet.Int
+    open override /*1*/ fun setDate(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun setHours(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun setMinutes(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun setMonth(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun setSeconds(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun setTime(/*0*/ p0: jet.Long): jet.Tuple0
+    open override /*1*/ fun setYear(/*0*/ p0: jet.Int): jet.Tuple0
+    open override /*1*/ fun toGMTString(): jet.String?
+    open override /*1*/ fun toLocaleString(): jet.String?
+}

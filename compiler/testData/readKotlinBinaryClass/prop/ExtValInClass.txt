@@ -1,0 +1,6 @@
+namespace test
+
+final class test.ExtPropInClass : jet.Any {
+    final /*constructor*/ fun <init>(): test.ExtPropInClass
+    val jet.Int.itIs: jet.Int
+}

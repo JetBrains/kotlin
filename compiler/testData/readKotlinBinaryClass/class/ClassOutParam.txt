@@ -1,0 +1,5 @@
+namespace test
+
+final class test.Juice</*0,r*/ in T : jet.Any?> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ in T : jet.Any?><init>(): test.Juice</*0,r*/ in T : jet.Any?>
+}

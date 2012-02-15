@@ -1,0 +1,4 @@
+namespace test
+
+val jet.String.junk: jet.Int
+var jet.Int.junk: jet.Short

@@ -1,0 +1,8 @@
+namespace test
+
+abstract class test.Aaa : jet.Any {
+    final /*constructor*/ fun <init>(): test.Aaa
+}
+final class test.Bbb : test.Aaa {
+    final /*constructor*/ fun <init>(): test.Bbb
+}

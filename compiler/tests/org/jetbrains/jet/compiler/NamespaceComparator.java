@@ -1,5 +1,23 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.compiler;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -25,9 +43,11 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.junit.Assert;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,13 +66,28 @@ class NamespaceComparator {
         this.includeObject = includeObject;
     }
 
-    public static void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb, boolean includeObject) {
-        new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
+    public static void compareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb, boolean includeObject,
+            @NotNull File txtFile) {
+        String serialized = new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
+        try {
+            // change to true to regenerate files if format changes
+            if (false) {
+                Files.write(serialized, txtFile, Charset.forName("utf-8"));
+            } else {
+                String expected = Files.toString(txtFile, Charset.forName("utf-8")).replace("\r\n", "\n");
+                // compare with hardcopy: make sure nothing is lost in output
+                Assert.assertEquals(expected, serialized);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
+    private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
+        StringBuilder sb = new StringBuilder();
         Assert.assertEquals(nsa.getName(), nsb.getName());
-        System.out.println("namespace " + nsa.getName());
+
+        sb.append("namespace " + nsa.getName() + "\n\n");
 
         Assert.assertTrue(!nsa.getMemberScope().getAllDescriptors().isEmpty());
 
@@ -77,13 +112,13 @@ class NamespaceComparator {
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
             Assert.assertTrue(ca != null);
             Assert.assertTrue(cb != null);
-            compareClassifiers(ca, cb);
+            compareClassifiers(ca, cb, sb);
         }
 
         for (String name : propertyNames) {
             Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
             Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
-            compareDeclarationSets(pa, pb);
+            compareDeclarationSets(pa, pb, sb);
 
             Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.getterName(name)).isEmpty());
             Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(name)).isEmpty());
@@ -92,15 +127,18 @@ class NamespaceComparator {
         for (String name : functionNames) {
             Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
-            compareDeclarationSets(fa, fb);
+            compareDeclarationSets(fa, fb, sb);
         }
+        
+        return sb.toString();
     }
 
-    private static void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b) {
+    private static void compareDeclarationSets(Set<? extends DeclarationDescriptor> a, Set<? extends DeclarationDescriptor> b,
+            @NotNull StringBuilder sb) {
         String at = serializedDeclarationSets(a);
         String bt = serializedDeclarationSets(b);
         Assert.assertEquals(at, bt);
-        System.out.print(at);
+        sb.append(at);
     }
 
     private static String serializedDeclarationSets(Collection<? extends DeclarationDescriptor> ds) {
@@ -121,7 +159,7 @@ class NamespaceComparator {
         return r.toString();
     }
 
-    private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b) {
+    private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b, @NotNull StringBuilder sb) {
         StringBuilder sba = new StringBuilder();
         StringBuilder sbb = new StringBuilder();
 
@@ -132,22 +170,8 @@ class NamespaceComparator {
         String bs = sbb.toString();
 
         Assert.assertEquals(as, bs);
-        System.out.println(as);
+        sb.append(as);
     }
-
-    private void compareDescriptors(@NotNull DeclarationDescriptor a, @NotNull DeclarationDescriptor b) {
-        StringBuilder sba = new StringBuilder();
-        StringBuilder sbb = new StringBuilder();
-        new Serializer(sba).serialize(a);
-        new Serializer(sbb).serialize(b);
-
-        String as = sba.toString();
-        String bs = sbb.toString();
-
-        Assert.assertEquals(as, bs);
-        System.out.println(as);
-    }
-
 
 
 
@@ -167,8 +191,11 @@ class NamespaceComparator {
                 case TRAIT:
                     sb.append("trait");
                     break;
+                case OBJECT:
+                    sb.append("object");
+                    break;
                 default:
-                    throw new IllegalStateException();
+                    throw new IllegalStateException("unknown class kind: " + kind);
             }
         }
 
@@ -185,6 +212,10 @@ class NamespaceComparator {
         public void serialize(FunctionDescriptor fun) {
             serialize(fun.getModality());
             sb.append(" ");
+            
+            if (!fun.getOverriddenDescriptors().isEmpty()) {
+                sb.append("override /*" + fun.getOverriddenDescriptors().size() + "*/ ");
+            }
 
             if (fun instanceof ConstructorDescriptor) {
                 sb.append("/*constructor*/ ");
@@ -473,6 +504,12 @@ class NamespaceComparator {
 
             for (String memberString : memberStrings) {
                 sb.append(indent(memberString));
+            }
+            
+            if (klass.getClassObjectDescriptor() != null) {
+                StringBuilder sbForClassObject = new StringBuilder();
+                new FullContentSerialier(sbForClassObject).serialize(klass.getClassObjectDescriptor());
+                sb.append(indent(sbForClassObject.toString()));
             }
 
             sb.append("}\n");

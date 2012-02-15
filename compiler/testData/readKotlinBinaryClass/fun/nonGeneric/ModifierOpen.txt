@@ -1,0 +1,6 @@
+namespace test
+
+open class test.ModifierOpen : jet.Any {
+    final /*constructor*/ fun <init>(): test.ModifierOpen
+    open fun abs(): jet.Int
+}

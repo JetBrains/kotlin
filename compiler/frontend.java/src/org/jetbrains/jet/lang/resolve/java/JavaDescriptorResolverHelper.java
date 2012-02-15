@@ -1,10 +1,30 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.HierarchicalMethodSignature;
+import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMember;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,14 +61,28 @@ class JavaDescriptorResolverHelper {
             return r;
         }
         
+        private boolean includeMember(PsiMemberWrapper member) {
+            if (member.isStatic() != staticMembers) {
+                return false;
+            }
+
+            if (!staticMembers && member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
+                return false;
+            }
+            
+            if (member.isPrivate()) {
+                return false;
+            }
+
+            return true;
+        }
+        
         private void processFields() {
             if (!kotlin) {
-                for (PsiFieldWrapper field : psiClass.getFields()) {
-                    if (field.isStatic() != staticMembers) {
-                        continue;
-                    }
-
-                    if (field.isPrivate()) {
+                for (PsiField field0 : psiClass.getPsiClass().getFields()) {
+                    PsiFieldWrapper field = new PsiFieldWrapper(field0);
+                    
+                    if (!includeMember(field)) {
                         continue;
                     }
 
@@ -61,15 +95,16 @@ class JavaDescriptorResolverHelper {
         }
 
         private void processMethods() {
-            for (HierarchicalMethodSignature method0 : psiClass.getPsiClass().getVisibleSignatures()) {
+            
+            for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
+                getNamedMembers(method.getName());
+            }
+
+            
+            for (PsiMethod method0 : psiClass.getPsiClass().getMethods()) {
+                PsiMethodWrapper method = new PsiMethodWrapper(method0);
                 
-                PsiMethodWrapper method = new PsiMethodWrapper(method0.getMethod());
-
-                if (method.isStatic() != staticMembers) {
-                    continue;
-                }
-
-                if (method.isPrivate()) {
+                if (!includeMember(method)) {
                     continue;
                 }
 

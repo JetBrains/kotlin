@@ -1,0 +1,3 @@
+namespace test
+
+final fun anyq(): jet.Any?

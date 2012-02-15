@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.plugin.refactoring.introduceVariable;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
@@ -81,7 +97,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
         BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
                                                                             AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
-        JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
+        final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         if (expressionType instanceof NamespaceType) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
             return;
@@ -112,11 +128,15 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                     allReplaces = Collections.singletonList(expression);
                 }
                 
-                String[] suggestedNames = JetNameSuggester.suggestNames(expression, new JetNameValidatorImpl(expression));
-                final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
-                Collections.addAll(suggestedNamesSet, suggestedNames);
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
+                JetNameValidatorImpl validator = new JetNameValidatorImpl(commonContainer,
+                                                                          calculateAnchor(commonParent,
+                                                                                          commonContainer,
+                                                                                          allReplaces));
+                String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator);
+                final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
+                Collections.addAll(suggestedNamesSet, suggestedNames);
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
@@ -140,7 +160,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                         new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
                                                                          references.toArray(new JetExpression[references.size()]),
                                                                          reference.get(), finalReplaceOccurrence,
-                                                                         property);
+                                                                         property, /*todo*/false, /*todo*/false,
+                                                                         expressionType);
                                 variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
                             }
                         }
@@ -175,23 +196,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                } else variableText += expression.getText();
                JetProperty property = JetPsiFactory.createProperty(project, variableText);
                if (property == null) return;
-               PsiElement anchor = commonParent;
-               if (anchor != commonContainer) {
-                   while (anchor.getParent() != commonContainer) {
-                       anchor = anchor.getParent();
-                   }
-               } else {
-                   anchor = commonContainer.getFirstChild();
-                   int startOffset = commonContainer.getTextRange().getEndOffset();
-                   for (JetExpression expr : allReplaces) {
-                       int offset = expr.getTextRange().getStartOffset();
-                       if (offset < startOffset) startOffset = offset;
-                   }
-                   while (anchor != null && !anchor.getTextRange().contains(startOffset)) {
-                       anchor = anchor.getNextSibling();
-                   }
-                   if (anchor == null) return;
-               }
+               PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
+               if (anchor == null) return;
                boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
                            commonContainer instanceof JetClassBody ||
                            commonContainer instanceof JetClassInitializer);
@@ -246,7 +252,29 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
            }
        };
     }
-    
+
+    private static PsiElement calculateAnchor(PsiElement commonParent, PsiElement commonContainer,
+                                              List<JetExpression> allReplaces) {
+        PsiElement anchor = commonParent;
+        if (anchor != commonContainer) {
+            while (anchor.getParent() != commonContainer) {
+                anchor = anchor.getParent();
+            }
+        } else {
+            anchor = commonContainer.getFirstChild();
+            int startOffset = commonContainer.getTextRange().getEndOffset();
+            for (JetExpression expr : allReplaces) {
+                int offset = expr.getTextRange().getStartOffset();
+                if (offset < startOffset) startOffset = offset;
+            }
+            while (anchor != null && !anchor.getTextRange().contains(startOffset)) {
+                anchor = anchor.getNextSibling();
+            }
+            if (anchor == null) return null;
+        }
+        return anchor;
+    }
+
     private static ArrayList<JetExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull JetExpression expression) {
         if (expression instanceof JetParenthesizedExpression) {
             JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;

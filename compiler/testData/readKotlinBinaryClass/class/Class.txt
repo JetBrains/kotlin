@@ -1,0 +1,5 @@
+namespace test
+
+final class test.Ramification : jet.Any {
+    final /*constructor*/ fun <init>(): test.Ramification
+}

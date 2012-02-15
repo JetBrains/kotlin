@@ -1,3 +1,19 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
@@ -40,11 +56,13 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     
     private final File ktFile;
     private final File javaFile;
+    private final File txtFile;
 
     public ReadJavaBinaryClassTest(File ktFile) {
         this.ktFile = ktFile;
         Assert.assertTrue(ktFile.getName().endsWith(".kt"));
         this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".java"));
+        this.txtFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".txt"));
         setName(javaFile.getName());
     }
 
@@ -53,7 +71,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     public void runTest() throws Exception {
         NamespaceDescriptor nsa = compileKotlin();
         NamespaceDescriptor nsb = compileJava();
-        NamespaceComparator.compareNamespaces(nsa, nsb, false);
+        NamespaceComparator.compareNamespaces(nsa, nsb, false, txtFile);
     }
 
     private NamespaceDescriptor compileKotlin() throws Exception {
@@ -64,6 +82,8 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         LightVirtualFile virtualFile = new LightVirtualFile(ktFile.getName(), JetLanguage.INSTANCE, text);
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
+
+        AnalyzingUtils.checkForSyntacticErrors(psiFile);
 
         BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
