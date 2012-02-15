@@ -37,11 +37,19 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testDoWhileAddBlockInner() {
+        doTest();
+    }
+
     public void testFewOccurrences() {
         doTest();
     }
 
     public void testFunctionAddBlock() {
+        doTest();
+    }
+
+    public void testFunctionAddBlockInner() {
         doTest();
     }
 
@@ -53,7 +61,15 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testIfElseAddBlockInner() {
+        doTest();
+    }
+
     public void testIfThenAddBlock() {
+        doTest();
+    }
+
+    public void testIfThenAddBlockInner() {
         doTest();
     }
 
@@ -93,11 +109,19 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testWhenAddBlockInner() {
+        doTest();
+    }
+
     public void testWhenParts() {
         doTest();
     }
 
     public void testWhileAddBlock() {
+        doTest();
+    }
+
+    public void testWhileAddBlockInner() {
         doTest();
     }
 
@@ -133,6 +157,7 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
             }
         });
         int endOffset = file.getLastChild().getTextRange().getStartOffset();
+//        System.out.println(file.getText().substring(0, endOffset).trim());
         assertEquals(expectedResultText, file.getText().substring(0, endOffset).trim());
     }
 }

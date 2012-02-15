@@ -208,9 +208,70 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                    JetExpression emptyBody = JetPsiFactory.createEmptyBody(project);
                    PsiElement firstChild = emptyBody.getFirstChild();
                    emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                   property = (JetProperty) emptyBody.addAfter(property, firstChild);
-                   emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                   emptyBody = (JetExpression) anchor.replace(emptyBody);
+                   if (replaceOccurrence && commonContainer != null) {
+                       for (JetExpression replace : allReplaces) {
+                           boolean isActualExpression = expression == replace;
+                           JetExpression element = (JetExpression) replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
+                           if (isActualExpression) reference.set(element);
+                       }
+                       PsiElement oldElement = commonContainer;
+                       if (commonContainer instanceof JetWhenEntry) {
+                           JetExpression body = ((JetWhenEntry) commonContainer).getExpression();
+                           if (body != null) {
+                               oldElement = body;
+                           }
+                       } else if (commonContainer instanceof JetNamedFunction) {
+                           JetExpression body = ((JetNamedFunction) commonContainer).getBodyExpression();
+                           if (body != null) {
+                               oldElement = body;
+                           }
+                       } else if (commonContainer instanceof JetSecondaryConstructor) {
+                           JetExpression body = ((JetSecondaryConstructor) commonContainer).getBodyExpression();
+                           if (body != null) {
+                               oldElement = body;
+                           }
+                       } else if (commonContainer instanceof JetContainerNode) {
+                           JetContainerNode container = (JetContainerNode) commonContainer;
+                           PsiElement[] children = container.getChildren();
+                           for (PsiElement child : children) {
+                               if (child instanceof JetExpression) {
+                                   oldElement = child;
+                               }
+                           }
+                       }
+                       //ugly logic to make sure we are working with right actual expression
+                       JetExpression actualExpression = reference.get();
+                       int diff = actualExpression.getTextRange().getStartOffset() - oldElement.getTextRange().getStartOffset();
+                       String actualExpressionText = actualExpression.getText();
+                       PsiElement newElement = emptyBody.addAfter(oldElement, firstChild);
+                       PsiElement elem = newElement.findElementAt(diff);
+                       while (elem != null && !(elem instanceof JetExpression &&
+                              actualExpressionText.equals(elem.getText()))) {
+                           elem = elem.getParent();
+                       }
+                       if (elem != null) {
+                           reference.set((JetExpression) elem);
+                       }
+                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                       property = (JetProperty) emptyBody.addAfter(property, firstChild);
+                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                       actualExpression = reference.get();
+                       diff = actualExpression.getTextRange().getStartOffset() - emptyBody.getTextRange().getStartOffset();
+                       actualExpressionText = actualExpression.getText();
+                       emptyBody = (JetExpression) anchor.replace(emptyBody);
+                       elem = emptyBody.findElementAt(diff);
+                       while (elem != null && !(elem instanceof JetExpression &&
+                                                actualExpressionText.equals(elem.getText()))) {
+                           elem = elem.getParent();
+                       }
+                       if (elem != null) {
+                           reference.set((JetExpression) elem);
+                       }
+                   } else {
+                       property = (JetProperty) emptyBody.addAfter(property, firstChild);
+                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                       emptyBody = (JetExpression) anchor.replace(emptyBody);
+                   }
                    for (PsiElement child : emptyBody.getChildren()) {
                        if (child instanceof JetProperty) {
                            property = (JetProperty) child;
@@ -239,7 +300,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                    }
                }
                for (JetExpression replace : allReplaces) {
-                   if (replaceOccurrence) {
+                   if (replaceOccurrence && !needBraces) {
                        boolean isActualExpression = expression == replace;
                        JetExpression element = (JetExpression) replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
                        references.add(element);
