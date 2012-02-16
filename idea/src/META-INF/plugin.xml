@@ -49,6 +49,9 @@
       <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
       <internalFileTemplate name="Kotlin File"/>
+      <internalFileTemplate name="Kotlin Class"/>
+      <internalFileTemplate name="Kotlin Enum"/>
+      <internalFileTemplate name="Kotlin Trait"/>
 
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 

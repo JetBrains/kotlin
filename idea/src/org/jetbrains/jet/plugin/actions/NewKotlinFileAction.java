@@ -16,23 +16,44 @@
 
 package org.jetbrains.jet.plugin.actions;
 
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.actions.CreateFromTemplateAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import org.jetbrains.jet.plugin.JetIconProvider;
+import com.intellij.ide.actions.CreateFileFromTemplateAction;
+import com.intellij.ide.actions.CreateFileFromTemplateDialog;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.util.PlatformIcons;
+import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.JetFileType;
 
 /**
  * @author Nikolay Krasko
  */
-public class NewKotlinFileAction extends CreateFromTemplateAction {
-
+public class NewKotlinFileAction extends CreateFileFromTemplateAction {
     public NewKotlinFileAction() {
-        super(FileTemplateManager.getInstance().getInternalTemplate("Kotlin File"));
+        super(JetBundle.message("new.kotlin.file.action"), "Creates new Kotlin file", JetFileType.INSTANCE.getIcon());
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        super.update(e);
-        e.getPresentation().setIcon(JetIconProvider.KOTLIN_ICON);
+    protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
+        builder
+                .setTitle(JetBundle.message("new.kotlin.file.action"))
+                .addKind("Class", PlatformIcons.CLASS_ICON, "Kotlin Class")
+                .addKind("Trait", PlatformIcons.INTERFACE_ICON, "Kotlin Trait")
+                .addKind("Enum class", PlatformIcons.ENUM_ICON, "Kotlin Enum")
+                .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File");
+    }
+
+    @Override
+    protected String getActionName(PsiDirectory directory, String newName, String templateName) {
+        return JetBundle.message("new.kotlin.file.action");
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof NewKotlinFileAction;
     }
 }
