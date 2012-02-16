@@ -69,25 +69,24 @@ public class JetCompletionContributor extends CompletionContributor {
                        final JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
                            for (Object variant : jetReference.getVariants()) {
-                               addReferenceVariant(result, variant, positions, parameters.getPosition().getProject());
+                               addReferenceVariant(result, variant, positions);
                            }
-                       }
 
-                       if (shouldRunTopLevelCompletion(parameters)) {
-                           addClasses(parameters, result, positions);
-                           addJetTopLevelFunctions(result, position, positions);
-                       }
+                           if (shouldRunTopLevelCompletion(parameters)) {
+                               addClasses(parameters, result, positions);
+                               addJetTopLevelFunctions(result, position, positions);
+                           }
 
-                       result.stopHere();
+                           result.stopHere();
+                       }
                    }
                });
     }
 
     private static void addReferenceVariant(
-            @NotNull CompletionResultSet result, 
+            @NotNull CompletionResultSet result,
             @NotNull Object variant,
-            @NotNull final HashSet<LookupPositionObject> positions,
-            @NotNull final Project project) {
+            @NotNull final HashSet<LookupPositionObject> positions) {
 
         if (variant instanceof LookupElement) {
             addCompletionToResult(result, (LookupElement) variant, positions);
@@ -99,7 +98,7 @@ public class JetCompletionContributor extends CompletionContributor {
 
     private static void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position,
                                                 @NotNull final HashSet<LookupPositionObject> positions) {
-        
+
         String actualPrefix = result.getPrefixMatcher().getPrefix();
 
         final Project project = position.getProject();
@@ -153,7 +152,7 @@ public class JetCompletionContributor extends CompletionContributor {
         if (parameters.getInvocationCount() > 1) {
             return true;
         }
-        
+
         if (element.getNode().getElementType() == JetTokens.IDENTIFIER) {
             if (element.getParent() instanceof JetSimpleNameExpression) {
                 JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) element.getParent();
@@ -211,9 +210,11 @@ public class JetCompletionContributor extends CompletionContributor {
     private static LookupPositionObject getLookupPosition(LookupElement element) {
         final Object lookupObject = element.getObject();
         if (lookupObject instanceof PsiElement) {
+//            PsiElement psiElement = (PsiElement) lookupObject;
             return new LookupPositionObject((PsiElement) lookupObject);
         }
         else if (lookupObject instanceof JetLookupObject) {
+//            JetLookupObject jetLookupObject = (JetLookupObject) lookupObject;
             final PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
             if (psiElement != null) {
                 return new LookupPositionObject(psiElement);

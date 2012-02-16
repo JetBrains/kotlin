@@ -49,6 +49,7 @@
       <internalFileTemplate name="Kotlin File"/>
 
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
+
       <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.JetSyntaxHighlighterFactory"/>
       <lang.braceMatcher language="jet" implementationClass="org.jetbrains.jet.plugin.JetPairMatcher"/>
       <lang.parserDefinition language="jet" implementationClass="org.jetbrains.jet.lang.parsing.JetParserDefinition"/>
@@ -70,14 +71,17 @@
       <completion.contributor language="jet" id="JetKeywordCompletionContributor" order="first"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
 
+      <completion.contributor language="jet" id="JetPackagesContributor" order="after JetKeywordCompletionContributor"
+                              implementationClass="org.jetbrains.jet.plugin.completion.JetPackagesContributor" />
+
       <completion.contributor language="jet" id="JetCompletionContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
-      <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.completion.GlobalMemberCompletionContributor"/>
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor" id="liveTemplates" order="first"/>
 
       <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
       <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
+
       <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper" id="skipLiveTemplate"/>
 
       <psi.referenceContributor language="jet" order="after JetCompletionContributor" implementation="org.jetbrains.jet.plugin.references.JetReferenceContributor"/>

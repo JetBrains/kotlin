@@ -135,6 +135,8 @@ public class JetParsing extends AbstractJetParsing {
 
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
+
+
             parseNamespaceName();
 
             if (at(LBRACE)) {
@@ -162,7 +164,14 @@ public class JetParsing extends AbstractJetParsing {
     private void parseNamespaceName() {
         PsiBuilder.Marker nsName = mark();
         while (true) {
-            expect(IDENTIFIER, "Namespace name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET);
+            if (myBuilder.newlineBeforeCurrentToken()) {
+                errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", NAMESPACE_NAME_RECOVERY_SET);
+                nsName.drop();
+                break;
+            }
+
+            expect(IDENTIFIER, "Package name must be a '.'-separated identifier list", NAMESPACE_NAME_RECOVERY_SET);
+
             if (at(DOT)) {
                 nsName.done(REFERENCE_EXPRESSION);
                 advance(); // DOT

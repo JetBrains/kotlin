@@ -20,6 +20,7 @@ import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
+import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetThisReferenceExpression;
 
@@ -37,6 +38,15 @@ public class JetReferenceContributor extends PsiReferenceContributor {
                                                 @Override
                                                 public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext processingContext) {
                                                     return new PsiReference[] { new JetSimpleNameReference((JetSimpleNameExpression) element) };
+                                                }
+                                            });
+
+        registrar.registerReferenceProvider(psiElement(JetNamespaceHeader.class),
+                                            new PsiReferenceProvider() {
+                                                @NotNull
+                                                @Override
+                                                public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+                                                    return new PsiReference[] { new JetPackageReference((JetNamespaceHeader) element) };
                                                 }
                                             });
 

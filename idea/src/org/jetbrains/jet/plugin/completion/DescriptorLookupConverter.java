@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.completion;
 
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
@@ -30,6 +31,8 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import java.util.List;
 
 /**
  * @author Nikolay Krasko
@@ -95,7 +98,7 @@ public final class DescriptorLookupConverter {
         return element;
     }
 
-    @NotNull    
+    @NotNull
     public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
             CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
@@ -106,5 +109,15 @@ public final class DescriptorLookupConverter {
             descriptor = callableMemberDescriptor;
         }
         return createLookupElement(descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
+    }
+
+    public static LookupElement[] collectLookupElements(BindingContext bindingContext, Iterable<DeclarationDescriptor> descriptors) {
+        List<LookupElement> result = Lists.newArrayList();
+
+        for (final DeclarationDescriptor descriptor : descriptors) {
+            result.add(createLookupElement(bindingContext, descriptor));
+        }
+
+        return result.toArray(new LookupElement[result.size()]);
     }
 }

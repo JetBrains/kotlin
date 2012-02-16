@@ -18,6 +18,9 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -28,7 +31,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class JetNamespaceHeader extends JetElement {
+public class JetNamespaceHeader extends JetReferenceExpression {
     public JetNamespaceHeader(@NotNull ASTNode node) {
         super(node);
     }
@@ -36,6 +39,19 @@ public class JetNamespaceHeader extends JetElement {
     @NotNull
     public List<JetSimpleNameExpression> getParentNamespaceNames() {
         return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
+    @NotNull
+    @Override
+    public PsiReference[] getReferences() {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this, PsiReferenceService.Hints.NO_HINTS);
+    }
+
+    @Nullable
+    @Override
+    public PsiReference getReference() {
+        PsiReference[] references = getReferences();
+        return references.length == 1 ? references[0] : null;
     }
 
     @Nullable
@@ -49,3 +65,4 @@ public class JetNamespaceHeader extends JetElement {
         return nameIdentifier == null ? "" : nameIdentifier.getText();
     }
 }
+

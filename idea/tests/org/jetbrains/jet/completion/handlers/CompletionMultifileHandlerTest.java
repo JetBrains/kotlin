@@ -26,27 +26,24 @@ import java.io.File;
  */
 public class CompletionMultifileHandlerTest extends CompletionTestCase {
 
-    public void testTopLevelFunctionImport() {
+    public void testTopLevelFunctionImport() throws Exception {
         doTest();
     }
 
-    public void testTopLevelFunctionInQualifiedExpr() {
+    public void testTopLevelFunctionInQualifiedExpr() throws Exception {
         doTest();
     }
 
-    public void testNoParenthesisInImports() {
+    public void testNoParenthesisInImports() throws Exception {
         doTest();
     }
 
-    public void doTest() {
+    public void doTest() throws Exception {
         String fileName = getTestName(false);
-        try {
-            configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt");
-            complete(2);
-            checkResultByFile(fileName + ".kt.after");
-        } catch (Exception e) {
-            throw new AssertionError(e);
-        }
+
+        configureByFiles(null, fileName + "-1.kt", fileName + "-2.kt");
+        complete(2);
+        checkResultByFile(fileName + ".kt.after");
     }
 
     @Override

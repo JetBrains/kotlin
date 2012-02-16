@@ -85,7 +85,7 @@ public class TypeHierarchyResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitJetFile(JetFile file) {
-                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(file, owner);
+                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(file, owner, outerScope);
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
@@ -199,19 +199,34 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner, JetScope outerScope) {
+
         NamespaceLike currentOwner = owner;
+
         for (JetSimpleNameExpression nameExpression : file.getNamespaceHeader().getParentNamespaceNames()) {
-            currentOwner = createNamespaceDescriptorIfNeeded(null, currentOwner, JetPsiUtil.safeName(nameExpression.getReferencedName()));
+            String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
+
+            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName);
+
+            currentOwner = namespaceDescriptor;
+
             context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
+            context.getTrace().record(RESOLUTION_SCOPE, nameExpression, outerScope);
+
+            outerScope = namespaceDescriptor.getMemberScope();
         }
 
         String name = JetPsiUtil.safeName(file.getNamespaceHeader().getName());
+        context.getTrace().record(RESOLUTION_SCOPE, file.getNamespaceHeader(), outerScope);
+
         return createNamespaceDescriptorIfNeeded(file, currentOwner, name);
+
+
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLike owner, @NotNull String name) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLike owner, String name) {
+
         NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(
@@ -229,6 +244,7 @@ public class TypeHierarchyResolver {
                 context.getTrace().record(BindingContext.NAMESPACE, file, namespaceDescriptor);
             }
         }
+
         return namespaceDescriptor;
     }
 
@@ -406,7 +422,7 @@ public class TypeHierarchyResolver {
                             Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
                             break;
                     }
-                    
+
                     if (conflictingTypes.size() > 1) {
                         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                         assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
@@ -436,7 +452,7 @@ public class TypeHierarchyResolver {
                 return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
             }
         };
-        
+
         private void proceed(Set<JetType> conflictingTypes) {
             for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
                 JetType type = iterator.next();
@@ -452,7 +468,7 @@ public class TypeHierarchyResolver {
 
         public abstract boolean removeNeeded(JetType subject, JetType other);
     }
-    
+
     private void checkTypesInClassHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();

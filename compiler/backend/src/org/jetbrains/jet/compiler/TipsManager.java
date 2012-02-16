@@ -97,6 +97,16 @@ public final class TipsManager {
         return Collections.emptyList();
     }
 
+    @NotNull
+    public static Collection<DeclarationDescriptor> getReferenceVariants(JetNamespaceHeader expression, BindingContext context) {
+        JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+        if (resolutionScope != null) {
+            return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
+        }
+
+        return Collections.emptyList();
+    }
+
     public static Collection<DeclarationDescriptor> excludePrivateDescriptors(
             @NotNull Collection<DeclarationDescriptor> descriptors) {
 
