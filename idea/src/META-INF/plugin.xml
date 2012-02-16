@@ -4,6 +4,8 @@
   <version>@snapshot@</version>
   <vendor>JetBrains</vendor>
 
+  <depends optional="true">JUnit</depends>
+
   <project-components>
       <component>
           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
@@ -106,6 +108,7 @@
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
+      <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer"/>
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
       <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>

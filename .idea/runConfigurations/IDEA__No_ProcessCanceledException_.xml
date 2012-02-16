@@ -2,7 +2,7 @@
   <configuration default="false" name="IDEA (No ProcessCanceledException)" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
-    <option name="VM_PARAMETERS" value="-Xmx500m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=250m -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Didea.ProcessCanceledException=disabled" />
+    <option name="VM_PARAMETERS" value="-Xmx500m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=250m -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dplugin.path=$PROJECT_DIR$/out/LocalPlugin -Didea.ProcessCanceledException=disabled" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/ideaSDK/bin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -10,7 +10,7 @@
     <option name="ENABLE_SWING_INSPECTOR" value="false" />
     <option name="ENV_VARIABLES" />
     <option name="PASS_PARENT_ENVS" value="true" />
-    <module name="idea" />
+    <module name="idea_runner" />
     <envs />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />
@@ -20,6 +20,10 @@
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Run" />
-    <method />
+    <method>
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="LocalPlugin" />
+      </option>
+    </method>
   </configuration>
 </component>
