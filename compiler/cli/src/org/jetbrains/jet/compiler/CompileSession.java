@@ -17,15 +17,21 @@
 package org.jetbrains.jet.compiler;
 
 import com.google.common.base.Predicates;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -126,13 +132,39 @@ public class CompileSession {
             }
             return false;
         }
+
+        final ErrorCollector errorCollector = new ErrorCollector();
+
+        reportSyntaxErrors(errorCollector);
+        analyzeAndReportSemanticErrors(errorCollector);
+
+        errorCollector.flushTo(out);
+        return !errorCollector.hasErrors;
+    }
+
+    private void analyzeAndReportSemanticErrors(ErrorCollector errorCollector) {
         List<JetFile> allNamespaces = new ArrayList<JetFile>(mySourceFiles);
         allNamespaces.addAll(myLibrarySourceFiles);
         myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
-        ErrorCollector errorCollector = new ErrorCollector(myBindingContext);
-        errorCollector.report(out);
-        return !errorCollector.hasErrors;
+
+        for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
+            errorCollector.report(diagnostic);
+        }
+    }
+
+    private void reportSyntaxErrors(final ErrorCollector errorCollector) {
+        for (JetFile file : mySourceFiles) {
+            file.accept(new PsiRecursiveElementWalkingVisitor() {
+                @Override
+                public void visitErrorElement(PsiErrorElement element) {
+                    String description = element.getErrorDescription();
+                    String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
+                    Diagnostic diagnostic = SimpleDiagnosticFactory.create(Severity.ERROR, message).on(element);
+                    errorCollector.report(diagnostic);
+                }
+            });
+        }
     }
 
     @NotNull

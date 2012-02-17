@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -36,13 +35,10 @@ class ErrorCollector {
 
     boolean hasErrors;
 
-    public ErrorCollector(BindingContext bindingContext) {
-        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            report(diagnostic);
-        }
+    public ErrorCollector() {
     }
 
-    private void report(Diagnostic diagnostic) {
+    public void report(Diagnostic diagnostic) {
         hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
         if(diagnostic instanceof DiagnosticWithTextRange) {
             DiagnosticWithTextRange diagnosticWithTextRange = (DiagnosticWithTextRange) diagnostic;
@@ -53,7 +49,7 @@ class ErrorCollector {
         }
     }
 
-    void report(final PrintStream out) {
+    void flushTo(final PrintStream out) {
         if(!maps.isEmpty()) {
             for (PsiFile psiFile : maps.keySet()) {
                 String path = psiFile.getVirtualFile().getPath();
