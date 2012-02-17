@@ -1,0 +1,69 @@
+<project name="Jet CI Steps" default="none">
+    <import file="build.xml" optional="false"/>
+
+    <property name="build.number" value="snapshot"/>
+    <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
+    <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
+    <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
+
+    <macrodef name="echoprop">
+        <attribute name="prop"/>
+        <sequential>
+            <echo>@{prop}=${@{prop}}</echo>
+        </sequential>
+    </macrodef>
+
+    <echoprop prop="os.name"/>
+    <echoprop prop="os.version"/>
+    <echoprop prop="os.arch"/>
+    <echoprop prop="java.home"/>
+    <echoprop prop="java.vendor"/>
+    <echoprop prop="java.version"/>
+    <echoprop prop="user.name"/>
+    <echoprop prop="user.home"/>
+    <echoprop prop="user.dir"/>
+
+    <target name="unzipDependencies">
+        <unzip dest="ideaSDK">
+            <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
+        </unzip>
+
+        <delete dir="ideaSDK" includes="ideaIC*.zip"/>
+    </target>
+
+    <target name="cleanupArtifacts">
+        <delete dir="${artifact.output.path}" includes="*"/>
+    </target>
+
+    <target name="writeVersionToPluginXml">
+        <copy file="${plugin.xml}" tofile="${plugin.xml.bk}"/>
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true">
+            <filterchain>
+                <replacetokens>
+                    <token key="snapshot" value="${build.number}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+    </target>
+
+    <target name="cleanupPluginXml">
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+        <delete file="${plugin.xml.bk}" quiet="true"/>
+    </target>
+
+    <target name="pre_build" depends="cleanupArtifacts, unzipDependencies, dist, writeVersionToPluginXml">
+    </target>
+
+    <target name="zipArtifact">
+        <zip destfile="${artifact.output.path}/kotlin-plugin-${build.number}">
+            <fileset dir="${artifact.output.path}/Kotlin"/>
+        </zip>
+        <delete dir="${artifact.output.path}/Kotlin" quiet="true"/>
+    </target>
+
+    <target name="post_build" depends="cleanupPluginXml, zipArtifact"/>
+
+    <target name="none">
+        <fail message="Either specify pre_build or post_build"/>
+    </target>
+</project>

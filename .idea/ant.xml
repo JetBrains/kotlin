@@ -42,30 +42,6 @@
       <maximumStackSize value="2" />
       <properties />
     </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/plugin_post_build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/write_version_to_plugin_xml.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/plugin_pre_build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="2" />
-      <properties />
-    </buildFile>
   </component>
 </project>
 
