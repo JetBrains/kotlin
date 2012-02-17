@@ -55,8 +55,8 @@
     </target>
 
     <target name="zipArtifact">
-        <zip destfile="${artifact.output.path}/kotlin-plugin-${build.number}">
-            <fileset dir="${artifact.output.path}/Kotlin"/>
+        <zip destfile="${artifact.output.path}/kotlin-plugin-${build.number}.zip">
+            <zipfileset prefix="Kotlin" dir="${artifact.output.path}/Kotlin"/>
         </zip>
         <delete dir="${artifact.output.path}/Kotlin" quiet="true"/>
     </target>
