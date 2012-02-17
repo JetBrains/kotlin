@@ -80,8 +80,29 @@ public class JetCompiler implements TranslatingCompiler {
     public void compile(final CompileContext compileContext, Chunk<Module> moduleChunk, final VirtualFile[] virtualFiles, OutputSink outputSink) {
         if (virtualFiles.length == 0) return;
 
+        List<VirtualFile> productionFiles = new ArrayList<VirtualFile>();
+        List<VirtualFile> testFiles = new ArrayList<VirtualFile>();
+        for (VirtualFile file : virtualFiles) {
+            final boolean inTests = ((CompileContextEx)compileContext).isInTestSourceContent(file);
+            if (inTests) {
+                testFiles.add(file);
+            }
+            else {
+                productionFiles.add(file);
+            }
+        }
+
         final Module module = compileContext.getModuleByFile(virtualFiles[0]);
-        final VirtualFile outputDir = compileContext.getModuleOutputDirectory(module);
+
+        doCompile(compileContext, moduleChunk, productionFiles, module, false);
+        doCompile(compileContext, moduleChunk, testFiles, module, true);
+    }
+
+    private void doCompile(CompileContext compileContext, Chunk<Module> moduleChunk, List<VirtualFile> files, Module module, boolean tests) {
+        if (files.isEmpty()) return;
+
+        VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
+        final VirtualFile outputDir = tests ? compileContext.getModuleOutputDirectoryForTests(module) : mainOutput;
         if (outputDir == null) {
             compileContext.addMessage(ERROR, "[Internal Error] No output directory", "", -1, -1);
             return;
@@ -100,7 +121,7 @@ public class JetCompiler implements TranslatingCompiler {
         script.append("fun project() {\n");
         script.append("module(\"" + moduleChunk.getNodes().iterator().next().getName() + "\") {\n");
 
-        for (VirtualFile sourceFile : virtualFiles) {
+        for (VirtualFile sourceFile : files) {
             script.append("sources += \"" + path(sourceFile) + "\"\n");
         }
 
@@ -118,6 +139,10 @@ public class JetCompiler implements TranslatingCompiler {
         // This is for java files in same roots
         for (VirtualFile root : chunk.getSourceRoots()) {
             script.append("classpath += \"" + path(root) + "\"\n");
+        }
+
+        if (tests && mainOutput != null) {
+            script.append("classpath += \"" + path(mainOutput) + "\"\n");
         }
 
         script.append("}\n");
