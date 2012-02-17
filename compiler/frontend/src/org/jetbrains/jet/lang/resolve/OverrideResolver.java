@@ -237,34 +237,6 @@ public class OverrideResolver {
         return r;
     }
 
-    @NotNull
-    private Collection<FunctionDescriptor> findFunctionsOverridableBy(@NotNull FunctionDescriptor declaredFunction, @NotNull JetType supertype) {
-        List<FunctionDescriptor> result = Lists.newArrayList();
-        List<FunctionDescriptor> result2 = Lists.newArrayList();
-        Set<FunctionDescriptor> functionGroup = supertype.getMemberScope().getFunctions(declaredFunction.getName());
-        for (FunctionDescriptor functionDescriptor : functionGroup) {
-            if (OverridingUtil.isOverridableBy(functionDescriptor, declaredFunction).isOverridable()) {
-                result.add(functionDescriptor);
-            } else {
-                result2.add(functionDescriptor);
-            }
-        }
-        return result;
-    }
-
-    @NotNull
-    private Collection<PropertyDescriptor> findPropertiesOverridableBy(@NotNull PropertyDescriptor declaredProperty, @NotNull JetType supertype) {
-        List<PropertyDescriptor> result = Lists.newArrayList();
-        Set<VariableDescriptor> properties = supertype.getMemberScope().getProperties(declaredProperty.getName());
-        for (VariableDescriptor property : properties) {
-            assert property instanceof PropertyDescriptor;
-            if (OverridingUtil.isOverridableBy(property, declaredProperty).isOverridable()) {
-                result.add((PropertyDescriptor) property);
-            }
-        }
-        return result;
-    }
-
     private void checkOverrides() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             checkOverridesInAClass(entry.getValue(), entry.getKey());
