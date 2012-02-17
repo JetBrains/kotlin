@@ -618,6 +618,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(stackElement instanceof FinallyBlockStackElement) {
                 FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
                 JetTryExpression jetTryExpression = finallyBlockStackElement.expression;
+                //noinspection ConstantConditions
                 gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
             }
             else if(stackElement instanceof LoopBlockStackElement) {
