@@ -156,7 +156,7 @@ public class JetOverridingTest extends JetLiteFixture {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
         OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(a, b);
-        assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isSuccess());
+        assertEquals(overridableWith.getMessage(), expectedIsError, !overridableWith.isOverridable());
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {

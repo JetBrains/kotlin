@@ -28,7 +28,7 @@ public class OverloadUtil {
      */
     public static OverloadCompatibilityInfo isOverloadble(FunctionDescriptor a, FunctionDescriptor b) {
         OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.isOverridableByImpl(a, b, false);
-        if (overrideCompatibilityInfo.isSuccess()) {
+        if (!overrideCompatibilityInfo.isOverloadable()) {
             return OverloadCompatibilityInfo.someError(); 
         } else {
             return OverloadCompatibilityInfo.success();

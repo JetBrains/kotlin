@@ -147,14 +147,14 @@ public class OverrideResolver {
             boolean overrides = false;
             
             for (NamedFunctionDescriptor functionFromCurrent : functionsFromCurrent) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isSuccess()) {
+                if (OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isOverridable()) {
                     ((FunctionDescriptorImpl) functionFromCurrent).addOverriddenFunction(functionFromSupertype);
                     overrides = true;
                 }
             }
             
             for (NamedFunctionDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isSuccess()) {
+                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isOverridable()) {
                     ((FunctionDescriptorImpl) fakeOverride).addOverriddenFunction(functionFromSupertype);
                     overrides = true;
                 }
@@ -183,14 +183,14 @@ public class OverrideResolver {
         for (PropertyDescriptor propertyFromSupertype : propertiesFromSupertypes) {
             boolean overrides = false;
             for (PropertyDescriptor propertyFromCurrent : propertiesFromCurrent) {
-                if (OverridingUtil.isOverridableBy(propertyFromSupertype, propertyFromCurrent).isSuccess()) {
+                if (OverridingUtil.isOverridableBy(propertyFromSupertype, propertyFromCurrent).isOverridable()) {
                     propertyFromCurrent.addOverriddenDescriptor(propertyFromSupertype);
                     overrides = true;
                 }
             }
             
             for (PropertyDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(propertyFromSupertype, fakeOverride).isSuccess()) {
+                if (OverridingUtil.isOverridableBy(propertyFromSupertype, fakeOverride).isOverridable()) {
                     ((PropertyDescriptor) fakeOverride).addOverriddenDescriptor(propertyFromSupertype);
                     overrides = true;
                 }
@@ -243,7 +243,7 @@ public class OverrideResolver {
         List<FunctionDescriptor> result2 = Lists.newArrayList();
         Set<FunctionDescriptor> functionGroup = supertype.getMemberScope().getFunctions(declaredFunction.getName());
         for (FunctionDescriptor functionDescriptor : functionGroup) {
-            if (OverridingUtil.isOverridableBy(functionDescriptor, declaredFunction).isSuccess()) {
+            if (OverridingUtil.isOverridableBy(functionDescriptor, declaredFunction).isOverridable()) {
                 result.add(functionDescriptor);
             } else {
                 result2.add(functionDescriptor);
@@ -258,7 +258,7 @@ public class OverrideResolver {
         Set<VariableDescriptor> properties = supertype.getMemberScope().getProperties(declaredProperty.getName());
         for (VariableDescriptor property : properties) {
             assert property instanceof PropertyDescriptor;
-            if (OverridingUtil.isOverridableBy(property, declaredProperty).isSuccess()) {
+            if (OverridingUtil.isOverridableBy(property, declaredProperty).isOverridable()) {
                 result.add((PropertyDescriptor) property);
             }
         }
@@ -402,8 +402,8 @@ public class OverrideResolver {
             for (CallableMemberDescriptor another : filteredMembers) {
 //                if (one == another) continue;
                 factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).isSuccess()
-                        || OverridingUtil.isOverridableBy(another, one).isSuccess()) {
+                if (OverridingUtil.isOverridableBy(one, another).isOverridable()
+                        || OverridingUtil.isOverridableBy(another, one).isOverridable()) {
                     factoredMembers.put(one, another);
                 }
             }
