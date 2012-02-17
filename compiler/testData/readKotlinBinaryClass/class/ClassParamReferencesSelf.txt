@@ -1,0 +1,7 @@
+namespace test
+
+final class test.ClassParamReferencesSelf</*0,r*/ A : test.TraitWithP<A>> : jet.Any {
+    final /*constructor*/ fun </*0,r*/ A : test.TraitWithP<A>><init>(): test.ClassParamReferencesSelf</*0,r*/ A : test.TraitWithP<A>>
+}
+abstract trait test.TraitWithP</*0,r*/ P : jet.Any?> : jet.Any {
+}

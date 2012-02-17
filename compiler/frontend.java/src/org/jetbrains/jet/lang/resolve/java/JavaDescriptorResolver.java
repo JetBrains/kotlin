@@ -465,29 +465,27 @@ public class JavaDescriptorResolver {
 
 
     private abstract class JetSignatureTypeParameterVisitor extends JetSignatureExceptionsAdapter {
-        
-        private final DeclarationDescriptor containingDeclaration;
-        private final PsiTypeParameterListOwner psiOwner;
-        private final String name;
-        private final boolean reified;
-        private final int index;
-        private final TypeInfoVariance variance;
-        private final TypeVariableResolver typeVariableResolver;
 
-        protected JetSignatureTypeParameterVisitor(DeclarationDescriptor containingDeclaration, PsiTypeParameterListOwner psiOwner,
-                String name, boolean reified, int index, TypeInfoVariance variance, TypeVariableResolver typeVariableResolver)
+        @NotNull
+        private final PsiTypeParameterListOwner psiOwner;
+        @NotNull
+        private final String name;
+        @NotNull
+        private final TypeVariableResolver typeVariableResolver;
+        @NotNull
+        private final TypeParameterDescriptor typeParameterDescriptor;
+
+        protected JetSignatureTypeParameterVisitor(PsiTypeParameterListOwner psiOwner,
+                String name, TypeVariableResolver typeVariableResolver, TypeParameterDescriptor typeParameterDescriptor)
         {
             if (name.isEmpty()) {
                 throw new IllegalStateException();
             }
-            
-            this.containingDeclaration = containingDeclaration;
+
             this.psiOwner = psiOwner;
             this.name = name;
-            this.reified = reified;
-            this.index = index;
-            this.variance = variance;
             this.typeVariableResolver = typeVariableResolver;
+            this.typeParameterDescriptor = typeParameterDescriptor;
         }
 
         List<JetType> upperBounds = new ArrayList<JetType>();
@@ -518,19 +516,57 @@ public class JavaDescriptorResolver {
 
         @Override
         public void visitFormalTypeParameterEnd() {
+            PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
+            TypeParameterDescriptorInitialization typeParameterDescriptorInitialization = new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter, upperBounds, lowerBounds);
+            done(typeParameterDescriptorInitialization);
+        }
+        
+        protected abstract void done(@NotNull TypeParameterDescriptorInitialization typeParameterDescriptor);
+    }
+
+    private class JetSignatureTypeParametersVisitor extends JetSignatureExceptionsAdapter {
+        @NotNull
+        private final DeclarationDescriptor containingDeclaration;
+        @NotNull
+        private final PsiTypeParameterListOwner psiOwner;
+
+        private final List<TypeParameterDescriptor> previousTypeParameters = new ArrayList<TypeParameterDescriptor>();
+        // note changes state in this method
+        private final TypeVariableResolver typeVariableResolver;
+
+
+        private JetSignatureTypeParametersVisitor(@NotNull TypeVariableResolver containerTypeVariableResolver, @NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameterListOwner psiOwner) {
+            this.containingDeclaration = containingDeclaration;
+            this.psiOwner = psiOwner;
+
+            this.typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(previousTypeParameters, containerTypeVariableResolver);
+        }
+
+        private int formalTypeParameterIndex = 0;
+
+
+        List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
+
+        @Override
+        public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
             TypeParameterDescriptor typeParameter = TypeParameterDescriptor.createForFurtherModification(
                     containingDeclaration,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
                     reified,
                     JetSignatureUtils.translateVariance(variance),
                     name,
-                    index);
-            PsiTypeParameter psiTypeParameter = getPsiTypeParameterByName(psiOwner, name);
-            TypeParameterDescriptorInitialization typeParameterDescriptorInitialization = new TypeParameterDescriptorInitialization(typeParameter, psiTypeParameter, upperBounds, lowerBounds);
-            done(typeParameterDescriptorInitialization);
+                    formalTypeParameterIndex++);
+
+            previousTypeParameters.add(typeParameter);
+
+            return new JetSignatureTypeParameterVisitor(psiOwner, name, typeVariableResolver, typeParameter) {
+                @Override
+                protected void done(@NotNull TypeParameterDescriptorInitialization typeParameterDescriptor) {
+                    r.add(typeParameterDescriptor);
+                    previousTypeParameters.add(typeParameterDescriptor.descriptor);
+                }
+            };
         }
-        
-        protected abstract void done(@NotNull TypeParameterDescriptorInitialization typeParameterDescriptor);
     }
 
     /**
@@ -538,26 +574,7 @@ public class JavaDescriptorResolver {
      */
     private List<TypeParameterDescriptorInitialization> resolveClassTypeParametersFromJetSignature(String jetSignature, final PsiClass clazz,
             final ClassDescriptor classDescriptor, final TypeVariableResolver outerClassTypeVariableResolver) {
-        final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
-
-        final List<TypeParameterDescriptor> previousTypeParameters = new ArrayList<TypeParameterDescriptor>();
-        // note changes state in this method
-        final TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(previousTypeParameters, outerClassTypeVariableResolver);
-
-        new JetSignatureReader(jetSignature).accept(new JetSignatureExceptionsAdapter() {
-            private int formalTypeParameterIndex = 0;
-            
-            @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
-                return new JetSignatureTypeParameterVisitor(classDescriptor, clazz, name, reified, formalTypeParameterIndex++, variance, typeVariableResolver) {
-                    @Override
-                    protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
-                        r.add(typeParameterDescriptor);
-                        previousTypeParameters.add(typeParameterDescriptor.descriptor);
-                    }
-                };
-            }
-
+        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor = new JetSignatureTypeParametersVisitor(outerClassTypeVariableResolver, classDescriptor, clazz) {
             @Override
             public JetSignatureVisitor visitSuperclass() {
                 // TODO
@@ -569,8 +586,9 @@ public class JavaDescriptorResolver {
                 // TODO
                 return new JetSignatureAdapter();
             }
-        });
-        return r;
+        };
+        new JetSignatureReader(jetSignature).accept(jetSignatureTypeParametersVisitor);
+        return jetSignatureTypeParametersVisitor.r;
     }
 
     private DeclarationDescriptor resolveParentDescriptor(PsiClass psiClass) {
@@ -1478,29 +1496,9 @@ public class JavaDescriptorResolver {
     private List<TypeParameterDescriptorInitialization> resolveMethodTypeParametersFromJetSignature(String jetSignature, final PsiMethod method,
             final DeclarationDescriptor functionDescriptor, final TypeVariableResolver classTypeVariableResolver)
     {
-        final List<TypeParameterDescriptorInitialization> r = new ArrayList<TypeParameterDescriptorInitialization>();
-
-        final List<TypeParameterDescriptor> previousTypeParameters = new ArrayList<TypeParameterDescriptor>();
-        // note changes state in this method
-        final TypeVariableResolver typeVariableResolver = new TypeVariableResolverFromTypeDescriptors(previousTypeParameters, classTypeVariableResolver);
-
-        new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(new JetSignatureExceptionsAdapter() {
-            private int formalTypeParameterIndex = 0;
-            
-            @Override
-            public JetSignatureVisitor visitFormalTypeParameter(final String name, final TypeInfoVariance variance, boolean reified) {
-                
-                return new JetSignatureTypeParameterVisitor(functionDescriptor, method, name, reified, formalTypeParameterIndex++, variance, typeVariableResolver) {
-                    @Override
-                    protected void done(TypeParameterDescriptorInitialization typeParameterDescriptor) {
-                        r.add(typeParameterDescriptor);
-                        previousTypeParameters.add(typeParameterDescriptor.descriptor);
-                    }
-                };
-
-            }
-        });
-        return r;
+        JetSignatureTypeParametersVisitor jetSignatureTypeParametersVisitor = new JetSignatureTypeParametersVisitor(classTypeVariableResolver, functionDescriptor, method);
+        new JetSignatureReader(jetSignature).acceptFormalTypeParametersOnly(jetSignatureTypeParametersVisitor);
+        return jetSignatureTypeParametersVisitor.r;
     }
 
     private JetType makeReturnType(PsiType returnType, PsiMethodWrapper method,
