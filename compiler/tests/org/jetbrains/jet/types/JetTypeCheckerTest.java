@@ -59,7 +59,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        library          = JetStandardLibrary.getJetStandardLibrary(getProject());
+        library          = JetStandardLibrary.getInstance();
         semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
         descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);

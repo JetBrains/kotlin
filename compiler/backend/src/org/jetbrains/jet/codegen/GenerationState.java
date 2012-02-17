@@ -58,7 +58,7 @@ public class GenerationState {
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, FileNameTransformer fileNameTransformer) {
         this.project = project;
-        this.standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        this.standardLibrary = JetStandardLibrary.getInstance();
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
         this.fileNameTransformer = fileNameTransformer;

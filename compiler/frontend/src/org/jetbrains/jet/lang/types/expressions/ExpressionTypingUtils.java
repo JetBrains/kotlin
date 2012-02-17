@@ -155,6 +155,7 @@ public class ExpressionTypingUtils {
         JetExpression expression = JetPsiFactory.createExpression(project, "fake");
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getOutType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                project,
                 JetSemanticServices.createSemanticServices(project),
                 new HashMap<JetPattern, DataFlowInfo>(),
                 new HashMap<JetPattern, List<VariableDescriptor>>(),

@@ -102,7 +102,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
             return;
         } if (expressionType != null &&
-              JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getJetStandardLibrary(project).getTuple0Type(), expressionType)) {
+              JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getInstance().getTuple0Type(), expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }

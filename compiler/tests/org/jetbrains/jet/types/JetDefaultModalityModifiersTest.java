@@ -50,7 +50,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private JetScope scope;
 
         public void setUp() throws Exception {
-            JetStandardLibrary library = JetStandardLibrary.getJetStandardLibrary(getProject());
+            JetStandardLibrary library = JetStandardLibrary.getInstance();
             JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(library);
             descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE);
             scope = createScope(library.getLibraryScope());

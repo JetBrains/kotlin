@@ -83,6 +83,7 @@ public class ExpressionTypingServices {
     @Nullable
     public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expression.getProject(),
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
                 trace, scope, dataFlowInfo, expectedType, FORBIDDEN, false
@@ -92,6 +93,7 @@ public class ExpressionTypingServices {
 
     public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expression.getProject(),
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
                 trace, scope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN,
@@ -131,6 +133,7 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
+                function.getProject(),
                 semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, expectedReturnType, false
         ));
@@ -178,7 +181,7 @@ public class ExpressionTypingServices {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-        expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
+        expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(function.getProject(), semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
                                                                                           trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false), !function.hasBlockBody());
         //todo function literals
         final Collection<JetExpression> returnedExpressions = Lists.newArrayList();
@@ -307,7 +310,7 @@ public class ExpressionTypingServices {
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType, JetType expectedReturnType) {
-        return ExpressionTypingContext.newContext(oldContext.semanticServices, oldContext.patternsToDataFlowInfo, oldContext.patternsToBoundVariableLists, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, oldContext.namespacesAllowed);
+        return ExpressionTypingContext.newContext(oldContext.project, oldContext.semanticServices, oldContext.patternsToDataFlowInfo, oldContext.patternsToBoundVariableLists, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, oldContext.namespacesAllowed);
     }
 
     private ObservableBindingTrace makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {

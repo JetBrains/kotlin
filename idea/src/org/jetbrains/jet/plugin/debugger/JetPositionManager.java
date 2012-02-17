@@ -153,7 +153,7 @@ public class JetPositionManager implements PositionManager {
             return mapper;
         }
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
-        final JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(myDebugProcess.getProject());
+        final JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
         file.acceptChildren(new JetVisitorVoid() {
             @Override

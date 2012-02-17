@@ -41,7 +41,7 @@ public class JetOverridingTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        library          = JetStandardLibrary.getJetStandardLibrary(getProject());
+        library          = JetStandardLibrary.getInstance();
         semanticServices = JetSemanticServices.createSemanticServices(library);
         descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
     }

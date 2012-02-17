@@ -8,6 +8,9 @@
 
   <project-components>
       <component>
+          <implementation-class>org.jetbrains.jet.plugin.JetStandardLibraryInitializer</implementation-class>
+      </component>
+      <component>
           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
       </component>
       <component>

@@ -76,7 +76,7 @@ public class JetPluginUtil {
             return true;
         }
 
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         JetScope libraryScope = standardLibrary.getLibraryScope();
 
         DeclarationDescriptor declaration = type.getMemberScope().getContainingDeclaration();

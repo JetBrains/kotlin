@@ -33,7 +33,7 @@ public class JetSemanticServices {
     }
 
     public static JetSemanticServices createSemanticServices(Project project) {
-        return new JetSemanticServices(JetStandardLibrary.getJetStandardLibrary(project));
+        return new JetSemanticServices(JetStandardLibrary.getInstance());
     }
 
     private final JetStandardLibrary standardLibrary;

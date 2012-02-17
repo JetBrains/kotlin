@@ -47,29 +47,21 @@ import java.util.*;
  */
 public class JetStandardLibrary {
 
-    // TODO : consider releasing this memory
-    private static JetStandardLibrary cachedLibrary = null;
-    // A temporary try to find a reason of KT-224
-    private static int wasProcessCanceledException = 0;
-    //    private static final Map<Project, JetStandardLibrary> standardLibraryCache = new HashMap<Project, JetStandardLibrary>();
+    private static JetStandardLibrary instance = null;
 
-    // TODO : double checked locking
-    synchronized
-    public static JetStandardLibrary getJetStandardLibrary(@NotNull Project project) {
-        if (cachedLibrary == null) {
-            cachedLibrary = new JetStandardLibrary(project);
+    // This method must be called at least once per application run, on any project
+    // before any type checking is run
+    public static synchronized void initialize(@NotNull Project project) {
+        if (instance == null) {
+            instance = new JetStandardLibrary(project);
         }
-        return cachedLibrary;
-//        JetStandardLibrary standardLibrary = standardLibraryCache.get(project);
-//        if (standardLibrary == null) {
-//            standardLibrary = new JetStandardLibrary(project);
-//            standardLibraryCache.put(project, standardLibrary);
-//        }
-//        return standardLibrary;
     }
 
-    private final Project project;
-    
+    @NotNull // This asserts that initialize() is called before any resolution happens
+    public static JetStandardLibrary getInstance() {
+        return instance;
+    }
+
     private JetScope libraryScope;
 
     private ClassDescriptor numberClass;
@@ -78,7 +70,6 @@ public class JetStandardLibrary {
     private ClassDescriptor stringClass;
     private ClassDescriptor arrayClass;
     private ClassDescriptor iterableClass;
-    private ClassDescriptor typeInfoClass;
     private ClassDescriptor comparableClass;
     private ClassDescriptor volatileClass;
 
@@ -89,10 +80,6 @@ public class JetStandardLibrary {
     private JetType nullableCharSequenceType;
 
     private JetType nullableTuple0Type;
-
-    public JetType getTuple0Type() {
-        return tuple0Type;
-    }
 
     private JetType tuple0Type;
 
@@ -108,8 +95,6 @@ public class JetStandardLibrary {
     private Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
     private JetStandardLibrary(@NotNull Project project) {
-        this.project = project;
-
         // TODO : review
         List<String> libraryFiles = Arrays.asList(
                 "Library.jet",
@@ -134,24 +119,15 @@ public class JetStandardLibrary {
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Root bootstrap scope");
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-//            this.libraryScope = bootstrappingTDA.process(JetStandardClasses.STANDARD_CLASSES, file.getRootNamespace().getDeclarations());
-//            bootstrappingTDA.process(writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, file.getRootNamespace().getDeclarations());
             TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
-//            this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
             AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());
             initStdClasses();
         } catch (IOException e) {
             throw new IllegalStateException(e);
         } catch (ProcessCanceledException e) {
-            wasProcessCanceledException++;
             throw e;
         }
-    }
-
-    @NotNull
-    public Project getProject() {
-        return project;
     }
 
     public JetScope getLibraryScope() {
@@ -170,8 +146,6 @@ public class JetStandardLibrary {
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
-//            typeInfoNamespace = libraryScope.getNamespace("typeinfo");
-            this.typeInfoClass = (ClassDescriptor) libraryScope.getClassifier("TypeInfo");
             this.typeInfoFunction = libraryScope.getFunctions("typeinfo");
 
             this.stringType = new JetTypeImpl(getString());
@@ -296,26 +270,9 @@ public class JetStandardLibrary {
         return comparableClass;
     }
 
-//    public NamespaceDescriptor getTypeInfoNamespace() {
-//        initStdClasses();
-//        return typeInfoNamespace;
-//    }
-//
-    public ClassDescriptor getTypeInfo() {
-        initStdClasses();
-        return typeInfoClass;
-    }
-
     public Set<FunctionDescriptor> getTypeInfoFunctions() {
         initStdClasses();
         return typeInfoFunction;
-    }
-
-    @NotNull
-    public JetType getTypeInfoType(@NotNull JetType type) {
-        TypeProjection typeProjection = new TypeProjection(type);
-        List<TypeProjection> arguments = Collections.singletonList(typeProjection);
-        return new JetTypeImpl(Collections.<AnnotationDescriptor>emptyList(), getTypeInfo().getTypeConstructor(), false, arguments, getTypeInfo().getMemberScope(arguments));
     }
 
     @NotNull
@@ -492,5 +449,9 @@ public class JetStandardLibrary {
             }
         }
         return false;
+    }
+
+    public JetType getTuple0Type() {
+        return tuple0Type;
     }
 }

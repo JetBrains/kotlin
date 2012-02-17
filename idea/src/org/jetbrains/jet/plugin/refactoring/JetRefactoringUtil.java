@@ -107,7 +107,7 @@ public class JetRefactoringUtil {
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.
-                            getJetStandardLibrary(element.getProject()).getTuple0Type(), expressionType)) {
+                                                          getInstance().getTuple0Type(), expressionType)) {
                         expressions.add(expression);
                     }
                 }

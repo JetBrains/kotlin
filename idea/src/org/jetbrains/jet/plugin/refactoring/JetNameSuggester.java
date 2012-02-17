@@ -78,7 +78,7 @@ public class JetNameSuggester {
     }
     
     private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(validator.getProject());
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         if (typeChecker.equalTypes(standardLibrary.getBooleanType(), jetType)) {
             addName(result, "b", validator);
