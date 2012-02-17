@@ -2159,8 +2159,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                         case -1:
                             throw new UnsupportedOperationException();
                     }
-                            
-                    ((CallableMethod)callable).invoke(v);
+
+                    CallableMethod callableMethod = (CallableMethod) callable;
+                    callableMethod.invoke(v);
+                    StackValue.onStack(callableMethod.getSignature().getAsmMethod().getReturnType()).put(value.type, v);
                     value.store(v);
                     return StackValue.onStack(type);
                 }
