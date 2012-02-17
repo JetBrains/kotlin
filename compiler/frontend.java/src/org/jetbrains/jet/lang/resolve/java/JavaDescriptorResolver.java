@@ -219,6 +219,12 @@ public class JavaDescriptorResolver {
             return new ResolverSrcClassData(kotlinClassDescriptor);
         }
 
+        PsiClass containingClass = psiClass.getContainingClass();
+        if (containingClass != null) {
+            // must resolve containing class first, because inner class must have a reference to it
+            resolveClass(containingClass);
+        }
+
         // Not let's take a descriptor of a Java class
         ResolverBinaryClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
@@ -265,11 +271,13 @@ public class JavaDescriptorResolver {
     }
 
     private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
-        assert !classDescriptorCache.containsKey(psiClass.getQualifiedName()) : psiClass.getQualifiedName();
-        classDescriptorCache.put(psiClass.getQualifiedName(), null); // TODO
+        if (classDescriptorCache.containsKey(psiClass.getQualifiedName())) {
+            throw new IllegalStateException(psiClass.getQualifiedName());
+        }
 
         String name = psiClass.getName();
         ResolverBinaryClassData classData = new ResolverBinaryClassData();
+        classDescriptorCache.put(psiClass.getQualifiedName(), classData);
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         DeclarationDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         classData.classDescriptor = new MutableClassDescriptorLite(containingDeclaration, kind);
@@ -294,7 +302,6 @@ public class JavaDescriptorResolver {
                 !psiClass.hasModifierProperty(PsiModifier.FINAL))
         );
         classData.classDescriptor.createTypeConstructor();
-        classDescriptorCache.put(psiClass.getQualifiedName(), classData);
         classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
 
         initializeTypeParameters(classData.typeParameters, new TypeVariableResolverFromTypeDescriptors(new ArrayList<TypeParameterDescriptor>(), outerTypeVariableByNameResolver));
