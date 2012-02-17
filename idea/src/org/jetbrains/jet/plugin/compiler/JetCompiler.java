@@ -115,6 +115,11 @@ public class JetCompiler implements TranslatingCompiler {
             script.append("classpath += \"" + path(root) + "\"\n");
         }
 
+        // This is for java files in same roots
+        for (VirtualFile root : chunk.getSourceRoots()) {
+            script.append("classpath += \"" + path(root) + "\"\n");
+        }
+
         script.append("}\n");
         script.append("}\n");
 
