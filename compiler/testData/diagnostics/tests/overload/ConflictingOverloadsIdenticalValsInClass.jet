@@ -1,0 +1,4 @@
+class Aaa() {
+    val <!REDECLARATION, REDECLARATION!>a<!> = 1
+    val <!REDECLARATION, REDECLARATION!>a<!> = 1
+}
