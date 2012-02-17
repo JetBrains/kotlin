@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -50,7 +49,6 @@ import java.util.List;
 public class CompileSession {
     private final JetCoreEnvironment myEnvironment;
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
-    private final List<JetFile> myLibrarySourceFiles = new ArrayList<JetFile>();
     private final FileNameTransformer myFileNameTransformer;
     private List<String> myErrors = new ArrayList<String>();
 
@@ -83,39 +81,40 @@ public class CompileSession {
             return;
         }
 
-        addSources(new File(path), false);
+        addSources(new File(path));
     }
 
-    private void addSources(File file, boolean library) {
+    private void addSources(File file) {
         if(file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                addSources(child, library);
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    addSources(child);
+                }
             }
         }
         else {
             VirtualFile fileByPath = myEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
-            PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
-            if(psiFile instanceof JetFile) {
-                (library ? myLibrarySourceFiles : mySourceFiles).add((JetFile) psiFile);
+            if (fileByPath != null) {
+                PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
+                if(psiFile instanceof JetFile) {
+                    mySourceFiles.add((JetFile) psiFile);
+                }
             }
         }
     }
 
     public void addSources(VirtualFile vFile) {
-        addSources(vFile, false);
-    }
-
-    private void addSources(VirtualFile vFile, boolean library) {
         if  (vFile.isDirectory())  {
             for (VirtualFile virtualFile : vFile.getChildren()) {
-                addSources(virtualFile, library);
+                addSources(virtualFile);
             }
         }
         else {
             if (vFile.getFileType() == JetFileType.INSTANCE) {
                 PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
                 if (psiFile instanceof JetFile) {
-                    (library ? myLibrarySourceFiles : mySourceFiles).add((JetFile) psiFile);
+                    mySourceFiles.add((JetFile) psiFile);
                 }
             }
         }
@@ -143,10 +142,8 @@ public class CompileSession {
     }
 
     private void analyzeAndReportSemanticErrors(ErrorCollector errorCollector) {
-        List<JetFile> allNamespaces = new ArrayList<JetFile>(mySourceFiles);
-        allNamespaces.addAll(myLibrarySourceFiles);
         myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
-                myEnvironment.getProject(), allNamespaces, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+                myEnvironment.getProject(), mySourceFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
         for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
             errorCollector.report(diagnostic);
@@ -172,31 +169,5 @@ public class CompileSession {
         GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES, myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         return generationState.getFactory();
-    }
-
-    public String generateText() {
-        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.TEXT, myFileNameTransformer);
-        generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
-        return generationState.createText();
-    }
-
-    @TestOnly
-    public boolean addStdLibSources(boolean toModuleSources) {
-        final File unpackedRuntimePath = CompileEnvironment.getUnpackedRuntimePath();
-        if (unpackedRuntimePath != null) {
-            addSources(new File(unpackedRuntimePath, "../../../stdlib/ktSrc").getAbsoluteFile(), !toModuleSources);
-        }
-        else {
-            final File runtimeJarPath = CompileEnvironment.getRuntimeJarPath();
-            if (runtimeJarPath != null && runtimeJarPath.exists()) {
-                VirtualFile runtimeJar = myEnvironment.getLocalFileSystem().findFileByPath(runtimeJarPath.getAbsolutePath());
-                VirtualFile jarRoot = myEnvironment.getJarFileSystem().findFileByPath(runtimeJar.getPath() + "!/stdlib/ktSrc");
-                addSources(jarRoot, !toModuleSources);
-            }
-            else {
-                return false;
-            }
-        }
-        return true;
     }
 }
