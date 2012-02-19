@@ -99,6 +99,8 @@ public class OverridingUtil {
         if (superDescriptor instanceof PropertyDescriptor) {
             if (subDescriptor instanceof FunctionDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
         }
+
+        // TODO: check outside of this method
         if (!superDescriptor.getName().equals(subDescriptor.getName())) {
             return OverrideCompatibilityInfo.nameMismatch();
         }
@@ -191,9 +193,11 @@ public class OverridingUtil {
                 JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
                 // TODO: compare erasure
                 if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
-                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, OverrideCompatibilityInfo.ErrorKind.CONFLICT);
+                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, OverrideCompatibilityInfo.ErrorKind.INCOMPATIBLE);
                 }
             }
+            
+            return OverrideCompatibilityInfo.success();
 
         }
 

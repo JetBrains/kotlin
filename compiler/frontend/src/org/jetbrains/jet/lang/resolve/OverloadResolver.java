@@ -103,7 +103,7 @@ public class OverloadResolver {
 
     private void checkOverloadsInANamespace(MultiMap<Key, ConstructorDescriptor> inNamespaces) {
 
-        MultiMap<Key, FunctionDescriptor> functionsByName = MultiMap.create();
+        MultiMap<Key, CallableMemberDescriptor> functionsByName = MultiMap.create();
 
         for (NamedFunctionDescriptor function : context.getFunctions().values()) {
             DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
@@ -113,11 +113,19 @@ public class OverloadResolver {
             }
         }
         
+        for (PropertyDescriptor property : context.getProperties().values()) {
+            DeclarationDescriptor containingDeclaration = property.getContainingDeclaration();
+            if (containingDeclaration instanceof NamespaceDescriptor) {
+                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
+                functionsByName.putValue(new Key(namespaceDescriptor, property.getName()), property);
+            }
+        }
+        
         for (Map.Entry<Key, Collection<ConstructorDescriptor>> entry : inNamespaces.entrySet()) {
             functionsByName.putValues(entry.getKey(), entry.getValue());
         }
 
-        for (Map.Entry<Key, Collection<FunctionDescriptor>> e : functionsByName.entrySet()) {
+        for (Map.Entry<Key, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
             checkOverloadsWithSameName(e.getKey().getFunctionName(), e.getValue(), e.getKey().getNamespace());
         }
     }
@@ -140,17 +148,21 @@ public class OverloadResolver {
             MutableClassDescriptor classDescriptor, JetClassOrObject klass,
             Collection<ConstructorDescriptor> nestedClassConstructors)
     {
-        MultiMap<String, FunctionDescriptor> functionsByName = MultiMap.create();
+        MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
         for (FunctionDescriptor function : classDescriptor.getFunctions()) {
             functionsByName.putValue(function.getName(), function);
+        }
+        
+        for (PropertyDescriptor property : classDescriptor.getProperties()) {
+            functionsByName.putValue(property.getName(), property);
         }
         
         for (ConstructorDescriptor nestedClassConstructor : nestedClassConstructors) {
             functionsByName.putValue(nestedClassConstructor.getContainingDeclaration().getName(), nestedClassConstructor);
         }
         
-        for (Map.Entry<String, Collection<FunctionDescriptor>> e : functionsByName.entrySet()) {
+        for (Map.Entry<String, Collection<CallableMemberDescriptor>> e : functionsByName.entrySet()) {
             checkOverloadsWithSameName(e.getKey(), e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
 
@@ -160,14 +172,14 @@ public class OverloadResolver {
 
     }
     
-    private void checkOverloadsWithSameName(String name, Collection<FunctionDescriptor> functions, @NotNull String functionContainer) {
+    private void checkOverloadsWithSameName(String name, Collection<CallableMemberDescriptor> functions, @NotNull String functionContainer) {
         if (functions.size() == 1) {
             // microoptimization
             return;
         }
         
-        for (FunctionDescriptor function : functions) {
-            for (FunctionDescriptor function2 : functions) {
+        for (CallableMemberDescriptor function : functions) {
+            for (CallableMemberDescriptor function2 : functions) {
                 if (function == function2) {
                     continue;
                 }
@@ -180,7 +192,11 @@ public class OverloadResolver {
                         return;
                     }
 
-                    context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
+                    if (function instanceof PropertyDescriptor) {
+                        context.getTrace().report(Errors.REDECLARATION.on(function, context.getTrace().getBindingContext()));
+                    } else {
+                        context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
+                    }
                 }
             }
         }

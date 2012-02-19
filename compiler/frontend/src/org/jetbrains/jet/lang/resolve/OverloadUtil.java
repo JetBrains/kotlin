@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 
 /**
  * @author Stepan Koltsov
@@ -26,16 +29,35 @@ public class OverloadUtil {
     /**
      * Does not check names.
      */
-    public static OverloadCompatibilityInfo isOverloadble(FunctionDescriptor a, FunctionDescriptor b) {
+    public static OverloadCompatibilityInfo isOverloadble(CallableDescriptor a, CallableDescriptor b) {
+        int abc = braceCount(a);
+        int bbc = braceCount(b);
+        
+        if (abc != bbc) {
+            return OverloadCompatibilityInfo.success();
+        }
+        
         OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.isOverridableByImpl(a, b, false);
         switch (overrideCompatibilityInfo.isOverridable()) {
             case OVERRIDABLE:
-                return OverloadCompatibilityInfo.someError();
             case CONFLICT:
+                return OverloadCompatibilityInfo.someError();
             case INCOMPATIBLE:
                 return OverloadCompatibilityInfo.success();
             default:
                 throw new IllegalStateException();
+        }
+    }
+    
+    private static int braceCount(CallableDescriptor a) {
+        if (a instanceof PropertyDescriptor) {
+            return 0;
+        } else if (a instanceof NamedFunctionDescriptor) {
+            return 1;
+        } else if (a instanceof ConstructorDescriptor) {
+            return 1;
+        } else {
+            throw new IllegalStateException();
         }
     }
 
