@@ -1,0 +1,7 @@
+open class Aaa() {
+    val <!REDECLARATION!>bar<!> = 1
+}
+
+open class Bbb() : Aaa() {
+    <!CONFLICTING_OVERLOADS!>val <T> <!REDECLARATION!>bar<!> = "aa"<!>
+}

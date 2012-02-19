@@ -28,10 +28,14 @@ public class OverloadUtil {
      */
     public static OverloadCompatibilityInfo isOverloadble(FunctionDescriptor a, FunctionDescriptor b) {
         OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.isOverridableByImpl(a, b, false);
-        if (!overrideCompatibilityInfo.isOverloadable()) {
-            return OverloadCompatibilityInfo.someError(); 
-        } else {
-            return OverloadCompatibilityInfo.success();
+        switch (overrideCompatibilityInfo.isOverridable()) {
+            case OVERRIDABLE:
+                return OverloadCompatibilityInfo.someError();
+            case CONFLICT:
+            case INCOMPATIBLE:
+                return OverloadCompatibilityInfo.success();
+            default:
+                throw new IllegalStateException();
         }
     }
 

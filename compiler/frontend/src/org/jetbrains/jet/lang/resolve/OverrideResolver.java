@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -109,8 +110,14 @@ public class OverrideResolver {
                     classDescriptor,
                     new DescriptorSink<NamedFunctionDescriptor>() {
                         @Override
-                        public void addToScope(NamedFunctionDescriptor fakeOverride) {
+                        public void addToScope(@NotNull NamedFunctionDescriptor fakeOverride) {
                             classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(fakeOverride);
+                        }
+
+                        @Override
+                        public void conflict(@NotNull NamedFunctionDescriptor fromSuper, @NotNull NamedFunctionDescriptor fromCurrent) {
+                            JetNamedFunction jetDeclaration = (JetNamedFunction) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
+                            context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
                         }
                     });
         }
@@ -122,15 +129,23 @@ public class OverrideResolver {
                     classDescriptor,
                     new DescriptorSink<PropertyDescriptor>() {
                         @Override
-                        public void addToScope(PropertyDescriptor fakeOverride) {
+                        public void addToScope(@NotNull PropertyDescriptor fakeOverride) {
                             classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor(fakeOverride);
+                        }
+
+                        @Override
+                        public void conflict(@NotNull PropertyDescriptor fromSuper, @NotNull PropertyDescriptor fromCurrent) {
+                            JetProperty jetProperty = (JetProperty) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
+                            context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
                         }
                     });
         }
     }
     
     public interface DescriptorSink<D extends CallableMemberDescriptor> {
-        void addToScope(D fakeOverride);
+        void addToScope(@NotNull D fakeOverride);
+        
+        void conflict(@NotNull D fromSuper, @NotNull D fromCurrent);
     }
     
     public static void generateOverridesInFunctionGroup(
@@ -147,14 +162,17 @@ public class OverrideResolver {
             boolean overrides = false;
             
             for (NamedFunctionDescriptor functionFromCurrent : functionsFromCurrent) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isOverridable()) {
+                OverridingUtil.OverrideCompatibilityInfo.ErrorKind overridable = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isOverridable();
+                if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
                     ((FunctionDescriptorImpl) functionFromCurrent).addOverriddenFunction(functionFromSupertype);
                     overrides = true;
+                } else if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.CONFLICT) {
+                    sink.conflict(functionFromSupertype, functionFromCurrent);
                 }
             }
             
             for (NamedFunctionDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isOverridable()) {
+                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
                     ((FunctionDescriptorImpl) fakeOverride).addOverriddenFunction(functionFromSupertype);
                     overrides = true;
                 }
@@ -183,14 +201,17 @@ public class OverrideResolver {
         for (PropertyDescriptor propertyFromSupertype : propertiesFromSupertypes) {
             boolean overrides = false;
             for (PropertyDescriptor propertyFromCurrent : propertiesFromCurrent) {
-                if (OverridingUtil.isOverridableBy(propertyFromSupertype, propertyFromCurrent).isOverridable()) {
+                OverridingUtil.OverrideCompatibilityInfo.ErrorKind overridable = OverridingUtil.isOverridableBy(propertyFromSupertype, propertyFromCurrent).isOverridable();
+                if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
                     propertyFromCurrent.addOverriddenDescriptor(propertyFromSupertype);
                     overrides = true;
+                } else if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.CONFLICT) {
+                    sink.conflict(propertyFromSupertype, propertyFromCurrent);
                 }
             }
             
             for (PropertyDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(propertyFromSupertype, fakeOverride).isOverridable()) {
+                if (OverridingUtil.isOverridableBy(propertyFromSupertype, fakeOverride).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
                     ((PropertyDescriptor) fakeOverride).addOverriddenDescriptor(propertyFromSupertype);
                     overrides = true;
                 }
@@ -374,8 +395,8 @@ public class OverrideResolver {
             for (CallableMemberDescriptor another : filteredMembers) {
 //                if (one == another) continue;
                 factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).isOverridable()
-                        || OverridingUtil.isOverridableBy(another, one).isOverridable()) {
+                if (OverridingUtil.isOverridableBy(one, another).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE
+                        || OverridingUtil.isOverridableBy(another, one).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
                     factoredMembers.put(one, another);
                 }
             }

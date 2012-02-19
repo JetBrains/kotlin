@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -63,7 +64,7 @@ public class FunctionSignatureDiagnosticFactory extends DiagnosticFactoryWithMes
     }
 
     @NotNull
-    public Diagnostic on(@NotNull JetDeclaration declaration, @NotNull FunctionDescriptor functionDescriptor,
+    public Diagnostic on(@NotNull JetDeclaration declaration, @NotNull CallableMemberDescriptor functionDescriptor,
             @NotNull String functionContainer)
     {
         TextRange rangeToMark = rangeToMark(declaration);
