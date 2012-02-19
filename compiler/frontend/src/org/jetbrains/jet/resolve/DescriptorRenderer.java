@@ -277,16 +277,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         private void renderModality(Modality modality, StringBuilder builder) {
             switch (modality) {
                 case FINAL:
-                    builder.append("final");
+                    // do not need: final by default
                     break;
                 case OPEN:
-                    builder.append("open");
+                    builder.append("open ");
                     break;
                 case ABSTRACT:
-                    builder.append("abstract");
+                    builder.append("abstract ");
                     break;
             }
-            builder.append(" ");
         }
 
         @Override
