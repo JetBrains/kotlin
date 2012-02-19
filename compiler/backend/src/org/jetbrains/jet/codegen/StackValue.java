@@ -1119,7 +1119,7 @@ public abstract class StackValue {
             ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
             if (thisObject.exists()) {
                 if(receiverArgument.exists()) {
-                    codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType()));
+                    codegen.generateFromResolvedCall(thisObject, callableMethod != null ? Type.getObjectType(callableMethod.getOwner()) : codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType()));
                     genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
                 }
                 else {
