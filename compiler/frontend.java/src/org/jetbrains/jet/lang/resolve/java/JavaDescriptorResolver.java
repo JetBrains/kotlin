@@ -1277,41 +1277,6 @@ public class JavaDescriptorResolver {
         }
         return typeSubstitutor;
     }
-    
-    private static boolean equal(@NotNull PsiClass c1, @NotNull PsiClass c2) {
-        return c1.getQualifiedName().equals(c2.getQualifiedName());
-    }
-    
-    private static boolean equal(@NotNull PsiMethod m1, @NotNull PsiMethod m2) {
-        // TODO dummy
-        return m1.getName().equals(m2.getName()) && equal(m1.getContainingClass(), m2.getContainingClass());
-    }
-
-    private static boolean equal(@NotNull PsiTypeParameterListOwner o1, @NotNull PsiTypeParameterListOwner o2) {
-        if (o1 == o2) {
-            return true;
-        }
-        if (o1 instanceof PsiClass && o2 instanceof PsiClass) {
-            return equal((PsiClass) o1, (PsiClass) o2);
-        }
-        if (o1 instanceof PsiMethod && o2 instanceof PsiMethod) {
-            return equal((PsiMethod) o1, (PsiMethod) o2);
-        }
-        if ((o1 instanceof PsiClass || o1 instanceof PsiMethod) && (o2 instanceof PsiClass || o2 instanceof PsiMethod)) {
-            return false;
-        }
-        throw new IllegalStateException(o1.getClass() + ", " + o2.getClass());
-    }
-    
-    public static boolean equal(@NotNull PsiTypeParameter p1, @NotNull PsiTypeParameter p2) {
-        if (p1 == p2) {
-            return true;
-        }
-        if (p1.getIndex() != p2.getIndex()) {
-            return false;
-        }
-        return equal(p1.getOwner(), p2.getOwner());
-    }
 
     private ValueParameterDescriptors resolveParameterDescriptors(DeclarationDescriptor containingDeclaration,
             List<PsiParameterWrapper> parameters, TypeVariableResolver typeVariableResolver) {
