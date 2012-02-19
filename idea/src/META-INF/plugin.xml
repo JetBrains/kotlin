@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Kotlin</name>
   <description>Kotlin language support</description>
-  <version>@snapshot@</version>
+  <version>snapshot</version>
   <vendor>JetBrains</vendor>
 
   <depends optional="true">JUnit</depends>
@@ -152,6 +152,8 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
+
+      <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.JetContentBasedFileSubstitutor" />
 
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 
