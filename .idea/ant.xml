@@ -30,7 +30,7 @@
       <additionalClassPath />
       <antReference projectDefault="true" />
       <customJdkName value="" />
-      <maximumHeapSize value="128" />
+      <maximumHeapSize value="512" />
       <maximumStackSize value="2" />
       <properties />
     </buildFile>
