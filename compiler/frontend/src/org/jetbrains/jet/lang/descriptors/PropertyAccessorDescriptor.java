@@ -133,4 +133,9 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
         }
         return overriddenAccessors;
     }
+
+    @Override
+    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden) {
+        throw new IllegalStateException();
+    }
 }

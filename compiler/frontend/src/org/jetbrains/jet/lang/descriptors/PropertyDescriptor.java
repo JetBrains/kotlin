@@ -275,8 +275,9 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         return kind;
     }
 
-    public void addOverriddenDescriptor(PropertyDescriptor overridden) {
-        overriddenProperties.add(overridden);
+    @Override
+    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden) {
+        overriddenProperties.add((PropertyDescriptor) overridden);
     }
 
     @NotNull

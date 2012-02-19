@@ -28,6 +28,8 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     @Override
     Set<? extends CallableMemberDescriptor> getOverriddenDescriptors();
 
+    void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overridden);
+
     enum Kind {
         DECLARATION,
         FAKE_OVERRIDE,

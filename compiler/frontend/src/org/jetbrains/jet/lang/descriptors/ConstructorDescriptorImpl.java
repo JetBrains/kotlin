@@ -97,7 +97,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     }
 
     @Override
-    public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
+    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         throw new UnsupportedOperationException("Constructors cannot override anything");
     }
 

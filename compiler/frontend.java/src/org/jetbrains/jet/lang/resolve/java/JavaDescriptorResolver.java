@@ -1196,14 +1196,14 @@ public class JavaDescriptorResolver {
 
             Set<NamedFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
 
-            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, new OverrideResolver.DescriptorSink<NamedFunctionDescriptor>() {
+            OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, new OverrideResolver.DescriptorSink() {
                 @Override
-                public void addToScope(@NotNull NamedFunctionDescriptor fakeOverride) {
-                    functions.add(fakeOverride);
+                public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                    functions.add((FunctionDescriptor) fakeOverride);
                 }
 
                 @Override
-                public void conflict(@NotNull NamedFunctionDescriptor fromSuper, @NotNull NamedFunctionDescriptor fromCurrent) {
+                public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                     // nop
                 }
             });

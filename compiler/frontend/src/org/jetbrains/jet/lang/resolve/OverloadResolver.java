@@ -150,12 +150,8 @@ public class OverloadResolver {
     {
         MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
-        for (FunctionDescriptor function : classDescriptor.getFunctions()) {
+        for (CallableMemberDescriptor function : classDescriptor.getCallableMembers()) {
             functionsByName.putValue(function.getName(), function);
-        }
-        
-        for (PropertyDescriptor property : classDescriptor.getProperties()) {
-            functionsByName.putValue(property.getName(), property);
         }
         
         for (ConstructorDescriptor nestedClassConstructor : nestedClassConstructors) {

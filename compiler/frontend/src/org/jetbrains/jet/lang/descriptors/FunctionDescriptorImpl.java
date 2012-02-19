@@ -140,8 +140,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         return visibility;
     }
 
-    public void addOverriddenFunction(@NotNull FunctionDescriptor overriddenFunction) {
-        overriddenFunctions.add(overriddenFunction);
+    @Override
+    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
+        overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
     }
 
     @Override
@@ -225,7 +226,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         );
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                substitutedDescriptor.addOverriddenFunction(overriddenFunction.substitute(substitutor));
+                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
             }
         }
         return substitutedDescriptor;

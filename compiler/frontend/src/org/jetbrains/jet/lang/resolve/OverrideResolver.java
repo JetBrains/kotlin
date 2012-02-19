@@ -85,142 +85,82 @@ public class OverrideResolver {
             }
         }
 
-        List<NamedFunctionDescriptor> functionsFromSupertypes = getDescriptorsFromSupertypes(classDescriptor, NamedFunctionDescriptor.class);
-        List<PropertyDescriptor> propertiesFromSupertypes = getDescriptorsFromSupertypes(classDescriptor, PropertyDescriptor.class);
+        List<CallableMemberDescriptor> functionsFromSupertypes = getDescriptorsFromSupertypes(classDescriptor);
 
-        MultiMap<String, NamedFunctionDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
-        MultiMap<String, PropertyDescriptor> propertiesFromSupertypesByName = groupDescriptorsByName(propertiesFromSupertypes);
+        MultiMap<String, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
 
-        MultiMap<String, NamedFunctionDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getFunctions());
-        MultiMap<String, PropertyDescriptor> propertiesFromCurrentByName = groupDescriptorsByName(classDescriptor.getProperties());
-        
+        MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getCallableMembers());
+
         Set<String> functionNames = new HashSet<String>();
         functionNames.addAll(functionsFromSupertypesByName.keySet());
         functionNames.addAll(functionsFromCurrentByName.keySet());
-        
-        Set<String> propertyNames = new HashSet<String>();
-        propertyNames.addAll(propertiesFromSupertypesByName.keySet());
-        propertyNames.addAll(propertiesFromCurrentByName.keySet());
-
         
         for (String functionName : functionNames) {
             generateOverridesInFunctionGroup(functionName,
                     functionsFromSupertypesByName.get(functionName),
                     functionsFromCurrentByName.get(functionName),
                     classDescriptor,
-                    new DescriptorSink<NamedFunctionDescriptor>() {
+                    new DescriptorSink() {
                         @Override
-                        public void addToScope(@NotNull NamedFunctionDescriptor fakeOverride) {
-                            classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(fakeOverride);
+                        public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                            if (fakeOverride instanceof PropertyDescriptor) {
+                                classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
+                            } else if (fakeOverride instanceof NamedFunctionDescriptor) {
+                                classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((NamedFunctionDescriptor) fakeOverride);
+                            } else {
+                                throw new IllegalStateException(fakeOverride.getClass().getName());
+                            }
                         }
 
                         @Override
-                        public void conflict(@NotNull NamedFunctionDescriptor fromSuper, @NotNull NamedFunctionDescriptor fromCurrent) {
-                            JetNamedFunction jetDeclaration = (JetNamedFunction) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
-                            context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
-                        }
-                    });
-        }
-        
-        for (String propertyName : propertyNames) {
-            generateOverridesInPropertyGroup(propertyName,
-                    propertiesFromSupertypesByName.get(propertyName),
-                    propertiesFromCurrentByName.get(propertyName),
-                    classDescriptor,
-                    new DescriptorSink<PropertyDescriptor>() {
-                        @Override
-                        public void addToScope(@NotNull PropertyDescriptor fakeOverride) {
-                            classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor(fakeOverride);
-                        }
-
-                        @Override
-                        public void conflict(@NotNull PropertyDescriptor fromSuper, @NotNull PropertyDescriptor fromCurrent) {
-                            JetProperty jetProperty = (JetProperty) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
+                        public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                            JetDeclaration jetProperty = (JetDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
                             context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
                         }
                     });
         }
     }
     
-    public interface DescriptorSink<D extends CallableMemberDescriptor> {
-        void addToScope(@NotNull D fakeOverride);
+    public interface DescriptorSink {
+        void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
         
-        void conflict(@NotNull D fromSuper, @NotNull D fromCurrent);
+        void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
     }
     
     public static void generateOverridesInFunctionGroup(
             @NotNull String name,
-            @NotNull Collection<NamedFunctionDescriptor> functionsFromSupertypes,
-            @NotNull Collection<NamedFunctionDescriptor> functionsFromCurrent,
+            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromSupertypes,
+            @NotNull Collection<? extends CallableMemberDescriptor> functionsFromCurrent,
             @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink<NamedFunctionDescriptor> sink) {
+            @NotNull DescriptorSink sink) {
         
-        List<NamedFunctionDescriptor> fakeOverrides = Lists.newArrayList();
+        List<CallableMemberDescriptor> fakeOverrides = Lists.newArrayList();
 
-        for (NamedFunctionDescriptor functionFromSupertype : functionsFromSupertypes) {
+        for (CallableMemberDescriptor functionFromSupertype : functionsFromSupertypes) {
 
             boolean overrides = false;
             
-            for (NamedFunctionDescriptor functionFromCurrent : functionsFromCurrent) {
+            for (CallableMemberDescriptor functionFromCurrent : functionsFromCurrent) {
                 OverridingUtil.OverrideCompatibilityInfo.ErrorKind overridable = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isOverridable();
                 if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
-                    ((FunctionDescriptorImpl) functionFromCurrent).addOverriddenFunction(functionFromSupertype);
+                    functionFromCurrent.addOverriddenDescriptor(functionFromSupertype);
                     overrides = true;
                 } else if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.CONFLICT) {
                     sink.conflict(functionFromSupertype, functionFromCurrent);
                 }
             }
             
-            for (NamedFunctionDescriptor fakeOverride : fakeOverrides) {
+            for (CallableMemberDescriptor fakeOverride : fakeOverrides) {
                 if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
-                    ((FunctionDescriptorImpl) fakeOverride).addOverriddenFunction(functionFromSupertype);
+                    fakeOverride.addOverriddenDescriptor(functionFromSupertype);
                     overrides = true;
                 }
             }
 
             if (!overrides) {
-                NamedFunctionDescriptor fakeOverride = functionFromSupertype.copy(current, false, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-                ((FunctionDescriptorImpl) fakeOverride).addOverriddenFunction(functionFromSupertype);
+                CallableMemberDescriptor fakeOverride = functionFromSupertype.copy(current, false, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
+                fakeOverride.addOverriddenDescriptor(functionFromSupertype);
                 
-                fakeOverrides.add(fakeOverride);
-
-                sink.addToScope(fakeOverride);
-            }
-        }
-    }
-    
-    public static void generateOverridesInPropertyGroup(
-            @NotNull String name,
-            @NotNull Collection<PropertyDescriptor> propertiesFromSupertypes,
-            @NotNull Collection<PropertyDescriptor> propertiesFromCurrent,
-            @NotNull ClassDescriptor current,
-            @NotNull DescriptorSink<PropertyDescriptor> sink) {
-
-        List<PropertyDescriptor> fakeOverrides = Lists.newArrayList();
-        
-        for (PropertyDescriptor propertyFromSupertype : propertiesFromSupertypes) {
-            boolean overrides = false;
-            for (PropertyDescriptor propertyFromCurrent : propertiesFromCurrent) {
-                OverridingUtil.OverrideCompatibilityInfo.ErrorKind overridable = OverridingUtil.isOverridableBy(propertyFromSupertype, propertyFromCurrent).isOverridable();
-                if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
-                    propertyFromCurrent.addOverriddenDescriptor(propertyFromSupertype);
-                    overrides = true;
-                } else if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.CONFLICT) {
-                    sink.conflict(propertyFromSupertype, propertyFromCurrent);
-                }
-            }
-            
-            for (PropertyDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(propertyFromSupertype, fakeOverride).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
-                    ((PropertyDescriptor) fakeOverride).addOverriddenDescriptor(propertyFromSupertype);
-                    overrides = true;
-                }
-            }
-            
-            if (!overrides) {
-                PropertyDescriptor fakeOverride = propertyFromSupertype.copy(current, false, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-                fakeOverride.addOverriddenDescriptor(propertyFromSupertype);
-
                 fakeOverrides.add(fakeOverride);
 
                 sink.addToScope(fakeOverride);
@@ -238,21 +178,20 @@ public class OverrideResolver {
     }
 
 
-    private static <T extends DeclarationDescriptor> List<T> getDescriptorsFromSupertypes(
-            ClassDescriptor classDescriptor, Class<T> descriptorClass) {
-        Set<T> r = Sets.newHashSet();
+    private static List<CallableMemberDescriptor> getDescriptorsFromSupertypes(ClassDescriptor classDescriptor) {
+        Set<CallableMemberDescriptor> r = Sets.newHashSet();
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
-            r.addAll(getDescriptorsOfType(supertype.getMemberScope(), descriptorClass));
+            r.addAll(getDescriptorsOfType(supertype.getMemberScope()));
         }
-        return new ArrayList<T>(r);
+        return new ArrayList<CallableMemberDescriptor>(r);
     }
 
-    private static <T extends DeclarationDescriptor> List<T> getDescriptorsOfType(
-            JetScope scope, Class<T> descriptorClass) {
-        List<T> r = Lists.newArrayList();
+    private static <T extends DeclarationDescriptor> List<CallableMemberDescriptor> getDescriptorsOfType(
+            JetScope scope) {
+        List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
-            if (descriptorClass.isInstance(decl)) {
-                r.add((T) decl);
+            if (decl instanceof PropertyDescriptor || decl instanceof NamedFunctionDescriptor) {
+                r.add((CallableMemberDescriptor) decl);
             }
         }
         return r;
