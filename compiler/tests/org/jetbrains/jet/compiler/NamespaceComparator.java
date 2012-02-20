@@ -70,13 +70,19 @@ class NamespaceComparator {
             @NotNull File txtFile) {
         String serialized = new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
         try {
-            // change to true to regenerate files if format changes
-            if (false) {
-                Files.write(serialized, txtFile, Charset.forName("utf-8"));
-            } else {
+            for (;;) {
                 String expected = Files.toString(txtFile, Charset.forName("utf-8")).replace("\r\n", "\n");
+
+                if (expected.contains("kick me")) {
+                    // for developer
+                    System.err.println("generating " + txtFile);
+                    Files.write(serialized, txtFile, Charset.forName("utf-8"));
+                    continue;
+                }
+
                 // compare with hardcopy: make sure nothing is lost in output
                 Assert.assertEquals(expected, serialized);
+                break;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
