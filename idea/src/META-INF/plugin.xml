@@ -56,6 +56,10 @@
       <internalFileTemplate name="Kotlin Enum"/>
       <internalFileTemplate name="Kotlin Trait"/>
 
+      <!--
+      <gotoSymbolContributor implementation="org.jetbrains.jet.plugin.caches.GotoSymbolContributor"/>
+      -->
+
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
       <lang.syntaxHighlighterFactory key="jet" implementationClass="org.jetbrains.jet.plugin.JetSyntaxHighlighterFactory"/>
@@ -81,6 +85,9 @@
 
       <completion.contributor language="jet" id="JetPackagesContributor" order="after JetKeywordCompletionContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetPackagesContributor" />
+
+      <completion.contributor language="jet" id="JetClassCompletionContributor" order="after JetPackagesContributor"
+                              implementationClass="org.jetbrains.jet.plugin.completion.JetClassCompletionContributor" />
 
       <completion.contributor language="jet" id="JetCompletionContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>

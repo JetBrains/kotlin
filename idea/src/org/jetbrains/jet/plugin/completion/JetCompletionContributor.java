@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
@@ -126,24 +125,12 @@ public class JetCompletionContributor extends CompletionContributor {
             @NotNull final CompletionResultSet result,
             @NotNull final HashSet<LookupPositionObject> positions) {
 
-        CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
-
-        JavaClassNameCompletionContributor.addAllClasses(
-                parameters,
-                parameters.getInvocationCount() <= 2,
-                JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
-                new Consumer<LookupElement>() {
-                    @Override
-                    public void consume(@NotNull LookupElement element) {
-                        // Redefine standard java insert handler which is going to insert fqn
-                        if (element instanceof JavaPsiClassReferenceElement) {
-                            JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) element;
-                            javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.JAVA_CLASS_INSERT_HANDLER);
-                        }
-
-                        addCompletionToResult(result, element, positions);
-                    }
-                });
+        JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
+            @Override
+            public void consume(@NotNull LookupElement element) {
+                addCompletionToResult(result, element, positions);
+            }
+        });
     }
 
     private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters) {
