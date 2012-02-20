@@ -696,14 +696,7 @@ public class JavaDescriptorResolver {
 
                 @Override
                 public JetSignatureVisitor visitInterface() {
-                    return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
-                        @Override
-                        protected void done(@NotNull JetType jetType) {
-                            if (!jetType.equals(JetStandardClasses.getAnyType())) {
-                                result.add(jetType);
-                            }
-                        }
-                    };
+                    return visitSuperclass();
                 }
             });
         } else {
