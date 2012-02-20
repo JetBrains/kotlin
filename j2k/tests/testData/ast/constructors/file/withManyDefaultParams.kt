@@ -23,7 +23,7 @@ val __ = Test(null, false, 0.double, 0.float, 0, 0, 0, ' ')
 return __
 }
 open public fun init(name : String?) : Test {
-val __ = Test(foo(name), false, 0.double, 0.flat, 0, 0, 0, ' ')
+val __ = Test(foo(name), false, 0.double, 0.float, 0, 0, 0, ' ')
 return __
 }
 open fun foo(n : String?) : String? {
