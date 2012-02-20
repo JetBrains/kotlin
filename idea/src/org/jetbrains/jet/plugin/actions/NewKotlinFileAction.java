@@ -36,10 +36,10 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction {
     protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
         builder
                 .setTitle(JetBundle.message("new.kotlin.file.action"))
+                .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File")
                 .addKind("Class", PlatformIcons.CLASS_ICON, "Kotlin Class")
                 .addKind("Trait", PlatformIcons.INTERFACE_ICON, "Kotlin Trait")
-                .addKind("Enum class", PlatformIcons.ENUM_ICON, "Kotlin Enum")
-                .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File");
+                .addKind("Enum class", PlatformIcons.ENUM_ICON, "Kotlin Enum");
     }
 
     @Override
