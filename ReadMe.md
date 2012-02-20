@@ -7,6 +7,11 @@ Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [follow Kotlin on twitter](http://twitter.com/#!/project_kotlin)
 
+## Editing Kotlin
+
+ * [Kotlin IDEA Plugin](http://hadihariri.com/2012/02/17/the-kotlin-journey-part-i-getting-things-set-up/)
+ * [Kotlin TextMate Bundle](https://github.com/k33g/kotlin-textmate-bundle#readme)
+
 ## Building
 
 To build this project you need to run
