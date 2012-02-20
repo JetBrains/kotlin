@@ -385,13 +385,13 @@
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Explicit Jar -->
-            <kotlinc-jar         module    = "${basedir}/build-tools/test/modules/Testlib.kts"/>
+            <kotlinc-jar         module    = "${basedir}/testlib/module.kt"/>
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Default Jar -->
-            <kotlinc-jar         module    = "${basedir}/build-tools/test/modules/Testlib.kts" jar=""/>
-            <move file="${basedir}/build-tools/test/modules/Testlib.jar" todir="${tests-dir}"/>
-            <testlib-junit-tests classpath = "${tests-dir}/Testlib.jar"/>
+            <kotlinc-jar         module    = "${basedir}/testlib/module.kt" jar=""/>
+            <move file="${basedir}/testlib/testlib.jar" todir="${tests-dir}"/>
+            <testlib-junit-tests classpath = "${tests-dir}/testlib.jar"/>
         </sequential>
     </macrodef>
 
