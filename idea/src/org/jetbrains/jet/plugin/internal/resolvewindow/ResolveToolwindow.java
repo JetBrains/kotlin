@@ -28,14 +28,11 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.ui.content.ContentFactory;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -69,14 +66,11 @@ public class ResolveToolwindow extends JPanel {
 
     public static final String BAR = "\n\n===\n\n";
 
-    public static class Factory implements ToolWindowFactory {
-        @Override
-        public void createToolWindowContent(Project project, ToolWindow toolWindow) {
-            toolWindow.getContentManager().addContent(ContentFactory.SERVICE.getInstance().createContent(new ResolveToolwindow(project), "", false));
-        }
-    }
-
     private static final int UPDATE_DELAY = 500;
+    private static final String DEFAULT_TEXT = "/*\n" +
+                                               "Information about symbols resolved by\nKotlin compiler.\n" +
+                                               "No Kotlin source file is opened.\n" +
+                                               "*/";
     private final Editor myEditor;
     private final Alarm myUpdateAlarm;
     private BytecodeToolwindow.Location myCurrentLocation;
@@ -105,18 +99,18 @@ public class ResolveToolwindow extends JPanel {
     private void render(BytecodeToolwindow.Location location, BytecodeToolwindow.Location oldLocation) {
         Editor editor = location.getEditor();
         if (editor == null) {
-            setText("No editor");
+            setText(DEFAULT_TEXT);
         }
         else {
             VirtualFile vFile = ((EditorEx) editor).getVirtualFile();
             if (vFile == null) {
-                setText("");
+                setText(DEFAULT_TEXT);
                 return;
             }
 
             PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
             if (!(psiFile instanceof JetFile)) {
-                setText("");
+                setText(DEFAULT_TEXT);
                 return;
             }
 

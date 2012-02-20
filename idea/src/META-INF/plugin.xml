@@ -135,11 +135,10 @@
 
       <psi.treeChangePreprocessor implementation="org.jetbrains.jet.asJava.JetCodeBlockModificationListener"/>
 
-      <toolWindow id="CodeWindow"
-                  factoryClass="org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow$Factory"
-                  anchor="right"/>
-      <toolWindow id="ResolveWindow"
-                  factoryClass="org.jetbrains.jet.plugin.internal.resolvewindow.ResolveToolwindow$Factory"
-                  anchor="right"/>
+      <toolWindow id="Kotlin"
+                  factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
+                  anchor="right"
+                  icon="/org/jetbrains/jet/plugin/icons/kotlin16x16.png"
+              />
   </extensions>
 </idea-plugin>
