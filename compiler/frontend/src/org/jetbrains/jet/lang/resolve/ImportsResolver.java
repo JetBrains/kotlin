@@ -363,12 +363,14 @@ public class ImportsResolver {
                 return;
             }
 
+            // Simple case of no descriptors
             if (descriptors.isEmpty()) {
                 trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
                 trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
                 return;
             }
 
+            // Decide if expression has resolved reference
             if (descriptors.size() == 1) {
                 assert canBeImportedDescriptors.size() <= 1;
                 trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
@@ -377,8 +379,11 @@ public class ImportsResolver {
             else if (canBeImportedDescriptors.size() == 1) {
                 trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, canBeImportedDescriptors.iterator().next());
                 trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+            } else {
+                // trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
             }
 
+            // Check for more information and additional errors
             if (canBeImportedDescriptors.isEmpty()) {
                 assert descriptors.size() >= 1;
                 trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next()));

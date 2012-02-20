@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="IDEA" type="Application" factoryName="Application">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
     <option name="VM_PARAMETERS" value="-Xmx500m -XX:ReservedCodeCacheSize=64m -XX:MaxPermSize=250m -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=../system-idea -Didea.config.path=../config -Dapple.laf.useScreenMenuBar=true -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin" />
     <option name="PROGRAM_PARAMETERS" value="" />
