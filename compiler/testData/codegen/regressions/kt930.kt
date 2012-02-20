@@ -15,51 +15,51 @@ fun testInt () : String {
 }
 
 fun testByte () : String {
-    val r1 = 1.byt upto 4.byt
-    if(r1.end != 4.byt || r1.isReversed || r1.size != 4) return "byte upto fail"
+    val r1 = 1.byte upto 4.byte
+    if(r1.end != 4.byte || r1.isReversed || r1.size != 4) return "byte upto fail"
 
-    val r2 = 4.byt upto 1.byt
-    if(r2.start != 0.byt || r2.size != 0) return "byte negative upto fail"
+    val r2 = 4.byte upto 1.byte
+    if(r2.start != 0.byte || r2.size != 0) return "byte negative upto fail"
 
-    val r3 = 5.byt downto 0.byt
-    if(r3.start != 5.byt || r3.end != 0.byt || !r3.isReversed || r3.size != 6) return "byte downto fail"
+    val r3 = 5.byte downto 0.byte
+    if(r3.start != 5.byte || r3.end != 0.byte || !r3.isReversed || r3.size != 6) return "byte downto fail"
 
-    val r4 = 5.byt downto 6.byt
-    if(r4.start != 0.byt || r4.end != 0.byt || !r3.isReversed || r4.size != 0) return "byte negative downto fail"
+    val r4 = 5.byte downto 6.byte
+    if(r4.start != 0.byte || r4.end != 0.byte || !r3.isReversed || r4.size != 0) return "byte negative downto fail"
 
     return "OK"
 }
 
 fun testShort () : String {
 
-    val r1 = 1.sht upto 4.sht
-    if(r1.end != 4.sht || r1.isReversed || r1.size != 4) return "short upto fail"
+    val r1 = 1.short upto 4.short
+    if(r1.end != 4.short || r1.isReversed || r1.size != 4) return "short upto fail"
 
-    val r2 = 4.sht upto 1.sht
-    if(r2.start != 0.sht || r2.size != 0) return "short negative upto fail"
+    val r2 = 4.short upto 1.short
+    if(r2.start != 0.short || r2.size != 0) return "short negative upto fail"
 
-    val r3 = 5.sht downto 0.sht
-    if(r3.start != 5.sht || r3.end != 0.sht || !r3.isReversed || r3.size != 6) return "short downto fail"
+    val r3 = 5.short downto 0.short
+    if(r3.start != 5.short || r3.end != 0.short || !r3.isReversed || r3.size != 6) return "short downto fail"
 
-    val r4 = 5.sht downto 6.sht
-    if(r4.start != 0.sht || r4.end != 0.sht || !r3.isReversed || r4.size != 0) return "short negative downto fail"
+    val r4 = 5.short downto 6.short
+    if(r4.start != 0.short || r4.end != 0.short || !r3.isReversed || r4.size != 0) return "short negative downto fail"
 
     return "OK"
 }
 
 fun testLong () : String {
 
-    val r1 = 1.lng upto 4.lng
-    if(r1.end != 4.lng || r1.isReversed || r1.size != 4.lng) return "long upto fail"
+    val r1 = 1.long upto 4.long
+    if(r1.end != 4.long || r1.isReversed || r1.size != 4.long) return "long upto fail"
 
-    val r2 = 4.lng upto 1.lng
-    if(r2.start != 0.lng || r2.size != 0.lng) return "short negative long fail"
+    val r2 = 4.long upto 1.long
+    if(r2.start != 0.long || r2.size != 0.long) return "short negative long fail"
 
-    val r3 = 5.lng downto 0.lng
-    if(r3.start != 5.lng || r3.end != 0.lng || !r3.isReversed || r3.size != 6.lng) return "long downto fail"
+    val r3 = 5.long downto 0.long
+    if(r3.start != 5.long || r3.end != 0.long || !r3.isReversed || r3.size != 6.long) return "long downto fail"
 
-    val r4 = 5.lng downto 6.lng
-    if(r4.start != 0.lng || r4.end != 0.lng || !r3.isReversed || r4.size != 0.lng) return "long negative downto fail"
+    val r4 = 5.long downto 6.long
+    if(r4.start != 0.long || r4.end != 0.long || !r3.isReversed || r4.size != 0.long) return "long negative downto fail"
 
     return "OK"
 }
@@ -70,13 +70,13 @@ fun testChar () : String {
     if(r1.end != 'd' || r1.isReversed || r1.size != 4) return "char upto fail"
 
     val r2 = 'd' upto 'a'
-    if(r2.start != 0.chr || r2.size != 0) return "char negative long fail"
+    if(r2.start != 0.char || r2.size != 0) return "char negative long fail"
 
     val r3 = 'd' downto 'a'
     if(r3.start != 'd' || r3.end != 'a' || !r3.isReversed || r3.size != 4) return "char downto fail"
 
     val r4 = 'a' downto 'd'
-    if(r4.start != 0.chr || r4.end != 0.chr || !r3.isReversed || r4.size != 0) return "char negative downto fail"
+    if(r4.start != 0.char || r4.end != 0.char || !r3.isReversed || r4.size != 0) return "char negative downto fail"
 
     return "OK"
 }

@@ -49,6 +49,6 @@ public class DoubleValue implements CompileTimeConstant<Double> {
 
     @Override
     public String toString() {
-        return value + ".dbl";
+        return value + ".double";
     }
 }

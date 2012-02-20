@@ -8,5 +8,5 @@ var myContainer : Container? = Container()
 }
 }
 open class Test() {
-var b : Byte = One.myContainer?.myInt.sure().byt
+var b : Byte = One.myContainer?.myInt.sure().byte
 }

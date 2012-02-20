@@ -52,6 +52,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
+import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 
 /**
 * @author abreslav
@@ -570,22 +571,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             Number value = (Number) receiverValue.getValue();
             String referencedName = selectorExpression.getReferencedName();
             if (OperatorConventions.NUMBER_CONVERSIONS.contains(referencedName)) {
-                if ("dbl".equals(referencedName)) {
+                if (DOUBLE.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
                 }
-                else if ("flt".equals(referencedName)) {
+                else if (FLOAT.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new FloatValue(value.floatValue()));
                 }
-                else if ("lng".equals(referencedName)) {
+                else if (LONG.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new LongValue(value.longValue()));
                 }
-                else if ("sht".equals(referencedName)) {
+                else if (SHORT.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ShortValue(value.shortValue()));
                 }
-                else if ("byt".equals(referencedName)) {
+                else if (BYTE.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new ByteValue(value.byteValue()));
                 }
-                else if ("int".equals(referencedName)) {
+                else if (INT.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new IntValue(value.intValue()));
                 }
             }

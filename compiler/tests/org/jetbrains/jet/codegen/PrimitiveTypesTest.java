@@ -154,13 +154,13 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testCastConstant() throws Exception {
-        loadText("fun foo(): Double = 1.dbl");
+        loadText("fun foo(): Double = 1.double");
         final Method main = generateFunction();
         assertEquals(1.0, main.invoke(null));
     }
 
     public void testCastOnStack() throws Exception {
-        loadText("fun foo(): Double = System.currentTimeMillis().dbl");
+        loadText("fun foo(): Double = System.currentTimeMillis().double");
         final Method main = generateFunction();
         double currentTimeMillis = (double) System.currentTimeMillis();
         double result = (Double) main.invoke(null);
@@ -327,7 +327,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testKt737() throws Exception {
-        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byt.compareTo(10.lng) >= 0) \"fail\" else \"OK\"");
+        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byte.compareTo(10.long) >= 0) \"fail\" else \"OK\"");
         assertEquals("OK", blackBox());
     }
 

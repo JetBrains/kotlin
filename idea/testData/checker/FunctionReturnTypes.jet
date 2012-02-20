@@ -16,7 +16,7 @@ fun bbb() {
 fun foo(<warning>expr</warning>: StringBuilder): Int {
   val c = 'a'
   when(c) {
-    0.chr -> throw Exception("zero")
+    0.char -> throw Exception("zero")
     else -> throw Exception("nonzero" + c)
   }
 }

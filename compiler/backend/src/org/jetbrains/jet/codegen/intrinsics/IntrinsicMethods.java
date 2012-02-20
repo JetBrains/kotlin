@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
 
@@ -70,7 +71,7 @@ public class IntrinsicMethods {
     public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
         myProject = project;
         myStdLib = stdlib;
-        List<String> primitiveCastMethods = ImmutableList.of("dbl", "flt", "lng", "int", "chr", "sht", "byt");
+        List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
             declareIntrinsicProperty("Number", method, NUMBER_CAST);
             for (String type : PRIMITIVE_NUMBER_TYPES) {

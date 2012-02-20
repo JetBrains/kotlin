@@ -26,12 +26,14 @@ import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
 import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.*;
 
 import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 import static org.jetbrains.jet.j2k.ConverterUtil.createMainFunction;
 import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
+import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 
 /**
  * @author ignatov
@@ -328,8 +330,8 @@ public class Converter {
             final String typeToKotlin = f.getType().toKotlin();
             if (typeToKotlin.equals("Boolean")) return "false";
             if (typeToKotlin.equals("Char")) return "' '";
-            if (typeToKotlin.equals("Double")) return "0.dbl";
-            if (typeToKotlin.equals("Float")) return "0.flt";
+            if (typeToKotlin.equals("Double")) return "0." + OperatorConventions.DOUBLE;
+            if (typeToKotlin.equals("Float")) return "0." + OperatorConventions.FLOAT;
             return "0";
         }
     }
@@ -780,21 +782,21 @@ public class Converter {
     @NotNull
     private static String getPrimitiveTypeConversion(@NotNull String type) {
         Map<String, String> conversions = new HashMap<String, String>();
-        conversions.put("byte", "byt");
-        conversions.put("short", "sht");
-        conversions.put("int", "int");
-        conversions.put("long", "lng");
-        conversions.put("float", "flt");
-        conversions.put("double", "dbl");
-        conversions.put("char", "chr");
+        conversions.put("byte", BYTE);
+        conversions.put("short", SHORT);
+        conversions.put("int", INT);
+        conversions.put("long", LONG);
+        conversions.put("float", FLOAT);
+        conversions.put("double", DOUBLE);
+        conversions.put("char", CHAR);
 
-        conversions.put(JAVA_LANG_BYTE, "byt");
-        conversions.put(JAVA_LANG_SHORT, "sht");
-        conversions.put(JAVA_LANG_INTEGER, "int");
-        conversions.put(JAVA_LANG_LONG, "lng");
-        conversions.put(JAVA_LANG_FLOAT, "flt");
-        conversions.put(JAVA_LANG_DOUBLE, "dbl");
-        conversions.put(JAVA_LANG_CHARACTER, "chr");
+        conversions.put(JAVA_LANG_BYTE, BYTE);
+        conversions.put(JAVA_LANG_SHORT, SHORT);
+        conversions.put(JAVA_LANG_INTEGER, INT);
+        conversions.put(JAVA_LANG_LONG, LONG);
+        conversions.put(JAVA_LANG_FLOAT, FLOAT);
+        conversions.put(JAVA_LANG_DOUBLE, DOUBLE);
+        conversions.put(JAVA_LANG_CHARACTER, CHAR);
 
         if (conversions.containsKey(type)) {
             return "." + conversions.get(type);

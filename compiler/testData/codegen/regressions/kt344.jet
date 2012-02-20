@@ -62,43 +62,43 @@ fun t3() : Boolean {
 }
 
 fun t4() : Boolean {
-    var x = 100.flt
+    var x = 100.float
     val y = x + 22
     val foo = {
-        x = x + 200.flt + y
+        x = x + 200.float + y
         x += 18
         #()
     }
     foo()
     System.out?.println(x)
-    return x == 440.flt
+    return x == 440.float
 }
 
 fun t5() : Boolean {
-    var x = 100.dbl
+    var x = 100.double
     val y = x + 22
     val foo = {
-        x = x + 200.dbl + y
+        x = x + 200.double + y
         x -= 22
         #()
     }
     foo()
     System.out?.println(x)
-    return x == 400.dbl
+    return x == 400.double
 }
 
 fun t6() : Boolean {
-    var x = 20.byt
+    var x = 20.byte
     val y = x + 22
     val foo = {
-        x = (x + 20.byt + y).byt
+        x = (x + 20.byte + y).byte
         x += 2
         x--
         #()
     }
     foo()
     System.out?.println(x)
-    return x == 83.byt
+    return x == 83.byte
 }
 
 fun t7() : Boolean {
@@ -113,17 +113,17 @@ fun t7() : Boolean {
 }
 
 fun t8() : Boolean {
-    var x = 20.sht
+    var x = 20.short
     val foo = {
         val bar = {
-            x = 30.sht
+            x = 30.short
             #()
         }
         bar()
         #()
     }
     foo()
-    return x == 30.sht
+    return x == 30.short
 }
 
 fun t9(var x: Int) : Boolean {

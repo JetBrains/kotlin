@@ -1,5 +1,5 @@
 fun StringBuilder.takeFirst(): Char {
-  if (this.length() == 0) return 0.chr
+  if (this.length() == 0) return 0.char
   val c = this.charAt(0)
   this.deleteCharAt(0)
   return c
@@ -8,7 +8,7 @@ fun StringBuilder.takeFirst(): Char {
 fun foo(expr: StringBuilder): Int {
   val c = expr.takeFirst()
   when(c) {
-    0.chr -> throw Exception("zero")
+    0.char -> throw Exception("zero")
     else -> throw Exception("nonzero" + c)
   }
 }

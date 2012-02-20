@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.util.AstUtil;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.*;
 
@@ -75,8 +76,8 @@ public class ArrayInitializerExpression extends Expression {
 
     @NotNull
     private static String getConversion(@NotNull final String afterReplace) {
-        if (afterReplace.contains("double")) return DOT + "dbl";
-        if (afterReplace.contains("float")) return DOT + "flt";
+        if (afterReplace.contains("double")) return DOT + OperatorConventions.DOUBLE;
+        if (afterReplace.contains("float")) return DOT + OperatorConventions.FLOAT;
         return "";
     }
 

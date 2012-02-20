@@ -1,5 +1,5 @@
 val _0 : Double = 0.0
-val _0dbl  : Double = 0.dbl
+val _0dbl  : Double = 0.double
 
 fun box() : String {
     if(_0 != _0dbl) return "fail"

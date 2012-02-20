@@ -8,7 +8,7 @@ fun test1() : Boolean {
 }
 
 fun test2() : Boolean {
-    val r1 = 1.byt..10.byt
+    val r1 = 1.byte..10.byte
     var s1 = 0
     for(e in r1 step 2) {
         s1 += e
@@ -17,21 +17,21 @@ fun test2() : Boolean {
 }
 
 fun test3() : Boolean {
-    val r1 = 1.byt..10.lng
-    var s1 = 0.lng
+    val r1 = 1.byte..10.long
+    var s1 = 0.long
     for(e in r1 step 2) {
         s1 += e
     }
-    return s1 == 25.lng
+    return s1 == 25.long
 }
 
 fun test4() : Boolean {
-    val r1 = 1.byt..10.sht
-    var s1 = 0.sht
+    val r1 = 1.byte..10.short
+    var s1 = 0.short
     for(e in r1 step 2) {
         s1 += e
     }
-    return s1 == 25.sht
+    return s1 == 25.short
 }
 
 fun test5() : Boolean {

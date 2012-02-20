@@ -5,12 +5,12 @@ import std.io.*
 fun main(args : Array<String>) {
 //    for (b : Byte in Byte.MIN_VALUE..Byte.MAX_VALUE) {
 //        // Problematic code does not compile
-//        if (b == 0x90 .byt)
+//        if (b == 0x90 .byte)
 //            println("joy")
 //    }
     for (b : Byte in Byte.MIN_VALUE to Byte.MAX_VALUE) {
         // Problematic code does not compile
-        if (b == 0x90 .byt)
+        if (b == 0x90 .byte)
             println("joy")
     }
 }

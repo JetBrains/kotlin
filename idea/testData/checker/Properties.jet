@@ -2,7 +2,7 @@
    get() : Int = 1
    set(value : <error>Long</error>) {
       $x = value.int
-      $x = <error>1.lng</error>
+      $x = <error>1.long</error>
     }
 
  val xx : Int = <error>1 + x</error>

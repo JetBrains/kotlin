@@ -58,7 +58,7 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testNullableIntArrayKotlin () throws InvocationTargetException, IllegalAccessException {
-        loadText("fun test() = testf(239.byt, 7.byt); fun testf(vararg ts: Byte?) = ts");
+        loadText("fun test() = testf(239.byte, 7.byte); fun testf(vararg ts: Byte?) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);

@@ -8,7 +8,7 @@ public open class PerfectNumberFinder() {
             var factors : List<Int?>? = ArrayList<Int?>()
             factors?.add(1)
             factors?.add(number)
-            for (i in 2..(Math.sqrt((number).dbl) - 1).int)
+            for (i in 2..(Math.sqrt((number).double) - 1).int)
                 if (((number % i) == 0)) {
                     factors?.add(i)
                     if (((number / i) != i))

@@ -285,7 +285,7 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testLongDouble () throws Exception {
         loadText(
-                     "fun box() : Int { var l = IntArray(1); l[0.lng] = 4; l[0.lng] += 6; return l[0.lng];}\n" +
+                     "fun box() : Int { var l = IntArray(1); l[0.long] = 4; l[0.long] += 6; return l[0.long];}\n" +
                      "fun IntArray.set(index: Long, elem: Int) { this[index.int] = elem }\n" +
                      "fun IntArray.get(index: Long) = this[index.int]");
 //        System.out.println(generateToText());

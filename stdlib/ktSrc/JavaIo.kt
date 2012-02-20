@@ -49,7 +49,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
     }
 
     override fun skip(n: Long): Long {
-        return System.`in`?.skip(n) ?: -1.lng
+        return System.`in`?.skip(n) ?: -1.long
     }
 
     override fun available(): Int {
@@ -98,7 +98,7 @@ fun InputStream.iterator() : ByteIterator =
         override val hasNext : Boolean
             get() = available() > 0
 
-        override fun nextByte() = read().byt
+        override fun nextByte() = read().byte
     }
 
 inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)

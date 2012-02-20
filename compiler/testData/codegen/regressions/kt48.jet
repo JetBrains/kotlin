@@ -3,24 +3,24 @@ class A() {
     var xin : Int? = 0
     var xinn : Int? = null
 
-    var xl = 0.lng
-    var xln : Long? = 0.lng
+    var xl = 0.long
+    var xln : Long? = 0.long
     var xlnn : Long? = null
 
-    var xb = 0.byt
-    var xbn : Byte? = 0.byt
+    var xb = 0.byte
+    var xbn : Byte? = 0.byte
     var xbnn : Byte? = null
 
-    var xf = 0.flt
-    var xfn : Float? = 0.flt
+    var xf = 0.float
+    var xfn : Float? = 0.float
     var xfnn : Float? = null
 
-    var xd = 0.dbl
-    var xdn : Double? = 0.dbl
+    var xd = 0.double
+    var xdn : Double? = 0.double
     var xdnn : Double? = null
 
-    var xs = 0.sht
-    var xsn : Short? = 0.sht
+    var xs = 0.short
+    var xsn : Short? = 0.short
     var xsnn : Short? = null
 }
 

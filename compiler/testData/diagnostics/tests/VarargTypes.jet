@@ -23,5 +23,5 @@ fun test() {
     fooi(1, 2, 3)
     fool(1, 2, 3)
     food(1.0, 2.0, 3.0)
-    foof(1.0.flt, 2.0.flt, 3.0.flt)
+    foof(1.0.float, 2.0.float, 3.0.float)
 }

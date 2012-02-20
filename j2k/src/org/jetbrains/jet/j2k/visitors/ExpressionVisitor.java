@@ -208,7 +208,7 @@ public class ExpressionVisitor extends StatementVisitor {
                 text = text.replace("D", "").replace("d", "");
             }
             if (canonicalTypeStr.equals("float") || canonicalTypeStr.equals(JAVA_LANG_FLOAT)) {
-                text = text.replace("F", "").replace("f", "") + "." + "flt";
+                text = text.replace("F", "").replace("f", "") + "." + "float";
             }
             if (canonicalTypeStr.equals("long") || canonicalTypeStr.equals(JAVA_LANG_LONG)) {
                 text = text.replace("L", "").replace("l", "");

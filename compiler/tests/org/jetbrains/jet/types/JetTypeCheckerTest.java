@@ -79,14 +79,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("0b1", library.getIntType());
         assertType("0B1", library.getIntType());
 
-        assertType("1.lng", library.getLongType());
+        assertType("1.long", library.getLongType());
 
         assertType("1.0", library.getDoubleType());
-        assertType("1.0.dbl", library.getDoubleType());
+        assertType("1.0.double", library.getDoubleType());
         assertType("0x1.fffffffffffffp1023", library.getDoubleType());
 
-        assertType("1.0.flt", library.getFloatType());
-        assertType("0x1.fffffffffffffp1023.flt", library.getFloatType());
+        assertType("1.0.float", library.getFloatType());
+        assertType("0x1.fffffffffffffp1023.float", library.getFloatType());
 
         assertType("true", library.getBooleanType());
         assertType("false", library.getBooleanType());
@@ -400,53 +400,53 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         assertType("f()", "Unit");
         assertType("f(1)", "Int");
-        assertType("f(1.flt, 1)", "Float");
-        assertType("f<String>(1.flt)", "String");
+        assertType("f(1.float, 1)", "Float");
+        assertType("f<String>(1.float)", "String");
     }
 
     public void testPlus() throws Exception {
-        assertType("1.0.plus(1.dbl)", "Double");
-        assertType("1.0.plus(1.flt)", "Double");
-        assertType("1.0.plus(1.lng)", "Double");
+        assertType("1.0.plus(1.double)", "Double");
+        assertType("1.0.plus(1.float)", "Double");
+        assertType("1.0.plus(1.long)", "Double");
         assertType("1.0.plus(1)", "Double");
 
-        assertType("1.flt.plus(1.dbl)", "Double");
-        assertType("1.flt.plus(1.flt)", "Float");
-        assertType("1.flt.plus(1.lng)", "Float");
-        assertType("1.flt.plus(1)", "Float");
+        assertType("1.float.plus(1.double)", "Double");
+        assertType("1.float.plus(1.float)", "Float");
+        assertType("1.float.plus(1.long)", "Float");
+        assertType("1.float.plus(1)", "Float");
 
-        assertType("1.lng.plus(1.dbl)", "Double");
-        assertType("1.lng.plus(1.flt)", "Float");
-        assertType("1.lng.plus(1.lng)", "Long");
-        assertType("1.lng.plus(1)", "Long");
+        assertType("1.long.plus(1.double)", "Double");
+        assertType("1.long.plus(1.float)", "Float");
+        assertType("1.long.plus(1.long)", "Long");
+        assertType("1.long.plus(1)", "Long");
 
-        assertType("1.plus(1.dbl)", "Double");
-        assertType("1.plus(1.flt)", "Float");
-        assertType("1.plus(1.lng)", "Long");
+        assertType("1.plus(1.double)", "Double");
+        assertType("1.plus(1.float)", "Float");
+        assertType("1.plus(1.long)", "Long");
         assertType("1.plus(1)", "Int");
 
-        assertType("'1'.plus(1.dbl)", "Double");
-        assertType("'1'.plus(1.flt)", "Float");
-        assertType("'1'.plus(1.lng)", "Long");
+        assertType("'1'.plus(1.double)", "Double");
+        assertType("'1'.plus(1.float)", "Float");
+        assertType("'1'.plus(1.long)", "Long");
         assertType("'1'.plus(1)", "Int");
         assertType("'1'.minus('1')", "Int"); // Plus is not available for char
 
-        assertType("(1:Short).plus(1.dbl)", "Double");
-        assertType("(1:Short).plus(1.flt)", "Float");
-        assertType("(1:Short).plus(1.lng)", "Long");
+        assertType("(1:Short).plus(1.double)", "Double");
+        assertType("(1:Short).plus(1.float)", "Float");
+        assertType("(1:Short).plus(1.long)", "Long");
         assertType("(1:Short).plus(1)", "Int");
         assertType("(1:Short).plus(1:Short)", "Int");
 
-        assertType("(1:Byte).plus(1.dbl)", "Double");
-        assertType("(1:Byte).plus(1.flt)", "Float");
-        assertType("(1:Byte).plus(1.lng)", "Long");
+        assertType("(1:Byte).plus(1.double)", "Double");
+        assertType("(1:Byte).plus(1.float)", "Float");
+        assertType("(1:Byte).plus(1.long)", "Long");
         assertType("(1:Byte).plus(1)", "Int");
         assertType("(1:Byte).plus(1:Short)", "Int");
         assertType("(1:Byte).plus(1:Byte)", "Int");
 
-        assertType("\"1\".plus(1.dbl)", "String");
-        assertType("\"1\".plus(1.flt)", "String");
-        assertType("\"1\".plus(1.lng)", "String");
+        assertType("\"1\".plus(1.double)", "String");
+        assertType("\"1\".plus(1.float)", "String");
+        assertType("\"1\".plus(1.long)", "String");
         assertType("\"1\".plus(1)", "String");
         assertType("\"1\".plus('1')", "String");
     }

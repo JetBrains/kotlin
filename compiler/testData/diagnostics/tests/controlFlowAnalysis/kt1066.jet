@@ -5,7 +5,7 @@ package kt1066
 
 import java.util.Set
 
-fun randomDigit() = 0.chr
+fun randomDigit() = 0.char
 
 fun foo(excluded: Set<Char>) {
     var digit : Char

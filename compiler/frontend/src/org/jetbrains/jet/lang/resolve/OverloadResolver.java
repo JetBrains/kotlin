@@ -180,8 +180,8 @@ public class OverloadResolver {
                     continue;
                 }
 
-                OverloadUtil.OverloadCompatibilityInfo overloadble = OverloadUtil.isOverloadble(function, function2);
-                if (!overloadble.isSuccess()) {
+                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(function, function2);
+                if (!overloadable.isSuccess()) {
                     JetDeclaration member = (JetDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, function);
                     if (member == null) {
                         assert context.getTrace().get(DELEGATED, function);

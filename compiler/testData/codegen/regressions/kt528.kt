@@ -123,6 +123,6 @@ fun Reader.forEachChar(body : (Char) -> Unit) {
     do {
         var i = read();
         if (i == -1) break
-        body(i.chr)
+        body(i.char)
     } while(true)
 }

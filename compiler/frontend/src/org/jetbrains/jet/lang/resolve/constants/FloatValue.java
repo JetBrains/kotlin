@@ -49,6 +49,6 @@ public class FloatValue implements CompileTimeConstant<Float> {
 
     @Override
     public String toString() {
-        return value + ".flt";
+        return value + ".float";
     }
 }

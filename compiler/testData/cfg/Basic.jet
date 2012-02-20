@@ -1,7 +1,7 @@
 fun f(a : Boolean) : Unit {
     1
     a
-    2.lng
+    2.long
     foo(a, 3)
     genfun<Any>()
     flfun {1}

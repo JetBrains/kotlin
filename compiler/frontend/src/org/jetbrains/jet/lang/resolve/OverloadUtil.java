@@ -29,7 +29,7 @@ public class OverloadUtil {
     /**
      * Does not check names.
      */
-    public static OverloadCompatibilityInfo isOverloadble(CallableDescriptor a, CallableDescriptor b) {
+    public static OverloadCompatibilityInfo isOverloadable(CallableDescriptor a, CallableDescriptor b) {
         int abc = braceCount(a);
         int bbc = braceCount(b);
         

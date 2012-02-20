@@ -58,6 +58,6 @@ public class LongValue implements CompileTimeConstant<Long> {
 
     @Override
     public String toString() {
-        return value + ".lng";
+        return value + ".long";
     }
 }

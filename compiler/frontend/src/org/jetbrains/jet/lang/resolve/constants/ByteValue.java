@@ -59,6 +59,6 @@ public class ByteValue implements CompileTimeConstant<Byte> {
 
     @Override
     public String toString() {
-        return value + ".byt";
+        return value + ".byte";
     }
 }

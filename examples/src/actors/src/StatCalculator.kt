@@ -7,11 +7,11 @@ import java.util.LinkedList
 
 class StatCalculator() : Actor(Executors.newSingleThreadExecutor().sure()) {
     val list = LinkedList<Long> ()
-    var average = 0.lng
-    var sum = 0.lng
-    var cnt = 0.lng
+    var average = 0.long
+    var sum = 0.long
+    var cnt = 0.long
 
-    val timer = fixedRateTimer(period=2000.lng, daemon=true) {
+    val timer = fixedRateTimer(period=2000.long, daemon=true) {
         this@StatCalculator post "print"
     }
 

@@ -35,13 +35,18 @@ public class OperatorConventions {
 
     private OperatorConventions() {}
 
+    // Names for primitive type conversion properties
+    public static final String DOUBLE = "double";
+    public static final String FLOAT = "float";
+    public static final String LONG = "long";
+    public static final String INT = "int";
+    public static final String CHAR = "char";
+    public static final String SHORT = "short";
+    public static final String BYTE = "byte";
+
+
     public static final ImmutableSet<String> NUMBER_CONVERSIONS = ImmutableSet.of(
-            "dbl",
-            "flt",
-            "lng",
-            "sht",
-            "byt",
-            "int"
+            DOUBLE, FLOAT, LONG, INT, SHORT, BYTE, CHAR
     );
 
     public static final ImmutableBiMap<JetToken, String> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetToken, String>builder()

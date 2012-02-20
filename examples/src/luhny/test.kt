@@ -144,7 +144,7 @@ fun computeLast(allButLast : String) : Char {
   }
 
   var remainder = sum % 10
-  return if (remainder == 0) '0' else ('0' + (10 - remainder)).chr
+  return if (remainder == 0) '0' else ('0' + (10 - remainder)).char
 }
 
 fun computeLast(allButLast : CharSequence) : Char = computeLast(allButLast.toString().sure())
@@ -155,12 +155,12 @@ fun setRandomDigits(builder : StringBuilder, start : Int, end : Int) {
 }
 
 /** Generates a random digit. */
-fun randomDigit() : Char = ('0' + random.nextInt(10)).chr
+fun randomDigit() : Char = ('0' + random.nextInt(10)).char
 
 fun nonDigits() : String {
   val nonDigits = StringBuilder()
   for (i in 0..999)
-    nonDigits.append((random.nextInt(68) + ':').chr)
+    nonDigits.append((random.nextInt(68) + ':').char)
   return nonDigits.toString().sure()
 }
 
