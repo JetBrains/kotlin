@@ -61,6 +61,31 @@
         </java>
     </target>
 
+    <target name="compileTestlib" depends="jarRT">
+        <mkdir dir="${output}/classes/testlib"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+            <classpath>
+              <path refid="classpath"/>
+              <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+<!--
+              <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
+              <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
+              <fileset dir="${basedir}/testlib/lib">
+                <include name="**/*.jar"/>
+              </fileset>
+-->
+            </classpath>
+            <arg value="-stdlib"/>
+            <arg value="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            <arg value="-src"/>
+            <arg value="${basedir}/testlib/test"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/testlib"/>
+            <arg value="-module"/>
+            <arg value="${basedir}/testlib/module.kt"/>
+        </java>
+    </target>
+
     <target name="compileJDKHeaders" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
