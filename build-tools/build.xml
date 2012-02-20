@@ -265,14 +265,14 @@
             <run-java classname = "bottles.namespace" equals="false" out="12 bottles of beer on the wall, 12 bottles of beer."/>
             <run-java classname = "life.namespace"    equals="false" out="***  ** **  ***"/>
             <!--<run-java classname = "maze.namespace"    equals="false" out="O ~OOOOOOOOOOOOOO"/>-->
-            <run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+            <!--<run-java classname = "html.namespace"    equals="false" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
 
             <kotlinc-jar src    = "${basedir}/build-tools/test/longer-examples"/>
 
             <run-java classname = "bottles.namespace" equals="false" run-jar="true" out="12 bottles of beer on the wall, 12 bottles of beer."/>
             <run-java classname = "life.namespace"    equals="false" run-jar="true" out="***  ** **  ***"/>
             <!--<run-java classname = "maze.namespace"    equals="false" run-jar="true" out="O ~OOOOOOOOOOOOOO"/>-->
-            <run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>
+            <!--<run-java classname = "html.namespace"    equals="false" run-jar="true" out="&lt;a href=&quot;http://jetbrains.com/kotlin&quot;&gt;"/>-->
         </sequential>
     </macrodef>
 
