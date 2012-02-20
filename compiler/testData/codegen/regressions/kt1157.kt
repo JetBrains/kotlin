@@ -23,6 +23,6 @@ public object SomeClass {
 
 public fun box():String {
     if(SomeClass.bug is Throwable)
-      throw SomeClass.bug
+      throw SomeClass.bug as Throwable
     return "OK"
 }

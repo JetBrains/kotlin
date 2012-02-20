@@ -204,10 +204,11 @@ public class JavaTypeTransformer {
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
             classTypesMap.put("java.lang.CharSequence", standardLibrary.getNullableCharSequenceType());
+            classTypesMap.put("java.lang.Throwable", standardLibrary.getThrowableType());
         }
         return classTypesMap;
     }
-    
+
     public Map<String, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
         if (classDescriptorMap == null) {
             classDescriptorMap = new HashMap<String, ClassDescriptor>();
@@ -217,6 +218,7 @@ public class JavaTypeTransformer {
             }
             classDescriptorMap.put("java.lang.String", standardLibrary.getString());
             classDescriptorMap.put("java.lang.CharSequence", standardLibrary.getCharSequence());
+            classDescriptorMap.put("java.lang.Throwable", standardLibrary.getThrowable());
         }
         return classDescriptorMap;
     }

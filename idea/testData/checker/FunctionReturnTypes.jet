@@ -157,7 +157,7 @@ fun illegalReturnIf(): Char {
 }
 
 fun returnNothing(): Nothing {
-    throw 1
+    throw <error>1</error>
 }
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()

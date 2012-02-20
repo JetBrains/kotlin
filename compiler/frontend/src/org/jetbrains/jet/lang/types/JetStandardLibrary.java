@@ -72,14 +72,16 @@ public class JetStandardLibrary {
     private ClassDescriptor iterableClass;
     private ClassDescriptor comparableClass;
     private ClassDescriptor volatileClass;
+    private ClassDescriptor throwableClass;
 
     private JetType stringType;
     private JetType volatileType;
     private JetType nullableStringType;
     private JetType charSequenceType;
     private JetType nullableCharSequenceType;
-
     private JetType nullableTuple0Type;
+    private JetType throwableType;
+    private JetType nullableThrowableType;
 
     private JetType tuple0Type;
 
@@ -143,6 +145,7 @@ public class JetStandardLibrary {
             this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier("CharSequence");
             this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
             this.volatileClass = (ClassDescriptor) libraryScope.getClassifier("volatile");
+            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier("Throwable");            
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
@@ -153,6 +156,8 @@ public class JetStandardLibrary {
             this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);
             this.nullableStringType = TypeUtils.makeNullable(stringType);
             this.volatileType = new JetTypeImpl(getVolatile());
+            this.throwableType = new JetTypeImpl(getThrowable());
+            this.nullableThrowableType = TypeUtils.makeNullable(throwableType);
 
             this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));
             this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);
@@ -270,6 +275,12 @@ public class JetStandardLibrary {
         return comparableClass;
     }
 
+    @NotNull
+    public ClassDescriptor getThrowable() {
+        initStdClasses();
+        return throwableClass;
+    }
+    
     public Set<FunctionDescriptor> getTypeInfoFunctions() {
         initStdClasses();
         return typeInfoFunction;
@@ -392,6 +403,17 @@ public class JetStandardLibrary {
     public JetType getNullableCharSequenceType() {
         initStdClasses();
         return nullableCharSequenceType;
+    }
+    
+    @NotNull
+    public JetType getThrowableType() {
+        initStdClasses();
+        return throwableType;
+    }
+
+    public JetType getNullableThrowableType() {
+        initStdClasses();
+        return nullableThrowableType;
     }
 
     @NotNull

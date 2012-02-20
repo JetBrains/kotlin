@@ -400,6 +400,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
                 VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter);
+                JetType throwableType = context.semanticServices.getStandardLibrary().getThrowable().getDefaultType();
+                DataFlowUtils.checkType(variableDescriptor.getOutType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context).setDebugName("Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
@@ -433,8 +435,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitThrowExpression(JetThrowExpression expression, ExpressionTypingContext context) {
         JetExpression thrownExpression = expression.getThrownExpression();
         if (thrownExpression != null) {
-            JetType type = facade.getType(thrownExpression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceScope(context.scope));
-            // TODO : check that it inherits Throwable
+            JetType throwableType = context.semanticServices.getStandardLibrary().getThrowable().getDefaultType();
+            facade.getType(thrownExpression, context.replaceExpectedType(throwableType).replaceScope(context.scope));
         }
         return DataFlowUtils.checkType(JetStandardClasses.getNothingType(), expression, context);
     }

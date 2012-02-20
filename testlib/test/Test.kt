@@ -135,7 +135,7 @@ fun <T: Exception> failsWith(block: ()-> Any) {
 }
 
 fun todo(block: ()-> Any) {
-  println("TODO at " + Exception().getStackTrace()?.get(1) + " for " + block)
+  println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
 }
 
 /*

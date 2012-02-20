@@ -842,6 +842,8 @@ public class JetTypeMapper {
         knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
         knowTypes.put(standardLibrary.getCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
         knowTypes.put(standardLibrary.getNullableCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
+        knowTypes.put(standardLibrary.getThrowableType(), TYPE_THROWABLE);
+        knowTypes.put(standardLibrary.getNullableThrowableType(), TYPE_THROWABLE);
 
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();

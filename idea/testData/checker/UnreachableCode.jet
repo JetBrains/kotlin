@@ -107,7 +107,7 @@ fun t7() : Int {
     return 1
     <error>2</error>
   }
-  catch (e : Any) {
+  catch (<error>e : Any</error>) {
     <warning>2</warning>
   }
   return 1 // this is OK, like in Java
@@ -118,7 +118,7 @@ fun t8() : Int {
     return 1
     <error>2</error>
   }
-  catch (e : Any) {
+  catch (<error>e : Any</error>) {
     return 1
     <error>2</error>
   }
