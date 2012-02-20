@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
@@ -48,5 +49,10 @@ public class ErrorNamedFunctionDescriptorImpl extends NamedFunctionDescriptorImp
     @Override
     public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         return this;
+    }
+
+    @Override
+    public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
+        // nop
     }
 }
