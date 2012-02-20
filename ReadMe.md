@@ -28,3 +28,7 @@ Then, you need to run
     ant -f build.xml
     
 which will build the binaries and put them into the 'dist' directory.
+
+## Kommitter links
+
+* [TeamCity CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
