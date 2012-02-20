@@ -19,6 +19,7 @@
  */
 package org.jetbrains.jet.plugin.internal.resolvewindow;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -62,7 +63,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ResolutionDebugInfo.*;
 /*
  * @author abreslav
  */
-public class ResolveToolwindow extends JPanel {
+public class ResolveToolwindow extends JPanel implements Disposable {
 
     public static final String BAR = "\n\n===\n\n";
 
@@ -339,5 +340,10 @@ public class ResolveToolwindow extends JPanel {
                 myEditor.getDocument().setText(text);
             }
         }.execute();
+    }
+
+    @Override
+    public void dispose() {
+        EditorFactory.getInstance().releaseEditor(myEditor);
     }
 }
