@@ -2,12 +2,13 @@ package test.dom
 
 import std.*
 import std.dom.*
+import std.util.*
 import stdhack.test.*
 import org.w3c.dom.*
 
 class DomBuilderTest() : TestSupport() {
 
-    fun testBuildDocumnet() {
+    fun testBuildDocument() {
         var doc = createDocument()
 
         doc.addElement("foo") {
@@ -19,11 +20,24 @@ class DomBuilderTest() : TestSupport() {
                 addElement("grandChild") {
                     cssClass = "tiny"
                     addText("Hello World!")
-                    // TODO support neater syntax sugar for adding text?
-                    // += "Hello World!"
+                // TODO support neater syntax sugar for adding text?
+                // += "Hello World!"
                 }
             }
         }
         println("builder document: ${doc.toXmlString()}")
+
+
+        val grandChild = doc.elementsByTagName("grandChild").first
+        if (grandChild != null) {
+            println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
+            assertEquals("Hello World!", grandChild.text)
+        } else {
+            fail("Not an Element $grandChild")
+        }
+        val children = doc.rootElement.children()
+        val xml = children.toXmlString()
+        println("root element has children: ${xml}")
+        assertEquals(1, children.size())
     }
 }

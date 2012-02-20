@@ -1,10 +1,56 @@
 package std.dom
 
 import std.*
+import std.util.*
+import java.util.*
 import org.w3c.dom.*
 
 
 // Properties
+
+val Document?.rootElement : Element?
+get() = if (this != null) this.getDocumentElement() else null
+
+
+var Node.text : String
+get() {
+    if (this is Element) {
+        return this.text
+    } else {
+        return this.getNodeValue() ?: ""
+    }
+}
+set(value) {
+    if (this is Element) {
+        this.text = value
+    } else {
+        this.setNodeValue(value)
+    }
+}
+
+var Element.text : String
+get() {
+    val buffer = StringBuilder()
+    val nodeList = this.getChildNodes()
+    if (nodeList != null) {
+        var i = 0
+        val size = nodeList.getLength()
+        while (i < size) {
+            val node = nodeList.item(i)
+            if (node != null) {
+                if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+                    buffer.append(node.getNodeValue())
+                }
+            }
+            i++
+        }
+    }
+    return buffer.toString().sure()
+}
+set(value) {
+    // lets remove all the previous text nodes first
+    this.setAttribute("id", value)
+}
 
 var Element.id : String
 get() = this.getAttribute("id")?: ""
@@ -25,6 +71,104 @@ set(value) {
     this.setAttribute("class", value)
 }
 
+
+// Helper methods
+
+inline fun Element?.children(): List<Node> {
+    return this?.getChildNodes().toList()
+}
+
+inline fun Element?.elementsByTagName(name: String?): List<Element> {
+    return this?.getElementsByTagName(name).toElementList()
+}
+
+inline fun Element?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+inline fun Document?.elementsByTagName(name: String?): List<Element> {
+    return this?.getElementsByTagName(name).toElementList()
+}
+
+inline fun Document?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
+    return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
+}
+
+val NodeList?.head : Node?
+get() = if (this != null && this.getLength() > 0) this.item(0) else null
+
+val NodeList?.first : Node?
+get() = this.head
+
+val NodeList?.tail : Node?
+get() {
+    if (this == null) {
+        return null
+    } else {
+        val s = this.getLength()
+        return if (s > 0) this.item(s - 1) else null
+    }
+}
+
+val NodeList?.last : Node?
+get() = this.tail
+
+
+inline fun NodeList?.toList(): List<Node> {
+    return if (this == null) {
+        Collections.EMPTY_LIST as List<Node>
+    }
+    else {
+        NodeListAsList(this)
+    }
+}
+
+inline fun NodeList?.toElementList(): List<Element> {
+    return if (this == null) {
+        Collections.EMPTY_LIST as List<Element>
+    }
+    else {
+        ElementListAsList(this)
+    }
+}
+
+fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
+    return if (this == null)
+        "" else {
+        this.toList().toXmlString(xmlDeclaration)
+    }
+}
+
+class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
+    override fun get(index: Int): Node {
+        val node = nodeList.item(index)
+        if (node == null) {
+            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
+        } else {
+            return node
+        }
+    }
+
+    override fun size(): Int = nodeList.getLength()
+}
+
+class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
+    override fun get(index: Int): Element {
+        val node = nodeList.item(index)
+        if (node is Element) {
+            return node
+        } else {
+            if (node == null) {
+                throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
+            } else {
+                throw IllegalArgumentException("Node is not an Element as expected but is $node")
+            }
+        }
+    }
+
+    override fun size(): Int = nodeList.getLength()
+
+}
 // Syntax sugar
 
 inline fun Node.plus(child: Node?): Node {
