@@ -21,20 +21,20 @@ package org.jetbrains.jet.plugin.run;
 
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
+import com.intellij.execution.PsiLocation;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.JUnitConfiguration;
 import com.intellij.execution.junit.JUnitConfigurationType;
+import com.intellij.execution.junit.JUnitUtil;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 
 public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer {
     private JetElement myElement;
@@ -50,25 +50,56 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-
         PsiElement leaf = location.getPsiElement();
+        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class);
+        if (function != null) {
+            myElement = function;
+            JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
+            if (owner instanceof JetClass) {
+                JetLightClass delegate = wrapDelegate((JetClass) owner);
+                for (PsiMethod method : delegate.getMethods()) {
+                    if (method.getNavigationElement() == function) {
+                        Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
+                        if (JUnitUtil.isTestMethod(methodLocation, false)) {
+                            RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
+                            final JUnitConfiguration configuration = (JUnitConfiguration)settings.getConfiguration();
+
+                            final Module originalModule = configuration.getConfigurationModule().getModule();
+                            configuration.beMethodConfiguration(methodLocation);
+                            configuration.restoreOriginalModule(originalModule);
+                            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+                            return settings;
+                        }
+                        break;
+                    }
+                }
+
+            }
+        }
+
         JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class);
         if (jetClass != null) {
             myElement = jetClass;
-            PsiClass delegate = new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
+            PsiClass delegate = wrapDelegate(jetClass);
 
-            RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(jetClass.getProject(), context);
-            final JUnitConfiguration configuration = (JUnitConfiguration)settings.getConfiguration();
+            if (JUnitUtil.isTestClass(delegate)) {
+                RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
+                final JUnitConfiguration configuration = (JUnitConfiguration)settings.getConfiguration();
 
-            final Module originalModule = configuration.getConfigurationModule().getModule();
-            configuration.beClassConfiguration(delegate);
-            configuration.restoreOriginalModule(originalModule);
-            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
-            return settings;
+                final Module originalModule = configuration.getConfigurationModule().getModule();
+                configuration.beClassConfiguration(delegate);
+                configuration.restoreOriginalModule(originalModule);
+                JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+                return settings;
+            }
 
         }
 
         return null;
+    }
+
+    private static JetLightClass wrapDelegate(JetClass jetClass) {
+        return new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
     }
 
     @Override
