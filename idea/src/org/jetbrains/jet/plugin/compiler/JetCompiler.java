@@ -214,10 +214,16 @@ public class JetCompiler implements TranslatingCompiler {
     private static int execInProcess(File kotlinHome, VirtualFile outputDir, File scriptFile, PrintStream out, CompileContext context) {
         URLClassLoader loader = getOrCreateClassloader(kotlinHome, context);
         try {
-            Class<?> kompiler = Class.forName("org.jetbrains.jet.cli.KotlinCompiler", true, loader);
+            String compilerClassName = "org.jetbrains.jet.cli.KotlinCompiler";
+            Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            Object rc = exec.invoke(null, out, new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir)});
+            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir) };
+
+            context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
+            context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
+            
+            Object rc = exec.invoke(null, out, arguments);
             if (rc instanceof Integer) {
                 return ((Integer) rc).intValue();
             }
@@ -273,6 +279,9 @@ public class JetCompiler implements TranslatingCompiler {
 
         final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
                 ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
+        
+        compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
+        
         try {
             final OSProcessHandler processHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString()) {
               @Override
