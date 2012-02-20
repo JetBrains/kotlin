@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+package flist;
+
 import java.util.NoSuchElementException;
 
 abstract public class FList<T> {

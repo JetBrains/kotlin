@@ -1,4 +1,20 @@
-package threadring
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package threadring_kotlin
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -24,19 +40,14 @@ fun main(args: Array<String>) {
     System.out?.println("[ThreadRing-" + System.getProperty("project.name")+ " Benchmark Result: " + total + "]")
 }
 
-class TokenMessage(val nodeId : Int, value: Int, val isStop: Boolean) : AtomicInteger(value){
-}
+class TokenMessage(val nodeId : Int, value: Int, val isStop: Boolean) : AtomicInteger(value)
 
 class ThreadRing(val N: Int) {
     val executor = Executors.newFixedThreadPool(MAX_THREADS).sure()
 
-    val nodes : Array<Node> = Array<Node>(MAX_NODES+1, { Node(it+1) })
+    val nodes : Array<Node> = Array<Node>(MAX_NODES+1, { (it : Int) -> Node(it+1) });
 
     {
-        connectNodes()
-    }
-
-    fun connectNodes() {
         nodes[nodes.size-1] = nodes[0]
         for (i in 0..nodes.size-2) {
             nodes[i].connect(nodes[i+1]);
@@ -46,6 +57,7 @@ class ThreadRing(val N: Int) {
     fun sendMessage(m : TokenMessage) {
         nodes[0].sendMessage(m)
     }
+
     class Node(val nodeId : Int) : Runnable {
         val queue = LinkedBlockingQueue<TokenMessage>()
         var isActive = false

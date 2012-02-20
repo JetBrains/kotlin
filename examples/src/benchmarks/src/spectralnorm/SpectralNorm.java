@@ -1,3 +1,4 @@
+package spectralnorm_kotlin;
 /*
  * Copyright 2010-2012 JetBrains s.r.o.
  *

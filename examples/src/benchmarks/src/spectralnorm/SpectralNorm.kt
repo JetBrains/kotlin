@@ -1,4 +1,4 @@
-package spectralnorm
+package spectralnorm_kotlin
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
