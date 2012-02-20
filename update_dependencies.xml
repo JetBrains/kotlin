@@ -33,6 +33,13 @@
             <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/${build.zip}"/>
 
+            <!--
+                 This one needs to be deleted because otherwise it gets onto the classpath
+                 together with junit-4.10.jar and the classloading goes crazy that breaks
+                 many nice features of IDEA including diffs in the test console.
+            -->
+            <delete file="ideaSDK/lib/junit.jar"/>
+
             <mkdir dir="ideaSDK/sources"/>
             <get src="${tc}/sources.zip" dest="ideaSDK/sources"/>
         </sequential>
