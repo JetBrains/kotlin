@@ -155,7 +155,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
             }
-            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 final EnclosedValueDescriptor valueDescriptor = closure.get(descriptor);
                 answer.addArg(valueDescriptor.getOuterValue());
             }
@@ -257,7 +257,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 argCount++;
                 variableDescriptors.add(descriptor);
             }
-            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 argCount++;
                 variableDescriptors.add(descriptor);
             }
@@ -283,7 +283,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
                 argTypes[i++] = type;
             }
-            else if(descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+            else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
                 final Type type = Type.getObjectType(state.getTypeMapper().classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)));
                 argTypes[i++] = type;
             }
@@ -294,7 +294,6 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         if (cv.generateCode()) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
-            ExpressionCodegen expressionCodegen = new ExpressionCodegen(mv, null, Type.VOID_TYPE, context, state);
 
             iv.load(0, Type.getObjectType(funClass));
 //        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));

@@ -76,7 +76,7 @@ public class ObjectOrClosureCodegen {
             return innerValue;
         }
 
-        if(d instanceof NamedFunctionDescriptor && d.getContainingDeclaration() instanceof FunctionDescriptor) {
+        if(CodegenUtil.isNamedFun(d, state.getBindingContext()) && d.getContainingDeclaration() instanceof FunctionDescriptor) {
             FunctionDescriptor vd = (FunctionDescriptor) d;
 
             final int idx = exprContext.lookupLocal(vd);

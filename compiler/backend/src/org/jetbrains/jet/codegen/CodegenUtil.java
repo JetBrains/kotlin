@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -144,9 +144,17 @@ public class CodegenUtil {
         }
     }
 
-    static boolean isNonLiteralObject(JetClassOrObject myClass) {
+    public static boolean isNonLiteralObject(JetClassOrObject myClass) {
         return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
                 !(myClass.getParent() instanceof JetClassObject);
     }
 
+
+    public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
+        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fd);
+        if(psiElement instanceof JetNamedFunction) {
+            return true;
+        }
+        return false;
+    }
 }

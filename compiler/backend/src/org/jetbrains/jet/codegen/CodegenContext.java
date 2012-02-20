@@ -44,6 +44,11 @@ public abstract class CodegenContext {
         public boolean isStatic() {
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "ROOT";
+        }
     };
 
     protected static final StackValue local0 = StackValue.local(0, JetTypeMapper.TYPE_OBJECT);
@@ -73,7 +78,7 @@ public abstract class CodegenContext {
     }
 
     protected abstract ClassDescriptor getThisDescriptor ();
-    
+
     public DeclarationDescriptor getClassOrNamespaceDescriptor() {
         CodegenContext c = this;
         while(true) {
@@ -331,6 +336,11 @@ public abstract class CodegenContext {
         protected StackValue getOuterExpression(StackValue prefix) {
             return getParentContext().getOuterExpression(prefix);
         }
+
+        @Override
+        public String toString() {
+            return "Method: " + getContextDescriptor();
+        }
     }
 
     public static class ConstructorContext extends MethodContext {
@@ -345,6 +355,11 @@ public abstract class CodegenContext {
 
         protected StackValue getOuterExpression(StackValue prefix) {
             return outerExpression;
+        }
+
+        @Override
+        public String toString() {
+            return "Constructor: " + getContextDescriptor().getName();
         }
     }
 
@@ -388,6 +403,11 @@ public abstract class CodegenContext {
         public boolean isStatic() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "Anonymous: " + getThisDescriptor();
+        }
     }
 
     public static class ClosureContext extends ReceiverContext {
@@ -417,6 +437,11 @@ public abstract class CodegenContext {
         public boolean isStatic() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "Closure: " + classDescriptor;
+        }
     }
 
     public static class NamespaceContext extends CodegenContext {
@@ -432,6 +457,11 @@ public abstract class CodegenContext {
         @Override
         public boolean isStatic() {
             return true;
+        }
+
+        @Override
+        public String toString() {
+            return "Namespace: " + getContextDescriptor().getName();
         }
     }
 }
