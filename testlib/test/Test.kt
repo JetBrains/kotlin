@@ -101,6 +101,10 @@ fun assertNull(actual: Any?, message: String = "") {
   Assert.assertNull(message, actual)
 }
 
+fun fail(message: String = "") {
+  Assert.fail(message)
+}
+
 fun <T> expect(expected: T, block: ()-> T) {
   expect(expected, block.toString(), block)
 }
