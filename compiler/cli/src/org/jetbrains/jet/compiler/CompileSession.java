@@ -27,18 +27,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -137,8 +144,33 @@ public class CompileSession {
         reportSyntaxErrors(errorCollector);
         analyzeAndReportSemanticErrors(errorCollector);
 
+
+        boolean hasIncompleteHierarchyErrors;
+        Collection<ClassDescriptor> incompletes = myBindingContext.getKeys(BindingContext.INCOMPLETE_HIERARCHY);
+        if (!incompletes.isEmpty()) {
+            out.println("following classes have incomplete hierarchies:");
+            for (ClassDescriptor incomplete : incompletes) {
+                out.println("    " + fqName(incomplete));
+            }
+            hasIncompleteHierarchyErrors = true;
+        } else {
+            hasIncompleteHierarchyErrors = false;
+        }
+
         errorCollector.flushTo(out);
-        return !errorCollector.hasErrors;
+        return !errorCollector.hasErrors && !hasIncompleteHierarchyErrors;
+    }
+
+    /**
+     * @see JetTypeMapper#getFQName(DeclarationDescriptor)
+     */
+    private String fqName(ClassOrNamespaceDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration == null || containingDeclaration instanceof ModuleDescriptor || containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
+            return descriptor.getName();
+        } else {
+            return fqName((ClassOrNamespaceDescriptor) containingDeclaration) + "." + descriptor.getName();
+        }
     }
 
     private void analyzeAndReportSemanticErrors(ErrorCollector errorCollector) {

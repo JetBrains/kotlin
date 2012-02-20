@@ -309,7 +309,7 @@ public class JavaDescriptorResolver {
         TypeVariableResolverFromTypeDescriptors resolverForTypeParameters = new TypeVariableResolverFromTypeDescriptors(classData.getTypeParameters(), null);
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.getTypeParameters()));
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.classDescriptor, classData.getTypeParameters()));
 
         if (psiClass.isInterface()) {
             //classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
@@ -669,7 +669,7 @@ public class JavaDescriptorResolver {
         }
     }
 
-    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, List<TypeParameterDescriptor> typeParameters) {
+    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, ClassDescriptor classDescriptor, List<TypeParameterDescriptor> typeParameters) {
         final List<JetType> result = new ArrayList<JetType>();
 
         if (psiClass.getJetClass().signature().length() > 0) {
@@ -703,6 +703,13 @@ public class JavaDescriptorResolver {
             transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
             transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
         }
+        
+        for (JetType supertype : result) {
+            if (ErrorUtils.isErrorType(supertype)) {
+                semanticServices.getTrace().record(BindingContext.INCOMPLETE_HIERARCHY, classDescriptor);
+            }
+        }
+        
         if (result.isEmpty()) {
             result.add(JetStandardClasses.getAnyType());
         }

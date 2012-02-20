@@ -171,6 +171,8 @@ public interface BindingContext {
 
     WritableSlice<String, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<String, ClassDescriptor>(DO_NOTHING, true);
     WritableSlice<String, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<String, NamespaceDescriptor>(DO_NOTHING);
+    
+    WritableSlice<ClassDescriptor, Boolean> INCOMPLETE_HIERARCHY = Slices.createCollectiveSetSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer
