@@ -309,7 +309,6 @@ public class ImportsResolver {
             }
             else {
                 descriptors.addAll(outerScope.getFunctions(referencedName));
-
                 descriptors.addAll(outerScope.getProperties(referencedName));
 
                 VariableDescriptor localVariable = outerScope.getLocalVariable(referencedName);
@@ -353,29 +352,75 @@ public class ImportsResolver {
 
         private void storeResolutionResult(
                 @NotNull Collection<? extends DeclarationDescriptor> descriptors,
-                @NotNull Collection<? extends DeclarationDescriptor> filteredDescriptors,
+                @NotNull Collection<? extends DeclarationDescriptor> canBeImportedDescriptors,
                 @NotNull JetSimpleNameExpression referenceExpression,
                 @NotNull JetScope resolutionScope) {
 
-            if (descriptors.size() == 1 && filteredDescriptors.size() <= 1) {
-                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
-            }
-            if (filteredDescriptors.isEmpty()) {
-                if (!descriptors.isEmpty()) {
-                    trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next()));
-                }
-                else {
-                    trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
-                }
-            }
-            else if (filteredDescriptors.size() > 1) {
-                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
+            assert canBeImportedDescriptors.size() <= descriptors.size();
+
+            // A special case - will fill all trace information
+            if (resolveClassNamespaceAmbiguity(canBeImportedDescriptors, referenceExpression, resolutionScope)) {
+                return;
             }
 
-            // If it's not an ambiguous case - store resolution scope
-            if (descriptors.size() <= 1) {
+            if (descriptors.isEmpty()) {
+                trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+                trace.report(UNRESOLVED_REFERENCE.on(referenceExpression));
+                return;
+            }
+
+            if (descriptors.size() == 1) {
+                assert canBeImportedDescriptors.size() <= 1;
+                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
                 trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
             }
+            else if (canBeImportedDescriptors.size() == 1) {
+                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, canBeImportedDescriptors.iterator().next());
+                trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+            }
+
+            if (canBeImportedDescriptors.isEmpty()) {
+                assert descriptors.size() >= 1;
+                trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next()));
+            }
+            else if (canBeImportedDescriptors.size() > 1) {
+                trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
+            }
+        }
+
+        /**
+         * This method tries to resolve descriptors ambiguity between class descriptor and namespace descriptor for the same class.
+         * It's ok choose class for expression reference resolution.
+         *
+         * @return <code>true</code> if method has successfully resolved ambiguity
+         */
+        private boolean resolveClassNamespaceAmbiguity(Collection<? extends DeclarationDescriptor> filteredDescriptors,
+                                                       JetSimpleNameExpression referenceExpression,
+                                                       JetScope resolutionScope) {
+
+            if (filteredDescriptors.size() == 2) {
+                NamespaceDescriptor namespaceDescriptor = null;
+                ClassDescriptor classDescriptor = null;
+
+                for (DeclarationDescriptor filteredDescriptor : filteredDescriptors) {
+                    if (filteredDescriptor instanceof NamespaceDescriptor) {
+                        namespaceDescriptor = (NamespaceDescriptor) filteredDescriptor;
+                    }
+                    else if (filteredDescriptor instanceof ClassDescriptor) {
+                        classDescriptor = (ClassDescriptor) filteredDescriptor;
+                    }
+                }
+
+                if (namespaceDescriptor != null && classDescriptor != null) {
+                    if (DescriptorUtils.getFQName(namespaceDescriptor).equals(DescriptorUtils.getFQName(classDescriptor))) {
+                        trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classDescriptor);
+                        trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
