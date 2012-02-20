@@ -86,6 +86,35 @@
         </java>
     </target>
 
+    <target name="testlib" depends="compileTestlib">
+        <mkdir dir="${output}/test-reports"/>
+
+        <junit printsummary="yes" haltonfailure="no">
+          <classpath>
+              <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
+              <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
+              <fileset dir="${basedir}/testlib/lib">
+                <include name="**/*.jar"/>
+              </fileset>
+            <pathelement path="${output}/classes/testlib"/>
+          </classpath>
+
+          <formatter type="plain"/>
+
+<!--
+          <test name="my.test.TestCase" haltonfailure="no" outfile="result">
+            <formatter type="xml"/>
+          </test>
+-->
+
+          <batchtest fork="yes" todir="${output}/test-reports">
+            <fileset dir="${output}/classes/testlib">
+              <include name="**/*Test.*"/>
+            </fileset>
+          </batchtest>
+        </junit>
+    </target>
+
     <target name="compileJDKHeaders" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">

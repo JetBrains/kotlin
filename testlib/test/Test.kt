@@ -9,7 +9,7 @@ import org.junit.runner.*
 import org.junit.runner.notification.*
 import junit.framework.*
 
-protected class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test: BuiltTest<T>.() -> Unit) : TestCase(name) {
+protected class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test: TestBuilt<T>.() -> Unit) : TestCase(name) {
     private var myState: T? = null
 
     var state : T
@@ -32,12 +32,12 @@ protected class BuiltTest<T>(name: String, val builder: TestBuilder<T>, val test
 open class TestBuilder<T>(name: String) {
     val mySuite : TestSuite = TestSuite(name)
 
-    public var setUp : BuiltTest<T>.() -> Unit = {}
+    public var setUp : TestBuilt<T>.() -> Unit = {}
 
-    public var tearDown : BuiltTest<T>.() -> Unit = {}
+    public var tearDown : TestBuilt<T>.() -> Unit = {}
 
-    fun String.minus(test: BuiltTest<T>.() -> Unit) {
-        mySuite.addTest(BuiltTest<T>(this, this@TestBuilder, test))
+    fun String.minus(test: TestBuilt<T>.() -> Unit) {
+        mySuite.addTest(TestBuilt<T>(this, this@TestBuilder, test))
     }
 }
 
