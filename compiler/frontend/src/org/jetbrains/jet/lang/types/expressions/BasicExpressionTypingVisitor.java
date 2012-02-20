@@ -611,7 +611,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 checkSuper(receiver, resultingDescriptor, context.trace, selectorExpression);
                 return resultingDescriptor.getOutType();
             }
-            if (resolutionResult.isAmbiguity()) {
+            if (resolutionResult.isAmbiguity() || resolutionResult.singleResult()) {
                 temporaryTrace.commit();
                 return null;
             }
