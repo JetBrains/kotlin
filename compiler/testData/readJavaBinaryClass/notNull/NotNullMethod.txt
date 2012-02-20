@@ -1,0 +1,6 @@
+namespace test
+
+open class test.NotNullMethod : jet.Any {
+    final /*constructor*/ fun <init>(): test.NotNullMethod
+    open fun hi(): jet.String
+}

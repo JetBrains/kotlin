@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.PsiType;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,10 +29,13 @@ class TypeSource {
     private final String typeString;
     @NotNull
     private final PsiType psiType;
+    @NotNull
+    private final PsiModifierListOwner psiNotNullOwner;
 
-    TypeSource(@NotNull String typeString, @NotNull PsiType psiType) {
+    TypeSource(@NotNull String typeString, @NotNull PsiType psiType, @NotNull PsiModifierListOwner psiNotNullOwner) {
         this.typeString = typeString;
         this.psiType = psiType;
+        this.psiNotNullOwner = psiNotNullOwner;
     }
 
     @NotNull
@@ -42,5 +46,10 @@ class TypeSource {
     @NotNull
     public PsiType getPsiType() {
         return psiType;
+    }
+
+    @NotNull
+    public PsiModifierListOwner getPsiNotNullOwner() {
+        return psiNotNullOwner;
     }
 }

@@ -1,0 +1,6 @@
+namespace test
+
+open class test.NotNullParameter : jet.Any {
+    final /*constructor*/ fun <init>(): test.NotNullParameter
+    open fun hi(/*0*/ p0: jet.String): jet.Tuple0
+}

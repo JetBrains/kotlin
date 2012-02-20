@@ -88,7 +88,7 @@ class JavaDescriptorResolverHelper {
 
                     NamedMembers namedMembers = getNamedMembers(field.getName());
 
-                    TypeSource type = new TypeSource("", field.getType());
+                    TypeSource type = new TypeSource("", field.getType(), field0);
                     namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
                 }
             }
@@ -124,7 +124,7 @@ class JavaDescriptorResolverHelper {
                         TypeSource receiverType;
                         if (i < method.getParameters().size() && method.getParameter(i).getJetValueParameter().receiver()) {
                             PsiParameterWrapper receiverParameter = method.getParameter(i);
-                            receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType());
+                            receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
                             ++i;
                         } else {
                             receiverType = null;
@@ -144,7 +144,7 @@ class JavaDescriptorResolverHelper {
                         NamedMembers members = getNamedMembers(propertyName);
 
                         // TODO: what if returnType == null?
-                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType());
+                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType(), method.getPsiMethod());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
                     }
@@ -161,7 +161,7 @@ class JavaDescriptorResolverHelper {
                         TypeSource receiverType = null;
                         PsiParameterWrapper p1 = method.getParameter(0);
                         if (p1.getJetValueParameter().receiver()) {
-                            receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType());
+                            receiverType = new TypeSource(p1.getJetValueParameter().type(), p1.getPsiParameter().getType(), p1.getPsiParameter());
                             ++i;
                         }
 
@@ -174,7 +174,7 @@ class JavaDescriptorResolverHelper {
                         }
 
                         PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
-                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType());
+                        TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
 
                         String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
                         NamedMembers members = getNamedMembers(propertyName);

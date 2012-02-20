@@ -27,4 +27,6 @@ public class JvmAbi {
     public static final String PACKAGE_CLASS = "namespace";
     public static final String SET_TYPE_INFO_METHOD = "$setTypeInfo";
     public static final String TYPE_INFO_FIELD = "$typeInfo";
+
+    public static final JvmClassName JETBRAINS_NOT_NULL_ANNOTATION = new JvmClassName("org.jetbrains.annotations.NotNull");
 }

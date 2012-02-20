@@ -879,8 +879,6 @@ public class JavaDescriptorResolver {
 
         PsiType psiType = parameter.getPsiParameter().getType();
 
-        boolean nullable = parameter.getJetValueParameter().nullable();
-
         // TODO: must be very slow, make it lazy?
         String name = parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i;
 
@@ -909,13 +907,22 @@ public class JavaDescriptorResolver {
         if (receiver) {
             return JvmMethodParameterMeaning.receiver(outType);
         } else {
+
+            JetType transformedType;
+            if (parameter.getJetValueParameter().nullable()) {
+                transformedType = TypeUtils.makeNullableAsSpecified(outType, parameter.getJetValueParameter().nullable());
+            } else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+                transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
+            } else {
+                transformedType = outType;
+            }
             return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
                     containingDeclaration,
                     i,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO
                     name,
                     false,
-                    nullable ? TypeUtils.makeNullableAsSpecified(outType, nullable) : outType,
+                    transformedType,
                     hasDefaultValue,
                     varargElementType
             ));
@@ -1142,6 +1149,9 @@ public class JavaDescriptorResolver {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
             } else {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
+                if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+                    propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
+                }
             }
             
             JetType receiverType;
@@ -1491,6 +1501,8 @@ public class JavaDescriptorResolver {
         }
         if (method.getJetMethod().returnTypeNullable()) {
             return TypeUtils.makeNullableAsSpecified(transformedType, true);
+        } else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+            return TypeUtils.makeNullableAsSpecified(transformedType, false);
         } else {
             return transformedType;
         }

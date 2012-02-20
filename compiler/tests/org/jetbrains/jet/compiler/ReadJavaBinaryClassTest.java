@@ -97,7 +97,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         try {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(javaFile));
             List<String> options = Arrays.asList(
-                    "-classpath", "out/production/stdlib",
+                    "-classpath", "out/production/stdlib:ideaSDK/lib/annotations.jar",
                     "-d", tmpdir.getPath()
             );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
