@@ -1,3 +1,14 @@
+# Kotlin Programming Language
+
+Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
+
+ * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
+ * [Web Demo](http://kotlin-demo.jetbrains.com/)
+ * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
+ * [follow Kotlin on twitter](http://twitter.com/#!/project_kotlin)
+
+## Building
+
 To build this project you need to run
 
     ant -f update_dependencies.xml
