@@ -916,7 +916,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetType visitArrayAccessExpression(JetArrayAccessExpression expression, ExpressionTypingContext context) {
-        return resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetType type = resolveArrayAccessGetMethod(expression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        DataFlowUtils.checkType(type, expression, context);
+        return type;
     }
 
     @Nullable

@@ -17,7 +17,6 @@ fun hasDuplicates(a : IntArray) : Boolean {
         break@loop
       }
     }
-    return a[i]
   }
   return duplicate
 }
