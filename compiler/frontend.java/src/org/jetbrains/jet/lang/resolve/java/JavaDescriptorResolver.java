@@ -187,7 +187,6 @@ public class JavaDescriptorResolver {
     protected final Map<String, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
-    protected final Map<PsiMethod, FunctionDescriptorImpl> methodDescriptorCache = Maps.newHashMap();
     protected final JavaPsiFacade javaFacade;
     protected final GlobalSearchScope javaSearchScope;
     protected final JavaSemanticServices semanticServices;
@@ -1205,7 +1204,6 @@ public class JavaDescriptorResolver {
         Set<NamedFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
             FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
-                    typeSubstitutorForGenericSuperclasses,
                     method);
             if (function != null) {
                 functionsFromCurrent.add((NamedFunctionDescriptor) function);
@@ -1324,21 +1322,12 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, final PsiMethodWrapper method) {
+    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, final PsiMethodWrapper method) {
 
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;
         }
-        FunctionDescriptorImpl functionDescriptor = methodDescriptorCache.get(method.getPsiMethod());
-        if (functionDescriptor != null) {
-            if (method.getPsiMethod().getContainingClass() != psiClass) {
-                //functionDescriptor = functionDescriptor.substitute(typeSubstitutorForGenericSuperclasses);
-                throw new IllegalStateException();
-            }
-            return functionDescriptor;
-        }
-
         ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
 
         boolean kotlin;
@@ -1388,7 +1377,6 @@ public class JavaDescriptorResolver {
                 method.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        methodDescriptorCache.put(method.getPsiMethod(), functionDescriptorImpl);
 
         final TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(classDescriptor);
 
@@ -1409,9 +1397,8 @@ public class JavaDescriptorResolver {
         );
         semanticServices.getTrace().record(BindingContext.FUNCTION, method.getPsiMethod(), functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
-        if (method.getPsiMethod().getContainingClass() != psiClass) {
-            //substitutedFunctionDescriptor = functionDescriptorImpl.substitute(typeSubstitutorForGenericSuperclasses);
-            throw new IllegalStateException();
+        if (method.getPsiMethod().getContainingClass() != psiClass && !method.isStatic()) {
+            throw new IllegalStateException("non-static method in subclass");
         }
         return (FunctionDescriptorImpl) substitutedFunctionDescriptor;
     }
