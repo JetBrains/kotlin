@@ -1,0 +1,7 @@
+namespace test
+
+open class test.JavaBeanVal : jet.Any {
+    final /*constructor*/ fun <init>(): test.JavaBeanVal
+    open fun getColor(): jet.String?
+    val color: jet.String?
+}

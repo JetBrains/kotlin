@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -113,6 +114,9 @@ class JavaDescriptorResolverHelper {
                 // TODO: remove getJavaClass
                 if (method.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
 
+                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
+                    NamedMembers members = getNamedMembers(propertyName);
+
                     // TODO: some java properties too
                     if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
 
@@ -137,15 +141,21 @@ class JavaDescriptorResolverHelper {
                             throw new IllegalStateException();
                         }
 
-                        String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
-                        NamedMembers members = getNamedMembers(propertyName);
-
                         // TODO: what if returnType == null?
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType(), method.getPsiMethod());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
+                    } else if (!kotlin) {
+                        if (method.getParameters().size() == 0) {
+                            TypeSource propertyType = new TypeSource("", method.getReturnType(), method.getPsiMethod());
+                            members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, null));
+                        }
                     }
+
                 } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+
+                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
+                    NamedMembers members = getNamedMembers(propertyName);
 
                     if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
                         if (method.getParameters().size() == 0) {
@@ -173,10 +183,13 @@ class JavaDescriptorResolverHelper {
                         PsiParameterWrapper propertyTypeParameter = method.getParameter(i);
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
 
-                        String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
-                        NamedMembers members = getNamedMembers(propertyName);
-
                         members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
+                    } else if (!kotlin) {
+                        if (method.getParameters().size() == 1) {
+                            PsiParameter psiParameter = method.getParameters().get(0).getPsiParameter();
+                            TypeSource propertyType = new TypeSource("", psiParameter.getType(), psiParameter);
+                            members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, null));
+                        }
                     }
                 }
                 

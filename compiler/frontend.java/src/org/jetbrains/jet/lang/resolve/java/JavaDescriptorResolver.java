@@ -1069,9 +1069,13 @@ public class JavaDescriptorResolver {
         }
 
         
-        Set<VariableDescriptor> r = new HashSet<VariableDescriptor>();
-        
-        for (GroupingValue members : map.values()) {
+        Set<VariableDescriptor> r = new HashSet<VariableDescriptor>(1);
+
+        // we cannot have more then one property with given name even if java code
+        // has several fields, getters and setter of different types
+        if (map.size() == 1) {
+            GroupingValue members = map.values().iterator().next();
+
             boolean isFinal;
             if (members.setter == null && members.getter == null) {
                 isFinal = false;

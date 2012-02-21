@@ -24,4 +24,13 @@ abstract class test.ClassDoesNotOverrideMethod : java.util.Date {
     open override /*1*/ fun setYear(/*0*/ p0: jet.Int): jet.Tuple0
     open override /*1*/ fun toGMTString(): jet.String?
     open override /*1*/ fun toLocaleString(): jet.String?
+    val day: jet.Int
+    val timezoneOffset: jet.Int
+    var date: jet.Int
+    var hours: jet.Int
+    var minutes: jet.Int
+    var month: jet.Int
+    var seconds: jet.Int
+    var time: jet.Long
+    var year: jet.Int
 }
