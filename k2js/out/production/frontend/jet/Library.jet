@@ -1,0 +1,61 @@
+package jet
+
+class TypeInfo<out T> {
+  fun isSubtypeOf(other : TypeInfo<*>) : Boolean
+  fun isInstance(obj : Any?) : Boolean
+}
+
+fun typeinfo<T>() : TypeInfo<T>
+fun typeinfo<T>(expression : T) : TypeInfo<T>
+
+annotation class volatile
+annotation class atomic
+
+fun <R> synchronized(lock: Any, block : () -> R) : R
+
+fun Any?.identityEquals(other : Any?) : Boolean // = this === other
+
+// Can't write a body due to a bootstrapping problem (see JET-74)
+fun Any?.equals(other : Any?) : Boolean// = this === other
+
+// Returns "null" for null
+fun Any?.toString() : String// = this === other
+
+fun <T : Any> T?.sure() : T
+
+fun String?.plus(other: Any?) : String
+
+trait Comparable<in T> {
+  fun compareTo(other : T) : Int
+}
+
+trait Hashable {
+  fun hashCode() : Int
+  fun equals(other : Any?) : Boolean
+}
+
+class Boolean : Comparable<Boolean> {
+  fun not() : Boolean
+
+  fun and(other : Boolean) : Boolean
+
+  fun or(other : Boolean) : Boolean
+
+  fun xor(other : Boolean) : Boolean
+
+  fun equals(other : Any?) : Boolean
+}
+
+trait CharSequence {
+  fun get(index : Int) : Char
+
+  val length : Int
+
+  fun toString() : String
+}
+
+class String() : Comparable<String>, CharSequence {
+  fun plus(other : Any?) : String
+
+  fun equals(other : Any?) : Boolean
+}
