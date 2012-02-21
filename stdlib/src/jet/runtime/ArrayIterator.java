@@ -21,7 +21,7 @@ import jet.*;
 /**
  * @author alex.tkachman
  */
-public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
+public abstract class ArrayIterator<T> implements Iterator<T> {
     private final int size;
     protected int index;
 
@@ -46,11 +46,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public T next() {
             return array[index++];
         }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
-        }
     }
     
     public static <T> Iterator<T> iterator(T[] array) {
@@ -73,11 +68,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public byte nextByte() {
             return array[index++];
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 
@@ -103,11 +93,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public short nextShort() {
             return array[index++];
         }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
-        }
     }
 
     public static ShortIterator iterator(short[] array) {
@@ -131,11 +116,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public int nextInt() {
             return array[index++];
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 
@@ -161,11 +141,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public long nextLong() {
             return array[index++];
         }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
-        }
     }
 
     public static LongIterator iterator(long[] array) {
@@ -189,11 +164,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public float nextFloat() {
             return array[index++];
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 
@@ -219,11 +189,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public double nextDouble() {
             return array[index++];
         }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
-        }
     }
 
     public static DoubleIterator iterator(double[] array) {
@@ -248,11 +213,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         public char nextChar() {
             return array[index++];
         }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
-        }
     }
 
     public static CharIterator iterator(char[] array) {
@@ -276,11 +236,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public boolean nextBoolean() {
             return array[index++];
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 

@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class ShortRange implements Range<Short>, ShortIterable, JetObject {
+public final class ShortRange implements Range<Short>, ShortIterable {
     private final short start;
     private final int count;
 
@@ -72,11 +72,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
         return new MyIterator(start, count, 1);
     }
 
-    @Override
-    public JetObject getOuterObject() {
-        return null;
-    }
-
     public static ShortRange count(int length) {
         return new ShortRange((byte) 0, length);
     }
@@ -118,11 +113,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
                 cur += step;
                 return (short) (cur - step);
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

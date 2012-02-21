@@ -18,7 +18,7 @@ package jet;
 
 import jet.runtime.typeinfo.JetMethod;
 
-public interface Iterator<T> extends JetObject {
+public interface Iterator<T> {
     @JetMethod(kind = JetMethod.KIND_PROPERTY)
     boolean getHasNext();
     T next ();

@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class LongRange implements Range<Long>, LongIterable, JetObject {
+public final class LongRange implements Range<Long>, LongIterable {
     private final long start;
     private final long count;
 
@@ -72,11 +72,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
         return new MyIterator(start, count, 1);
     }
 
-    @Override
-    public JetObject getOuterObject() {
-        return null;
-    }
-
     public static LongRange count(int length) {
         return new LongRange(0, length);
     }
@@ -118,11 +113,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
                 cur += step;
                 return (cur - step);
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

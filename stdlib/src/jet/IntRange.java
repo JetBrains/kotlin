@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class IntRange implements Range<Integer>, IntIterable, JetObject {
+public final class IntRange implements Range<Integer>, IntIterable {
     private final int start;
     private final int count;
 
@@ -72,11 +72,6 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
         return new MyIterator(start, count, 1);
     }
 
-    @Override
-    public JetObject getOuterObject() {
-        return null;
-    }
-
     public static IntRange count(int length) {
         return new IntRange(0, length);
     }
@@ -118,11 +113,6 @@ public final class IntRange implements Range<Integer>, IntIterable, JetObject {
                 cur += step;
                 return cur - step;
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

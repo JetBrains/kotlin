@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class DoubleRange implements Range<Double>, JetObject {
+public final class DoubleRange implements Range<Double> {
     private final double start;
     private final double size;
 
@@ -59,11 +59,6 @@ public final class DoubleRange implements Range<Double>, JetObject {
 
     public DoubleRange minus() {
         return new DoubleRange(getEnd(), -size);
-    }
-
-    @Override
-    public JetObject getOuterObject() {
-        return null;
     }
 
     public static DoubleRange count(int length) {
@@ -109,11 +104,6 @@ public final class DoubleRange implements Range<Double>, JetObject {
                 cur += step;
                 return cur - step;
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

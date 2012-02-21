@@ -19,12 +19,7 @@ package jet;
 /**
  * @author alex.tkachman
  */
-public class DefaultJetObject implements JetObject {
+public class DefaultJetObject {
     protected DefaultJetObject() {
-    }
-
-    @Override
-    public JetObject getOuterObject() {
-        return null;
     }
 }

@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
+public final class ByteRange implements Range<Byte>, ByteIterable {
     private final byte start;
     private final int count;
 
@@ -72,11 +72,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
         return new MyIterator(start, count, 1);
     }
 
-    @Override
-    public JetObject getOuterObject() {
-        return null;
-    }
-
     public static ByteRange count(int length) {
         return new ByteRange((byte) 0, length);
     }
@@ -118,11 +113,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
                 cur += step;
                 return (byte) (cur - step);
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

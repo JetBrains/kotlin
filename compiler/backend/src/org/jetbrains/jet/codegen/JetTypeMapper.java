@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import jet.JetObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -42,7 +41,6 @@ import static org.objectweb.asm.Opcodes.*;
 public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     public static final Type TYPE_THROWABLE = Type.getObjectType("java/lang/Throwable");
-    public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");

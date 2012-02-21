@@ -590,14 +590,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
             iv.putfield(classname, fieldName, interfaceDesc);
-
-            Type outerType = typeMapper.mapType(outerDescriptor.getDefaultType());
-            MethodVisitor outer = v.newMethod(myClass, ACC_PUBLIC, JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, "()Ljet/JetObject;", null, null);
-            outer.visitCode();
-            outer.visitVarInsn(ALOAD, 0);
-            outer.visitFieldInsn(GETFIELD, classname, "this$0", outerType.getDescriptor());
-            outer.visitInsn(ARETURN);
-            FunctionCodegen.endVisit(outer, JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, myClass);
         }
 
         if(closure != null) {
@@ -935,19 +927,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Nullable
     private JetClassObject getClassObject() {
         return myClass instanceof JetClass ? ((JetClass) myClass).getClassObject() : null;
-    }
-
-    private void staticTypeInfoField() {
-        v.newField(myClass, ACC_PUBLIC | ACC_FINAL | ACC_STATIC, "$staticTypeInfo", "Ljet/TypeInfo;", null, null);
-        staticInitializerChunks.add(new CodeChunk() {
-            @Override
-            public void generate(InstructionAdapter v) {
-                v.aconst(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION));
-                v.iconst(0);
-                v.invokestatic("jet/TypeInfo", JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
-                v.putstatic(typeMapper.mapType(descriptor.getDefaultType(), kind).getInternalName(), "$staticTypeInfo", "Ljet/TypeInfo;");
-            }
-        });
     }
 
 

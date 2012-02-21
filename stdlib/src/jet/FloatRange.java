@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class FloatRange implements Range<Float>, JetObject {
+public final class FloatRange implements Range<Float> {
     private final float start;
     private final float size;
 
@@ -59,12 +59,6 @@ public final class FloatRange implements Range<Float>, JetObject {
 
     public FloatRange minus() {
         return new FloatRange(getEnd(), -size);
-    }
-
-
-    @Override
-    public JetObject getOuterObject() {
-        return null;
     }
 
     public static FloatRange count(int length) {
@@ -110,11 +104,6 @@ public final class FloatRange implements Range<Float>, JetObject {
                 cur += step;
                 return cur - step;
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

@@ -116,10 +116,6 @@ class JavaDescriptorResolverHelper {
                     // TODO: some java properties too
                     if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
 
-                        if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD)) {
-                            continue;
-                        }
-
                         int i = 0;
 
                         TypeSource receiverType;

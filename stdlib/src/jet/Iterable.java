@@ -16,6 +16,6 @@
 
 package jet;
 
-public interface Iterable<T> extends JetObject {
+public interface Iterable<T> {
     Iterator<T> iterator ();
 }

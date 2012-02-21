@@ -1364,19 +1364,6 @@ public class JavaDescriptorResolver {
             if (ownerClassName.equals("java.lang.Object")) {
                 return null;
             }
-            
-            if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD) && method.getParameters().size() == 0) {
-                return null;
-            }
-            
-            if (method.getName().equals(JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD) && method.getParameters().size() == 0) {
-                return null;
-            }
-
-            // TODO: check signature
-            if (method.getName().equals(JvmAbi.SET_TYPE_INFO_METHOD)) {
-                return null;
-            }
         }
 
         ClassOrNamespaceDescriptor classDescriptor;

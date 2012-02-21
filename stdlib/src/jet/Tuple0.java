@@ -19,7 +19,7 @@ package jet;
 /**
  * @author alex.tkachman
  */
-public class Tuple0 implements JetObject {
+public class Tuple0 {
     public static final Tuple0 INSTANCE = new Tuple0();
 
     private Tuple0() {
@@ -38,10 +38,5 @@ public class Tuple0 implements JetObject {
     @Override
     public int hashCode() {
         return 239;
-    }
-
-    @Override
-    public JetObject getOuterObject() {
-        return null;
     }
 }

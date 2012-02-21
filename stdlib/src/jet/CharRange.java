@@ -16,7 +16,7 @@
 
 package jet;
 
-public final class CharRange implements Range<Character>, CharIterable, JetObject {
+public final class CharRange implements Range<Character>, CharIterable {
     private final char start;
     private final int count;
 
@@ -72,11 +72,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
         return new MyIterator(start, count, 1);
     }
 
-    @Override
-    public JetObject getOuterObject() {
-        return null;
-    }
-
     public static CharRange count(int length) {
         return new CharRange((char) 0, length);
     }
@@ -118,11 +113,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
                 cur += step;
                 return (char) (cur - step);
             }
-        }
-
-        @Override
-        public JetObject getOuterObject() {
-            return null;
         }
     }
 }

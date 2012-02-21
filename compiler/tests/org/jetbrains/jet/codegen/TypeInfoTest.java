@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import jet.JetObject;
 import jet.TypeCastException;
 
 import java.lang.reflect.Method;
