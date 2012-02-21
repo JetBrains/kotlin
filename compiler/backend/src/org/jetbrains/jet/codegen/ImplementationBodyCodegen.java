@@ -646,12 +646,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         
         for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
-            FunctionDescriptor fun = (FunctionDescriptor) needDelegates.second;
-            generateDelegationToTraitImpl(codegen, fun);
+            if (needDelegates.second instanceof NamedFunctionDescriptor) {
+                generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second);
+            } else if (needDelegates.second instanceof PropertyDescriptor) {
+                PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
+                for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
+                    generateDelegationToTraitImpl(codegen, accessor);
+                }
+            }
         }
     }
 
-    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun) {
+    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, @NotNull FunctionDescriptor fun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if(containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;

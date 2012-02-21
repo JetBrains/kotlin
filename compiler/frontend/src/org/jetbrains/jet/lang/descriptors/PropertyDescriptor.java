@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -182,6 +183,18 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     @Nullable
     public PropertySetterDescriptor getSetter() {
         return setter;
+    }
+
+    @NotNull
+    public List<PropertyAccessorDescriptor> getAccessors() {
+        List<PropertyAccessorDescriptor> r = Lists.newArrayListWithCapacity(2);
+        if (getter != null) {
+            r.add(getter);
+        }
+        if (setter != null) {
+            r.add(setter);
+        }
+        return r;
     }
 
     @Override
