@@ -50,7 +50,7 @@
     <target name="compileStdlib" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
         <mkdir dir="${output}/apidoc/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -66,7 +66,7 @@
 
     <target name="compileTestlib" depends="jarRT">
         <mkdir dir="${output}/classes/testlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
               <path refid="classpath"/>
               <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -120,7 +120,7 @@
 
     <target name="compileJDKHeaders" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
