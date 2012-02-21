@@ -1,3 +1,26 @@
+/**
+ * Copyright 2010 Tim Down.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*  Prototype JavaScript framework, version 1.6.1
+ *  (c) 2005-2009 Sam Stephenson
+ *
+ *  Prototype is freely distributable under the terms of an MIT-style license.
+ *  For details, see the Prototype web site: http://www.prototypejs.org/
+ *
+ *--------------------------------------------------------------------------*/
 (function () {
 
     function $A(iterable) {
@@ -585,34 +608,6 @@
         return obj;
     };
 
-    /**
-     * Copyright 2010 Tim Down.
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *      http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
-
-    /**
-     * jshashtable
-     *
-     * jshashtable is a JavaScript implementation of a hash table. It creates a single constructor function called Hashtable
-     * in the global scope.
-     *
-     * Author: Tim Down <tim@timdown.co.uk>
-     * Version: 2.1
-     * Build date: 21 March 2010
-     * Website: http://www.timdown.co.uk/jshashtable
-     */
-
     (function () {
         var FUNCTION = "function";
 
@@ -980,34 +975,8 @@
     );
 
 
-    /**
-     * Copyright 2010 Tim Down.
-     *
-     * Licensed under the Apache License, Version 2.0 (the "License");
-     * you may not use this file except in compliance with the License.
-     * You may obtain a copy of the License at
-     *
-     *      http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
 
-    /**
-     * HashSet
-     *
-     * This is a JavaScript implementation of HashSet, similar in concept to those found in Java or C#'s standard libraries.
-     * It is distributed as part of jshashtable and depends on jshashtable.js. It creates a single constructor function
-     * called HashSet in the global scope.
-     *
-     * Author: Tim Down <tim@timdown.co.uk>
-     * Version: 2.1
-     * Build date: 27 March 2010
-     * Website: http://www.timdown.co.uk/jshashtable/
-     */
+
     (function () {
         function HashSet(hashingFunction, equalityFunction) {
             var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
