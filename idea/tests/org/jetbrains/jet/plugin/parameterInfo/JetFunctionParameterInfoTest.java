@@ -52,6 +52,10 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         doTest();
     }
 
+    public void testNullableTypeCall() {
+        doTest();
+    }
+
     public void testPrintln() {
         doTest();
     }

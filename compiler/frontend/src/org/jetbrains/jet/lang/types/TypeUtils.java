@@ -106,10 +106,12 @@ public class TypeUtils {
         }
     };
 
+    @NotNull
     public static JetType makeNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, true);
     }
 
+    @NotNull
     public static JetType makeNotNullable(@NotNull JetType type) {
         return makeNullableAsSpecified(type, false);
     }
