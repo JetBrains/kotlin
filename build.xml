@@ -49,6 +49,7 @@
 
     <target name="compileStdlib" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
+        <mkdir dir="${output}/apidoc/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler">
             <classpath>
                 <path refid="classpath"/>
@@ -58,6 +59,8 @@
             <arg value="${basedir}/stdlib/ktSrc"/>
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
+            <arg value="-docOutput"/>
+            <arg value="${output}/apidoc/stdlib"/>
         </java>
     </target>
 
@@ -170,6 +173,9 @@
             <fileset dir="${basedir}/lib" includes="*.jar"/>
         </copy>
     </target>
+
+
+    <target name="test" depends="dist,testlib" description="Creates the distribution and runs all the tests"/>
 
     <target name="zip" depends="dist">
         <echo file="${kotlin-home}/build.txt" message="${build.number}"/>
