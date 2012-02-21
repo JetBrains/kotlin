@@ -19,6 +19,10 @@ inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedLi
 /** Returns a new HashSet with a variable number of initial elements */
 inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
+/** Returns a new hash map */
+inline fun <K,V> hashMap() = HashMap<K,V>()
+
+
 val Collection<*>.indices : IntRange
     get() = 0..size-1
 
