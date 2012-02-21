@@ -1,0 +1,150 @@
+Index: compiler/frontend/src/org/jetbrains/jet/lang/resolve/AnnotationResolver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- compiler/frontend/src/org/jetbrains/jet/lang/resolve/AnnotationResolver.java	(revision 24a2ec5)
++++ compiler/frontend/src/org/jetbrains/jet/lang/resolve/AnnotationResolver.java	(revision 4229e867af6d744d3b384dfc515cbf89caf363ae)
+@@ -173,8 +173,8 @@
+         List<AnnotationDescriptor> result = Lists.newArrayList();
+         for (JetAnnotationEntry annotation : annotations) {
+             AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
+-            result.add(annotationDescriptor);
+-            trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
++            // result.add(annotationDescriptor);
++            //  trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
+         }
+         return result;
+     }
+Index: idea/src/META-INF/plugin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- idea/src/META-INF/plugin.xml	(revision 24a2ec5)
++++ idea/src/META-INF/plugin.xml	(revision 4229e867af6d744d3b384dfc515cbf89caf363ae)
+@@ -1,9 +1,12 @@
+ <idea-plugin version="2">
+   <name>Kotlin</name>
+   <description>Kotlin language support</description>
+-  <version>@snapshot@</version>
++  <version>1.0</version>
+   <vendor>JetBrains</vendor>
+ 
++  <application-components>
++  </application-components>
++
+   <project-components>
+       <component>
+           <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>
+@@ -28,16 +31,18 @@
+          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift T"/>
+          <add-to-group group-id="CodeMenu" anchor="last"/>
+      </action>
+-     <action id="ConvertJavaToKotlin" class="org.jetbrains.jet.plugin.actions.JavaToKotlinAction"
+-             text="Convert Java File to Kotlin File">
+-         <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
+-         <add-to-group group-id="CodeMenu" anchor="last"/>
+-     </action>
+      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
+              text="Toggle Error Reporting">
+          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
+          <add-to-group group-id="CodeMenu" anchor="last"/>
+      </action>
++      
++      <action id="Kotlin.TranslateToJs" class="org.jetbrains.jet.plugin.actions.TranslateToJsAction"
++              text="Translate current namespace and create js files.">
++          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
++          <add-to-group group-id="CodeMenu" anchor="last"/>
++      </action>
++      
+   </actions>
+ 
+   <extensions defaultExtensionNs="com.intellij">
+Index: idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java	(revision 4229e867af6d744d3b384dfc515cbf89caf363ae)
++++ idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java	(revision 4229e867af6d744d3b384dfc515cbf89caf363ae)
+@@ -0,0 +1,79 @@
++package org.jetbrains.jet.plugin.actions;
++
++import com.intellij.notification.Notification;
++import com.intellij.notification.NotificationType;
++import com.intellij.notification.Notifications;
++import com.intellij.openapi.actionSystem.AnAction;
++import com.intellij.openapi.actionSystem.AnActionEvent;
++import com.intellij.openapi.actionSystem.LangDataKeys;
++import com.intellij.openapi.actionSystem.PlatformDataKeys;
++import com.intellij.openapi.application.ApplicationManager;
++import com.intellij.openapi.editor.Editor;
++import com.intellij.openapi.project.Project;
++import com.intellij.openapi.vfs.VirtualFile;
++import com.intellij.psi.PsiFile;
++import org.jetbrains.jet.lang.psi.JetFile;
++import org.jetbrains.k2js.facade.K2JSTranslator;
++
++/**
++ * @author Pavel Talanov
++ */
++public final class TranslateToJsAction extends AnAction {
++
++    private static void notifyFailure(Throwable exception) {
++        Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",
++                                                  "Exception: " + exception.getMessage(),
++                                                  NotificationType.ERROR));
++    }
++
++    private static void notifySuccess(String outputPath) {
++        Notifications.Bus.notify(new Notification("JsTranslator", "Translation successful.",
++                                                  "Generated file: " + outputPath,
++                                                  NotificationType.INFORMATION));
++    }
++
++    public void actionPerformed(AnActionEvent event) {
++
++        final PsiFile psiFile = event.getData(LangDataKeys.PSI_FILE);
++        if (!(psiFile instanceof JetFile)) {
++            return;
++        }
++
++        Runnable task = new Runnable() {
++            @Override
++            public void run() {
++                try {
++                    Project project = psiFile.getProject();
++                    String outputPath = getOutputPath(psiFile);
++                    K2JSTranslator.translateWithCallToMainAndSaveToFile((JetFile) psiFile,
++                                                                        outputPath,
++                                                                        project);
++                    notifySuccess(outputPath);
++                } catch (Throwable e) {
++                    e.printStackTrace();
++                    notifyFailure(e);
++                }
++            }
++        };
++        ApplicationManager.getApplication().runWriteAction(task);
++    }
++
++    private static String getOutputPath(PsiFile psiFile) {
++        VirtualFile virtualFile = psiFile.getVirtualFile();
++        assert virtualFile != null : "Internal error: Psi file should correspond to actual virtual file";
++        String originalFilePath = virtualFile.getPath();
++
++        //TODO: make platform independent
++        String pathToDir = originalFilePath.substring(0, originalFilePath.lastIndexOf("/") + 1);
++        String generatedFileName = ((JetFile) psiFile).getNamespaceHeader().getName() + ".js";
++        return pathToDir + generatedFileName;
++    }
++
++
++    @Override
++    public void update(AnActionEvent e) {
++        Editor editor = e.getData(PlatformDataKeys.EDITOR);
++        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
++        e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile);
++    }
++}
