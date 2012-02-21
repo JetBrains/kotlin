@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="translator" />
     <orderEntry type="library" name="idea-full" level="application" />
     <orderEntry type="library" name="js" level="application" />
+    <orderEntry type="library" name="guava-10.0.1" level="project" />
     <orderEntry type="module" module-name="compiler-tests" />
     <orderEntry type="module" module-name="cli" />
   </component>

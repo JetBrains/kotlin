@@ -8,9 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="frontend" />
-    <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="module" module-name="backend" />
-    <orderEntry type="module" module-name="cli" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -24,8 +21,10 @@
     <orderEntry type="library" name="js" level="application" />
     <orderEntry type="library" name="idea-full" level="application" />
     <orderEntry type="module" module-name="js" />
-    <orderEntry type="module" module-name="compiler-tests" />
     <orderEntry type="module" module-name="jslib" />
+    <orderEntry type="library" name="guava-10.0.1" level="project" />
+    <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module" module-name="frontend.java" />
   </component>
 </module>
 
