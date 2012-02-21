@@ -14,6 +14,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
@@ -77,11 +78,15 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
+        //NOTE: treat native extension function calls as usual calls
         if (isIntrinsic()) {
             return intrinsicInvocation();
         }
         if (isConstructor()) {
             return constructorCall();
+        }
+        if (isNative()) {
+            return methodCall();
         }
         if (isExtensionFunctionLiteral()) {
             return extensionFunctionLiteralCall();
@@ -91,7 +96,6 @@ public final class CallTranslator extends AbstractTranslator {
         }
         return methodCall();
     }
-
 
     private boolean isIntrinsic() {
         return context().intrinsics().isIntrinsic(descriptor);
@@ -121,6 +125,10 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translateAsFunctionWithNoThisObject(@NotNull DeclarationDescriptor descriptor) {
         return ReferenceTranslator.translateAsFQReference(descriptor, context());
+    }
+
+    private boolean isNative() {
+        return AnnotationsUtils.isNativeObject(descriptor);
     }
 
     private boolean isExtensionFunctionLiteral() {

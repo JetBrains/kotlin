@@ -4,7 +4,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -13,12 +12,12 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
 
 /**
  * @author Pavel.Talanov
  *         <p/>
- *         Translates single namespace.
+ *         Genereate code for a single namespace.
  */
 public final class NamespaceTranslator extends AbstractTranslator {
 
@@ -38,8 +37,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
         super(context.newDeclaration(namespace));
         this.namespace = namespace;
         this.namespaceName = context.getNameForDescriptor(namespace);
-        List<JetDeclaration> namespaceDeclarations = getDeclarationsForNamespace(context.bindingContext(), namespace);
-        this.classDeclarationTranslator = new ClassDeclarationTranslator(context(), namespaceDeclarations);
+        this.classDeclarationTranslator = new ClassDeclarationTranslator(context(),
+                getAllClassesDefinedInNamespace(namespace));
     }
 
     @NotNull

@@ -14,6 +14,7 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getSuperclassDe
 
 
 //TODO: can optimise using less dumb implementation
+//TODO: pass list of descriptors here, not the list of jet classes
 
 /**
  * @author Pavel Talanov

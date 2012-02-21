@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.translate.utils;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -186,5 +187,17 @@ public final class DescriptorUtils {
         }
         return null;
     }
+
+    @NotNull
+    public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        List<ClassDescriptor> classDescriptors = Lists.newArrayList();
+        for (DeclarationDescriptor descriptor : namespaceDescriptor.getMemberScope().getAllDescriptors()) {
+            if (descriptor instanceof ClassDescriptor) {
+                classDescriptors.add((ClassDescriptor) descriptor);
+            }
+        }
+        return classDescriptors;
+    }
+
 
 }

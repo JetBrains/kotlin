@@ -28,6 +28,7 @@ public abstract class Config {
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
             "/core/annotations.kt",
             "/jquery/common.kt",
+            "/jquery/ui.kt",
             "/core/javautil.kt",
             "/core/javalang.kt",
             "/core/core.kt",
@@ -37,7 +38,8 @@ public abstract class Config {
             "/html5/canvas.kt",
             "/html5/files.kt",
             "/html5/image.kt",
-            "/helper/ip.kt"
+            "/helper/ip.kt",
+            "/pixastic/pixastic.kt"
     );
 
 

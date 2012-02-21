@@ -15,6 +15,8 @@ class MathClass() {
     fun sin(value : Double) = 0.0
     fun exp(value : Double) = 0.0
     fun max(vararg values : Double) = 0.0
+    fun max(vararg values : Int) : Int = js.noImpl
+    fun min(vararg values : Int) : Int = js.noImpl
     fun min(vararg values : Double) = 0.0
     fun sqrt(value : Double) = 0.0
     fun tan(value : Double) = 0.0

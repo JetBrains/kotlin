@@ -59,6 +59,7 @@ public final class BindingUtils {
         return getDescriptorForExpression(context, declaration, FunctionDescriptor.class);
     }
 
+    //TODO:
     @NotNull
     public static PropertyAccessorDescriptor getPropertyAccessorDescriptor(@NotNull BindingContext context,
                                                                            @NotNull JetPropertyAccessor declaration) {

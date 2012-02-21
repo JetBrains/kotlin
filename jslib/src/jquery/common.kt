@@ -5,8 +5,8 @@ import js.DomElement
 
 native
 class JQuery() {
-    fun addClass(className : String) : JQuery = this;
-    fun addClass(f : DomElement.(Int, String)->String) = this;
+    fun addClass(className : String) : JQuery = js.noImpl;
+    fun addClass(f : DomElement.(Int, String)->String) = js.noImpl;
 
     fun attr(attrName : String) = "";
     fun attr(attrName : String, value : String) = this;
@@ -39,6 +39,8 @@ class JQuery() {
     fun slideUp() = this;
     fun hover(handlerInOut : DomElement.() -> Unit) = this;
     fun hover(handlerIn : DomElement.() -> Unit, handlerOut : DomElement.() -> Unit) = this;
+    fun next() : JQuery = js.noImpl
+    fun parent() : JQuery = js.noImpl
 }
 
 native

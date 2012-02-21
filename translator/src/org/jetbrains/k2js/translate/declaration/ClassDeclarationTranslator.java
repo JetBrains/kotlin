@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -27,7 +26,7 @@ import java.util.Map;
 public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     @NotNull
-    private final List<JetDeclaration> namespaceDeclarations;
+    private final List<ClassDescriptor> descriptors;
     @NotNull
     private final Map<JsName, JsName> localToGlobalClassName;
     @NotNull
@@ -37,9 +36,10 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @Nullable
     private JsStatement declarationsStatement = null;
 
-    public ClassDeclarationTranslator(@NotNull TranslationContext context, @NotNull List<JetDeclaration> declarationList) {
+    public ClassDeclarationTranslator(@NotNull TranslationContext context,
+                                      @NotNull List<ClassDescriptor> descriptors) {
         super(context);
-        this.namespaceDeclarations = declarationList;
+        this.descriptors = descriptors;
         this.localToGlobalClassName = new HashMap<JsName, JsName>();
         this.dummyFunctionScope = new JsScope(context().jsScope(), "class declaration function");
     }
@@ -106,10 +106,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<JetClass> getClassDeclarations() {
         List<JetClass> classes = new ArrayList<JetClass>();
-        for (JetDeclaration declaration : namespaceDeclarations) {
-            if (declaration instanceof JetClass) {
-                classes.add((JetClass) declaration);
-            }
+        for (ClassDescriptor classDescriptor : descriptors) {
+            classes.add(BindingUtils.getClassForDescriptor(context().bindingContext(), classDescriptor));
         }
         return ClassSorter.sortUsingInheritanceOrder(classes, context().bindingContext());
     }
@@ -125,7 +123,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private JsName generateLocalAlias(@NotNull JetClass declaration) {
         JsName globalClassName = context().getNameForElement(declaration);
-        JsName localAlias = dummyFunctionScope.declareName(globalClassName.getIdent());
+        JsName localAlias = dummyFunctionScope.declareTemporary();
         localToGlobalClassName.put(localAlias, globalClassName);
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), declaration);
         context().aliaser().setAliasForDescriptor(descriptor, localAlias);
