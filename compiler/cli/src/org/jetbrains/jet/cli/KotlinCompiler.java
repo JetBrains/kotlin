@@ -23,6 +23,7 @@ import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.FileNameTransformer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -115,7 +116,13 @@ public class KotlinCompiler {
         CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
         try {
             environment.setIgnoreErrors(arguments.ignoreErrors);
-            environment.setErrorStream(errStream);
+            if (arguments.ignoreErrors) {
+                // To avoid outputting error messages
+                environment.setErrorStream(new PrintStream(new ByteArrayOutputStream()));
+            }
+            else {
+                environment.setErrorStream(errStream);
+            }
 
             if (arguments.stdlib != null) {
                 environment.setStdlib(arguments.stdlib);
