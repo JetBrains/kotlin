@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.util.*;
@@ -170,7 +171,8 @@ public final class TipsManager {
             @NotNull final ReceiverDescriptor receiverDescriptor
     ) {
         // It's impossible to add extension function for namespace
-        if (receiverDescriptor.getType() instanceof NamespaceType) {
+        JetType receiverType = receiverDescriptor.getType();
+        if (receiverType instanceof NamespaceType) {
             return descriptors;
         }
 
@@ -189,10 +191,24 @@ public final class TipsManager {
     }
 
     /*
-     * Checks if receiver declaration could be resolved to call expected receiver.
-     */
+    * Checks if receiver declaration could be resolved to call expected receiver.
+    */
     private static boolean checkReceiverResolution (
             @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        JetType type = expectedReceiver.getType();
+        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
+        if (type.isNullable()) {
+            JetType notNullableType = TypeUtils.makeNotNullable(type);
+            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
+        }
+        return false;
+    }
+
+    private static boolean checkReceiverResolution (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
         ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
@@ -203,7 +219,7 @@ public final class TipsManager {
         ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
         if (expectedReceiver.exists() && receiverParameter.exists()) {
             constraintSystem.addSubtypingConstraint(
-                    RECEIVER.assertSubtyping(expectedReceiver.getType(), receiverParameter.getType()));
+                    RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
         }
         else if (expectedReceiver.exists() || receiverParameter.exists()) {
             // Only one of receivers exist
