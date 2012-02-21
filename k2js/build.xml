@@ -1,0 +1,83 @@
+<project name="Kotlin" default="dist">
+    <property name="output" value="${basedir}/dist"/>
+    <property name="build.number" value="snapshot"/>
+    <property name="output.name" value="kotlin-${build.number}"/>
+
+    <path id="classpath">
+        <fileset dir="${basedir}/ideaSDK" includes="*.jar"/>
+        <fileset dir="${basedir}/lib" includes="*.jar"/>
+        <pathelement path="${output}/classes/runtime"/>
+    </path>
+
+    <path id="classpath.kotlin">
+        <path refid="classpath"/>
+        <pathelement path="${output}/classes/compiler"/>
+    </path>
+
+    <path id="sourcepath">
+        <dirset dir="${basedir}/compiler">
+            <include name="frontend/src"/>
+            <include name="frontend.java/src"/>
+            <include name="backend/src"/>
+            <include name="cli/src"/>
+        </dirset>
+    </path>
+
+    <target name="compileRT">
+        <mkdir dir="${output}/classes/runtime"/>
+        <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source">
+            <src path="${basedir}/stdlib/src"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="compileStdlib" depends="compile">
+        <mkdir dir="${output}/classes/stdlib"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler">
+            <classpath refid="classpath.kotlin"/>
+            <arg value="-src"/>
+            <arg value="${basedir}/stdlib/ktSrc"/>
+            <arg value="-output"/>
+            <arg value="${basedir}/classes/stdlib"/>
+        </java>
+    </target>
+
+    <target name="jarRT" depends="compileStdlib">
+        <jar destfile="${output}/kotlin-runtime.jar">
+            <fileset dir="${output}/classes/runtime"/>
+            <fileset dir="${output}/classes/stdlib"/>
+            <fileset dir="${basedir}/stdlib/ktSrc"/>
+        </jar>
+    </target>
+
+    
+    <target name="compile" depends="compileRT">
+        <mkdir dir="${output}/classes/compiler"/>
+        <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source">
+            <src refid="sourcepath"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${output}/kotlin-compiler.jar">
+            <fileset dir="${output}/classes/compiler"/>
+            <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${output}"/>
+    </target>
+
+    <target name="dist" depends="clean,jarRT,jar">
+        <zip destfile="${output}/${output.name}.zip">
+            <zipfileset prefix="${output.name}/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
+            <zipfileset prefix="${output.name}/lib" dir="${basedir}/ideaSDK"/>
+            <zipfileset prefix="${output.name}/lib" dir="${basedir}/lib"/>
+            <zipfileset prefix="${output.name}/lib" dir="${output}" includes="*.jar"/>
+            <zipfileset prefix="${output.name}/examples" dir="${basedir}/examples/src"/>
+        </zip>
+    </target>
+</project>
+        
