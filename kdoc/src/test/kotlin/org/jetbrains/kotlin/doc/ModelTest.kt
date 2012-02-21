@@ -6,8 +6,11 @@ import std.util.*
 import org.jetbrains.kotlin.model.*
 
 import junit.framework.TestCase
-import junit.framework.Assert
+
+// TODO should use the ktest library really for nicer asserts
 import junit.framework.Assert.assertEquals
+import org.jetbrains.kotlin.doc.KDocProcessor
+import java.io.File
 
 class ModelTest : TestCase() {
     val model = KModel()
@@ -18,10 +21,9 @@ class ModelTest : TestCase() {
 
         println("Got class: $c")
 
-        // TODO should use the ktest library really for nicer asserts
-        Assert.assertEquals("foo.bar.Cheese", c.name)
-        Assert.assertEquals("foo.bar", c.packageName)
-        Assert.assertEquals("Cheese", c.simpleName)
+        assertEquals("foo.bar.Cheese", c.name)
+        assertEquals("foo.bar", c.packageName)
+        assertEquals("Cheese", c.simpleName)
     }
 
     fun testGetClassViaQualifiedName() {
@@ -29,15 +31,15 @@ class ModelTest : TestCase() {
 
         println("Got class: $c")
 
-        // TODO should use the ktest library really for nicer asserts
-        Assert.assertEquals("something.else.Foo", c.name)
-        Assert.assertEquals("something.else", c.packageName)
-        Assert.assertEquals("Foo", c.simpleName)
+        assertEquals("something.else.Foo", c.name)
+        assertEquals("something.else", c.packageName)
+        assertEquals("Foo", c.simpleName)
     }
 
     fun testModelWalk() {
         model.getClass("something.else.Aaa")
         model.getClass("something.else.Zzz")
+        model.getClass("another.Cheese")
 
         // now lets iterate through the model
         println("Walking the model...")
@@ -48,5 +50,8 @@ class ModelTest : TestCase() {
             }
             println()
         }
+
+        val processor = KDocProcessor(model, File("target/test-data/ModelTest"))
+        processor.execute()
     }
 }

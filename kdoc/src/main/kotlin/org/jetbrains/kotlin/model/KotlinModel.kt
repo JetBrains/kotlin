@@ -1,13 +1,12 @@
 package org.jetbrains.kotlin.model
 
-import std.*
+import java.lang.String
+//import std.*
 import std.util.*
 
 import java.util.*
 
-import org.jetbrains.jet.lang.psi.*
-
-class KModel {
+class KModel(var title: String = "Documentation") {
     // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String,KPackage> = TreeMap<String,KPackage>()
