@@ -14,7 +14,6 @@ import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
-import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.expression.PatternTranslator;
@@ -36,12 +35,6 @@ public final class Translation {
     public static FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
                                                         @NotNull TranslationContext context) {
         return FunctionTranslator.newInstance(function, context);
-    }
-
-    @NotNull
-    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace,
-                                                 @NotNull TranslationContext context) {
-        return NamespaceTranslator.translateNamespace(namespace, context);
     }
 
     @NotNull

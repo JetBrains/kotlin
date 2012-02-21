@@ -39,8 +39,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @Nullable
     private JsStatement declarationsStatement = null;
 
-    public ClassDeclarationTranslator(@NotNull TranslationContext context,
-                                      @NotNull List<ClassDescriptor> descriptors) {
+    public ClassDeclarationTranslator(@NotNull List<ClassDescriptor> descriptors,
+                                      @NotNull TranslationContext context) {
         super(context);
         this.descriptors = descriptors;
         this.localToGlobalClassName = new HashMap<JsName, JsName>();

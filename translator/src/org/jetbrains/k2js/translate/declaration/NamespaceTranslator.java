@@ -13,8 +13,6 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
-
 /**
  * @author Pavel.Talanov
  *         <p/>
@@ -29,44 +27,24 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private final ClassDeclarationTranslator classDeclarationTranslator;
 
-    @NotNull
-    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace,
-                                                 @NotNull TranslationContext context) {
-        return (new NamespaceTranslator(namespace, context)).translateNamespace();
-    }
-
-    private NamespaceTranslator(@NotNull NamespaceDescriptor descriptor, @NotNull TranslationContext context) {
+    /*package*/ NamespaceTranslator(@NotNull NamespaceDescriptor descriptor,
+                                    @NotNull ClassDeclarationTranslator classDeclarationTranslator,
+                                    @NotNull TranslationContext context) {
         super(context.newDeclaration(descriptor));
         this.descriptor = descriptor;
         this.namespaceName = context.getNameForDescriptor(descriptor);
-        this.classDeclarationTranslator = new ClassDeclarationTranslator(context(),
-                getAllClassesDefinedInNamespace(descriptor));
-    }
-
-    @NotNull
-    public JsStatement translateNamespace() {
-        if (isNamespaceEmpty()) {
-            return program().getEmptyStmt();
-        }
-        classDeclarationTranslator.generateDeclarations();
-        return AstUtil.newBlock(classDeclarationsStatement(),
-                namespaceOwnDeclarationStatement(),
-                namespaceInitializeStatement());
+        this.classDeclarationTranslator = classDeclarationTranslator;
     }
 
     //TODO: at the moment this check is very ineffective, possible solution is to cash the result of getDFN
     // other solution is to determine it's not affecting performance :D
-    private boolean isNamespaceEmpty() {
+    public boolean isNamespaceEmpty() {
         return BindingUtils.getDeclarationsForNamespace(context().bindingContext(), descriptor).isEmpty();
     }
 
-    @NotNull
-    private JsStatement classDeclarationsStatement() {
-        return classDeclarationTranslator.getDeclarationsStatement();
-    }
 
     @NotNull
-    private JsStatement namespaceInitializeStatement() {
+    public JsStatement getInitializeStatement() {
         JsNameRef initializeMethodReference = Namer.initializeMethodReference();
         AstUtil.setQualifier(initializeMethodReference, namespaceName.makeRef());
         return AstUtil.newInvocation(initializeMethodReference).makeStmt();
@@ -78,7 +56,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsStatement namespaceOwnDeclarationStatement() {
+    public JsStatement getDeclarationStatement() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
         addMemberDeclarations(namespaceDeclaration);
         addClassesDeclarations(namespaceDeclaration);
