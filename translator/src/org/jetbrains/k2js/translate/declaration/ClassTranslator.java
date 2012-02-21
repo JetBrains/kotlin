@@ -125,12 +125,11 @@ public final class ClassTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
-        //TODO we actually know that in current implementation superclass must have an alias but
-        // in future it might change
-        if (aliaser().hasAliasForDeclaration(superClassDescriptor)) {
+        //NOTE: aliasing here is needed for the declaration generation step
+        if (context().aliaser().hasAliasForDeclaration(superClassDescriptor)) {
             return context().aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
         }
-        throw new AssertionError("Inherited from unknown class");
+        return context().getNameForDescriptor(superClassDescriptor).makeRef();
     }
 
     @Nullable

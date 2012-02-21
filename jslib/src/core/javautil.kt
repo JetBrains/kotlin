@@ -4,7 +4,7 @@ import js.*;
 
 
 library("collectionsMax")
-public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
+public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T {}
 
 library
 public trait Comparator<T> {
@@ -24,10 +24,8 @@ public open class Iterator<T>() {
 library
 val Collections = object {
     library("collectionsMax")
-    public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = f
+    public fun max<T>(col : Collection<T>, comp : Comparator<T>) : T = js.noImpl
 }
-
-private val f : Nothing
 
 library
 public open class ArrayList<erased E>() : java.util.List<E> {

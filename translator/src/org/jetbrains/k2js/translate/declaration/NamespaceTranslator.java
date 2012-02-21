@@ -8,6 +8,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +44,18 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     public JsStatement translateNamespace() {
+        if (isNamespaceEmpty()) {
+            return program().getEmptyStmt();
+        }
         classDeclarationTranslator.generateDeclarations();
         return AstUtil.newBlock(classDeclarationsStatement(),
                 namespaceOwnDeclarationStatement(),
                 namespaceInitializeStatement());
+    }
+
+    //TODO: at the moment this check is very ineffective, possible solution is to cash the result of getDFN
+    private boolean isNamespaceEmpty() {
+        return BindingUtils.getDeclarationsForNamespace(context().bindingContext(), namespace).isEmpty();
     }
 
     private JsStatement classDeclarationsStatement() {

@@ -139,16 +139,6 @@ public final class StaticContext {
 
     private final class NameGenerator extends Generator<JsName> {
         public NameGenerator() {
-            Rule<JsName> aliasOverridesNames = new Rule<JsName>() {
-                @Override
-                @Nullable
-                public JsName apply(@NotNull DeclarationDescriptor data) {
-                    if (aliaser.hasAliasForDeclaration(data)) {
-                        return aliaser.getAliasForDeclaration(data);
-                    }
-                    return null;
-                }
-            };
             Rule<JsName> namesForStandardClasses = new Rule<JsName>() {
                 @Override
                 @Nullable
@@ -294,7 +284,6 @@ public final class StaticContext {
                 }
             };
             addRule(namesForStandardClasses);
-            addRule(aliasOverridesNames);
             addRule(constructorHasTheSameNameAsTheClass);
             addRule(namesAnnotatedAsLibraryHasUnobfuscatableNames);
             addRule(namesForNativeObjectsAreUnobfuscatable);
