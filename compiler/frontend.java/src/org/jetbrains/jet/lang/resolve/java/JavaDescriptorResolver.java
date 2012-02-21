@@ -1315,13 +1315,6 @@ public class JavaDescriptorResolver {
     @Nullable
     private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, final PsiMethodWrapper method) {
 
-        PsiAnnotation[] applicableAnnotations = method.getPsiMethod().getModifierList().getAnnotations();
-        for (PsiAnnotation applicableAnnotation : applicableAnnotations) {
-            if("jet.runtime.intrinsic".equals(applicableAnnotation.getQualifiedName())) {
-                PsiAnnotationMemberValue value = applicableAnnotation.findAttributeValue("value");
-            }
-        }
-
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;

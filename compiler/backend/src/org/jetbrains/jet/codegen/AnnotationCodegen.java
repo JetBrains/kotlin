@@ -52,7 +52,7 @@ public abstract class AnnotationCodegen {
 
                 if(!valueArguments.isEmpty()) {
                     // todo: temporary hack for intrinsics in stdlib
-                    if(valueArguments.size()==1 && "intrinsic".equals(annotationDescriptor.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                    if(valueArguments.size()==1 && "Intrinsic".equals(annotationDescriptor.getType().getConstructor().getDeclarationDescriptor().getName())) {
                         annotationVisitor.visit("value", valueArguments.get(0).getValue());
                     }
                     else

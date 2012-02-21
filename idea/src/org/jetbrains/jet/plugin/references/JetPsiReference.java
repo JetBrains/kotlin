@@ -100,7 +100,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
 
-        // TODO: Need a better resolution for intrinsic function (KT-975)
+        // TODO: Need a better resolution for Intrinsic function (KT-975)
         return file;
     }
 
@@ -115,7 +115,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
             PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
             if (element == null) {
-                // TODO: Need a better resolution for intrinsic function (KT-975)
+                // TODO: Need a better resolution for Intrinsic function (KT-975)
                 element = file;
             }
 

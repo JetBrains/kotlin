@@ -244,7 +244,7 @@ public class IntrinsicMethods {
             List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
             if (annotations != null) {
                 for (AnnotationDescriptor annotation : annotations) {
-                    if("intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                    if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
                         intrinsicMethod = namedMethods.get(annotation.getValueArguments().get(0).getValue());
                     }
                 }

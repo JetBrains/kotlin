@@ -44,7 +44,7 @@ public class BinaryOp implements IntrinsicMethod {
             expectedType = JetTypeMapper.unboxType(expectedType);
         }
         if (arguments.size() == 1) {
-            // intrinsic is called as an ordinary function
+            // Intrinsic is called as an ordinary function
             if (receiver != null) {
                 receiver.put(expectedType, v);
             }
