@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>intellij-core.</artifactId>
+            <artifactId>intellij-core</artifactId>
             <version>${kotlin-compiler.version}</version>
             <scope>system</scope>
             <systemPath>${kotlin-sdk}/lib/intellij-core.jar</systemPath>
