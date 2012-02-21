@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -282,7 +283,8 @@ public class JavaDescriptorResolver {
         DeclarationDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         classData.classDescriptor = new MutableClassDescriptorLite(containingDeclaration, kind);
         classData.classDescriptor.setName(name);
-        
+        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass));
+
         List<JetType> supertypes = new ArrayList<JetType>();
 
         TypeVariableResolverFromOuters outerTypeVariableByNameResolver = new TypeVariableResolverFromOuters(containingDeclaration);
@@ -297,10 +299,16 @@ public class JavaDescriptorResolver {
         classData.classDescriptor.setTypeParameterDescriptors(typeParameters);
         classData.classDescriptor.setSupertypes(supertypes);
         classData.classDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(psiClass));
-        classData.classDescriptor.setModality(Modality.convertFromFlags(
-                psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
-                !psiClass.hasModifierProperty(PsiModifier.FINAL))
-        );
+        Modality modality;
+        if (classData.classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+            modality = Modality.FINAL;
+        }
+        else {
+            modality = Modality.convertFromFlags(
+                    psiClass.hasModifierProperty(PsiModifier.ABSTRACT) || psiClass.isInterface(),
+                    !psiClass.hasModifierProperty(PsiModifier.FINAL));
+        }
+        classData.classDescriptor.setModality(modality);
         classData.classDescriptor.createTypeConstructor();
         classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
 
@@ -700,8 +708,8 @@ public class JavaDescriptorResolver {
                 }
             });
         } else {
-            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
-            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null));
+            transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null), classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
+            transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), new TypeVariableResolverFromTypeDescriptors(typeParameters, null), classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
         }
         
         for (JetType supertype : result) {
@@ -716,10 +724,13 @@ public class JavaDescriptorResolver {
         return result;
     }
 
-    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver) {
+    private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver, boolean annotation) {
         for (PsiClassType type : extendsListTypes) {
             PsiClass resolved = type.resolve();
             if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName())) {
+                continue;
+            }
+            if (annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
                 continue;
             }
             
@@ -1373,7 +1384,7 @@ public class JavaDescriptorResolver {
 
         NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
                 owner,
-                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                resolveAnnotations(method.getPsiMethod()),
                 method.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
@@ -1403,6 +1414,37 @@ public class JavaDescriptorResolver {
             throw new IllegalStateException();
         }
         return (FunctionDescriptorImpl) substitutedFunctionDescriptor;
+    }
+
+    private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
+        PsiAnnotation[] psiAnnotations = owner.getModifierList().getAnnotations();
+        List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
+        for (PsiAnnotation psiAnnotation : psiAnnotations) {
+            AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation);
+            if (annotation != null) {
+                r.add(annotation);
+            }
+        }
+        return r;
+    }
+
+    @Nullable
+    private AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation) {
+        AnnotationDescriptor annotation = new AnnotationDescriptor();
+
+        String qname = psiAnnotation.getQualifiedName();
+        if (qname.startsWith("java.lang.annotation.") || qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName())) {
+            // TODO
+            return null;
+        }
+
+        ClassDescriptor clazz = resolveClass(psiAnnotation.getQualifiedName());
+        if (clazz == null) {
+            return null;
+        }
+        annotation.setAnnotationType(clazz.getDefaultType());
+        annotation.setValueArguments(new ArrayList<CompileTimeConstant<?>>()); // TODO
+        return annotation;
     }
 
     public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, ClassOrNamespaceDescriptor containingDeclaration) {

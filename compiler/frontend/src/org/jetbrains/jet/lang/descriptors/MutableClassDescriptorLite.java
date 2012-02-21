@@ -40,7 +40,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private ConstructorDescriptor primaryConstructor;
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
 
-    private final List<AnnotationDescriptor> annotations = Lists.newArrayList();
+    private List<AnnotationDescriptor> annotations = Lists.newArrayList();
 
     private Map<String, ClassDescriptor> innerClassesAndObjects = Maps.newHashMap();
 
@@ -341,5 +341,9 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
         return annotations;
+    }
+
+    public void setAnnotations(List<AnnotationDescriptor> annotations) {
+        this.annotations = annotations;
     }
 }

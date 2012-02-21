@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -200,6 +201,9 @@ class NamespaceComparator {
                 case OBJECT:
                     sb.append("object");
                     break;
+                case ANNOTATION_CLASS:
+                    sb.append("annotation class");
+                    break;
                 default:
                     throw new IllegalStateException("unknown class kind: " + kind);
             }
@@ -218,6 +222,11 @@ class NamespaceComparator {
         public void serialize(FunctionDescriptor fun) {
             serialize(fun.getModality());
             sb.append(" ");
+
+            if (!fun.getAnnotations().isEmpty()) {
+                new Serializer(sb).serializeSeparated(fun.getAnnotations(), " ");
+                sb.append(" ");
+            }
             
             if (!fun.getOverriddenDescriptors().isEmpty()) {
                 sb.append("override /*" + fun.getOverriddenDescriptors().size() + "*/ ");
@@ -250,6 +259,11 @@ class NamespaceComparator {
         }
 
         public void serialize(PropertyDescriptor prop) {
+            if (!prop.getAnnotations().isEmpty()) {
+                new Serializer(sb).serializeSeparated(prop.getAnnotations(), " ");
+                sb.append(" ");
+            }
+
             if (prop.isVar()) {
                 sb.append("var ");
             } else {
@@ -320,6 +334,13 @@ class NamespaceComparator {
             if (type.isNullable()) {
                 sb.append("?");
             }
+        }
+
+        public void serialize(AnnotationDescriptor annotation) {
+            serialize(annotation.getType());
+            sb.append("(");
+            serializeCommaSeparated(annotation.getValueArguments());
+            sb.append(")");
         }
 
         public void serializeCommaSeparated(List<?> list) {
@@ -460,6 +481,10 @@ class NamespaceComparator {
 
         public void serialize(ClassDescriptor klass) {
 
+            if (!klass.getAnnotations().isEmpty()) {
+                new Serializer(sb).serializeSeparated(klass.getAnnotations(), " ");
+                sb.append(" ");
+            }
             serialize(klass.getModality());
             sb.append(" ");
 

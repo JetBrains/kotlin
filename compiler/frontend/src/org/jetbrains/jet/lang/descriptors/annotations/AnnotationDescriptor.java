@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 
+import javax.rmi.CORBA.ClassDesc;
 import java.util.List;
 
 /**
@@ -40,6 +42,9 @@ public class AnnotationDescriptor {
     }
 
     public void setAnnotationType(@NotNull JetType annotationType) {
+        if (!(annotationType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+            throw new IllegalStateException();
+        }
         this.annotationType = annotationType;
     }
 

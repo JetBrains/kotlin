@@ -1,0 +1,5 @@
+namespace test
+
+final annotation class test.SimpleAnnotation : jet.Any {
+    final /*constructor*/ fun <init>(): test.SimpleAnnotation
+}

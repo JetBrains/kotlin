@@ -133,7 +133,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
 
     @Override
     public List<AnnotationDescriptor> getAnnotations() {
-        throw new UnsupportedOperationException(); // TODO
+        return original.getAnnotations();
     }
 
     @NotNull
