@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -1425,7 +1425,14 @@ public class JavaDescriptorResolver {
             return null;
         }
         annotation.setAnnotationType(clazz.getDefaultType());
-        annotation.setValueArguments(new ArrayList<CompileTimeConstant<?>>()); // TODO
+        ArrayList<CompileTimeConstant<?>> valueArguments = new ArrayList<CompileTimeConstant<?>>();
+        if("jet.runtime.Intrinsic".equals(psiAnnotation.getQualifiedName())) {
+            // temporary hack
+            valueArguments.add(new StringValue(psiAnnotation.findAttributeValue("value").getText()));
+            annotation.setValueArguments(valueArguments); // TODO
+        }
+        else
+            annotation.setValueArguments(valueArguments); // TODO
         return annotation;
     }
 

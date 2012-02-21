@@ -72,7 +72,7 @@ public class IntrinsicMethods {
         myProject = project;
         myStdLib = stdlib;
 
-        namedMethods.put("std.javaClass.property", new JavaClassProperty());
+        namedMethods.put("\"std.javaClass.function\"", new JavaClassFunction());
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
