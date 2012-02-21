@@ -149,9 +149,9 @@ public class CompileSession {
         boolean hasIncompleteHierarchyErrors;
         Collection<ClassDescriptor> incompletes = myBindingContext.getKeys(BindingContext.INCOMPLETE_HIERARCHY);
         if (!incompletes.isEmpty()) {
-            out.println("following classes have incomplete hierarchies:");
+            out.println(Severity.ERROR + ":: The following classes have incomplete hierarchies:");
             for (ClassDescriptor incomplete : incompletes) {
-                out.println("    " + fqName(incomplete));
+                out.println(Severity.ERROR + "::    " + fqName(incomplete));
             }
             hasIncompleteHierarchyErrors = true;
         } else {

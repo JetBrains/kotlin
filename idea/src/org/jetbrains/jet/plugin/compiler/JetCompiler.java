@@ -324,7 +324,9 @@ public class JetCompiler implements TranslatingCompiler {
                     int line = -1;
                     int column = -1;
                     int colonIndex = text.indexOf(':');
-                    if (colonIndex > 0) {
+                    if (text.startsWith(":")) {
+                        text = text.substring(1);
+                    } else if (colonIndex > 0) {
                         path = "file://" + text.substring(0, colonIndex).trim();
                         text = text.substring(colonIndex + 1);
 
