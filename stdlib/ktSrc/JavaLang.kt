@@ -3,12 +3,9 @@ package std
 import java.lang.Class
 import java.lang.Object
 
-val <erased T> T.javaClass : Class<T>
-    get() = jet.runtime.Intrinsics.getJavaClass(this) as Class<T>
+import jet.runtime.intrinsic
 
-fun <T> javaClass() : Class<T> = (typeinfo<T>() as org.jetbrains.jet.rt.TypeInfoImpl<T>).getJavaClass().sure()
+val <T> T.javaClass : Class<T>
+    [intrinsic("std.javaClass.property")] get() = (this as java.lang.Object).getClass() as Class<T>
 
-val <erased T> TypeInfo<T>.javaClassForType : Class<T>
-    get() {
-      return (this as org.jetbrains.jet.rt.TypeInfoImpl<T>).getJavaClass().sure()
-    }
+[intrinsic("std.javaClass.function")] fun <T> javaClass() : Class<T> = null as Class<T>

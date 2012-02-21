@@ -17,8 +17,6 @@
 package jet;
 
 public final class DoubleRange implements Range<Double>, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(DoubleRange.class, false);
-
     private final double start;
     private final double size;
 
@@ -64,11 +62,6 @@ public final class DoubleRange implements Range<Double>, JetObject {
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
-
-    @Override
     public JetObject getOuterObject() {
         return null;
     }
@@ -78,8 +71,6 @@ public final class DoubleRange implements Range<Double>, JetObject {
     }
 
     private static class MyIterator extends DoubleIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private double cur;
         private double step;
         private final double end;
@@ -118,11 +109,6 @@ public final class DoubleRange implements Range<Double>, JetObject {
                 cur += step;
                 return cur - step;
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

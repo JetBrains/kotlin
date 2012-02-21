@@ -146,14 +146,6 @@ public class FunctionCodegen {
                         }
                         av.visitEnd();
                     }
-                    for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                        if (!typeParameterDescriptor.isReified()) {
-                            continue;
-                        }
-                        AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
-                        av.visit(JvmStdlibNames.JET_TYPE_PARAMETER_NAME_FIELD, typeParameterDescriptor.getName());
-                        av.visitEnd();
-                    }
                     for(int i = 0; i != paramDescrs.size(); ++i) {
                         AnnotationVisitor av = mv.visitParameterAnnotation(i + start, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
@@ -191,15 +183,6 @@ public class FunctionCodegen {
 
                 if(receiverParameter.exists())
                     add++;
-
-                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    if (!typeParameterDescriptor.isReified()) {
-                        continue;
-                    }
-                    int slot = frameMap.enterTemp();
-                    add++;
-                    codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(slot, JetTypeMapper.TYPE_TYPEINFO));
-                }
 
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
@@ -253,10 +236,6 @@ public class FunctionCodegen {
                     // TODO: specify signature
                     mv.visitLocalVariable("this$receiver", type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();
-                }
-
-                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    mv.visitLocalVariable(typeParameterDescriptor.getName(), JetTypeMapper.TYPE_TYPEINFO.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
 
                 for (ValueParameterDescriptor parameter : paramDescrs) {
@@ -361,13 +340,6 @@ public class FunctionCodegen {
                     var += receiverType.getSize();
                 }
 
-                List<TypeParameterDescriptor> typeParameters = functionDescriptor.getTypeParameters();
-                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    if(typeParameterDescriptor.isReified()) {
-                        codegen.addTypeParameter(typeParameterDescriptor, StackValue.local(var++, JetTypeMapper.TYPE_TYPEINFO));
-                    }
-                }
-
                 Type[] argTypes = jvmSignature.getArgumentTypes();
                 List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
                 for (int i = 0; i < paramDescrs.size(); i++) {
@@ -388,12 +360,6 @@ public class FunctionCodegen {
                 }
 
                 int extra = hasReceiver ? 1 : 0;
-                for (final TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
-                    if(typeParameterDescriptor.isReified()) {
-                        iv.load(var++, JetTypeMapper.TYPE_OBJECT);
-                        extra++;
-                    }
-                }
 
                 Type[] argumentTypes = jvmSignature.getArgumentTypes();
                 for (int index = 0; index < paramDescrs.size(); index++) {

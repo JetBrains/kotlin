@@ -366,12 +366,6 @@ public class BothSignatureWriter {
         transitionState(State.PARAMETER, State.PARAMETERS);
     }
 
-    public void writeTypeInfoParameter() {
-        writeParameterType(JvmMethodParameterKind.TYPE_INFO);
-        writeAsmType(JetTypeMapper.TYPE_TYPEINFO, false);
-        writeParameterTypeEnd();
-    }
-
     public void writeReturnType() {
         transitionState(State.PARAMETERS, State.RETURN_TYPE);
 

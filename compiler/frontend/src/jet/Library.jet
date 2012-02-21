@@ -1,13 +1,5 @@
 package jet
 
-class TypeInfo<out T> {
-  fun isSubtypeOf(other : TypeInfo<*>) : Boolean
-  fun isInstance(obj : Any?) : Boolean
-}
-
-fun typeinfo<T>() : TypeInfo<T>
-fun typeinfo<T>(expression : T) : TypeInfo<T>
-
 annotation class volatile
 annotation class atomic
 

@@ -34,7 +34,7 @@ public class PropertyGenTest extends CodegenTestCase {
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
-        assertEquals(2, fields.length);  // $typeInfo, prop
+        assertEquals(1, fields.length);  // prop
         final Field field = fields[0];
         assertEquals("prop", field.getName());
     }

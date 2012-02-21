@@ -20,8 +20,8 @@
 package jet;
 
 public abstract class ExtensionFunction3<E, D1, D2, D3, R> extends DefaultJetObject {
-    protected ExtensionFunction3(TypeInfo<?> typeInfo) {
-        super(typeInfo);
+    protected ExtensionFunction3() {
+        super();
     }
 
     public abstract R invoke(E receiver, D1 d1, D2 d2, D3 d3);

@@ -105,13 +105,13 @@ public class PatternMatchingTest extends CodegenTestCase {
         Method foo = generateFunction();
         final Object result;
         try {
-            result = foo.invoke(null, new Tuple2<Integer, Integer>(null, 1, 2));
+            result = foo.invoke(null, new Tuple2<Integer, Integer>(1, 2));
         } catch (Exception e) {
             System.out.println(generateToText());
             throw e;
         }
         assertEquals("one,two", result);
-        assertEquals("something", foo.invoke(null, new Tuple2<String, String>(null, "not", "tuple")));
+        assertEquals("something", foo.invoke(null, new Tuple2<String, String>("not", "tuple")));
     }
 
     // Commented for KT-621
@@ -135,8 +135,8 @@ public class PatternMatchingTest extends CodegenTestCase {
     public void testNames() throws Exception {
         loadText("fun foo(x: #(Any, Any)) = when(x) { is #(val a is String, *) -> a; else -> \"something\" }");
         Method foo = generateFunction();
-        assertEquals("JetBrains", foo.invoke(null, new Tuple2<String, String>(null, "JetBrains", "s.r.o.")));
-        assertEquals("something", foo.invoke(null, new Tuple2<Integer, Integer>(null, 1, 2)));
+        assertEquals("JetBrains", foo.invoke(null, new Tuple2<String, String>("JetBrains", "s.r.o.")));
+        assertEquals("something", foo.invoke(null, new Tuple2<Integer, Integer>(1, 2)));
     }
 
     public void testMultipleConditions() throws Exception {

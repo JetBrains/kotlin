@@ -55,8 +55,9 @@ public class ForTestCompileStdlib {
         
         File classesDir = new File(tmpDir, "classes");
 
-        compileKotlinPartOfStdlib(classesDir);
+        FileUtil.createParentDirs(new File(classesDir, "dummy"));
         compileJavaPartOfStdlib(classesDir);
+        compileKotlinPartOfStdlib(classesDir);
 
         FileOutputStream stdlibJar = new FileOutputStream(jarFile);
         try {
@@ -98,7 +99,7 @@ public class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        KotlinCompiler.exec("-output", destdir.getPath(), "-src", "./stdlib/ktSrc");
+        KotlinCompiler.exec("-output", destdir.getPath(), "-src", "./stdlib/ktSrc", "-stdlib", destdir.getAbsolutePath());
     }
     
     private static List<File> javaFilesInDir(File dir) {

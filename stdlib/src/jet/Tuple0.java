@@ -21,7 +21,6 @@ package jet;
  */
 public class Tuple0 implements JetObject {
     public static final Tuple0 INSTANCE = new Tuple0();
-    private static final TypeInfo<?> typeInfo = TypeInfo.getTypeInfo(Tuple0.class, false);
 
     private Tuple0() {
     }
@@ -39,11 +38,6 @@ public class Tuple0 implements JetObject {
     @Override
     public int hashCode() {
         return 239;
-    }
-
-    @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
     }
 
     @Override

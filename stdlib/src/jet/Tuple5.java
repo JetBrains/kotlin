@@ -23,8 +23,7 @@ public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject {
     public final T4 _4;
     public final T5 _5;
 
-    public Tuple5(TypeInfo typeInfo, T1 t1, T2 t2, T3 t3, T4 t4, T5 t5) {
-        super(typeInfo);
+    public Tuple5(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5) {
         _1 = t1;
         _2 = t2;
         _3 = t3;

@@ -20,10 +20,6 @@
 package jet;
 
 public abstract class Function3<D1, D2, D3, R> extends DefaultJetObject {
-    protected Function3(TypeInfo<?> typeInfo) {
-        super(typeInfo);
-    }
-
     public abstract R invoke(D1 d1, D2 d2, D3 d3);
 
     @Override

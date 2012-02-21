@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,21 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.List;
 
 /**
- * @author yole
+ * @author alex.tkachman
  */
-public class TypeInfo implements IntrinsicMethod {
+public class JavaClassProperty implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        final List<JetTypeProjection> typeArguments = ((JetCallExpression) element).getTypeArguments();
-        if (typeArguments.size() != 1) {
-            throw new UnsupportedOperationException("one type argument expected");
-        }
-        codegen.pushTypeArgument(typeArguments.get(0));
-        return StackValue.onStack(JetTypeMapper.TYPE_TYPEINFO);
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver) {
+        return null;
     }
 }

@@ -31,7 +31,8 @@ import java.util.Map;
  * @author Stepan Koltsov
  */
 class JavaDescriptorResolverHelper {
-
+    private JavaDescriptorResolverHelper() {
+    }
 
     private static class Builder {
         private final PsiClassWrapper psiClass;

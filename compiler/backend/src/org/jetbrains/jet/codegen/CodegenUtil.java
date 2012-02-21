@@ -74,34 +74,6 @@ public class CodegenUtil {
         return (ClassDescriptor) outerDescriptor;
     }
 
-    public static boolean hasDerivedTypeInfoField(JetType type) {
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            if(hasTypeInfoField(jetType))
-                return true;
-        }
-
-        return false;
-    }
-
-    public static boolean requireTypeInfoConstructorArg(JetType type) {
-        for (TypeParameterDescriptor parameter : type.getConstructor().getParameters()) {
-            if(parameter.isReified())
-                return true;
-        }
-
-        return false;
-    }
-
-    public static boolean hasTypeInfoField(JetType type) {
-        if(isInterface(type))
-            return false;
-
-        if(requireTypeInfoConstructorArg(type))
-            return true;
-
-        return hasDerivedTypeInfoField(type);
-    }
-
     public static NamedFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
         NamedFunctionDescriptorImpl invokeDescriptor = new NamedFunctionDescriptorImpl(

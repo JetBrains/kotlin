@@ -78,7 +78,7 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testArrayT () throws InvocationTargetException, IllegalAccessException {
         loadText("fun test() = _array(2, 4); fun <T> _array(vararg elements : T) = elements");
-//        System.out.println(generateToText());
+        System.out.println(generateToText());
         final Method main = generateFunction("test");
         Object res = main.invoke(null);
         assertTrue(((Integer[])res).length == 2);

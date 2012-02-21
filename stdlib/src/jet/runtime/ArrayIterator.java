@@ -17,7 +17,6 @@
 package jet.runtime;
 
 import jet.*;
-import jet.typeinfo.TypeInfoProjection;
 
 /**
  * @author alex.tkachman
@@ -37,12 +36,10 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class GenericIterator<T> extends ArrayIterator<T> {
         private final T[] array;
-        private final TypeInfo elementTypeInfo;
 
-        private GenericIterator(T[] array, TypeInfo elementTypeInfo) {
+        private GenericIterator(T[] array) {
             super(array.length);
             this.array = array;
-            this.elementTypeInfo = elementTypeInfo;
         }
 
         @Override
@@ -51,23 +48,16 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return TypeInfo.getTypeInfo(GenericIterator.class, false, new TypeInfoProjection[] {(TypeInfoProjection) elementTypeInfo});
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
     }
     
-    public static <T> Iterator<T> iterator(T[] array, TypeInfo elementTypeInfo) {
-        return new GenericIterator<T>(array, elementTypeInfo);
+    public static <T> Iterator<T> iterator(T[] array) {
+        return new GenericIterator<T>(array);
     }
 
     private static class ArrayByteIterator extends ByteIterator {
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayByteIterator.class, false);
-
         private final byte[] array;
         private int index;
 
@@ -86,11 +76,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -102,7 +87,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayShortIterator extends ShortIterator {
         private final short[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayShortIterator.class, false);
 
         private int index;
 
@@ -121,11 +105,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -137,7 +116,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayIntegerIterator extends IntIterator {
         private final int[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayIntegerIterator.class, false);
 
         private int index;
 
@@ -156,11 +134,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -172,7 +145,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayLongIterator extends LongIterator {
         private final long[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayLongIterator.class, false);
 
         private int index;
 
@@ -191,11 +163,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -207,7 +174,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayFloatIterator extends FloatIterator {
         private final float[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayFloatIterator.class, false);
 
         private int index;
 
@@ -226,11 +192,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -242,7 +203,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayDoubleIterator extends DoubleIterator {
         private final double[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayDoubleIterator.class, false);
 
         private int index;
 
@@ -261,11 +221,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -277,7 +232,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayCharacterIterator extends CharIterator {
         private final char[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayCharacterIterator.class, false);
 
         private int index;
 
@@ -296,11 +250,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         }
 
         @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
-        }
-
-        @Override
         public JetObject getOuterObject() {
             return null;
         }
@@ -312,7 +261,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
 
     private static class ArrayBooleanIterator extends BooleanIterator {
         private final boolean[] array;
-        private static final TypeInfo typeInfo = TypeInfo.getTypeInfo(ArrayBooleanIterator.class, false);
 
         private int index;
 
@@ -328,11 +276,6 @@ public abstract class ArrayIterator<T> implements Iterator<T>, JetObject {
         @Override
         public boolean nextBoolean() {
             return array[index++];
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

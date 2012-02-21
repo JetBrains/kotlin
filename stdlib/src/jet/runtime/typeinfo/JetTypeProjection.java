@@ -16,8 +16,6 @@
 
 package jet.runtime.typeinfo;
 
-import jet.typeinfo.TypeInfoVariance;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -28,10 +26,6 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JetTypeProjection {
-    /**
-     * @return variance of the type
-     */
-    TypeInfoVariance variance();
 
     /**
      * @return index of the class in the per class table of JetTypeDescriptor

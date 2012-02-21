@@ -1,6 +1,6 @@
 package test
 
-class List<T>(len: Int) {
+class List<T>(len: Int, cls : java.lang.Class) {
   val a : Array<T?> = Array<T?>(len)
 
   fun reverse() {

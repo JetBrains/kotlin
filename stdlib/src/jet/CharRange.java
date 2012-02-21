@@ -17,8 +17,6 @@
 package jet;
 
 public final class CharRange implements Range<Character>, CharIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(CharRange.class, false);
-
     private final char start;
     private final int count;
 
@@ -75,11 +73,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
-
-    @Override
     public JetObject getOuterObject() {
         return null;
     }
@@ -89,8 +82,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
     }
 
     private static class MyIterator extends CharIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private char cur;
         private int step;
         private int count;
@@ -127,11 +118,6 @@ public final class CharRange implements Range<Character>, CharIterable, JetObjec
                 cur += step;
                 return (char) (cur - step);
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

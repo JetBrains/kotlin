@@ -16,7 +16,6 @@
 
 package jet.runtime.typeinfo;
 
-import jet.typeinfo.TypeInfoVariance;
 
 /**
  * @author alex.tkachman
@@ -29,7 +28,6 @@ public @interface JetTypeDescriptor{
     //
     String varName() default "";
     boolean reified () default true;
-    TypeInfoVariance variance() default TypeInfoVariance.INVARIANT;
     int [] upperBounds() default {};
 
     //

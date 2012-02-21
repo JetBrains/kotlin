@@ -25,6 +25,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
@@ -46,8 +47,6 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod UNARY_PLUS = new UnaryPlus();
     private static final IntrinsicMethod NUMBER_CAST = new NumberCast();
     private static final IntrinsicMethod INV = new Inv();
-    private static final IntrinsicMethod TYPEINFO = new TypeInfo();
-    private static final IntrinsicMethod VALUE_TYPEINFO = new ValueTypeInfo();
     private static final IntrinsicMethod UP_TO = new UpTo(true);
     private static final IntrinsicMethod DOWN_TO = new UpTo(false);
     private static final IntrinsicMethod INC = new Increment(1);
@@ -66,11 +65,15 @@ public class IntrinsicMethods {
     private final Project myProject;
     private final JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
+    private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
     public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
         myProject = project;
         myStdLib = stdlib;
+
+        namedMethods.put("std.javaClass.property", new JavaClassProperty());
+
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
             declareIntrinsicProperty("Number", method, NUMBER_CAST);
@@ -91,8 +94,6 @@ public class IntrinsicMethods {
         }
 
         final Set<FunctionDescriptor> typeInfoFunctionGroup = stdlib.getTypeInfoFunctions();
-        declareOverload(typeInfoFunctionGroup, 0, TYPEINFO);
-        declareOverload(typeInfoFunctionGroup, 1, VALUE_TYPEINFO);
 
         declareBinaryOp("plus", Opcodes.IADD);
         declareBinaryOp("minus", Opcodes.ISUB);
@@ -238,7 +239,18 @@ public class IntrinsicMethods {
     }
 
     public IntrinsicMethod getIntrinsic(DeclarationDescriptor descriptor) {
-        return myMethods.get(descriptor.getOriginal());
+        IntrinsicMethod intrinsicMethod = myMethods.get(descriptor.getOriginal());
+        if(intrinsicMethod == null) {
+            List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
+            if (annotations != null) {
+                for (AnnotationDescriptor annotation : annotations) {
+                    if("intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                        intrinsicMethod = namedMethods.get(annotation.getValueArguments().get(0).getValue());
+                    }
+                }
+            }
+        }
+        return intrinsicMethod;
     }
 
 }

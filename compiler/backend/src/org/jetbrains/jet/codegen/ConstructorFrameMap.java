@@ -41,12 +41,6 @@ public class ConstructorFrameMap extends FrameMap {
             }
         }
 
-        if (classDescriptor != null) {
-            if (CodegenUtil.requireTypeInfoConstructorArg(classDescriptor.getDefaultType())) {
-                myTypeInfoIndex = enterTemp();
-            }
-        }
-
         List<Type> explicitArgTypes = callableMethod.getValueParameterTypes();
 
         List<ValueParameterDescriptor> paramDescrs = descriptor != null

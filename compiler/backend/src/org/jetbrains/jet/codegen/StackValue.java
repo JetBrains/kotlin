@@ -671,12 +671,6 @@ public abstract class StackValue {
                     }
                 }
 
-                for (TypeParameterDescriptor typeParameterDescriptor : setterDescriptor.getOriginal().getTypeParameters()) {
-                    if(typeParameterDescriptor.isReified()) {
-                        codegen.generateTypeInfo(resolvedSetCall.getTypeArguments().get(typeParameterDescriptor), null);
-                    }
-                }
-
                 int index = firstParamIndex;
                 for(int i = 0; i != valueParameters.size(); ++i) {
                     Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());

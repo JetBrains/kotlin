@@ -17,8 +17,6 @@
 package jet;
 
 public final class ShortRange implements Range<Short>, ShortIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(ShortRange.class, false);
-
     private final short start;
     private final int count;
 
@@ -75,11 +73,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
-
-    @Override
     public JetObject getOuterObject() {
         return null;
     }
@@ -89,8 +82,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
     }
 
     private static class MyIterator extends ShortIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private short cur;
         private int step;
         private int count;
@@ -127,11 +118,6 @@ public final class ShortRange implements Range<Short>, ShortIterable, JetObject 
                 cur += step;
                 return (short) (cur - step);
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

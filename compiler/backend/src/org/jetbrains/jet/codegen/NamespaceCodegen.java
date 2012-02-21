@@ -98,13 +98,10 @@ public class NamespaceCodegen {
         if (hasNonConstantPropertyInitializers(file)) {
             generateStaticInitializers(file);
         }
-
-        generateTypeInfoFields(file, context);
     }
 
     private void generateStaticInitializers(JetFile namespace) {
-        MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC,
-                                       "<clinit>", "()V", null, null);
+        MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
         if (v.generateCode()) {
             mv.visitCode();
 
@@ -129,78 +126,6 @@ public class NamespaceCodegen {
             mv.visitInsn(RETURN);
             FunctionCodegen.endVisit(mv, "static initializer for namespace", namespace);
             mv.visitEnd();
-        }
-    }
-
-    private void generateTypeInfoFields(JetFile file, CodegenContext context) {
-        if(context.typeInfoConstants != null) {
-            String jvmClassName = getJVMClassName(JetPsiUtil.getFQName(file), true);
-            for(int index = 0; index != context.typeInfoConstantsCount; index++) {
-                JetType type = context.reverseTypeInfoConstants.get(index);
-                String fieldName = "$typeInfoCache$" + index;
-                v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, fieldName, "Ljet/TypeInfo;", null, null);
-
-                MethodVisitor mmv = v.newMethod(null, ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "$getCachedTypeInfo$" + index, "()Ljet/TypeInfo;", null, null);
-                InstructionAdapter v = new InstructionAdapter(mmv);
-                v.visitFieldInsn(GETSTATIC, jvmClassName, fieldName, "Ljet/TypeInfo;");
-                v.visitInsn(DUP);
-                Label end = new Label();
-                v.visitJumpInsn(IFNONNULL, end);
-
-                v.pop();
-                generateTypeInfo(context, v, type, state.getTypeMapper(), type);
-                v.dup();
-
-                v.visitFieldInsn(PUTSTATIC, jvmClassName, fieldName, "Ljet/TypeInfo;");
-                v.visitLabel(end);
-                v.visitInsn(ARETURN);
-                FunctionCodegen.endVisit(v, "type info method", file);
-            }
-        }
-    }
-
-    private static void generateTypeInfo(CodegenContext context, InstructionAdapter v, JetType jetType, JetTypeMapper typeMapper, JetType root) {
-        String knownTypeInfo = typeMapper.isKnownTypeInfo(jetType);
-        if(knownTypeInfo != null) {
-            v.getstatic("jet/TypeInfo", knownTypeInfo, "Ljet/TypeInfo;");
-            return;
-        }
-
-        DeclarationDescriptor declarationDescriptor = jetType.getConstructor().getDeclarationDescriptor();
-        if(!jetType.equals(root) && jetType.getArguments().size() == 0 && !JetStandardClasses.getAny().equals(declarationDescriptor)) {
-            // TODO: we need some better checks here
-            v.getstatic(typeMapper.mapType(jetType, OwnerKind.IMPLEMENTATION).getInternalName(), JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
-            return;
-        }
-
-        boolean hasUnsubstituted = TypeUtils.hasUnsubstitutedTypeParameters(jetType);
-        if(!jetType.equals(root) && !hasUnsubstituted) {
-            int typeInfoConstantIndex = context.getTypeInfoConstantIndex(jetType);
-            v.invokestatic(context.getNamespaceClassName(), "$getCachedTypeInfo$" + typeInfoConstantIndex, "()Ljet/TypeInfo;");
-            return;
-        }
-
-        final Type jvmType = typeMapper.mapType(jetType);
-
-        v.aconst(jvmType);
-        v.iconst(jetType.isNullable() ? 1 : 0);
-        List<TypeProjection> arguments = jetType.getArguments();
-        if (arguments.size() > 0 && !(jvmType.getSort() == Type.ARRAY && JetTypeMapper.correctElementType(jvmType).getSort() != Type.OBJECT)) {
-            v.iconst(arguments.size());
-            v.newarray(JetTypeMapper.TYPE_TYPEINFOPROJECTION);
-
-            for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
-                TypeProjection argument = arguments.get(i);
-                v.dup();
-                v.iconst(i);
-                generateTypeInfo(context, v, argument.getType(), typeMapper, root);
-                ExpressionCodegen.genTypeInfoToProjection(v, argument.getProjectionKind());
-                v.astore(JetTypeMapper.TYPE_OBJECT);
-            }
-            v.invokestatic("jet/TypeInfo", JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "(Ljava/lang/Class;Z[Ljet/typeinfo/TypeInfoProjection;)Ljet/TypeInfo;");
-        }
-        else {
-            v.invokestatic("jet/TypeInfo", JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "(Ljava/lang/Class;Z)Ljet/TypeInfo;");
         }
     }
 

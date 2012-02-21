@@ -233,8 +233,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
-        generateGetTypeInfo();
-
         generateFieldForObjectInstance();
         generateFieldForClassObject();
 
@@ -414,10 +412,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 signatureWriter.writeParameterTypeEnd();
             }
 
-            if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
-                signatureWriter.writeTypeInfoParameter();
-            }
-
             signatureWriter.writeParametersEnd();
             
             signatureWriter.writeVoidReturn();
@@ -499,12 +493,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 i++;
             }
 
-            if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType())) {
-                AnnotationVisitor jetTypeParameterAnnotation =
-                        mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_TYPE_PARAMETER.getDescriptor(), true);
-                jetTypeParameterAnnotation.visitEnd();
-            }
-
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
                 AnnotationVisitor jetValueParameterAnnotation =
                         mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
@@ -559,10 +547,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(1, JetTypeMapper.TYPE_OBJECT);
                 parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
             }
-            for(TypeProjection typeParameterDescriptor : superType.getArguments()) {
-                codegen.generateTypeInfo(typeParameterDescriptor.getType(), null);
-                parameterTypes.add(JetTypeMapper.TYPE_TYPEINFO);
-            }
             Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
             iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "<init>", superCallMethod.getDescriptor());
         }
@@ -614,12 +598,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             outer.visitFieldInsn(GETFIELD, classname, "this$0", outerType.getDescriptor());
             outer.visitInsn(ARETURN);
             FunctionCodegen.endVisit(outer, JvmStdlibNames.JET_OBJECT_GET_OUTER_OBJECT_METHOD, myClass);
-        }
-
-        if (CodegenUtil.requireTypeInfoConstructorArg(descriptor.getDefaultType()) && kind == OwnerKind.IMPLEMENTATION) {
-            iv.load(0, JetTypeMapper.TYPE_OBJECT);
-            iv.load(frameMap.getTypeInfoIndex(), JetTypeMapper.TYPE_OBJECT);
-            iv.invokevirtual(typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), JvmAbi.SET_TYPE_INFO_METHOD, "(Ljet/TypeInfo;)V");
         }
 
         if(closure != null) {
@@ -957,60 +935,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Nullable
     private JetClassObject getClassObject() {
         return myClass instanceof JetClass ? ((JetClass) myClass).getClassObject() : null;
-    }
-
-    private void generateGetTypeInfo() {
-        JetType defaultType = descriptor.getDefaultType();
-        if(CodegenUtil.requireTypeInfoConstructorArg(defaultType)) {
-            if(myClass instanceof JetClass && ((JetClass)myClass).isTrait())
-                return;
-
-            if(!CodegenUtil.hasDerivedTypeInfoField(defaultType)) {
-                v.newField(myClass, ACC_PROTECTED, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;", null, null);
-
-                MethodVisitor mv = v.newMethod(myClass, ACC_PUBLIC, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "()Ljet/TypeInfo;", null, null);
-                if (v.generateCode()) {
-                    mv.visitCode();
-                    InstructionAdapter iv = new InstructionAdapter(mv);
-                    String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    iv.getfield(owner, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
-                    iv.areturn(JetTypeMapper.TYPE_TYPEINFO);
-                    FunctionCodegen.endVisit(iv, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, myClass);
-                }
-
-                mv = v.newMethod(myClass, ACC_PROTECTED | ACC_FINAL, JvmAbi.SET_TYPE_INFO_METHOD, "(Ljet/TypeInfo;)V", null, null);
-                if (v.generateCode()) {
-                    mv.visitCode();
-                    InstructionAdapter iv = new InstructionAdapter(mv);
-                    String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    iv.load(1, JetTypeMapper.TYPE_OBJECT);
-                    iv.putfield(owner, JvmAbi.TYPE_INFO_FIELD, "Ljet/TypeInfo;");
-                    mv.visitInsn(RETURN);
-                    FunctionCodegen.endVisit(iv, JvmAbi.SET_TYPE_INFO_METHOD, myClass);
-                }
-            }
-        }
-        else {
-            if (!(myClass instanceof JetClass) || !((JetClass) myClass).isTrait()) {
-                genGetStaticGetTypeInfoMethod();
-            }
-
-            staticTypeInfoField();
-        }
-    }
-
-    private void genGetStaticGetTypeInfoMethod() {
-        final MethodVisitor mv = v.newMethod(myClass, ACC_PUBLIC, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, "()Ljet/TypeInfo;", null, null);
-        if (v.generateCode()) {
-            mv.visitCode();
-            InstructionAdapter v = new InstructionAdapter(mv);
-            String owner = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-            v.getstatic(owner, "$staticTypeInfo", "Ljet/TypeInfo;");
-            v.areturn(JetTypeMapper.TYPE_TYPEINFO);
-            FunctionCodegen.endVisit(v, JvmStdlibNames.JET_OBJECT_GET_TYPEINFO_METHOD, myClass);
-        }
     }
 
     private void staticTypeInfoField() {

@@ -17,8 +17,6 @@
 package jet;
 
 public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(ByteRange.class, false);
-
     private final byte start;
     private final int count;
 
@@ -75,11 +73,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
-
-    @Override
     public JetObject getOuterObject() {
         return null;
     }
@@ -89,8 +82,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
     }
 
     private static class MyIterator extends ByteIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private byte cur;
         private int step;
         private int count;
@@ -127,11 +118,6 @@ public final class ByteRange implements Range<Byte>, ByteIterable, JetObject {
                 cur += step;
                 return (byte) (cur - step);
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

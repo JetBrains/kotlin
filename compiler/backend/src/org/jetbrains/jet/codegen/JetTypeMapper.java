@@ -19,8 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import jet.JetObject;
-import jet.TypeInfo;
-import jet.typeinfo.TypeInfoProjection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -44,8 +42,6 @@ import static org.objectweb.asm.Opcodes.*;
 public class JetTypeMapper {
     public static final Type TYPE_OBJECT = Type.getObjectType("java/lang/Object");
     public static final Type TYPE_THROWABLE = Type.getObjectType("java/lang/Throwable");
-    public static final Type TYPE_TYPEINFO = Type.getType(TypeInfo.class);
-    public static final Type TYPE_TYPEINFOPROJECTION = Type.getType(TypeInfoProjection.class);
     public static final Type TYPE_JET_OBJECT = Type.getType(JetObject.class);
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
@@ -492,11 +488,6 @@ public class JetTypeMapper {
             signatureVisitor.writeParameterTypeEnd();
         }
 
-        for (TypeParameterDescriptor parameterDescriptor : f.getTypeParameters()) {
-            if(parameterDescriptor.isReified()) {
-                signatureVisitor.writeTypeInfoParameter();
-            }
-        }
         for (ValueParameterDescriptor parameter : parameters) {
             signatureVisitor.writeParameterType(JvmMethodParameterKind.VALUE);
             mapType(parameter.getOutType(), signatureVisitor);
@@ -625,12 +616,6 @@ public class JetTypeMapper {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if(typeParameterDescriptor.isReified()) {
-                signatureWriter.writeTypeInfoParameter();
-            }
-        }
-        
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
@@ -672,12 +657,6 @@ public class JetTypeMapper {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        for (TypeParameterDescriptor typeParameterDescriptor : descriptor.getTypeParameters()) {
-            if(typeParameterDescriptor.isReified()) {
-                signatureWriter.writeTypeInfoParameter();
-            }
-        }
-
         signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
         mapType(outType, signatureWriter);
         signatureWriter.writeParameterTypeEnd();
@@ -706,10 +685,6 @@ public class JetTypeMapper {
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
             mapType(CodegenUtil.getOuterClassDescriptor(classDescriptor).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter);
             signatureWriter.writeParameterTypeEnd();
-        }
-
-        if (CodegenUtil.requireTypeInfoConstructorArg(classDescriptor.getDefaultType())) {
-            signatureWriter.writeTypeInfoParameter();
         }
 
         for (ValueParameterDescriptor parameter : parameters) {

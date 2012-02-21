@@ -296,9 +296,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             iv.load(0, Type.getObjectType(funClass));
-//        expressionCodegen.generateTypeInfo(new ProjectionErasingJetType(returnType));
-            iv.aconst(null); // @todo
-            iv.invokespecial(funClass, "<init>", "(Ljet/TypeInfo;)V");
+            iv.invokespecial(funClass, "<init>", "()V");
 
             i = 1;
             for (Type type : argTypes) {

@@ -17,8 +17,6 @@
 package jet;
 
 public final class FloatRange implements Range<Float>, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(FloatRange.class, false);
-
     private final float start;
     private final float size;
 
@@ -63,10 +61,6 @@ public final class FloatRange implements Range<Float>, JetObject {
         return new FloatRange(getEnd(), -size);
     }
 
-    @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
 
     @Override
     public JetObject getOuterObject() {
@@ -78,8 +72,6 @@ public final class FloatRange implements Range<Float>, JetObject {
     }
 
     private static class MyIterator extends FloatIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private float cur;
         private float step;
         private final float end;
@@ -118,11 +110,6 @@ public final class FloatRange implements Range<Float>, JetObject {
                 cur += step;
                 return cur - step;
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

@@ -17,8 +17,6 @@
 package jet;
 
 public final class LongRange implements Range<Long>, LongIterable, JetObject {
-    private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(IntRange.class, false);
-
     private final long start;
     private final long count;
 
@@ -75,11 +73,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
     }
 
     @Override
-    public TypeInfo<?> getTypeInfo() {
-        return typeInfo;
-    }
-
-    @Override
     public JetObject getOuterObject() {
         return null;
     }
@@ -89,8 +82,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
     }
 
     private static class MyIterator extends LongIterator {
-        private final static TypeInfo typeInfo = TypeInfo.getTypeInfo(MyIterator.class, false);
-
         private long cur;
         private long step;
         private long count;
@@ -127,11 +118,6 @@ public final class LongRange implements Range<Long>, LongIterable, JetObject {
                 cur += step;
                 return (cur - step);
             }
-        }
-
-        @Override
-        public TypeInfo<?> getTypeInfo() {
-            return typeInfo;
         }
 
         @Override

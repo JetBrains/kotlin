@@ -21,6 +21,5 @@ package jet;
  * @author alex.tkachman
  */
 public interface JetObject {
-    TypeInfo<?> getTypeInfo();
     JetObject getOuterObject();
 }

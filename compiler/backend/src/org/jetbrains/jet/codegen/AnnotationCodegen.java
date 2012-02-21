@@ -43,16 +43,22 @@ public abstract class AnnotationCodegen {
 
         for (AnnotationDescriptor annotationDescriptor : annotations) {
             List<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getValueArguments();
-            if(!valueArguments.isEmpty()) {
-                throw new UnsupportedOperationException("Only annotations without values are supported by backend so far");
-            }
-
             JetType type = annotationDescriptor.getType();
             ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
             RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
             if(rp != RetentionPolicy.SOURCE) {
                 String internalName = typeMapper.mapType(type).getDescriptor();
                 AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
+
+                if(!valueArguments.isEmpty()) {
+                    // todo: temporary hack for intrinsics in stdlib
+                    if(valueArguments.size()==1 && "intrinsic".equals(annotationDescriptor.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                        annotationVisitor.visit("value", valueArguments.get(0).getValue());
+                    }
+                    else
+                    throw new UnsupportedOperationException("Only annotations without values are supported by backend so far");
+                }
+
                 annotationVisitor.visitEnd();
             }
         }

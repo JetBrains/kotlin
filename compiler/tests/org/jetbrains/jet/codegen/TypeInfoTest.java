@@ -18,39 +18,17 @@ package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
 import jet.TypeCastException;
-import jet.TypeInfo;
 
 import java.lang.reflect.Method;
 
 /**
  * @author yole
+ * @author alex.tkachman
  */
 public class TypeInfoTest extends CodegenTestCase {
     @Override
     protected String getPrefix() {
         return "typeInfo";
-    }
-
-    public void testGetTypeInfo() throws Exception {
-        loadFile();
-        Method foo = generateFunction();
-        JetObject jetObject = (JetObject) foo.invoke(null);
-        TypeInfo<?> typeInfo = jetObject.getTypeInfo();
-        assertNotNull(typeInfo);
-    }
-
-    public void testOneArgTypeinfo() throws Exception {
-        loadFile();
-        Method foo = generateFunction();
-        TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
-        assertNotNull(typeInfo);
-    }
-
-    public void testNoArgTypeinfo() throws Exception {
-        loadText("fun foo() = typeinfo<Int>()");
-        Method foo = generateFunction();
-        TypeInfo typeInfo = (TypeInfo) foo.invoke(null);
-        assertSame(TypeInfo.INT_TYPE_INFO, typeInfo);
     }
 
     public void testAsSafeOperator() throws Exception {
@@ -94,19 +72,22 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testIsWithGenericParameters() throws Exception {
-        loadFile();
-        Method foo = generateFunction();
-        assertFalse((Boolean) foo.invoke(null));
+//  todo: obsolete with typeinfo removal
+//        loadFile();
+//        Method foo = generateFunction();
+//        assertFalse((Boolean) foo.invoke(null));
     }
 
     public void testIsTypeParameter() throws Exception {
-        blackBoxFile("typeInfo/isTypeParameter.jet");
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("typeInfo/isTypeParameter.jet");
     }
 
     public void testAsSafeWithGenerics() throws Exception {
-        loadFile();
-        Method foo = generateFunction();
-        assertNull(foo.invoke(null));
+//  todo: obsolete with typeinfo removal
+//        loadFile();
+//        Method foo = generateFunction();
+//        assertNull(foo.invoke(null));
     }
 
     public void testAsInLoop() throws Exception {
@@ -119,18 +100,22 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testNullability() throws Exception {
-        blackBoxFile("typeInfo/nullability.jet");
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("typeInfo/nullability.jet");
     }
 
     public void testGenericFunction() throws Exception {
-        blackBoxFile("typeInfo/genericFunction.jet");
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("typeInfo/genericFunction.jet");
     }
 
     public void testForwardTypeParameter() throws Exception {
-        blackBoxFile("typeInfo/forwardTypeParameter.jet");
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("typeInfo/forwardTypeParameter.jet");
     }
 
     public void testClassObjectInTypeInfo() throws Exception {
+        /*
         loadFile();
 //        System.out.println(generateToText());
         Method foo = generateFunction();
@@ -139,6 +124,7 @@ public class TypeInfoTest extends CodegenTestCase {
         final Object object = typeInfo.getClassObject();
         final Method classObjFoo = object.getClass().getMethod("foo");
         assertNotNull(classObjFoo);
+        */
     }
 
     private Runnable newRunnable() {
@@ -150,7 +136,8 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testKt259() throws Exception {
-        blackBoxFile("regressions/kt259.jet");
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("regressions/kt259.jet");
 //        System.out.println(generateToText());
     }
 
@@ -170,7 +157,8 @@ public class TypeInfoTest extends CodegenTestCase {
     }
 
     public void testkt1113() throws Exception {
-        blackBoxFile("regressions/kt1113.kt");
-        System.out.println(generateToText());
+//  todo: obsolete with typeinfo removal
+//        blackBoxFile("regressions/kt1113.kt");
+//        System.out.println(generateToText());
     }
 }
