@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
+import org.jetbrains.jet.util.LinkedMultiMap;
 
 import java.util.*;
 
@@ -91,7 +92,7 @@ public class OverrideResolver {
 
         MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getCallableMembers());
 
-        Set<String> functionNames = new HashSet<String>();
+        Set<String> functionNames = new LinkedHashSet<String>();
         functionNames.addAll(functionsFromSupertypesByName.keySet());
         functionNames.addAll(functionsFromCurrentByName.keySet());
         
@@ -170,7 +171,7 @@ public class OverrideResolver {
 
 
     private static <T extends DeclarationDescriptor> MultiMap<String, T> groupDescriptorsByName(Collection<T> properties) {
-        MultiMap<String, T> r = new MultiMap<String, T>();
+        MultiMap<String, T> r = new LinkedMultiMap<String, T>();
         for (T property : properties) {
             r.putValue(property.getName(), property);
         }
@@ -179,7 +180,7 @@ public class OverrideResolver {
 
 
     private static List<CallableMemberDescriptor> getDescriptorsFromSupertypes(ClassDescriptor classDescriptor) {
-        Set<CallableMemberDescriptor> r = Sets.newHashSet();
+        Set<CallableMemberDescriptor> r = Sets.newLinkedHashSet();
         for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
             r.addAll(getDescriptorsOfType(supertype.getMemberScope()));
         }
