@@ -1,7 +1,7 @@
-package test.org.jetbrains.kotlin.template
+package test.kotlin.template
 
 import std.*
-import std.template.*
+import org.jetbrains.kotlin.template.*
 import std.io.*
 import std.util.*
 import java.util.*

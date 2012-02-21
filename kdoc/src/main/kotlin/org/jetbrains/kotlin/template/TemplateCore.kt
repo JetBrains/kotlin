@@ -1,4 +1,4 @@
-package std.template
+package org.jetbrains.kotlin.template
 
 import std.io.*
 import java.io.Writer
@@ -16,7 +16,6 @@ import java.io.File
  * stuff
  */
 trait Template {
-    var printer: Printer
 
     /** Renders the template to the output printer */
     fun render(): Unit
@@ -32,10 +31,11 @@ trait Template {
 trait Printer {
     fun print(value: Any): Unit
     //fun print(text: String): Unit
+
 }
 
+
 class NullPrinter() : Printer {
-    //override fun print(text: String) = none()
     override fun print(value: Any) {
         throw UnsupportedOperationException("No Printer defined on the Template")
     }
@@ -47,22 +47,26 @@ class NullPrinter() : Printer {
 abstract class TemplateSupport : Template {
 }
 
+val newline: String = System.getProperty("line.separator") ?: "\n"
+
 /**
  * Base class for templates generating text output
  * by printing values to some underlying Printer which
  * will typically output to a String, File, stream etc.
  */
 abstract class TextTemplate() : TemplateSupport(), Printer {
-    override var printer: Printer = NullPrinter()
+    public var printer: Printer = NullPrinter()
 
     fun String.plus(): Unit {
         printer.print(this)
     }
 
-    //override fun print(value: String) = printer.print(value)
-
     override fun print(value: Any) = printer.print(value)
 
+    fun println(value: Any) {
+        print(value)
+        print(newline)
+    }
 
     fun renderToText(): String {
         val buffer = StringWriter()
@@ -75,9 +79,21 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
         this.render()
     }
 
-    fun renderTo(os: OutputStream): Unit = renderTo(OutputStreamWriter(os))
+    fun renderTo(os: OutputStream): Unit {
+        // TODO compiler error
+        //OutputStreamWriter(os).foreach{ renderTo(it) }
+        val s = OutputStreamWriter(os)
+        renderTo(s)
+        s.close()
+    }
 
-    fun renderTo(file: File): Unit = renderTo(FileWriter(file))
+    fun renderTo(file: File): Unit {
+        // TODO compiler error
+        //FileWriter(file).foreach{ s -> renderTo(s) }
+        val s = FileWriter(file)
+        renderTo(s)
+        s.close()
+    }
 }
 
 

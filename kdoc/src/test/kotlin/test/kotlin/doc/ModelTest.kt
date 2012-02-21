@@ -1,4 +1,4 @@
-package test.model
+package test.kotlin.doc
 
 import std.*
 import std.util.*

@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.doc;
+package test.kotlin.doc;
 
 import junit.framework.TestSuite;
 
 /**
  */
-public class TestAll {
+public class KDocTestAll {
     public static TestSuite suite() {
-        return TestSuite(ModelTest.class);
+        return new TestSuite("test.kotlin.doc.ModelTest");
     }
 }
