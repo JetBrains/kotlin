@@ -610,10 +610,17 @@ public class JavaDescriptorResolver {
         if (containingClass != null) {
             return resolveClass(containingClass);
         }
-        
-        PsiJavaFile containingFile = (PsiJavaFile) psiClass.getContainingFile();
-        String packageName = containingFile.getPackageName();
-        return resolveNamespace(packageName);
+
+        return resolveNamespace(packageNameOfClass(psiClass.getQualifiedName()));
+    }
+
+    private static String packageNameOfClass(@NotNull String qualifiedName) {
+        int lastDot = qualifiedName.lastIndexOf('.');
+        if (lastDot < 0) {
+            return "";
+        } else {
+            return qualifiedName.substring(0, lastDot);
+        }
     }
 
     private List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
