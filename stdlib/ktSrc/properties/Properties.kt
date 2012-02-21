@@ -81,6 +81,7 @@ abstract class ChangeSupport {
 
 /*
 TODO this seems to generate a compiler barf!
+see http://youtrack.jetbrains.com/issue/KT-1362
 
     protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
         return DelegateChangeListener(fn)
