@@ -415,4 +415,8 @@ public class CompileEnvironment {
             throw new RuntimeException(e);
         }
     }
+
+    public JetCoreEnvironment getMyEnvironment() {
+        return myEnvironment;
+    }
 }

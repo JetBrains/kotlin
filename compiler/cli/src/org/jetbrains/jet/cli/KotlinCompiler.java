@@ -47,6 +47,9 @@ public class KotlinCompiler {
         @Argument(value = "output", description = "output directory")
         public String outputDir;
 
+        @Argument(value = "docOutput", description = "KDoc output directory")
+        public String docOutputDir;
+
         @Argument(value = "jar", description = "jar file name")
         public String jar;
 
@@ -122,6 +125,10 @@ public class KotlinCompiler {
             }
             else {
                 environment.setErrorStream(errStream);
+            }
+
+            if (arguments.docOutputDir != null) {
+                environment.getMyEnvironment().getFileProcessors().add(new KDocProcessor(arguments.docOutputDir));
             }
 
             if (arguments.stdlib != null) {

@@ -26,10 +26,15 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.PathUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author yole
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
+    private List<JetFileProcessor> fileProcessors = new ArrayList<JetFileProcessor>();
+
     public JetCoreEnvironment(Disposable parentDisposable) {
         super(parentDisposable);
         registerFileType(JetFileType.INSTANCE, "kt");
@@ -54,5 +59,13 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public MockApplication getApplication() {
         return myApplication;
+    }
+
+    public List<JetFileProcessor> getFileProcessors() {
+        return fileProcessors;
+    }
+
+    public void setFileProcessors(List<JetFileProcessor> fileProcessors) {
+        this.fileProcessors = fileProcessors;
     }
 }

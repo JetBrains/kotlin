@@ -17,6 +17,7 @@
 package org.jetbrains.jet.compiler;
 
 import com.google.common.base.Predicates;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
@@ -198,8 +199,17 @@ public class CompileSession {
 
     @NotNull
     public ClassFileFactory generate() {
-        GenerationState generationState = new GenerationState(myEnvironment.getProject(), ClassBuilderFactory.BINARIES, myFileNameTransformer);
+        Project project = myEnvironment.getProject();
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactory.BINARIES, myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
-        return generationState.getFactory();
+        ClassFileFactory answer = generationState.getFactory();
+
+        List<JetFileProcessor> fileProcessors = myEnvironment.getFileProcessors();
+        if (fileProcessors != null) {
+            for (JetFileProcessor processor : fileProcessors) {
+                processor.processFiles(getSourceFileNamespaces());
+            }
+        }
+        return answer;
     }
 }
