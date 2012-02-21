@@ -21,11 +21,11 @@ class MapTest() : TestSupport() {
     assertEquals(0, data.size)
   }
 
-  fun testGetOrElseUpdate() {
-    val a = data.getOrElseUpdate("foo"){2}
+  fun testGetOrPut() {
+    val a = data.getOrPut("foo"){2}
     assertEquals(2, a)
 
-    val b = data.getOrElseUpdate("foo"){3}
+    val b = data.getOrPut("foo"){3}
     assertEquals(2, b)
 
     assertEquals(1, data.size())

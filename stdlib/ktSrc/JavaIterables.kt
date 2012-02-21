@@ -110,7 +110,7 @@ inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (it: T, it
 inline fun <T,K> java.lang.Iterable<T>.groupBy(result: Map<K,List<T>> = HashMap<K,List<T>>(), toKey: (T)-> K) : Map<K,List<T>> {
   for (elem in this) {
     val key = toKey(elem)
-    val list = result.getOrElseUpdate(key){ ArrayList<T>() }
+    val list = result.getOrPut(key){ ArrayList<T>() }
     list.add(elem)
   }
   return result

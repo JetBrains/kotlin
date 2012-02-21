@@ -41,7 +41,7 @@ inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V 
 }
 
 /** Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned */
-inline fun <K,V> java.util.Map<K,V>.getOrElseUpdate(key: K, defaultValue: ()-> V) : V {
+inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
   val current = this.get(key)
   if (current != null) {
     return current
