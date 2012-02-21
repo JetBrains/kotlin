@@ -1,6 +1,7 @@
 package std.util
 
 import java.util.Map as JMap
+import java.util.HashMap
 
 // Temporary workaround: commenting out
 //import java.util.Map.Entry as JEntry
@@ -50,3 +51,6 @@ inline fun <K,V> java.util.Map<K,V>.getOrElseUpdate(key: K, defaultValue: ()-> V
     return answer
   }
 }
+
+/** Returns a new hash map */
+inline fun <K,V> hashMap() = HashMap<K,V>()
