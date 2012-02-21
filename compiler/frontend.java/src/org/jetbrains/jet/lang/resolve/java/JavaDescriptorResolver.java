@@ -1034,6 +1034,7 @@ public class JavaDescriptorResolver {
             PropertyAccessorData getter;
             PropertyAccessorData setter;
             PropertyAccessorData field;
+            boolean ext;
         }
         
         Map<Object, GroupingValue> map = new HashMap<Object, GroupingValue>();
@@ -1045,7 +1046,12 @@ public class JavaDescriptorResolver {
             GroupingValue value = map.get(key);
             if (value == null) {
                 value = new GroupingValue();
+                value.ext = propertyAccessor.getReceiverType() != null;
                 map.put(key, value);
+            }
+
+            if (value.ext != (propertyAccessor.getReceiverType() != null)) {
+                throw new IllegalStateException("internal error, incorrect key");
             }
 
             if (propertyAccessor.isGetter()) {
@@ -1071,10 +1077,20 @@ public class JavaDescriptorResolver {
         
         Set<VariableDescriptor> r = new HashSet<VariableDescriptor>(1);
 
-        // we cannot have more then one property with given name even if java code
-        // has several fields, getters and setter of different types
-        if (map.size() == 1) {
-            GroupingValue members = map.values().iterator().next();
+        int regularProperitesCount = 0;
+        for (GroupingValue members : map.values()) {
+            if (!members.ext) {
+                ++regularProperitesCount;
+            }
+        }
+
+        for (GroupingValue members : map.values()) {
+
+            // we cannot have more then one property with given name even if java code
+            // has several fields, getters and setter of different types
+            if (!members.ext && regularProperitesCount > 1) {
+                continue;
+            }
 
             boolean isFinal;
             if (members.setter == null && members.getter == null) {

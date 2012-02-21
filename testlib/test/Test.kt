@@ -18,10 +18,6 @@ protected class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test
 
     override fun countTestCases(): Int = 1
 
-    var name : String
-        get() = super.getName().sure()
-        set(newName: String) = super.setName(newName)
-
     override fun setUp() = this.(builder.setUp)()
 
     override fun tearDown() = this.(builder.tearDown)()
