@@ -318,18 +318,6 @@ public class JavaDescriptorResolver {
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
         supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.classDescriptor, classData.getTypeParameters()));
 
-        if (psiClass.isInterface()) {
-            //classData.classDescriptor.setSuperclassType(JetStandardClasses.getAnyType()); // TODO : Make it java.lang.Object
-        }
-        else {
-            PsiClassType[] extendsListTypes = psiClass.getExtendsListTypes();
-            assert extendsListTypes.length == 0 || extendsListTypes.length == 1;
-            JetType superclassType = extendsListTypes.length == 0
-                                            ? JetStandardClasses.getAnyType()
-                                            : semanticServices.getTypeTransformer().transformToType(extendsListTypes[0], resolverForTypeParameters);
-            //classData.classDescriptor.setSuperclassType(superclassType);
-        }
-
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
         if (psiConstructors.length == 0) {
