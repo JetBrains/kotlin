@@ -6,6 +6,7 @@ import java.util.*;
 
 
 
+native
 val noImpl : Nothing = throw Exception();
 
 library("println")

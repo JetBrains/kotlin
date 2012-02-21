@@ -70,13 +70,26 @@ public final class AnnotationsUtils {
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
-        if (getAnnotationByName(descriptor, NATIVE_ANNOTATION_FQNAME) != null) {
+        return hasAnnotationOrInsideAnnotatedClass(descriptor, NATIVE_ANNOTATION_FQNAME);
+    }
+
+    public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
+        return hasAnnotationOrInsideAnnotatedClass(descriptor, LIBRARY_ANNOTATION_FQNAME);
+    }
+
+    //TODO: the use of this method is splattered across the code which can be hard to track
+    public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
+        return isLibraryObject(descriptor) || isNativeObject(descriptor);
+    }
+
+    private static boolean hasAnnotationOrInsideAnnotatedClass(DeclarationDescriptor descriptor, String annotationFQName) {
+        if (getAnnotationByName(descriptor, annotationFQName) != null) {
             return true;
         }
         ClassDescriptor containingClass = getContainingClass(descriptor);
         if (containingClass == null) {
             return false;
         }
-        return (getAnnotationByName(containingClass, NATIVE_ANNOTATION_FQNAME) != null);
+        return (getAnnotationByName(containingClass, annotationFQName) != null);
     }
 }

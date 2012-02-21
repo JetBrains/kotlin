@@ -192,6 +192,9 @@ public final class DescriptorUtils {
     public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         List<ClassDescriptor> classDescriptors = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : namespaceDescriptor.getMemberScope().getAllDescriptors()) {
+            if (AnnotationsUtils.isPredefinedObject(descriptor)) {
+                continue;
+            }
             if (descriptor instanceof ClassDescriptor) {
                 classDescriptors.add((ClassDescriptor) descriptor);
             }

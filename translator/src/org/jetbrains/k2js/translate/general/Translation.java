@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.declaration.NamespaceDeclarationTranslator;
 import org.jetbrains.k2js.translate.declaration.NamespaceTranslator;
 import org.jetbrains.k2js.translate.expression.ExpressionVisitor;
 import org.jetbrains.k2js.translate.expression.FunctionTranslator;
@@ -41,6 +42,11 @@ public final class Translation {
     public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace,
                                                  @NotNull TranslationContext context) {
         return NamespaceTranslator.translateNamespace(namespace, context);
+    }
+
+    @NotNull
+    public static List<JsStatement> translateFiles(@NotNull List<JetFile> files, @NotNull TranslationContext context) {
+        return NamespaceDeclarationTranslator.translateFiles(files, context);
     }
 
     @NotNull
@@ -99,8 +105,7 @@ public final class Translation {
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.addStatement(Translation.translateNamespace(namespaceToTranslate, context));
-
+        block.getStatements().addAll(Translation.translateFiles(files, context));
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());
         return context.program();

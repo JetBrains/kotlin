@@ -1,5 +1,6 @@
 package org.jetbrains.k2js.translate.utils;
 
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +14,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
@@ -85,6 +87,9 @@ public final class BindingUtils {
                                                                    @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
         for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
+            if (AnnotationsUtils.isPredefinedObject(descriptor)) {
+                continue;
+            }
             //TODO:
             if (descriptor instanceof NamespaceDescriptor) {
                 continue;
@@ -295,5 +300,18 @@ public final class BindingUtils {
         PropertyDescriptor propertyDescriptor = context.get(BindingContext.OBJECT_DECLARATION, name);
         assert propertyDescriptor != null;
         return propertyDescriptor;
+    }
+
+    @NotNull
+    public static Set<NamespaceDescriptor> getAllNonNativeNamespaceDescriptors(@NotNull BindingContext context,
+                                                                               @NotNull List<JetFile> files) {
+        Set<NamespaceDescriptor> descriptorSet = Sets.newHashSet();
+        for (JetFile file : files) {
+            NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptor(context, file);
+            if (!AnnotationsUtils.isPredefinedObject(namespaceDescriptor)) {
+                descriptorSet.add(namespaceDescriptor);
+            }
+        }
+        return descriptorSet;
     }
 }
