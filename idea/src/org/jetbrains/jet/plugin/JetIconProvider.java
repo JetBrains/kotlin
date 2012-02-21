@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.ide.IconProvider;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
@@ -27,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * @author yole
@@ -38,6 +40,23 @@ public class JetIconProvider extends IconProvider {
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
+            JetFile file = (JetFile) psiElement;
+            List<JetDeclaration> declarations = file.getDeclarations();
+            JetClassOrObject mostImportantClass = null;
+            String nameWithoutExtension = StringUtil.getPackageName(file.getName());
+            for (JetDeclaration declaration : declarations) {
+                if (mostImportantClass == null && declaration instanceof JetClassOrObject) {
+                    mostImportantClass = (JetClassOrObject) declaration;
+                } else if (declaration instanceof JetClassOrObject) {
+                    JetClassOrObject object = (JetClassOrObject) declaration;
+                    if (nameWithoutExtension.equals(object.getName())) {
+                        mostImportantClass = object;
+                    }
+                }
+            }
+            if (mostImportantClass != null) {
+                return getIcon(mostImportantClass, flags);
+            }
             return KOTLIN_ICON;
         }
         if (psiElement instanceof JetNamespaceHeader) {

@@ -17,6 +17,9 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.CheckUtil;
+import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -232,6 +235,18 @@ public class JetPsiUtil {
             }
         }
         return false;
+    }
+
+    public static void deleteClass(@NotNull JetClassOrObject clazz) {
+        CheckUtil.checkWritable(clazz);
+        JetFile file = (JetFile) clazz.getContainingFile();
+        List<JetDeclaration> declarations = file.getDeclarations();
+        if (declarations.size() == 1) {
+            file.delete();
+        } else {
+            PsiElement parent = clazz.getParent();
+            CodeEditUtil.removeChild(parent.getNode(), clazz.getNode());
+        }
     }
 
 }

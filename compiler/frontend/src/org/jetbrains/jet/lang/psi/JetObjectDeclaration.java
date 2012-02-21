@@ -117,5 +117,10 @@ public class JetObjectDeclaration extends JetNamedDeclaration implements JetClas
     @NotNull
     public PsiElement getObjectKeyword() {
         return findChildByType(JetTokens.OBJECT_KEYWORD);
-    }     
+    }
+
+    @Override
+    public void delete() throws IncorrectOperationException {
+        JetPsiUtil.deleteClass(this);
+    }
 }

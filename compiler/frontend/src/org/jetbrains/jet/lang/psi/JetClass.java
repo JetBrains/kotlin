@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -152,5 +153,10 @@ public class JetClass extends JetTypeParameterListOwner
     public PsiJetClassStub<?> getStub() {
         // TODO (stubs)
         return null;
+    }
+
+    @Override
+    public void delete() throws IncorrectOperationException {
+        JetPsiUtil.deleteClass(this);
     }
 }
