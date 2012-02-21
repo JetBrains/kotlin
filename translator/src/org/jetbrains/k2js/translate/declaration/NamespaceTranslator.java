@@ -18,28 +18,29 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDe
 /**
  * @author Pavel.Talanov
  *         <p/>
- *         Genereate code for a single namespace.
+ *         Genereate code for a single descriptor.
  */
 public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
-    private final NamespaceDescriptor namespace;
+    private final NamespaceDescriptor descriptor;
     @NotNull
     private final JsName namespaceName;
     @NotNull
     private final ClassDeclarationTranslator classDeclarationTranslator;
 
     @NotNull
-    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
+    public static JsStatement translateNamespace(@NotNull NamespaceDescriptor namespace,
+                                                 @NotNull TranslationContext context) {
         return (new NamespaceTranslator(namespace, context)).translateNamespace();
     }
 
-    private NamespaceTranslator(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
-        super(context.newDeclaration(namespace));
-        this.namespace = namespace;
-        this.namespaceName = context.getNameForDescriptor(namespace);
+    private NamespaceTranslator(@NotNull NamespaceDescriptor descriptor, @NotNull TranslationContext context) {
+        super(context.newDeclaration(descriptor));
+        this.descriptor = descriptor;
+        this.namespaceName = context.getNameForDescriptor(descriptor);
         this.classDeclarationTranslator = new ClassDeclarationTranslator(context(),
-                getAllClassesDefinedInNamespace(namespace));
+                getAllClassesDefinedInNamespace(descriptor));
     }
 
     @NotNull
@@ -54,10 +55,12 @@ public final class NamespaceTranslator extends AbstractTranslator {
     }
 
     //TODO: at the moment this check is very ineffective, possible solution is to cash the result of getDFN
+    // other solution is to determine it's not affecting performance :D
     private boolean isNamespaceEmpty() {
-        return BindingUtils.getDeclarationsForNamespace(context().bindingContext(), namespace).isEmpty();
+        return BindingUtils.getDeclarationsForNamespace(context().bindingContext(), descriptor).isEmpty();
     }
 
+    @NotNull
     private JsStatement classDeclarationsStatement() {
         return classDeclarationTranslator.getDeclarationsStatement();
     }
@@ -83,7 +86,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     }
 
     private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {
-        namespaceDeclaration.getArguments().add(classDeclarationTranslator.getDeclarationsObjectName().makeRef());
+        namespaceDeclaration.getArguments().add(classDeclarationTranslator.classDeclarationsForNamespace(descriptor));
     }
 
     private void addMemberDeclarations(@NotNull JsInvocation jsNamespace) {
@@ -94,8 +97,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsObjectLiteral translateNamespaceMemberDeclarations() {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        propertyList.add(Translation.generateNamespaceInitializerMethod(namespace, context()));
-        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(namespace, context()));
+        propertyList.add(Translation.generateNamespaceInitializerMethod(descriptor, context()));
+        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(descriptor, context()));
         return new JsObjectLiteral(propertyList);
     }
 }

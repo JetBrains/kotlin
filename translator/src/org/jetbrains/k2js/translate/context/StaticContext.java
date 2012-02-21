@@ -128,14 +128,12 @@ public final class StaticContext {
         return namingScope;
     }
 
-
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         JsName name = names.get(descriptor.getOriginal());
         assert name != null : "Must have name for descriptor";
         return name;
     }
-
 
     private final class NameGenerator extends Generator<JsName> {
         public NameGenerator() {

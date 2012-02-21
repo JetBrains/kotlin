@@ -5,6 +5,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
 
 /**
  * @author Pavel Talanov
@@ -128,5 +131,21 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), declaration);
         context().aliaser().setAliasForDescriptor(descriptor, localAlias);
         return localAlias;
+    }
+
+    @NotNull
+    public JsObjectLiteral classDeclarationsForNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        JsObjectLiteral result = new JsObjectLiteral();
+        for (ClassDescriptor classDescriptor : getAllClassesDefinedInNamespace(namespaceDescriptor)) {
+            result.getPropertyInitializers().add(getClassNameToClassObject(classDescriptor));
+        }
+        return result;
+    }
+
+    @NotNull
+    private JsPropertyInitializer getClassNameToClassObject(@NotNull ClassDescriptor classDescriptor) {
+        JsName className = context().getNameForDescriptor(classDescriptor);
+        JsNameRef alreadyDefinedClassReferernce = AstUtil.qualified(className, getDeclarationsObjectName().makeRef());
+        return new JsPropertyInitializer(className.makeRef(), alreadyDefinedClassReferernce);
     }
 }
