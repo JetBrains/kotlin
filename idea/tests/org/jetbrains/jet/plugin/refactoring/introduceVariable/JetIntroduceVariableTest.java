@@ -77,9 +77,9 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
-    /*public void testLoopRange() {
+    public void testLoopRange() {
         doTest();
-    }*/
+    }
 
     public void testManyInnerOccurences() {
         doTest();
