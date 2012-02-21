@@ -80,11 +80,11 @@ public class CompileSession {
 
         VirtualFile vFile = myEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
-            myErrors.add("File/directory not found: " + path);
+            myErrors.add("ERROR: File/directory not found: " + path);
             return;
         }
         if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            myErrors.add("Not a Kotlin file: " + path);
+            myErrors.add("ERROR: Not a Kotlin file: " + path);
             return;
         }
 
@@ -158,7 +158,7 @@ public class CompileSession {
         }
 
         errorCollector.flushTo(out);
-        return !errorCollector.hasErrors && !hasIncompleteHierarchyErrors;
+        return !errorCollector.hasErrors() && !hasIncompleteHierarchyErrors;
     }
 
     /**

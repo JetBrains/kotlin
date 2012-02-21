@@ -84,22 +84,19 @@ public class DiagnosticUtils {
         }
     }
 
-    public static String formatPosition(DiagnosticWithTextRange diagnosticWithTextRange) {
-        PsiFile file = diagnosticWithTextRange.getPsiFile();
+    public static String formatPosition(Diagnostic diagnostic) {
+        PsiFile file = diagnostic.getFactory().getPsiFile(diagnostic);
         Document document = file.getViewProvider().getDocument();
-        String position;
-        int offset = diagnosticWithTextRange.getTextRange().getStartOffset();
+        TextRange firstRange = diagnostic.getFactory().getTextRanges(diagnostic).iterator().next();
+        int offset = firstRange.getStartOffset();
         if (document != null) {
             int lineNumber = document.getLineNumber(offset);
             int lineStartOffset = document.getLineStartOffset(lineNumber);
             int column = offset - lineStartOffset;
 
-            position = "(" + (lineNumber + 1) + "," + (column + 1) + ")";
+            return "(" + (lineNumber + 1) + "," + (column + 1) + ")";
         }
-        else {
-            position = "(offset: " + offset + " line unknown)";
-        }
-        return position;
+        return "(offset: " + offset + " line unknown)";
     }
 
     public static void throwIfRunningOnServer(Throwable e) {

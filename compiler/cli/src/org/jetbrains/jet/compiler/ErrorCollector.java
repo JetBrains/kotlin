@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 
 import java.io.PrintStream;
@@ -31,35 +30,32 @@ import java.util.Collection;
 * @author alex.tkachman
 */
 class ErrorCollector {
-    Multimap<PsiFile,DiagnosticWithTextRange> maps = LinkedHashMultimap.<PsiFile, DiagnosticWithTextRange>create();
+    private final Multimap<PsiFile, Diagnostic> maps = LinkedHashMultimap.create();
 
-    boolean hasErrors;
+    private boolean hasErrors;
 
     public ErrorCollector() {
     }
 
     public void report(Diagnostic diagnostic) {
         hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
-        if(diagnostic instanceof DiagnosticWithTextRange) {
-            DiagnosticWithTextRange diagnosticWithTextRange = (DiagnosticWithTextRange) diagnostic;
-            maps.put(diagnosticWithTextRange.getPsiFile(), diagnosticWithTextRange);
-        }
-        else {
-            System.out.println(diagnostic.getSeverity().toString() + ": " + diagnostic.getMessage());
-        }
+        maps.put(diagnostic.getFactory().getPsiFile(diagnostic), diagnostic);
     }
 
-    void flushTo(final PrintStream out) {
+    public void flushTo(final PrintStream out) {
         if(!maps.isEmpty()) {
             for (PsiFile psiFile : maps.keySet()) {
                 String path = psiFile.getVirtualFile().getPath();
-                Collection<DiagnosticWithTextRange> diagnosticWithTextRanges = maps.get(psiFile);
-                for (DiagnosticWithTextRange diagnosticWithTextRange : diagnosticWithTextRanges) {
-                    String position = DiagnosticUtils.formatPosition(diagnosticWithTextRange);
-                    out.println(diagnosticWithTextRange.getSeverity().toString() + ": " + path + ":" + position + " " + diagnosticWithTextRange.getMessage());
+                Collection<Diagnostic> diagnostics = maps.get(psiFile);
+                for (Diagnostic diagnostic : diagnostics) {
+                    String position = DiagnosticUtils.formatPosition(diagnostic);
+                    out.println(diagnostic.getSeverity().toString() + ": " + path + ":" + position + " " + diagnostic.getMessage());
                 }
             }
         }
     }
 
+    public boolean hasErrors() {
+        return hasErrors;
+    }
 }
