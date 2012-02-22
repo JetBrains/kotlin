@@ -57,7 +57,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private final TemporaryVariable rangeStart;
+    private final JsExpression rangeStart;
 
     @NotNull
     private final TemporaryVariable rangeEnd;
@@ -67,7 +67,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
         JetExpression loopRange = getLoopRange(expression);
         assert loopRange instanceof JetBinaryExpression;
         JetBinaryExpression loopRangeAsBinary = ((JetBinaryExpression) loopRange);
-        rangeStart = context.declareTemporary(translateLeftExpression(context, loopRangeAsBinary));
+        rangeStart = translateLeftExpression(context, loopRangeAsBinary);
         rangeEnd = context.declareTemporary(getRangeEnd(loopRangeAsBinary));
     }
 
@@ -79,7 +79,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsBlock translate() {
-        List<JsStatement> blockStatements = temporariesInitialization(rangeEnd, rangeStart);
+        List<JsStatement> blockStatements = temporariesInitialization(rangeEnd);
         blockStatements.add(generateForExpression());
         return AstUtil.newBlock(blockStatements);
     }
@@ -96,7 +96,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsVars initExpression() {
-        return AstUtil.newVar(parameterName, rangeStart.reference());
+        return AstUtil.newVar(parameterName, rangeStart);
     }
 
     @NotNull
