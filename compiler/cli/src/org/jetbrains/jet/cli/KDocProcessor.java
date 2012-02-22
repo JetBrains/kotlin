@@ -107,7 +107,7 @@ public class KDocProcessor implements JetFileProcessor {
 
     @Nullable
     private String getDocCommentFor(PsiElement psiElement) {
-        // This method is a hack. Doc comments should be easilty accessible, but they aren't for now.
+        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
         ASTNode node = psiElement.getNode().getTreePrev();
         while (node != null && (node.getElementType() == JetTokens.WHITE_SPACE || node.getElementType() == JetTokens.BLOCK_COMMENT)) {
             node = node.getTreePrev();
