@@ -27,20 +27,13 @@
         <attribute name="type" default="dir"/>
         <sequential>
             <if>
-                <not>
-                    <available file="@{file}" type="@{type}"/>
-                </not>
+                <available file="@{file}" type="@{type}"/>
                 <then>
-                    <if>
-                        <equals arg1="@{type}" arg2="dir"/>
-                        <then>
-                            <fail message="Directory [@{file}] is not found!"/>
-                        </then>
-                        <else>
-                            <fail message="File [@{file}] is not found!"/>
-                        </else>
-                    </if>
+                    <echo>[@{file}] of type [@{type}] exists</echo>
                 </then>
+                <else>
+                    <fail message="[@{file}] of type [@{type}] is not found!"/>
+                </else>
             </if>
         </sequential>
     </macrodef>
@@ -50,29 +43,36 @@
     <macrodef name="kotlin-home-setup">
         <sequential>
             <if>
-                <not>
-                    <available file="${kotlin-home}/lib" type="dir"/>
-                </not>
+                <and>
+                    <available file="${kotlin-home}/lib/kotlin-build-tools.jar" type="file"/>
+                    <available file="${kotlin-home}/lib/kotlin-compiler.jar"    type="file"/>
+                    <available file="${kotlin-home}/lib/kotlin-runtime.jar"     type="file"/>
+                </and>
                 <then>
+                    <echo>[${kotlin-home}/lib] jars found, defining "kotlin.classpath"</echo>
+                    <path id="kotlin.classpath">
+                        <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
+                    </path>
+                </then>
+                <else>
                     <!-- Creating and unpacking the distribution archive to make sure it's Ok -->
+                    <echo>[${kotlin-home}/lib] jars *not* found, creating distribution zip</echo>
 
                     <antcall target = "zip"/>
                     <verify-exists file="${output}/${output.name}.zip" type="file"/>
 
                     <delete dir  = "${kotlin-home}" failonerror="true"/>
                     <mkdir  dir  = "${kotlin-home}"/>
-
                     <unzip  src  = "${output}/${output.name}.zip" dest="${output}"/>
+
                     <verify-exists file="${kotlin-home}/lib"/>
                     <verify-exists file="${kotlin-home}/lib/kotlin-build-tools.jar" type="file"/>
+                    <verify-exists file="${kotlin-home}/lib/kotlin-compiler.jar"    type="file"/>
+                    <verify-exists file="${kotlin-home}/lib/kotlin-runtime.jar"     type="file"/>
 
                     <kotlin-home-setup/>
-                </then>
+                </else>
             </if>
-
-            <path id="kotlin.classpath">
-                <fileset dir = "${kotlin-home}/lib" includes = "*.jar"/>
-            </path>
         </sequential>
     </macrodef>
 
