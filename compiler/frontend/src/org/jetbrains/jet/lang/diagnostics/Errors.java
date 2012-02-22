@@ -488,6 +488,10 @@ public interface Errors {
 
     ParameterizedDiagnosticFactory1<String> UNRESOLVED_IDE_TEMPLATE = new ParameterizedDiagnosticFactory1<String>(ERROR, "Unresolved IDE template: {0}");
 
+    SimpleDiagnosticFactory DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = SimpleDiagnosticFactory.create(WARNING, "This expression is treated as an argument to the function call on the previous line. " +
+                                                                                                                   "Separate it with a semicolon (;) if it is not intended to be an argument.");
+
+
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
     @SuppressWarnings("UnusedDeclaration")
     Initializer __initializer = Initializer.INSTANCE;

@@ -19,12 +19,14 @@ package org.jetbrains.jet.lang.resolve.calls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
 * @author abreslav
@@ -72,6 +74,9 @@ import java.util.Collection;
 
         @Override
         public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
+
+        @Override
+        public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments) {}
     };
 
     <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall);
@@ -101,4 +106,6 @@ import java.util.Collection;
     void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
 
     void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
+
+    void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments);
 }

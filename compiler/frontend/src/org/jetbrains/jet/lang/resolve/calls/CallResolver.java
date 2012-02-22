@@ -386,13 +386,20 @@ public class CallResolver {
                 assert callElement != null;
                 trace.report(UNNECESSARY_SAFE_CALL.on((JetElement) callOperationNode.getTreeParent().getPsi(), callOperationNode, type));
             }
+
+            @Override
+            public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments) {
+                for (JetExpression functionLiteralArgument : functionLiteralArguments) {
+                    trace.report(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED.on(functionLiteralArgument));
+                }
+            }
         };
 
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<D> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace);
-            OverloadResolutionResultsImpl<D> results = performResolution(temporaryTrace, scope, expectedType, task, tracing);
+            OverloadResolutionResultsImpl<D> results = performResolutionGuardedForExtraFunctionLiteralArguments(temporaryTrace, scope, expectedType, task, tracing);
             if (results.isSuccess()) {
                 temporaryTrace.commit();
 
@@ -420,6 +427,53 @@ public class CallResolver {
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @NotNull
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolutionGuardedForExtraFunctionLiteralArguments(
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scope, @NotNull JetType expectedType,
+            @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing
+    ) {
+        OverloadResolutionResultsImpl<D> results = performResolution(trace, scope, expectedType, task, tracing);
+        // If resolution fails, we should check for some of the following situations:
+        //   class A {
+        //     val foo = Bar() // The following is intended to be an anonymous initializer,
+        //                     // but is treated as a function literal argument
+        //     {
+        //       ...
+        //     }
+        //  }
+        //
+        //  fun foo() {
+        //    bar {
+        //      buzz()
+        //      {...} // intended to be a returned from the outer literal
+        //    }
+        //  }
+        EnumSet<OverloadResolutionResults.Code> someFailed = EnumSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES, OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
+        if (someFailed.contains(results.getResultCode()) && !task.getCall().getFunctionLiteralArguments().isEmpty()) {
+            // We have some candidates that failed for some reason
+            // And we have a suspect: the function literal argument
+            // Now, we try to remove this argument and see if it helps
+            Collection<ResolvedCallImpl<D>> newCandidates = Lists.newArrayList();
+            for (ResolvedCallImpl<D> candidate : task.getCandidates()) {
+                newCandidates.add(ResolvedCallImpl.create(candidate.getCandidateDescriptor()));
+            }
+            ResolutionTask<D> newTask = new ResolutionTask<D>(newCandidates, new DelegatingCall(task.getCall()) {
+                @NotNull
+                @Override
+                public List<JetExpression> getFunctionLiteralArguments() {
+                    return Collections.emptyList();
+                }
+            }, task.getDataFlowInfo());
+            OverloadResolutionResultsImpl<D> resultsWithFunctionLiteralsStripped = performResolution(TemporaryBindingTrace.create(trace), scope, expectedType, newTask, tracing);
+            if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
+                tracing.danglingFunctionLiteralArgumentSuspected(trace, task.getCall().getFunctionLiteralArguments());
+            }
+        }
+
+        return results;
+    }
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolution(
