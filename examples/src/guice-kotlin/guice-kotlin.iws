@@ -58,28 +58,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="GuiceDsl.kt" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="GuiceDsl.kt" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/GuiceDsl.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="0" selection-start="1211" selection-end="1211" vertical-scroll-proportion="0.0">
+            <state line="31" column="59" selection-start="859" selection-end="859" vertical-scroll-proportion="0.3951613">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LinkedBindingBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/binder/LinkedBindingBuilder.java">
+      <file leaf-file-name="Singleton.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Singleton.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="0" selection-start="1509" selection-end="1509" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BindingBuilder.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/BindingBuilder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="129" column="53" selection-start="4384" selection-end="4384" vertical-scroll-proportion="0.0">
+            <state line="32" column="18" selection-start="1107" selection-end="1107" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -130,10 +121,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GuiceExample.kt" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="GuiceExample.kt" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/GuiceExample.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="50" selection-start="860" selection-end="860" vertical-scroll-proportion="0.5938967">
+            <state line="45" column="87" selection-start="1494" selection-end="1494" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -167,10 +158,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1" />
-    <option name="y" value="22" />
-    <option name="width" value="1411" />
-    <option name="height" value="826" />
+    <option name="y" value="32" />
+    <option name="width" value="1429" />
+    <option name="height" value="790" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -203,16 +193,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -233,6 +213,16 @@
             <PATH_ELEMENT>
               <option name="myItemId" value="guice-kotlin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -506,7 +496,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="22" width="1411" height="826" extended-state="0" />
+    <frame x="0" y="32" width="1429" height="790" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -515,22 +505,23 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39886847" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956153" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="CodeWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39985326" sideWeight="0.6718529" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Kotlin" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3294714" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956153" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956153" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24944974" sideWeight="0.6718529" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24909486" sideWeight="0.671151" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3281471" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="ResolveWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37655678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956153" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="CodeWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39985326" sideWeight="0.6718529" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32884902" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="ResolveWindow" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37655678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -590,112 +581,86 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Stage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="12" selection-start="720" selection-end="720" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Scope.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="0" selection-start="597" selection-end="597" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/Scoping.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="0" selection-start="1182" selection-end="1182" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="32" column="0" selection-start="1182" selection-end="1182" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/binder/AnnotatedBindingBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="63" selection-start="850" selection-end="850" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="25" column="63" selection-start="850" selection-end="850" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Provider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="17" selection-start="1946" selection-end="1946" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="44" column="17" selection-start="1946" selection-end="1946" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Binder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="243" column="14" selection-start="11110" selection-end="11110" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="243" column="14" selection-start="11110" selection-end="11110" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/binder/LinkedBindingBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="0" selection-start="1509" selection-end="1509" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/spi/InjectionPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="374" column="30" selection-start="14896" selection-end="14896" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="50" column="0" selection-start="1509" selection-end="1509" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/BindingBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="129" column="53" selection-start="4384" selection-end="4384" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="129" column="53" selection-start="4384" selection-end="4384" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Singleton.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="18" selection-start="1107" selection-end="1107" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/spi/InjectionPoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="374" column="30" selection-start="14896" selection-end="14896" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/binder/ScopedBindingBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="0" selection-start="936" selection-end="936" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="31" column="0" selection-start="936" selection-end="936" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/AbstractBindingBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="34" selection-start="3438" selection-end="3438" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="88" column="34" selection-start="3438" selection-end="3438" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/BindingImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="99" column="0" selection-start="2736" selection-end="2736" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="99" column="0" selection-start="2736" selection-end="2736" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/internal/ProviderInstanceBindingImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="24" selection-start="3009" selection-end="3009" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="79" column="24" selection-start="3009" selection-end="3009" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/GuiceExample.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="87" selection-start="1494" selection-end="1494" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar://$PROJECT_DIR$/lib/guice-3.0-sources.jar!/com/google/inject/Injector.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="148" column="0" selection-start="6054" selection-end="6054" vertical-scroll-proportion="0.0">
+        <state line="148" column="0" selection-start="6054" selection-end="6054" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/../../../dist/kotlinc/lib/kotlin-runtime.jar!/std/namespace.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="336" column="0" selection-start="40990" selection-end="40990" vertical-scroll-proportion="0.32130584">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/GuiceDsl.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="1211" selection-end="1211" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/GuiceExample.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="50" selection-start="860" selection-end="860" vertical-scroll-proportion="0.5938967">
+        <state line="31" column="59" selection-start="859" selection-end="859" vertical-scroll-proportion="0.3951613">
           <folding />
         </state>
       </provider>

@@ -30,6 +30,10 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
+import org.objectweb.asm.commons.Method;
+
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 /**
  * @author max
@@ -270,5 +274,15 @@ public class PropertyCodegen {
 
     public static String setterName(String propertyName) {
         return JvmAbi.SETTER_PREFIX + StringUtil.capitalizeWithJavaBeanConvention(propertyName);
+    }
+
+    public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {
+        JvmPropertyAccessorSignature jvmPropertyAccessorSignature = state.getTypeMapper().mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+        functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
+
+        if(declaration.isVar()) {
+            jvmPropertyAccessorSignature = state.getTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+            functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
+        }
     }
 }

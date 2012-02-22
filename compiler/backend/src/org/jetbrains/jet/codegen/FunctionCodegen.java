@@ -459,9 +459,47 @@ public class FunctionCodegen {
                     iv.aconst(null);
                 iv.areturn(overriden.getReturnType());
                 endVisit(mv, "bridge method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
-                mv.visitEnd();
             }
         }
     }
 
+    public void genDelegate(FunctionDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field) {
+        JvmMethodSignature jvmMethodSignature = state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor);
+        genDelegate(functionDescriptor, overriddenDescriptor, field, jvmMethodSignature);
+    }
+
+    public void genDelegate(CallableMemberDescriptor functionDescriptor, CallableMemberDescriptor overriddenDescriptor, StackValue field, JvmMethodSignature jvmMethodSignature) {
+        Method method = jvmMethodSignature.getAsmMethod();
+        int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
+
+        final MethodVisitor mv = v.newMethod(null, flags, method.getName(), method.getDescriptor(), null, null);
+        if (v.generateCode()) {
+            mv.visitCode();
+
+            Type[] argTypes = method.getArgumentTypes();
+            InstructionAdapter iv = new InstructionAdapter(mv);
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                Type argType = argTypes[i];
+                iv.load(reg, argType);
+                if(argType.getSort() == Type.OBJECT) {
+                    StackValue.onStack(JetTypeMapper.TYPE_OBJECT).put(method.getArgumentTypes()[i], iv);
+                }
+
+                //noinspection AssignmentToForLoopParameter
+                reg += argType.getSize();
+            }
+
+            iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            field.put(field.type, iv);
+            ClassDescriptor classDescriptor = (ClassDescriptor) overriddenDescriptor.getContainingDeclaration();
+            String internalName = state.getTypeMapper().mapType(classDescriptor.getDefaultType()).getInternalName();
+            if(classDescriptor.getKind() == ClassKind.TRAIT)
+                iv.invokeinterface(internalName, method.getName(), method.getDescriptor());
+            else
+                iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
+            iv.areturn(method.getReturnType());
+            endVisit(mv, "delegate method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
+        }
+    }
 }

@@ -567,17 +567,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 assert superType != null;
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                String delegateField = "$delegate_" + n;
-                Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                String delegateField = "$delegate_" + (n++);
+                Type fieldType = typeMapper.mapType(superClassDescriptor.getDefaultType());
                 String fieldDesc = fieldType.getDescriptor();
                 v.newField(specifier, ACC_PRIVATE, delegateField, fieldDesc, /*TODO*/null, null);
-                iv.putfield(classname, delegateField, fieldDesc);
+                StackValue field = StackValue.field(fieldType, classname, delegateField, false);
+                field.store(iv);
 
                 JetClass superClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
-                                                   typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName()), state.getTypeMapper());
-                generateDelegates(superClass, delegateContext, overridden);
+                                                   typeMapper.mapType(superClassDescriptor.getDefaultType()).getInternalName()), state.getTypeMapper());
+                generateDelegates(superClass, delegateContext, field);
             }
         }
 
@@ -657,7 +658,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, @NotNull FunctionDescriptor fun) {
+    private void generateDelegationToTraitImpl(ExpressionCodegen codegen, FunctionDescriptor fun) {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if(containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
@@ -902,17 +903,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, Set<FunctionDescriptor> overriden) {
+    protected void generateDelegates(JetClass toClass, CodegenContext delegateContext, StackValue field) {
         final FunctionCodegen functionCodegen = new FunctionCodegen(delegateContext, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(delegateContext, v, functionCodegen, state);
 
-        for (JetDeclaration declaration : toClass.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                propertyCodegen.gen((JetProperty) declaration);
-            }
-            else if (declaration instanceof JetNamedFunction) {
-                if (!overriden.contains(bindingContext.get(BindingContext.FUNCTION, declaration))) {
-                    functionCodegen.gen((JetNamedFunction) declaration);
+        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, toClass);
+        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (declaration instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
+                if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION) {
+                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callableMemberDescriptor.getOverriddenDescriptors();
+                    for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
+                        if(overriddenDescriptor.getContainingDeclaration() == classDescriptor) {
+                            if (declaration instanceof PropertyDescriptor) {
+                                propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
+                            }
+                            else if (declaration instanceof NamedFunctionDescriptor) {
+                                functionCodegen.genDelegate((NamedFunctionDescriptor) declaration, overriddenDescriptor, field);
+                            }
+                        }
+                    }
                 }
             }
         }

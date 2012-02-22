@@ -47,6 +47,10 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("classes/inheritance.jet");
     }
 
+    public void testInheritanceAndDelegation2() throws Exception {
+        blackBoxFile("classes/delegation2.kt");
+    }
+
     public void testFunDelegation() throws Exception {
         blackBoxFile("classes/funDelegation.jet");
     }
