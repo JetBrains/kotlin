@@ -23,17 +23,24 @@ import org.jetbrains.jet.lang.psi.JetForExpression;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
 
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
 
 /**
  * @author Pavel Talanov
  */
+
+//TODO: create util class for managing stuff like binary operations
 public abstract class ForTranslator extends AbstractTranslator {
 
     @NotNull
     public static JsStatement translate(@NotNull JetForExpression expression,
                                         @NotNull TranslationContext context) {
+        if (RangeLiteralForTranslator.isApplicable(expression, context)) {
+            return RangeLiteralForTranslator.translate(expression, context);
+        }
         if (ArrayForTranslator.isApplicable(expression, context)) {
             return ArrayForTranslator.translate(expression, context);
         }
@@ -45,15 +52,26 @@ public abstract class ForTranslator extends AbstractTranslator {
 
     @NotNull
     protected final JetForExpression expression;
+    @NotNull
+    protected final JsName parameterName;
 
     protected ForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(context);
         this.expression = forExpression;
+        this.parameterName = declareParameter();
     }
 
     @NotNull
-    protected JsName declareParameter() {
+    private JsName declareParameter() {
         JetParameter loopParameter = getLoopParameter(expression);
         return context().getNameForElement(loopParameter);
     }
+
+    //TODO: look for should-be-usages
+    @NotNull
+    protected JsStatement translateOriginalBodyExpression() {
+        return Translation.translateAsStatement(getLoopBody(expression), context());
+    }
+
+
 }

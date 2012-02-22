@@ -50,7 +50,6 @@ public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     private JsBlock translate() {
-        JsName parameterName = declareParameter();
         TemporaryVariable iterator = context().declareTemporary(iteratorMethodInvocation());
         JsBlock bodyBlock = generateCycleBody(parameterName, iterator);
         JsWhile cycle = new JsWhile(hasNextMethodInvocation(iterator), bodyBlock);

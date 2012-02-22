@@ -43,4 +43,7 @@ public final class RangeTest extends TranslationTest {
         testFooBoxIsTrue("intInRange.kt");
     }
 
+    public void testIteratingOverRanges() throws Exception {
+        testFooBoxIsTrue("iteratingOverRanges.kt");
+    }
 }

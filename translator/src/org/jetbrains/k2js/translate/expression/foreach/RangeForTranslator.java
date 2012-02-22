@@ -81,7 +81,6 @@ public final class RangeForTranslator extends ForTranslator {
                                         @NotNull TemporaryVariable start,
                                         @NotNull TemporaryVariable end) {
         JsFor result = new JsFor();
-        JsName parameterName = declareParameter();
         result.setInitVars(initExpression(start, parameterName));
         result.setCondition(getCondition(end, parameterName));
         result.setIncrExpr(getIncrExpression(incrVar, parameterName));
