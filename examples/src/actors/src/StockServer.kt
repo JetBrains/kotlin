@@ -14,7 +14,7 @@ class StockServer(val numberOfShards : Int) : Actor(Executors.newFixedThreadPool
 
     private val shards = Array<StockServerShard> (numberOfShards, { (i: Int) -> StockServerShard(statCalculator, executor) })
 
-    private val timer = fixedRateTimer(period=1000.long, daemon=true) {
+    private val timer = fixedRateTimer(period=1000.toLong(), daemon=true) {
         for(s in shards)
             s post StockMessage.UpdateModel
     }

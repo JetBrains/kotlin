@@ -5,5 +5,5 @@ fun Long?.inv() : Long = this.sure().inv()
 fun box() : String {
     val x : Long? = 10
     System.out?.println(x.inv())
-    return if(x.inv() == -11.long) "OK" else "fail"
+    return if(x.inv() == -11.toLong()) "OK" else "fail"
 }

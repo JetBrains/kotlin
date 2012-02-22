@@ -59,7 +59,7 @@ public class ShortValue implements CompileTimeConstant<Short> {
 
     @Override
     public String toString() {
-        return value + ".short";
+        return value + ".toShort()";
     }
 
 }

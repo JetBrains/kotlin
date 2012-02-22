@@ -31,7 +31,7 @@ internal object RefreshQueue {
             }
         }
 
-        fixedRateTimer(daemon=true, name="refresher timer", period=5000.long) {
+        fixedRateTimer(daemon=true, name="refresher timer", period=5000.toLong()) {
             scheduleRefresh(FileSystem.watchedDirectories)
         }
     }

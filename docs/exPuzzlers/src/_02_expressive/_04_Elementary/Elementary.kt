@@ -7,5 +7,5 @@ fun main(args : Array<String>) {
 //    println(12345 + 5432l)
 
     // Correct syntax:
-    println(12345 + 5432.long)
+    println(12345 + 5432.toLong())
 }

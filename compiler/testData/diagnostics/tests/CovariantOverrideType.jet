@@ -18,8 +18,8 @@ abstract class B() : A {
     override fun foo2() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> {
     }
 
-    override val a : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 1.double
-    override val <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>a1<!> = 1.double
+    override val a : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 1.toDouble()
+    override val <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>a1<!> = 1.toDouble()
 
     abstract override fun <X> g() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
     abstract override fun <X> g1() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>java.util.List<X><!>

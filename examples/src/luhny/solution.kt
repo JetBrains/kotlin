@@ -92,4 +92,4 @@ class Luhny() {
 }
 
 fun Char.isDigit() = Character.isDigit(this)
-fun Char.toDigit() = this.int - '0'.int
+fun Char.toDigit() = this.toInt() - '0'.toInt()

@@ -125,7 +125,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testAccessorsWithoutBody() throws Exception {
         loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
         final Object instance = aClass.newInstance();
         final Method getFoo = findMethodByName(aClass, "getFoo");
@@ -167,7 +167,7 @@ public class PropertyGenTest extends CodegenTestCase {
 
     public void testVolatileProperty() throws Exception {
         loadText("abstract class Foo { public volatile var x: String = \"\"; }");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
         Field x = aClass.getDeclaredField("x");

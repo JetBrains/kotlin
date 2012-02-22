@@ -1,11 +1,11 @@
 fun box() : String {
-    System.out?.println(System.out?.println(10.float..11.float))
+    System.out?.println(System.out?.println(10.toFloat()..11.toFloat()))
 
-    for(f in 10.float..11.float step 0.3.float) {
+    for(f in 10.toFloat()..11.toFloat() step 0.3.toFloat()) {
         System.out?.println(f)
     }
 
-    for(f in 10.double..11.double step 0.3.double) {
+    for(f in 10.toDouble()..11.toDouble() step 0.3.toDouble()) {
         System.out?.println(f)
     }
 

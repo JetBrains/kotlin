@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.Collections;
 import java.util.List;
@@ -208,7 +209,7 @@ public class ExpressionVisitor extends StatementVisitor {
                 text = text.replace("D", "").replace("d", "");
             }
             if (canonicalTypeStr.equals("float") || canonicalTypeStr.equals(JAVA_LANG_FLOAT)) {
-                text = text.replace("F", "").replace("f", "") + "." + "float";
+                text = text.replace("F", "").replace("f", "") + "." + OperatorConventions.FLOAT + "()";
             }
             if (canonicalTypeStr.equals("long") || canonicalTypeStr.equals(JAVA_LANG_LONG)) {
                 text = text.replace("L", "").replace("l", "");

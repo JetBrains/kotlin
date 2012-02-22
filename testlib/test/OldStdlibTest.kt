@@ -24,7 +24,7 @@ class OldStdlibTest() : TestSupport() {
         val x = ByteArray (10)
 
         for(index in 0..9) {
-            x [index] = index.byte
+            x [index] = index.toByte()
         }
 
         for(b in x.inputStream) {

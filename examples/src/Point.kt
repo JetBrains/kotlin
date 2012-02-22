@@ -4,7 +4,7 @@ class Point(val x: Int, val y: Int) {
     fun distanceTo(other: Point): Double {
         val dx = x - other.x
         val dy = y - other.y
-        return Math.sqrt((dx*dx + dy*dy).double)
+        return Math.sqrt((dx*dx + dy*dy).toDouble())
     }
 }
 

@@ -377,7 +377,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testArrayAugAssignLong() throws Exception {
-        loadText("fun foo(c: LongArray) { c[0] *= 2.long }");
+        loadText("fun foo(c: LongArray) { c[0] *= 2.toLong() }");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         long[] data = new long[] { 5 };

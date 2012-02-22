@@ -40,7 +40,7 @@ fun Timer.scheduleAtFixedRate(time: Date, period: Long, action: TimerTask.()->Un
     return task
 }
 
-fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.long, period: Long, action: TimerTask.()->Unit) : Timer {
+fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.()->Unit) : Timer {
     val timer = if(name == null) Timer(daemon) else Timer(name, daemon)
     timer.schedule(initialDelay, period, action)
     return timer
@@ -52,7 +52,7 @@ fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, period: 
     return timer
 }
 
-fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.long, period: Long, action: TimerTask.()->Unit) : Timer {
+fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.()->Unit) : Timer {
     val timer = if(name == null) Timer(daemon) else Timer(name, daemon)
     timer.scheduleAtFixedRate(initialDelay, period, action)
     return timer

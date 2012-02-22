@@ -9,7 +9,7 @@ class StringTest() : TestCase() {
     fun testStringIterator() {
         var sum = 0
         for(c in "239")
-            sum += (c.int - '0'.int)
+            sum += (c.toInt() - '0'.toInt())
         assertTrue(sum == 14)
     }
 
@@ -22,7 +22,7 @@ class StringTest() : TestCase() {
         println(sb)
 
         for(c in sb)
-            sum += (c.int - '0'.int)
+            sum += (c.toInt() - '0'.toInt())
         assertTrue(sum == 14)
     }
 }

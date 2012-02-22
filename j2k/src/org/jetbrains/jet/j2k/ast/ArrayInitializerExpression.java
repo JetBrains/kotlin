@@ -76,8 +76,8 @@ public class ArrayInitializerExpression extends Expression {
 
     @NotNull
     private static String getConversion(@NotNull final String afterReplace) {
-        if (afterReplace.contains("double")) return DOT + OperatorConventions.DOUBLE;
-        if (afterReplace.contains("float")) return DOT + OperatorConventions.FLOAT;
+        if (afterReplace.contains("double")) return DOT + OperatorConventions.DOUBLE + "()";
+        if (afterReplace.contains("float")) return DOT + OperatorConventions.FLOAT + "()";
         return "";
     }
 

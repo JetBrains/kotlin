@@ -15,7 +15,7 @@ sink:
 fun f(a : Boolean) : Unit {
     1
     a
-    2.long
+    2.toLong()
     foo(a, 3)
     genfun<Any>()
     flfun {1}
@@ -36,10 +36,11 @@ l0:
     w(a)                NEXT:[r(1)]                       PREV:[v(a : Boolean)]
     r(1)                NEXT:[r(a)]                       PREV:[w(a)]
     r(a)                NEXT:[r(2)]                       PREV:[r(1)]
-    r(2)                NEXT:[r(long)]                    PREV:[r(a)]
-    r(long)             NEXT:[r(2.long)]                  PREV:[r(2)]
-    r(2.long)           NEXT:[r(a)]                       PREV:[r(long)]
-    r(a)                NEXT:[r(3)]                       PREV:[r(2.long)]
+    r(2)                NEXT:[r(toLong)]                  PREV:[r(a)]
+    r(toLong)           NEXT:[r(toLong())]                PREV:[r(2)]
+    r(toLong())         NEXT:[r(2.toLong())]              PREV:[r(toLong)]
+    r(2.toLong())       NEXT:[r(a)]                       PREV:[r(toLong())]
+    r(a)                NEXT:[r(3)]                       PREV:[r(2.toLong())]
     r(3)                NEXT:[r(foo)]                     PREV:[r(a)]
     r(foo)              NEXT:[r(foo(a, 3))]               PREV:[r(3)]
     r(foo(a, 3))        NEXT:[r(genfun)]                  PREV:[r(foo)]

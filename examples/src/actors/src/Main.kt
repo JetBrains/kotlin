@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
         }
 
         for (k in 1..stocksPerClient) {
-            val stock = (Math.random() * numberOfSymbols).int
+            val stock = (Math.random() * numberOfSymbols).toInt()
             stockServer post Subscribe(stock.toString(), client)
         }
     }

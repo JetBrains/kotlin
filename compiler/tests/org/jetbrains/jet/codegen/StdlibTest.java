@@ -104,7 +104,7 @@ public class StdlibTest extends CodegenTestCase {
     public void testForInString() throws Exception {
         loadText("fun foo() : Int {        var sum = 0\n" +
                  "        for(c in \"239\")\n" +
-                 "            sum += (c.int - '0'.int)\n" +
+                 "            sum += (c.toInt() - '0'.toInt())\n" +
                  "        return sum" +
                  "}" );
         final Method main = generateFunction();

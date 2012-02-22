@@ -76,9 +76,9 @@ public class IntrinsicMethods {
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
-            declareIntrinsicProperty("Number", method, NUMBER_CAST);
+            declareIntrinsicFunction("Number", method, 0, NUMBER_CAST, true);
             for (String type : PRIMITIVE_NUMBER_TYPES) {
-                declareIntrinsicProperty(type, method, NUMBER_CAST);
+                declareIntrinsicFunction(type, method, 0, NUMBER_CAST, true);
             }
         }
 

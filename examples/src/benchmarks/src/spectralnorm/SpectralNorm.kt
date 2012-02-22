@@ -37,8 +37,8 @@ fun spectralnormGame(n: Int) : Double {
         Approximate (u, v, tmp, r1, r2)
     })
 
-    var vBv = 0.double
-    var vv = 0.double;
+    var vBv = 0.toDouble()
+    var vv = 0.toDouble();
     for (i in 0..nthread-1) {
         try {
             ap[i].join ();
@@ -100,7 +100,7 @@ class Approximate(val u: DoubleArray, val v: DoubleArray, val _tmp: DoubleArray,
     {
         for (i in rbegin..rend)
         {
-            var sum = 0.double
+            var sum = 0.toDouble()
             for (j in v.indices)
                 sum += eval_A (j, i) * v[j];
 

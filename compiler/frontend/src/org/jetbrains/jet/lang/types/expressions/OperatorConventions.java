@@ -36,13 +36,13 @@ public class OperatorConventions {
     private OperatorConventions() {}
 
     // Names for primitive type conversion properties
-    public static final String DOUBLE = "double";
-    public static final String FLOAT = "float";
-    public static final String LONG = "long";
-    public static final String INT = "int";
-    public static final String CHAR = "char";
-    public static final String SHORT = "short";
-    public static final String BYTE = "byte";
+    public static final String DOUBLE = "toDouble";
+    public static final String FLOAT = "toFloat";
+    public static final String LONG = "toLong";
+    public static final String INT = "toInt";
+    public static final String CHAR = "toChar";
+    public static final String SHORT = "toShort";
+    public static final String BYTE = "toByte";
 
 
     public static final ImmutableSet<String> NUMBER_CONVERSIONS = ImmutableSet.of(

@@ -15,51 +15,51 @@ fun testInt () : String {
 }
 
 fun testByte () : String {
-    val r1 = 1.byte upto 4.byte
-    if(r1.end != 4.byte || r1.isReversed || r1.size != 4) return "byte upto fail"
+    val r1 = 1.toByte() upto 4.toByte()
+    if(r1.end != 4.toByte() || r1.isReversed || r1.size != 4) return "byte upto fail"
 
-    val r2 = 4.byte upto 1.byte
-    if(r2.start != 0.byte || r2.size != 0) return "byte negative upto fail"
+    val r2 = 4.toByte() upto 1.toByte()
+    if(r2.start != 0.toByte() || r2.size != 0) return "byte negative upto fail"
 
-    val r3 = 5.byte downto 0.byte
-    if(r3.start != 5.byte || r3.end != 0.byte || !r3.isReversed || r3.size != 6) return "byte downto fail"
+    val r3 = 5.toByte() downto 0.toByte()
+    if(r3.start != 5.toByte() || r3.end != 0.toByte() || !r3.isReversed || r3.size != 6) return "byte downto fail"
 
-    val r4 = 5.byte downto 6.byte
-    if(r4.start != 0.byte || r4.end != 0.byte || !r3.isReversed || r4.size != 0) return "byte negative downto fail"
+    val r4 = 5.toByte() downto 6.toByte()
+    if(r4.start != 0.toByte() || r4.end != 0.toByte() || !r3.isReversed || r4.size != 0) return "byte negative downto fail"
 
     return "OK"
 }
 
 fun testShort () : String {
 
-    val r1 = 1.short upto 4.short
-    if(r1.end != 4.short || r1.isReversed || r1.size != 4) return "short upto fail"
+    val r1 = 1.toShort() upto 4.toShort()
+    if(r1.end != 4.toShort() || r1.isReversed || r1.size != 4) return "short upto fail"
 
-    val r2 = 4.short upto 1.short
-    if(r2.start != 0.short || r2.size != 0) return "short negative upto fail"
+    val r2 = 4.toShort() upto 1.toShort()
+    if(r2.start != 0.toShort() || r2.size != 0) return "short negative upto fail"
 
-    val r3 = 5.short downto 0.short
-    if(r3.start != 5.short || r3.end != 0.short || !r3.isReversed || r3.size != 6) return "short downto fail"
+    val r3 = 5.toShort() downto 0.toShort()
+    if(r3.start != 5.toShort() || r3.end != 0.toShort() || !r3.isReversed || r3.size != 6) return "short downto fail"
 
-    val r4 = 5.short downto 6.short
-    if(r4.start != 0.short || r4.end != 0.short || !r3.isReversed || r4.size != 0) return "short negative downto fail"
+    val r4 = 5.toShort() downto 6.toShort()
+    if(r4.start != 0.toShort() || r4.end != 0.toShort() || !r3.isReversed || r4.size != 0) return "short negative downto fail"
 
     return "OK"
 }
 
 fun testLong () : String {
 
-    val r1 = 1.long upto 4.long
-    if(r1.end != 4.long || r1.isReversed || r1.size != 4.long) return "long upto fail"
+    val r1 = 1.toLong() upto 4.toLong()
+    if(r1.end != 4.toLong() || r1.isReversed || r1.size != 4.toLong()) return "long upto fail"
 
-    val r2 = 4.long upto 1.long
-    if(r2.start != 0.long || r2.size != 0.long) return "short negative long fail"
+    val r2 = 4.toLong() upto 1.toLong()
+    if(r2.start != 0.toLong() || r2.size != 0.toLong()) return "short negative long fail"
 
-    val r3 = 5.long downto 0.long
-    if(r3.start != 5.long || r3.end != 0.long || !r3.isReversed || r3.size != 6.long) return "long downto fail"
+    val r3 = 5.toLong() downto 0.toLong()
+    if(r3.start != 5.toLong() || r3.end != 0.toLong() || !r3.isReversed || r3.size != 6.toLong()) return "long downto fail"
 
-    val r4 = 5.long downto 6.long
-    if(r4.start != 0.long || r4.end != 0.long || !r3.isReversed || r4.size != 0.long) return "long negative downto fail"
+    val r4 = 5.toLong() downto 6.toLong()
+    if(r4.start != 0.toLong() || r4.end != 0.toLong() || !r3.isReversed || r4.size != 0.toLong()) return "long negative downto fail"
 
     return "OK"
 }
@@ -70,13 +70,13 @@ fun testChar () : String {
     if(r1.end != 'd' || r1.isReversed || r1.size != 4) return "char upto fail"
 
     val r2 = 'd' upto 'a'
-    if(r2.start != 0.char || r2.size != 0) return "char negative long fail"
+    if(r2.start != 0.toChar() || r2.size != 0) return "char negative long fail"
 
     val r3 = 'd' downto 'a'
     if(r3.start != 'd' || r3.end != 'a' || !r3.isReversed || r3.size != 4) return "char downto fail"
 
     val r4 = 'a' downto 'd'
-    if(r4.start != 0.char || r4.end != 0.char || !r3.isReversed || r4.size != 0) return "char negative downto fail"
+    if(r4.start != 0.toChar() || r4.end != 0.toChar() || !r3.isReversed || r4.size != 0) return "char negative downto fail"
 
     return "OK"
 }

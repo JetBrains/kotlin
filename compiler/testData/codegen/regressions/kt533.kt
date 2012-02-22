@@ -26,7 +26,7 @@ class Luhny() {
 
         // Commented for KT-621
         // when (it) {
-        //   .isDigit() => digits.push(it.int - '0'.int)
+        //   .isDigit() => digits.push(it.toInt() - '0'.toInt())
         //   ' ', '-' => {}
         //   else => {
         //           printAll()
@@ -35,7 +35,7 @@ class Luhny() {
         // }
 
         if (it.isDigit()) {
-            digits.push(it.int - '0'.int)
+            digits.push(it.toInt() - '0'.toInt())
         } else if (it == ' ' || it == '-') {
         } else {
             printAll()
@@ -139,6 +139,6 @@ fun Reader.forEachChar(body : (Char) -> Unit) {
     do {
         var i = read();
         if (i == -1) break
-        body(i.char)
+        body(i.toChar())
     } while(true)
 }

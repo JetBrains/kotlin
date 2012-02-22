@@ -1,13 +1,13 @@
 package jet
 
 abstract class Number : Hashable {
-  abstract val double : Double
-  abstract val float : Float
-  abstract val long : Long
-  abstract val int : Int
-  abstract val char : Char
-  abstract val short : Short
-  abstract val byte : Byte
+  abstract fun toDouble() : Double
+  abstract fun toFloat() : Float
+  abstract fun toLong() : Long
+  abstract fun toInt() : Int
+  abstract fun toChar() : Char
+  abstract fun toShort() : Short
+  abstract fun toByte() : Byte
 //  fun equals(other : Double) : Boolean
 //  fun equals(other : Float) : Boolean
 //  fun equals(other : Long) : Boolean

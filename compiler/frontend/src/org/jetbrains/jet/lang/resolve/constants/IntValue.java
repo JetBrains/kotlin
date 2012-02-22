@@ -59,7 +59,7 @@ public class IntValue implements CompileTimeConstant<Integer> {
 
     @Override
     public String toString() {
-        return value + ".int";
+        return value + ".toInt()";
     }
 
     @Override

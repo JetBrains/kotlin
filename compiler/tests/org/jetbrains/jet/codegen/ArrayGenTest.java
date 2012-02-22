@@ -78,7 +78,7 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testIterator () throws Exception {
         loadText("fun box() { val x = Array<Int>(5, { it } ).iterator(); while(x.hasNext) { java.lang.System.out?.println(x.next()) } }");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Method foo = generateFunction();
         foo.invoke(null);
     }
@@ -285,9 +285,9 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testLongDouble () throws Exception {
         loadText(
-                     "fun box() : Int { var l = IntArray(1); l[0.long] = 4; l[0.long] += 6; return l[0.long];}\n" +
-                     "fun IntArray.set(index: Long, elem: Int) { this[index.int] = elem }\n" +
-                     "fun IntArray.get(index: Long) = this[index.int]");
+                     "fun box() : Int { var l = IntArray(1); l[0.toLong()] = 4; l[0.toLong()] += 6; return l[0.toLong()];}\n" +
+                     "fun IntArray.set(index: Long, elem: Int) { this[index.toInt()] = elem }\n" +
+                     "fun IntArray.get(index: Long) = this[index.toInt()]");
 //        System.out.println(generateToText());
         Method foo = generateFunction("box");
         assertTrue((Integer)foo.invoke(null) == 10);
@@ -314,6 +314,6 @@ public class ArrayGenTest extends CodegenTestCase {
 
     public void testNonNullArray() throws Exception {
         blackBoxFile("classes/nonnullarray.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 }

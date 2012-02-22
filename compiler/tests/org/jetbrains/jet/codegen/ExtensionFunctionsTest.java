@@ -48,7 +48,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
 
     public void testShared() throws Exception {
         blackBoxFile("extensionFunctions/shared.kt");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
     }
 
     public void testKt475() throws Exception {

@@ -38,7 +38,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testArrayListInheritance() throws Exception {
         loadFile("classes/inheritingFromArrayList.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         final Class aClass = loadClass("Foo", generateClassesInFile());
         assertInstanceOf(aClass.newInstance(), List.class);
     }
@@ -214,7 +214,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testKt508 () throws Exception {
         loadFile("regressions/kt508.jet");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         blackBox();
     }
 

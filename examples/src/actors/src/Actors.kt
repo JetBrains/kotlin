@@ -167,7 +167,7 @@ abstract class Actor(protected val executor: Executor, val fair: Boolean = false
         val messagesSent = AtomicLong()
         val messagesProcessed = AtomicLong()
 
-        val timer = fixedRateTimer(daemon=true, period=5000.long) {
+        val timer = fixedRateTimer(daemon=true, period=5000.toLong()) {
             val sent = messagesSent.get()
             val received = messagesProcessed.get()
             println("Actors stat: Sent: $sent Processed: $received Pending: ${sent-received}")

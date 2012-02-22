@@ -41,7 +41,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     public void testPropSetter() throws NoSuchFieldException, NoSuchMethodException {
         loadText("var x = 0\n" +
                  "[Deprecated] set");
-        System.out.println(generateToText());
+//        System.out.println(generateToText());
         Class aClass = generateNamespaceClass();
         assertNull(aClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNotNull(aClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));

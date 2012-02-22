@@ -1,8 +1,8 @@
  var x : Int = 1 + x
    get() : Int = 1
    set(value : <error>Long</error>) {
-      $x = value.int
-      $x = <error>1.long</error>
+      $x = value.toInt()
+      $x = <error>1.toLong()</error>
     }
 
  val xx : Int = <error>1 + x</error>

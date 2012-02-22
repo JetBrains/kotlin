@@ -147,20 +147,20 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testDoubleToInt() throws Exception {
-        loadText("fun foo(a: Double): Int = a.int");
+        loadText("fun foo(a: Double): Int = a.toInt()");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         assertEquals(1, main.invoke(null, 1.0));
     }
 
     public void testCastConstant() throws Exception {
-        loadText("fun foo(): Double = 1.double");
+        loadText("fun foo(): Double = 1.toDouble()");
         final Method main = generateFunction();
         assertEquals(1.0, main.invoke(null));
     }
 
     public void testCastOnStack() throws Exception {
-        loadText("fun foo(): Double = System.currentTimeMillis().double");
+        loadText("fun foo(): Double = System.currentTimeMillis().toDouble()");
         final Method main = generateFunction();
         double currentTimeMillis = (double) System.currentTimeMillis();
         double result = (Double) main.invoke(null);
@@ -327,7 +327,7 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testKt737() throws Exception {
-        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.byte.compareTo(10.long) >= 0) \"fail\" else \"OK\"");
+        loadText("fun box() = if(3.compareTo(2) != 1) \"fail\" else if(5.toByte().compareTo(10.toLong()) >= 0) \"fail\" else \"OK\"");
         assertEquals("OK", blackBox());
     }
 

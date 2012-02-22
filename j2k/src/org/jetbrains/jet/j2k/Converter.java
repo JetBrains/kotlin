@@ -330,8 +330,8 @@ public class Converter {
             final String typeToKotlin = f.getType().toKotlin();
             if (typeToKotlin.equals("Boolean")) return "false";
             if (typeToKotlin.equals("Char")) return "' '";
-            if (typeToKotlin.equals("Double")) return "0." + OperatorConventions.DOUBLE;
-            if (typeToKotlin.equals("Float")) return "0." + OperatorConventions.FLOAT;
+            if (typeToKotlin.equals("Double")) return "0." + OperatorConventions.DOUBLE + "()";
+            if (typeToKotlin.equals("Float")) return "0." + OperatorConventions.FLOAT + "()";
             return "0";
         }
     }
@@ -799,7 +799,7 @@ public class Converter {
         conversions.put(JAVA_LANG_CHARACTER, CHAR);
 
         if (conversions.containsKey(type)) {
-            return "." + conversions.get(type);
+            return "." + conversions.get(type) + "()";
         }
         return "";
     }

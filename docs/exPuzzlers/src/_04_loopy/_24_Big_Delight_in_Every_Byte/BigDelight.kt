@@ -5,12 +5,12 @@ import std.io.*
 fun main(args : Array<String>) {
 //    for (b : Byte in Byte.MIN_VALUE..Byte.MAX_VALUE) {
 //        // Problematic code does not compile
-//        if (b == 0x90 .byte)
+//        if (b == 0x90 .toByte())
 //            println("joy")
 //    }
     for (b : Byte in Byte.MIN_VALUE to Byte.MAX_VALUE) {
         // Problematic code does not compile
-        if (b == 0x90 .byte)
+        if (b == 0x90 .toByte())
             println("joy")
     }
 }
@@ -40,4 +40,4 @@ class NumberRange<T : Comparable<T>>(val from : Int, val to : Int) : Range<Int>,
     }
 }
 
-fun Byte.to(to : Byte) = NumberRange<Byte>(this.int, to.int)
+fun Byte.to(to : Byte) = NumberRange<Byte>(this.toInt(), to.toInt())
