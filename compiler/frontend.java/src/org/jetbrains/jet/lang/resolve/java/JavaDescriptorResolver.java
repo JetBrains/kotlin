@@ -275,6 +275,8 @@ public class JavaDescriptorResolver {
             throw new IllegalStateException(psiClass.getQualifiedName());
         }
 
+        checkPsiClassIsNotJet(psiClass);
+
         String name = psiClass.getName();
         ResolverBinaryClassData classData = new ResolverBinaryClassData();
         classDescriptorCache.put(psiClass.getQualifiedName(), classData);
@@ -410,6 +412,12 @@ public class JavaDescriptorResolver {
         semanticServices.getTrace().record(BindingContext.CLASS, psiClass, classData.classDescriptor);
 
         return classData;
+    }
+
+    private void checkPsiClassIsNotJet(PsiClass psiClass) {
+        if (psiClass instanceof JetJavaMirrorMarker) {
+            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass");
+        }
     }
 
     /**
@@ -819,6 +827,9 @@ public class JavaDescriptorResolver {
      * @see #createClassObjectDescriptor(org.jetbrains.jet.lang.descriptors.ClassDescriptor, com.intellij.psi.PsiClass)
      */
     private ResolverNamespaceData createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
+
+        checkPsiClassIsNotJet(psiClass);
+
         ResolverNamespaceData namespaceData = new ResolverNamespaceData();
         namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
                 resolveParentDescriptor(psiClass),
