@@ -21,6 +21,7 @@ import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.compiler.FileNameTransformer;
 
 import java.io.ByteArrayOutputStream;
@@ -127,9 +128,13 @@ public class KotlinCompiler {
                 environment.setErrorStream(errStream);
             }
 
-//            if (arguments.docOutputDir != null) {
-//                environment.getMyEnvironment().getFileProcessors().add(new KDocProcessor(arguments.docOutputDir));
-//            }
+            if (arguments.docOutputDir != null) {
+                KDocProcessor factory = new KDocProcessor(arguments.docOutputDir);
+                CompilerPlugin processor = factory.createCompilerPlugin();
+                if (processor != null) {
+                    environment.getMyEnvironment().getCompilerPlugins().add(processor);
+                }
+            }
 
             if (arguments.stdlib != null) {
                 environment.setStdlib(arguments.stdlib);

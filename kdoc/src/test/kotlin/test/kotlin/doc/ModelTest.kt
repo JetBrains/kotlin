@@ -9,7 +9,7 @@ import junit.framework.TestCase
 
 // TODO should use the ktest library really for nicer asserts
 import junit.framework.Assert.assertEquals
-import org.jetbrains.kotlin.doc.KDocProcessor
+import org.jetbrains.kotlin.doc.KDocGenerator
 import java.io.File
 
 class ModelTest : TestCase() {
@@ -56,7 +56,7 @@ class ModelTest : TestCase() {
             println()
         }
 
-        val processor = KDocProcessor(model, File("target/test-data/ModelTest"))
+        val processor = KDocGenerator(model, File("target/test-data/ModelTest"))
         processor.execute()
     }
 }

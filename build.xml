@@ -49,11 +49,28 @@
 
     <target name="compileStdlib" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+            <arg value="-src"/>
+            <arg value="${basedir}/stdlib/ktSrc"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/stdlib"/>
+        </java>
+    </target>
+
+    <target name="docStdlib">
+        <mkdir dir="${output}/classes/stdlib"/>
         <mkdir dir="${output}/apidoc/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <fileset dir="${basedir}/kdoc/target">
+                  <include name="**/*.jar"/>
+                </fileset>
             </classpath>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
@@ -70,13 +87,6 @@
             <classpath>
               <path refid="classpath"/>
               <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
-<!--
-              <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
-              <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
-              <fileset dir="${basedir}/testlib/lib">
-                <include name="**/*.jar"/>
-              </fileset>
--->
             </classpath>
             <arg value="-stdlib"/>
             <arg value="${kotlin-home}/lib/kotlin-runtime.jar"/>

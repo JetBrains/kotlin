@@ -33,7 +33,7 @@ import java.util.List;
  * @author yole
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
-    private List<JetFileProcessor> fileProcessors = new ArrayList<JetFileProcessor>();
+    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
 
     public JetCoreEnvironment(Disposable parentDisposable) {
         super(parentDisposable);
@@ -61,11 +61,11 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         return myApplication;
     }
 
-    public List<JetFileProcessor> getFileProcessors() {
-        return fileProcessors;
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
     }
 
-    public void setFileProcessors(List<JetFileProcessor> fileProcessors) {
-        this.fileProcessors = fileProcessors;
+    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
     }
 }

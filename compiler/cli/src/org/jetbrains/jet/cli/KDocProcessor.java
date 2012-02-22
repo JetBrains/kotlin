@@ -17,38 +17,30 @@
  */
 package org.jetbrains.jet.cli;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.compiler.JetFileProcessor;
-import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
+ * A simple facade to auto-detect the KDoc processor if its available on the classpath
  */
-public class KDocProcessor implements JetFileProcessor {
+public class KDocProcessor implements CompilerPlugin {
 
     private final String outputDir;
 
@@ -56,10 +48,49 @@ public class KDocProcessor implements JetFileProcessor {
         this.outputDir = outputDir;
     }
 
+    public CompilerPlugin createCompilerPlugin() {
+        // lets see if we can see the KDoc class
+        String name = "org.jetbrains.kotlin.doc.KDoc";
+        Class<?> aClass = null;
+        try {
+            aClass = loadClass(name);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Could not find class: " + name);
+            return null;
+        }
+        if (aClass != null) {
+            try {
+                File dir = new File(outputDir);
+                Constructor<?> constructor = aClass.getConstructor(File.class);
+                if (constructor != null) {
+                    return (CompilerPlugin) constructor.newInstance(dir);
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to create Processor: " + e);
+            }
+        }
+        return null;
+    }
+
+    public static Class<?> loadClass(String name) throws ClassNotFoundException {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            try {
+                return Thread.currentThread().getContextClassLoader().loadClass(name);
+            } catch (ClassNotFoundException e1) {
+                return KDocProcessor.class.getClassLoader().loadClass(name);
+            }
+        }
+    }
+
+
     @Override
-    public void processFiles(List<JetFile> sources) {
+    public void processFiles(BindingContext context, List<JetFile> sources) {
+        /*
         // JetFile's are PSI (Program Source Interface) classes, i.e. they contain the concrete syntax trees of files
         if (sources.isEmpty()) return;
+
 
         // Let's perform the semantic analysis
         Project project = sources.get(0).getProject();
@@ -82,6 +113,7 @@ public class KDocProcessor implements JetFileProcessor {
         }
 
         // TODO fire up the KDoc processor here...
+        */
     }
 
     private void processDescriptors(Collection<DeclarationDescriptor> allDescriptors, BindingContext context) {
@@ -125,6 +157,6 @@ public class KDocProcessor implements JetFileProcessor {
         });
         List<JetFile> files = Lists.newArrayList();
         files.add(JetPsiFactory.createFile(jetCoreEnvironment.getProject(), "package a;/**sdfsdf*/class A {fun foo() {} /**doc*/ fun bar() {}}"));
-        new KDocProcessor("").processFiles(files);
+        new KDocProcessor("").processFiles(null, files);
     }
 }

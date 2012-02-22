@@ -204,10 +204,10 @@ public class CompileSession {
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
         ClassFileFactory answer = generationState.getFactory();
 
-        List<JetFileProcessor> fileProcessors = myEnvironment.getFileProcessors();
+        List<CompilerPlugin> fileProcessors = myEnvironment.getCompilerPlugins();
         if (fileProcessors != null) {
-            for (JetFileProcessor processor : fileProcessors) {
-                processor.processFiles(getSourceFileNamespaces());
+            for (CompilerPlugin processor : fileProcessors) {
+                processor.processFiles(myBindingContext, getSourceFileNamespaces());
             }
         }
         return answer;

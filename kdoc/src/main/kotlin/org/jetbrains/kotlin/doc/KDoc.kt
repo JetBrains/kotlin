@@ -5,8 +5,67 @@ import org.jetbrains.kotlin.template.TextTemplate
 import org.jetbrains.kotlin.model.KModel
 
 import java.io.File
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.compiler.CompilerPlugin
+import java.util.List
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
+import java.util.HashSet
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lexer.JetTokens
 
-class KDocProcessor(val model: KModel, val outputDir: File) {
+class KDoc(val outputDir: File) : KDocSupport() {
+    val model = KModel()
+
+    /** TODO compile errors so lets use Java for this bit for now...
+    override fun processFiles(context: BindingContext, files: List<JetFile?>?) {
+        println("==== KDoc running! Generating to $outputDir")
+        if (context != null) {
+            val namespaces = HashSet<NamespaceDescriptor>()
+            if (files != null) {
+                for (source in files) {
+                    if (source != null) {
+                        val namespaceDescriptor = context.get(BindingContext.NAMESPACE, source)
+                        if (namespaceDescriptor != null) {
+                            namespaces.add(namespaceDescriptor)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    */
+
+    override fun generate() {
+        for (classElement in allClasses) {
+            if (classElement != null) {
+                //val docComment = getDocCommentFor(classElement.sure()) ?: "";
+                val name = classElement?.getName()
+                if (name != null) {
+                    println("Found class: ${name}")
+                    //model.getClass(name)
+                }
+            }
+        }
+        if (!model.packages.isEmpty()) {
+            val generator = KDocGenerator(model, outputDir)
+            generator.execute()
+        }
+    }
+
+    protected fun getDocCommentFor(psiElement: PsiElement): String? {
+        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+        var node = psiElement.getNode()?.getTreePrev()
+        while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
+            node = node?.getTreePrev();
+        }
+        if (node == null) return null;
+        if (node?.getElementType() != JetTokens.DOC_COMMENT) return null;
+        return node?.getText();
+    }
+}
+
+class KDocGenerator(val model: KModel, val outputDir: File) {
 
     fun execute(): Unit {
         run("allclasses-frame.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
