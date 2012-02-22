@@ -18,6 +18,7 @@
 package org.jetbrains.kotlin.doc;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.compiler.CompileEnvironment; // Just to show it compiles.
 import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;

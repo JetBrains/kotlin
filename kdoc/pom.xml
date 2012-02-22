@@ -89,6 +89,12 @@
                                     <version>latest.lastSuccessful</version>
                                     <classifier>kotlin-runtime</classifier>
                                 </dependency>
+                                <dependency>
+                                    <groupId>ivy.org</groupId>
+                                    <artifactId>bt344</artifactId>
+                                    <version>latest.lastSuccessful</version>
+                                    <classifier>kotlin-compiler</classifier>
+                                </dependency>
                             </dependencies>
                             <scope>compile</scope>
                             <verbose>true</verbose>
