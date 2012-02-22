@@ -332,7 +332,7 @@ public class JavaDescriptorResolver {
                         classData.classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
-                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), Modality.FINAL, classData.classDescriptor.getVisibility());
+                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), classData.classDescriptor.getVisibility());
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
@@ -373,7 +373,7 @@ public class JavaDescriptorResolver {
                     }
                 }
 
-                constructorDescriptor.initialize(typeParameters, valueParameters, Modality.FINAL, classData.classDescriptor.getVisibility());
+                constructorDescriptor.initialize(typeParameters, valueParameters, classData.classDescriptor.getVisibility());
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
@@ -398,8 +398,8 @@ public class JavaDescriptorResolver {
                 if (valueParameterDescriptors.receiverType != null) {
                     throw new IllegalStateException();
                 }
-                constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors, Modality.FINAL,
-                                                 resolveVisibilityFromPsiModifiers(psiConstructor));
+                constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors,
+                        resolveVisibilityFromPsiModifiers(psiConstructor));
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);

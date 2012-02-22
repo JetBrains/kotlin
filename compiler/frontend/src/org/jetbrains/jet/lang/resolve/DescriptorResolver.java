@@ -823,8 +823,7 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters),
-                        Modality.FINAL,
-                        resolveVisibilityFromModifiers(modifierList));
+                resolveVisibilityFromModifiers(modifierList));
     }
 
     @Nullable

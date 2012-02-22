@@ -157,7 +157,7 @@ public class TypeHierarchyResolver {
                 private void createPrimaryConstructorForObject(@Nullable JetDeclaration object, MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                                     Modality.FINAL, Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
+                            Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, context.getTrace());
                     if (object != null) {
