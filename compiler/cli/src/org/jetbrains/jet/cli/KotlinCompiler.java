@@ -129,7 +129,7 @@ public class KotlinCompiler {
             }
 
             if (arguments.docOutputDir != null) {
-                KDocProcessor factory = new KDocProcessor(arguments.docOutputDir);
+                KDocLoader factory = new KDocLoader(arguments.docOutputDir);
                 CompilerPlugin processor = factory.createCompilerPlugin();
                 if (processor != null) {
                     environment.getMyEnvironment().getCompilerPlugins().add(processor);
