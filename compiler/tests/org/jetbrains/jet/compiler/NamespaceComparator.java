@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -316,7 +317,7 @@ class NamespaceComparator {
             sb.append(modality.name().toLowerCase());
         }
 
-        public void serialize(JetType type) {
+        public void serialize(@NotNull JetType type) {
             serialize(type.getConstructor().getDeclarationDescriptor());
             if (!type.getArguments().isEmpty()) {
                 sb.append("<");

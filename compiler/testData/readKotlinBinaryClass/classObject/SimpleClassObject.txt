@@ -1,0 +1,8 @@
+namespace test
+
+final class test.SimpleClassObject : jet.Any {
+    final /*constructor*/ fun <init>(): test.SimpleClassObject
+    final object test.SimpleClassObject.<no name provided> : jet.Any {
+        final /*constructor*/ fun <init>(): test.SimpleClassObject.<no name provided>
+    }
+}

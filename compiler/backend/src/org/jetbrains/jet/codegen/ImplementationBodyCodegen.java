@@ -135,9 +135,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitInnerClass(innerClassInternalName, outerClassInernalName, innerClass.getName(), innerClassAccess);
         }
 
+        if (descriptor.getClassObjectDescriptor() != null) {
+            int innerClassAccess = ACC_PUBLIC | ACC_FINAL | ACC_STATIC;
+            String outerClassInernalName = typeMapper.mapType(descriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            v.visitInnerClass(outerClassInernalName + JvmAbi.CLASS_OBJECT_SUFFIX, outerClassInernalName, JvmAbi.CLASS_OBJECT_CLASS_NAME, innerClassAccess);
+        }
+
         AnnotationCodegen.forClass(v.getVisitor()).genAnnotations(descriptor, typeMapper);
 
-        if(myClass instanceof JetClass && signature.getKotlinGenericSignature() != null) {
+        if (signature.getKotlinGenericSignature() != null) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
             annotationVisitor.visit(JvmStdlibNames.JET_CLASS_SIGNATURE, signature.getKotlinGenericSignature());
             annotationVisitor.visitEnd();

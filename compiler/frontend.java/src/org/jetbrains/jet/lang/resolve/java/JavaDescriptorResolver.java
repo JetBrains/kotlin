@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
@@ -406,8 +407,10 @@ public class JavaDescriptorResolver {
             }
         }
 
-        // TODO
-        //classData.classDescriptor.setClassObjectDescriptor(createClassObjectDescriptor(classData.classDescriptor));
+        MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.classDescriptor, psiClass);
+        if (classObject != null) {
+            classData.classDescriptor.setClassObjectDescriptor(classObject);
+        }
 
         semanticServices.getTrace().record(BindingContext.CLASS, psiClass, classData.classDescriptor);
 
@@ -420,19 +423,47 @@ public class JavaDescriptorResolver {
         }
     }
 
+    @Nullable
+    private PsiClass getInnerClassClassObject(@NotNull PsiClass outer) {
+        for (PsiClass inner : outer.getInnerClasses()) {
+            if (inner.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
+                return inner;
+            }
+        }
+        return null;
+    }
+
     /**
      * TODO
      * @see #createJavaNamespaceDescriptor(com.intellij.psi.PsiClass)
      */
     @Nullable
     private MutableClassDescriptorLite createClassObjectDescriptor(@NotNull ClassDescriptor containing, @NotNull PsiClass psiClass) {
-        MutableClassDescriptorLite classObjectDescriptor = new MutableClassDescriptorLite(containing, ClassKind.OBJECT);
-        classObjectDescriptor.setName("<TODO>"); // TODO
-        classObjectDescriptor.setModality(Modality.FINAL);
-        classObjectDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
-        classObjectDescriptor.createTypeConstructor();
-        classObjectDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classObjectDescriptor, psiClass, semanticServices, true));
-        return classObjectDescriptor;
+        PsiClass classObjectPsiClass = getInnerClassClassObject(psiClass);
+        if (classObjectPsiClass == null) {
+            return null;
+        }
+
+        ResolverBinaryClassData classData = new ResolverBinaryClassData();
+        classData.kotlin = true;
+        classData.classDescriptor = new MutableClassDescriptorLite(containing, ClassKind.OBJECT);
+
+        classDescriptorCache.put(classObjectPsiClass.getQualifiedName(), classData);
+
+        classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
+        classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
+        classData.classDescriptor.setModality(Modality.FINAL);
+        classData.classDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
+        classData.classDescriptor.createTypeConstructor();
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, classObjectPsiClass, semanticServices, false));
+
+        // TODO: wrong: class objects do not need visible constructors
+        ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
+        constructor.setReturnType(classData.classDescriptor.getDefaultType());
+        constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), Visibility.PUBLIC);
+
+        classData.classDescriptor.addConstructor(constructor, null);
+        return classData.classDescriptor;
     }
 
     private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData, TypeVariableResolver typeVariableResolver) {
@@ -679,7 +710,7 @@ public class JavaDescriptorResolver {
         }
     }
 
-    private Collection<? extends JetType> getSupertypes(PsiClassWrapper psiClass, ClassDescriptor classDescriptor, List<TypeParameterDescriptor> typeParameters) {
+    private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ClassDescriptor classDescriptor, List<TypeParameterDescriptor> typeParameters) {
         final List<JetType> result = new ArrayList<JetType>();
 
         if (psiClass.getJetClass().signature().length() > 0) {
@@ -1271,6 +1302,7 @@ public class JavaDescriptorResolver {
     }
 
     private ResolverScopeData getResolverScopeData(@NotNull ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
+        // TODO: store scopeData in Java*Scope
         ResolverScopeData scopeData;
         boolean staticMembers;
         if (owner instanceof JavaNamespaceDescriptor) {
@@ -1574,6 +1606,9 @@ public class JavaDescriptorResolver {
         for (PsiClass innerPsiClass : innerPsiClasses) {
             if (innerPsiClass.hasModifierProperty(PsiModifier.PRIVATE)) {
                 // TODO: hack against inner classes
+                continue;
+            }
+            if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 continue;
             }
             r.add(resolveClass(innerPsiClass));

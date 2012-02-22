@@ -1,0 +1,10 @@
+namespace test
+
+final class test.ClassObjectExtendsTraitWithTP : jet.Any {
+    final /*constructor*/ fun <init>(): test.ClassObjectExtendsTraitWithTP
+    final object test.ClassObjectExtendsTraitWithTP.<no name provided> : test.Bbb<jet.String> {
+        final /*constructor*/ fun <init>(): test.ClassObjectExtendsTraitWithTP.<no name provided>
+    }
+}
+abstract trait test.Bbb</*0,r*/ P : jet.Any?> : jet.Any {
+}

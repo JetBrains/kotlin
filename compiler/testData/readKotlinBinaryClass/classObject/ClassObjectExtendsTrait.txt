@@ -1,0 +1,10 @@
+namespace test
+
+abstract trait test.Bbb : jet.Any {
+}
+final class test.ClassObjectextendsTrait : jet.Any {
+    final /*constructor*/ fun <init>(): test.ClassObjectextendsTrait
+    final object test.ClassObjectextendsTrait.<no name provided> : test.Bbb {
+        final /*constructor*/ fun <init>(): test.ClassObjectextendsTrait.<no name provided>
+    }
+}

@@ -170,7 +170,7 @@ public class JetTypeMapper {
     public static String getLocalNameForObject(JetObjectDeclaration object) {
         PsiElement parent = object.getParent();
         if (parent instanceof JetClassObject) {
-            return "ClassObject$";
+            return JvmAbi.CLASS_OBJECT_CLASS_NAME;
         }
 
         return null;
@@ -755,7 +755,7 @@ public class JetTypeMapper {
 
             ClassDescriptor myClass = bindingContext.get(BindingContext.CLASS, expression);
             if(CodegenUtil.isClassObject(myClass)) {
-                return mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + "$ClassObject$";
+                return mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX;
             }
             else
                 baseName = classNameForAnonymousClass((JetElement) container);
