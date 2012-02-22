@@ -177,11 +177,14 @@ public class ErrorUtils {
     }
 
     public static ConstructorDescriptor createErrorConstructor(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
-        return new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false).initialize(
+        ConstructorDescriptorImpl r = new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false);
+        r.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 Visibility.INTERNAL
         );
+        r.setReturnType(createErrorType("<ERROR RETURN TYPE>"));
+        return r;
     }
 
     private static final JetType ERROR_PARAMETER_TYPE = createErrorType("<ERROR VALUE_PARAMETER TYPE>");
