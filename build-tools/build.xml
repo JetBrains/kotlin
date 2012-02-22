@@ -469,7 +469,7 @@
         <hello-tests/>
         <longer-examples-tests/>
         <module-tests/>
-        <testlib-tests/>
+        <!--<testlib-tests/>-->
         <compilation-fail-test/>
     </target>
 </project>
