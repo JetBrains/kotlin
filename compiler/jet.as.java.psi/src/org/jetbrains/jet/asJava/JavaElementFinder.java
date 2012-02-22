@@ -28,6 +28,7 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -122,6 +123,7 @@ public class JavaElementFinder extends PsiElementFinder {
         }
     }
 
+    @Nullable
     private static String getLocalName(JetDeclaration declaration) {
         String given = declaration.getName();
         if (given != null) return given;
@@ -129,6 +131,7 @@ public class JavaElementFinder extends PsiElementFinder {
         if (declaration instanceof JetObjectDeclaration) {
             return JetTypeMapper.getLocalNameForObject((JetObjectDeclaration) declaration);
         }
+
         return null;
     }
 
@@ -194,7 +197,10 @@ public class JavaElementFinder extends PsiElementFinder {
                 answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, JvmAbi.PACKAGE_CLASS)));
                 for (JetDeclaration declaration : file.getDeclarations()) {
                     if (declaration instanceof JetClassOrObject) {
-                        answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, getLocalName(declaration))));
+                        String localName = getLocalName(declaration);
+                        if (localName != null) {
+                            answer.add(new JetLightClass(psiManager, file, QualifiedNamesUtil.combine(packageFQN, localName)));
+                        }
                     }
                 }
             }
