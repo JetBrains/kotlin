@@ -7,7 +7,7 @@ import std.util.*
 import java.util.*
 import org.jetbrains.kotlin.model.KModel
 
-class PackageListTemplate(val model: KModel) : TextTemplate() {
+class PackageListTemplate(val model: KModel) : KDocTemplate() {
   override fun render() {
       for (p in model.packages) {
           println(p.name)

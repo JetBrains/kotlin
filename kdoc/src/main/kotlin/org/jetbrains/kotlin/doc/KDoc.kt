@@ -9,8 +9,8 @@ import java.io.File
 class KDocProcessor(val model: KModel, val outputDir: File) {
 
     fun execute(): Unit {
-        run("allclasses-frame.html", AllClassesFrameTemplate(model))
-        run("allclasses-noframe.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
+        run("allclasses-frame.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
+        run("allclasses-noframe.html", AllClassesFrameTemplate(model))
         // run("constant-values.html", ConstantValuesTemplate(model))
         // run("deprecated-list.html", DeprecatedListTemplate(model))
         run("help-doc.html", HelpDocTemplate(model))
@@ -29,6 +29,9 @@ class KDocProcessor(val model: KModel, val outputDir: File) {
             run("${p.nameAsPath}/package-summary.html", PackageSummaryTemplate(model, p))
             //run("${p.nameAsPath}/package-tree.html", PackageTreeTemplate(model, p))
             //run("${p.nameAsPath}/package-use.html", PackageUseTemplate(model, p))
+            for (c in p.classes) {
+                run("${c.nameAsPath}.html", ClassTemplate(model, p, c))
+            }
         }
     }
 

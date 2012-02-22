@@ -37,9 +37,14 @@ class ModelTest : TestCase() {
     }
 
     fun testModelWalk() {
-        model.getClass("something.else.Aaa")
-        model.getClass("something.else.Zzz")
-        model.getClass("another.Cheese")
+        val a = model.getClass("something.else.Aaa")
+        val z = model.getClass("something.else.Zzz")
+        val c = model.getClass("another.Cheese")
+
+        c.methods.add(KMethod("addFoo", a, "add some foos"))
+        val m1 = KMethod("addZzzz", z, "add some zzz")
+        m1.parameters.add(KParameter("myz", z))
+        c.methods.add(m1)
 
         // now lets iterate through the model
         println("Walking the model...")

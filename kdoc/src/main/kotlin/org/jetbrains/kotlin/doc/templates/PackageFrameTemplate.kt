@@ -8,7 +8,7 @@ import java.util.*
 import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 
-class PackageFrameTemplate(val model: KModel, val pkg: KPackage) : TextTemplate() {
+class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupport(p) {
     override fun render() {
         // TODO could really do with templates in multi-line strings :)
         println("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -22,13 +22,13 @@ class PackageFrameTemplate(val model: KModel, val pkg: KPackage) : TextTemplate(
         println("""</TITLE>
 
 <META NAME="date" CONTENT="2012-01-09">""")
-println("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}/stylesheet.css\" TITLE=\"Style\">")
+println("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}stylesheet.css\" TITLE=\"Style\">")
 println("""
 </HEAD>
 
 <BODY BGCOLOR="white">
 <FONT size="+1" CLASS="FrameTitleFont">""")
-        println("<A HREF=\"${pkg.nameAsRelativePath}/${pkg.nameAsPath}/package-summary.html\" target=\"classFrame\">${pkg.name}</A></FONT>")
+        println("<A HREF=\"${pkg.nameAsRelativePath}${pkg.nameAsPath}/package-summary.html\" target=\"classFrame\">${pkg.name}</A></FONT>")
 
         printClasses("interface", "Interfaces")
         printClasses("class", "Classes")
@@ -52,7 +52,7 @@ println("""
 <BR>""")
             for (c in classes) {
                 val formatted = if (kind == "interface") "<I>${c.simpleName}</I>" else c.simpleName
-                println("<A HREF=\"${c.simpleName}\" title=\"$kind in ${pkg.name}\" target=\"classFrame\">$formatted</A>")
+                println("<A HREF=\"${c.simpleName}.html\" title=\"$kind in ${pkg.name}\" target=\"classFrame\">$formatted</A>")
                 println("<BR>")
             }
             println("""</TR>

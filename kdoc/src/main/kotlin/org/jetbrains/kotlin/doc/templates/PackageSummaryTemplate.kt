@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
 
-class PackageSummaryTemplate(val model: KModel, val pkg: KPackage) : TextTemplate() {
+class PackageSummaryTemplate(val model: KModel, pkg: KPackage) : PackageTemplateSupport(pkg) {
     override fun render() {
         // TODO could really do with templates in multi-line strings :)
         println("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -24,7 +24,7 @@ class PackageSummaryTemplate(val model: KModel, val pkg: KPackage) : TextTemplat
 
 <META NAME="date" CONTENT="2012-01-09">
 <META NAME="date" CONTENT="2012-01-09">""")
-        println("<LINK REL=\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}/stylesheet.css\" TITLE=\"Style\">")
+        println("<LINK REL=\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}stylesheet.css\" TITLE=\"Style\">")
         println("""
 <SCRIPT type="text/javascript">
 function windowTitle()
@@ -53,15 +53,15 @@ function windowTitle()
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">""")
 
-        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}/overview-summary.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>")
+        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}overview-summary.html\"><FONT CLASS=\"NavBarFont1\"><B>Overview</B></FONT></A>&nbsp;</TD>")
         println("""<TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-use.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>""")
 
-        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}/deprecated-list.html\"><FONT CLASS=\"NavBarFont1\"><B>Deprecated</B></FONT></A>&nbsp;</TD>")
-        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}/index-all.html\"><FONT CLASS=\"NavBarFont1\"><B>Index</B></FONT></A>&nbsp;</TD>")
-        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}/help-doc.html\"><FONT CLASS=\"NavBarFont1\"><B>Help</B></FONT></A>&nbsp;</TD>")
+        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}deprecated-list.html\"><FONT CLASS=\"NavBarFont1\"><B>Deprecated</B></FONT></A>&nbsp;</TD>")
+        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}index-all.html\"><FONT CLASS=\"NavBarFont1\"><B>Index</B></FONT></A>&nbsp;</TD>")
+        println("<TD BGCOLOR=\"#EEEEFF\" CLASS=\"NavBarCell1\">    <A HREF=\"${pkg.nameAsRelativePath}help-doc.html\"><FONT CLASS=\"NavBarFont1\"><B>Help</B></FONT></A>&nbsp;</TD>")
         println("""  </TR>
 </TABLE>
 </TD>
@@ -74,17 +74,17 @@ function windowTitle()
 
         printNextPrevPackages()
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">""")
-        println("  <A HREF=\"${pkg.nameAsRelativePath}/index.html?${pkg.nameAsPath}/package-summary.html\" target=\"_top\"><B>FRAMES</B></A>  &nbsp;")
+        println("  <A HREF=\"${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html\" target=\"_top\"><B>FRAMES</B></A>  &nbsp;")
         println("""&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {""")
-        println("    document.writeln('<A HREF=\"${pkg.nameAsRelativePath}/allclasses-noframe.html\"><B>All Classes</B></A>');")
+        println("    document.writeln('<A HREF=\"${pkg.nameAsRelativePath}allclasses-noframe.html\"><B>All Classes</B></A>');")
         println("""  }
   //-->
 </SCRIPT>
 <NOSCRIPT>""")
-        println("  <A HREF=\"${pkg.nameAsRelativePath}/allclasses-noframe.html\"><B>All Classes</B></A>")
+        println("  <A HREF=\"${pkg.nameAsRelativePath}allclasses-noframe.html\"><B>All Classes</B></A>")
         println("""</NOSCRIPT>
 
 
@@ -142,7 +142,7 @@ function windowTitle()
                 println("""
  <ul>""")
                 for (c in list) {
-                    println(" <li><A HREF=\"${pkg.nameAsRelativePath}/${c.nameAsPath}.html\" title=\"class in ${pkg.name}\"><CODE>${c.simpleName}</CODE></A>")
+                    println(" <li><A HREF=\"${pkg.nameAsRelativePath}${c.nameAsPath}.html\" title=\"class in ${pkg.name}\"><CODE>${c.simpleName}</CODE></A>")
                 }
                 println("""
  </ul>""")
@@ -167,14 +167,14 @@ function windowTitle()
 <A NAME="navbar_bottom_firstrow"><!-- --></A>
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
   <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}/overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-use.html"><FONT CLASS="NavBarFont1"><B>Use</B></FONT></A>&nbsp;</TD>
   <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}/deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}/index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}/help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="${pkg.nameAsRelativePath}help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
   </TR>
 </TABLE>
 </TD>
@@ -188,17 +188,17 @@ function windowTitle()
         printNextPrevPackages()
 
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">""")
-        println(")  <A HREF=\"${pkg.nameAsRelativePath}/index.html?${pkg.nameAsPath}/package-summary.html\" target=\"_top\"><B>FRAMES</B></A>  &nbsp;")
+        println(")  <A HREF=\"${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html\" target=\"_top\"><B>FRAMES</B></A>  &nbsp;")
         println("""&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="${pkg.nameAsRelativePath}/allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="${pkg.nameAsRelativePath}/allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>
 </NOSCRIPT>
 
 
@@ -227,7 +227,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 
             for (c in classes) {
                 println("""<TR BGCOLOR="white" CLASS="TableRowColor">""")
-                println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}/${c.nameAsPath}.html\" title=\"$kind in ${pkg.name}\">${c.simpleName}</A></B></TD>")
+                println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}${c.nameAsPath}.html\" title=\"$kind in ${pkg.name}\">${c.simpleName}</A></B></TD>")
                 println("<TD>${c.description}</TD>")
                 println("</TR>")
             }
@@ -244,11 +244,11 @@ Copyright &#169; 2010-2012. All Rights Reserved.
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">""")
         val prev = model.previous(pkg)
         if (prev != null) {
-            println("&nbsp;<A HREF=\"${prev.nameAsRelativePath}/${prev.nameAsPath}/package-summary.html\"><B>PREV PACKAGE</B></A>&nbsp;")
+            println("&nbsp;<A HREF=\"${prev.nameAsRelativePath}${prev.nameAsPath}/package-summary.html\"><B>PREV PACKAGE</B></A>&nbsp;")
         }
         val next = model.next(pkg)
         if (next != null) {
-            println("&nbsp;<A HREF=\"${next.nameAsRelativePath}/${next.nameAsPath}/package-summary.html\"><B>NEXT PACKAGE</B></A>")
+            println("&nbsp;<A HREF=\"${next.nameAsRelativePath}${next.nameAsPath}/package-summary.html\"><B>NEXT PACKAGE</B></A>")
         }
         println("""</FONT></TD>""")
 

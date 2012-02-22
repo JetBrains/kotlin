@@ -7,7 +7,7 @@ import std.util.*
 import java.util.*
 import org.jetbrains.kotlin.model.KModel
 
-class OverviewTreeTemplate(val model: KModel) : TextTemplate() {
+class OverviewTreeTemplate(val model: KModel) : KDocTemplate() {
     override fun render() {
         println("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
 <!--NewPage-->
