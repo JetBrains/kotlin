@@ -711,6 +711,14 @@ public class JetControlFlowProcessor {
                 value(initializer, false);
                 builder.write(property, property);
             }
+            for (JetPropertyAccessor accessor : property.getAccessors()) {
+                value(accessor, false);
+            }
+        }
+
+        @Override
+        public void visitPropertyAccessor(JetPropertyAccessor accessor) {
+            processLocalDeclaration(accessor);
         }
 
         @Override

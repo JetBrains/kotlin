@@ -328,7 +328,7 @@ fun func() {
     val <!UNUSED_VARIABLE!>a<!> = object {
         val x = b
         {
-            <!VAL_REASSIGNMENT!>b<!> = <!UNUSED_VALUE!>4<!>
+            <!VAL_REASSIGNMENT!>b<!> = 4
             <!UNRESOLVED_REFERENCE!>$b<!> = 3
         }
     }

@@ -93,7 +93,7 @@ class MyTest() {
 fun testInnerFunctions() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>y<!> = 1
     fun foo() {
-        y = <!UNUSED_VALUE!>1<!>
+        y = 1
     }
     var z = 1
     fun bar() {

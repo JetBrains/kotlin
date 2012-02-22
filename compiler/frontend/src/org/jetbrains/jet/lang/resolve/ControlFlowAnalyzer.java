@@ -66,12 +66,14 @@ public class ControlFlowAnalyzer {
         }
         for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
+            if (!context.completeAnalysisNeeded(property)) continue;
             PropertyDescriptor propertyDescriptor = entry.getValue();
             checkProperty(property, propertyDescriptor);
         }
     }
     
     private void checkClassOrObject(JetClassOrObject klass) {
+        // A pseudocode of class initialization corresponds to a class
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
         flowInformationProvider.markUninitializedVariables((JetElement) klass, context.isDeclaredLocally());
     }
@@ -95,7 +97,9 @@ public class ControlFlowAnalyzer {
 
         flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
-        flowInformationProvider.markUninitializedVariables(function.asElement(), context.isDeclaredLocally());
+        // Property accessor is checked through initialization of a class check (at 'checkClassOrObject')
+        boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
+        flowInformationProvider.markUninitializedVariables(function.asElement(), context.isDeclaredLocally() || isPropertyAccessor);
 
         flowInformationProvider.markUnusedVariables(function.asElement());
 

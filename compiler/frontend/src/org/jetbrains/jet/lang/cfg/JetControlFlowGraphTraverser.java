@@ -167,7 +167,7 @@ public class JetControlFlowGraphTraverser<D> {
     }
 
     public D getResultInfo() {
-        return dataMap.get(pseudocode.getSinkInstruction()).getFirst();
+        return dataMap.get(pseudocode.getExitInstruction()).getFirst();
     }
     
     interface InstructionDataMergeStrategy<D> {

@@ -41,6 +41,7 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -254,7 +255,7 @@ public class JetFlowInformationProvider {
                     if (!error && !processLocalDeclaration) { // error has been generated before, while processing outer function of this local declaration
                         error = checkValReassignment(variableDescriptor, (JetExpression) element, enterData.get(variableDescriptor), varWithValReassignErrorGenerated);
                     }
-                    if (!error) {
+                    if (!error && processClassOrObject) {
                         error = checkAssignmentBeforeDeclaration(variableDescriptor, (JetExpression) element, enterData.get(variableDescriptor), exitData.get(variableDescriptor));
                     }
                     if (!error && processClassOrObject) {
@@ -265,7 +266,7 @@ public class JetFlowInformationProvider {
         });
 
         recordInitializedVariables(declaredVariables, traverser.getResultInfo());
-        analyzeLocalDeclarations(processLocalDeclaration, pseudocode);
+        analyzeLocalDeclarations(pseudocode, processLocalDeclaration);
     }
 
     private void checkIsInitialized(@NotNull VariableDescriptor variableDescriptor, 
@@ -442,7 +443,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private void analyzeLocalDeclarations(boolean processLocalDeclaration, Pseudocode pseudocode) {
+    private void analyzeLocalDeclarations(Pseudocode pseudocode, boolean processLocalDeclaration) {
         for (Instruction instruction : pseudocode.getInstructions()) {
             if (instruction instanceof LocalDeclarationInstruction) {
                 JetElement element = ((LocalDeclarationInstruction) instruction).getElement();
@@ -595,6 +596,7 @@ public class JetFlowInformationProvider {
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
                 VariableStatus variableStatus = enterData.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
+                    if (trace.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor)) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
                     if (variableStatus != VariableStatus.READ) {
                         if (element instanceof JetBinaryExpression && ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {

@@ -31,7 +31,7 @@ fun main(args: Array<String>) {
 
     var m: MyNumber = MyNumber()
     val <!UNUSED_VARIABLE!>a<!> = { (): MyNumber ->
-        <!UNUSED_CHANGED_VALUE!>m++<!>
+        m++
     }
 }
 

@@ -23,7 +23,7 @@ fun foo() {
             2
         }
         else {
-            z = <!UNUSED_VALUE!>34<!>
+            z = 34
         }
     }
     val <!UNUSED_VARIABLE!>f<!>: ()-> Int = <!TYPE_MISMATCH!>r<!>
@@ -74,7 +74,7 @@ fun testCoercionToUnit() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 43
     val checkType = {
         if (true) {
-            x = <!UNUSED_VALUE!>4<!>
+            x = 4
         } else {
             45
         }
