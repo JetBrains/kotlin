@@ -1,4 +1,4 @@
-package testing.first
+package testing.rename
 
 public open class First {
 }

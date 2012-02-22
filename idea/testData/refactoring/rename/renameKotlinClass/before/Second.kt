@@ -1,18 +1,18 @@
-package testing.second
+package testing.rename2
 
-import testing.first.First
+import testing.rename.First
 import testing.*
 import java.util.ArrayList
 
-// Extends testing.first.First
+// Extends testing.rename.First
 public class Second : First() {
-  val temp : testing.first.First = First()
+  val temp : testing.rename.First = First()
 
-  fun tempName(param : First) : first.First {
+  fun tempName(param : First) : rename.First {
     val local = First()
     val otherLocal = param
     val arr = ArrayList<First>()
 
-    return testing.first.First()
+    return testing.rename.First()
   }
 }

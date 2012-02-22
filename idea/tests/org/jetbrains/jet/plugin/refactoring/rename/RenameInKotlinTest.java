@@ -19,6 +19,8 @@ package org.jetbrains.jet.plugin.refactoring.rename;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -47,7 +49,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
     }
 
     public void testRenameKotlinClass() throws Exception {
-        doTestWithRenameClass("testing.first.First", "Third");
+        doTestWithRenameClass("testing.rename.First", "Third");
     }
 
     private void doTestWithRenameClass(@NonNls final String qClassName, @NonNls final String newName) throws Exception {
@@ -66,6 +68,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
                 new RenameProcessor(myProject, psiElement, newName, true, true).run();
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments();
                 FileDocumentManager.getInstance().saveAllDocuments();
+                VirtualFileManager.getInstance().refresh(false);
             }
         });
     }
