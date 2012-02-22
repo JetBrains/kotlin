@@ -35,7 +35,10 @@ import java.util.Set;
  * TODO This class is written in Java for now to work around a few gremlins in Kotlin...
  */
 public abstract class KDocSupport implements CompilerPlugin {
+    protected BindingContext context;
+
     public void processFiles(BindingContext context, List<JetFile> sources) {
+        this.context = context;
         Set<NamespaceDescriptor> allNamespaces = new HashSet<NamespaceDescriptor>();
         for (JetFile source : sources) {
             // We retrieve a descriptor by a PSI element from the context

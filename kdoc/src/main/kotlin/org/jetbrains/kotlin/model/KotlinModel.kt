@@ -11,7 +11,12 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String,KPackage> = TreeMap<String,KPackage>()
 
-    public val packages: Collection<KPackage> = packageMap.values().sure()
+    public val allPackages: Collection<KPackage>
+        get() = packageMap.values().sure()
+
+    /** Returns the local packages */
+    public val packages: Collection<KPackage>
+        get() = allPackages.filter{ it.local }
 
     public val classes: Collection<KClass>
         get() = packages.flatMap{ it.classes }
@@ -43,7 +48,8 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
 }
 
 class KPackage(val model: KModel, val name: String, var external: Boolean = false,
-        var description: String = "", var detailedDescription: String = "") : Comparable<KPackage> {
+        var description: String = "", var detailedDescription: String = "",
+        var local: Boolean = false) : Comparable<KPackage> {
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
     fun equals(other: KPackage) = name == other.name
@@ -123,6 +129,16 @@ class KClass(val pkg: KPackage, val simpleName: String,
         var methods: List<KMethod> = arrayList<KMethod>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
         var sourceLine: Int = 2) : Comparable<KClass> {
+
+    private var _initialised = false
+
+    /** Runs the initialisation block if this class has not yet been initialised */
+    fun initialise(fn: () -> Unit): Unit {
+        if (!_initialised) {
+            _initialised = true
+            fn()
+        }
+    }
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 

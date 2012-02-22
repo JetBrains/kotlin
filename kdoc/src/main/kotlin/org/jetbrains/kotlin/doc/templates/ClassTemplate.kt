@@ -285,21 +285,24 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 
     fun printMethodSummary(method: KMethod): Unit {
         val deprecated = if (method.deprecated) "<B>Deprecated.</B>" else ""
-        println("""<TR BGCOLOR="white" CLASS="TableRowColor">
+        print("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-<TR ALIGN="right" VALIGN="">
-<TD NOWRAP><FONT SIZE="-1">
 <CODE>""")
-        printTypeParameters(method)
-
-       println("<BR>")
-       print(link(method.returnType))
-println("""</CODE></FONT></TD>
+        if (!method.typeParameters.isEmpty()) {
+            println("""<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+            <TR ALIGN="right" VALIGN="">
+            <TD NOWRAP><FONT SIZE="-1">
+            <CODE>""")
+            printTypeParameters(method)
+            println("<BR>")
+            print(link(method.returnType))
+            println("""</CODE></FONT></TD>
 </TR>
-</TABLE>
-</CODE></FONT></TD>""")
+</TABLE>""")
+        } else {
+            print(link(method.returnType))
+        }
+        println("</CODE></FONT></TD>")
         print("<TD><CODE><B><A HREF=\"${pkg.nameAsRelativePath}${klass.nameAsPath}.html#${method.link}\">${method.name}</A></B>")
         printParameters(method)
         println("</CODE>")
@@ -312,9 +315,9 @@ println("""</CODE></FONT></TD>
 
     fun printMethodDetail(method: KMethod): Unit {
         println("<A NAME=\"${method.name}{${method.parameters.map{it.klass.name}})\"><!-- --></A><A NAME=\"${method.name}(${method.typeParametersText})\"><!-- --></A><H3>")
-println("${method.name}</H3>")
-println("<PRE>")
-println("<FONT SIZE=\"-1\">")
+        println("${method.name}</H3>")
+        println("<PRE>")
+        println("<FONT SIZE=\"-1\">")
         printAnnotations(method.annotations)
         print("</FONT>${method.modifiers.join(" ")} ")
 
@@ -348,7 +351,7 @@ println("<FONT SIZE=\"-1\">")
 </DD>
 </DL>
 */
-println("<HR>")
+        println("<HR>")
     }
 
     fun printTypeParameters(method: KMethod): Unit {

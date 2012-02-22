@@ -14,6 +14,13 @@ import java.util.HashSet
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.model.KMethod
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.kotlin.model.KClass
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
 
 class KDoc(val outputDir: File) : KDocSupport() {
     val model = KModel()
@@ -39,24 +46,73 @@ class KDoc(val outputDir: File) : KDocSupport() {
 
     override fun addClass(namespace: NamespaceDescriptor?, classElement: ClassDescriptor?) {
         if (namespace != null && classElement != null) {
-            //val docComment = getDocCommentFor(classElement.sure()) ?: "";
-            val name = classElement.getName()
-            val namespaceName = namespace.getName() ?: ""
-            val pkg = model.getPackage(namespaceName)
-            if (name != null) {
-                println("Found namespace ${namespaceName} class: ${name}")
-                pkg.getClass(name)
+            val klass = getOrCreateClass(classElement)
+            if (klass != null) {
+                klass.pkg.local = true
             }
         }
     }
 
-    override fun generate() {
-        /*
-                for (classElement in allClasses) {
-                    if (classElement != null) {
+    protected fun containerName(descriptor: DeclarationDescriptor): String {
+        val container = descriptor.containingDeclaration
+        if (container == null || container is ModuleDescriptor || container is JavaNamespaceDescriptor) {
+            return ""
+        } else {
+            val parent = containerName(container)
+            val name = container.getName() ?: ""
+            val answer = if (parent.length() > 0) parent + "." + name else name
+            return if (answer.startsWith(".")) answer.substring(1) else answer
+        }
+    }
+
+    protected fun getOrCreateClass(classElement: ClassDescriptor): KClass? {
+        //val docComment = getDocCommentFor(classElement.sure()) ?: "";
+        val container = classElement.containingDeclaration
+        val namespaceName = containerName(classElement)
+        val pkg = model.getPackage(namespaceName)
+        val name = classElement.getName()
+        if (name != null) {
+            val klass = pkg.getClass(name)
+            klass.initialise {
+                val descriptors = classElement.getDefaultType().getMemberScope().getAllDescriptors()
+                for (descriptor in descriptors) {
+                    if (descriptor is CallableDescriptor) {
+                        val method = createMethod(descriptor)
+                        if (method != null) {
+                            klass.methods.add(method)
+                        }
                     }
                 }
-        */
+            }
+            return klass
+        }
+        return null
+    }
+
+    protected fun createMethod(descriptor: CallableDescriptor): KMethod? {
+        val returnType = getType(descriptor.getReturnType())
+        if (returnType != null) {
+            val method = KMethod(descriptor.getName() ?: "null", returnType)
+            val params = descriptor.getValueParameters()
+            for (param in params) {
+
+            }
+            return method
+        }
+        return null
+    }
+
+    protected fun getType(aType: JetType?): KClass? {
+        if (aType != null) {
+            val classifierDescriptor = aType.constructor.declarationDescriptor
+            if (classifierDescriptor is ClassDescriptor) {
+                return getOrCreateClass(classifierDescriptor)
+            }
+        }
+        return null
+    }
+
+    override fun generate() {
         if (!model.packages.isEmpty()) {
             val generator = KDocGenerator(model, outputDir)
             generator.execute()
@@ -79,6 +135,7 @@ class KDoc(val outputDir: File) : KDocSupport() {
 class KDocGenerator(val model: KModel, val outputDir: File) {
 
     fun execute(): Unit {
+        println("Generating kdoc to $outputDir")
         run("allclasses-frame.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
         run("allclasses-noframe.html", AllClassesFrameTemplate(model))
         // run("constant-values.html", ConstantValuesTemplate(model))
