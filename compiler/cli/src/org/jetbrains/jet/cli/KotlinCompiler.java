@@ -127,9 +127,9 @@ public class KotlinCompiler {
                 environment.setErrorStream(errStream);
             }
 
-            if (arguments.docOutputDir != null) {
-                environment.getMyEnvironment().getFileProcessors().add(new KDocProcessor(arguments.docOutputDir));
-            }
+//            if (arguments.docOutputDir != null) {
+//                environment.getMyEnvironment().getFileProcessors().add(new KDocProcessor(arguments.docOutputDir));
+//            }
 
             if (arguments.stdlib != null) {
                 environment.setStdlib(arguments.stdlib);
