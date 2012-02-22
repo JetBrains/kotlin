@@ -45,13 +45,6 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         this.isPrimary = isPrimary;
     }
 
-    @Override
-    @Deprecated
-    public ConstructorDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull ReceiverDescriptor expectedThisObject, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, Modality modality, @NotNull Visibility visibility) {
-        assert receiverType == null;
-        return (ConstructorDescriptorImpl) super.initialize(null, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
-    }
-
     public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Visibility visibility) {
         super.initialize(null, getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;

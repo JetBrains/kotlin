@@ -72,7 +72,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         this.kind = kind;
     }
 
-    public FunctionDescriptorImpl initialize(
+    protected FunctionDescriptorImpl initialize(
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
             @NotNull List<TypeParameterDescriptor> typeParameters,

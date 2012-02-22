@@ -178,12 +178,8 @@ public class ErrorUtils {
 
     public static ConstructorDescriptor createErrorConstructor(int typeParameterCount, List<JetType> positionedValueParameterTypes) {
         return new ConstructorDescriptorImpl(ERROR_CLASS, Collections.<AnnotationDescriptor>emptyList(), false).initialize(
-                null,
-                ReceiverDescriptor.NO_RECEIVER,
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
-                createErrorType("<ERROR CONSRUCTOR RETURN TYPE>"),
-                Modality.OPEN,
                 Visibility.INTERNAL
         );
     }
