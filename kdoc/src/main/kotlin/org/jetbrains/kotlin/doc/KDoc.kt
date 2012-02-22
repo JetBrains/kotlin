@@ -139,16 +139,23 @@ class KDoc(val outputDir: File) : KDocSupport() {
         }
     }
 
-    protected fun commentsFor(psiElement: DeclarationDescriptor): String {
-        if (psiElement is PsiElement) {
-            // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+    protected fun commentsFor(descriptor: DeclarationDescriptor): String {
+        val psiElement = try {
+            context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)
+        } catch (e: Throwable) {
+            // ignore exceptions on fake descriptors
+            null
+        }
+
+        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+        if (psiElement != null) {
             var node = psiElement.getNode()?.getTreePrev()
             while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
-                node = node?.getTreePrev();
+                node = node?.getTreePrev()
             }
-            if (node == null) return "";
-            if (node?.getElementType() != JetTokens.DOC_COMMENT) return "";
-            return node?.getText() ?: "";
+            if (node == null) return ""
+            if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
+            return node?.getText() ?: ""
         }
         return ""
     }
