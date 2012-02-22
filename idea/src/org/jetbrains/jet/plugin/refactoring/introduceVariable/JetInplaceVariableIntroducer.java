@@ -46,7 +46,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
     private JetProperty myProperty;
     private boolean isVar;
     private boolean myDoNotChangeVar;
-    private @Nullable JetType myExprType;
+    @Nullable private final JetType myExprType;
     private JCheckBox myVarCheckbox;
     private JCheckBox myExprTypeCheckbox;
 
@@ -84,7 +84,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
             });
         }
 
-        if (myExpr != null) {
+        if (myExprType != null) {
             myExprTypeCheckbox = new NonFocusableCheckBox("Add type annotation");
             myExprTypeCheckbox.setSelected(false);
             myExprTypeCheckbox.setMnemonic('t');
