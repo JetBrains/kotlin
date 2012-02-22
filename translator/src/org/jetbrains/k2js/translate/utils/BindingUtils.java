@@ -330,4 +330,12 @@ public final class BindingUtils {
         }
         return descriptorSet;
     }
+
+    @NotNull
+    public static JetType getTypeForExpression(@NotNull BindingContext context,
+                                               @NotNull JetExpression expression) {
+        JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
+        assert type != null;
+        return type;
+    }
 }

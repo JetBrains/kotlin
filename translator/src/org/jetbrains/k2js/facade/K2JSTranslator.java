@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.k2js.analyze.Analyzer;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.IDEAConfig;
@@ -49,12 +50,16 @@ import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
  */
 public final class K2JSTranslator {
 
-    public static void translateWithCallToMainAndSaveToFile(@NotNull JetFile file,
+    public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
                                                             @NotNull String outputPath,
                                                             @NotNull Project project) throws Exception {
         K2JSTranslator translator = new K2JSTranslator(new IDEAConfig(project));
-        String programCode = translator.generateProgramCode(file) + "\n";
-        String callToMain = translator.generateCallToMain(file, "");
+        String programCode = translator.generateProgramCode(files) + "\n";
+        JetFile fileWithMain = JetMainDetector.getFileWithMain(files);
+        if (fileWithMain == null) {
+            throw new RuntimeException("No file with main detected.");
+        }
+        String callToMain = translator.generateCallToMain(fileWithMain, "");
         FileWriter writer = new FileWriter(new File(outputPath));
         writer.write(programCode + callToMain);
         writer.close();
@@ -86,6 +91,7 @@ public final class K2JSTranslator {
         this.config = config;
     }
 
+    //TODO: refactor
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
@@ -99,6 +105,13 @@ public final class K2JSTranslator {
     @NotNull
     private String generateProgramCode(@NotNull JetFile psiFile) {
         JsProgram program = generateProgram(Arrays.asList(psiFile));
+        CodeGenerator generator = new CodeGenerator();
+        return generator.generateToString(program);
+    }
+
+    @NotNull
+    private String generateProgramCode(@NotNull List<JetFile> files) {
+        JsProgram program = generateProgram(files);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
@@ -136,7 +149,6 @@ public final class K2JSTranslator {
         }
         return result;
     }
-
 
     @NotNull
     private Project getProject() {

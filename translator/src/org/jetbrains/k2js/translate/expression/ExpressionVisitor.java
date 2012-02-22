@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
+import org.jetbrains.k2js.translate.expression.foreach.ForTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
@@ -160,12 +161,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         TemporaryVariable result = context.declareTemporary(context.program().getNullLiteral());
         AstUtil.SaveLastExpressionMutator saveResultToTemporaryMutator =
-                new AstUtil.SaveLastExpressionMutator(result.nameReference());
+                new AstUtil.SaveLastExpressionMutator(result.reference());
         JsNode mutatedIfStatement = AstUtil.mutateLastExpression(ifStatement,
                 saveResultToTemporaryMutator);
         JsStatement resultingStatement = AstUtil.convertToStatement(mutatedIfStatement);
         context.addStatementToCurrentBlock(resultingStatement);
-        return result.nameReference();
+        return result.reference();
     }
 
     @Override

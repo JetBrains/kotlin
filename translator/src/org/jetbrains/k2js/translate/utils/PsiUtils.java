@@ -153,4 +153,11 @@ public final class PsiUtils {
         }
         return name;
     }
+
+    @NotNull
+    public static JetExpression getLoopRange(@NotNull JetForExpression expression) {
+        JetExpression rangeExpression = expression.getLoopRange();
+        assert rangeExpression != null;
+        return rangeExpression;
+    }
 }

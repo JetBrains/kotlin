@@ -44,9 +44,9 @@ public enum CallType {
             TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
             JsNullLiteral nullLiteral = context.program().getNullLiteral();
             //TODO: find similar not null checks
-            JsBinaryOperation notNullCheck = AstUtil.notEqual(temporaryVariable.nameReference(), nullLiteral);
+            JsBinaryOperation notNullCheck = AstUtil.notEqual(temporaryVariable.reference(), nullLiteral);
             JsConditional callMethodIfNotNullElseNull =
-                    new JsConditional(notNullCheck, constructor.construct(temporaryVariable.nameReference()), nullLiteral);
+                    new JsConditional(notNullCheck, constructor.construct(temporaryVariable.reference()), nullLiteral);
             return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);
         }
     },

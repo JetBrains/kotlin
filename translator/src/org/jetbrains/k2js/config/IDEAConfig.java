@@ -18,6 +18,10 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -35,5 +39,11 @@ public final class IDEAConfig extends Config {
     @Override
     public Project getProject() {
         return project;
+    }
+
+    @NotNull
+    @Override
+    public List<JetFile> getLibFiles() {
+        return Collections.emptyList();
     }
 }

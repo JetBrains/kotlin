@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.expression;
+package org.jetbrains.k2js.translate.expression.foreach;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -24,34 +24,28 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetForExpression;
-import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
 /**
  * @author Pavel Talanov
  */
-public final class ForTranslator extends AbstractTranslator {
+public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     public static JsStatement translate(@NotNull JetForExpression expression,
                                         @NotNull TranslationContext context) {
-        return (new ForTranslator(expression, context).translate());
+        return (new IteratorForTranslator(expression, context).translate());
     }
 
-    @NotNull
-    private final JetForExpression expression;
-
-    private ForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
-        super(context);
-        this.expression = forExpression;
+    private IteratorForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
+        super(forExpression, context);
     }
 
     @NotNull
@@ -61,12 +55,6 @@ public final class ForTranslator extends AbstractTranslator {
         JsBlock bodyBlock = generateCycleBody(parameterName, iterator);
         JsWhile cycle = new JsWhile(hasNextMethodInvocation(iterator), bodyBlock);
         return AstUtil.newBlock(iterator.assignmentExpression().makeStmt(), cycle);
-    }
-
-    @NotNull
-    private JsName declareParameter() {
-        JetParameter loopParameter = getLoopParameter(expression);
-        return context().getNameForElement(loopParameter);
     }
 
     @NotNull
@@ -82,29 +70,22 @@ public final class ForTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression nextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange());
-        return translateMethodInvocation(iterator.nameReference(), nextFunction);
+        FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange(expression));
+        return translateMethodInvocation(iterator.reference(), nextFunction);
     }
 
     @NotNull
     private JsExpression hasNextMethodInvocation(@NotNull TemporaryVariable iterator) {
-        CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange());
-        return translateMethodInvocation(iterator.nameReference(), hasNextFunction);
+        CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange(expression));
+        return translateMethodInvocation(iterator.reference(), hasNextFunction);
     }
 
     @NotNull
     private JsExpression iteratorMethodInvocation() {
-        JetExpression rangeExpression = getLoopRange();
+        JetExpression rangeExpression = getLoopRange(expression);
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
         FunctionDescriptor iteratorFunction = getIteratorFunction(context().bindingContext(), rangeExpression);
         return translateMethodInvocation(range, iteratorFunction);
-    }
-
-    @NotNull
-    private JetExpression getLoopRange() {
-        JetExpression rangeExpression = expression.getLoopRange();
-        assert rangeExpression != null;
-        return rangeExpression;
     }
 
     @NotNull

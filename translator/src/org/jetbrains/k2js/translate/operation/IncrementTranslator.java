@@ -97,10 +97,10 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = context().declareTemporary(t1.nameReference());
-        JsExpression variableReassignment = variableReassignment(t1.nameReference());
+        TemporaryVariable t2 = context().declareTemporary(t1.reference());
+        JsExpression variableReassignment = variableReassignment(t1.reference());
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
-                variableReassignment, t2.nameReference());
+                variableReassignment, t2.reference());
     }
 
     //TODO: TEST
@@ -109,9 +109,9 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, t2.inc(), t1) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = context().declareTemporary(t1.nameReference());
-        JsExpression methodCall = operationExpression(t2.nameReference());
-        JsExpression returnedValue = t1.nameReference();
+        TemporaryVariable t2 = context().declareTemporary(t1.reference());
+        JsExpression methodCall = operationExpression(t2.reference());
+        JsExpression returnedValue = t1.reference();
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
     }
 

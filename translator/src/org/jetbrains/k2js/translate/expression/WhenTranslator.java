@@ -65,7 +65,7 @@ public class WhenTranslator extends AbstractTranslator {
         List<JsStatement> entries = translateEntries();
         resultingFor.setBody(AstUtil.newBlock(entries));
         context().addStatementToCurrentBlock(resultingFor);
-        return result.nameReference();
+        return result.reference();
     }
 
     @NotNull
@@ -80,7 +80,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
         JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                dummyCounter.nameReference(), context().program().getNumberLiteral(currentEntryNumber));
+                dummyCounter.reference(), context().program().getNumberLiteral(currentEntryNumber));
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }
@@ -97,12 +97,12 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsBinaryOperation generateConditionStatement() {
         JsNumberLiteral entriesNumber = program().getNumberLiteral(whenExpression.getEntries().size());
-        return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounter.nameReference(), entriesNumber);
+        return new JsBinaryOperation(JsBinaryOperator.LT, dummyCounter.reference(), entriesNumber);
     }
 
     @NotNull
     private JsPrefixOperation generateIncrementStatement() {
-        return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounter.nameReference());
+        return new JsPrefixOperation(JsUnaryOperator.INC, dummyCounter.reference());
     }
 
     @NotNull
@@ -119,7 +119,7 @@ public class WhenTranslator extends AbstractTranslator {
     JsStatement withReturnValueCaptured(@NotNull JsNode node) {
 
         return AstUtil.convertToStatement(AstUtil.mutateLastExpression(node,
-                new AstUtil.SaveLastExpressionMutator(result.nameReference())));
+                new AstUtil.SaveLastExpressionMutator(result.reference())));
     }
 
     @NotNull

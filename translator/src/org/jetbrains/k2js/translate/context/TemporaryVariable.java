@@ -38,7 +38,7 @@ public final class TemporaryVariable {
     }
 
     @NotNull
-    public JsNameRef nameReference() {
+    public JsNameRef reference() {
         return variableName.makeRef();
     }
 
