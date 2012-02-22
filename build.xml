@@ -71,6 +71,9 @@
                 <fileset dir="${basedir}/kdoc/target">
                   <include name="**/*.jar"/>
                 </fileset>
+
+                <!-- TODO Dirty Hack until kdoc jar has stdlib inside it -->
+                <pathelement location="${output}/classes/stdlib"/>
             </classpath>
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>

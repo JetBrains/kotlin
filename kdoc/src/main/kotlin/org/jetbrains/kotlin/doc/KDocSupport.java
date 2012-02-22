@@ -34,10 +34,8 @@ import java.util.Set;
  * TODO This class is written in Java for now to work around a few gremlins in Kotlin...
  */
 public abstract class KDocSupport implements CompilerPlugin {
-    protected Set<NamespaceDescriptor> allNamespaces = new HashSet<NamespaceDescriptor>();
-    protected Set<ClassDescriptor> allClasses = new HashSet<ClassDescriptor>();
-
     public void processFiles(BindingContext context, List<JetFile> sources) {
+        Set<NamespaceDescriptor> allNamespaces = new HashSet<NamespaceDescriptor>();
         for (JetFile source : sources) {
             // We retrieve a descriptor by a PSI element from the context
             NamespaceDescriptor namespaceDescriptor = context.get(BindingContext.NAMESPACE, source);
@@ -45,29 +43,19 @@ public abstract class KDocSupport implements CompilerPlugin {
                 allNamespaces.add(namespaceDescriptor);
             }
         }
-
         for (NamespaceDescriptor namespace : allNamespaces) {
             // Let's take all the declarations in the namespace...
-            processDescriptors(namespace.getMemberScope().getAllDescriptors(), context);
+            processDescriptors(namespace, namespace.getMemberScope().getAllDescriptors(), context);
         }
-
         generate();
     }
 
     protected abstract void generate();
 
-    private void processDescriptors(Collection<DeclarationDescriptor> allDescriptors, BindingContext context) {
+    private void processDescriptors(NamespaceDescriptor namespace, Collection<DeclarationDescriptor> allDescriptors, BindingContext context) {
         for (DeclarationDescriptor descriptor : allDescriptors) {
             PsiElement classElement = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
 /*
-            // Print the doc comment text
-            String docComment = getDocCommentFor(classElement);
-            if (docComment != null) {
-                System.out.println("Docs for " + descriptor.getName() + ": " + docComment);
-            }
-            else {
-                System.out.println("No docs for " + descriptor.getName());
-            }
             // Print the class header (verbose)
             System.out.println(DescriptorRenderer.TEXT.render(descriptor));
 */
@@ -75,10 +63,12 @@ public abstract class KDocSupport implements CompilerPlugin {
             if (descriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
                 if (classElement != null) {
-                    allClasses.add(classDescriptor);
+                    addClass(namespace, classDescriptor);
                 }
                 //processDescriptors(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(), context);
             }
         }
     }
+
+    protected abstract void addClass(NamespaceDescriptor namespace, ClassDescriptor classDescriptor);
 }

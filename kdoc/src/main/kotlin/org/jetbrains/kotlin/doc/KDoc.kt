@@ -13,6 +13,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import java.util.HashSet
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 class KDoc(val outputDir: File) : KDocSupport() {
     val model = KModel()
@@ -36,17 +37,26 @@ class KDoc(val outputDir: File) : KDocSupport() {
     }
     */
 
-    override fun generate() {
-        for (classElement in allClasses) {
-            if (classElement != null) {
-                //val docComment = getDocCommentFor(classElement.sure()) ?: "";
-                val name = classElement?.getName()
-                if (name != null) {
-                    println("Found class: ${name}")
-                    //model.getClass(name)
-                }
+    override fun addClass(namespace: NamespaceDescriptor?, classElement: ClassDescriptor?) {
+        if (namespace != null && classElement != null) {
+            //val docComment = getDocCommentFor(classElement.sure()) ?: "";
+            val name = classElement.getName()
+            val namespaceName = namespace.getName() ?: ""
+            val pkg = model.getPackage(namespaceName)
+            if (name != null) {
+                println("Found namespace ${namespaceName} class: ${name}")
+                pkg.getClass(name)
             }
         }
+    }
+
+    override fun generate() {
+        /*
+                for (classElement in allClasses) {
+                    if (classElement != null) {
+                    }
+                }
+        */
         if (!model.packages.isEmpty()) {
             val generator = KDocGenerator(model, outputDir)
             generator.execute()
@@ -63,6 +73,7 @@ class KDoc(val outputDir: File) : KDocSupport() {
         if (node?.getElementType() != JetTokens.DOC_COMMENT) return null;
         return node?.getText();
     }
+
 }
 
 class KDocGenerator(val model: KModel, val outputDir: File) {
