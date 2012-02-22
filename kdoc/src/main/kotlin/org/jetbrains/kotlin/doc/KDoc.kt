@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.model.KParameter
 
 class KDoc(val outputDir: File) : KDocSupport() {
     val model = KModel()
@@ -74,6 +76,7 @@ class KDoc(val outputDir: File) : KDocSupport() {
         if (name != null) {
             val klass = pkg.getClass(name)
             klass.initialise {
+                klass.description = commentsFor(classElement)
                 val descriptors = classElement.getDefaultType().getMemberScope().getAllDescriptors()
                 for (descriptor in descriptors) {
                     if (descriptor is CallableDescriptor) {
@@ -93,11 +96,28 @@ class KDoc(val outputDir: File) : KDocSupport() {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
             val method = KMethod(descriptor.getName() ?: "null", returnType)
+            method.description = commentsFor(descriptor)
             val params = descriptor.getValueParameters()
             for (param in params) {
-
+                if (param != null) {
+                    val p = createParameter(param)
+                    if (p != null) {
+                        method.parameters.add(p)
+                    }
+                }
             }
             return method
+        }
+        return null
+    }
+
+    protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
+        val returnType = getType(descriptor.getReturnType())
+        if (returnType != null) {
+            val name = descriptor.getName()
+            val answer = KParameter(name, returnType)
+            answer.description = commentsFor(descriptor)
+            return answer
         }
         return null
     }
@@ -119,15 +139,18 @@ class KDoc(val outputDir: File) : KDocSupport() {
         }
     }
 
-    protected fun getDocCommentFor(psiElement: PsiElement): String? {
-        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
-        var node = psiElement.getNode()?.getTreePrev()
-        while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
-            node = node?.getTreePrev();
+    protected fun commentsFor(psiElement: DeclarationDescriptor): String {
+        if (psiElement is PsiElement) {
+            // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+            var node = psiElement.getNode()?.getTreePrev()
+            while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
+                node = node?.getTreePrev();
+            }
+            if (node == null) return "";
+            if (node?.getElementType() != JetTokens.DOC_COMMENT) return "";
+            return node?.getText() ?: "";
         }
-        if (node == null) return null;
-        if (node?.getElementType() != JetTokens.DOC_COMMENT) return null;
-        return node?.getText();
+        return ""
     }
 
 }
