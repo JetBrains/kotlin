@@ -62,21 +62,28 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         return result;
     }
 
-    //TODO: logic seems not so clear, may be a couple of extract method should help
     @NotNull
     private List<JsStatement> translate() {
-        classDeclarationTranslator.generateDeclarations();
-        List<JsStatement> result = Lists.newArrayList();
-        result.add(classDeclarationsStatement());
-        List<NamespaceTranslator> namespaceTranslators = getTranslatorsForNonEmptyNamespaces();
-        result.addAll(declarationStatements(namespaceTranslators));
-        result.addAll(initializeStatements(namespaceTranslators));
+        List<JsStatement> result = classesDeclarations();
+        result.addAll(namespacesDeclarations());
         return result;
     }
 
     @NotNull
-    private JsStatement classDeclarationsStatement() {
-        return classDeclarationTranslator.getDeclarationsStatement();
+    private List<JsStatement> classesDeclarations() {
+        List<JsStatement> result = Lists.newArrayList();
+        classDeclarationTranslator.generateDeclarations();
+        result.add(classDeclarationTranslator.getDeclarationsStatement());
+        return result;
+    }
+
+    @NotNull
+    private List<JsStatement> namespacesDeclarations() {
+        List<JsStatement> result = Lists.newArrayList();
+        List<NamespaceTranslator> namespaceTranslators = getTranslatorsForNonEmptyNamespaces();
+        result.addAll(declarationStatements(namespaceTranslators));
+        result.addAll(initializeStatements(namespaceTranslators));
+        return result;
     }
 
     @NotNull
