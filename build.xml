@@ -49,7 +49,7 @@
 
     <target name="compileStdlib" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -63,7 +63,7 @@
 
     <target name="compileKdoc">
         <mkdir dir="${output}/classes/kdoc"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
               <path refid="classpath"/>
               <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -83,7 +83,7 @@
     <target name="docStdlib" depends="compileKdoc">
         <mkdir dir="${output}/classes/stdlib"/>
         <mkdir dir="${output}/apidoc/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -111,7 +111,7 @@
 
     <target name="compileTestlib" depends="jarRT">
         <mkdir dir="${output}/classes/testlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
               <path refid="classpath"/>
               <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -212,7 +212,9 @@
         </copy>
     </target>
 
-    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar,docStdlib"/>
+    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar"/>
+
+    <target name="doc" depends="dist,docStdlib"/>
 
     <target name="test" depends="dist,testlib" description="Creates the distribution and runs all the tests"/>
 
