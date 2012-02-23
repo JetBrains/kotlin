@@ -29,4 +29,22 @@ class SerialTest() : TestCase() {
 
         Assert.assertEquals(op (), ops())
     }
+
+    fun testComplex() {
+        val y = 12
+        val op = { (x:Int) -> (x + y).toString() }
+
+        val op2 : Int.(Int) -> String = { op(this + it) }
+
+        val baos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(baos)
+        oos.writeObject(op2)
+        oos.close()
+
+        val bais = ByteArrayInputStream(baos.toByteArray())
+        val ins = ObjectInputStream(bais)
+        val ops = ins.readObject() as (Int.(Int) -> String)
+
+        Assert.assertEquals("27", 5.ops(10))
+    }
 }
