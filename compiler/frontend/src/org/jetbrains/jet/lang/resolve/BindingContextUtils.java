@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -61,4 +62,17 @@ public class BindingContextUtils {
         }
         return null;
     }
+
+    // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
+
+    @Nullable
+    public static NamespaceDescriptor namespaceDescriptor(@NotNull BindingContext context, @NotNull JetFile source) {
+        return context.get(BindingContext.NAMESPACE, source);
+    }
+
+    @Nullable
+    public static PsiElement descriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
+        return context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+    }
+
 }
