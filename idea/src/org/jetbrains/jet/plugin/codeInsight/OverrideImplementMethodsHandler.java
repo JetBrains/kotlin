@@ -128,13 +128,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             ImportClassHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 
-        final String initializer = defaultInitializer(returnType, stdlib);
-        if (initializer != null) {
-            bodyBuilder.append(" = ").append(initializer);
-        }
-        else {
-            bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
-        }
+        bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
 
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
     }
