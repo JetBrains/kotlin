@@ -52,13 +52,18 @@ public class CompilationException extends RuntimeException {
             col = -1;
         }
 
-        String s2 = getCause().getMessage() != null ? getCause().getMessage() : getCause().toString();
+        String s2 = "";
+        Throwable cause = getCause();
+        if (cause != null) {
+            s2 = cause.getMessage() != null ? cause.getMessage() : cause.toString();
+        }
         return "Internal error: (" + (line+1) + "," + col + ") " + s2 + "\n@" + where();
     }
     
     private String where() {
-        if (getCause().getStackTrace().length > 0) {
-            return getCause().getStackTrace()[0].getFileName() + ":" + getCause().getStackTrace()[0].getLineNumber();
+        Throwable cause = getCause();
+        if (cause != null && cause.getStackTrace().length > 0) {
+            return cause.getStackTrace()[0].getFileName() + ":" + cause.getStackTrace()[0].getLineNumber();
         } else {
             return "far away in cyberspace";
         }
