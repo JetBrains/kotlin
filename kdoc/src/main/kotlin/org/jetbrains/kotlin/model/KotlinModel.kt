@@ -102,6 +102,9 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         if (created) {
             pkg.description = commentsFor(descriptor)
             addFunctions(pkg, pkg.functions, descriptor.getMemberScope())
+            if (pkg.functions.notEmpty()) {
+                pkg.local = true
+            }
         }
         return pkg;
     }
@@ -174,7 +177,13 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             }
             if (node == null) return ""
             if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
-            return node?.getText() ?: ""
+            var text = node?.getText() ?: ""
+            // lets remove the comment tokens
+            //val lines = text.trim().split("\\n")
+            text = text.trim().trim("/").trim("*").trim()
+
+            // TODO convert any macros or wiki text!
+            return text
         }
         return ""
     }
@@ -241,7 +250,6 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
                     klass.baseClasses.add(sc)
                 }
             }
-            //model.addFunctions(pkg, pkg.functions, descriptor.getMemberScope())
             model.addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
         }
         return klass
