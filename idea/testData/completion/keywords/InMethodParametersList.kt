@@ -31,7 +31,7 @@ class TestSample() {
 // ABSENT: null
 // ABSENT: object
 // ABSENT: open
-// EXIST:  out
+// ABSENT: out
 // ABSENT: override
 // ABSENT: package
 // ABSENT: private

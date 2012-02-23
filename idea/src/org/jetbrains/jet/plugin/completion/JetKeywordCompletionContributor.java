@@ -36,6 +36,7 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetKeywordInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetTemplateInsertHandler;
@@ -61,7 +62,9 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
             new CommentFilter(), // or
             new ParentFilter(new ClassFilter(JetLiteralStringTemplateEntry.class)), // or
             new ParentFilter(new ClassFilter(JetConstantExpression.class)), // or
-            new LeftNeighbour(new TextFilter("."))
+            new LeftNeighbour(new TextFilter(".")), // or
+            new AndFilter(new LeafElementFilter(JetTokens.IDENTIFIER),
+                          new NotFilter(new ParentFilter(new ClassFilter(JetReferenceExpression.class))))
     ));
 
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
@@ -308,5 +311,6 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         return PlatformPatterns.psiElement().and(
                 new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
     }
+
 
 }

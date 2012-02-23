@@ -1,4 +1,4 @@
-fun test(<caret>) {
+fun <caret>() {
 
 }
 
