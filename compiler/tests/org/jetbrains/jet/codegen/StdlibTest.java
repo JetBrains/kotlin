@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.compiler.CompileEnvironment;
-
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +30,7 @@ public class StdlibTest extends CodegenTestCase {
         super.setUp();
         createEnvironmentWithFullJdk();
         myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
-        CompileEnvironment.ensureRuntime(myEnvironment);
+        myEnvironment.ensureRuntime();
     }
 
     @Override

@@ -223,18 +223,4 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         return loadClass(name, codegens);
     }
 
-    private static class MyClassLoader extends ClassLoader {
-      public MyClassLoader(ClassLoader parent) {
-        super(parent);
-      }
-
-      public Class doDefineClass(String name, byte[] data) {
-        return defineClass(name, data, 0, data.length);
-      }
-
-      @Override
-      public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
-      }
-    }
 }
