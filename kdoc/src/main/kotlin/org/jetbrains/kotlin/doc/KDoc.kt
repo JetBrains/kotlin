@@ -1,5 +1,8 @@
 package org.jetbrains.kotlin.doc
 
+import std.*
+import std.util.*
+
 import org.jetbrains.kotlin.doc.templates.*
 import org.jetbrains.kotlin.template.TextTemplate
 import org.jetbrains.kotlin.model.*
@@ -11,6 +14,7 @@ import java.util.Collection
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.BindingContext.*
 import org.jetbrains.jet.compiler.CompilerPlugin
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
@@ -24,61 +28,110 @@ import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.jet.util.slicedmap.WritableSlice
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
 
-class KDoc(val outputDir: File) : KDocSupport() {
+
+class KDoc(val outputDir: File) : CompilerPlugin {
     val model = KModel()
+    var context: BindingContext? = null
 
-    override fun addClass(namespace: NamespaceDescriptor?, classElement: ClassDescriptor?) {
-        if (namespace != null && classElement != null) {
-            val klass = getOrCreateClass(classElement)
-            if (klass != null) {
-                klass.pkg.local = true
+    override fun processFiles(context: BindingContext?, sources: List<JetFile?>?) {
+        $context = context
+        if (context != null && sources != null) {
+            val allNamespaces = HashSet<NamespaceDescriptor>()
+            for (source in sources) {
+                if (source != null) {
+                    // We retrieve a descriptor by a PSI element from the context
+                    val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
+                    if (namespaceDescriptor != null) {
+                        allNamespaces.add(namespaceDescriptor);
+                    }
+                }
             }
+            val allClasses = HashSet<KClass>()
+            for (namespace in allNamespaces) {
+                model.getPackage(namespace)
+                for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
+                    if (descriptor is ClassDescriptor) {
+                        val klass = getOrCreateClass(descriptor)
+                        if (klass != null) {
+                            allClasses.add(klass)
+                        }
+                    } else if (descriptor is NamespaceDescriptor) {
+                        model.getPackage(descriptor)
+                    }
+                }
+                //addNamespace(namespace)
+            }
+            /*
+                        for (namespace in allNamespaces) {
+                            for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
+                                if (descriptor is CallableDescriptor) {
+                                    val pkg = getPackage(namespace)
+                                    val function = createFunction(pkg, descriptor)
+                                    if (function != null && function.extensionClass == null) {
+                                        pkg.functions.add(function)
+                                        pkg.local = true
+                                    }
+                                }
+                            }
+                            //addNamespace(namespace)
+                        }
+            */
+
+            // lets add the functions...
+            for (klass in allClasses) {
+                addFunctions(klass, klass.functions, klass.descriptor.getDefaultType().getMemberScope())
+            }
+            for (pkg in model.allPackages) {
+                for (descriptor in pkg.descriptor.getMemberScope().getAllDescriptors()) {
+                    if (descriptor is CallableDescriptor) {
+                        val function = createFunction(pkg, descriptor)
+                        if (function != null && function.extensionClass == null) {
+                            pkg.functions.add(function)
+                            pkg.local = true
+                        }
+                    }
+                }
+            }
+            generate();
         }
     }
 
-    protected fun containerName(descriptor: DeclarationDescriptor): String {
-        val container = descriptor.containingDeclaration
-        if (container == null || container is ModuleDescriptor || container is JavaNamespaceDescriptor) {
-            return ""
-        } else {
-            val parent = containerName(container)
-            val name = container.getName() ?: ""
-            val answer = if (parent.length() > 0) parent + "." + name else name
-            return if (answer.startsWith(".")) answer.substring(1) else answer
-        }
+    fun generate(): Unit {
+        val generator = KDocGenerator(model, outputDir)
+        generator.execute()
     }
+
 
     protected fun getOrCreateClass(classElement: ClassDescriptor): KClass? {
         //val docComment = getDocCommentFor(classElement.sure()) ?: "";
-        val container = classElement.containingDeclaration
-        val namespaceName = containerName(classElement)
-        val pkg = model.getPackage(namespaceName)
-        pkg.initialise{
-            if (container is NamespaceDescriptor) {
-                addFunctions(pkg, pkg.functions, container.getMemberScope())
-            }
-        }
         val name = classElement.getName()
-        if (name != null) {
-            val klass = pkg.getClass(name)
-            klass.initialise {
-                if (klass.pkg.description.length() == 0) {
-                    klass.pkg.description = commentsFor(container)
-                }
-                klass.description = commentsFor(classElement)
-                val superTypes = classElement.getTypeConstructor().getSupertypes()
-                for (st in superTypes) {
-                    val sc = getType(st)
-                    if (sc != null) {
-                        klass.baseClasses.add(sc)
-                    }
-                }
-                addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
+        val container = classElement.containingDeclaration
+        if (name != null && container is NamespaceDescriptor) {
+            val pkg = model.getPackage(container)
+            //val namespaceName = containerName(classElement)
+            val klass = KClass(pkg, classElement, name)
+            pkg.classMap.put(name, klass)
+            if (pkg.description.length() == 0) {
+                pkg.description = commentsFor(container)
             }
+            pkg.local = true
+            klass.description = commentsFor(classElement)
+            val superTypes = classElement.getTypeConstructor().getSupertypes()
+            for (st in superTypes) {
+                val sc = getType(st)
+                if (sc != null) {
+                    klass.baseClasses.add(sc)
+                }
+            }
+            //addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
             return klass
+        } else {
+            println("No package found for $container and class $name")
+            return null
         }
-        return null
     }
 
     protected fun addFunctions(owner: KClassOrPackage, list: Collection<KFunction>, scope: JetScope): Unit {
@@ -137,16 +190,10 @@ class KDoc(val outputDir: File) : KDocSupport() {
         return null
     }
 
-    override fun generate() {
-        if (!model.packages.isEmpty()) {
-            val generator = KDocGenerator(model, outputDir)
-            generator.execute()
-        }
-    }
-
     protected fun commentsFor(descriptor: DeclarationDescriptor): String {
+        /*
         val psiElement = try {
-            context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)
+            BindingContextUtils.descriptorToDeclaration(context.sure(), descriptor)
         } catch (e: Throwable) {
             // ignore exceptions on fake descriptors
             null
@@ -162,6 +209,7 @@ class KDoc(val outputDir: File) : KDocSupport() {
             if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
             return node?.getText() ?: ""
         }
+        */
         return ""
     }
 

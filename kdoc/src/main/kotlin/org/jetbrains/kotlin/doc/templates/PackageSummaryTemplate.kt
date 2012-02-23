@@ -152,9 +152,11 @@ function windowTitle()
  </ul>""")
             }
         }
+        println("<P>")
+
+        printFunctionDetail(pkg.packageFunctions())
 
         println("""
-<P>
 
 <P>
 <DL>
@@ -252,10 +254,10 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <B>Functions Summary</B></FONT></TH>
 </TR>""")
 
-            for (c in functions) {
+            for (f in functions) {
                 println("""<TR BGCOLOR="white" CLASS="TableRowColor">""")
-                println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}${c.name}.html\" title=\"function in ${pkg.name}\">${c.name}</A></B></TD>")
-                println("<TD>${c.description}</TD>")
+                println("<TD WIDTH=\"15%\"><B><A HREF=\"${href(f)}\" title=\"function in ${pkg.name}\">${f.name}</A></B></TD>")
+                println("<TD>${f.description}</TD>")
                 println("</TR>")
             }
             println("""</TABLE>

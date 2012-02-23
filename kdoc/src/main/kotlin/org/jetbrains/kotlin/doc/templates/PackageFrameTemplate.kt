@@ -66,7 +66,7 @@ class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupp
     }
 
     protected fun printFunctions(): Unit {
-        val functions = pkg.functions.filter{ it.extensionClass == null }
+        val functions = pkg.packageFunctions()
         if (! functions.isEmpty()) {
             println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
 <TR>

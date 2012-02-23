@@ -61,16 +61,41 @@
         </java>
     </target>
 
-    <target name="docStdlib">
+    <target name="compileKdoc">
+        <mkdir dir="${output}/classes/kdoc"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+            <classpath>
+              <path refid="classpath"/>
+              <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+            <arg value="-stdlib"/>
+            <arg value="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            <arg value="-src"/>
+            <arg value="${basedir}/kdoc/src/main/kotlin"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/kdoc"/>
+            <arg value="-module"/>
+            <arg value="${basedir}/kdoc/module.kt"/>
+        </java>
+    </target>
+
+
+    <target name="docStdlib" depends="compileKdoc">
         <mkdir dir="${output}/classes/stdlib"/>
         <mkdir dir="${output}/apidoc/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement location="${output}/classes/kdoc"/>
+
+<!--
+    lets use the local Ant build rather than the mvn build
+
                 <fileset dir="${basedir}/kdoc/target">
                   <include name="**/*.jar"/>
                 </fileset>
+-->
 
                 <!-- TODO Dirty Hack until kdoc jar has stdlib inside it -->
                 <pathelement location="${output}/classes/stdlib"/>
@@ -180,13 +205,14 @@
         <delete dir="${output}"/>
     </target>
 
-    <target name="dist" depends="init,jarRT,jarJDKHeaders,jar,buildToolsJar">
+    <target name="copyKotlinJars">
         <copy todir="${kotlin-home}/lib">
             <fileset dir="${idea.sdk}/core" includes="*.jar"/>
             <fileset dir="${basedir}/lib" includes="*.jar"/>
         </copy>
     </target>
 
+    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar,docStdlib"/>
 
     <target name="test" depends="dist,testlib" description="Creates the distribution and runs all the tests"/>
 

@@ -1,10 +1,28 @@
 package org.jetbrains.kotlin.model
 
 import java.lang.String
-//import std.*
+import std.*
 import std.util.*
 
 import java.util.*
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
+
+fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
+
+fun qualifiedName(descriptor: DeclarationDescriptor?): String {
+    if (descriptor == null || descriptor is ModuleDescriptor || descriptor is JavaNamespaceDescriptor) {
+        return ""
+    } else {
+        val parent = containerName(descriptor)
+        val name = descriptor.getName() ?: ""
+        val answer = if (parent.length() > 0) parent + "." + name else name
+        return if (answer.startsWith(".")) answer.substring(1) else answer
+    }
+}
 
 fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
@@ -31,19 +49,15 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
     public val classes: Collection<KClass>
     get() = packages.flatMap{ it.classes }
 
-    /* Returns the package for the given name, creating one if its not already been create yet */
-    fun getPackage(name: String): KPackage {
-        return packageMap.getOrPut(name){ KPackage(this, name) }
-    }
+    /* Returns the package for the given name or null if it does not exist */
+    fun getPackage(name: String): KPackage? = packageMap.get(name)
 
-    /* Returns the class for the given qualified name, creating one if its not already been created yet */
-    fun getClass(qualifiedName: String): KClass {
-        val idx = qualifiedName.lastIndexOf('.')
-        return if (idx > 0) {
-            getPackage(qualifiedName.substring(0, idx)).getClass(qualifiedName.substring(idx + 1))
-        } else {
-            getPackage("").getClass(qualifiedName)
-        }
+    /** Returns the package for the given descriptor, creating one if its not available */
+    fun getPackage(namespace: NamespaceDescriptor): KPackage {
+        val name = qualifiedName(namespace)
+        return packageMap.getOrPut(name) {
+           KPackage(this, namespace, name)
+       }
     }
 
     fun previous(pkg: KPackage): KPackage? {
@@ -57,30 +71,20 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
     }
 }
 
-class KPackage(val model: KModel, val name: String, var external: Boolean = false,
+class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
+        val name: String, var external: Boolean = false,
         var description: String = "", var detailedDescription: String = "",
         var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
         var local: Boolean = false) : Comparable<KPackage>, KClassOrPackage {
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
-
     fun equals(other: KPackage) = name == other.name
 
     fun toString() = "KPackage($name)"
 
-    private var _initialised = false
-
-    /** Runs the initialisation block if this class has not yet been initialised */
-    fun initialise(fn: () -> Unit): Unit {
-        if (!_initialised) {
-            _initialised = true
-            fn()
-        }
-    }
-
     /** Returns the name as a directory using '/' instead of '.' */
     public val nameAsPath: String
-    get() = name.replace('.', '/')
+    get() = if (name.length() == 0) "." else name.replace('.', '/')
 
     /** Returns a list of all the paths in the package name */
     public val namePaths: List<String>
@@ -109,13 +113,6 @@ class KPackage(val model: KModel, val name: String, var external: Boolean = fals
 
     public val annotations: Collection<KClass> = ArrayList<KClass>()
 
-
-    /* Returns the class for the given name, creating one if its not already been create yet */
-    fun getClass(simpleName: String): KClass {
-        return classMap.getOrPut(simpleName) {
-            KClass(this, simpleName) }
-    }
-
     fun qualifiedName(simpleName: String): String {
         return if (name.length() > 0) {
             "${name}.${simpleName}"
@@ -138,9 +135,12 @@ class KPackage(val model: KModel, val name: String, var external: Boolean = fals
     fun groupClassMap(): Map<String, List<KClass>> {
         return classes.groupBy(TreeMap<String, List<KClass>>()){it.group}
     }
+
+    fun packageFunctions() = functions.filter{ it.extensionClass == null }
 }
 
-class KClass(val pkg: KPackage, val simpleName: String,
+class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
+        val simpleName: String,
         var kind: String = "class", var group: String = "Other",
         var description: String = "", var detailedDescription: String = "",
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
@@ -150,16 +150,6 @@ class KClass(val pkg: KPackage, val simpleName: String,
         var baseClasses: List<KClass> = arrayList<KClass>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
         var sourceLine: Int = 2) : Comparable<KClass>, KClassOrPackage {
-
-    private var _initialised = false
-
-    /** Runs the initialisation block if this class has not yet been initialised */
-    fun initialise(fn: () -> Unit): Unit {
-        if (!_initialised) {
-            _initialised = true
-            fn()
-        }
-    }
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 

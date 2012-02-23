@@ -24,8 +24,7 @@ abstract class KDocTemplate() : TextTemplate() {
         return if (f.owner is KClass) {
             "${href(f.owner)}#${f.link}"
         } else {
-            // TODO how to find the function in a package???
-            ""
+            "#${f.link}"
         }
     }
 

@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.doc.templates
 
 import std.*
-import org.jetbrains.kotlin.template.*
 import std.io.*
 import std.util.*
 import java.util.*
+import org.jetbrains.kotlin.template.*
 import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
@@ -16,20 +16,50 @@ abstract class PackageTemplateSupport(private val _pkg: KPackage) : KDocTemplate
 
     // TODO this verbosity is to work around this bug: http://youtrack.jetbrains.com/issue/KT-1398
     public val pkg: KPackage
-        get() = _pkg
+    get() = _pkg
 
     protected override fun relativePrefix(): String = pkg.nameAsRelativePath
 
 
     fun printFunctionSummary(functions: Collection<KFunction>): Unit {
-        for (f in functions) {
-            printFunctionSummary(f)
+        if (functions.notEmpty()) {
+            println("""<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>""")
+
+            for (f in functions) {
+                printFunctionSummary(f)
+            }
+            println("""</TABLE>
+&nbsp;
+<P>
+""")
         }
     }
 
     fun printFunctionDetail(functions: Collection<KFunction>): Unit {
-        for (f in functions) {
-            printFunctionDetail(f)
+        if (functions.notEmpty()) {
+            println("""
+
+            <!-- ============ METHOD DETAIL ========== -->
+
+            <A NAME="method_detail"><!-- --></A>
+            <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+            <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+            <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+            <B>Method Detail</B></FONT></TH>
+            </TR>
+            </TABLE>
+            """)
+
+            for (f in functions) {
+                printFunctionDetail(f)
+            }
         }
     }
 
