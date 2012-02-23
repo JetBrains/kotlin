@@ -1,0 +1,32 @@
+package serial
+
+import java.io.ObjectOutputStream
+import java.io.ByteArrayOutputStream
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
+import java.io.Serializable
+import java.util.HashMap
+import junit.framework.TestCase
+import junit.framework.Assert
+
+class Serial(val a : String) : java.lang.Object(), Serializable {
+    override fun toString() = a
+}
+
+class SerialTest() : TestCase() {
+    fun testMe() {
+        val tuple = #("lala", "bbb", Serial("serial"))
+        val op = { -> tuple.toString() }
+
+        val baos = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(baos)
+        oos.writeObject(op)
+        oos.close()
+
+        val bais = ByteArrayInputStream(baos.toByteArray())
+        val ins = ObjectInputStream(bais)
+        val ops = ins.readObject() as (() -> String)
+
+        Assert.assertEquals(op (), ops())
+    }
+}
