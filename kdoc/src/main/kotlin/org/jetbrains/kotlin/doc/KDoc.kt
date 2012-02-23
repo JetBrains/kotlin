@@ -54,7 +54,7 @@ class KDoc(val outputDir: File) : CompilerPlugin {
                 model.getPackage(namespace)
                 for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
                     if (descriptor is ClassDescriptor) {
-                        val klass = getOrCreateClass(descriptor)
+                        val klass = model.getClass(descriptor)
                         if (klass != null) {
                             allClasses.add(klass)
                         }
@@ -62,23 +62,7 @@ class KDoc(val outputDir: File) : CompilerPlugin {
                         model.getPackage(descriptor)
                     }
                 }
-                //addNamespace(namespace)
             }
-            /*
-                        for (namespace in allNamespaces) {
-                            for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
-                                if (descriptor is CallableDescriptor) {
-                                    val pkg = getPackage(namespace)
-                                    val function = createFunction(pkg, descriptor)
-                                    if (function != null && function.extensionClass == null) {
-                                        pkg.functions.add(function)
-                                        pkg.local = true
-                                    }
-                                }
-                            }
-                            //addNamespace(namespace)
-                        }
-            */
 
             // lets add the functions...
             for (klass in allClasses) {
@@ -105,35 +89,6 @@ class KDoc(val outputDir: File) : CompilerPlugin {
     }
 
 
-    protected fun getOrCreateClass(classElement: ClassDescriptor): KClass? {
-        //val docComment = getDocCommentFor(classElement.sure()) ?: "";
-        val name = classElement.getName()
-        val container = classElement.containingDeclaration
-        if (name != null && container is NamespaceDescriptor) {
-            val pkg = model.getPackage(container)
-            //val namespaceName = containerName(classElement)
-            val klass = KClass(pkg, classElement, name)
-            pkg.classMap.put(name, klass)
-            if (pkg.description.length() == 0) {
-                pkg.description = commentsFor(container)
-            }
-            pkg.local = true
-            klass.description = commentsFor(classElement)
-            val superTypes = classElement.getTypeConstructor().getSupertypes()
-            for (st in superTypes) {
-                val sc = getType(st)
-                if (sc != null) {
-                    klass.baseClasses.add(sc)
-                }
-            }
-            //addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
-            return klass
-        } else {
-            println("No package found for $container and class $name")
-            return null
-        }
-    }
-
     protected fun addFunctions(owner: KClassOrPackage, list: Collection<KFunction>, scope: JetScope): Unit {
         val descriptors = scope.getAllDescriptors()
         for (descriptor in descriptors) {
@@ -147,7 +102,7 @@ class KDoc(val outputDir: File) : CompilerPlugin {
     }
 
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
-        val returnType = getType(descriptor.getReturnType())
+        val returnType = model.getClass(descriptor.getReturnType())
         if (returnType != null) {
             val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
             function.description = commentsFor(descriptor)
@@ -162,7 +117,7 @@ class KDoc(val outputDir: File) : CompilerPlugin {
             }
             val receiver = descriptor.getReceiverParameter()
             if (receiver is ExtensionReceiver) {
-                function.extensionClass = getType(receiver.getType())
+                function.extensionClass = model.getClass(receiver.getType())
             }
             return function
         }
@@ -170,7 +125,7 @@ class KDoc(val outputDir: File) : CompilerPlugin {
     }
 
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
-        val returnType = getType(descriptor.getReturnType())
+        val returnType = model.getClass(descriptor.getReturnType())
         if (returnType != null) {
             val name = descriptor.getName()
             val answer = KParameter(name, returnType)
@@ -178,39 +133,6 @@ class KDoc(val outputDir: File) : CompilerPlugin {
             return answer
         }
         return null
-    }
-
-    protected fun getType(aType: JetType?): KClass? {
-        if (aType != null) {
-            val classifierDescriptor = aType.constructor.declarationDescriptor
-            if (classifierDescriptor is ClassDescriptor) {
-                return getOrCreateClass(classifierDescriptor)
-            }
-        }
-        return null
-    }
-
-    protected fun commentsFor(descriptor: DeclarationDescriptor): String {
-        /*
-        val psiElement = try {
-            BindingContextUtils.descriptorToDeclaration(context.sure(), descriptor)
-        } catch (e: Throwable) {
-            // ignore exceptions on fake descriptors
-            null
-        }
-
-        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
-        if (psiElement != null) {
-            var node = psiElement.getNode()?.getTreePrev()
-            while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
-                node = node?.getTreePrev()
-            }
-            if (node == null) return ""
-            if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
-            return node?.getText() ?: ""
-        }
-        */
-        return ""
     }
 
 }

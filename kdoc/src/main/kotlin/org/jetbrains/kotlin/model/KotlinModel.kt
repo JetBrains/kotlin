@@ -10,6 +10,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
+import org.jetbrains.jet.lang.types.JetType
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
 
@@ -29,6 +30,31 @@ fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List
     functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
     return map
 }
+
+
+fun commentsFor(descriptor: DeclarationDescriptor): String {
+    /*
+    val psiElement = try {
+        BindingContextUtils.descriptorToDeclaration(context.sure(), descriptor)
+    } catch (e: Throwable) {
+        // ignore exceptions on fake descriptors
+        null
+    }
+
+    // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+    if (psiElement != null) {
+        var node = psiElement.getNode()?.getTreePrev()
+        while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
+            node = node?.getTreePrev()
+        }
+        if (node == null) return ""
+        if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
+        return node?.getText() ?: ""
+    }
+    */
+    return ""
+}
+
 
 trait KClassOrPackage {
 
@@ -53,11 +79,37 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
     fun getPackage(name: String): KPackage? = packageMap.get(name)
 
     /** Returns the package for the given descriptor, creating one if its not available */
-    fun getPackage(namespace: NamespaceDescriptor): KPackage {
-        val name = qualifiedName(namespace)
+    fun getPackage(descriptor: NamespaceDescriptor): KPackage {
+        val name = qualifiedName(descriptor)
         return packageMap.getOrPut(name) {
-           KPackage(this, namespace, name)
-       }
+            val pkg = KPackage(this, descriptor, name)
+            pkg.description = commentsFor(descriptor)
+            pkg
+        }
+    }
+
+
+    fun getClass(aType: JetType?): KClass? {
+        if (aType != null) {
+            val classifierDescriptor = aType.constructor.declarationDescriptor
+            if (classifierDescriptor is ClassDescriptor) {
+                return getClass(classifierDescriptor)
+            }
+        }
+        return null
+    }
+
+    fun getClass(classElement: ClassDescriptor): KClass? {
+        val name = classElement.getName()
+        val container = classElement.containingDeclaration
+        if (name != null && container is NamespaceDescriptor) {
+            val pkg = getPackage(container)
+
+            return pkg.getClass(name, classElement)
+        } else {
+            println("No package found for $container and class $name")
+            return null
+        }
     }
 
     fun previous(pkg: KPackage): KPackage? {
@@ -73,7 +125,8 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
 
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
         val name: String, var external: Boolean = false,
-        var description: String = "", var detailedDescription: String = "",
+        var description: String = "",
+        var detailedDescription: String = "",
         var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
         var local: Boolean = false) : Comparable<KPackage>, KClassOrPackage {
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
@@ -81,6 +134,24 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
     fun equals(other: KPackage) = name == other.name
 
     fun toString() = "KPackage($name)"
+
+    fun getClass(name: String, classElement: ClassDescriptor): KClass {
+        return classMap.getOrPut(name) {
+        //val namespaceName = containerName(classElement)
+            val klass = KClass(this, classElement, name)
+            local = true
+            klass.description = commentsFor(classElement)
+            val superTypes = classElement.getTypeConstructor().getSupertypes()
+            for (st in superTypes) {
+                val sc = model.getClass(st)
+                if (sc != null) {
+                    klass.baseClasses.add(sc)
+                }
+            }
+            //addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
+            klass
+        }
+    }
 
     /** Returns the name as a directory using '/' instead of '.' */
     public val nameAsPath: String
