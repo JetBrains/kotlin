@@ -212,8 +212,8 @@ public class CompileEnvironment {
             method.setAccessible(true);
             method.invoke(null);
 
-            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules);
-            AllModules.modules.clear();
+            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules.get());
+            AllModules.modules.get().clear();
             return answer;
         }
         catch (Exception e) {

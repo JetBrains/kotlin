@@ -22,5 +22,14 @@ package jet.modules;
 import java.util.ArrayList;
 
 public class AllModules {
-    public static final ArrayList<Module> modules = new ArrayList<Module>();
+
+    public static final ThreadLocal<ArrayList<Module>> modules = new ThreadLocal<ArrayList<Module>>() {
+        @Override
+        protected ArrayList<Module> initialValue() {
+            return new ArrayList<Module>();
+        }
+    };
+
+    private AllModules() {
+    }
 }
