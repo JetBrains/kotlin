@@ -22,6 +22,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.LocalTimeCounter;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
@@ -32,6 +34,7 @@ import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.plugin.compiler.PathUtil;
 
@@ -330,6 +333,18 @@ public class CompileEnvironment {
                 throw new CompileEnvironmentException("Couldn't find runtime library");
             }
         }
+    }
+
+    public ClassLoader compileText(String code) {
+        CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
+        session.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
+
+        if (!session.analyze(myErrorStream) && !ignoreErrors) {
+            return null;
+        }
+
+        ClassFileFactory factory = session.generate();
+        return new GeneratedClassLoader(factory);
     }
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {

@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.compiler.PathUtil;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,5 +70,19 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
         this.compilerPlugins = compilerPlugins;
+    }
+
+    public void addToClasspathFromClassLoader(ClassLoader loader) {
+        ClassLoader parent = loader.getParent();
+        if(parent != null)
+            addToClasspathFromClassLoader(parent);
+        
+        if(loader instanceof URLClassLoader) {
+            for (URL url : ((URLClassLoader) loader).getURLs()) {
+                File file = new File(url.getPath());
+                if(!file.isFile() || file.getPath().endsWith(".jar"))
+                    addToClasspath(file);
+            }
+        }
     }
 }
