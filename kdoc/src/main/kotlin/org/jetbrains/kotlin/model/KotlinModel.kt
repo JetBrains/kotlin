@@ -11,6 +11,14 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.psi.JetFile
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
 
@@ -32,35 +40,12 @@ fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List
 }
 
 
-fun commentsFor(descriptor: DeclarationDescriptor): String {
-    /*
-    val psiElement = try {
-        BindingContextUtils.descriptorToDeclaration(context.sure(), descriptor)
-    } catch (e: Throwable) {
-        // ignore exceptions on fake descriptors
-        null
-    }
-
-    // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
-    if (psiElement != null) {
-        var node = psiElement.getNode()?.getTreePrev()
-        while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
-            node = node?.getTreePrev()
-        }
-        if (node == null) return ""
-        if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
-        return node?.getText() ?: ""
-    }
-    */
-    return ""
-}
-
 
 trait KClassOrPackage {
 
 }
 
-class KModel(var title: String = "Documentation", var version: String = "TODO") {
+class KModel(var context: BindingContext, var title: String = "Documentation", var version: String = "TODO") {
     // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -75,17 +60,123 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
     public val classes: Collection<KClass>
     get() = packages.flatMap{ it.classes }
 
+    /** Loads the model from the given set of source files */
+    fun load(sources: List<JetFile?>): Unit {
+        val allNamespaces = HashSet<NamespaceDescriptor>()
+        for (source in sources) {
+            if (source != null) {
+                // We retrieve a descriptor by a PSI element from the context
+                val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
+                if (namespaceDescriptor != null) {
+                    allNamespaces.add(namespaceDescriptor);
+                }
+            }
+        }
+        val allClasses = HashSet<KClass>()
+        for (namespace in allNamespaces) {
+            getPackage(namespace)
+            for (descriptor in namespace.getMemberScope().getAllDescriptors()) {
+                if (descriptor is ClassDescriptor) {
+                    val klass = getClass(descriptor)
+                    if (klass != null) {
+                        allClasses.add(klass)
+                    }
+                } else if (descriptor is NamespaceDescriptor) {
+                    getPackage(descriptor)
+                }
+            }
+        }
+    }
+
     /* Returns the package for the given name or null if it does not exist */
     fun getPackage(name: String): KPackage? = packageMap.get(name)
 
     /** Returns the package for the given descriptor, creating one if its not available */
     fun getPackage(descriptor: NamespaceDescriptor): KPackage {
         val name = qualifiedName(descriptor)
-        return packageMap.getOrPut(name) {
-            val pkg = KPackage(this, descriptor, name)
-            pkg.description = commentsFor(descriptor)
-            pkg
+        var created = false
+        val pkg = packageMap.getOrPut(name) {
+            created = true
+            KPackage(this, descriptor, name)
         }
+        if (created) {
+            pkg.description = commentsFor(descriptor)
+            addFunctions(pkg, pkg.functions, descriptor.getMemberScope())
+        }
+        return pkg;
+    }
+
+    protected fun addFunctions(owner: KClassOrPackage, list: Collection<KFunction>, scope: JetScope): Unit {
+        try {
+            val descriptors = scope.getAllDescriptors()
+            for (descriptor in descriptors) {
+                if (descriptor is CallableDescriptor) {
+                    val function = createFunction(owner, descriptor)
+                    if (function != null) {
+                        list.add(function)
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            println("Caught exception finding function declarations on $owner")
+        }
+
+    }
+
+    protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
+        val returnType = getClass(descriptor.getReturnType())
+        if (returnType != null) {
+            val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
+            function.description = commentsFor(descriptor)
+            val params = descriptor.getValueParameters()
+            for (param in params) {
+                if (param != null) {
+                    val p = createParameter(param)
+                    if (p != null) {
+                        function.parameters.add(p)
+                    }
+                }
+            }
+            val receiver = descriptor.getReceiverParameter()
+            if (receiver is ExtensionReceiver) {
+                function.extensionClass = getClass(receiver.getType())
+            }
+            return function
+        }
+        return null
+    }
+
+    protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
+        val returnType = getClass(descriptor.getReturnType())
+        if (returnType != null) {
+            val name = descriptor.getName()
+            val answer = KParameter(name, returnType)
+            answer.description = commentsFor(descriptor)
+            return answer
+        }
+        return null
+    }
+
+
+    fun commentsFor(descriptor: DeclarationDescriptor): String {
+        val psiElement = try {
+            BindingContextUtils.descriptorToDeclaration(context, descriptor)
+        } catch (e: Throwable) {
+            // ignore exceptions on fake descriptors
+            null
+        }
+
+        // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
+        if (psiElement != null) {
+            var node = psiElement.getNode()?.getTreePrev()
+            while (node != null && (node?.getElementType() == JetTokens.WHITE_SPACE || node?.getElementType() == JetTokens.BLOCK_COMMENT)) {
+                node = node?.getTreePrev()
+            }
+            if (node == null) return ""
+            if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
+            return node?.getText() ?: ""
+        }
+        return ""
     }
 
 
@@ -104,7 +195,6 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
         val container = classElement.containingDeclaration
         if (name != null && container is NamespaceDescriptor) {
             val pkg = getPackage(container)
-
             return pkg.getClass(name, classElement)
         } else {
             println("No package found for $container and class $name")
@@ -136,11 +226,14 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
     fun toString() = "KPackage($name)"
 
     fun getClass(name: String, classElement: ClassDescriptor): KClass {
-        return classMap.getOrPut(name) {
-        //val namespaceName = containerName(classElement)
-            val klass = KClass(this, classElement, name)
+        var created = false
+        val klass = classMap.getOrPut(name) {
+            created = true
+            KClass(this, classElement, name)
+        }
+        if (created) {
             local = true
-            klass.description = commentsFor(classElement)
+            klass.description = model.commentsFor(classElement)
             val superTypes = classElement.getTypeConstructor().getSupertypes()
             for (st in superTypes) {
                 val sc = model.getClass(st)
@@ -148,9 +241,10 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
                     klass.baseClasses.add(sc)
                 }
             }
-            //addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
-            klass
+            //model.addFunctions(pkg, pkg.functions, descriptor.getMemberScope())
+            model.addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
         }
+        return klass
     }
 
     /** Returns the name as a directory using '/' instead of '.' */
