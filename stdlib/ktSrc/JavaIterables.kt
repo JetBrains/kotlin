@@ -141,18 +141,24 @@ inline fun <T> java.lang.Iterable<T>.reverse() : List<T> {
   return answer
 }
 
+/* Copies the collection into the given collection */
 inline fun <T, C: Collection<T>> java.lang.Iterable<T>.to(result: C) : C {
   for (elem in this)
     result.add(elem)
   return result
 }
 
+/* Converts the collection into a LinkedList */
 inline fun <T> java.lang.Iterable<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
+/* Converts the collection into a List */
 inline fun <T> java.lang.Iterable<T>.toList() : List<T> = this.to(ArrayList<T>())
 
+/* Converts the collection into a Set */
 inline fun <T> java.lang.Iterable<T>.toSet() : Set<T> = this.to(HashSet<T>())
 
+/* Converts the collection into a SortedSet */
+inline fun <T> java.lang.Iterable<T>.toSortedSet() : SortedSet<T> = this.to(TreeSet<T>())
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 inline fun <in T> java.lang.Iterable<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {

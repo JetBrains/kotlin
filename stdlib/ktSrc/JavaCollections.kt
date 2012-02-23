@@ -11,3 +11,7 @@ inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<
 
 /** Returns true if the collection is not empty */
 inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
+
+/** Converts the nullable collection into an empty collection if its null */
+inline fun <T> java.util.Collection<T>?.notNull() : Collection<T>
+    = if (this != null) this else Collections.EMPTY_LIST as Collection<T>

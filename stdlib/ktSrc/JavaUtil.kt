@@ -54,6 +54,10 @@ inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Co
   return this
 }
 
+/** Converts the nullable List into an empty List if its null */
+inline fun <T> java.util.List<T>?.notNull() : List<T>
+    = if (this != null) this else Collections.EMPTY_LIST as List<T>
+
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 inline fun <in T> List<T>.sort(transform: fun(T) : java.lang.Comparable<*>) : List<T> {
