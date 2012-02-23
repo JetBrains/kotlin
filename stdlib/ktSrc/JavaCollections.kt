@@ -8,3 +8,6 @@ inline fun <T, R> java.util.Collection<T>.map(result: Collection<R> = ArrayList<
     result.add(transform(item))
   return result
 }
+
+/** Returns true if the collection is not empty */
+inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
