@@ -8,7 +8,7 @@ import java.util.*
 import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KMethod
+import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
 
 class ClassTemplate(val model: KModel, pkg: KPackage, val klass: KClass) : PackageTemplateSupport(pkg) {
@@ -110,9 +110,7 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
         println("Class ${klass.simpleName}</H2>")
         println("<PRE>")
 
-        // TODO base class...
-        val bc = klass.baseClass
-        if (bc != null) {
+        for (bc in klass.baseClasses) {
             println(link(bc, true))
         }
         println("  <IMG SRC=\"${pkg.nameAsRelativePath}resources/inherit.gif\" ALT=\"extended by \"><B>${klass.name}</B>")
@@ -122,9 +120,11 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
         print("<DT><PRE><FONT SIZE=\"-1\">")
         printAnnotations(klass.annotations)
         print("</FONT>public class <A HREF=\"${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}\"><B>${klass.simpleName}</B></A><DT>")
-        if (bc != null) {
+        if (!klass.baseClasses.isEmpty()) {
             print("extends ")
-            println(link(bc))
+            for (bc in klass.baseClasses) {
+                println(link(bc))
+            }
         }
         println("</DL>")
         println("""</PRE>
@@ -181,9 +181,7 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
 <B>Method Summary</B></FONT></TH>
 </TR>""")
 
-        for (method in klass.methods) {
-            printMethodSummary(method)
-        }
+        printFunctionSummary(klass.functions)
 
         println("""</TABLE>
 &nbsp;
@@ -199,9 +197,7 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
 </TR>
 </TABLE>
 """)
-        for (method in klass.methods) {
-            printMethodDetail(method)
-        }
+        printFunctionDetail(klass.functions)
 
         println("""<!-- ========= END OF CLASS DATA ========= -->
 <HR>
@@ -283,115 +279,4 @@ Copyright &#169; 2010-2012. All Rights Reserved.
         println("""</FONT></TD>""")
     }
 
-    fun printMethodSummary(method: KMethod): Unit {
-        val deprecated = if (method.deprecated) "<B>Deprecated.</B>" else ""
-        print("""<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>""")
-        if (!method.typeParameters.isEmpty()) {
-            println("""<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
-            <TR ALIGN="right" VALIGN="">
-            <TD NOWRAP><FONT SIZE="-1">
-            <CODE>""")
-            printTypeParameters(method)
-            println("<BR>")
-            print(link(method.returnType))
-            println("""</CODE></FONT></TD>
-</TR>
-</TABLE>""")
-        } else {
-            print(link(method.returnType))
-        }
-        println("</CODE></FONT></TD>")
-        print("<TD><CODE><B><A HREF=\"${pkg.nameAsRelativePath}${klass.nameAsPath}.html#${method.link}\">${method.name}</A></B>")
-        printParameters(method)
-        println("</CODE>")
-        println("")
-        println("<BR>")
-        println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${method.detailedDescription}</TD>")
-        println("</TR>")
-    }
-
-
-    fun printMethodDetail(method: KMethod): Unit {
-        println("<A NAME=\"${method.name}{${method.parameters.map{it.klass.name}})\"><!-- --></A><A NAME=\"${method.name}(${method.typeParametersText})\"><!-- --></A><H3>")
-        println("${method.name}</H3>")
-        println("<PRE>")
-        println("<FONT SIZE=\"-1\">")
-        printAnnotations(method.annotations)
-        print("</FONT>${method.modifiers.join(" ")} ")
-
-        printTypeParameters(method)
-        print(link(method.returnType))
-        print(" <A HREF=\"${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}\"><B>${method.name}</B></A>")
-        printParameters(method)
-        val exlist = method.exceptions
-        var first = true
-        if (!exlist.isEmpty()) {
-            println("                                throws ");
-            for (ex in exlist) {
-                if (first) first = false else print(", ")
-                print(link(ex))
-            }
-        }
-        println("</PRE>")
-
-        /* TODO
-        println("""<DL>
-<DD><B>Deprecated.</B>&nbsp;TODO text
-<P>
-<DD><b>Deprecated.</b>
-<P>
-<DD>
-<DL>
-<DT><B>Throws:</B>
-<DD><CODE>${link(ex}</CODE><DT><B>Since:</B></DT>
-<DD>${since}</DD>
-</DL>
-</DD>
-</DL>
-*/
-        println("<HR>")
-    }
-
-    fun printTypeParameters(method: KMethod): Unit {
-        val typeParameters = method.typeParameters
-        if (!typeParameters.isEmpty()) {
-            print("&lt")
-            var separator = ""
-            for (t in typeParameters) {
-                print(separator)
-                separator = ", "
-                print(t.name)
-                val elist = t.extends
-                if (!elist.isEmpty()) {
-                    print(" extends ")
-                    var esep = ""
-                    for (e in elist) {
-                        print(esep)
-                        esep = " & "
-                        print(link(e))
-                    }
-                }
-            }
-            print("&gt")
-        }
-    }
-
-    fun printParameters(method: KMethod): Unit {
-        print("(")
-        var first = true
-        for (p in method.parameters) {
-            if (first) first = false else print(", ")
-            print("${p.name}:&nbsp;")
-            print(link(p.klass))
-        }
-        print(")")
-    }
-
-    fun printAnnotations(annotations: Collection<KAnnotation>): Unit {
-        for (a in annotations) {
-            println(link(a))
-        }
-    }
 }

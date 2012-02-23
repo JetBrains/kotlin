@@ -2,49 +2,31 @@ package org.jetbrains.kotlin.doc
 
 import org.jetbrains.kotlin.doc.templates.*
 import org.jetbrains.kotlin.template.TextTemplate
-import org.jetbrains.kotlin.model.KModel
+import org.jetbrains.kotlin.model.*
 
 import java.io.File
+import java.util.List
+import java.util.HashSet
+import java.util.Collection
+
+import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.compiler.CompilerPlugin
-import java.util.List
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
-import java.util.HashSet
-import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.model.KMethod
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.model.KParameter
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 
 class KDoc(val outputDir: File) : KDocSupport() {
     val model = KModel()
-
-    /** TODO compile errors so lets use Java for this bit for now...
-    override fun processFiles(context: BindingContext, files: List<JetFile?>?) {
-        println("==== KDoc running! Generating to $outputDir")
-        if (context != null) {
-            val namespaces = HashSet<NamespaceDescriptor>()
-            if (files != null) {
-                for (source in files) {
-                    if (source != null) {
-                        val namespaceDescriptor = context.get(BindingContext.NAMESPACE, source)
-                        if (namespaceDescriptor != null) {
-                            namespaces.add(namespaceDescriptor)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
 
     override fun addClass(namespace: NamespaceDescriptor?, classElement: ClassDescriptor?) {
         if (namespace != null && classElement != null) {
@@ -72,41 +54,64 @@ class KDoc(val outputDir: File) : KDocSupport() {
         val container = classElement.containingDeclaration
         val namespaceName = containerName(classElement)
         val pkg = model.getPackage(namespaceName)
+        pkg.initialise{
+            if (container is NamespaceDescriptor) {
+                addFunctions(pkg, pkg.functions, container.getMemberScope())
+            }
+        }
         val name = classElement.getName()
         if (name != null) {
             val klass = pkg.getClass(name)
             klass.initialise {
+                if (klass.pkg.description.length() == 0) {
+                    klass.pkg.description = commentsFor(container)
+                }
                 klass.description = commentsFor(classElement)
-                val descriptors = classElement.getDefaultType().getMemberScope().getAllDescriptors()
-                for (descriptor in descriptors) {
-                    if (descriptor is CallableDescriptor) {
-                        val method = createMethod(descriptor)
-                        if (method != null) {
-                            klass.methods.add(method)
-                        }
+                val superTypes = classElement.getTypeConstructor().getSupertypes()
+                for (st in superTypes) {
+                    val sc = getType(st)
+                    if (sc != null) {
+                        klass.baseClasses.add(sc)
                     }
                 }
+                addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
             }
             return klass
         }
         return null
     }
 
-    protected fun createMethod(descriptor: CallableDescriptor): KMethod? {
+    protected fun addFunctions(owner: KClassOrPackage, list: Collection<KFunction>, scope: JetScope): Unit {
+        val descriptors = scope.getAllDescriptors()
+        for (descriptor in descriptors) {
+            if (descriptor is CallableDescriptor) {
+                val function = createFunction(owner, descriptor)
+                if (function != null) {
+                    list.add(function)
+                }
+            }
+        }
+    }
+
+    protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val method = KMethod(descriptor.getName() ?: "null", returnType)
-            method.description = commentsFor(descriptor)
+            val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
+            function.description = commentsFor(descriptor)
             val params = descriptor.getValueParameters()
             for (param in params) {
                 if (param != null) {
                     val p = createParameter(param)
                     if (p != null) {
-                        method.parameters.add(p)
+                        function.parameters.add(p)
                     }
                 }
             }
-            return method
+            val receiver = descriptor.getReceiverParameter()
+            if (receiver is ExtensionReceiver) {
+                function.extensionClass = getType(receiver.getType())
+            }
+            return function
         }
         return null
     }

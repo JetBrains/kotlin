@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KAnnotation
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.template.TextTemplate
+import org.jetbrains.kotlin.model.KFunction
+import java.util.Collection
 
 abstract class KDocTemplate() : TextTemplate() {
     fun href(pkg: KPackage): String {
@@ -16,6 +18,24 @@ abstract class KDocTemplate() : TextTemplate() {
     fun href(c: KClass): String {
         val postfix = if (c.pkg.external) "?is-external=true" else ""
         return "${href(c.pkg)}${c.nameAsPath}.html$postfix"
+    }
+
+    fun href(f: KFunction): String {
+        return if (f.owner is KClass) {
+            "${href(f.owner)}#${f.link}"
+        } else {
+            // TODO how to find the function in a package???
+            ""
+        }
+    }
+
+    fun sourceHref(f: KFunction): String {
+        return if (f.owner is KClass) {
+            "${href(f.owner.pkg)}src-html/${f.owner.simpleName}.html#line.${f.sourceLine}"
+        } else {
+            // TODO how to find the function in a package???
+            ""
+        }
     }
 
     fun link(c: KClass, fullName: Boolean = false): String {
@@ -31,14 +51,4 @@ abstract class KDocTemplate() : TextTemplate() {
     }
 
     protected open fun relativePrefix(): String = ""
-}
-
-abstract class PackageTemplateSupport(private val _pkg: KPackage) : KDocTemplate() {
-
-    // TODO this verbosity is to work around this bug: http://youtrack.jetbrains.com/issue/KT-1398
-    public val pkg: KPackage
-        get() = _pkg
-
-    protected override fun relativePrefix(): String = pkg.nameAsRelativePath
-
 }

@@ -6,20 +6,30 @@ import std.util.*
 
 import java.util.*
 
+fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List<KFunction>> {
+    val map = TreeMap<KClass, List<KFunction>>()
+    functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    return map
+}
+
+trait KClassOrPackage {
+
+}
+
 class KModel(var title: String = "Documentation", var version: String = "TODO") {
     // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
-    public val packageMap: SortedMap<String,KPackage> = TreeMap<String,KPackage>()
+    public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
 
     public val allPackages: Collection<KPackage>
-        get() = packageMap.values().sure()
+    get() = packageMap.values().sure()
 
     /** Returns the local packages */
     public val packages: Collection<KPackage>
-        get() = allPackages.filter{ it.local }
+    get() = allPackages.filter{ it.local }
 
     public val classes: Collection<KClass>
-        get() = packages.flatMap{ it.classes }
+    get() = packages.flatMap{ it.classes }
 
     /* Returns the package for the given name, creating one if its not already been create yet */
     fun getPackage(name: String): KPackage {
@@ -49,39 +59,51 @@ class KModel(var title: String = "Documentation", var version: String = "TODO") 
 
 class KPackage(val model: KModel, val name: String, var external: Boolean = false,
         var description: String = "", var detailedDescription: String = "",
-        var local: Boolean = false) : Comparable<KPackage> {
+        var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
+        var local: Boolean = false) : Comparable<KPackage>, KClassOrPackage {
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
+
 
     fun equals(other: KPackage) = name == other.name
 
     fun toString() = "KPackage($name)"
 
+    private var _initialised = false
+
+    /** Runs the initialisation block if this class has not yet been initialised */
+    fun initialise(fn: () -> Unit): Unit {
+        if (!_initialised) {
+            _initialised = true
+            fn()
+        }
+    }
+
     /** Returns the name as a directory using '/' instead of '.' */
     public val nameAsPath: String
-        get() = name.replace('.', '/')
+    get() = name.replace('.', '/')
 
     /** Returns a list of all the paths in the package name */
     public val namePaths: List<String>
-        get() {
-            val answer = ArrayList<String>()
-            for (n in name.split("\\.")) {
-                if (n != null) {
-                    answer.add(n)
-                }
+    get() {
+        val answer = ArrayList<String>()
+        for (n in name.split("\\.")) {
+            if (n != null) {
+                answer.add(n)
             }
-            return answer;
         }
+        return answer;
+    }
 
     /** Returns a relative path like ../.. for each path in the name */
     public val nameAsRelativePath: String
-        get() {
-            val answer = namePaths.map{ ".." }.join("/")
-            return if (answer.length == 0) "" else answer + "/"
-        }
+    get() {
+        val answer = namePaths.map{ ".." }.join("/")
+        return if (answer.length == 0) "" else answer + "/"
+    }
 
     // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val classes = sortedMap<String,KClass>()
-    public val classMap: SortedMap<String,KClass> = TreeMap<String,KClass>()
+    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
 
     public val classes: Collection<KClass> = classMap.values().sure()
 
@@ -91,8 +113,7 @@ class KPackage(val model: KModel, val name: String, var external: Boolean = fals
     /* Returns the class for the given name, creating one if its not already been create yet */
     fun getClass(simpleName: String): KClass {
         return classMap.getOrPut(simpleName) {
-            val base = if (simpleName == "Object" && name == "java.lang") null else model.getClass("java.lang.Object")
-            KClass(this, simpleName, base) }
+            KClass(this, simpleName) }
     }
 
     fun qualifiedName(simpleName: String): String {
@@ -114,21 +135,21 @@ class KPackage(val model: KModel, val name: String, var external: Boolean = fals
         return null
     }
 
-    fun groupClassMap(): Map<String,List<KClass>> {
-        return classes.groupBy(TreeMap<String,List<KClass>>()){it.group}
+    fun groupClassMap(): Map<String, List<KClass>> {
+        return classes.groupBy(TreeMap<String, List<KClass>>()){it.group}
     }
 }
 
 class KClass(val pkg: KPackage, val simpleName: String,
-        var baseClass: KClass? = null,
         var kind: String = "class", var group: String = "Other",
         var description: String = "", var detailedDescription: String = "",
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
-        var methods: List<KMethod> = arrayList<KMethod>(),
+        var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
+        var baseClasses: List<KClass> = arrayList<KClass>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2) : Comparable<KClass> {
+        var sourceLine: Int = 2) : Comparable<KClass>, KClassOrPackage {
 
     private var _initialised = false
 
@@ -148,46 +169,63 @@ class KClass(val pkg: KPackage, val simpleName: String,
 
     /** Link to the type which is relative if its a local type but could be a type in a different library or null if no link */
     public var url: String? = null
-        get() {
-            if ($url == null) $url = "${nameAsPath}.html"
-            return $url
-        }
+    get() {
+        if ($url == null) $url = "${nameAsPath}.html"
+        return $url
+    }
 
     public val name: String = pkg.qualifiedName(simpleName)
     public val packageName: String = pkg.name
 
     /** Returns the name as a directory using '/' instead of '.' */
     public val nameAsPath: String
-        get() = name.replace('.', '/')
+    get() = name.replace('.', '/')
 
 
     fun isAnnotation() = kind == "annotation"
     fun isInterface() = kind == "interface"
 }
 
-class KMethod(val name: String,
+class KFunction(val owner: KClassOrPackage, val name: String,
         var returnType: KClass,
         var description: String = "", var detailedDescription: String = "",
         var deprecated: Boolean = false,
+        var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var parameters: List<KParameter> = arrayList<KParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>()) : Comparable<KMethod> {
-    // TODO compare other things than just name :)
+        var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
+        var sourceLine: Int = 2) : Comparable<KFunction> {
 
-    override fun compareTo(other: KMethod): Int = name.compareTo(other.name)
+    override fun compareTo(other: KFunction): Int {
+        var answer = name.compareTo(other.name)
+        if (answer == 0) {
+            answer = parameterTypeText.compareTo(other.parameterTypeText)
+        }
+        return answer
+    }
 
-    fun equals(other: KMethod) = name == other.name
+    fun equals(other: KFunction) = name == other.name
 
     fun toString() = "fun ($name)"
 
     /** TODO generate a link with the argument type names */
-    public val link: String = name
+    public val link: String = "$name($parameterTypeText)"
 
     /** Returns a list of generic type parameter names kinds like "A, I" */
     public val typeParametersText: String
-        get() = typeParameters.map{ it.name }.join(", ")
+    get() = typeParameters.map{ it.name }.join(", ")
+
+    /** Returns a list of parameter value types */
+    private var _parameterTypeText: String? = null
+    public val parameterTypeText: String
+    get() {
+        if (_parameterTypeText == null) {
+            _parameterTypeText = typeParameters.map{ it.klass.name }.join(", ")
+        }
+        return _parameterTypeText.sure()
+    }
 }
 
 class KParameter(val name: String,

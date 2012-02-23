@@ -7,6 +7,9 @@ import std.util.*
 import java.util.*
 import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
+import org.jetbrains.kotlin.model.KClass
+import org.jetbrains.kotlin.model.KFunction
+import org.jetbrains.kotlin.model.extensionFunctions
 
 class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupport(p) {
     override fun render() {
@@ -22,8 +25,8 @@ class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupp
         println("""</TITLE>
 
 <META NAME="date" CONTENT="2012-01-09">""")
-println("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}stylesheet.css\" TITLE=\"Style\">")
-println("""
+        println("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"${pkg.nameAsRelativePath}stylesheet.css\" TITLE=\"Style\">")
+        println("""
 </HEAD>
 
 <BODY BGCOLOR="white">
@@ -35,6 +38,8 @@ println("""
         printClasses("enum", "Enums")
         printClasses("annotation", "Annotations")
         printClasses("exception", "Exceptions")
+        printFunctions()
+        printExtensionFunctions()
 
         println("""</BODY>
 </HTML>""")
@@ -58,6 +63,42 @@ println("""
             println("""</TR>
 </TABLE>""")
         }
+    }
 
+    protected fun printFunctions(): Unit {
+        val functions = pkg.functions.filter{ it.extensionClass == null }
+        if (! functions.isEmpty()) {
+            println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
+<TR>
+<TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Functions</FONT>&nbsp;
+<FONT CLASS="FrameItemFont">
+<BR>""")
+            for (c in functions) {
+                println("<A HREF=\"${c.name}.html\" title=\"function in ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
+                println("<BR>")
+            }
+            println("""</TR>
+</TABLE>""")
+        }
+    }
+
+    protected fun printExtensionFunctions(): Unit {
+        val map = extensionFunctions(pkg.functions)
+        if (! map.isEmpty()) {
+            println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
+<TR>
+<TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Extensions</FONT>&nbsp;
+<FONT CLASS="FrameItemFont">
+<BR>""")
+            for (e in map.entrySet()) {
+                val c = e?.getKey()
+                if (c != null) {
+                    println("<A HREF=\"${c.name}.html\" title=\"function in ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
+                    println("<BR>")
+                }
+            }
+            println("""</TR>
+</TABLE>""")
+        }
     }
 }

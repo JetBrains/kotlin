@@ -8,6 +8,7 @@ import java.util.*
 import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
+import org.jetbrains.kotlin.model.extensionFunctions
 
 class PackageSummaryTemplate(val model: KModel, pkg: KPackage) : PackageTemplateSupport(pkg) {
     override fun render() {
@@ -119,6 +120,9 @@ function windowTitle()
         printClasses("enum", "Enums")
         printClasses("annotation", "Annotations")
         printClasses("exception", "Exceptions")
+
+        printFunctions()
+        printExtensionFunctions()
 
         println("""<A NAME="package_description"><!-- --></A><H2>""")
         println("Package ${pkg.name} Description")
@@ -237,8 +241,57 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <P>
 """)
         }
-
     }
+
+    protected fun printFunctions(): Unit {
+        val functions = pkg.functions.filter{ it.extensionClass == null }
+        if (! functions.isEmpty()) {
+            print("""<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Functions Summary</B></FONT></TH>
+</TR>""")
+
+            for (c in functions) {
+                println("""<TR BGCOLOR="white" CLASS="TableRowColor">""")
+                println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}${c.name}.html\" title=\"function in ${pkg.name}\">${c.name}</A></B></TD>")
+                println("<TD>${c.description}</TD>")
+                println("</TR>")
+            }
+            println("""</TABLE>
+&nbsp;
+
+<P>
+""")
+        }
+    }
+
+    protected fun printExtensionFunctions(): Unit {
+        val map = extensionFunctions(pkg.functions)
+        if (! map.isEmpty()) {
+            print("""<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Extensions Summary</B></FONT></TH>
+</TR>""")
+
+            for (e in map.entrySet()) {
+                val c = e?.getKey()
+                if (c != null) {
+                    println("""<TR BGCOLOR="white" CLASS="TableRowColor">""")
+                    println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}${c.name}.html\" title=\"extensions on ${pkg.name}\">${c.name}</A></B></TD>")
+                    println("<TD>${c.description}</TD>")
+                    println("</TR>")
+                }
+            }
+            println("""</TABLE>
+&nbsp;
+
+<P>
+""")
+        }
+    }
+
 
     protected fun printNextPrevPackages(): Unit {
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">""")
