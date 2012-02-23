@@ -80,7 +80,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         if(loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
                 File file = new File(url.getPath());
-                if(!file.isFile() || file.getPath().endsWith(".jar"))
+                if(file.exists() && (!file.isFile() || file.getPath().endsWith(".jar")))
                     addToClasspath(file);
             }
         }
