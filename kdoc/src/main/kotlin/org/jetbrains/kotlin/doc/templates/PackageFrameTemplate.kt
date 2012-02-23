@@ -74,7 +74,7 @@ class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupp
 <FONT CLASS="FrameItemFont">
 <BR>""")
             for (c in functions) {
-                println("<A HREF=\"${c.name}.html\" title=\"function in ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
+                println("<A HREF=\"${href(c)}\" title=\"function in ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
                 println("<BR>")
             }
             println("""</TR>

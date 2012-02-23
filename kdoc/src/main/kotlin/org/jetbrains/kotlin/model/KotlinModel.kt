@@ -181,7 +181,6 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             // lets remove the comment tokens
             //val lines = text.trim().split("\\n")
             text = text.trim().trim("/").trim("*").trim()
-
             // TODO convert any macros or wiki text!
             return text
         }

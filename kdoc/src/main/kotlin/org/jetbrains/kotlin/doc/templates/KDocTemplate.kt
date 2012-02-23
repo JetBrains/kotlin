@@ -24,7 +24,7 @@ abstract class KDocTemplate() : TextTemplate() {
         return if (f.owner is KClass) {
             "${href(f.owner)}#${f.link}"
         } else {
-            "#${f.link}"
+            "package-summary.html#${f.link}"
         }
     }
 
