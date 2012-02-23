@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +31,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
@@ -58,64 +58,59 @@ public final class ArrayForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private final TemporaryVariable rangeExpression;
+    private final TemporaryVariable loopRange;
+
+    @NotNull
+    private final TemporaryVariable end;
+
+    @NotNull
+    private final TemporaryVariable index;
 
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
-        rangeExpression = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
+        loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
+        JsExpression length = LengthIntrinsic.INSTANCE.apply(loopRange.reference(), Collections.<JsExpression>emptyList(), context());
+        end = context().declareTemporary(length);
+        index = context().declareTemporary(program().getNumberLiteral(0));
     }
 
     @NotNull
     private JsBlock translate() {
-        JsExpression length = LengthIntrinsic.INSTANCE.apply(rangeExpression.reference(), Collections.<JsExpression>emptyList(), context());
-        TemporaryVariable end = context().declareTemporary(length);
-        List<JsStatement> blockStatements = temporariesInitialization(rangeExpression, end);
-        blockStatements.add(generateForExpression(end));
+        List<JsStatement> blockStatements = temporariesInitialization(loopRange, end);
+        blockStatements.add(generateForExpression());
         return AstUtil.newBlock(blockStatements);
     }
 
     @NotNull
-    private JsFor generateForExpression(@NotNull TemporaryVariable end) {
+    private JsFor generateForExpression() {
         JsFor result = new JsFor();
-        //TODO: make index instance variable
-        TemporaryVariable indexVar = context().declareTemporary(program().getNumberLiteral(0));
-        result.setInitVars(initExpression(indexVar));
-        result.setCondition(getCondition(end, indexVar));
-        result.setIncrExpr(getIncrExpression(indexVar));
-        result.setBody(getBody(indexVar));
+        result.setInitVars(initExpression());
+        result.setCondition(getCondition());
+        result.setIncrExpr(getIncrExpression());
+        result.setBody(getBody());
         return result;
     }
 
     @NotNull
-    private JsStatement getBody(@NotNull TemporaryVariable index) {
-        JsArrayAccess arrayAccess = new JsArrayAccess(rangeExpression.reference(), index.reference());
+    private JsStatement getBody() {
+        JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
         JsStatement currentVar = AstUtil.newVar(parameterName, arrayAccess);
         JsStatement realBody = Translation.translateAsStatement(getLoopBody(expression), context());
         return AstUtil.newBlock(currentVar, realBody);
     }
 
     @NotNull
-    private JsVars initExpression(TemporaryVariable start) {
-        return AstUtil.newVar(start.name(), program().getNumberLiteral(0));
+    private JsVars initExpression() {
+        return AstUtil.newVar(index.name(), program().getNumberLiteral(0));
     }
 
     @NotNull
-    private JsExpression getCondition(TemporaryVariable end, TemporaryVariable index) {
+    private JsExpression getCondition() {
         return AstUtil.notEqual(index.reference(), end.reference());
     }
 
     @NotNull
-    private JsExpression getIncrExpression(@NotNull TemporaryVariable index) {
+    private JsExpression getIncrExpression() {
         return new JsPrefixOperation(JsUnaryOperator.INC, index.reference());
-    }
-
-    //TODO: move somewhere util
-    @NotNull
-    private List<JsStatement> temporariesInitialization(TemporaryVariable... temporaries) {
-        List<JsStatement> result = Lists.newArrayList();
-        for (TemporaryVariable temporary : temporaries) {
-            result.add(temporary.assignmentExpression().makeStmt());
-        }
-        return result;
     }
 }

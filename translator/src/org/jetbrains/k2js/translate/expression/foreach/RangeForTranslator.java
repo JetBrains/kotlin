@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +29,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
@@ -55,51 +55,54 @@ public final class RangeForTranslator extends ForTranslator {
 
     @NotNull
     private final TemporaryVariable rangeExpression;
+    @NotNull
+    private final TemporaryVariable incrVar;
+    @NotNull
+    private final TemporaryVariable start;
+    @NotNull
+    private final TemporaryVariable end;
 
     private RangeForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         rangeExpression = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-    }
-
-    @NotNull
-    private JsBlock translate() {
-        //TODO: make fields
         JsExpression isReversed = callFunction("get_reversed");
         JsConditional incrVarValue = new JsConditional(isReversed,
                 program().getNumberLiteral(-1),
                 program().getNumberLiteral(1));
-        TemporaryVariable incrVar = context().declareTemporary(incrVarValue);
-        TemporaryVariable start = context().declareTemporary(callFunction("get_start"));
-        TemporaryVariable end = context().declareTemporary(new JsBinaryOperation(JsBinaryOperator.ADD, callFunction("get_end"), incrVar.reference()));
+        incrVar = context().declareTemporary(incrVarValue);
+        start = context().declareTemporary(callFunction("get_start"));
+        end = context().declareTemporary(new JsBinaryOperation(JsBinaryOperator.ADD, callFunction("get_end"), incrVar.reference()));
+    }
+
+    @NotNull
+    private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(rangeExpression, incrVar, start, end);
-        blockStatements.add(generateForExpression(incrVar, start, end));
+        blockStatements.add(generateForExpression());
         return AstUtil.newBlock(blockStatements);
     }
 
     @NotNull
-    private JsFor generateForExpression(@NotNull TemporaryVariable incrVar,
-                                        @NotNull TemporaryVariable start,
-                                        @NotNull TemporaryVariable end) {
+    private JsFor generateForExpression() {
         JsFor result = new JsFor();
-        result.setInitVars(initExpression(start, parameterName));
-        result.setCondition(getCondition(end, parameterName));
-        result.setIncrExpr(getIncrExpression(incrVar, parameterName));
+        result.setInitVars(initExpression());
+        result.setCondition(getCondition());
+        result.setIncrExpr(getIncrExpression());
         result.setBody(Translation.translateAsStatement(getLoopBody(expression), context()));
         return result;
     }
 
     @NotNull
-    private JsVars initExpression(TemporaryVariable start, JsName parameterName) {
+    private JsVars initExpression() {
         return AstUtil.newVar(parameterName, start.reference());
     }
 
     @NotNull
-    private JsExpression getCondition(TemporaryVariable end, JsName parameterName) {
+    private JsExpression getCondition() {
         return AstUtil.notEqual(parameterName.makeRef(), end.reference());
     }
 
     @NotNull
-    private JsExpression getIncrExpression(@NotNull TemporaryVariable incrVar, @NotNull JsName parameterName) {
+    private JsExpression getIncrExpression() {
         return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, parameterName.makeRef(), incrVar.reference());
     }
 
@@ -113,14 +116,5 @@ public final class RangeForTranslator extends ForTranslator {
     @NotNull
     private JsExpression callFunction(@NotNull String funName) {
         return AstUtil.newInvocation(getField(funName));
-    }
-
-    @NotNull
-    private List<JsStatement> temporariesInitialization(TemporaryVariable... temporaries) {
-        List<JsStatement> result = Lists.newArrayList();
-        for (TemporaryVariable temporary : temporaries) {
-            result.add(temporary.assignmentExpression().makeStmt());
-        }
-        return result;
     }
 }

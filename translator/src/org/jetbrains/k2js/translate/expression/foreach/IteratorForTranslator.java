@@ -44,23 +44,25 @@ public final class IteratorForTranslator extends ForTranslator {
         return (new IteratorForTranslator(expression, context).translate());
     }
 
+    @NotNull
+    private final TemporaryVariable iterator;
+
     private IteratorForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
+        iterator = context().declareTemporary(iteratorMethodInvocation());
     }
 
     @NotNull
     private JsBlock translate() {
-        TemporaryVariable iterator = context().declareTemporary(iteratorMethodInvocation());
-        JsBlock bodyBlock = generateCycleBody(parameterName, iterator);
-        JsWhile cycle = new JsWhile(hasNextMethodInvocation(iterator), bodyBlock);
+        JsBlock bodyBlock = generateCycleBody();
+        JsWhile cycle = new JsWhile(hasNextMethodInvocation(), bodyBlock);
         return AstUtil.newBlock(iterator.assignmentExpression().makeStmt(), cycle);
     }
 
     @NotNull
-    private JsBlock generateCycleBody(@NotNull JsName parameterName, @NotNull TemporaryVariable iterator) {
+    private JsBlock generateCycleBody() {
         JsBlock cycleBody = new JsBlock();
-        JsStatement parameterAssignment =
-                AstUtil.newVar(parameterName, nextMethodInvocation(iterator));
+        JsStatement parameterAssignment = AstUtil.newVar(parameterName, nextMethodInvocation());
         JsNode originalBody = Translation.translateExpression(getLoopBody(expression), context().innerBlock(cycleBody));
         cycleBody.addStatement(parameterAssignment);
         cycleBody.addStatement(AstUtil.convertToBlock(originalBody));
@@ -68,13 +70,13 @@ public final class IteratorForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsExpression nextMethodInvocation(@NotNull TemporaryVariable iterator) {
+    private JsExpression nextMethodInvocation() {
         FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange(expression));
         return translateMethodInvocation(iterator.reference(), nextFunction);
     }
 
     @NotNull
-    private JsExpression hasNextMethodInvocation(@NotNull TemporaryVariable iterator) {
+    private JsExpression hasNextMethodInvocation() {
         CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange(expression));
         return translateMethodInvocation(iterator.reference(), hasNextFunction);
     }

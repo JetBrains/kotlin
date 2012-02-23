@@ -29,6 +29,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -37,7 +38,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRight
  * @author Pavel Talanov
  */
 
-// TODO: respect reverse semantics
+// TODO: implement reverse semantics
 public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
@@ -107,15 +108,5 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     @NotNull
     private JsExpression getIncrExpression() {
         return new JsPrefixOperation(JsUnaryOperator.INC, parameterName.makeRef());
-    }
-
-    //TODO : UTIL!!
-    @NotNull
-    private List<JsStatement> temporariesInitialization(@NotNull TemporaryVariable... temporaries) {
-        List<JsStatement> result = Lists.newArrayList();
-        for (TemporaryVariable temporary : temporaries) {
-            result.add(temporary.assignmentExpression().makeStmt());
-        }
-        return result;
     }
 }

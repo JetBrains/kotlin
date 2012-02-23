@@ -41,11 +41,11 @@ public abstract class ForTranslator extends AbstractTranslator {
         if (RangeLiteralForTranslator.isApplicable(expression, context)) {
             return RangeLiteralForTranslator.translate(expression, context);
         }
-        if (ArrayForTranslator.isApplicable(expression, context)) {
-            return ArrayForTranslator.translate(expression, context);
-        }
         if (RangeForTranslator.isApplicable(expression, context)) {
             return RangeForTranslator.translate(expression, context);
+        }
+        if (ArrayForTranslator.isApplicable(expression, context)) {
+            return ArrayForTranslator.translate(expression, context);
         }
         return IteratorForTranslator.translate(expression, context);
     }
