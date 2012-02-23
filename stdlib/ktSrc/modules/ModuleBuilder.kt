@@ -6,7 +6,7 @@ import jet.modules.*
 fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
     val builder = ModuleBuilder(name)
     builder.callback()
-    AllModules.modules.sure().get()?.add(builder)
+    AllModules.modules?.add(builder)
 }
 
 class SourcesBuilder(val parent: ModuleBuilder) {
