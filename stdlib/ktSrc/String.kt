@@ -18,6 +18,30 @@ inline fun String.replaceAll(regex: String, replacement : String) = (this as jav
 
 inline fun String.trim() = (this as java.lang.String).trim().sure()
 
+/** Returns the string with leading and trailing text matching the given string removed */
+inline fun String.trim(text: String) = trimLeading(text).trimTrailing(text)
+
+/** Returns the string with the prefix and postfix text trimmed */
+inline fun String.trim(prefix: String, postfix: String) = trimLeading(prefix).trimTrailing(postfix)
+
+/** Returns the string with all leading occurrences of the given string removed */
+inline fun String.trimLeading(prefix: String): String {
+    var answer = this
+    while (answer.startsWith(prefix)) {
+        answer = answer.substring(prefix.length())
+    }
+    return answer
+}
+
+/** Returns the string with the all the trailing occurrences of the given string removed */
+inline fun String.trimTrailing(postfix: String): String {
+    var answer = this
+    while (answer.endsWith(postfix)) {
+        answer = answer.substring(0, length() - postfix.length())
+    }
+    return answer
+}
+
 inline fun String.toUpperCase() = (this as java.lang.String).toUpperCase().sure()
 
 inline fun String.toLowerCase() = (this as java.lang.String).toLowerCase().sure()
