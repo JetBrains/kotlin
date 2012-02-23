@@ -12,11 +12,7 @@ import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
 
 
-abstract class PackageTemplateSupport(private val _pkg: KPackage) : KDocTemplate() {
-
-    // TODO this verbosity is to work around this bug: http://youtrack.jetbrains.com/issue/KT-1398
-    public val pkg: KPackage
-    get() = _pkg
+abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
     protected override fun relativePrefix(): String = pkg.nameAsRelativePath
 

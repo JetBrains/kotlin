@@ -93,7 +93,7 @@ class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupp
             for (e in map.entrySet()) {
                 val c = e?.getKey()
                 if (c != null) {
-                    println("<A HREF=\"${c.name}.html\" title=\"function in ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
+                    println("<A HREF=\"${extensionsHref(pkg, c)}\" title=\"extensions functions on class ${c.name} from ${pkg.name}\" target=\"classFrame\"><I>${c.name}</I></A>")
                     println("<BR>")
                 }
             }

@@ -8,16 +8,24 @@ import org.jetbrains.kotlin.model.KFunction
 import java.util.Collection
 
 abstract class KDocTemplate() : TextTemplate() {
-    fun href(pkg: KPackage): String {
+    fun rootHref(pkg: KPackage): String {
         return if (pkg.external) {
             // TODO deal with external classes
             ""
         } else relativePrefix()
     }
 
+    fun href(p: KPackage): String
+        = "${rootHref(p)}${p.nameAsPath}/package-summary.html"
+
     fun href(c: KClass): String {
         val postfix = if (c.pkg.external) "?is-external=true" else ""
-        return "${href(c.pkg)}${c.nameAsPath}.html$postfix"
+        return "${rootHref(c.pkg)}${c.nameAsPath}.html$postfix"
+    }
+
+    fun extensionsHref(pkg: KPackage, c: KClass): String {
+        // is inside the pkg so no need to use it...
+        return "${c.nameAsPath}-extensions.html"
     }
 
     fun href(f: KFunction): String {
@@ -30,7 +38,7 @@ abstract class KDocTemplate() : TextTemplate() {
 
     fun sourceHref(f: KFunction): String {
         return if (f.owner is KClass) {
-            "${href(f.owner.pkg)}src-html/${f.owner.simpleName}.html#line.${f.sourceLine}"
+            "${rootHref(f.owner.pkg)}src-html/${f.owner.simpleName}.html#line.${f.sourceLine}"
         } else {
             // TODO how to find the function in a package???
             ""
@@ -42,6 +50,10 @@ abstract class KDocTemplate() : TextTemplate() {
         val prefix = if (c.isAnnotation()) "@" else ""
         val name = if (fullName) c.name else c.simpleName
         return "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>"
+    }
+
+    fun link(p: KPackage): String {
+        return "<A HREF=\"${href(p)}\" title=\"package ${p.name}}\">${p.name}</A>"
     }
 
     fun link(a: KAnnotation): String {

@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.doc
+package org.jetbrains.kotlin.model
 
 import std.*
 import std.util.*
@@ -31,11 +31,18 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 
-/** Generates the Kotlin Documentation for the model */
-class KDoc(val outputDir: File) : KModelCompilerPlugin() {
 
-    override fun processModel(model: KModel) {
-        val generator = KDocGenerator(model, outputDir)
-        generator.execute()
+/** Base class for any compiler plugin which needs to process a KModel */
+abstract class KModelCompilerPlugin : CompilerPlugin {
+
+    override fun processFiles(context: BindingContext?, sources: List<JetFile?>?) {
+        if (context != null && sources != null) {
+            val model = KModel(context)
+            model.load(sources)
+
+            processModel(model)
+        }
     }
+
+    abstract fun processModel(model: KModel): Unit
 }
