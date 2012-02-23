@@ -33,16 +33,45 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
     }
 }
 
-fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List<KFunction>> {
+// TODO for some reason the SortedMap causes kotlin to freak out a little :)
+fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, SortedSet<KFunction>> {
+    //fun inheritedExtensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, SortedSet<KFunction>> {
+    val map = extensionFunctions(functions)
+    // for each class, lets walk its base classes and add any other extension functions from base classes
+    val classes = map.keySet().toList()
+    val answer = TreeMap<KClass, SortedSet<KFunction>>()
+    for (c in map.keySet()) {
+        val allFunctions = map.get(c).notNull().toSortedSet()
+        answer.put(c, allFunctions)
+        val des = c.descendants()
+        for (b in des) {
+            val list = map.get(b)
+            if (list != null) {
+                if (allFunctions != null) {
+                    for (f in list) {
+                        if (f != null) {
+                            // add the methods from the base class if we don't have a matching method
+                            if (!allFunctions.any{ it.name == f.name && it.parameterTypeText == f.parameterTypeText}) {
+                                allFunctions.add(f)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return answer
+}
+
+// TODO for some reason the SortedMap causes kotlin to freak out a little :)
+fun extensionFunctions(functions: Collection<KFunction>): Map<KClass, List<KFunction>> {
+    //fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
     functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
     return map
 }
 
-
-
 trait KClassOrPackage {
-
 }
 
 class KModel(var context: BindingContext, var title: String = "Documentation", var version: String = "TODO") {
@@ -346,6 +375,15 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
     fun isAnnotation() = kind == "annotation"
     fun isInterface() = kind == "interface"
+
+    /** Returns all of the base classes and all of their descendants */
+    fun descendants(answer: Set<KClass> = LinkedHashSet<KClass>()): Set<KClass> {
+        answer.addAll(baseClasses)
+        for (b in baseClasses) {
+            b.descendants(answer)
+        }
+        return answer
+    }
 }
 
 class KFunction(val owner: KClassOrPackage, val name: String,

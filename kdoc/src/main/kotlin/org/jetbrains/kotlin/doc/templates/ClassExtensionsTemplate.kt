@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
 
-class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass, var functions: List<KFunction>) : ClassTemplate(m, p, k) {
+class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass, var functions: Collection<KFunction>) : ClassTemplate(m, p, k) {
 
     override fun pageTitle(): String = "${klass.name} Extensions fom ${pkg.name} (${model.title})"
 

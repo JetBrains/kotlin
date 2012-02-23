@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.model.*
 import java.io.File
 import java.util.List
 import java.util.HashSet
-import java.util.Collection
+import java.util.*
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -47,9 +47,6 @@ class KDocGenerator(val model: KModel, val outputDir: File) {
         run("overview-tree.html", OverviewTreeTemplate(model))
         run("package-list", PackageListTemplate(model))
         // run("serialized-form.html", SerializedFormTemplate(model))
-        /**
-        TODO
-        */
         for (p in model.packages) {
             run("${p.nameAsPath}/package-frame.html", PackageFrameTemplate(model, p))
             run("${p.nameAsPath}/package-summary.html", PackageSummaryTemplate(model, p))
@@ -59,14 +56,7 @@ class KDocGenerator(val model: KModel, val outputDir: File) {
                 run("${c.nameAsPath}.html", ClassTemplate(model, p, c))
             }
 
-            val map = extensionFunctions(p.functions)
-            for (e in map.entrySet()) {
-                val c = e?.getKey()
-                val functions = e?.getValue()
-                if (c != null && functions != null) {
-                    run("${p.nameAsPath}/${c.simpleName}-extensions.html", ClassExtensionsTemplate(model, p, c, functions))
-                }
-            }
+            generateExtensionFunctions(p)
         }
     }
 
@@ -80,6 +70,17 @@ class KDocGenerator(val model: KModel, val outputDir: File) {
 
     protected fun log(text: String) {
         println(text)
+    }
+
+    protected fun generateExtensionFunctions(p: KPackage): Unit {
+        val map = inheritedExtensionFunctions(p.functions)
+        for (e in map.entrySet()) {
+            val c = e?.getKey()
+            val functions = e?.getValue()
+            if (c != null && functions != null) {
+                run("${p.nameAsPath}/${c.simpleName}-extensions.html", ClassExtensionsTemplate(model, p, c, functions))
+            }
+        }
     }
 
 }
