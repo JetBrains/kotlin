@@ -26,6 +26,7 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
+//TODO: consider moving some of the binary/unary operations stuff here
 public final class ForTranslatorUtils {
 
     private ForTranslatorUtils() {

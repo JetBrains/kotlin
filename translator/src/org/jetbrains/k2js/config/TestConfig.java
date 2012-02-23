@@ -54,8 +54,7 @@ public final class TestConfig extends Config {
             "/html5/canvas.kt",
             "/html5/files.kt",
             "/html5/image.kt",
-            "/helper/ip.kt",
-            "/pixastic/pixastic.kt"
+            "/helper/ip.kt"
     );
 
     @NotNull
@@ -90,9 +89,9 @@ public final class TestConfig extends Config {
     private static List<JetFile> initLibFiles(@NotNull Project project) {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         for (String libFileName : LIB_FILE_NAMES) {
-            InputStream stream = Dummy.class.getResourceAsStream(libFileName);
-            //noinspection IOResourceOpenedButNotSafelyClosed
             JetFile file = null;
+            //TODO: close stream?
+            InputStream stream = Dummy.class.getResourceAsStream(libFileName);
             try {
                 String text = readString(stream);
                 file = JetFileUtils.createPsiFile(libFileName, text, project);
@@ -109,7 +108,6 @@ public final class TestConfig extends Config {
         if (jsLibFiles == null) {
             jsLibFiles = initLibFiles(getProject());
         }
-
         return jsLibFiles;
     }
 
