@@ -26,10 +26,12 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.filters.position.PositionElementFilter;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -62,10 +64,13 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
             new CommentFilter(), // or
             new ParentFilter(new ClassFilter(JetLiteralStringTemplateEntry.class)), // or
             new ParentFilter(new ClassFilter(JetConstantExpression.class)), // or
-            new LeftNeighbour(new TextFilter(".")), // or
-            new AndFilter(new LeafElementFilter(JetTokens.IDENTIFIER),
-                          new NotFilter(new ParentFilter(new ClassFilter(JetReferenceExpression.class))))
+            new LeftNeighbour(new TextFilter("."))
     ));
+
+    private final static ElementFilter NOT_IDENTIFIER_FILTER = new NotFilter(new AndFilter(
+            new LeafElementFilter(JetTokens.IDENTIFIER),
+            new NotFilter(new ParentFilter(new ClassFilter(JetReferenceExpression.class))))
+    );
 
     private final static List<String> FUNCTION_KEYWORDS = Lists.newArrayList(GET_KEYWORD.toString(), SET_KEYWORD.toString());
 
@@ -82,6 +87,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
     private static final String TRAIT_TEMPLATE = "trait <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_TEMPLATE = "class <#<name>#> {\n<#<body>#>\n}";
     private static final String CLASS_OBJECT_TEMPLATE = "class object {\n<#<body>#>\n}";
+    private static final String CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE = "object {\n<#<body>#>\n}";
     private static final String FOR_TEMPLATE = "for (<#<i>#> in <#<elements>#>) {\n<#<body>#>\n}";
     private static final String WHEN_TEMPLATE = "when (<#<expression>#>) {\n<#<condition>#> -> <#<value>#>\n" +
                                                 "else -> <#<elseValue>#>\n}";
@@ -165,12 +171,28 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
             return PsiTreeUtil.getParentOfType(context, JetClassBody.class, true,
-                JetBlockExpression.class, JetProperty.class, JetParameterList.class) != null;
+                                               JetBlockExpression.class, JetProperty.class, JetParameterList.class) != null;
         }
 
         @Override
         public boolean isClassAcceptable(Class hintClass) {
             return true;
+        }
+    }
+
+    private static class AfterClassInClassBodyFilter extends InClassBodyFilter {
+        @Override
+        public boolean isAcceptable(Object element, PsiElement context) {
+            if (super.isAcceptable(element, context)) {
+                PsiElement ps = context.getPrevSibling();
+                if (ps instanceof PsiWhiteSpace) {
+                    ps = ps.getPrevSibling();
+                }
+                if (ps instanceof LeafPsiElement) {
+                    return ((LeafPsiElement) ps).getElementType() == JetTokens.CLASS_KEYWORD;
+                }
+            }
+            return false;
         }
     }
 
@@ -202,7 +224,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
         private final Collection<LookupElement> elements;
 
-        public KeywordsCompletionProvider(String ...keywords) {
+        public KeywordsCompletionProvider(String... keywords) {
             List<String> elementsList = Lists.newArrayList(keywords);
             elements = Collections2.transform(elementsList, new Function<String, LookupElement>() {
                 @Override
@@ -232,39 +254,39 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
 
     public JetKeywordCompletionContributor() {
         registerScopeKeywordsCompletion(new InTopFilter(),
-                ABSTRACT_KEYWORD,
-                FINAL_KEYWORD, GET_KEYWORD,
-                IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
-                OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
-                PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
-                TYPE_KEYWORD);
+                                        ABSTRACT_KEYWORD,
+                                        FINAL_KEYWORD, GET_KEYWORD,
+                                        IMPORT_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, PACKAGE_KEYWORD, PRIVATE_KEYWORD,
+                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
+                                        TYPE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InClassBodyFilter(),
-                ABSTRACT_KEYWORD,
-                FINAL_KEYWORD, GET_KEYWORD,
-                INLINE_KEYWORD, INTERNAL_KEYWORD, OBJECT_KEYWORD,
-                OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
-                PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
-                TYPE_KEYWORD);
+                                        ABSTRACT_KEYWORD,
+                                        FINAL_KEYWORD, GET_KEYWORD,
+                                        INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        OPEN_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
+                                        PROTECTED_KEYWORD, PUBLIC_KEYWORD, SET_KEYWORD,
+                                        TYPE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InNonClassBlockFilter(),
-                AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
-                CATCH_KEYWORD, CONTINUE_KEYWORD,
-                ELSE_KEYWORD,
-                FALSE_KEYWORD, FINALLY_KEYWORD,
-                GET_KEYWORD,
-                IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
-                IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
-                PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
-                RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
-                CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
-                TRUE_KEYWORD, TRY_KEYWORD,
-                TYPE_KEYWORD,
-                VARARG_KEYWORD, WHERE_KEYWORD);
+                                        AS_KEYWORD, BREAK_KEYWORD, BY_KEYWORD,
+                                        CATCH_KEYWORD, CONTINUE_KEYWORD,
+                                        ELSE_KEYWORD,
+                                        FALSE_KEYWORD, FINALLY_KEYWORD,
+                                        GET_KEYWORD,
+                                        IN_KEYWORD, INLINE_KEYWORD, INTERNAL_KEYWORD,
+                                        IS_KEYWORD, NULL_KEYWORD, OBJECT_KEYWORD,
+                                        PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD,
+                                        RETURN_KEYWORD, SET_KEYWORD, SUPER_KEYWORD,
+                                        CAPITALIZED_THIS_KEYWORD, THIS_KEYWORD, THROW_KEYWORD,
+                                        TRUE_KEYWORD, TRY_KEYWORD,
+                                        TYPE_KEYWORD,
+                                        VARARG_KEYWORD, WHERE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InPropertyFilter(),
-                ELSE_KEYWORD, FALSE_KEYWORD,
-                NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
+                                        ELSE_KEYWORD, FALSE_KEYWORD,
+                                        NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
         registerScopeKeywordsCompletion(new InParametersFilter(), OUT_KEYWORD);
 
@@ -287,11 +309,17 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
         registerScopeKeywordsCompletion(new InPropertyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
+        registerScopeKeywordsCompletion(new AfterClassInClassBodyFilter(), false,
+                                        CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);
+    }
+
+    private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, boolean notIdentifier, String... keywords) {
+        extend(CompletionType.BASIC, getPlacePattern(placeFilter, notIdentifier),
+               new KeywordsCompletionProvider(keywords));
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, String... keywords) {
-        extend(CompletionType.BASIC, getPlacePattern(placeFilter),
-               new KeywordsCompletionProvider(keywords));
+        registerScopeKeywordsCompletion(placeFilter, true, keywords);
     }
 
     private void registerScopeKeywordsCompletion(final ElementFilter placeFilter, JetToken... keywords) {
@@ -307,9 +335,14 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         return ArrayUtil.toStringArray(strings);
     }
 
-    private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter) {
-        return PlatformPatterns.psiElement().and(
-                new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
+    private static ElementPattern<PsiElement> getPlacePattern(final ElementFilter placeFilter, boolean notIdentifier) {
+        if (notIdentifier) {
+            return PlatformPatterns.psiElement().and(
+                    new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
+        } else {
+            return PlatformPatterns.psiElement().and(
+                    new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
+        }
     }
 
 

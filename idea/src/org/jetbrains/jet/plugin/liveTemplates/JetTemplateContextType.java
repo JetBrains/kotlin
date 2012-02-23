@@ -21,11 +21,14 @@ import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 /**
@@ -43,6 +46,11 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             PsiElement element = file.findElementAt(offset);
             if (element instanceof PsiWhiteSpace) {
                 return false;
+            } else if (element instanceof LeafPsiElement) {
+                IElementType elementType = ((LeafPsiElement) element).getElementType();
+                if (elementType == JetTokens.IDENTIFIER && !(element.getParent() instanceof JetReferenceExpression)) {
+                    return false;
+                }
             }
             return element != null && isInContext(element);
         }
