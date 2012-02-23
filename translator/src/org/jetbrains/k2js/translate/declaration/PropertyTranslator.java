@@ -59,7 +59,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private PropertyTranslator(@NotNull PropertyDescriptor property, @NotNull TranslationContext context) {
         super(context);
         this.property = property;
-        this.declaration = BindingUtils.getPropertyForDescriptor(context().bindingContext(), property);
+        this.declaration = BindingUtils.getPropertyForDescriptor(bindingContext(), property);
     }
 
     @NotNull

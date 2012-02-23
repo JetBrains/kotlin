@@ -76,7 +76,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     }
 
     public JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
-        JsNumberLiteral oneLiteral = context().program().getNumberLiteral(1);
+        JsNumberLiteral oneLiteral = program().getNumberLiteral(1);
         JetToken token = getOperationToken(expression);
         if (token.equals(JetTokens.PLUSPLUS)) {
             return new JsBinaryOperation(JsBinaryOperator.ADD, leftExpression, oneLiteral);

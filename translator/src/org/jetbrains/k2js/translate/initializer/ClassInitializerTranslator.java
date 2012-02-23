@@ -73,7 +73,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     }
 
     private void mayBeAddCallToSuperMethod() {
-        if (hasAncestorClass(context().bindingContext(), classDeclaration)) {
+        if (hasAncestorClass(bindingContext(), classDeclaration)) {
             JetDelegatorToSuperCall superCall = getSuperCall();
             if (superCall == null) return;
             addCallToSuperMethod(superCall);
@@ -119,7 +119,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     private JsParameter translateParameter(@NotNull JetParameter jetParameter) {
         DeclarationDescriptor parameterDescriptor =
-                getDescriptorForElement(context().bindingContext(), jetParameter);
+                getDescriptorForElement(bindingContext(), jetParameter);
         JsName parameterName = context().getNameForDescriptor(parameterDescriptor);
         JsParameter jsParameter = new JsParameter(parameterName);
         mayBeAddInitializerStatementForProperty(jsParameter, jetParameter);
@@ -129,7 +129,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     private void mayBeAddInitializerStatementForProperty(@NotNull JsParameter jsParameter,
                                                          @NotNull JetParameter jetParameter) {
         PropertyDescriptor propertyDescriptor =
-                getPropertyDescriptorForConstructorParameter(context().bindingContext(), jetParameter);
+                getPropertyDescriptorForConstructorParameter(bindingContext(), jetParameter);
         if (propertyDescriptor != null) {
             JsStatement assignmentToBackingFieldExpression = assignmentToBackingField
                     (context(), propertyDescriptor, jsParameter.getName().makeRef());

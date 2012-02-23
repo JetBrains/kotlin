@@ -55,7 +55,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     //TODO: at the moment this check is very ineffective, possible solution is to cash the result of getDFN
     // other solution is to determine it's not affecting performance :D
     public boolean isNamespaceEmpty() {
-        return BindingUtils.getDeclarationsForNamespace(context().bindingContext(), descriptor).isEmpty();
+        return BindingUtils.getDeclarationsForNamespace(bindingContext(), descriptor).isEmpty();
     }
 
 

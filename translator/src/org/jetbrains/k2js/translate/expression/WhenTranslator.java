@@ -55,7 +55,7 @@ public class WhenTranslator extends AbstractTranslator {
         super(context);
         this.whenExpression = expression;
         this.expressionToMatch = translateExpressionToMatch(whenExpression);
-        this.dummyCounter = context.declareTemporary(context().program().getNumberLiteral(0));
+        this.dummyCounter = context.declareTemporary(program().getNumberLiteral(0));
         this.result = context.declareTemporary(program().getNullLiteral());
     }
 
@@ -80,7 +80,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
         JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                dummyCounter.reference(), context().program().getNumberLiteral(currentEntryNumber));
+                dummyCounter.reference(), program().getNumberLiteral(currentEntryNumber));
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }

@@ -203,7 +203,7 @@ public final class FunctionTranslator extends AbstractTranslator {
             JsName receiver = functionBodyContext.jsScope().declareName(Namer.getReceiverParameterName());
             DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
             assert expectedReceiverDescriptor != null;
-            context().aliaser().setAliasForThis(expectedReceiverDescriptor, receiver);
+            aliaser().setAliasForThis(expectedReceiverDescriptor, receiver);
             jsParameters.add(new JsParameter(receiver));
         }
     }

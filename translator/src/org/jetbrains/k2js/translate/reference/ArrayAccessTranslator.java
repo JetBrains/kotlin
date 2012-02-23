@@ -77,7 +77,7 @@ public final class ArrayAccessTranslator extends AccessTranslator {
         return CallBuilder.build(context())
                 .receiver(translateArrayExpression())
                 .args(arguments)
-                .resolvedCall(BindingUtils.getResolvedCall(context().bindingContext(), expression))
+                .resolvedCall(BindingUtils.getResolvedCall(bindingContext(), expression))
                 .descriptor(methodDescriptor)
                 .translate();
     }

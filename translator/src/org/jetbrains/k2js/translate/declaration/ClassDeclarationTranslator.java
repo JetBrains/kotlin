@@ -117,8 +117,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
 
     private void removeAliases() {
         for (JetClass jetClass : getClassDeclarations()) {
-            ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), jetClass);
-            context().aliaser().removeAliasForDescriptor(descriptor);
+            ClassDescriptor descriptor = BindingUtils.getClassDescriptor(bindingContext(), jetClass);
+            aliaser().removeAliasForDescriptor(descriptor);
         }
     }
 
@@ -126,9 +126,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private List<JetClass> getClassDeclarations() {
         List<JetClass> classes = new ArrayList<JetClass>();
         for (ClassDescriptor classDescriptor : descriptors) {
-            classes.add(BindingUtils.getClassForDescriptor(context().bindingContext(), classDescriptor));
+            classes.add(BindingUtils.getClassForDescriptor(bindingContext(), classDescriptor));
         }
-        return ClassSorter.sortUsingInheritanceOrder(classes, context().bindingContext());
+        return ClassSorter.sortUsingInheritanceOrder(classes, bindingContext());
     }
 
     @NotNull
@@ -144,8 +144,8 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         JsName globalClassName = context().getNameForElement(declaration);
         JsName localAlias = dummyFunctionScope.declareTemporary();
         localToGlobalClassName.put(localAlias, globalClassName);
-        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(context().bindingContext(), declaration);
-        context().aliaser().setAliasForDescriptor(descriptor, localAlias);
+        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(bindingContext(), declaration);
+        aliaser().setAliasForDescriptor(descriptor, localAlias);
         return localAlias;
     }
 

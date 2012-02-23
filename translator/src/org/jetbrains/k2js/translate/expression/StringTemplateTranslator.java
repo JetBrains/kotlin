@@ -82,13 +82,13 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         //TODO: duplication
         @Override
         public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
-            JsStringLiteral stringConstant = context().program().getStringLiteral(entry.getText());
+            JsStringLiteral stringConstant = program().getStringLiteral(entry.getText());
             append(stringConstant);
         }
 
         @Override
         public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-            JsStringLiteral escapedValue = context().program().getStringLiteral(entry.getUnescapedValue());
+            JsStringLiteral escapedValue = program().getStringLiteral(entry.getUnescapedValue());
             append(escapedValue);
         }
 

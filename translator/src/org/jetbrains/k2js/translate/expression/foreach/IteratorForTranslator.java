@@ -71,13 +71,13 @@ public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression nextMethodInvocation() {
-        FunctionDescriptor nextFunction = getNextFunction(context().bindingContext(), getLoopRange(expression));
+        FunctionDescriptor nextFunction = getNextFunction(bindingContext(), getLoopRange(expression));
         return translateMethodInvocation(iterator.reference(), nextFunction);
     }
 
     @NotNull
     private JsExpression hasNextMethodInvocation() {
-        CallableDescriptor hasNextFunction = getHasNextCallable(context().bindingContext(), getLoopRange(expression));
+        CallableDescriptor hasNextFunction = getHasNextCallable(bindingContext(), getLoopRange(expression));
         return translateMethodInvocation(iterator.reference(), hasNextFunction);
     }
 
@@ -85,7 +85,7 @@ public final class IteratorForTranslator extends ForTranslator {
     private JsExpression iteratorMethodInvocation() {
         JetExpression rangeExpression = getLoopRange(expression);
         JsExpression range = Translation.translateAsExpression(rangeExpression, context());
-        FunctionDescriptor iteratorFunction = getIteratorFunction(context().bindingContext(), rangeExpression);
+        FunctionDescriptor iteratorFunction = getIteratorFunction(bindingContext(), rangeExpression);
         return translateMethodInvocation(range, iteratorFunction);
     }
 

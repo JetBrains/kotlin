@@ -99,7 +99,7 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     private boolean isNullable(JetTypePattern pattern) {
-        return BindingUtils.getTypeByReference(context().bindingContext(),
+        return BindingUtils.getTypeByReference(bindingContext(),
                 getTypeReference(pattern)).isNullable();
     }
 
@@ -119,7 +119,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef getClassNameReferenceForTypeReference(@NotNull JetTypeReference typeReference) {
         ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
-                (context().bindingContext(), typeReference);
+                (bindingContext(), typeReference);
         return TranslationUtils.getQualifiedReference(context(), referencedClass);
     }
 

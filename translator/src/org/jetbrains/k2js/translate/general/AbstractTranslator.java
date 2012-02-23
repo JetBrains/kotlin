@@ -18,13 +18,13 @@ package org.jetbrains.k2js.translate.general;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.context.Aliaser;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
  * @author Pavel Talanov
  */
-//TODO: provide helper methods for different parts of context
 public abstract class AbstractTranslator {
 
     @NotNull
@@ -47,5 +47,10 @@ public abstract class AbstractTranslator {
     @NotNull
     protected Aliaser aliaser() {
         return context.aliaser();
+    }
+
+    @NotNull
+    protected BindingContext bindingContext() {
+        return context.bindingContext();
     }
 }

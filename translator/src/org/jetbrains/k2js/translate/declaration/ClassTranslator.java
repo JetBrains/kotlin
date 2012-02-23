@@ -142,8 +142,8 @@ public final class ClassTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression getClassReference(@NotNull ClassDescriptor superClassDescriptor) {
         //NOTE: aliasing here is needed for the declaration generation step
-        if (context().aliaser().hasAliasForDeclaration(superClassDescriptor)) {
-            return context().aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
+        if (aliaser().hasAliasForDeclaration(superClassDescriptor)) {
+            return aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
         }
         return context().getNameForDescriptor(superClassDescriptor).makeRef();
     }
@@ -171,7 +171,7 @@ public final class ClassTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> result = new ArrayList<JsPropertyInitializer>();
         for (JetParameter parameter : getPrimaryConstructorParameters(classDeclaration)) {
             PropertyDescriptor descriptor =
-                    getPropertyDescriptorForConstructorParameter(context().bindingContext(), parameter);
+                    getPropertyDescriptorForConstructorParameter(bindingContext(), parameter);
             if (descriptor != null) {
                 result.addAll(PropertyTranslator.translateAccessors(descriptor, context()));
             }

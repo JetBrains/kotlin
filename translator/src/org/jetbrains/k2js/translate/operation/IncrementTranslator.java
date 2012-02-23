@@ -79,7 +79,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     private boolean returnValueIgnored() {
-        return isStatement(context().bindingContext(), expression);
+        return isStatement(bindingContext(), expression);
     }
 
     @NotNull
