@@ -19,6 +19,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
 
@@ -147,6 +148,12 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
                     if (function != null) {
                         list.add(function)
                     }
+                } else if (descriptor is PropertyDescriptor) {
+                    if (owner is KClass) {
+                        val name = descriptor.getName()
+                        val property = KProperty(descriptor, name)
+                        owner.properties.add(property)
+                    }
                 }
             }
         } catch (e: Throwable) {
@@ -250,12 +257,18 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     }
 }
 
+abstract class KAnnotated {
+    public open var description: String = ""
+
+    public open var detailedDescription: String = ""
+        get() = if ($detailedDescription.notEmpty()) $detailedDescription else description
+}
+
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
         val name: String, var external: Boolean = false,
-        var description: String = "",
-        var detailedDescription: String = "",
         var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
-        var local: Boolean = false) : Comparable<KPackage>, KClassOrPackage {
+        var local: Boolean = false) : KAnnotated(), Comparable<KPackage>, KClassOrPackage {
+
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
     fun equals(other: KPackage) = name == other.name
@@ -343,14 +356,14 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
 class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         val simpleName: String,
         var kind: String = "class", var group: String = "Other",
-        var description: String = "", var detailedDescription: String = "",
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
         var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
+        var properties: SortedSet<KProperty> = TreeSet<KProperty>(),
         var baseClasses: List<KClass> = arrayList<KClass>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2) : Comparable<KClass>, KClassOrPackage {
+        var sourceLine: Int = 2) : KAnnotated(), Comparable<KClass>, KClassOrPackage {
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -388,7 +401,6 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
 class KFunction(val owner: KClassOrPackage, val name: String,
         var returnType: KClass,
-        var description: String = "", var detailedDescription: String = "",
         var deprecated: Boolean = false,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
@@ -396,7 +408,7 @@ class KFunction(val owner: KClassOrPackage, val name: String,
         var parameters: List<KParameter> = arrayList<KParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var sourceLine: Int = 2) : Comparable<KFunction> {
+        var sourceLine: Int = 2) : KAnnotated(), Comparable<KFunction> {
 
     override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
@@ -428,9 +440,17 @@ class KFunction(val owner: KClassOrPackage, val name: String,
     }
 }
 
+class KProperty(var descriptor: PropertyDescriptor, var name: String) : KAnnotated(), Comparable<KProperty> {
+
+    override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
+
+    fun equals(other: KFunction) = name == other.name
+
+    fun toString() = "property $name}"
+}
+
 class KParameter(val name: String,
-        var klass: KClass,
-        var description: String = "", var detailedDescription: String = "")  {
+        var klass: KClass) : KAnnotated()  {
 
     fun toString() = "$name: ${klass.name}"
 }
@@ -444,8 +464,7 @@ class KTypeParameter(val name: String,
     }
 }
 
-class KAnnotation(var klass: KClass,
-        var description: String = "", var detailedDescription: String = "")  {
+class KAnnotation(var klass: KClass) : KAnnotated()  {
 
     // TODO add some parameter values?
 
