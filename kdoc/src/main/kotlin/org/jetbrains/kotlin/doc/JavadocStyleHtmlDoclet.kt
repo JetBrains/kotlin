@@ -45,11 +45,16 @@ class JavadocStyleHtmlDoclet() : Doclet {
 
         fun generateExtensionFunctions(p: KPackage): Unit {
             val map = inheritedExtensionFunctions(p.functions)
-            for (e in map.entrySet()) {
-                val c = e?.getKey()
-                val functions = e?.getValue()
-                if (c != null && functions != null) {
-                    run("${p.nameAsPath}/${c.simpleName}-extensions.html", ClassExtensionsTemplate(model, p, c, functions))
+            val pmap = inheritedExtensionProperties(p.properties)
+            val classes = hashSet<KClass>()
+            classes.addAll(map.keySet())
+            classes.addAll(pmap.keySet())
+            for (c in classes) {
+                if (c != null) {
+                    val functions = map.get(c).notNull()
+                    val properties = pmap.get(c).notNull()
+                    run("${p.nameAsPath}/${c.simpleName}-extensions.html",
+                    ClassExtensionsTemplate(model, p, c, functions, properties))
                 }
             }
         }
