@@ -146,7 +146,6 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
                 if (descriptor is PropertyDescriptor) {
                     if (owner is KClass) {
                         val name = descriptor.getName()
-                        println("Found Property on owner: $owner with name: $name")
                         val returnType = getClass(descriptor.getReturnType())
                         if (returnType != null) {
                             val property = KProperty(owner, descriptor, name, returnType)

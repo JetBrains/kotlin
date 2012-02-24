@@ -31,9 +31,30 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 
-class KDocGenerator(val model: KModel, val outputDir: File) {
+/** Creates JavaDoc style HTML output from the model */
+class JavadocStyleHtmlDoclet() : Doclet {
 
-    fun execute(): Unit {
+    override fun generate(model: KModel, outputDir: File): Unit {
+        fun run(fileName: String, template: TextTemplate): Unit {
+            val file = File(outputDir, fileName)
+            file.getParentFile()?.mkdirs()
+
+            log("Generating $fileName")
+            template.renderTo(file)
+        }
+
+        fun generateExtensionFunctions(p: KPackage): Unit {
+            val map = inheritedExtensionFunctions(p.functions)
+            for (e in map.entrySet()) {
+                val c = e?.getKey()
+                val functions = e?.getValue()
+                if (c != null && functions != null) {
+                    run("${p.nameAsPath}/${c.simpleName}-extensions.html", ClassExtensionsTemplate(model, p, c, functions))
+                }
+            }
+        }
+
+
         println("Generating kdoc to $outputDir")
         run("allclasses-frame.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
         run("allclasses-noframe.html", AllClassesFrameTemplate(model))
@@ -60,27 +81,9 @@ class KDocGenerator(val model: KModel, val outputDir: File) {
         }
     }
 
-    protected fun run(fileName: String, template: TextTemplate): Unit {
-        val file = File(outputDir, fileName)
-        file.getParentFile()?.mkdirs()
-
-        log("Generating $fileName")
-        template.renderTo(file)
-    }
-
     protected fun log(text: String) {
         println(text)
     }
 
-    protected fun generateExtensionFunctions(p: KPackage): Unit {
-        val map = inheritedExtensionFunctions(p.functions)
-        for (e in map.entrySet()) {
-            val c = e?.getKey()
-            val functions = e?.getValue()
-            if (c != null && functions != null) {
-                run("${p.nameAsPath}/${c.simpleName}-extensions.html", ClassExtensionsTemplate(model, p, c, functions))
-            }
-        }
-    }
 
 }

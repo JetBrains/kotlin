@@ -35,7 +35,9 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils
 class KDoc(val outputDir: File) : KModelCompilerPlugin() {
 
     override fun processModel(model: KModel) {
-        val generator = KDocGenerator(model, outputDir)
-        generator.execute()
+        // TODO allow this to be configured; maybe we use configuration on the KotlinModule
+        // to define what doclets to use?
+        val generator = JavadocStyleHtmlDoclet()
+        generator.generate(model, outputDir)
     }
 }
