@@ -112,7 +112,14 @@ public abstract class ClassBodyCodegen {
 
                     //noinspection ConstantConditions
                     if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                        v.newField(p, Opcodes.ACC_PRIVATE, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
+                        int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+                        if (!propertyDescriptor.isVar()) {
+                            modifiers |= Opcodes.ACC_FINAL;
+                        }
+                        if(state.getStandardLibrary().isVolatile(propertyDescriptor)) {
+                            modifiers |= Opcodes.ACC_VOLATILE;
+                        }
+                        v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, null);
                     }
                 }
             }
