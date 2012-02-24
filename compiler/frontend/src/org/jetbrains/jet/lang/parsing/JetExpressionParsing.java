@@ -48,7 +48,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     private static final TokenSet TYPE_ARGUMENT_LIST_STOPPERS = TokenSet.create(
-            INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE, RAW_STRING_LITERAL,
+            INTEGER_LITERAL, FLOAT_LITERAL, CHARACTER_LITERAL, OPEN_QUOTE,
             PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD, THIS_KEYWORD, VAL_KEYWORD, VAR_KEYWORD,
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
@@ -70,7 +70,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             // literal constant
             TRUE_KEYWORD, FALSE_KEYWORD,
-            OPEN_QUOTE, RAW_STRING_LITERAL,
+            OPEN_QUOTE,
             INTEGER_LITERAL, CHARACTER_LITERAL, FLOAT_LITERAL,
             NULL_KEYWORD,
 
@@ -700,9 +700,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLiteralConstant() {
         if (at(TRUE_KEYWORD) || at(FALSE_KEYWORD)) {
             parseOneTokenExpression(BOOLEAN_CONSTANT);
-        }
-        else if (at(RAW_STRING_LITERAL)) {
-            parseOneTokenExpression(RAW_STRING_CONSTANT);
         }
         else if (at(INTEGER_LITERAL)) {
             parseOneTokenExpression(INTEGER_CONSTANT);

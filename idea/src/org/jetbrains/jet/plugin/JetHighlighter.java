@@ -192,7 +192,6 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.ESCAPE_SEQUENCE, JET_STRING_ESCAPE);
 
         keys1.put(JetTokens.CHARACTER_LITERAL, JET_STRING);
-        keys1.put(JetTokens.RAW_STRING_LITERAL, JET_STRING);
 
         keys1.put(JetTokens.EOL_COMMENT, JET_COMMENT);
         keys1.put(JetTokens.BLOCK_COMMENT, JET_COMMENT);

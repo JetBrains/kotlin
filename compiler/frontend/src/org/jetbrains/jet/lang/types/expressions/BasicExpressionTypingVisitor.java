@@ -161,9 +161,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else if (elementType == JetNodeTypes.CHARACTER_CONSTANT) {
             value = compileTimeConstantResolver.getCharValue(text, context.expectedType);
         }
-        else if (elementType == JetNodeTypes.RAW_STRING_CONSTANT) {
-            value = compileTimeConstantResolver.getRawStringValue(text, context.expectedType);
-        }
         else if (elementType == JetNodeTypes.NULL) {
             value = compileTimeConstantResolver.getNullValue(context.expectedType);
         }

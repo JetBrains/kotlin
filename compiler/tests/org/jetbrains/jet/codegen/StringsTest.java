@@ -73,6 +73,10 @@ public class StringsTest extends CodegenTestCase {
         blackBoxFile("rawStrings.jet");
     }
 
+    public void testMultilineStringsWithTemplates() throws Exception {
+        blackBoxFile("multilineStringsWithTemplates.jet");
+    }
+
     public void testKt881() throws Exception {
         blackBoxFile("regressions/kt881.jet");
     }

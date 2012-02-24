@@ -45,7 +45,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 %eof{  return;
 %eof}
 
-%xstate STRING SHORT_TEMPLATE_ENTRY
+%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY
 %state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
@@ -110,25 +110,31 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 // String templates
 
-\"                                     { pushState(STRING); return JetTokens.OPEN_QUOTE; }
+{THREE_QUO}                      { pushState(RAW_STRING); return JetTokens.OPEN_QUOTE; }
+<RAW_STRING> \n                  { return JetTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \"                  { return JetTokens.REGULAR_STRING_PART; }
+<RAW_STRING> \\                  { return JetTokens.REGULAR_STRING_PART; }
+<RAW_STRING> {THREE_QUO}         { popState(); return JetTokens.CLOSING_QUOTE; }
 
-<STRING> \"                            { popState(); return JetTokens.CLOSING_QUOTE; }
-<STRING> \n                            { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
-<STRING> {REGULAR_STRING_PART}         { return JetTokens.REGULAR_STRING_PART; }
-<STRING> {ESCAPE_SEQUENCE}             { return JetTokens.ESCAPE_SEQUENCE; }
-<STRING> {SHORT_TEMPLATE_ENTRY}        {
-                                            pushState(SHORT_TEMPLATE_ENTRY);
-                                            yypushback(yylength() - 1);
-                                            return JetTokens.SHORT_TEMPLATE_ENTRY_START;
-                                       }
+\"                          { pushState(STRING); return JetTokens.OPEN_QUOTE; }
+<STRING> \n                 { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
+<STRING> \"                 { popState(); return JetTokens.CLOSING_QUOTE; }
+<STRING> {ESCAPE_SEQUENCE}  { return JetTokens.ESCAPE_SEQUENCE; }
+
+<STRING, RAW_STRING> {REGULAR_STRING_PART}         { return JetTokens.REGULAR_STRING_PART; }
+<STRING, RAW_STRING> {SHORT_TEMPLATE_ENTRY}        {
+                                                        pushState(SHORT_TEMPLATE_ENTRY);
+                                                        yypushback(yylength() - 1);
+                                                        return JetTokens.SHORT_TEMPLATE_ENTRY_START;
+                                                   }
 // Only *this* keyword is itself an expression valid in this position
 // *null*, *true* and *false* are also keywords and expression, but it does not make sense to put them
 // in a string template for it'd be easier to just type them in without a dollar
 <SHORT_TEMPLATE_ENTRY> "this"          { popState(); return JetTokens.THIS_KEYWORD; }
 <SHORT_TEMPLATE_ENTRY> {IDENTIFIER}    { popState(); return JetTokens.IDENTIFIER; }
 
-<STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
-<STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
+<STRING, RAW_STRING> {LONELY_DOLLAR}               { return JetTokens.REGULAR_STRING_PART; }
+<STRING, RAW_STRING> {LONG_TEMPLATE_ENTRY_START}   { pushState(LONG_TEMPLATE_ENTRY); return JetTokens.LONG_TEMPLATE_ENTRY_START; }
 
 <LONG_TEMPLATE_ENTRY> "{"              { lBraceCount++; return JetTokens.LBRACE; }
 <LONG_TEMPLATE_ENTRY> "}"              {
@@ -157,9 +163,6 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
 //{STRING_LITERAL} { return JetTokens.STRING_LITERAL; }
-
-// TODO: Decide what to do with """ ... """"
-{RAW_STRING_LITERAL} { return JetTokens.RAW_STRING_LITERAL; }
 
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 "package"    { return JetTokens.PACKAGE_KEYWORD ;}

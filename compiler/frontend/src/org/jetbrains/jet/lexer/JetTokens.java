@@ -45,8 +45,6 @@ public interface JetTokens {
     JetToken LONG_TEMPLATE_ENTRY_END = new JetToken("LONG_TEMPLATE_ENTRY_END");
     JetToken DANGLING_NEWLINE = new JetToken("DANGLING_NEWLINE");
 
-    JetToken RAW_STRING_LITERAL = new JetToken("RAW_STRING_LITERAL");
-
     JetKeywordToken PACKAGE_KEYWORD = JetKeywordToken.keyword("package");
     JetKeywordToken AS_KEYWORD               = JetKeywordToken.keyword("as");
     JetKeywordToken TYPE_KEYWORD             = JetKeywordToken.keyword("type");
@@ -185,7 +183,7 @@ public interface JetTokens {
     TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
 
-    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART, RAW_STRING_LITERAL);
+    TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
     TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS,

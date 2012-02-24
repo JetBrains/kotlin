@@ -111,9 +111,6 @@ public class ExpressionTypingUtils {
         else if (constantType == JetNodeTypes.CHARACTER_CONSTANT) {
             return semanticServices.getStandardLibrary().getCharType();
         }
-        else if (constantType == JetNodeTypes.RAW_STRING_CONSTANT) {
-            return semanticServices.getStandardLibrary().getStringType();
-        }
         else if (constantType == JetNodeTypes.NULL) {
             return JetStandardClasses.getNullableNothingType();
         }

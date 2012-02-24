@@ -87,7 +87,6 @@ public interface JetNodeTypes {
     JetNodeType BOOLEAN_CONSTANT   = new JetNodeType("BOOLEAN_CONSTANT", JetConstantExpression.class);
     JetNodeType FLOAT_CONSTANT     = new JetNodeType("FLOAT_CONSTANT", JetConstantExpression.class);
     JetNodeType CHARACTER_CONSTANT = new JetNodeType("CHARACTER_CONSTANT", JetConstantExpression.class);
-    JetNodeType RAW_STRING_CONSTANT = new JetNodeType("STRING_CONSTANT", JetConstantExpression.class);
     JetNodeType INTEGER_CONSTANT   = new JetNodeType("INTEGER_CONSTANT", JetConstantExpression.class);
 
     JetNodeType STRING_TEMPLATE    = new JetNodeType("STRING_TEMPLATE", JetStringTemplateExpression.class);

@@ -259,8 +259,11 @@ JetFile: When.jet
             PsiElement(is)('is')
             PsiWhiteSpace(' ')
             EXPRESSION_PATTERN
-              STRING_CONSTANT
-                PsiElement(RAW_STRING_LITERAL)('"""ddd"""')
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"""')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('ddd')
+                PsiElement(CLOSING_QUOTE)('"""')
           PsiWhiteSpace(' ')
           PsiElement(ARROW)('->')
           PsiWhiteSpace(' ')
