@@ -112,6 +112,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         println("</PRE>")
 
+        println(function.detailedDescription)
         /* TODO
         println("""<DL>
 <DD><B>Deprecated.</B>&nbsp;TODO text
