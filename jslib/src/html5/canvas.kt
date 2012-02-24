@@ -75,12 +75,14 @@ class Context() {
     fun drawImage(image : HTMLImageElement, dx: Double, dy: Double, dw: Double, dh: Double) {
     }
     fun drawImage(image : HTMLImageElement, sx: Double, sy: Double,
-    sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) {
+            sw: Double, sh: Double, dx: Double, dy: Double, dw: Double, dh: Double) {
     }
 
     fun createLinearGradient(x0 : Double, y0 : Double, x1 : Double, y1 : Double) : CanvasGradient = CanvasGradient()
     fun createRadialGradient(x0 : Double, y0 : Double, r0 : Double, x1 : Double, y1 : Double, r1 : Double) : CanvasGradient = CanvasGradient();
 
+    fun getImageData(sx : Int, sy : Int, sw : Int, sh : Int) : ImageData = js.noImpl
+    fun putImageData(data : ImageData, dx : Int, dy : Int) : Unit = js.noImpl
 }
 
 native
@@ -89,14 +91,25 @@ open class HTMLImageElement() : DomElement() {
 
 native
 class CanvasGradient() {
-    fun addColorStop(offset : Double, color : String) {}
+    fun addColorStop(offset : Double, color : String) {
+    }
+}
+
+native
+class ImageData() {
+    //    readonly attribute unsigned long width;
+    //    readonly attribute unsigned long height;
+    //    readonly attribute Uint8ClampedArray data;
+    val width : Int = js.noImpl
+    val height : Int = js.noImpl
+    val data : Array<Int> = js.noImpl
 }
 
 
 native
 class Canvas() : DomElement() {
-    var width = 0.0;
-    var height = 0.0;
+    var width : Int = js.noImpl;
+    var height : Int = js.noImpl;
 
     //DOMString toDataURL(in optional DOMString type, in any... args);
     fun toDataURL() : String = js.noImpl

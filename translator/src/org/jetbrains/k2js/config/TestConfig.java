@@ -53,8 +53,7 @@ public final class TestConfig extends Config {
             "/raphael/raphael.kt",
             "/html5/canvas.kt",
             "/html5/files.kt",
-            "/html5/image.kt",
-            "/helper/ip.kt"
+            "/html5/image.kt"
     );
 
     @NotNull
