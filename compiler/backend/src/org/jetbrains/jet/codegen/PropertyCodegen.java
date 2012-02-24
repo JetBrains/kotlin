@@ -30,10 +30,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
-import org.objectweb.asm.commons.Method;
-
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 /**
  * @author max
@@ -99,7 +95,7 @@ public class PropertyCodegen {
             if(state.getStandardLibrary().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
-            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getOutType()).getDescriptor(), null, value);
+            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, value);
             AnnotationCodegen.forField(fieldVisitor).genAnnotations(propertyDescriptor, state.getTypeMapper());
         }
     }
@@ -179,7 +175,7 @@ public class PropertyCodegen {
             if (kind != OwnerKind.NAMESPACE) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
             }
-            final Type type = state.getTypeMapper().mapType(propertyDescriptor.getOutType());
+            final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
             if (kind instanceof OwnerKind.DelegateKind) {
                 OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                 dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
@@ -240,7 +236,7 @@ public class PropertyCodegen {
         if (v.generateCode() && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
-            final Type type = state.getTypeMapper().mapType(propertyDescriptor.getOutType());
+            final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
             int paramCode = 0;
             if (kind != OwnerKind.NAMESPACE) {
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);

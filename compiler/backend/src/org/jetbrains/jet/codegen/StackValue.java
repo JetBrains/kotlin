@@ -593,7 +593,7 @@ public abstract class StackValue {
                 List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
                 int firstParamIndex = -1;
                 for(int i = valueParameters.size()-1; i >= 0; --i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
                     int sz = type.getSize();
                     frame.enterTemp(sz);
                     lastIndex += sz;
@@ -673,7 +673,7 @@ public abstract class StackValue {
 
                 int index = firstParamIndex;
                 for(int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
                     int sz = type.getSize();
                     v.load(index-sz, type);
                     index -= sz;
@@ -701,7 +701,7 @@ public abstract class StackValue {
                 
                 index = firstParamIndex;
                 for(int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getOutType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
                     int sz = type.getSize();
                     v.load(index-sz, type);
                     index -= sz;
@@ -725,7 +725,7 @@ public abstract class StackValue {
                 return false;
 
             for (ValueParameterDescriptor valueParameter : valueParameters) {
-                if (codegen.typeMapper.mapType(valueParameter.getOutType()).getSize() != 1)
+                if (codegen.typeMapper.mapType(valueParameter.getType()).getSize() != 1)
                     return false;
             }
 

@@ -37,7 +37,7 @@ public class PropertyGetterDescriptor extends PropertyAccessorDescriptor {
     }
     
     public void initialize(JetType returnType) {
-        this.returnType = returnType == null ? getCorrespondingProperty().getOutType() : returnType;
+        this.returnType = returnType == null ? getCorrespondingProperty().getType() : returnType;
     }
 
     @NotNull

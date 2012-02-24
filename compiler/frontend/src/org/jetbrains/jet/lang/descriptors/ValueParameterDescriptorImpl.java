@@ -123,6 +123,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
-        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), isVar, getOutType(), hasDefaultValue, varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), isVar, getType(), hasDefaultValue, varargElementType);
     }
 }

@@ -173,7 +173,7 @@ public class JetFunctionParameterInfoHandler implements
     }
     
     private static JetType getActualParameterType(ValueParameterDescriptor descriptor) {
-        JetType paramType = descriptor.getOutType();
+        JetType paramType = descriptor.getType();
         if (descriptor.getVarargElementType() != null) paramType = descriptor.getVarargElementType();
         return paramType;
     }

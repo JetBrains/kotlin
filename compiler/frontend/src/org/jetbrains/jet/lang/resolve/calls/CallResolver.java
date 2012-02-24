@@ -540,7 +540,7 @@ public class CallResolver {
                             // We'll type check the arguments later, with the inferred types expected
                             TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(temporaryTrace);
                             ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
-                            JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getOutType(), Variance.INVARIANT));
+                            JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT));
                             if (type != null && !ErrorUtils.isErrorType(type)) {
                                 constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                             }
@@ -663,7 +663,7 @@ public class CallResolver {
     private JetType getEffectiveExpectedType(ValueParameterDescriptor valueParameterDescriptor) {
         JetType effectiveExpectedType = valueParameterDescriptor.getVarargElementType();
         if (effectiveExpectedType == null) {
-            effectiveExpectedType = valueParameterDescriptor.getOutType();
+            effectiveExpectedType = valueParameterDescriptor.getType();
         }
         return effectiveExpectedType;
     }
@@ -1002,7 +1002,7 @@ public class CallResolver {
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameter = valueParameters.get(i);
             JetType expectedType = parameterTypes.get(i);
-            if (!TypeUtils.equalTypes(expectedType, valueParameter.getOutType())) return false;
+            if (!TypeUtils.equalTypes(expectedType, valueParameter.getType())) return false;
         }
         return true;
     }

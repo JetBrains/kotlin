@@ -93,7 +93,7 @@ public class TaskPrioritizers {
                 variable = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
             }
             if (variable != null) {
-                JetType outType = variable.getOutType();
+                JetType outType = variable.getType();
                 if (outType != null && JetStandardClasses.isFunctionType(outType)) {
                     VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
                     if ((functionDescriptor.getReceiverParameter().exists()) == receiverNeeded) {

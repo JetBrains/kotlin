@@ -83,7 +83,7 @@ public interface Importer {
                 return;
             }
             if (descriptor instanceof VariableDescriptor) {
-                JetType type = ((VariableDescriptor) descriptor).getOutType();
+                JetType type = ((VariableDescriptor) descriptor).getType();
                 namespaceScope.importScope(type.getMemberScope());
             }
             else if (descriptor instanceof ClassDescriptor) {

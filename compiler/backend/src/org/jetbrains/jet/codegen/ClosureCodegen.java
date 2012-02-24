@@ -113,7 +113,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final String funClass = getInternalClassName(funDescriptor);
         signatureWriter.visitClassType(funClass);
         for (ValueParameterDescriptor parameter : parameters) {
-            appendType(signatureWriter, parameter.getOutType(), '=');
+            appendType(signatureWriter, parameter.getType(), '=');
         }
 
         appendType(signatureWriter, funDescriptor.getReturnType(), '=');
@@ -233,7 +233,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             final List<ValueParameterDescriptor> params = funDescriptor.getValueParameters();
             for (ValueParameterDescriptor param : params) {
                 StackValue.local(count, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
-                StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getOutType()), iv);
+                StackValue.onStack(JetTypeMapper.TYPE_OBJECT).upcast(state.getTypeMapper().mapType(param.getType()), iv);
                 count++;
             }
 
@@ -280,7 +280,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         for (DeclarationDescriptor descriptor : closure.keySet()) {
             if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                 final Type sharedVarType = exprContext.getTypeMapper().getSharedVarType(descriptor);
-                final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+                final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getType());
                 argTypes[i++] = type;
             }
             else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {

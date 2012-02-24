@@ -92,9 +92,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append("val ");
         }
-        bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getOutType());
-        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getOutType(), file);
-        String initializer = defaultInitializer(descriptor.getOutType(), JetStandardLibrary.getInstance());
+        bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getType());
+        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
+        String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
             bodyBuilder.append("=").append(initializer);
         }
@@ -116,9 +116,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
             bodyBuilder.append(": ");
-            bodyBuilder.append(parameterDescriptor.getOutType().toString());
+            bodyBuilder.append(parameterDescriptor.getType().toString());
 
-            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getOutType(), file);
+            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();

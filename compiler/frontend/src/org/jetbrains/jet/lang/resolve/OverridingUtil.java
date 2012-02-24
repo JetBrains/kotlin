@@ -115,7 +115,7 @@ public class OverridingUtil {
             parameters.add(receiverParameter.getType());
         }
         for (ValueParameterDescriptor valueParameterDescriptor : callableDescriptor.getValueParameters()) {
-            parameters.add(valueParameterDescriptor.getOutType());
+            parameters.add(valueParameterDescriptor.getType());
         }
         return parameters;
     }

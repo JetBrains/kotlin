@@ -52,7 +52,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
     }
 
     @Override
-    public JetType getOutType() {
+    public JetType getType() {
         return outType;
     }
 
@@ -99,6 +99,6 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
 
     @Override
     public JetType getReturnType() {
-        return getOutType();
+        return getType();
     }
 }

@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
  */
 public interface VariableDescriptor extends CallableDescriptor {
     @NotNull
-    JetType getOutType();
+    JetType getType();
 
     @Override
     @SuppressWarnings({"NullableProblems"})

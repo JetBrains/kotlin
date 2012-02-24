@@ -61,7 +61,7 @@ public class ObjectOrClosureCodegen {
             if (idx < 0) return null;
 
             final Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-            Type localType = state.getTypeMapper().mapType(vd.getOutType());
+            Type localType = state.getTypeMapper().mapType(vd.getType());
             final Type type = sharedVarType != null ? sharedVarType : localType;
 
             StackValue outerValue = StackValue.local(idx, type);

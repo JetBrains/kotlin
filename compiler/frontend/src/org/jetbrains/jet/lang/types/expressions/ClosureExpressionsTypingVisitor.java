@@ -89,7 +89,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         List<JetType> parameterTypes = Lists.newArrayList();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         for (ValueParameterDescriptor valueParameter : valueParameters) {
-            parameterTypes.add(valueParameter.getOutType());
+            parameterTypes.add(valueParameter.getType());
         }
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         JetType receiver = receiverParameter != NO_RECEIVER ? receiverParameter.getType() : null;
@@ -161,7 +161,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "it", false, valueParameterDescriptor.getOutType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
+                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "it", false, valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
             );
             valueParameterDescriptors.add(it);
             context.trace.record(AUTO_CREATED_IT, it);
@@ -177,7 +177,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 }
                 else {
                     if (expectedValueParameters != null && i < expectedValueParameters.size()) {
-                        type = expectedValueParameters.get(i).getOutType();
+                        type = expectedValueParameters.get(i).getType();
                     }
                     else {
                         context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));

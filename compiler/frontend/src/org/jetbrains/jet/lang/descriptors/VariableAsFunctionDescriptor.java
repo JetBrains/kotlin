@@ -27,7 +27,7 @@ import java.util.Collections;
  */
 public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
     public static VariableAsFunctionDescriptor create(@NotNull VariableDescriptor variableDescriptor) {
-        JetType outType = variableDescriptor.getOutType();
+        JetType outType = variableDescriptor.getType();
         assert outType != null;
         VariableAsFunctionDescriptor result = new VariableAsFunctionDescriptor(variableDescriptor);
         FunctionDescriptorUtil.initializeFromFunctionType(result, outType, variableDescriptor.getExpectedThisObject());

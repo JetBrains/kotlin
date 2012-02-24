@@ -1240,7 +1240,7 @@ public class JavaDescriptorResolver {
                 getterDescriptor.initialize(propertyType);
             }
             if (setterDescriptor != null) {
-                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getOutType(), false, null));
+                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getType(), false, null));
             }
 
             semanticServices.getTrace().record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
