@@ -74,20 +74,34 @@ set(value) {
 
 // Helper methods
 
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Document?.get(selector: String): List<Element> {
+    val root = this?.getDocumentElement()
+    return if (root != null) {
+        root.get(selector)
+    } else {
+        Collections.EMPTY_LIST as List<Element>
+    }
+}
+
+/** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+fun Element.get(selector: String): List<Element> {
+    if (selector.startsWith(".")) {
+        // TODO filter by CSS style class
+    } else if (selector.startsWith("#")) {
+        // TODO lookup by ID
+    }
+    // TODO assume its a vanilla element name
+    return this.getElementsByTagName(selector).toElementList()
+}
+
+/** Returns the children of the element as a list */
 inline fun Element?.children(): List<Node> {
     return this?.getChildNodes().toList()
 }
 
-inline fun Element?.elementsByTagName(name: String?): List<Element> {
-    return this?.getElementsByTagName(name).toElementList()
-}
-
 inline fun Element?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
-}
-
-inline fun Document?.elementsByTagName(name: String?): List<Element> {
-    return this?.getElementsByTagName(name).toElementList()
 }
 
 inline fun Document?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
