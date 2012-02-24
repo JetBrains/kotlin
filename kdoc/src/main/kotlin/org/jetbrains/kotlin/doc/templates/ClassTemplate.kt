@@ -241,6 +241,7 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
 &nbsp;""")
         }
 
+        printPropertySummary(klass.properties)
         printFunctionSummary(klass.functions)
         printFunctionDetail(klass.functions)
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
+import org.jetbrains.kotlin.model.KProperty
 
 
 abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
@@ -19,7 +20,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
     fun printFunctionSummary(functions: Collection<KFunction>): Unit {
         if (functions.notEmpty()) {
-            println("""<!-- ========== METHOD SUMMARY =========== -->
+            println("""<!-- ========== FUNCTION SUMMARY =========== -->
 
 <A NAME="method_summary"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
@@ -35,27 +36,6 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 &nbsp;
 <P>
 """)
-        }
-    }
-
-    fun printFunctionDetail(functions: Collection<KFunction>): Unit {
-        if (functions.notEmpty()) {
-            println("""
-
-            <!-- ============ METHOD DETAIL ========== -->
-
-            <A NAME="method_detail"><!-- --></A>
-            <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-            <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-            <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-            <B>Method Detail</B></FONT></TH>
-            </TR>
-            </TABLE>
-            """)
-
-            for (f in functions) {
-                printFunctionDetail(f)
-            }
         }
     }
 
@@ -88,19 +68,40 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("</TR>")
     }
 
-    fun printFunctionDetail(method: KFunction): Unit {
-        println("<A NAME=\"${method.name}{${method.parameterTypeText}})\"><!-- --></A><A NAME=\"${method.name}(${method.typeParametersText})\"><!-- --></A><H3>")
-        println("${method.name}</H3>")
+    fun printFunctionDetail(functions: Collection<KFunction>): Unit {
+        if (functions.notEmpty()) {
+            println("""
+
+            <!-- ============ FUNCTION DETAIL ========== -->
+
+            <A NAME="method_detail"><!-- --></A>
+            <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+            <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+            <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+            <B>Method Detail</B></FONT></TH>
+            </TR>
+            </TABLE>
+            """)
+
+            for (f in functions) {
+                printFunctionDetail(f)
+            }
+        }
+    }
+
+    fun printFunctionDetail(function: KFunction): Unit {
+        println("<A NAME=\"${function.name}{${function.parameterTypeText}})\"><!-- --></A><A NAME=\"${function.name}(${function.typeParametersText})\"><!-- --></A><H3>")
+        println("${function.name}</H3>")
         println("<PRE>")
         println("<FONT SIZE=\"-1\">")
-        printAnnotations(method.annotations)
-        print("</FONT>${method.modifiers.join(" ")} ")
+        printAnnotations(function.annotations)
+        print("</FONT>${function.modifiers.join(" ")} ")
 
-        printTypeParameters(method)
-        print(link(method.returnType))
-        print(" <A HREF=\"${sourceHref(method)}\"><B>${method.name}</B></A>")
-        printParameters(method)
-        val exlist = method.exceptions
+        printTypeParameters(function)
+        print(link(function.returnType))
+        print(" <A HREF=\"${sourceHref(function)}\"><B>${function.name}</B></A>")
+        printParameters(function)
+        val exlist = function.exceptions
         var first = true
         if (!exlist.isEmpty()) {
             println("                                throws ");
@@ -127,6 +128,59 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 </DL>
 */
         println("<HR>")
+    }
+
+    fun printPropertySummary(properties: Collection<KProperty>): Unit {
+        if (properties.notEmpty()) {
+            println("""<!-- ========== PROPERTY SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Property Summary</B></FONT></TH>
+</TR>""")
+
+            for (f in properties) {
+                printPropertySummary(f)
+            }
+            println("""</TABLE>
+&nbsp;
+<P>
+""")
+        }
+    }
+
+    fun printPropertySummary(property: KProperty): Unit {
+        val deprecated = if (property.deprecated) "<B>Deprecated.</B>" else ""
+        print("""<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>""")
+        /*
+        if (!property.typeParameters.isEmpty()) {
+            println("""<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+            <TR ALIGN="right" VALIGN="">
+            <TD NOWRAP><FONT SIZE="-1">
+            <CODE>""")
+            printTypeParameters(property)
+            println("<BR>")
+            print(link(property.returnType))
+            println("""</CODE></FONT></TD>
+</TR>
+</TABLE>""")
+        } else {
+            print(link(property.returnType))
+        }
+        */
+        print(link(property.returnType))
+        println("</CODE></FONT></TD>")
+        print("<TD><CODE><B><A HREF=\"${href(property)}\">${property.name}</A></B>")
+        //printParameters(property)
+        println("</CODE>")
+        println("")
+        println("<BR>")
+        println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription}</TD>")
+        println("</TR>")
     }
 
     fun printTypeParameters(method: KFunction): Unit {

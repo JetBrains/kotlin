@@ -143,16 +143,20 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         try {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
-                if (descriptor is CallableDescriptor) {
+                if (descriptor is PropertyDescriptor) {
+                    if (owner is KClass) {
+                        val name = descriptor.getName()
+                        println("Found Property on owner: $owner with name: $name")
+                        val returnType = getClass(descriptor.getReturnType())
+                        if (returnType != null) {
+                            val property = KProperty(owner, descriptor, name, returnType)
+                            owner.properties.add(property)
+                        }
+                    }
+                } else if (descriptor is CallableDescriptor) {
                     val function = createFunction(owner, descriptor)
                     if (function != null) {
                         list.add(function)
-                    }
-                } else if (descriptor is PropertyDescriptor) {
-                    if (owner is KClass) {
-                        val name = descriptor.getName()
-                        val property = KProperty(descriptor, name)
-                        owner.properties.add(property)
                     }
                 }
             }
@@ -261,7 +265,9 @@ abstract class KAnnotated {
     public open var description: String = ""
 
     public open var detailedDescription: String = ""
-        get() = if ($detailedDescription.notEmpty()) $detailedDescription else description
+    get() = if ($detailedDescription.notEmpty()) $detailedDescription else description
+
+    public open var deprecated: Boolean = false
 }
 
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
@@ -401,7 +407,6 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
 class KFunction(val owner: KClassOrPackage, val name: String,
         var returnType: KClass,
-        var deprecated: Boolean = false,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
@@ -422,7 +427,6 @@ class KFunction(val owner: KClassOrPackage, val name: String,
 
     fun toString() = "fun ($name)"
 
-    /** TODO generate a link with the argument type names */
     public val link: String = "$name($parameterTypeText)"
 
     /** Returns a list of generic type parameter names kinds like "A, I" */
@@ -440,9 +444,12 @@ class KFunction(val owner: KClassOrPackage, val name: String,
     }
 }
 
-class KProperty(var descriptor: PropertyDescriptor, var name: String) : KAnnotated(), Comparable<KProperty> {
+class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
+        val returnType: KClass) : KAnnotated(), Comparable<KProperty> {
 
     override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
+
+    public val link: String = "$name"
 
     fun equals(other: KFunction) = name == other.name
 

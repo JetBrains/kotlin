@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.template.TextTemplate
 import org.jetbrains.kotlin.model.KFunction
 import java.util.Collection
+import org.jetbrains.kotlin.model.KProperty
 
 abstract class KDocTemplate() : TextTemplate() {
     fun rootHref(pkg: KPackage): String {
@@ -23,17 +24,25 @@ abstract class KDocTemplate() : TextTemplate() {
         return "${rootHref(c.pkg)}${c.nameAsPath}.html$postfix"
     }
 
-    fun extensionsHref(pkg: KPackage, c: KClass): String {
-        // is inside the pkg so no need to use it...
-        return "${c.nameAsPath}-extensions.html"
-    }
-
     fun href(f: KFunction): String {
         return if (f.owner is KClass) {
             "${href(f.owner)}#${f.link}"
         } else {
             "package-summary.html#${f.link}"
         }
+    }
+
+    fun href(f: KProperty): String {
+        return if (f.owner is KClass) {
+            "${href(f.owner)}#${f.link}"
+        } else {
+            "package-summary.html#${f.link}"
+        }
+    }
+
+    fun extensionsHref(pkg: KPackage, c: KClass): String {
+        // is inside the pkg so no need to use it...
+        return "${c.nameAsPath}-extensions.html"
     }
 
     fun sourceHref(f: KFunction): String {
