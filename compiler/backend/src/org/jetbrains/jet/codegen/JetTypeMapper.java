@@ -854,7 +854,7 @@ public class JetTypeMapper {
         if(descriptor instanceof PropertyDescriptor) {
             return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
         }
-        else if (descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+        else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             return Type.getObjectType(classNameForAnonymousClass((JetElement) psiElement));
         }

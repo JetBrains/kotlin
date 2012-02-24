@@ -74,9 +74,9 @@ public class CodegenUtil {
         return (ClassDescriptor) outerDescriptor;
     }
 
-    public static NamedFunctionDescriptor createInvoke(FunctionDescriptor fd) {
+    public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
-        NamedFunctionDescriptorImpl invokeDescriptor = new NamedFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
                 fd.getExpectedThisObject().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity),
                 Collections.<AnnotationDescriptor>emptyList(),
                 "invoke",

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -479,7 +479,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else if (element != null) {
-            NamedFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
+            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
             if (functionDescriptor != null) {
                 expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
                 if (functionDescriptor != containingFunctionDescriptor) {

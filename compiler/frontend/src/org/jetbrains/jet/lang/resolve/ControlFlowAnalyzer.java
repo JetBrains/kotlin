@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -51,9 +51,9 @@ public class ControlFlowAnalyzer {
             if (!context.completeAnalysisNeeded(objectDeclaration)) continue;
             checkClassOrObject(objectDeclaration);
         }
-        for (Map.Entry<JetNamedFunction, NamedFunctionDescriptor> entry : context.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : context.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
-            NamedFunctionDescriptor functionDescriptor = entry.getValue();
+            SimpleFunctionDescriptor functionDescriptor = entry.getValue();
             if (!context.completeAnalysisNeeded(function)) continue;
             final JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE

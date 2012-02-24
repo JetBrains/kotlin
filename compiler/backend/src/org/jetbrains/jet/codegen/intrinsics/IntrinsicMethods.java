@@ -182,8 +182,8 @@ public class IntrinsicMethods {
                 }
         );
         for (DeclarationDescriptor stringMember : stringMembers) {
-            if (stringMember instanceof NamedFunctionDescriptor) {
-                final NamedFunctionDescriptor stringMethod = (NamedFunctionDescriptor) stringMember;
+            if (stringMember instanceof SimpleFunctionDescriptor) {
+                final SimpleFunctionDescriptor stringMethod = (SimpleFunctionDescriptor) stringMember;
                 final PsiMethod[] methods = stringPsiClass != null?
                                             stringPsiClass.findMethodsByName(stringMember.getName(), false) : new PsiMethod[]{};
                 for (PsiMethod method : methods) {

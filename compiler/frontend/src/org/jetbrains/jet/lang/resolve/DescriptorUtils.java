@@ -187,7 +187,7 @@ public class DescriptorUtils {
         return descriptor.getName();
     }
 
-    public static boolean isTopLevelFunction(@NotNull NamedFunctionDescriptor functionDescriptor) {
+    public static boolean isTopLevelFunction(@NotNull SimpleFunctionDescriptor functionDescriptor) {
         return functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
     }
 

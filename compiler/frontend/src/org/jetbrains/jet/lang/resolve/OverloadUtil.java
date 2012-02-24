@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 
 /**
@@ -52,7 +52,7 @@ public class OverloadUtil {
     private static int braceCount(CallableDescriptor a) {
         if (a instanceof PropertyDescriptor) {
             return 0;
-        } else if (a instanceof NamedFunctionDescriptor) {
+        } else if (a instanceof SimpleFunctionDescriptor) {
             return 1;
         } else if (a instanceof ConstructorDescriptor) {
             return 1;

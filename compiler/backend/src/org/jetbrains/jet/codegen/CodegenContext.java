@@ -230,12 +230,12 @@ public abstract class CodegenContext {
         if(accessor != null)
             return accessor;
 
-        if(descriptor instanceof NamedFunctionDescriptor) {
-            NamedFunctionDescriptorImpl myAccessor = new NamedFunctionDescriptorImpl(contextType,
+        if(descriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
                     descriptor.getName() + "$bridge$" + accessors.size(),
                     CallableMemberDescriptor.Kind.DECLARATION);
-            FunctionDescriptor fd = (NamedFunctionDescriptor) descriptor;
+            FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                   fd.getExpectedThisObject(),
                                   fd.getTypeParameters(),

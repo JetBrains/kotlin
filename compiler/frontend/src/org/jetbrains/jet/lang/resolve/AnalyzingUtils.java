@@ -141,7 +141,7 @@ public class AnalyzingUtils {
             }
 
             @Override
-            public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
+            public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
                 scope.addFunctionDescriptor(functionDescriptor);
             }
 

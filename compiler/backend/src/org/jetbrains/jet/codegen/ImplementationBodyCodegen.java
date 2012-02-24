@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -533,7 +532,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetNamedFunction) {
-                NamedFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
+                SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
                 assert functionDescriptor != null;
                 overridden.addAll(functionDescriptor.getOverriddenDescriptors());
             }
@@ -653,7 +652,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         
         for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
-            if (needDelegates.second instanceof NamedFunctionDescriptor) {
+            if (needDelegates.second instanceof SimpleFunctionDescriptor) {
                 generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second);
             } else if (needDelegates.second instanceof PropertyDescriptor) {
                 PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
@@ -924,8 +923,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
                             }
-                            else if (declaration instanceof NamedFunctionDescriptor) {
-                                functionCodegen.genDelegate((NamedFunctionDescriptor) declaration, overriddenDescriptor, field);
+                            else if (declaration instanceof SimpleFunctionDescriptor) {
+                                functionCodegen.genDelegate((SimpleFunctionDescriptor) declaration, overriddenDescriptor, field);
                             }
                         }
                     }

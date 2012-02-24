@@ -106,8 +106,8 @@ public class OverrideResolver {
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                             if (fakeOverride instanceof PropertyDescriptor) {
                                 classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
-                            } else if (fakeOverride instanceof NamedFunctionDescriptor) {
-                                classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((NamedFunctionDescriptor) fakeOverride);
+                            } else if (fakeOverride instanceof SimpleFunctionDescriptor) {
+                                classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
                             } else {
                                 throw new IllegalStateException(fakeOverride.getClass().getName());
                             }
@@ -191,7 +191,7 @@ public class OverrideResolver {
             JetScope scope) {
         List<CallableMemberDescriptor> r = Lists.newArrayList();
         for (DeclarationDescriptor decl : scope.getAllDescriptors()) {
-            if (decl instanceof PropertyDescriptor || decl instanceof NamedFunctionDescriptor) {
+            if (decl instanceof PropertyDescriptor || decl instanceof SimpleFunctionDescriptor) {
                 r.add((CallableMemberDescriptor) decl);
             }
         }

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.editor.Document;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.tree.IElementType;
@@ -31,8 +30,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
@@ -1328,8 +1325,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             assert !superCall;
             callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         }
-        else if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof NamedFunctionDescriptor && fd.getContainingDeclaration() instanceof FunctionDescriptor)) {
-            NamedFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
+        else if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && fd.getContainingDeclaration() instanceof FunctionDescriptor)) {
+            SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
             callableMethod = ClosureCodegen.asCallableMethod(invoke);
         }
         else if (fd instanceof FunctionDescriptor) {

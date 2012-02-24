@@ -482,9 +482,9 @@ public class BodyResolver {
     }
 
     private void resolveFunctionBodies() {
-        for (Map.Entry<JetNamedFunction, NamedFunctionDescriptor> entry : this.context.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : this.context.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
-            NamedFunctionDescriptor descriptor = entry.getValue();
+            SimpleFunctionDescriptor descriptor = entry.getValue();
 
             computeDeferredType(descriptor.getReturnType());
 

@@ -29,9 +29,9 @@ import java.util.List;
 /**
  * @author Stepan Koltsov
  */
-public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implements NamedFunctionDescriptor {
+public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
 
-    public NamedFunctionDescriptorImpl(
+    public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
@@ -39,9 +39,9 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
         super(containingDeclaration, annotations, name, kind);
     }
 
-    private NamedFunctionDescriptorImpl(
+    private SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NamedFunctionDescriptor original,
+            @NotNull SimpleFunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull String name,
             Kind kind) {
@@ -55,14 +55,14 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
 
     @NotNull
     @Override
-    public NamedFunctionDescriptor getOriginal() {
-        return (NamedFunctionDescriptor) super.getOriginal();
+    public SimpleFunctionDescriptor getOriginal() {
+        return (SimpleFunctionDescriptor) super.getOriginal();
     }
 
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
         if (preserveOriginal) {
-            return new NamedFunctionDescriptorImpl(
+            return new SimpleFunctionDescriptorImpl(
                     newOwner,
                     getOriginal(),
                     // TODO : safeSubstitute
@@ -70,7 +70,7 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
                     getName(),
                     kind);
         } else {
-            return new NamedFunctionDescriptorImpl(
+            return new SimpleFunctionDescriptorImpl(
                     newOwner,
                     // TODO : safeSubstitute
                     getAnnotations(),
@@ -81,7 +81,7 @@ public class NamedFunctionDescriptorImpl extends FunctionDescriptorImpl implemen
 
     @NotNull
     @Override
-    public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
-        return (NamedFunctionDescriptor) doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+        return (SimpleFunctionDescriptor) doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
     }
 }

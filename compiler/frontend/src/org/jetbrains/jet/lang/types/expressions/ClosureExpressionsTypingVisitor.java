@@ -84,7 +84,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType expectedType = context.expectedType;
         boolean functionTypeExpected = expectedType != TypeUtils.NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(expectedType);
 
-        NamedFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
+        SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
 
         List<JetType> parameterTypes = Lists.newArrayList();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -124,10 +124,10 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType), expression, context);
     }
 
-    private NamedFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
+    private SimpleFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
-        NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "<anonymous>", CallableMemberDescriptor.Kind.DECLARATION);
 
         List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected);

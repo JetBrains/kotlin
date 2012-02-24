@@ -56,7 +56,7 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        final NamedFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        final SimpleFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, true, null, functionDescriptor);
@@ -120,7 +120,7 @@ public class FunctionCodegen {
                 if (needJetAnnotations) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
                         PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
-                    } else if (functionDescriptor instanceof NamedFunctionDescriptor) {
+                    } else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
                             throw new IllegalStateException();
                         }

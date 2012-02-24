@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.error.ErrorNamedFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 
 import java.util.*;
 
@@ -162,8 +162,8 @@ public class ErrorUtils {
             CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
 
-    private static NamedFunctionDescriptor createErrorFunction(ErrorScope ownerScope) {
-        ErrorNamedFunctionDescriptorImpl function = new ErrorNamedFunctionDescriptorImpl(ownerScope);
+    private static SimpleFunctionDescriptor createErrorFunction(ErrorScope ownerScope) {
+        ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ownerScope);
         function.initialize(
                 null,
                 ReceiverDescriptor.NO_RECEIVER,

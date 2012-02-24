@@ -105,7 +105,7 @@ public class OverloadResolver {
 
         MultiMap<Key, CallableMemberDescriptor> functionsByName = MultiMap.create();
 
-        for (NamedFunctionDescriptor function : context.getFunctions().values()) {
+        for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
             DeclarationDescriptor containingDeclaration = function.getContainingDeclaration();
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
