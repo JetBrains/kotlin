@@ -33,23 +33,29 @@ import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
 */
 public class JetSimpleNameReference extends JetPsiReference {
 
+    @NotNull
     private final JetSimpleNameExpression myExpression;
 
-    public JetSimpleNameReference(JetSimpleNameExpression jetSimpleNameExpression) {
+    public JetSimpleNameReference(@NotNull JetSimpleNameExpression jetSimpleNameExpression) {
         super(jetSimpleNameExpression);
         myExpression = jetSimpleNameExpression;
     }
 
+    @NotNull
     @Override
     public PsiElement getElement() {
         return myExpression.getReferencedNameElement();
     }
 
+    @NotNull
+    public JetSimpleNameExpression getExpression() {
+        return myExpression;
+    }
+
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
-        PsiElement element = getElement();
-        if (element == null) return null;
-        return new TextRange(0, element.getTextLength());
+        return new TextRange(0, getElement().getTextLength());
     }
 
     @NotNull

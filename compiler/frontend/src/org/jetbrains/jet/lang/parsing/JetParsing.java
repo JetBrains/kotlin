@@ -207,8 +207,12 @@ public class JetParsing extends AbstractJetParsing {
             advance(); // DOT
 
             reference = mark();
-            expect(IDENTIFIER, "Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, SEMICOLON));
-            reference.done(REFERENCE_EXPRESSION);
+            if (expect(IDENTIFIER, "Qualified name must be a '.'-separated identifier list", TokenSet.create(AS_KEYWORD, DOT, SEMICOLON))) {
+                reference.done(REFERENCE_EXPRESSION);
+            }
+            else {
+                reference.drop();
+            }
 
             PsiBuilder.Marker precede = qualifiedName.precede();
             qualifiedName.done(DOT_QUALIFIED_EXPRESSION);
@@ -817,7 +821,7 @@ public class JetParsing extends AbstractJetParsing {
             errorAndAdvance("Expecting 'val' or 'var'");
         }
 
-        boolean typeParametersDeclared = at(LT) ? parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON)) : false;
+        boolean typeParametersDeclared = at(LT) && parseTypeParameterList(TokenSet.create(IDENTIFIER, EQ, COLON, SEMICOLON));
 
         TokenSet propertyNameFollow = TokenSet.create(COLON, EQ, LBRACE, SEMICOLON, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, CLASS_KEYWORD);
 
@@ -1236,8 +1240,11 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         PsiBuilder.Marker reference = mark();
-        expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST));
-        reference.done(REFERENCE_EXPRESSION);
+        if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST))) {
+            reference.done(REFERENCE_EXPRESSION);
+        } else {
+            reference.drop();
+        }
 
         expect(COLON, "Expecting ':' before the upper bound", TYPE_REF_FIRST);
 
@@ -1394,8 +1401,13 @@ public class JetParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker reference = mark();
         while (true) {
-            expect(IDENTIFIER, "Expecting type name", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW));
-            reference.done(REFERENCE_EXPRESSION);
+            if (expect(IDENTIFIER, "Expecting type name", TokenSet.orSet(JetExpressionParsing.EXPRESSION_FIRST, JetExpressionParsing.EXPRESSION_FOLLOW))) {
+                reference.done(REFERENCE_EXPRESSION);
+            }
+            else {
+                reference.drop();
+                break;
+            }
 
             parseTypeArgumentList(-1);
             if (!at(DOT)) {
