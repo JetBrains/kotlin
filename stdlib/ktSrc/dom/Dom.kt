@@ -95,6 +95,11 @@ fun Element.get(selector: String): List<Element> {
     return this.getElementsByTagName(selector).toElementList()
 }
 
+/** Returns the attribute value or null if its not present */
+inline fun Element?.attribute(name: String): String? {
+    return this?.getAttribute(name)
+}
+
 /** Returns the children of the element as a list */
 inline fun Element?.children(): List<Node> {
     return this?.getChildNodes().toList()

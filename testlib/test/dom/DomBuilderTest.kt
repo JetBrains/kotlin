@@ -35,6 +35,7 @@ class DomBuilderTest() : TestSupport() {
         if (grandChild != null) {
             println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
             assertEquals("Hello World!", grandChild.text)
+            assertEquals("tiny", grandChild.attribute("class") ?: "")
         } else {
             fail("Not an Element $grandChild")
         }
