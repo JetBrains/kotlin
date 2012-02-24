@@ -42,4 +42,6 @@ class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass, var functions: 
 """)
     }
 
+    override fun href(f: KFunction): String = "#${f.link}"
+
 }

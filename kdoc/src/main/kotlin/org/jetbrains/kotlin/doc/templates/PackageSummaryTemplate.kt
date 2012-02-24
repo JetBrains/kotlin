@@ -282,7 +282,14 @@ Copyright &#169; 2010-2012. All Rights Reserved.
                 if (c != null) {
                     println("""<TR BGCOLOR="white" CLASS="TableRowColor">""")
                     println("<TD WIDTH=\"15%\"><B><A HREF=\"${pkg.nameAsRelativePath}${c.name}.html\" title=\"extensions on ${pkg.name}\">${c.name}</A></B></TD>")
-                    println("<TD>${c.description}</TD>")
+                    print("<TD>")
+                    val list = e?.getValue()
+                    if (list != null) {
+                        for (f in list) {
+                            println("""<A HREF="${extensionsHref(pkg, c, f)}">${f.name}<A> """)
+                        }
+                    }
+                    println("</TD>")
                     println("</TR>")
                 }
             }
