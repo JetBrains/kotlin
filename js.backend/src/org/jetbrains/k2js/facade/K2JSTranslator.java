@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.k2js.analyze.Analyzer;
 import org.jetbrains.k2js.config.Config;
@@ -123,6 +124,7 @@ public final class K2JSTranslator {
 
     @NotNull
     private JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
+        JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
         return Translation.generateAst(bindingContext, Analyzer.withJsLibAdded(filesToTranslate, config));
     }
