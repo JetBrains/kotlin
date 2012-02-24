@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.JsNamer;
 import com.google.dart.compiler.backend.js.JsPrettyNamer;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -106,11 +105,9 @@ public final class Translation {
     }
 
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-                                        @NotNull NamespaceDescriptor namespaceToTranslate,
-                                        @NotNull List<JetFile> files,
-                                        @NotNull Project project) {
+                                        @NotNull List<JetFile> files) {
         //TODO: move some of the code somewhere
-        JetStandardLibrary standardLibrary = JetStandardLibrary.getJetStandardLibrary(project);
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);

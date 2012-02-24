@@ -11,3 +11,5 @@ trait Iterable<T> {
 library("splitString")
 public fun String.split(regex : String) : Array<String> = js.noImpl
 
+class Throwable() {}
+

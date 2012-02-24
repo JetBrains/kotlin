@@ -19,7 +19,6 @@ package org.jetbrains.k2js.facade;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -29,7 +28,6 @@ import org.jetbrains.k2js.config.IDEAConfig;
 import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.utils.GenerationUtils;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
@@ -126,10 +124,7 @@ public final class K2JSTranslator {
     @NotNull
     private JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        JetFile file = filesToTranslate.iterator().next();
-        NamespaceDescriptor namespaceDescriptor = BindingUtils.getNamespaceDescriptor(bindingContext, file);
-        return Translation.generateAst(bindingContext, namespaceDescriptor,
-                Analyzer.withJsLibAdded(filesToTranslate, config), getProject());
+        return Translation.generateAst(bindingContext, Analyzer.withJsLibAdded(filesToTranslate, config));
     }
 
 

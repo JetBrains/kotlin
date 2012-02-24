@@ -18,7 +18,7 @@ fun print(s : Any?) {}
 library("parseInt")
 fun parseInt(s : String) : Int = 0
 library
-open class Exception() {}
+open class Exception() : Throwable() {}
 library
 class NumberFormatException() : Exception() {}
 
