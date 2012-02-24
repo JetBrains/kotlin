@@ -1246,11 +1246,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if(resolvedCall == null) {
             throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
         }
-        receiver = StackValue.receiver(resolvedCall, receiver, this, null);
 
         DeclarationDescriptor funDescriptor = resolvedCall.getResultingDescriptor();
 
         if (funDescriptor instanceof ConstructorDescriptor) {
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
             return generateConstructorCall(expression, (JetSimpleNameExpression) callee, receiver);
         }
         else if (funDescriptor instanceof FunctionDescriptor) {
@@ -1295,6 +1295,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             return returnValueAsStackValue((FunctionDescriptor) fd, callReturnType);
         }
         else {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+            assert resolvedCall != null;
+            receiver = StackValue.receiver(resolvedCall, receiver, this, null);
+
             IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
             List<JetExpression> args = new ArrayList<JetExpression>();
             for (ValueArgument argument : expression.getValueArguments()) {
