@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -135,7 +135,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @NotNull
-    public Collection<NamedFunctionDescriptor> getTopLevelFunctionDescriptorsByName(final @NotNull String name,
+    public Collection<SimpleFunctionDescriptor> getTopLevelFunctionDescriptorsByName(final @NotNull String name,
                                                                                     final @NotNull GlobalSearchScope scope) {
 
         // TODO: Add jet function in jar-dependencies (those functions are missing in BindingContext and stubs)
@@ -144,10 +144,10 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         
         final BindingContext context = getResolutionContext(scope);
 
-        final HashSet<NamedFunctionDescriptor> result = new HashSet<NamedFunctionDescriptor>();
+        final HashSet<SimpleFunctionDescriptor> result = new HashSet<SimpleFunctionDescriptor>();
 
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
-            final NamedFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
+            final SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
             if (functionDescriptor != null) {
                 result.add(functionDescriptor);
             }
@@ -181,17 +181,17 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return extensionFunctionNames;
     }
 
-    public Collection<NamedFunctionDescriptor> getAllJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
+    public Collection<SimpleFunctionDescriptor> getAllJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
         // TODO: Add jet extension functions in jar-dependencies (those functions are missing in BindingContext and stubs)
 
         final Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
 
         final BindingContext context = getResolutionContext(scope);
 
-        final HashSet<NamedFunctionDescriptor> result = new HashSet<NamedFunctionDescriptor>();
+        final HashSet<SimpleFunctionDescriptor> result = new HashSet<SimpleFunctionDescriptor>();
 
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
-            final NamedFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
+            final SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
             if (functionDescriptor != null) {
                 if (functionDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor) {
                     if (functionDescriptor.getExpectedThisObject() != ReceiverDescriptor.NO_RECEIVER) {

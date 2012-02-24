@@ -56,7 +56,7 @@ public class FunctionCodegen {
     }
 
     public void gen(JetNamedFunction f) {
-        final NamedFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
+        final SimpleFunctionDescriptor functionDescriptor = state.getBindingContext().get(BindingContext.FUNCTION, f);
         assert functionDescriptor != null;
         JvmMethodSignature method = typeMapper.mapToCallableMethod(functionDescriptor, false, owner.getContextKind()).getSignature();
         generateMethod(f, method, true, null, functionDescriptor);
@@ -120,7 +120,7 @@ public class FunctionCodegen {
                 if (needJetAnnotations) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
                         PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
-                    } else if (functionDescriptor instanceof NamedFunctionDescriptor) {
+                    } else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
                             throw new IllegalStateException();
                         }
@@ -153,7 +153,7 @@ public class FunctionCodegen {
                         if(parameterDescriptor.hasDefaultValue()) {
                             av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
                         }
-                        if(parameterDescriptor.getOutType().isNullable()) {
+                        if(parameterDescriptor.getType().isNullable()) {
                             av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
                         }
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
@@ -205,7 +205,7 @@ public class FunctionCodegen {
                     for (ValueParameterDescriptor parameter : paramDescrs) {
                         Type sharedVarType = typeMapper.getSharedVarType(parameter);
                         if (sharedVarType != null) {
-                            Type localVarType = typeMapper.mapType(parameter.getOutType());
+                            Type localVarType = typeMapper.mapType(parameter.getType());
                             int index = frameMap.getIndex(parameter);
                             mv.visitTypeInsn(NEW, sharedVarType.getInternalName());
                             mv.visitInsn(DUP);
@@ -239,7 +239,7 @@ public class FunctionCodegen {
                 }
 
                 for (ValueParameterDescriptor parameter : paramDescrs) {
-                    Type type = typeMapper.mapType(parameter.getOutType());
+                    Type type = typeMapper.mapType(parameter.getType());
                     // TODO: specify signature
                     mv.visitLocalVariable(parameter.getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();

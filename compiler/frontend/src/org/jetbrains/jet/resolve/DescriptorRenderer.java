@@ -152,7 +152,7 @@ public class DescriptorRenderer implements Renderer {
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER, descriptor.getOutType());
+            String typeString = renderPropertyPrefixAndComputeTypeString(builder, Collections.<TypeParameterDescriptor>emptyList(), ReceiverDescriptor.NO_RECEIVER, descriptor.getType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
@@ -188,7 +188,7 @@ public class DescriptorRenderer implements Renderer {
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder, descriptor.getTypeParameters(),
                     descriptor.getReceiverParameter(),
-                    descriptor.getOutType());
+                    descriptor.getType());
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return null;

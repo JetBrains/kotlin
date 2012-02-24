@@ -64,7 +64,7 @@ public final class DescriptorLookupConverter {
                 @Override
                 public String fun(ValueParameterDescriptor valueParameterDescriptor) {
                     return valueParameterDescriptor.getName() + ":" +
-                           DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getOutType());
+                           DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getType());
                 }
             }, ",") + ")";
 
@@ -78,7 +78,7 @@ public final class DescriptorLookupConverter {
             }
         }
         else if (descriptor instanceof VariableDescriptor) {
-            JetType outType = ((VariableDescriptor) descriptor).getOutType();
+            JetType outType = ((VariableDescriptor) descriptor).getType();
             typeText = DescriptorRenderer.TEXT.renderType(outType);
         }
         else if (descriptor instanceof ClassDescriptor) {

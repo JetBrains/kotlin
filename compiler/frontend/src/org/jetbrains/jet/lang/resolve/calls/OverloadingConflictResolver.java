@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -104,8 +102,8 @@ public class OverloadingConflictResolver {
         int fSize = fParams.size();
         if (fSize != gParams.size()) return false;
         for (int i = 0; i < fSize; i++) {
-            JetType fParamType = fParams.get(i).getOutType();
-            JetType gParamType = gParams.get(i).getOutType();
+            JetType fParamType = fParams.get(i).getType();
+            JetType gParamType = gParams.get(i).getType();
 
             if (!typeMoreSpecific(fParamType, gParamType)) {
                 return false;

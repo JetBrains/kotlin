@@ -17,11 +17,8 @@
 package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
@@ -30,12 +27,12 @@ import java.util.Collections;
 /**
  * @author Stepan Koltsov
  */
-public class ErrorNamedFunctionDescriptorImpl extends NamedFunctionDescriptorImpl {
+public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorImpl {
     // used for diagnostic only
     @NotNull
     private final ErrorUtils.ErrorScope ownerScope;
 
-    public ErrorNamedFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
+    public ErrorSimpleFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
         super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "<ERROR FUNCTION>", Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
@@ -47,7 +44,7 @@ public class ErrorNamedFunctionDescriptorImpl extends NamedFunctionDescriptorImp
 
     @NotNull
     @Override
-    public NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
         return this;
     }
 

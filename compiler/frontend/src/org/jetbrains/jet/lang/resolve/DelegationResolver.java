@@ -62,10 +62,10 @@ public class DelegationResolver {
                                 context.getTrace().record(DELEGATED, copy);
                             }
                         }
-                        else if (declarationDescriptor instanceof NamedFunctionDescriptor) {
-                            NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) declarationDescriptor;
+                        else if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
+                            SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) declarationDescriptor;
                             if (functionDescriptor.getModality().isOverridable()) {
-                                NamedFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
+                                SimpleFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.addFunctionDescriptor(copy);
                                 context.getTrace().record(DELEGATED, copy);
                             }

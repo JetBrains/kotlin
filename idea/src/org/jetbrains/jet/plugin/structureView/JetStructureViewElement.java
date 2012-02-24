@@ -190,7 +190,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                         @Override
                         public String fun(ValueParameterDescriptor valueParameterDescriptor) {
                             return valueParameterDescriptor.getName() + ":" +
-                                   DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getOutType());
+                                   DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getType());
                         }
                     },
                     ",");
@@ -201,7 +201,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(returnType));
         }
         else if (descriptor instanceof VariableDescriptor) {
-            JetType outType = ((VariableDescriptor) descriptor).getOutType();
+            JetType outType = ((VariableDescriptor) descriptor).getType();
 
             textBuilder = new StringBuilder(descriptor.getName());
             textBuilder.append(":").append(DescriptorRenderer.TEXT.renderType(outType));

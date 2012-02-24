@@ -71,10 +71,10 @@ public class DeclarationsChecker {
             checkObject(objectDeclaration, objectDescriptor);
         }
 
-        Map<JetNamedFunction, NamedFunctionDescriptor> functions = context.getFunctions();
-        for (Map.Entry<JetNamedFunction, NamedFunctionDescriptor> entry : functions.entrySet()) {
+        Map<JetNamedFunction, SimpleFunctionDescriptor> functions = context.getFunctions();
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
             JetNamedFunction function = entry.getKey();
-            NamedFunctionDescriptor functionDescriptor = entry.getValue();
+            SimpleFunctionDescriptor functionDescriptor = entry.getValue();
 
             if (!context.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
@@ -246,7 +246,7 @@ public class DeclarationsChecker {
         }
     }
 
-    protected void checkFunction(JetNamedFunction function, NamedFunctionDescriptor functionDescriptor) {
+    protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         PsiElement nameIdentifier = function.getNameIdentifier();
         JetModifierList modifierList = function.getModifierList();

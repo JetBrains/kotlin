@@ -1240,7 +1240,7 @@ public class JavaDescriptorResolver {
                 getterDescriptor.initialize(propertyType);
             }
             if (setterDescriptor != null) {
-                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getOutType(), false, null));
+                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getType(), false, null));
             }
 
             semanticServices.getTrace().record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
@@ -1258,19 +1258,19 @@ public class JavaDescriptorResolver {
         
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
-        Set<NamedFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
+        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
             FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
                     method);
             if (function != null) {
-                functionsFromCurrent.add((NamedFunctionDescriptor) function);
+                functionsFromCurrent.add((SimpleFunctionDescriptor) function);
             }
         }
 
         if (owner instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) owner;
 
-            Set<NamedFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
+            Set<SimpleFunctionDescriptor> functionsFromSupertypes = getFunctionsFromSupertypes(scopeData, methodName);
 
             OverrideResolver.generateOverridesInFunctionGroup(methodName, functionsFromSupertypes, functionsFromCurrent, classDescriptor, new OverrideResolver.DescriptorSink() {
                 @Override
@@ -1291,11 +1291,11 @@ public class JavaDescriptorResolver {
         namedMembers.functionDescriptors = functions;
     }
     
-    private Set<NamedFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, String methodName) {
-        Set<NamedFunctionDescriptor> r = new HashSet<NamedFunctionDescriptor>();
+    private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, String methodName) {
+        Set<SimpleFunctionDescriptor> r = new HashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
-                r.add((NamedFunctionDescriptor) function);
+                r.add((SimpleFunctionDescriptor) function);
             }
         }
         return r;
@@ -1429,7 +1429,7 @@ public class JavaDescriptorResolver {
             return null;
         }
 
-        NamedFunctionDescriptorImpl functionDescriptorImpl = new NamedFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 owner,
                 resolveAnnotations(method.getPsiMethod()),
                 method.getName(),

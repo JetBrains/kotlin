@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -151,7 +150,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     @Override
     public JetType getReturnType() {
-        return getOutType();
+        return getType();
     }
 
     public boolean isVar() {
@@ -213,7 +212,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
 
-        JetType originalOutType = getOutType();
+        JetType originalOutType = getType();
         JetType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
         if (outType == null) {
             return null; // TODO : tell the user that the property was projected out

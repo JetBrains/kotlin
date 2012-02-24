@@ -28,7 +28,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -122,10 +122,10 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
 
                 if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
                     final DeclarationDescriptor descriptor = ((JetLookupObject) item.getObject()).getDescriptor();
-                    if (descriptor instanceof NamedFunctionDescriptor) {
+                    if (descriptor instanceof SimpleFunctionDescriptor) {
 
                         final JetFile file = (JetFile) context.getFile();
-                        NamedFunctionDescriptor functionDescriptor = (NamedFunctionDescriptor) descriptor;
+                        SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
                         final String fqn = DescriptorUtils.getFQName(functionDescriptor);
 
                         if (DescriptorUtils.isTopLevelFunction(functionDescriptor)) {

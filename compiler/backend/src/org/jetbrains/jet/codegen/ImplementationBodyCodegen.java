@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -452,7 +451,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (DeclarationDescriptor descriptor : closure.closure.keySet()) {
                 if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                     final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                    final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getOutType());
+                    final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getType());
                     consArgTypes.add(insert++, new JvmMethodParameterSignature(type, "", JvmMethodParameterKind.SHARED_VAR));
                 }
                 else if(descriptor instanceof FunctionDescriptor) {
@@ -533,7 +532,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         HashSet<FunctionDescriptor> overridden = new HashSet<FunctionDescriptor>();
         for (JetDeclaration declaration : myClass.getDeclarations()) {
             if (declaration instanceof JetNamedFunction) {
-                NamedFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
+                SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
                 assert functionDescriptor != null;
                 overridden.addAll(functionDescriptor.getOverriddenDescriptors());
             }
@@ -613,7 +612,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if(varDescr instanceof VariableDescriptor && !(varDescr instanceof PropertyDescriptor)) {
                     Type sharedVarType = typeMapper.getSharedVarType(varDescr);
                     if(sharedVarType == null) {
-                        sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getOutType());
+                        sharedVarType = typeMapper.mapType(((VariableDescriptor) varDescr).getType());
                     }
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     iv.load(k, StackValue.refType(sharedVarType));
@@ -629,7 +628,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetParameter parameter : constructorParameters) {
             if (parameter.getValOrVarNode() != null) {
                 VariableDescriptor descriptor = paramDescrs.get(curParam);
-                Type type = typeMapper.mapType(descriptor.getOutType());
+                Type type = typeMapper.mapType(descriptor.getType());
                 iv.load(0, classType);
                 iv.load(frameMap.getIndex(descriptor), type);
                 iv.putfield(classname, descriptor.getName(), type.getDescriptor());
@@ -653,7 +652,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         
         for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
-            if (needDelegates.second instanceof NamedFunctionDescriptor) {
+            if (needDelegates.second instanceof SimpleFunctionDescriptor) {
                 generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second);
             } else if (needDelegates.second instanceof PropertyDescriptor) {
                 PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
@@ -865,9 +864,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if(compileTimeValue != null) {
                             assert compileTimeValue != null;
                             Object value = compileTimeValue.getValue();
-                            Type type = typeMapper.mapType(propertyDescriptor.getOutType());
+                            Type type = typeMapper.mapType(propertyDescriptor.getType());
                             if(JetTypeMapper.isPrimitive(type)) {
-                                if( !propertyDescriptor.getOutType().isNullable() && value instanceof Number) {
+                                if( !propertyDescriptor.getType().isNullable() && value instanceof Number) {
                                     if(type == Type.INT_TYPE && ((Number)value).intValue() == 0)
                                         continue;
                                     if(type == Type.BYTE_TYPE && ((Number)value).byteValue() == 0)
@@ -893,12 +892,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         }
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         Type type = codegen.expressionType(initializer);
-                        if(propertyDescriptor.getOutType().isNullable())
+                        if(propertyDescriptor.getType().isNullable())
                             type = JetTypeMapper.boxType(type);
                         codegen.gen(initializer, type);
                         // @todo write directly to the field. Fix test excloset.jet::test6
                         String owner = typeMapper.getOwner(propertyDescriptor, OwnerKind.IMPLEMENTATION);
-                        StackValue.property(propertyDescriptor.getName(), owner, owner, typeMapper.mapType(propertyDescriptor.getOutType()), false, false, false, null, null, 0).store(iv);
+                        StackValue.property(propertyDescriptor.getName(), owner, owner, typeMapper.mapType(propertyDescriptor.getType()), false, false, false, null, null, 0).store(iv);
                     }
 
                 }
@@ -924,8 +923,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen.genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
                             }
-                            else if (declaration instanceof NamedFunctionDescriptor) {
-                                functionCodegen.genDelegate((NamedFunctionDescriptor) declaration, overriddenDescriptor, field);
+                            else if (declaration instanceof SimpleFunctionDescriptor) {
+                                functionCodegen.genDelegate((SimpleFunctionDescriptor) declaration, overriddenDescriptor, field);
                             }
                         }
                     }

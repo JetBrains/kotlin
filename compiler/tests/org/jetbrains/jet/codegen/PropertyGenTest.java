@@ -199,6 +199,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt1170() throws Exception {
+        createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt1170.kt");
     }
 

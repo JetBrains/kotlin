@@ -109,7 +109,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         VariableDescriptor propertyDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo);
         JetExpression initializer = property.getInitializer();
         if (property.getPropertyTypeRef() != null && initializer != null) {
-            JetType outType = propertyDescriptor.getOutType();
+            JetType outType = propertyDescriptor.getType();
             JetType initializerType = facade.getType(initializer, context.replaceExpectedType(outType).replaceScope(scope));
         }
         
@@ -126,7 +126,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
-        NamedFunctionDescriptor functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
+        SimpleFunctionDescriptor functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         context.getServices().checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo);

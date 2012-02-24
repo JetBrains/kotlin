@@ -154,8 +154,8 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public NamedFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
-        final NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
+    public SimpleFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
+        final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 containingDescriptor,
                 annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName()),
@@ -708,11 +708,11 @@ public class DescriptorResolver {
                 JetType type;
                 JetTypeReference typeReference = parameter.getTypeReference();
                 if (typeReference == null) {
-                    type = propertyDescriptor.getOutType(); // TODO : this maybe unknown at this point
+                    type = propertyDescriptor.getType(); // TODO : this maybe unknown at this point
                 }
                 else {
                     type = typeResolver.resolveType(scope, typeReference);
-                    JetType inType = propertyDescriptor.getOutType();
+                    JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
                             trace.report(WRONG_SETTER_PARAMETER_TYPE.on(setter, typeReference, inType));
@@ -762,7 +762,7 @@ public class DescriptorResolver {
         if (getter != null) {
             List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList());
 
-            JetType outType = propertyDescriptor.getOutType();
+            JetType outType = propertyDescriptor.getType();
             JetType returnType = outType;
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
@@ -782,7 +782,7 @@ public class DescriptorResolver {
         }
         else {
             getterDescriptor = createDefaultGetter(propertyDescriptor);
-            getterDescriptor.initialize(propertyDescriptor.getOutType());
+            getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;
     }
@@ -872,7 +872,7 @@ public class DescriptorResolver {
         PropertySetterDescriptor setter = createDefaultSetter(propertyDescriptor);
 
         propertyDescriptor.initialize(getter, setter);
-        getter.initialize(propertyDescriptor.getOutType());
+        getter.initialize(propertyDescriptor.getType());
 
         trace.record(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter, propertyDescriptor);
         return propertyDescriptor;

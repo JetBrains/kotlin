@@ -83,7 +83,7 @@ public interface NamespaceLike extends DeclarationDescriptor {
 
     void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor);
 
-    void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor);
+    void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor);
 
     void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor);
 

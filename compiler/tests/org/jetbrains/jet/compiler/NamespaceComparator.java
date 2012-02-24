@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.compiler;
 
-import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PropertyCodegen;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -282,7 +280,7 @@ class NamespaceComparator {
             }
             sb.append(prop.getName());
             sb.append(": ");
-            new Serializer(sb).serialize(prop.getOutType());
+            new Serializer(sb).serialize(prop.getType());
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
@@ -297,7 +295,7 @@ class NamespaceComparator {
             if (valueParameter.getVarargElementType() != null) {
                 serialize(valueParameter.getVarargElementType());
             } else {
-                serialize(valueParameter.getOutType());
+                serialize(valueParameter.getType());
             }
             if (valueParameter.hasDefaultValue()) {
                 sb.append(" = ?");

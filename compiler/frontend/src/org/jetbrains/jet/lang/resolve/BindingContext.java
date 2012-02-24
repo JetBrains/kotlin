@@ -149,7 +149,7 @@ public interface BindingContext {
     WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, NamedFunctionDescriptor> FUNCTION = Slices.<PsiElement, NamedFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
     WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();

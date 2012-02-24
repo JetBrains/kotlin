@@ -57,7 +57,7 @@ public class DataFlowValueFactory {
 
     @NotNull
     public DataFlowValue createDataFlowValue(@NotNull VariableDescriptor variableDescriptor) {
-        JetType type = variableDescriptor.getOutType();
+        JetType type = variableDescriptor.getType();
         return new DataFlowValue(variableDescriptor, type, isStableVariable(variableDescriptor), getImmanentNullability(type));
     }
 

@@ -73,8 +73,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
        for (DescriptorClassMember selectedElement : selectedElements) {
            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
            JetFile containingFile = (JetFile) classOrObject.getContainingFile();
-           if (descriptor instanceof NamedFunctionDescriptor) {
-               JetElement target = overrideFunction(project, containingFile, (NamedFunctionDescriptor) descriptor);
+           if (descriptor instanceof SimpleFunctionDescriptor) {
+               JetElement target = overrideFunction(project, containingFile, (SimpleFunctionDescriptor) descriptor);
                body.addBefore(target, body.getRBrace());
            }
            else if (descriptor instanceof PropertyDescriptor) {
@@ -92,9 +92,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append("val ");
         }
-        bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getOutType());
-        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getOutType(), file);
-        String initializer = defaultInitializer(descriptor.getOutType(), JetStandardLibrary.getInstance());
+        bodyBuilder.append(descriptor.getName()).append(": ").append(descriptor.getType());
+        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
+        String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
             bodyBuilder.append("=").append(initializer);
         }
@@ -104,7 +104,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, JetFile file, NamedFunctionDescriptor descriptor) {
+    private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder("override fun ");
         bodyBuilder.append(descriptor.getName());
         bodyBuilder.append("(");
@@ -116,9 +116,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
             bodyBuilder.append(": ");
-            bodyBuilder.append(parameterDescriptor.getOutType().toString());
+            bodyBuilder.append(parameterDescriptor.getType().toString());
 
-            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getOutType(), file);
+            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();

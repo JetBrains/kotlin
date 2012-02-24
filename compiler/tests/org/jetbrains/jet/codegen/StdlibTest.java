@@ -116,4 +116,8 @@ public class StdlibTest extends CodegenTestCase {
             throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
         }
     }
+
+    public void testKt1406() throws Exception {
+        blackBoxFile("regressions/kt1406.kt");
+    }
 }

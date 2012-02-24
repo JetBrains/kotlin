@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -39,7 +38,7 @@ import java.util.Set;
 public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
-    private final Set<NamedFunctionDescriptor> functions = Sets.newHashSet();
+    private final Set<SimpleFunctionDescriptor> functions = Sets.newHashSet();
 
     private final WritableScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
@@ -119,7 +118,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     @Override
-    public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
+    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
         super.addFunctionDescriptor(functionDescriptor);
         functions.add(functionDescriptor);
         callableMembers.add(functionDescriptor);
@@ -127,7 +126,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     @NotNull
-    public Set<NamedFunctionDescriptor> getFunctions() {
+    public Set<SimpleFunctionDescriptor> getFunctions() {
         return functions;
     }
 

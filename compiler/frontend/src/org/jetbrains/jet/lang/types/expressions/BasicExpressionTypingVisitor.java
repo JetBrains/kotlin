@@ -607,7 +607,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 temporaryTrace.commit();
                 VariableDescriptor resultingDescriptor = resolutionResult.getResultingDescriptor();
                 checkSuper(receiver, resultingDescriptor, context.trace, selectorExpression);
-                return resultingDescriptor.getOutType();
+                return resultingDescriptor.getType();
             }
             if (resolutionResult.isAmbiguity() || resolutionResult.singleResult()) {
                 temporaryTrace.commit();

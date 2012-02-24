@@ -252,7 +252,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
     @Override
-    public void addFunctionDescriptor(@NotNull NamedFunctionDescriptor functionDescriptor) {
+    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
         getScopeForMemberLookupAsWritableScope().addFunctionDescriptor(functionDescriptor);
     }
 

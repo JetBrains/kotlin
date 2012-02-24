@@ -19,17 +19,17 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * ... and also a closure
+ * Simple functions are the ones with 'fun' keyword and function literals
  *
  * @author Stepan Koltsov
  */
-public interface NamedFunctionDescriptor extends FunctionDescriptor {
+public interface SimpleFunctionDescriptor extends FunctionDescriptor {
 
     @NotNull
     @Override
-    NamedFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
+    SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides);
 
     @NotNull
     @Override
-    NamedFunctionDescriptor getOriginal();
+    SimpleFunctionDescriptor getOriginal();
 }

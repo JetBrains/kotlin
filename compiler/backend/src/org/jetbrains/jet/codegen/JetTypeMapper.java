@@ -488,7 +488,7 @@ public class JetTypeMapper {
 
         for (ValueParameterDescriptor parameter : parameters) {
             signatureVisitor.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getOutType(), signatureVisitor);
+            mapType(parameter.getType(), signatureVisitor);
             signatureVisitor.writeParameterTypeEnd();
         }
 
@@ -576,7 +576,7 @@ public class JetTypeMapper {
         }
         for (ValueParameterDescriptor parameter : parameters) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getOutType(), signatureWriter);
+            mapType(parameter.getType(), signatureWriter);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -617,7 +617,7 @@ public class JetTypeMapper {
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        mapType(descriptor.getOutType(), signatureWriter);
+        mapType(descriptor.getType(), signatureWriter);
         signatureWriter.writeReturnTypeEnd();
 
         JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
@@ -636,7 +636,7 @@ public class JetTypeMapper {
         
         writeFormalTypeParameters(descriptor.getTypeParameters(), signatureWriter);
 
-        JetType outType = descriptor.getOutType();
+        JetType outType = descriptor.getType();
 
         signatureWriter.writeParametersStart();
 
@@ -687,7 +687,7 @@ public class JetTypeMapper {
 
         for (ValueParameterDescriptor parameter : parameters) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getOutType(), signatureWriter);
+            mapType(parameter.getType(), signatureWriter);
             signatureWriter.writeParameterTypeEnd();
         }
         
@@ -854,7 +854,7 @@ public class JetTypeMapper {
         if(descriptor instanceof PropertyDescriptor) {
             return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
         }
-        else if (descriptor instanceof NamedFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
+        else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             return Type.getObjectType(classNameForAnonymousClass((JetElement) psiElement));
         }
@@ -864,7 +864,7 @@ public class JetTypeMapper {
         else if (descriptor instanceof VariableDescriptor) {
             Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
             if (aBoolean != null && aBoolean) {
-                JetType outType = ((VariableDescriptor) descriptor).getOutType();
+                JetType outType = ((VariableDescriptor) descriptor).getType();
                 return StackValue.sharedTypeForType(mapType(outType));
             }
             else {

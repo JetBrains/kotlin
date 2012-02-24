@@ -84,12 +84,12 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetType expectedType = context.expectedType;
         boolean functionTypeExpected = expectedType != TypeUtils.NO_EXPECTED_TYPE && JetStandardClasses.isFunctionType(expectedType);
 
-        NamedFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
+        SimpleFunctionDescriptorImpl functionDescriptor = createFunctionDescriptor(expression, context, functionTypeExpected);
 
         List<JetType> parameterTypes = Lists.newArrayList();
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         for (ValueParameterDescriptor valueParameter : valueParameters) {
-            parameterTypes.add(valueParameter.getOutType());
+            parameterTypes.add(valueParameter.getType());
         }
         ReceiverDescriptor receiverParameter = functionDescriptor.getReceiverParameter();
         JetType receiver = receiverParameter != NO_RECEIVER ? receiverParameter.getType() : null;
@@ -124,10 +124,10 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         return DataFlowUtils.checkType(JetStandardClasses.getFunctionType(Collections.<AnnotationDescriptor>emptyList(), receiver, parameterTypes, safeReturnType), expression, context);
     }
 
-    private NamedFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
+    private SimpleFunctionDescriptorImpl createFunctionDescriptor(JetFunctionLiteralExpression expression, ExpressionTypingContext context, boolean functionTypeExpected) {
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
         JetTypeReference receiverTypeRef = functionLiteral.getReceiverTypeRef();
-        NamedFunctionDescriptorImpl functionDescriptor = new NamedFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 context.scope.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), "<anonymous>", CallableMemberDescriptor.Kind.DECLARATION);
 
         List<ValueParameterDescriptor> valueParameterDescriptors = createValueParameterDescriptors(context, functionLiteral, functionDescriptor, functionTypeExpected);
@@ -161,7 +161,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (functionTypeExpected && !hasDeclaredValueParameters && expectedValueParameters.size() == 1) {
             ValueParameterDescriptor valueParameterDescriptor = expectedValueParameters.get(0);
             ValueParameterDescriptor it = new ValueParameterDescriptorImpl(
-                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "it", false, valueParameterDescriptor.getOutType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
+                    functionDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "it", false, valueParameterDescriptor.getType(), valueParameterDescriptor.hasDefaultValue(), valueParameterDescriptor.getVarargElementType()
             );
             valueParameterDescriptors.add(it);
             context.trace.record(AUTO_CREATED_IT, it);
@@ -177,7 +177,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 }
                 else {
                     if (expectedValueParameters != null && i < expectedValueParameters.size()) {
-                        type = expectedValueParameters.get(i).getOutType();
+                        type = expectedValueParameters.get(i).getType();
                     }
                     else {
                         context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));

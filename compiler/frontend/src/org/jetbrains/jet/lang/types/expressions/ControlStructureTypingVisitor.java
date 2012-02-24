@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamedFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -248,7 +248,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             VariableDescriptor variableDescriptor;
             if (typeReference != null) {
                 variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter);
-                JetType actualParameterType = variableDescriptor.getOutType();
+                JetType actualParameterType = variableDescriptor.getType();
                 if (expectedParameterType != null &&
                         actualParameterType != null &&
                         !context.semanticServices.getTypeChecker().isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -377,7 +377,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (hasNextProperty == null) {
             return null;
         } else {
-            JetType hasNextReturnType = hasNextProperty.getOutType();
+            JetType hasNextReturnType = hasNextProperty.getType();
             if (hasNextReturnType == null) {
                 // TODO : accessibility
                 context.trace.report(HAS_NEXT_MUST_BE_READABLE.on(loopRange));
@@ -401,7 +401,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (catchParameter != null) {
                 VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter);
                 JetType throwableType = context.semanticServices.getStandardLibrary().getThrowable().getDefaultType();
-                DataFlowUtils.checkType(variableDescriptor.getOutType(), catchParameter, context.replaceExpectedType(throwableType));
+                DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
                     WritableScope catchScope = newWritableScopeImpl(context).setDebugName("Catch scope");
                     catchScope.addVariableDescriptor(variableDescriptor);
@@ -479,7 +479,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else if (element != null) {
-            NamedFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
+            SimpleFunctionDescriptor functionDescriptor = context.trace.get(FUNCTION, element);
             if (functionDescriptor != null) {
                 expectedType = DescriptorUtils.getFunctionExpectedReturnType(functionDescriptor, element);
                 if (functionDescriptor != containingFunctionDescriptor) {

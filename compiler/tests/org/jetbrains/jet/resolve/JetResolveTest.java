@@ -142,7 +142,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();
             for (int i = 0, unsubstitutedValueParametersSize = unsubstitutedValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
                 ValueParameterDescriptor unsubstitutedValueParameter = unsubstitutedValueParameters.get(i);
-                if (unsubstitutedValueParameter.getOutType().equals(parameterType[i])) {
+                if (unsubstitutedValueParameter.getType().equals(parameterType[i])) {
                     return resolvedCall.getResultingDescriptor();
                 }
             }

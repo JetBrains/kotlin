@@ -230,12 +230,12 @@ public abstract class CodegenContext {
         if(accessor != null)
             return accessor;
 
-        if(descriptor instanceof NamedFunctionDescriptor) {
-            NamedFunctionDescriptorImpl myAccessor = new NamedFunctionDescriptorImpl(contextType,
+        if(descriptor instanceof SimpleFunctionDescriptor) {
+            SimpleFunctionDescriptorImpl myAccessor = new SimpleFunctionDescriptorImpl(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
                     descriptor.getName() + "$bridge$" + accessors.size(),
                     CallableMemberDescriptor.Kind.DECLARATION);
-            FunctionDescriptor fd = (NamedFunctionDescriptor) descriptor;
+            FunctionDescriptor fd = (SimpleFunctionDescriptor) descriptor;
             myAccessor.initialize(fd.getReceiverParameter().exists() ? fd.getReceiverParameter().getType() : null,
                                   fd.getExpectedThisObject(),
                                   fd.getTypeParameters(),
@@ -257,13 +257,13 @@ public abstract class CodegenContext {
                     CallableMemberDescriptor.Kind.DECLARATION
             );
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
-            myAccessor.setType(pd.getOutType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
+            myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
 
             PropertyGetterDescriptor pgd = new PropertyGetterDescriptor(
                         myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),
                         myAccessor.getVisibility(),
                     false, false, CallableMemberDescriptor.Kind.DECLARATION);
-            pgd.initialize(myAccessor.getOutType());
+            pgd.initialize(myAccessor.getType());
             
             PropertySetterDescriptor psd = new PropertySetterDescriptor(
                     myAccessor, Collections.<AnnotationDescriptor>emptyList(), myAccessor.getModality(),

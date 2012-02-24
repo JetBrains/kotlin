@@ -468,12 +468,12 @@ public class BodyResolver {
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
         ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
-        JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getOutType() : NO_EXPECTED_TYPE;
+        JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         JetType type = typeInferrer.getType(context.getDescriptorResolver().getPropertyDeclarationInnerScope(scope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter()), initializer, expectedTypeForInitializer);
 //
 //        JetType expectedType = propertyDescriptor.getInType();
 //        if (expectedType == null) {
-//            expectedType = propertyDescriptor.getOutType();
+//            expectedType = propertyDescriptor.getType();
 //        }
 //        if (type != null && expectedType != null
 //            && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, expectedType)) {
@@ -482,9 +482,9 @@ public class BodyResolver {
     }
 
     private void resolveFunctionBodies() {
-        for (Map.Entry<JetNamedFunction, NamedFunctionDescriptor> entry : this.context.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : this.context.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
-            NamedFunctionDescriptor descriptor = entry.getValue();
+            SimpleFunctionDescriptor descriptor = entry.getValue();
 
             computeDeferredType(descriptor.getReturnType());
 
@@ -528,7 +528,7 @@ public class BodyResolver {
                 JetParameter jetParameter = valueParameters.get(i);
                 JetExpression defaultValue = jetParameter.getDefaultValue();
                 if (defaultValue != null) {
-                    typeInferrer.getType(declaringScope, defaultValue, valueParameterDescriptor.getOutType());
+                    typeInferrer.getType(declaringScope, defaultValue, valueParameterDescriptor.getType());
                 }
             }
         }

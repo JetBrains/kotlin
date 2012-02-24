@@ -106,7 +106,7 @@ public class AnnotationResolver {
             List<JetExpression> argumentExpressions = descriptorToArgument.getValue().getArgumentExpressions();
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             for (JetExpression argument : argumentExpressions) {
-                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getOutType()));
+                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getType()));
             }
         }
         descriptor.setValueArguments(arguments);

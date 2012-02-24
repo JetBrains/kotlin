@@ -234,8 +234,8 @@ public class DataFlowInfo {
 //    }
 //
 //    @Nullable
-//    public JetType getOutType(@NotNull VariableDescriptor variableDescriptor) {
-//        JetType outType = variableDescriptor.getOutType();
+//    public JetType getType(@NotNull VariableDescriptor variableDescriptor) {
+//        JetType outType = variableDescriptor.getType();
 //        if (outType == null) return null;
 //        if (!outType.isNullable()) return outType;
 //        NullabilityFlags nullabilityFlags = nullabilityInfo.get(variableDescriptor);
@@ -269,7 +269,7 @@ public class DataFlowInfo {
 //
 //    @NotNull
 //    public List<JetType> getPossibleTypesForVariable(@NotNull VariableDescriptor variableDescriptor) {
-//        return getPossibleTypes(variableDescriptor, variableDescriptor.getOutType());
+//        return getPossibleTypes(variableDescriptor, variableDescriptor.getType());
 //    }
 //
 //    public List<JetType> getPossibleTypesForReceiver(@NotNull ReceiverDescriptor receiver) {

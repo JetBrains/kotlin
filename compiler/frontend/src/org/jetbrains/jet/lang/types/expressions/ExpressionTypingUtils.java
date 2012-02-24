@@ -150,7 +150,7 @@ public class ExpressionTypingUtils {
 
     public static boolean isVariableIterable(@NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
         JetExpression expression = JetPsiFactory.createExpression(project, "fake");
-        ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getOutType());
+        ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 project,
                 JetSemanticServices.createSemanticServices(project),
