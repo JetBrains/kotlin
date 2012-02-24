@@ -2,6 +2,7 @@ package std.util
 
 import java.util.Map as JMap
 import java.util.HashMap
+import java.util.Collections
 
 // Temporary workaround: commenting out
 //import java.util.Map.Entry as JEntry
@@ -18,6 +19,10 @@ val JMap<*,*>.empty : Boolean
 
 /** Provides [] access to maps */
 fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
+
+/** Converts the nullable Map into an empty Map if its null */
+inline fun <K,V> java.util.Map<K,V>?.notNull() : java.util.Map<K,V>
+    = if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
 
 
 /** Returns the key of the entry */
