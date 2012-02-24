@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.model.KModel
 
 class AllClassesFrameTemplate(val model: KModel, val classAttributes: String = "") : KDocTemplate() {
     override fun render() {
-        // TODO could really do with templates in multi-line strings :)
         println("""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--NewPage-->
 <HTML>
