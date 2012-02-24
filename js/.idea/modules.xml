@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/backend/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/cli/cli.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/cli/cli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/tests/compiler-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend/frontend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/frontend.java/frontend.java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js.ast/js.ast.iml" filepath="$PROJECT_DIR$/js.ast/js.ast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js.backend/js.backend.iml" filepath="$PROJECT_DIR$/js.backend/js.backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js.examples/js.examples.iml" filepath="$PROJECT_DIR$/js.examples/js.examples.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js.tests/js.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/js.lib/jslib.iml" filepath="$PROJECT_DIR$/js.lib/jslib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/stdlib/stdlib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Kotlin/jet/compiler/util/util.iml" filepath="$PROJECT_DIR$/../../Kotlin/jet/compiler/util/util.iml" />
+    </modules>
+  </component>
+</project>
+
