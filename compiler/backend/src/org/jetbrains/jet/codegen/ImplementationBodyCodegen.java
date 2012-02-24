@@ -593,7 +593,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final Type type = typeMapper.mapType(outerDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
-            v.newField(myClass, ACC_PRIVATE | ACC_FINAL, fieldName, interfaceDesc, null, null);
+            v.newField(myClass, ACC_FINAL, fieldName, interfaceDesc, null, null);
             iv.load(0, classType);
             iv.load(frameMap.getOuterThisIndex(), type);
             iv.putfield(classname, fieldName, interfaceDesc);

@@ -140,7 +140,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         final Method constructor = generateConstructor(funClass, fun);
 
         if (captureThis) {
-            cv.newField(fun, 0, "this$0", enclosingType.getDescriptor(), null, null);
+            cv.newField(fun, ACC_FINAL, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
         if(isConst()) {
