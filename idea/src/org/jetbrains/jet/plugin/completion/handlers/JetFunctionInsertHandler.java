@@ -90,7 +90,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
             // Insert () if it's not already exist
             document.insertString(endOffset, "()");
             bothParentheses = true;
-        } else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset) == ')') {
+        } else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset + 1) == ')') {
             bothParentheses = true;
         }
 
