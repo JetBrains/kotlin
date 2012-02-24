@@ -20,7 +20,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -32,6 +31,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
+import java.io.File;
+
 /**
  * @author Nikolay Krasko
  */
@@ -39,8 +40,12 @@ public class RenameInKotlinTest extends MultiFileTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        refreshPath(getTestDataPath() + getTestRoot());
+        refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "before");
+        refreshPath(getTestDataPath() + getTestRoot() + getTestName(true) + File.separator + "after");
+    }
 
-        String path = getTestDataPath() + getTestRoot();
+    public static void refreshPath(String path) {
         VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
         if (virtualFile != null) {
             virtualFile.getChildren();
@@ -69,6 +74,8 @@ public class RenameInKotlinTest extends MultiFileTestCase {
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments();
                 FileDocumentManager.getInstance().saveAllDocuments();
                 VirtualFileManager.getInstance().refresh(false);
+
+
             }
         });
     }
