@@ -94,6 +94,9 @@ inline fun String(stringBuffer : java.lang.StringBuffer) = java.lang.String(stri
 
 inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(stringBuilder) as String
 
+/** Returns true if the string is not null and not empty */
+inline fun String?.notEmpty() : Boolean = this != null && this.length() > 0
+
 /*
 Iterator for characters of given CharSequence
 */
