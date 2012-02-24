@@ -50,7 +50,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             <TD NOWRAP><FONT SIZE="-1">
             <CODE>""")
             printTypeParameters(method)
-            println("<BR>")
+            println("""<BR>""")
             print(link(method.returnType))
             println("""</CODE></FONT></TD>
 </TR>
@@ -58,14 +58,14 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         } else {
             print(link(method.returnType))
         }
-        println("</CODE></FONT></TD>")
-        print("<TD><CODE><B><A HREF=\"${href(method)}\">${method.name}</A></B>")
+        println("""</CODE></FONT></TD>""")
+        print("""<TD><CODE><B><A HREF="${href(method)}">${method.name}</A></B>""")
         printParameters(method)
-        println("</CODE>")
-        println("")
-        println("<BR>")
-        println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${method.detailedDescription}</TD>")
-        println("</TR>")
+        println("""</CODE>""")
+        println("""""")
+        println("""<BR>""")
+        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${method.detailedDescription}</TD>""")
+        println("""</TR>""")
     }
 
     fun printFunctionDetail(functions: Collection<KFunction>): Unit {
@@ -90,27 +90,27 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     }
 
     fun printFunctionDetail(function: KFunction): Unit {
-        println("<A NAME=\"${function.name}{${function.parameterTypeText}})\"><!-- --></A><A NAME=\"${function.name}(${function.typeParametersText})\"><!-- --></A><H3>")
-        println("${function.name}</H3>")
-        println("<PRE>")
-        println("<FONT SIZE=\"-1\">")
+        println("""<A NAME="${function.name}{${function.parameterTypeText}})"><!-- --></A><A NAME="${function.name}(${function.typeParametersText})"><!-- --></A><H3>""")
+        println("""${function.name}</H3>""")
+        println("""<PRE>""")
+        println("""<FONT SIZE="-1">""")
         printAnnotations(function.annotations)
-        print("</FONT>${function.modifiers.join(" ")} ")
+        print("""</FONT>${function.modifiers.join(" ")} """)
 
         printTypeParameters(function)
         print(link(function.returnType))
-        print(" <A HREF=\"${sourceHref(function)}\"><B>${function.name}</B></A>")
+        print(""" <A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
         printParameters(function)
         val exlist = function.exceptions
         var first = true
         if (!exlist.isEmpty()) {
-            println("                                throws ");
+            println("""                                throws """);
             for (ex in exlist) {
                 if (first) first = false else print(", ")
                 print(link(ex))
             }
         }
-        println("</PRE>")
+        println("""</PRE>""")
 
         println(function.detailedDescription)
         /* TODO
@@ -128,7 +128,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 </DD>
 </DL>
 */
-        println("<HR>")
+        println("""<HR>""")
     }
 
     fun printPropertySummary(properties: Collection<KProperty>): Unit {
@@ -164,7 +164,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             <TD NOWRAP><FONT SIZE="-1">
             <CODE>""")
             printTypeParameters(property)
-            println("<BR>")
+            println("""<BR>""")
             print(link(property.returnType))
             println("""</CODE></FONT></TD>
 </TR>
@@ -174,14 +174,14 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         */
         print(link(property.returnType))
-        println("</CODE></FONT></TD>")
-        print("<TD><CODE><B><A HREF=\"${href(property)}\">${property.name}</A></B>")
+        println("""</CODE></FONT></TD>""")
+        print("""<TD><CODE><B><A HREF="${href(property)}">${property.name}</A></B>""")
         //printParameters(property)
-        println("</CODE>")
-        println("")
-        println("<BR>")
-        println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription}</TD>")
-        println("</TR>")
+        println("""</CODE>""")
+        println("""""")
+        println("""<BR>""")
+        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription}</TD>""")
+        println("""</TR>""")
     }
 
     fun printTypeParameters(method: KFunction): Unit {

@@ -19,24 +19,20 @@ class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass, var functions: 
         println("""<HR>
 <!-- ======== START OF CLASS EXTENSIONS DATA ======== -->
 <H2>
-<FONT SIZE="-1">""")
-        println("${pkg.name}</FONT>")
-        println("<BR>")
-        println("Extensions on ${klass.name}</H2>")
-        println("<DL>")
-        print("<DT>")
-        print("extension functions on class <A HREF=\"${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}\"><B>${klass.name}</B></A><DT>")
-
-        println("from package ")
-        println(link(pkg))
-        println("</DL>")
-        println("""</PRE>
+<FONT SIZE="-1">
+${pkg.name}</FONT>
+<BR>
+Extensions on ${klass.name}</H2>
+<DL>
+<DT>
+extension functions on class <A HREF="${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"><B>${klass.name}</B></A><DT>
+from package ${link(pkg)}
+</DL>
+</PRE>
 
 <P>""")
-
         printFunctionSummary(functions)
         printFunctionDetail(functions)
-
         println("""<!-- ========= END OF CLASS EXTENSIONS DATA ========= -->
 <HR>
 """)
