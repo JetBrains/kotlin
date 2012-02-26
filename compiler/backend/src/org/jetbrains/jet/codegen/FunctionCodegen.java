@@ -431,6 +431,14 @@ public class FunctionCodegen {
     private static void checkOverride(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
         Method method = state.getTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
         Method overriden = state.getTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
+
+        if(overriddenFunction.getModality() == Modality.ABSTRACT) {
+            Set<? extends FunctionDescriptor> overriddenFunctions = overriddenFunction.getOverriddenDescriptors();
+            for (FunctionDescriptor of : overriddenFunctions) {
+                checkOverride(owner, state, v, jvmSignature, overriddenFunction, of.getOriginal());
+            }
+        }
+
         if(differentMethods(method, overriden)) {
             int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
 
