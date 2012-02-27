@@ -1,9 +1,10 @@
 package std.util
-// Number of extension function for ava.lang.Iterable that shouldn't participate in auto generation
+// Number of extension function for java.lang.Iterable that shouldn't participate in auto generation
 
 import java.util.Collection
 import java.util.List
 import java.util.AbstractList
+import java.util.Iterator
 
 /**
  * Count the number of elements in collection.
@@ -82,4 +83,39 @@ fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
   }
 
   return false
+}
+
+/**
+ * Convert collection of arbitrary elements to collection of
+ */
+fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
+    return object : java.lang.Iterable<#(Int, T)> {
+        override fun iterator(): java.util.Iterator<#(Int, T)> {
+            // TODO explicit typecast as a workaround for KT-1457, should be removed when it is fixed
+            return NumberedIterator<T>(this@withIndices.iterator().sure()) as java.util.Iterator<#(Int, T)>
+        }
+    }
+}
+
+private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterator<TT>) : java.util.Iterator<#(Int, TT)> {
+    private var nextIndex = 0
+
+    override fun remove() {
+        try {
+            sourceIterator.remove()
+            nextIndex--;
+        } catch (e : UnsupportedOperationException) {
+            throw e
+        }
+    }
+
+    override fun hasNext(): Boolean {
+        return sourceIterator.hasNext();
+    }
+
+    override fun next(): #(Int, TT) {
+        val result = #(nextIndex, sourceIterator.next())
+        nextIndex++
+        return result
+    }
 }
