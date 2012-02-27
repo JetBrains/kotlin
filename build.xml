@@ -130,7 +130,7 @@
     <target name="testlib" depends="compileTestlib">
         <mkdir dir="${output}/test-reports"/>
 
-        <junit printsummary="yes" haltonfailure="true" logfailedtests="true">
+        <junit printsummary="yes" haltonfailure="true">
           <classpath>
               <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
               <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
