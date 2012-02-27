@@ -79,7 +79,7 @@ public class JetPsiChecker implements Annotator {
                     for (Diagnostic diagnostic : diagnostics) {
 
                         // This is needed because we have the same context for all files
-                        if (diagnostic.getFactory().getPsiFile(diagnostic) != file) continue;
+                        if (diagnostic.getPsiFile() != file) continue;
 
                         registerDiagnosticAnnotations(diagnostic, redeclarations, holder);
                     }
@@ -158,7 +158,7 @@ public class JetPsiChecker implements Annotator {
             @NotNull Set<PsiElement> redeclarations,
             @NotNull final AnnotationHolder holder
     ) {
-        List<TextRange> textRanges = diagnostic.getFactory().getTextRanges(diagnostic);
+        List<TextRange> textRanges = diagnostic.getTextRanges();
         if (diagnostic.getSeverity() == Severity.ERROR) {
             if (diagnostic.getFactory() == Errors.UNRESOLVED_IDE_TEMPLATE) {
                 return;
@@ -226,21 +226,18 @@ public class JetPsiChecker implements Annotator {
             return null;
         }
 
-        if (diagnostic instanceof DiagnosticWithPsiElementImpl && diagnostic.getFactory() instanceof PsiElementOnlyDiagnosticFactory) {
-            PsiElementOnlyDiagnosticFactory factory = (PsiElementOnlyDiagnosticFactory) diagnostic.getFactory();
-            Collection<JetIntentionActionFactory> intentionActionFactories = QuickFixes.get(factory);
-            for (JetIntentionActionFactory intentionActionFactory : intentionActionFactories) {
-                IntentionAction action = null;
-                if (intentionActionFactory != null) {
-                    action = intentionActionFactory.createAction((DiagnosticWithPsiElement) diagnostic);
-                }
-                if (action != null) {
-                    annotation.registerFix(action);
-                }
+        Collection<JetIntentionActionFactory> intentionActionFactories = QuickFixes.getActionFactories(diagnostic.getFactory());
+        for (JetIntentionActionFactory intentionActionFactory : intentionActionFactories) {
+            IntentionAction action = null;
+            if (intentionActionFactory != null) {
+                action = intentionActionFactory.createAction(diagnostic);
+            }
+            if (action != null) {
+                annotation.registerFix(action);
             }
         }
 
-        Collection<IntentionAction> actions = QuickFixes.get(diagnostic.getFactory());
+        Collection<IntentionAction> actions = QuickFixes.getActions(diagnostic.getFactory());
         for (IntentionAction action : actions) {
             annotation.registerFix(action);
         }
@@ -259,7 +256,7 @@ public class JetPsiChecker implements Annotator {
     @Nullable
     private Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations, @NotNull RedeclarationDiagnostic diagnostic, @NotNull AnnotationHolder holder) {
         if (!redeclarations.add(diagnostic.getPsiElement())) return null;
-        return holder.createErrorAnnotation(diagnostic.getFactory().getTextRanges(diagnostic).get(0), getMessage(diagnostic));
+        return holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), getMessage(diagnostic));
     }
 
 

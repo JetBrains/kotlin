@@ -111,7 +111,6 @@ public class DescriptorResolver {
                 return parentDescriptor.getDefaultType();
             }
             else {
-//                trace.getErrorHandler().genericError(((JetEnumEntry) jetClass).getNameIdentifier().getNode(), "Generic arguments of the base type must be specified");
                 trace.report(NO_GENERICS_IN_SUPERTYPE_SPECIFIER.on(((JetEnumEntry) jetClass).getNameIdentifier()));
                 return ErrorUtils.createErrorType("Supertype not specified");
             }
@@ -131,8 +130,7 @@ public class DescriptorResolver {
                 JetTypeElement typeElement = typeReference.getTypeElement();
                 while (typeElement instanceof JetNullableType) {
                     JetNullableType nullableType = (JetNullableType) typeElement;
-//                    trace.getErrorHandler().genericError(nullableType.getQuestionMarkNode(), "A supertype cannot be nullable");
-                    trace.report(NULLABLE_SUPERTYPE.on(nullableType.getQuestionMarkNode()));
+                    trace.report(NULLABLE_SUPERTYPE.on(nullableType));
                     typeElement = nullableType.getInnerType();
                 }
                 if (typeElement instanceof JetUserType) {
@@ -140,8 +138,7 @@ public class DescriptorResolver {
                     List<JetTypeProjection> typeArguments = userType.getTypeArguments();
                     for (JetTypeProjection typeArgument : typeArguments) {
                         if (typeArgument.getProjectionKind() != JetProjectionKind.NONE) {
-//                            trace.getErrorHandler().genericError(typeArgument.getProjectionNode(), "Projections are not allowed for immediate arguments of a supertype");
-                            trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument.getProjectionNode()));
+                            trace.report(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.on(typeArgument));
                         }
                     }
                 }
@@ -202,7 +199,6 @@ public class DescriptorResolver {
                 });
             }
             else {
-//                trace.getErrorHandler().genericError(function.asElement().getNode(), "This function must either declare a return type or have a body element");
                 trace.report(FUNCTION_WITH_NO_TYPE_NO_BODY.on(function.asElement()));
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
@@ -247,7 +243,6 @@ public class DescriptorResolver {
 
             JetType type;
             if (typeReference == null) {
-//                trace.getErrorHandler().genericError(valueParameter.getNode(), "A type annotation is required on a value parameter");
                 trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter));
                 type = ErrorUtils.createErrorType("Type annotation was missing");
             } else {
@@ -350,7 +345,6 @@ public class DescriptorResolver {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
                 if (classifier != null) {
-//                    trace.getErrorHandler().genericError(subjectTypeParameterName.getNode(), referencedName + " does not refer to a type parameter of " + declaration.getName());
                     trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(subjectTypeParameterName, constraint, declaration));
                     trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
                 }
@@ -379,7 +373,6 @@ public class DescriptorResolver {
             if (JetStandardClasses.isNothing(parameter.getUpperBoundsAsType())) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
-//                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Upper bounds of " + parameter.getName() + " have empty intersection");
                     trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
                 }
             }
@@ -388,7 +381,6 @@ public class DescriptorResolver {
             if (classObjectType != null && JetStandardClasses.isNothing(classObjectType)) {
                 PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
                 if (nameIdentifier != null) {
-//                    trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Class object upper bounds of " + parameter.getName() + " have empty intersection");
                     trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
                 }
             }
@@ -399,11 +391,9 @@ public class DescriptorResolver {
         JetType jetType = typeResolverNotCheckingBounds.resolveType(scope, upperBound);
         if (!TypeUtils.canHaveSubtypes(semanticServices.getTypeChecker(), jetType)) {
             if (classObjectConstaint) {
-//                trace.getErrorHandler().genericError(upperBound.getNode(), jetType + " is a final type, and thus a class object cannot extend it");
                 trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
             }
             else {
-//                trace.getErrorHandler().genericWarning(upperBound.getNode(), jetType + " is a final type, and thus a value of the type parameter is predetermined");
                 trace.report(FINAL_UPPER_BOUND.on(upperBound, jetType));
             }
         }
@@ -615,10 +605,9 @@ public class DescriptorResolver {
         if (propertyTypeRef == null) {
             final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
-//                trace.getErrorHandler().genericError(property.getNode(), "This property must either have a type annotation or be initialized");
                 PsiElement nameIdentifier = property.getNameIdentifier();
                 if (nameIdentifier != null) {
-                    trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier.getNode()));
+                    trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier));
                 }
                 return ErrorUtils.createErrorType("No type, no body");
             } else {
@@ -715,7 +704,7 @@ public class DescriptorResolver {
                     JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(setter, typeReference, inType));
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
                         }
                     }
                     else {
@@ -739,7 +728,7 @@ public class DescriptorResolver {
         if (! property.isVar()) {
             if (setter != null) {
 //                trace.getErrorHandler().genericError(setter.asElement().getNode(), "A 'val'-property cannot have a setter");
-                trace.report(VAL_WITH_SETTER.on(property, setter));
+                trace.report(VAL_WITH_SETTER.on(setter));
             }
         }
         return setterDescriptor;
@@ -768,8 +757,7 @@ public class DescriptorResolver {
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
-//                    trace.getErrorHandler().genericError(returnTypeReference.getNode(), "Getter return type must be equal to the type of the property, i.e. " + propertyDescriptor.getReturnType());
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(getter, returnTypeReference, propertyDescriptor.getReturnType()));
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
                 }
             }
 
@@ -851,8 +839,7 @@ public class DescriptorResolver {
         if (modifierList != null) {
             ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
             if (abstractNode != null) {
-//                trace.getErrorHandler().genericError(abstractNode, "This property cannot be declared abstract");
-                trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(parameter, abstractNode));
+                trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(parameter));
             }
         }
 
@@ -913,7 +900,6 @@ public class DescriptorResolver {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, substitutedBound)) {
-//                trace.getErrorHandler().genericError(argumentTypeReference.getNode(), "An upper bound " + substitutedBound + " is violated");
                 trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound));
             }
         }

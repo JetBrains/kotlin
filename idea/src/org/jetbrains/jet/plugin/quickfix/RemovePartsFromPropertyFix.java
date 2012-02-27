@@ -20,16 +20,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -37,27 +33,21 @@ import org.jetbrains.jet.plugin.JetBundle;
  * @author svtk
  */
 public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> {
-    private final JetType type;
     private final boolean removeInitializer;
     private final boolean removeGetter;
     private final boolean removeSetter;
     
-    private RemovePartsFromPropertyFix(@NotNull JetProperty element, @Nullable JetType type, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
+    private RemovePartsFromPropertyFix(@NotNull JetProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
         super(element);
-        this.type = type;
         this.removeInitializer = removeInitializer;
         this.removeGetter = removeGetter;
         this.removeSetter = removeSetter;
     }
     
-    private RemovePartsFromPropertyFix(@NotNull JetProperty element, @Nullable JetType type) {
-        this(element, type, element.getInitializer() != null,
+    private RemovePartsFromPropertyFix(@NotNull JetProperty element) {
+        this(element, element.getInitializer() != null,
              element.getGetter() != null && element.getGetter().getBodyExpression() != null,
              element.getSetter() != null && element.getSetter().getBodyExpression() != null);
-    }
-
-    private RemovePartsFromPropertyFix(@NotNull JetProperty element, boolean removeInitializer, boolean removeGetter, boolean removeSetter) {
-        this(element, null, removeInitializer, removeGetter, removeSetter);
     }
 
     private static String partsToRemove(boolean getter, boolean setter, boolean initializer) {
@@ -96,8 +86,15 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     }
 
     @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        JetType type = QuickFixUtil.getDeclarationReturnType(element);
+        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
+    }
+
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         if (!(file instanceof JetFile)) return;
+        JetType type = QuickFixUtil.getDeclarationReturnType(element);
         JetProperty newElement = (JetProperty) element.copy();
         JetPropertyAccessor getter = newElement.getGetter();
         if (removeGetter && getter != null) {
@@ -127,24 +124,15 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
         element.replace(newElement);
     }
 
-    public static JetIntentionActionFactory<JetProperty> createFactory() {
-        return new JetIntentionActionFactory<JetProperty>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetProperty> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetProperty;
-                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.TYPE);
-                JetType type = diagnosticWithParameters.getParameter(DiagnosticParameters.TYPE);
-                return new RemovePartsFromPropertyFix((JetProperty) diagnostic.getPsiElement(), type);
-            }
-        };
-    }
-
-    public static JetIntentionActionFactory<JetProperty> createRemoveInitializerFactory() {
-        return new JetIntentionActionFactory<JetProperty>() {
-            @Override
-            public JetIntentionAction<JetProperty> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetProperty;
-                return new RemovePartsFromPropertyFix((JetProperty) diagnostic.getPsiElement(), true, false, false);
+            public JetIntentionAction<JetProperty> createAction(Diagnostic diagnostic) {
+                PsiElement element = diagnostic.getPsiElement();
+                assert element instanceof JetElement;
+                JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
+                if (property == null) return null;
+                return new RemovePartsFromPropertyFix(property);
             }
         };
     }

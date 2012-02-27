@@ -17,17 +17,23 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiElement;
+
+import java.util.List;
 
 /**
  * @author abreslav
  */
-public interface DiagnosticWithTextRange extends Diagnostic {
-    @NotNull
-    TextRange getTextRange();
+public abstract class DiagnosticFactoryWithPsiElement<P extends PsiElement> extends AbstractDiagnosticFactory {
+    protected final Severity severity;
+    protected final PositioningStrategy<? super P> positioningStrategy;
 
-    @NotNull
-    PsiFile getPsiFile();
+    public DiagnosticFactoryWithPsiElement(Severity severity, PositioningStrategy<? super P> positioningStrategy) {
+        this.severity = severity;
+        this.positioningStrategy = positioningStrategy;
+    }
 
+    protected List<TextRange> getTextRanges(Diagnostic<P> diagnostic) {
+        return positioningStrategy.mark(diagnostic.getPsiElement());
+    }
 }

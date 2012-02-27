@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -48,7 +49,7 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         assert editor != null && psiFile != null;
 
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
-        List<TextRange> syntaxError = AnalyzingUtils.getSyntaxErrorRanges(psiFile);
+        List<PsiErrorElement> syntaxError = AnalyzingUtils.getSyntaxErrorRanges(psiFile);
 
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, bindingContext, syntaxError).toString();
 

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -130,9 +131,9 @@ public class BodyResolver {
             @Override
             public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-                ASTNode node = valueArgumentList == null ? call.getNode() : valueArgumentList.getNode();
+                PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.TRAIT) {
-                    context.getTrace().report(SUPERTYPE_INITIALIZED_IN_TRAIT.on(node));
+                    context.getTrace().report(SUPERTYPE_INITIALIZED_IN_TRAIT.on(elementToMark));
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
@@ -149,7 +150,7 @@ public class BodyResolver {
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
                         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(node));
+                            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(elementToMark));
                         }
                     }
                 }
@@ -304,13 +305,14 @@ public class BodyResolver {
 
         final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
+        PsiElement nameElement = declaration.getNameNode().getPsi();
         if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
-            context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(declaration.getNameNode()));
+            context.getTrace().report(SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY.on(nameElement));
         }
         else {
             List<JetDelegationSpecifier> initializers = declaration.getInitializers();
             if (initializers.isEmpty()) {
-                context.getTrace().report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(declaration.getNameNode()));
+                context.getTrace().report(SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST.on(nameElement));
             }
             else {
                 initializers.get(0).accept(new JetVisitorVoid() {

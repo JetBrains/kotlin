@@ -16,14 +16,16 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import com.intellij.codeInsight.intention.IntentionAction;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
 /**
 * @author svtk
 */
-public interface JetIntentionActionFactory<T extends PsiElement> {
+public interface JetIntentionActionFactory {
 
-    JetIntentionAction<T> createAction(DiagnosticWithPsiElement diagnostic);
+    @Nullable
+    IntentionAction createAction(Diagnostic diagnostic);
 
 }

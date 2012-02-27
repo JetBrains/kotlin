@@ -371,10 +371,10 @@ public class JetFlowInformationProvider {
                 JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) variable;
                 if (simpleNameExpression.getReferencedNameElementType() != JetTokens.FIELD_IDENTIFIER) {
                     if (((PropertyDescriptor) variableDescriptor).getModality() != Modality.FINAL) {
-                        trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER.on(simpleNameExpression, expression, variableDescriptor));
+                        trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER.on(expression, variableDescriptor));
                     }
                     else {
-                        trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.on(simpleNameExpression, expression, variableDescriptor));
+                        trace.report(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER.on(expression, variableDescriptor));
                     }
                     return true;
                 }
@@ -620,7 +620,7 @@ public class JetFlowInformationProvider {
                         if (nameIdentifier == null) return;
                         if (variableStatus == null || variableStatus == VariableStatus.UNUSED) {
                             if (element instanceof JetProperty) {
-                                trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, nameIdentifier, variableDescriptor));
+                                trace.report(Errors.UNUSED_VARIABLE.on((JetProperty) element, variableDescriptor));
                             }
                             else if (element instanceof JetParameter) {
                                 PsiElement psiElement = element.getParent().getParent();
@@ -630,18 +630,18 @@ public class JetFlowInformationProvider {
                                     assert descriptor instanceof FunctionDescriptor;
                                     FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                     if (!isMain && !functionDescriptor.getModality().isOverridable() && functionDescriptor.getOverriddenDescriptors().isEmpty()) {
-                                        trace.report(Errors.UNUSED_PARAMETER.on((JetParameter) element, nameIdentifier, variableDescriptor));
+                                        trace.report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor));
                                     }
                                 }
                             }
                         }
                         else if (variableStatus == VariableStatus.ONLY_WRITTEN && element instanceof JetProperty) {
-                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, nameIdentifier, variableDescriptor));
+                            trace.report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor));
                         }
                         else if (variableStatus == VariableStatus.WRITTEN && element instanceof JetProperty) {
                             JetExpression initializer = ((JetProperty) element).getInitializer();
                             if (initializer != null) {
-                                trace.report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on((JetNamedDeclaration) element, initializer, variableDescriptor));
+                                trace.report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(initializer, variableDescriptor));
                             }
                         }
                     }

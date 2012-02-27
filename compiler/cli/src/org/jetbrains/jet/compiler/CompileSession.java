@@ -35,8 +35,8 @@ import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -190,7 +190,7 @@ public class CompileSession {
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = SimpleDiagnosticFactory.create(Severity.ERROR, message).on(element);
+                    Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
                     errorCollector.report(diagnostic);
                 }
             });

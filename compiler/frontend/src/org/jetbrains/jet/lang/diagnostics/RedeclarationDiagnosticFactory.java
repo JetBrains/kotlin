@@ -57,26 +57,6 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
 
     @NotNull
     @Override
-    public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
-        PsiElement redeclaration = ((RedeclarationDiagnostic) diagnostic).getPsiElement();
-        if (redeclaration instanceof JetNamedDeclaration) {
-            PsiElement nameIdentifier = ((JetNamedDeclaration) redeclaration).getNameIdentifier();
-            if (nameIdentifier != null) {
-                return Collections.singletonList(nameIdentifier.getTextRange());
-            }
-        }
-        else if (redeclaration instanceof JetFile) {
-            JetFile file = (JetFile) redeclaration;
-            PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
-            if (nameIdentifier != null) {
-                return Collections.singletonList(nameIdentifier.getTextRange());
-            }
-        }
-        return Collections.singletonList(redeclaration.getTextRange());
-    }
-
-    @NotNull
-    @Override
     public String getName() {
         return name;
     }

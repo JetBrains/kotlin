@@ -38,7 +38,7 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
@@ -205,11 +205,11 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     }
 
     @Nullable
-    public static JetIntentionActionFactory<JetSimpleNameExpression> createFactory() {
-        return new JetIntentionActionFactory<JetSimpleNameExpression>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Nullable
             @Override
-            public JetIntentionAction<JetSimpleNameExpression> createAction(@NotNull DiagnosticWithPsiElement diagnostic) {
+            public JetIntentionAction<JetSimpleNameExpression> createAction(@NotNull Diagnostic diagnostic) {
                 // There could be different psi elements (i.e. JetArrayAccessExpression), but we can fix only JetSimpleNameExpression case
                 if (diagnostic.getPsiElement() instanceof JetSimpleNameExpression) {
                     JetSimpleNameExpression psiElement = (JetSimpleNameExpression) diagnostic.getPsiElement();
@@ -219,4 +219,5 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 return null;
             }
         };
-    }}
+    }
+}

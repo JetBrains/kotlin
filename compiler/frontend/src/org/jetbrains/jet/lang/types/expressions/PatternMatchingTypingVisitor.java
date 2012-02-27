@@ -205,7 +205,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                     ASTNode nameLabelNode = entry.getNameLabelNode();
                     if (nameLabelNode != null) {
 //                                context.trace.getErrorHandler().genericError(nameLabelNode, "Unsupported [OperatorConventions]");
-                        context.trace.report(UNSUPPORTED.on(nameLabelNode, getClass().getCanonicalName()));
+                        context.trace.report(UNSUPPORTED.on(nameLabelNode.getPsi(), getClass().getCanonicalName()));
                     }
 
                     JetPattern entryPattern = entry.getPattern();

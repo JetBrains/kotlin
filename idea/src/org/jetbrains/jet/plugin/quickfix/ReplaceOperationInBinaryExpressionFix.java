@@ -18,10 +18,11 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.plugin.JetBundle;
  */
 public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
     private final String operation;
+
     public ReplaceOperationInBinaryExpressionFix(@NotNull T element, String operation) {
         super(element);
         this.operation = operation;
@@ -56,12 +58,13 @@ public abstract class ReplaceOperationInBinaryExpressionFix<T extends JetExpress
         }
     }
 
-    public static JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS> createChangeCastToStaticAssertFactory() {
-        return new JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
+    public static JetIntentionActionFactory createChangeCastToStaticAssertFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetBinaryExpressionWithTypeRHS;
-                return new ReplaceOperationInBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>((JetBinaryExpressionWithTypeRHS) diagnostic.getPsiElement(), " : ") {
+            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
+                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
+                if (expression == null) return null;
+                return new ReplaceOperationInBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, " : ") {
                     @NotNull
                     @Override
                     public String getText() {

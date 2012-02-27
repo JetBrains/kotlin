@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,8 +36,8 @@ public interface DiagnosticHolder {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                PsiFile psiFile = diagnostic.getFactory().getPsiFile(diagnostic);
-                List<TextRange> textRanges = diagnostic.getFactory().getTextRanges(diagnostic);
+                PsiFile psiFile = diagnostic.getPsiFile();
+                List<TextRange> textRanges = diagnostic.getTextRanges();
                 throw new IllegalStateException(diagnostic.getMessage() + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }

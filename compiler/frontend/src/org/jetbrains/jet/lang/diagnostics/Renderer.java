@@ -16,26 +16,15 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author abreslav
  */
-public interface Renderer {
-    Renderer TO_STRING = new Renderer() {
-        @NotNull
-        @Override
-        public String render(@Nullable Object object) {
-            return object == null ? "null" : object.toString();
-        }
-
-        @Override
-        public String toString() {
-            return "TO_STRING";
-        }
-    };
+public interface Renderer<P> {
 
     @NotNull
-    String render(@Nullable Object object);
+    String render(@Nullable P element);
 }

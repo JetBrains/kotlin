@@ -21,21 +21,31 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+
+import java.util.List;
 
 /**
  * @author abreslav
  */
-public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiElement> {
-    public class SimpleRedeclarationDiagnostic extends DiagnosticWithPsiElementImpl<PsiElement> implements RedeclarationDiagnostic {
+public interface RedeclarationDiagnostic extends Diagnostic<PsiElement> {
+    class SimpleRedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> implements RedeclarationDiagnostic {
 
         public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
-            super(factory, factory.severity, factory.makeMessage(name), psiElement);
+            super(psiElement, factory, factory.severity, factory.makeMessage(name));
+        }
+
+        @NotNull
+        @Override
+        public List<TextRange> getTextRanges() {
+            return POSITION_REDECLARATION.mark(getPsiElement());
         }
     }
 
-    public class RedeclarationDiagnosticWithDeferredResolution implements RedeclarationDiagnostic {
-        
+    class RedeclarationDiagnosticWithDeferredResolution implements RedeclarationDiagnostic {
+
         private final DeclarationDescriptor duplicatingDescriptor;
         private final BindingContext contextToResolveToDeclaration;
         private final RedeclarationDiagnosticFactory factory;
@@ -54,7 +64,7 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
             }
             return element;
         }
-        
+
         @NotNull
         @Override
         public PsiElement getPsiElement() {
@@ -63,8 +73,8 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
 
         @NotNull
         @Override
-        public TextRange getTextRange() {
-            return resolve().getTextRange();
+        public List<TextRange> getTextRanges() {
+            return POSITION_REDECLARATION.mark(getPsiElement());
         }
 
         @NotNull
@@ -75,7 +85,7 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
 
         @NotNull
         @Override
-        public DiagnosticFactory getFactory() {
+        public AbstractDiagnosticFactory getFactory() {
             return factory;
         }
 
@@ -90,11 +100,26 @@ public interface RedeclarationDiagnostic extends DiagnosticWithPsiElement<PsiEle
         public Severity getSeverity() {
             return factory.severity;
         }
-
-        @Override
-        public <P> DiagnosticWithPsiElement<PsiElement> add(DiagnosticParameter<P> parameterType, P parameter) {
-            throw new UnsupportedOperationException();
-        }
     }
 
+    PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetNamedDeclaration) {
+                PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            else if (element instanceof JetFile) {
+                JetFile file = (JetFile) element;
+                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            return markElement(element);
+        }
+    };
 }

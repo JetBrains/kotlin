@@ -169,7 +169,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         if (value instanceof ErrorValue) {
             ErrorValue errorValue = (ErrorValue) value;
-            context.trace.report(ERROR_COMPILE_TIME_VALUE.on(node, errorValue.getMessage()));
+            context.trace.report(ERROR_COMPILE_TIME_VALUE.on(node.getPsi(), errorValue.getMessage()));
             return getDefaultType(context.semanticServices, elementType);
         }
         else {
@@ -243,7 +243,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeChecker typeChecker = context.semanticServices.getTypeChecker();
         if (!typeChecker.isSubtypeOf(targetType, actualType)) {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression, expression.getOperationSign()));
+                context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationSign()));
             }
             else {
                 // See JET-58 Make 'as never succeeds' a warning, or even never check for Java (external) types
@@ -252,7 +252,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
-                context.trace.report(USELESS_CAST.on(expression, expression.getOperationSign()));
+                context.trace.report(USELESS_CAST.on(expression.getOperationSign()));
             } else {
                 if (isCastErased(actualType, targetType, typeChecker)) {
                     context.trace.report(Errors.UNCHECKED_CAST.on(expression, actualType, targetType));
@@ -852,7 +852,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 JetType rightType = right == null ? null : facade.getType(right, contextWithExpectedType.replaceScope(context.scope));
                 if (leftType != null) {
                     if (!leftType.isNullable()) {
-                        context.trace.report(USELESS_ELVIS.on(expression, left, leftType));
+                        context.trace.report(USELESS_ELVIS.on(left, leftType));
                     }
                     if (rightType != null) {
                         DataFlowUtils.checkType(TypeUtils.makeNullableAsSpecified(leftType, rightType.isNullable()), left, contextWithExpectedType);
@@ -1035,8 +1035,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 arrayAccessExpression,
                 isGet ? "get" : "set");
         if (!functionResults.isSuccess()) {
-            JetContainerNode indicesNode = arrayAccessExpression.getIndicesNode();
-            traceForResolveResult.report(isGet ? NO_GET_METHOD.on(indicesNode) : NO_SET_METHOD.on(indicesNode));
+            traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return null;
         }
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());

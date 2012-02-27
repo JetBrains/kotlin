@@ -20,20 +20,24 @@ import com.intellij.psi.PsiElement;
 /**
  * @author svtk
  */
-public class UnusedElementDiagnosticFactory<T extends PsiElement, A> extends PsiElementOnlyDiagnosticFactory1<T, A> {
-    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String messageStub) {
-        return new UnusedElementDiagnosticFactory<T, A>(severity, messageStub);
+public class UnusedElementDiagnosticFactory<T extends PsiElement, A> extends DiagnosticFactory1<T, A> {
+    private UnusedElementDiagnosticFactory(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {
+        super(severity, message, positioningStrategy, renderer);
     }
 
-    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String messageStub, Renderer renderer) {
-        return new UnusedElementDiagnosticFactory<T, A>(severity, messageStub, renderer);
+    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {
+        return new UnusedElementDiagnosticFactory<T, A>(severity, message, positioningStrategy, renderer);
     }
 
-    public UnusedElementDiagnosticFactory(Severity severity, String message, Renderer renderer) {
-        super(severity, message, renderer);
+    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
+        return create(severity, message, positioningStrategy, Renderers.TO_STRING);
     }
 
-    protected UnusedElementDiagnosticFactory(Severity severity, String message) {
-        super(severity, message);
+    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String message, Renderer<? super A> renderer) {
+        return create(severity, message, PositioningStrategies.DEFAULT, renderer);
+    }
+
+    public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String message) {
+        return create(severity, message, PositioningStrategies.DEFAULT, Renderers.TO_STRING);
     }
 }

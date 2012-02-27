@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -24,23 +26,27 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.util.Collection;
 
 /**
-* @author abreslav
-*/
-public class AmbiguousDescriptorDiagnosticFactory extends ParameterizedDiagnosticFactory1<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
+ * @author abreslav
+ */
+public class AmbiguousDescriptorDiagnosticFactory extends DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
     public static AmbiguousDescriptorDiagnosticFactory create(String messageTemplate) {
         return new AmbiguousDescriptorDiagnosticFactory(messageTemplate);
     }
 
     public AmbiguousDescriptorDiagnosticFactory(String messageTemplate) {
-        super(Severity.ERROR, messageTemplate);
+        super(Severity.ERROR, messageTemplate, PositioningStrategies.DEFAULT, AMBIGUOUS_DESCRIPTOR_RENDERER);
     }
 
-    @Override
-    protected String makeMessageFor(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
-        StringBuilder stringBuilder = new StringBuilder("\n");
-        for (ResolvedCall<? extends CallableDescriptor> call : argument) {
-            stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
+    private static Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_DESCRIPTOR_RENDERER = 
+            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+        @NotNull
+        @Override
+        public String render(@Nullable Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
+            StringBuilder stringBuilder = new StringBuilder("\n");
+            for (ResolvedCall<? extends CallableDescriptor> call : argument) {
+                stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
+            }
+            return stringBuilder.toString();
         }
-        return stringBuilder.toString();
-    }
+    };
 }

@@ -89,7 +89,6 @@ public class ExpressionTypingUtils {
         if (resultType != null) {
             // TODO : Relax?
             if (!isBoolean(context.semanticServices, resultType)) {
-//                    context.trace.getErrorHandler().genericError(operationSign.getNode(), subjectName + " must return Boolean but returns " + resultType);
                 context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, context.semanticServices.getStandardLibrary().getBooleanType(), resultType));
                 return false;
             }

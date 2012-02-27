@@ -24,7 +24,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
@@ -88,12 +88,13 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
         return false;
     }
 
-    public static JetIntentionActionFactory<JetFunction> createFactory() {
-        return new JetIntentionActionFactory<JetFunction>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetFunction> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetFunction;
-                return new RemoveFunctionBodyFix((JetFunction) diagnostic.getPsiElement());
+            public JetIntentionAction<JetFunction> createAction(Diagnostic diagnostic) {
+                JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
+                if (function == null) return null;
+                return new RemoveFunctionBodyFix(function);
             }
         };
     }

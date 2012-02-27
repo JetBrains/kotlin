@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorUtil;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -318,7 +317,7 @@ public class ExpressionTypingServices {
 
             @Override
             public void report(@NotNull Diagnostic diagnostic) {
-                if (diagnostic.getFactory() == TYPE_MISMATCH && ((DiagnosticWithPsiElement) diagnostic).getPsiElement() == expressionToWatch) {
+                if (diagnostic.getFactory() == TYPE_MISMATCH && diagnostic.getPsiElement() == expressionToWatch) {
                     mismatchFound[0] = true;
                 }
                 super.report(diagnostic);

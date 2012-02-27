@@ -39,7 +39,7 @@ class ErrorCollector {
 
     public void report(Diagnostic diagnostic) {
         hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
-        maps.put(diagnostic.getFactory().getPsiFile(diagnostic), diagnostic);
+        maps.put(diagnostic.getPsiFile(), diagnostic);
     }
 
     public void flushTo(final PrintStream out) {

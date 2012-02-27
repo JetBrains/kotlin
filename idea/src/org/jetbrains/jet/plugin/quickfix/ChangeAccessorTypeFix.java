@@ -18,18 +18,19 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -37,17 +38,30 @@ import org.jetbrains.jet.plugin.JetBundle;
  * @author svtk
  */
 public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccessor> {
-    private final JetType type;
-
-    public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element, JetType type) {
+    public ChangeAccessorTypeFix(@NotNull JetPropertyAccessor element) {
         super(element);
-        this.type = type;
+    }
+
+    @Nullable
+    private JetType getPropertyType() {
+        JetProperty property = PsiTreeUtil.getParentOfType(element, JetProperty.class);
+        if (property == null) return null;
+        return QuickFixUtil.getDeclarationReturnType(property);
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+        JetType type = getPropertyType();
+        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
     }
 
     @NotNull
     @Override
     public String getText() {
-        return element.isGetter() ? JetBundle.message("change.getter.type", type) : JetBundle.message("change.setter.type", type);
+        JetType type = getPropertyType();
+        return element.isGetter()
+               ? JetBundle.message("change.getter.type", type)
+               : JetBundle.message("change.setter.type", type);
     }
 
     @NotNull
@@ -58,6 +72,8 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        JetType type = getPropertyType();
+        if (type == null) return;
         JetPropertyAccessor newElement = (JetPropertyAccessor) element.copy();
         JetTypeReference newTypeReference = JetPsiFactory.createType(project, type.toString());
 
@@ -75,15 +91,14 @@ public class ChangeAccessorTypeFix extends JetIntentionAction<JetPropertyAccesso
         }
         element.replace(newElement);
     }
-    
-    public static JetIntentionActionFactory<JetPropertyAccessor> createFactory() {
-        return new JetIntentionActionFactory<JetPropertyAccessor>() {
+
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetPropertyAccessor> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetPropertyAccessor;
-                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.TYPE);
-                JetType type = diagnosticWithParameters.getParameter(DiagnosticParameters.TYPE);
-                return new ChangeAccessorTypeFix((JetPropertyAccessor) diagnostic.getPsiElement(), type);
+            public JetIntentionAction<JetPropertyAccessor> createAction(Diagnostic diagnostic) {
+                JetPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, JetPropertyAccessor.class);
+                if (accessor == null) return null;
+                return new ChangeAccessorTypeFix(accessor);
             }
         };
     }

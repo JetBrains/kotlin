@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class DescriptorRenderer implements Renderer {
+public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
 
@@ -97,11 +97,6 @@ public class DescriptorRenderer implements Renderer {
 
     @NotNull
     @Override
-    public String render(@Nullable Object object) {
-        assert object instanceof DeclarationDescriptor;
-        return render((DeclarationDescriptor) object);
-    }
-
     public String render(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor == null) return lt() + "null>";
         StringBuilder stringBuilder = new StringBuilder();

@@ -61,8 +61,8 @@ public class AnalyzingUtils {
         });
     }
     
-    public static List<TextRange> getSyntaxErrorRanges(@NotNull PsiElement root) {
-        final ArrayList<TextRange> r = new ArrayList<TextRange>();
+    public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
+        final ArrayList<PsiErrorElement> r = new ArrayList<PsiErrorElement>();
         root.acceptChildren(new PsiElementVisitor() {
             @Override
             public void visitElement(PsiElement element) {
@@ -71,7 +71,7 @@ public class AnalyzingUtils {
 
             @Override
             public void visitErrorElement(PsiErrorElement element) {
-                r.add(element.getTextRange());
+                r.add(element);
             }
         });
         return r;
