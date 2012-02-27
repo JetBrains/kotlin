@@ -25,24 +25,21 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetPattern;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,7 +50,10 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author abreslav
  */
 public class ExpressionTypingUtils {
-    
+
+    private ExpressionTypingUtils() {
+    }
+
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
         if (type == null) return null;
@@ -164,5 +164,64 @@ public class ExpressionTypingUtils {
                 false
         );
         return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
+    }
+
+    /**
+     * Check that function with the given qualified name can be resolved in given scope for given receiver
+     *
+     * @param functionFQN
+     * @param project
+     * @param scope
+     * @return
+     */
+    public static ArrayList<FunctionDescriptor> canCallBeResolved(
+            @NotNull String functionFQN,
+            @NotNull Project project,
+            @NotNull JetExpression receiverExpression,
+            @NotNull JetType receiverType,
+            @NotNull JetScope scope) {
+
+        WritableScopeWithImports writableScopeWithImports = new WritableScopeImpl(
+                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
+
+        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, functionFQN);
+
+        ExpressionReceiver expressionReceiver = new ExpressionReceiver(receiverExpression, receiverType);
+
+        ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(new BindingTraceContext(), false);
+        importResolver.processImportReference(
+                importDirective, scope,
+                new Importer.StandardImporter(writableScopeWithImports, false));
+
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                project,
+                JetSemanticServices.createSemanticServices(project),
+                new HashMap<JetPattern, DataFlowInfo>(),
+                new HashMap<JetPattern, List<VariableDescriptor>>(),
+                new LabelResolver(),
+                new BindingTraceContext(),
+                writableScopeWithImports,
+                DataFlowInfo.EMPTY,
+                TypeUtils.NO_EXPECTED_TYPE,
+                TypeUtils.NO_EXPECTED_TYPE,
+                false
+        );
+
+        writableScopeWithImports.changeLockLevel(WritableScope.LockLevel.READING);
+
+        OverloadResolutionResults<FunctionDescriptor> resolutionResult =
+                ControlStructureTypingVisitor.resolveFakeCall(expressionReceiver, context, QualifiedNamesUtil.fqnToShortName(functionFQN));
+
+        if (!resolutionResult.isSuccess()) {
+            return new ArrayList<FunctionDescriptor>();
+        }
+
+        ArrayList<FunctionDescriptor> resolvedDescriptors = new ArrayList<FunctionDescriptor>();
+
+        for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : resolutionResult.getResultingCalls()) {
+            resolvedDescriptors.add(resolvedCall.getCandidateDescriptor());
+        }
+
+        return resolvedDescriptors;
     }
 }

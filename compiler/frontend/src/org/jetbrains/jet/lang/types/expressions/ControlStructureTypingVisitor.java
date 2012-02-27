@@ -347,7 +347,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    private static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver, ExpressionTypingContext context, String name) {
+    public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver, ExpressionTypingContext context, String name) {
         JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.getProject(), "fake");
         BindingTrace fakeTrace = new BindingTraceContext();
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());

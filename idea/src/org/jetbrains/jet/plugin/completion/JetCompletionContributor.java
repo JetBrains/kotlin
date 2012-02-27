@@ -21,7 +21,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -30,18 +32,21 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetUserType;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author Nikolay Krasko
@@ -74,12 +79,74 @@ public class JetCompletionContributor extends CompletionContributor {
                            if (shouldRunTopLevelCompletion(parameters)) {
                                addClasses(parameters, result, positions);
                                addJetTopLevelFunctions(result, position, positions);
+                               addJetExtensionFunctions(jetReference.getExpression(), result, position);
                            }
 
                            result.stopHere();
                        }
                    }
                });
+    }
+
+    private static void addJetExtensionFunctions(JetSimpleNameExpression expression, CompletionResultSet result, PsiElement position) {
+
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) position.getContainingFile());
+        JetExpression receiverExpression = expression.getReceiverExpression();
+
+
+        if (receiverExpression != null) {
+            final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            final JetScope scope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+
+            if (expressionType != null && scope != null) {
+                JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
+                Collection<String> extensionFunctionsNames = namesCache.getAllJetExtensionFunctionsNames(
+                        GlobalSearchScope.allScope(position.getProject()));
+
+                HashSet<String> functionFQNs = new HashSet<String>();
+
+                // Collect all possible extension function qualified names
+                for (String name : extensionFunctionsNames) {
+                    if (result.getPrefixMatcher().prefixMatches(name)) {
+                        Collection<PsiElement> extensionFunctions =
+                                namesCache.getJetExtensionFunctionsByName(name, GlobalSearchScope.allScope(position.getProject()));
+
+                        for (PsiElement extensionFunction : extensionFunctions) {
+                            if (extensionFunction instanceof JetNamedFunction) {
+                                functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
+                            } else if (extensionFunction instanceof PsiMethod) {
+                                final PsiMethod function = (PsiMethod) extensionFunction;
+                                final PsiClass containingClass = function.getContainingClass();
+
+                                if (containingClass != null) {
+                                    final String classFQN = containingClass.getQualifiedName();
+
+                                    if (classFQN != null) {
+                                        final String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
+                                        functionFQNs.add(QualifiedNamesUtil.combine(classParentFQN, function.getName()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (String functionFQN : functionFQNs) {
+                    // System.out.println(functionFQN);
+
+                    List<FunctionDescriptor> functionDescriptors = ExpressionTypingUtils.canCallBeResolved(
+                            functionFQN, position.getProject(), receiverExpression, expressionType, scope);
+
+                    // System.out.println(!functionDescriptors.isEmpty());
+
+                    if (!functionDescriptors.isEmpty()) {
+                        for (FunctionDescriptor functionDescriptor : functionDescriptors) {
+                            result.addElement(DescriptorLookupConverter.createLookupElement(context, functionDescriptor));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void addReferenceVariant(
@@ -209,5 +276,10 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         return null;
+    }
+
+    @Override
+    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+        super.beforeCompletion(context);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }
