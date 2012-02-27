@@ -52,7 +52,7 @@ class String() : Comparable<String>, CharSequence {
   fun equals(other : Any?) : Boolean
 }
 
-class Throwable(message : String? = null, cause: Throwable? = null) {
+open class Throwable(message : String? = null, cause: Throwable? = null) {
     fun getMessage() : String?
     fun getCause() : Throwable?
     fun printStackTrace() : Unit

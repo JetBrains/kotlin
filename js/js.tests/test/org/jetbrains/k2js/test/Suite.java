@@ -61,8 +61,8 @@ public final class Suite extends TranslationTest {
 
     public static Test suiteForDirectory(@NotNull final String mainName, @NotNull final SingleFileTester testMethod) {
 
-        return TranslatorTestCaseBuilder.suiteForDirectory("translator\\testFiles\\",
-                mainName + casesDirectoryName(), true, new TranslatorTestCaseBuilder.NamedTestFactory() {
+        return TranslatorTestCaseBuilder.suiteForDirectory(TranslationTest.TEST_FILES,
+                                                           mainName + casesDirectoryName(), true, new TranslatorTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String name) {

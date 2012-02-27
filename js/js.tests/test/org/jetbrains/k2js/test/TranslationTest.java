@@ -38,7 +38,7 @@ import java.util.List;
  */
 public abstract class TranslationTest extends BaseTest {
 
-    private final static String TEST_FILES = "translator/testFiles/";
+    public final static String TEST_FILES = "js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";

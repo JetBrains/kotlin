@@ -173,8 +173,8 @@ public class AnnotationResolver {
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
-            result.add(annotationDescriptor);
-            trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
+            // result.add(annotationDescriptor);
+            //  trace.record(BindingContext.ANNOTATION, annotation, annotationDescriptor);
         }
         return result;
     }

@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.plugin;
 
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.List;
 
@@ -50,5 +49,24 @@ public class JetMainDetector {
             }
         }
         return false;
+    }
+
+    @Nullable
+    public static String getMainClassFQName(@NotNull List<JetFile> files) {
+        JetFile file = getFileWithMain(files);
+        if (file == null) {
+            return null;
+        }
+        return JetPsiUtil.getFQName(file);
+    }
+
+    @Nullable
+    public static JetFile getFileWithMain(@NotNull List<JetFile> files) {
+        for (JetFile file : files) {
+            if (hasMain(file.getDeclarations())) {
+                return file;
+            }
+        }
+        return null;
     }
 }

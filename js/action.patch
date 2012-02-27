@@ -1,0 +1,315 @@
+Index: idea/src/META-INF/plugin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><idea-plugin version=\"2\">\n  <name>Kotlin</name>\n  <description>Kotlin language support</description>\n  <version>@snapshot@</version>\n  <vendor>JetBrains</vendor>\n\n  <depends optional=\"true\">JUnit</depends>\n\n  <project-components>\n      <component>\n          <implementation-class>org.jetbrains.jet.plugin.JetStandardLibraryInitializer</implementation-class>\n      </component>\n      <component>\n          <implementation-class>org.jetbrains.jet.plugin.compiler.JetCompilerManager</implementation-class>\n      </component>\n      <component>\n          <implementation-class>org.jetbrains.jet.plugin.caches.JetCacheManager</implementation-class>\n      </component>\n  </project-components>\n\n  <actions>\n     <action id=\"Kotlin.NewFile\" class=\"org.jetbrains.jet.plugin.actions.NewKotlinFileAction\">\n        <add-to-group group-id=\"NewGroup\" anchor=\"before\" relative-to-action=\"NewFromTemplate\"/>\n     </action>\n\n     <action id=\"ShowJetExpressionType\" class=\"org.jetbrains.jet.plugin.actions.ShowExpressionTypeAction\"\n             text=\"Show Expression Type\">\n         <keyboard-shortcut keymap=\"$default\" first-keystroke=\"control shift Q\"/>\n         <add-to-group group-id=\"CodeMenu\" anchor=\"last\"/>\n     </action>\n     <action id=\"CopyAsDiagnosticTest\" class=\"org.jetbrains.jet.plugin.actions.CopyAsDiagnosticTestAction\"\n             text=\"Copy Current File As Diagnostic Test\">\n         <keyboard-shortcut keymap=\"$default\" first-keystroke=\"control alt shift T\"/>\n         <add-to-group group-id=\"CodeMenu\" anchor=\"last\"/>\n     </action>\n     <action id=\"ConvertJavaToKotlin\" class=\"org.jetbrains.jet.plugin.actions.JavaToKotlinAction\"\n             text=\"Convert Java File to Kotlin File\">\n         <keyboard-shortcut keymap=\"$default\" first-keystroke=\"control alt shift J\"/>\n         <add-to-group group-id=\"CodeMenu\" anchor=\"last\"/>\n     </action>\n     <action id=\"ToggleJetErrorReporting\" class=\"org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction\"\n             text=\"Toggle Error Reporting\">\n         <keyboard-shortcut keymap=\"$default\" first-keystroke=\"control alt shift E\"/>\n         <add-to-group group-id=\"CodeMenu\" anchor=\"last\"/>\n     </action>\n      \n      <action id=\"Kotlin.TranslateToJs\" class=\"org.jetbrains.jet.plugin.actions.TranslateToJsAction\"\n              text=\"Translate current namespace and create js files.\">\n          <keyboard-shortcut keymap=\"$default\" first-keystroke=\"control alt shift J\"/>\n          <add-to-group group-id=\"CodeMenu\" anchor=\"last\"/>\n      </action>\n      \n  </actions>\n\n  <extensions defaultExtensionNs=\"com.intellij\">\n      <applicationService serviceInterface=\"org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService\"\n                          serviceImplementation=\"org.jetbrains.jet.plugin.stubindex.StubIndexServiceImpl\" />\n\n      <errorHandler implementation=\"com.intellij.diagnostic.ITNReporter\"/>\n\n      <internalFileTemplate name=\"Kotlin File\"/>\n      <internalFileTemplate name=\"Kotlin Class\"/>\n      <internalFileTemplate name=\"Kotlin Enum\"/>\n      <internalFileTemplate name=\"Kotlin Trait\"/>\n\n      <fileTypeFactory implementation=\"org.jetbrains.jet.plugin.JetFileFactory\"/>\n\n      <lang.syntaxHighlighterFactory key=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.JetSyntaxHighlighterFactory\"/>\n      <lang.braceMatcher language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.JetPairMatcher\"/>\n      <lang.parserDefinition language=\"jet\" implementationClass=\"org.jetbrains.jet.lang.parsing.JetParserDefinition\"/>\n      <lang.commenter language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.JetCommenter\"/>\n      <lang.psiStructureViewFactory language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.structureView.JetStructureViewFactory\"/>\n      <lang.foldingBuilder language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.JetFoldingBuilder\"/>\n      <lang.formatter language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.formatter.JetFormattingModelBuilder\"/>\n      <lang.findUsagesProvider language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.findUsages.JetFindUsagesProvider\"/>\n      <lang.refactoringSupport language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider\"/>\n      <treeStructureProvider implementation=\"org.jetbrains.jet.plugin.projectView.JetProjectViewProvider\"/>\n\n      <codeStyleSettingsProvider implementation=\"org.jetbrains.jet.plugin.formatter.JetCodeStyleSettingsProvider\"/>\n      <langCodeStyleSettingsProvider implementation=\"org.jetbrains.jet.plugin.formatter.JetLanguageCodeStyleSettingsProvider\"/>\n\n      <templateParameterTraversalPolicy implementation=\"org.jetbrains.jet.plugin.completion.JetTemplateParameterTraversalPolicy\"/>\n\n      <codeInsight.parameterInfo language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler\"/>\n\n      <completion.contributor language=\"jet\" id=\"JetKeywordCompletionContributor\" order=\"first\"\n                              implementationClass=\"org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor\"/>\n\n      <completion.contributor language=\"jet\" id=\"JetPackagesContributor\" order=\"after JetKeywordCompletionContributor\"\n                              implementationClass=\"org.jetbrains.jet.plugin.completion.JetPackagesContributor\" />\n\n      <completion.contributor language=\"jet\" id=\"JetCompletionContributor\"\n                              implementationClass=\"org.jetbrains.jet.plugin.completion.JetCompletionContributor\"/>\n\n      <completion.contributor language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor\" id=\"liveTemplates\" order=\"first\"/>\n\n      <completion.confidence language=\"jet\" implementationClass=\"com.intellij.codeInsight.completion.UnfocusedNameIdentifier\"/>\n      <completion.confidence language=\"jet\" implementationClass=\"com.intellij.codeInsight.completion.AlwaysFocusLookup\" order=\"last\"/>\n\n      <completion.skip implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper\" id=\"skipLiveTemplate\"/>\n\n      <psi.referenceContributor language=\"jet\" order=\"after JetCompletionContributor\" implementation=\"org.jetbrains.jet.plugin.references.JetReferenceContributor\"/>\n\n      <renamePsiElementProcessor implementation=\"org.jetbrains.jet.plugin.refactoring.rename.RenameJetClassProcessor\"/>\n\n      <liveTemplateContext implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Generic\"/>\n      <liveTemplateContext implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Namespace\"/>\n      <liveTemplateContext implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Statement\"/>\n      <liveTemplateContext implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Class\"/>\n      <liveTemplateContext implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetTemplateContextType$Expression\"/>\n      <defaultLiveTemplatesProvider implementation=\"org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplatesProvider\"/>\n      <liveTemplateMacro implementation=\"org.jetbrains.jet.plugin.liveTemplates.macro.JetAnyVariableMacro\"/>\n      <liveTemplateMacro implementation=\"org.jetbrains.jet.plugin.liveTemplates.macro.JetFunctionParametersMacro\"/>\n      <liveTemplateMacro implementation=\"org.jetbrains.jet.plugin.liveTemplates.macro.JetAnonymousSuperMacro\"/>\n      <liveTemplateMacro implementation=\"org.jetbrains.jet.plugin.liveTemplates.macro.JetIterableVariableMacro\"/>\n      <liveTemplateMacro implementation=\"org.jetbrains.jet.plugin.liveTemplates.macro.JetSuggestVariableNameMacro\"/>\n\n      <annotator language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.annotations.SoftKeywordsAnnotator\"/>\n      <annotator language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.annotations.LabelsAnnotator\"/>\n      <annotator language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.annotations.JetPsiChecker\"/>\n      <annotator language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.annotations.DebugInfoAnnotator\"/>\n\n      <documentationProvider implementation=\"org.jetbrains.jet.plugin.JetQuickDocumentationProvider\"/>\n      <configurationType implementation=\"org.jetbrains.jet.plugin.run.JetRunConfigurationType\"/>\n      <configurationProducer implementation=\"org.jetbrains.jet.plugin.run.JetRunConfigurationProducer\"/>\n      <configurationProducer implementation=\"org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer\"/>\n      <codeInsight.lineMarkerProvider language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider\"/>\n      <iconProvider implementation=\"org.jetbrains.jet.plugin.JetIconProvider\"/>\n      <elementDescriptionProvider implementation=\"org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider\"/>\n      <debugger.positionManagerFactory implementation=\"org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory\"/>\n      <codeInsight.implementMethod language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler\"/>\n      <codeInsight.overrideMethod language=\"jet\" implementationClass=\"org.jetbrains.jet.plugin.codeInsight.OverrideMethodsHandler\"/>\n\n      <java.elementFinder implementation=\"org.jetbrains.jet.asJava.JavaElementFinder\"/>\n      <java.shortNamesCache implementation=\"org.jetbrains.jet.plugin.caches.JetShortNamesCache\"/>\n\n      <stubElementTypeHolder class=\"org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes\"/>\n      <stubIndex implementation=\"org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex\"/>\n      <stubIndex implementation=\"org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex\"/>\n      <stubIndex implementation=\"org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex\"/>\n      <stubIndex implementation=\"org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex\"/>\n\n      <editorNotificationProvider implementation=\"org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider\"/>\n\n      <psi.treeChangePreprocessor implementation=\"org.jetbrains.jet.asJava.JetCodeBlockModificationListener\"/>\n\n      <toolWindow id=\"Kotlin\"\n                  factoryClass=\"org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory\"\n                  anchor=\"right\"\n                  icon=\"/org/jetbrains/jet/plugin/icons/kotlin16x16.png\"\n              />\n  </extensions>\n</idea-plugin>\n
+===================================================================
+--- idea/src/META-INF/plugin.xml	(date 1330080250000)
++++ idea/src/META-INF/plugin.xml	(revision )
+@@ -45,8 +45,8 @@
+      </action>
+       
+       <action id="Kotlin.TranslateToJs" class="org.jetbrains.jet.plugin.actions.TranslateToJsAction"
+-              text="Translate current namespace and create js files.">
+-          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
++              text="Translate Kotlin to JavaScript.">
++          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift W"/>
+           <add-to-group group-id="CodeMenu" anchor="last"/>
+       </action>
+       
+Index: compiler/frontend/src/jet/Library.jet
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package jet\n\nannotation class volatile\nannotation class atomic\n\nfun <R> synchronized(lock: Any, block : () -> R) : R\n\nfun Any?.identityEquals(other : Any?) : Boolean // = this === other\n\n// Can't write a body due to a bootstrapping problem (see JET-74)\nfun Any?.equals(other : Any?) : Boolean// = this === other\n\n// Returns \"null\" for null\nfun Any?.toString() : String// = this === other\n\nfun <T : Any> T?.sure() : T\n\nfun String?.plus(other: Any?) : String\n\ntrait Comparable<in T> {\n  fun compareTo(other : T) : Int\n}\n\ntrait Hashable {\n  fun hashCode() : Int\n  fun equals(other : Any?) : Boolean\n}\n\nclass Boolean : Comparable<Boolean> {\n  fun not() : Boolean\n\n  fun and(other : Boolean) : Boolean\n\n  fun or(other : Boolean) : Boolean\n\n  fun xor(other : Boolean) : Boolean\n\n  fun equals(other : Any?) : Boolean\n}\n\ntrait CharSequence {\n  fun get(index : Int) : Char\n\n  val length : Int\n\n  fun toString() : String\n}\n\nclass String() : Comparable<String>, CharSequence {\n  fun plus(other : Any?) : String\n\n  fun equals(other : Any?) : Boolean\n}\n\nclass Throwable(message : String? = null, cause: Throwable? = null) {\n    fun getMessage() : String?\n    fun getCause() : Throwable?\n    fun printStackTrace() : Unit\n}
+===================================================================
+--- compiler/frontend/src/jet/Library.jet	(date 1330080250000)
++++ compiler/frontend/src/jet/Library.jet	(revision )
+@@ -52,7 +52,7 @@
+   fun equals(other : Any?) : Boolean
+ }
+ 
+-class Throwable(message : String? = null, cause: Throwable? = null) {
++open class Throwable(message : String? = null, cause: Throwable? = null) {
+     fun getMessage() : String?
+     fun getCause() : Throwable?
+     fun printStackTrace() : Unit
+\ No newline at end of file
+Index: compiler/frontend/src/org/jetbrains/jet/plugin/JetMainDetector.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/*\n * Copyright 2010-2012 JetBrains s.r.o.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n * http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\npackage org.jetbrains.jet.plugin;\n\nimport org.jetbrains.jet.lang.psi.JetDeclaration;\nimport org.jetbrains.jet.lang.psi.JetNamedFunction;\nimport org.jetbrains.jet.lang.psi.JetParameter;\nimport org.jetbrains.jet.lang.psi.JetTypeReference;\n\nimport java.util.List;\n\n/**\n * @author yole\n */\npublic class JetMainDetector {\n    private JetMainDetector() {\n    }\n\n    public static boolean hasMain(List<JetDeclaration> declarations) {\n        for (JetDeclaration declaration : declarations) {\n            if (declaration instanceof JetNamedFunction) {\n                if (isMain((JetNamedFunction) declaration)) return true;\n            }\n        }\n        return false;\n    }\n\n    public static boolean isMain(JetNamedFunction function) {\n        if (\"main\".equals(function.getName())) {\n            List<JetParameter> parameters = function.getValueParameters();\n            if (parameters.size() == 1) {\n                JetTypeReference reference = parameters.get(0).getTypeReference();\n                if (reference != null && reference.getText().equals(\"Array<String>\")) {  // TODO correct check\n                    return true;\n                }\n            }\n        }\n        return false;\n    }\n}\n
+===================================================================
+--- compiler/frontend/src/org/jetbrains/jet/plugin/JetMainDetector.java	(date 1330080250000)
++++ compiler/frontend/src/org/jetbrains/jet/plugin/JetMainDetector.java	(revision )
+@@ -16,10 +16,9 @@
+ 
+ package org.jetbrains.jet.plugin;
+ 
+-import org.jetbrains.jet.lang.psi.JetDeclaration;
+-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+-import org.jetbrains.jet.lang.psi.JetParameter;
+-import org.jetbrains.jet.lang.psi.JetTypeReference;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++import org.jetbrains.jet.lang.psi.*;
+ 
+ import java.util.List;
+ 
+@@ -50,5 +49,24 @@
+             }
+         }
+         return false;
++    }
++
++    @Nullable
++    public static String getMainClassFQName(@NotNull List<JetFile> files) {
++        JetFile file = getFileWithMain(files);
++        if (file == null) {
++            return null;
++        }
++        return JetPsiUtil.getFQName(file);
++    }
++
++    @Nullable
++    public static JetFile getFileWithMain(@NotNull List<JetFile> files) {
++        for (JetFile file : files) {
++            if (hasMain(file.getDeclarations())) {
++                return file;
++            }
++        }
++        return null;
+     }
+ }
+Index: idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.jetbrains.jet.plugin.actions;\n\nimport com.intellij.notification.Notification;\nimport com.intellij.notification.NotificationType;\nimport com.intellij.notification.Notifications;\nimport com.intellij.openapi.actionSystem.AnAction;\nimport com.intellij.openapi.actionSystem.AnActionEvent;\nimport com.intellij.openapi.actionSystem.LangDataKeys;\nimport com.intellij.openapi.actionSystem.PlatformDataKeys;\nimport com.intellij.openapi.application.ApplicationManager;\nimport com.intellij.openapi.editor.Editor;\nimport com.intellij.openapi.project.Project;\nimport com.intellij.openapi.vfs.VirtualFile;\nimport com.intellij.psi.PsiFile;\nimport org.jetbrains.jet.lang.psi.JetFile;\nimport org.jetbrains.k2js.facade.K2JSTranslator;\n\n/**\n * @author Pavel Talanov\n */\npublic final class TranslateToJsAction extends AnAction {\n\n    private static void notifyFailure(Throwable exception) {\n        Notifications.Bus.notify(new Notification(\"JsTranslator\", \"Translation failed.\",\n                                                  \"Exception: \" + exception.getMessage(),\n                                                  NotificationType.ERROR));\n    }\n\n    private static void notifySuccess(String outputPath) {\n        Notifications.Bus.notify(new Notification(\"JsTranslator\", \"Translation successful.\",\n                                                  \"Generated file: \" + outputPath,\n                                                  NotificationType.INFORMATION));\n    }\n\n    public void actionPerformed(AnActionEvent event) {\n\n        final PsiFile psiFile = event.getData(LangDataKeys.PSI_FILE);\n        if (!(psiFile instanceof JetFile)) {\n            return;\n        }\n\n        Runnable task = new Runnable() {\n            @Override\n            public void run() {\n                try {\n                    Project project = psiFile.getProject();\n                    String outputPath = getOutputPath(psiFile);\n                    K2JSTranslator.translateWithCallToMainAndSaveToFile((JetFile) psiFile,\n                                                                        outputPath,\n                                                                        project);\n                    notifySuccess(outputPath);\n                } catch (Throwable e) {\n                    e.printStackTrace();\n                    notifyFailure(e);\n                }\n            }\n        };\n        ApplicationManager.getApplication().runWriteAction(task);\n    }\n\n    private static String getOutputPath(PsiFile psiFile) {\n        VirtualFile virtualFile = psiFile.getVirtualFile();\n        assert virtualFile != null : \"Internal error: Psi file should correspond to actual virtual file\";\n        String originalFilePath = virtualFile.getPath();\n\n        //TODO: make platform independent\n        String pathToDir = originalFilePath.substring(0, originalFilePath.lastIndexOf(\"/\") + 1);\n        String generatedFileName = ((JetFile) psiFile).getNamespaceHeader().getName() + \".js\";\n        return pathToDir + generatedFileName;\n    }\n\n\n    @Override\n    public void update(AnActionEvent e) {\n        Editor editor = e.getData(PlatformDataKeys.EDITOR);\n        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);\n        e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile);\n    }\n}\n
+===================================================================
+--- idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java	(date 1330080250000)
++++ idea/src/org/jetbrains/jet/plugin/actions/TranslateToJsAction.java	(revision )
+@@ -1,54 +1,74 @@
++/*
++ * Copyright 2000-2012 JetBrains s.r.o.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
+ package org.jetbrains.jet.plugin.actions;
+ 
++import com.google.common.collect.Lists;
+ import com.intellij.notification.Notification;
+ import com.intellij.notification.NotificationType;
+ import com.intellij.notification.Notifications;
+ import com.intellij.openapi.actionSystem.AnAction;
+ import com.intellij.openapi.actionSystem.AnActionEvent;
+-import com.intellij.openapi.actionSystem.LangDataKeys;
+ import com.intellij.openapi.actionSystem.PlatformDataKeys;
+ import com.intellij.openapi.application.ApplicationManager;
+ import com.intellij.openapi.editor.Editor;
++import com.intellij.openapi.module.Module;
++import com.intellij.openapi.module.ModuleManager;
+ import com.intellij.openapi.project.Project;
++import com.intellij.openapi.roots.ModuleRootManager;
+ import com.intellij.openapi.vfs.VirtualFile;
+ import com.intellij.psi.PsiFile;
++import com.intellij.psi.PsiManager;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
+ import org.jetbrains.jet.lang.psi.JetFile;
++import org.jetbrains.jet.plugin.JetMainDetector;
+ import org.jetbrains.k2js.facade.K2JSTranslator;
+ 
++import java.util.Collection;
++import java.util.List;
++import java.util.Set;
++
++import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.allVirtualFiles;
++
++//TODO: clean up
++
+ /**
+  * @author Pavel Talanov
+  */
+ public final class TranslateToJsAction extends AnAction {
+ 
+-    private static void notifyFailure(Throwable exception) {
++    private static void notifyFailure(@NotNull Throwable exception) {
+         Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",
+                                                   "Exception: " + exception.getMessage(),
+                                                   NotificationType.ERROR));
+     }
+ 
+-    private static void notifySuccess(String outputPath) {
++    private static void notifySuccess(@NotNull String outputPath) {
+         Notifications.Bus.notify(new Notification("JsTranslator", "Translation successful.",
+                                                   "Generated file: " + outputPath,
+                                                   NotificationType.INFORMATION));
+     }
+ 
+-    public void actionPerformed(AnActionEvent event) {
+-
+-        final PsiFile psiFile = event.getData(LangDataKeys.PSI_FILE);
+-        if (!(psiFile instanceof JetFile)) {
+-            return;
+-        }
+-
++    public void actionPerformed(final AnActionEvent event) {
+         Runnable task = new Runnable() {
+             @Override
+             public void run() {
+                 try {
+-                    Project project = psiFile.getProject();
+-                    String outputPath = getOutputPath(psiFile);
+-                    K2JSTranslator.translateWithCallToMainAndSaveToFile((JetFile) psiFile,
+-                                                                        outputPath,
+-                                                                        project);
+-                    notifySuccess(outputPath);
++                    performAction(event);
+                 } catch (Throwable e) {
+                     e.printStackTrace();
+                     notifyFailure(e);
+@@ -58,7 +78,50 @@
+         ApplicationManager.getApplication().runWriteAction(task);
+     }
+ 
+-    private static String getOutputPath(PsiFile psiFile) {
++    private static void performAction(@NotNull AnActionEvent event) throws Exception {
++        final Project project = PlatformDataKeys.PROJECT.getData(event.getDataContext());
++        assert project != null;
++        Set<VirtualFile> allVirtualFiles = getAllProjectVirtualFiles(project);
++        List<JetFile> kotlinFiles = getJetFiles(allVirtualFiles, project);
++        String outputPath = getOutputPath(JetMainDetector.getFileWithMain(kotlinFiles));
++        K2JSTranslator.translateWithCallToMainAndSaveToFile(kotlinFiles,
++                                                            outputPath,
++                                                            project);
++        notifySuccess(outputPath);
++    }
++
++    @NotNull
++    private static Set<VirtualFile> getAllProjectVirtualFiles(@NotNull Project project) {
++        Module[] modules = ModuleManager.getInstance(project).getModules();
++        Set<VirtualFile> allVirtualFiles = allVirtualFiles(new VirtualFile[]{project.getBaseDir()});
++        for (Module module : modules) {
++            VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
++            allVirtualFiles.addAll(allVirtualFiles(roots));
++        }
++        return allVirtualFiles;
++    }
++
++    @NotNull
++    private static List<JetFile> getJetFiles(@NotNull Collection<VirtualFile> virtualFiles,
++                                             @NotNull Project project) {
++        List<JetFile> kotlinFiles = Lists.newArrayList();
++
++        PsiManager psiManager = PsiManager.getInstance(project);
++        for (VirtualFile virtualFile : virtualFiles) {
++            PsiFile psiFile = psiManager.findFile(virtualFile);
++            if (psiFile instanceof JetFile) {
++                kotlinFiles.add((JetFile) psiFile);
++            }
++        }
++        return kotlinFiles;
++    }
++
++
++    @NotNull
++    private static String getOutputPath(@Nullable PsiFile psiFile) {
++        if (psiFile == null) {
++            throw new AssertionError("Main was not detected.");
++        }
+         VirtualFile virtualFile = psiFile.getVirtualFile();
+         assert virtualFile != null : "Internal error: Psi file should correspond to actual virtual file";
+         String originalFilePath = virtualFile.getPath();
+@@ -69,11 +132,9 @@
+         return pathToDir + generatedFileName;
+     }
+ 
+-
+     @Override
+     public void update(AnActionEvent e) {
+         Editor editor = e.getData(PlatformDataKeys.EDITOR);
+-        PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
+-        e.getPresentation().setEnabled(editor != null && psiFile instanceof JetFile);
++        e.getPresentation().setEnabled(editor != null);
+     }
+ }
+Index: idea/src/org/jetbrains/jet/plugin/actions/JavaToKotlinActionUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/*\n * Copyright 2010-2012 JetBrains s.r.o.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n * http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\npackage org.jetbrains.jet.plugin.actions;\n\nimport com.intellij.ide.highlighter.JavaFileType;\nimport com.intellij.openapi.application.ApplicationManager;\nimport com.intellij.openapi.project.Project;\nimport com.intellij.openapi.ui.ex.MessagesEx;\nimport com.intellij.openapi.vfs.CharsetToolkit;\nimport com.intellij.openapi.vfs.VirtualFile;\nimport com.intellij.psi.PsiFile;\nimport com.intellij.psi.PsiJavaFile;\nimport com.intellij.psi.PsiManager;\nimport com.intellij.psi.codeStyle.CodeStyleManager;\nimport org.jetbrains.annotations.NotNull;\nimport org.jetbrains.annotations.Nullable;\nimport org.jetbrains.jet.j2k.Converter;\nimport org.jetbrains.jet.j2k.visitors.ClassVisitor;\n\nimport java.io.IOException;\nimport java.util.*;\n\n/**\n * @author ignatov\n */\npublic class JavaToKotlinActionUtil {\n\n    static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiFile psiFile) {\n        ClassVisitor c = new ClassVisitor();\n        psiFile.accept(c);\n        converter.setClassIdentifiers(c.getClassIdentifiers());\n    }\n\n    @NotNull\n    private static List<VirtualFile> getChildrenRecursive(@Nullable VirtualFile baseDir) {\n        List<VirtualFile> result = new LinkedList<VirtualFile>();\n        VirtualFile[] children = baseDir != null ? baseDir.getChildren() : VirtualFile.EMPTY_ARRAY;\n        result.addAll(Arrays.asList(children));\n        for (VirtualFile f : children)\n            result.addAll(getChildrenRecursive(f));\n        return result;\n    }\n\n    @NotNull\n    static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {\n        final PsiManager manager = PsiManager.getInstance(project);\n        Set<VirtualFile> filesSet = new HashSet<VirtualFile>();\n        for (VirtualFile f : vFiles) {\n            filesSet.add(f);\n            filesSet.addAll(getChildrenRecursive(f));\n        }\n        final List<PsiFile> res = new ArrayList<PsiFile>();\n        for (final VirtualFile file : filesSet) {\n            final PsiFile psiFile = manager.findFile(file);\n            if (psiFile != null && psiFile.getFileType() instanceof JavaFileType) {\n                res.add(psiFile);\n            }\n        }\n        return res;\n    }\n\n    static void reformatFiles(List<VirtualFile> allJetFiles, final Project project) {\n        for (final VirtualFile vf : allJetFiles)\n            ApplicationManager.getApplication().runWriteAction(new Runnable() {\n                @Override\n                public void run() {\n                    if (vf != null) {\n                        PsiFile psiFile = PsiManager.getInstance(project).findFile(vf);\n                        if (psiFile != null) {\n                            CodeStyleManager.getInstance(project).reformat(psiFile);\n                        }\n                    }\n                }\n            });\n    }\n\n    @NotNull\n    static List<VirtualFile> convertFiles(final Converter converter, List<PsiFile> allJavaFilesNear) {\n        final List<VirtualFile> result = new LinkedList<VirtualFile>();\n        for (final PsiFile f : allJavaFilesNear) {\n            ApplicationManager.getApplication().runWriteAction(new Runnable() {\n                @Override\n                public void run() {\n                    VirtualFile vf = convertOneFile(converter, f);\n                    if (vf != null) {\n                        result.add(vf);\n                    }\n                }\n            });\n        }\n        return result;\n    }\n\n    static void deleteFiles(List<PsiFile> allJavaFilesNear) {\n        for (final PsiFile f : allJavaFilesNear) {\n            ApplicationManager.getApplication().runWriteAction(new Runnable() {\n                @Override\n                public void run() {\n                    try {\n                        PsiManager manager = f.getManager();\n                        VirtualFile vFile = f.getVirtualFile();\n                        if (vFile != null) {\n                            vFile.delete(manager);\n                        }\n                    } catch (IOException ignored) {\n                    }\n                }\n            });\n        }\n    }\n\n    @Nullable\n    private static VirtualFile convertOneFile(Converter converter, PsiFile psiFile) {\n        try {\n            VirtualFile virtualFile = psiFile.getVirtualFile();\n            if (psiFile instanceof PsiJavaFile && virtualFile != null) {\n                String result = \"\";\n                try {\n                    result = converter.fileToFile((PsiJavaFile) psiFile).toKotlin();\n                } catch (Exception e) {\n                    //noinspection CallToPrintStackTrace\n                    e.printStackTrace();\n                }\n                final PsiManager manager = psiFile.getManager();\n                assert manager != null;\n                VirtualFile copy = virtualFile.copy(manager, virtualFile.getParent(), virtualFile.getNameWithoutExtension() + \".kt\");\n                copy.setBinaryContent(CharsetToolkit.getUtf8Bytes(result));\n                return copy;\n            }\n        } catch (Exception ex) {\n            MessagesEx.error(psiFile.getProject(), ex.getMessage()).showLater();\n        }\n        return null;\n    }\n\n    static void renameFiles(@NotNull List<PsiFile> psiFiles) {\n        for (final PsiFile f : psiFiles) {\n            ApplicationManager.getApplication().runWriteAction(new Runnable() {\n                @Override\n                public void run() {\n                    try {\n                        PsiManager manager = f.getManager();\n                        VirtualFile vFile = f.getVirtualFile();\n                        if (vFile != null) {\n                            vFile.copy(manager, vFile.getParent(), vFile.getNameWithoutExtension() + \".java.old\");\n                            vFile.delete(manager);\n                        }\n                    } catch (IOException ignored) {\n                    }\n                }\n            });\n        }\n    }\n}\n
+===================================================================
+--- idea/src/org/jetbrains/jet/plugin/actions/JavaToKotlinActionUtil.java	(date 1330080250000)
++++ idea/src/org/jetbrains/jet/plugin/actions/JavaToKotlinActionUtil.java	(revision )
+@@ -56,13 +56,9 @@
+     }
+ 
+     @NotNull
+-    static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
++    /*package*/ static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
++        Set<VirtualFile> filesSet = allVirtualFiles(vFiles);
+         final PsiManager manager = PsiManager.getInstance(project);
+-        Set<VirtualFile> filesSet = new HashSet<VirtualFile>();
+-        for (VirtualFile f : vFiles) {
+-            filesSet.add(f);
+-            filesSet.addAll(getChildrenRecursive(f));
+-        }
+         final List<PsiFile> res = new ArrayList<PsiFile>();
+         for (final VirtualFile file : filesSet) {
+             final PsiFile psiFile = manager.findFile(file);
+@@ -71,6 +67,16 @@
+             }
+         }
+         return res;
++    }
++
++    @NotNull
++    public static Set<VirtualFile> allVirtualFiles(@NotNull VirtualFile[] vFiles) {
++        Set<VirtualFile> filesSet = new HashSet<VirtualFile>();
++        for (VirtualFile f : vFiles) {
++            filesSet.add(f);
++            filesSet.addAll(getChildrenRecursive(f));
++        }
++        return filesSet;
+     }
+ 
+     static void reformatFiles(List<VirtualFile> allJetFiles, final Project project) {
+Index: compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/*\n * Copyright 2010-2012 JetBrains s.r.o.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n * http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\npackage org.jetbrains.jet.lang.types;\n\nimport com.intellij.openapi.progress.ProcessCanceledException;\nimport com.intellij.openapi.project.Project;\nimport com.intellij.openapi.util.io.FileUtil;\nimport com.intellij.psi.PsiFileFactory;\nimport org.jetbrains.annotations.NotNull;\nimport org.jetbrains.annotations.Nullable;\nimport org.jetbrains.jet.lang.JetSemanticServices;\nimport org.jetbrains.jet.lang.descriptors.ClassDescriptor;\nimport org.jetbrains.jet.lang.descriptors.FunctionDescriptor;\nimport org.jetbrains.jet.lang.descriptors.PropertyDescriptor;\nimport org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;\nimport org.jetbrains.jet.lang.psi.JetFile;\nimport org.jetbrains.jet.lang.resolve.AnalyzingUtils;\nimport org.jetbrains.jet.lang.resolve.BindingTraceContext;\nimport org.jetbrains.jet.lang.resolve.TopDownAnalyzer;\nimport org.jetbrains.jet.lang.resolve.scopes.JetScope;\nimport org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;\nimport org.jetbrains.jet.lang.resolve.scopes.WritableScope;\nimport org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;\nimport org.jetbrains.jet.plugin.JetFileType;\n\nimport java.io.IOException;\nimport java.io.InputStream;\nimport java.io.InputStreamReader;\nimport java.util.*;\n\n/**\n * @author abreslav\n */\npublic class JetStandardLibrary {\n\n    private static JetStandardLibrary instance = null;\n\n    // This method must be called at least once per application run, on any project\n    // before any type checking is run\n    public static synchronized void initialize(@NotNull Project project) {\n        if (instance == null) {\n            instance = new JetStandardLibrary(project);\n        }\n    }\n\n    @NotNull // This asserts that initialize() is called before any resolution happens\n    public static JetStandardLibrary getInstance() {\n        return instance;\n    }\n\n    private JetScope libraryScope;\n\n    private ClassDescriptor numberClass;\n\n    private ClassDescriptor charSequenceClass;\n    private ClassDescriptor stringClass;\n    private ClassDescriptor arrayClass;\n    private ClassDescriptor iterableClass;\n    private ClassDescriptor comparableClass;\n    private ClassDescriptor volatileClass;\n    private ClassDescriptor throwableClass;\n\n    private JetType stringType;\n    private JetType volatileType;\n    private JetType nullableStringType;\n    private JetType charSequenceType;\n    private JetType nullableCharSequenceType;\n    private JetType nullableTuple0Type;\n    private JetType throwableType;\n    private JetType nullableThrowableType;\n\n    private JetType tuple0Type;\n\n    private Set<FunctionDescriptor> typeInfoFunction;\n\n    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;\n    private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;\n    private EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;\n    private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableJetType;\n    private EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;\n    private EnumMap<PrimitiveType, JetType> primitiveTypeToNullableArrayJetType;\n    private Map<JetType, JetType> primitiveJetTypeToJetArrayType;\n    private Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;\n\n    private JetStandardLibrary(@NotNull Project project) {\n        // TODO : review\n        List<String> libraryFiles = Arrays.asList(\n                \"Library.jet\",\n                \"Numbers.jet\",\n                \"Ranges.jet\",\n                \"Iterables.jet\",\n                \"Iterators.jet\",\n                \"Arrays.jet\"\n        );\n        try {\n            List<JetFile> files = new LinkedList<JetFile>();\n            for(String fileName : libraryFiles) {\n                InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream(\"jet/\" + fileName);\n\n                //noinspection IOResourceOpenedButNotSafelyClosed\n                JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName,\n                        JetFileType.INSTANCE, FileUtil.loadTextAndClose(new InputStreamReader(stream)));\n                files.add(file);\n            }\n\n            JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);\n            BindingTraceContext bindingTraceContext = new BindingTraceContext();\n            WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName(\"Root bootstrap scope\");\n            writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);\n            TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);\n\n            AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());\n            initStdClasses();\n        } catch (IOException e) {\n            throw new IllegalStateException(e);\n        } catch (ProcessCanceledException e) {\n            throw e;\n        }\n    }\n\n    public JetScope getLibraryScope() {\n        initStdClasses();\n        return libraryScope;\n    }\n\n    private void initStdClasses() {\n        if(libraryScope == null) {\n            this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();\n            this.numberClass = (ClassDescriptor) libraryScope.getClassifier(\"Number\");\n            this.stringClass = (ClassDescriptor) libraryScope.getClassifier(\"String\");\n            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier(\"CharSequence\");\n            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(\"Array\");\n            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier(\"volatile\");\n            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(\"Throwable\");            \n\n            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(\"Iterable\");\n            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(\"Comparable\");\n            this.typeInfoFunction = libraryScope.getFunctions(\"typeinfo\");\n\n            this.stringType = new JetTypeImpl(getString());\n            this.charSequenceType = new JetTypeImpl(getCharSequence());\n            this.nullableCharSequenceType = TypeUtils.makeNullable(charSequenceType);\n            this.nullableStringType = TypeUtils.makeNullable(stringType);\n            this.volatileType = new JetTypeImpl(getVolatile());\n            this.throwableType = new JetTypeImpl(getThrowable());\n            this.nullableThrowableType = TypeUtils.makeNullable(throwableType);\n\n            this.tuple0Type = new JetTypeImpl(JetStandardClasses.getTuple(0));\n            this.nullableTuple0Type = TypeUtils.makeNullable(tuple0Type);\n            \n            primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);\n            primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);\n            primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);\n            primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);\n            primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);\n            primitiveTypeToNullableArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);\n            primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();\n            jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();\n\n            for (PrimitiveType primitive : PrimitiveType.values()) {\n                makePrimitive(primitive);\n            }\n        }\n    }\n\n    private void makePrimitive(PrimitiveType primitiveType) {\n        ClassDescriptor clazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName());\n        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName() + \"Array\");\n        JetTypeImpl type = new JetTypeImpl(clazz);\n        JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);\n\n        primitiveTypeToClass.put(primitiveType, clazz);\n        primitiveTypeToJetType.put(primitiveType, type);\n        primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));\n        primitiveTypeToArrayClass.put(primitiveType, arrayClazz);\n        primitiveTypeToArrayJetType.put(primitiveType, arrayType);\n        primitiveTypeToNullableArrayJetType.put(primitiveType, TypeUtils.makeNullable(arrayType));\n        primitiveJetTypeToJetArrayType.put(type, arrayType);\n        jetArrayTypeToPrimitiveJetType.put(arrayType, type);\n    }\n\n    @NotNull\n    public ClassDescriptor getNumber() {\n        initStdClasses();\n        return numberClass;\n    }\n\n    @NotNull\n    public ClassDescriptor getPrimitiveClassDescriptor(PrimitiveType primitiveType) {\n        initStdClasses();\n        return primitiveTypeToClass.get(primitiveType);\n    }\n\n    @NotNull\n    public ClassDescriptor getByte() {\n        return getPrimitiveClassDescriptor(PrimitiveType.BYTE);\n    }\n\n    @NotNull\n    public ClassDescriptor getChar() {\n        return getPrimitiveClassDescriptor(PrimitiveType.CHAR);\n    }\n\n    @NotNull\n    public ClassDescriptor getShort() {\n        return getPrimitiveClassDescriptor(PrimitiveType.SHORT);\n    }\n\n    @NotNull\n    public ClassDescriptor getInt() {\n        return getPrimitiveClassDescriptor(PrimitiveType.INT);\n    }\n\n    @NotNull\n    public ClassDescriptor getLong() {\n        return getPrimitiveClassDescriptor(PrimitiveType.LONG);\n    }\n\n    @NotNull\n    public ClassDescriptor getFloat() {\n        return getPrimitiveClassDescriptor(PrimitiveType.FLOAT);\n    }\n\n    @NotNull\n    public ClassDescriptor getDouble() {\n        return getPrimitiveClassDescriptor(PrimitiveType.DOUBLE);\n    }\n\n    @NotNull\n    public ClassDescriptor getBoolean() {\n        return getPrimitiveClassDescriptor(PrimitiveType.BOOLEAN);\n    }\n\n    @NotNull\n    public ClassDescriptor getString() {\n        initStdClasses();\n        return stringClass;\n    }\n\n    @NotNull\n    public ClassDescriptor getCharSequence() {\n        initStdClasses();\n        return charSequenceClass;\n    }\n\n    @NotNull\n    public ClassDescriptor  getArray() {\n        initStdClasses();\n        return arrayClass;\n    }\n\n    @NotNull\n    public ClassDescriptor getIterable() {\n        initStdClasses();\n        return iterableClass;\n    }\n\n    @NotNull\n    public ClassDescriptor getComparable() {\n        initStdClasses();\n        return comparableClass;\n    }\n\n    @NotNull\n    public ClassDescriptor getThrowable() {\n        initStdClasses();\n        return throwableClass;\n    }\n    \n    public Set<FunctionDescriptor> getTypeInfoFunctions() {\n        initStdClasses();\n        return typeInfoFunction;\n    }\n\n    @NotNull\n    public JetType getPrimitiveJetType(PrimitiveType primitiveType) {\n        return primitiveTypeToJetType.get(primitiveType);\n    }\n\n    @NotNull\n    public JetType getIntType() {\n        return getPrimitiveJetType(PrimitiveType.INT);\n    }\n\n    @NotNull\n    public JetType getLongType() {\n        return getPrimitiveJetType(PrimitiveType.LONG);\n    }\n\n    @NotNull\n    public JetType getDoubleType() {\n        return getPrimitiveJetType(PrimitiveType.DOUBLE);\n    }\n\n    @NotNull\n    public JetType getFloatType() {\n        return getPrimitiveJetType(PrimitiveType.FLOAT);\n    }\n\n    @NotNull\n    public JetType getCharType() {\n        return getPrimitiveJetType(PrimitiveType.CHAR);\n    }\n\n    @NotNull\n    public JetType getBooleanType() {\n        return getPrimitiveJetType(PrimitiveType.BOOLEAN);\n    }\n\n    @NotNull\n    public JetType getStringType() {\n        initStdClasses();\n        return stringType;\n    }\n\n    @NotNull\n    public JetType getCharSequenceType() {\n        initStdClasses();\n        return charSequenceType;\n    }\n\n    @NotNull\n    public JetType getByteType() {\n        return getPrimitiveJetType(PrimitiveType.BYTE);\n    }\n\n    @NotNull\n    public JetType getShortType() {\n        return getPrimitiveJetType(PrimitiveType.SHORT);\n    }\n\n    @NotNull\n    public JetType getArrayType(@NotNull JetType argument) {\n        return getArrayType(Variance.INVARIANT, argument);\n    }\n\n    @NotNull\n    public JetType getArrayType(@NotNull Variance projectionType, @NotNull JetType argument) {\n        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));\n        return new JetTypeImpl(\n                Collections.<AnnotationDescriptor>emptyList(),\n                getArray().getTypeConstructor(),\n                false,\n                types,\n                getArray().getMemberScope(types)\n        );\n    }\n    \n    @NotNull\n    public JetType getArrayElementType(@NotNull JetType arrayType) {\n        // make non-null?\n        if (arrayType.getConstructor().getDeclarationDescriptor() == getArray()) {\n            if (arrayType.getArguments().size() != 1) {\n                throw new IllegalStateException();\n            }\n            return arrayType.getArguments().get(0).getType();\n        }\n        JetType primitiveType = jetArrayTypeToPrimitiveJetType.get(arrayType);\n        if (primitiveType == null) {\n            throw new IllegalStateException(\"not array: \" + arrayType);\n        }\n        return primitiveType;\n    }\n\n    @NotNull\n    public JetType getIterableType(@NotNull JetType argument) {\n        return getIterableType(Variance.INVARIANT, argument);\n    }\n\n    @NotNull\n    public JetType getIterableType(@NotNull Variance projectionType, @NotNull JetType argument) {\n        List<TypeProjection> types = Collections.singletonList(new TypeProjection(projectionType, argument));\n        return new JetTypeImpl(\n                Collections.<AnnotationDescriptor>emptyList(),\n                getIterable().getTypeConstructor(),\n                false,\n                types,\n                getIterable().getMemberScope(types)\n        );\n    }\n\n    @NotNull\n    public JetType getNullableStringType() {\n        initStdClasses();\n        return nullableStringType;\n    }\n\n    @NotNull\n    public JetType getNullableCharSequenceType() {\n        initStdClasses();\n        return nullableCharSequenceType;\n    }\n    \n    @NotNull\n    public JetType getThrowableType() {\n        initStdClasses();\n        return throwableType;\n    }\n\n    public JetType getNullableThrowableType() {\n        initStdClasses();\n        return nullableThrowableType;\n    }\n\n    @NotNull\n    public JetType getNullablePrimitiveJetType(PrimitiveType primitiveType) {\n        initStdClasses();\n        return primitiveTypeToNullableJetType.get(primitiveType);\n    }\n\n    public JetType getNullableTuple0Type() {\n        initStdClasses();\n        return nullableTuple0Type;\n    }\n    \n    @NotNull\n    public JetType getPrimitiveArrayJetType(PrimitiveType primitiveType) {\n        initStdClasses();\n        return primitiveTypeToArrayJetType.get(primitiveType);\n    }\n\n    /**\n     * @return <code>null</code> if not primitive\n     */\n    @Nullable\n    public JetType getPrimitiveArrayJetTypeByPrimitiveJetType(JetType jetType) {\n        return primitiveJetTypeToJetArrayType.get(jetType);\n    }\n\n    @NotNull\n    public ClassDescriptor getPrimitiveArrayClassDescriptor(PrimitiveType primitiveType) {\n        initStdClasses();\n        return primitiveTypeToArrayClass.get(primitiveType);\n    }\n\n\n    @NotNull\n    public JetType getNullablePrimitiveArrayJetType(PrimitiveType primitiveType) {\n        initStdClasses();\n        return primitiveTypeToNullableArrayJetType.get(primitiveType);\n    }\n\n    public ClassDescriptor getVolatile() {\n        return volatileClass;\n    }\n\n    public JetType getVolatileType() {\n        return volatileType;\n    }\n\n    public final boolean isVolatile(PropertyDescriptor descriptor) {\n        List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();\n        if(annotations != null) {\n            for(AnnotationDescriptor d: annotations) {\n                if(d.getType().equals(getVolatileType()))\n                    return true;\n            }\n        }\n        return false;\n    }\n\n    public JetType getTuple0Type() {\n        return tuple0Type;\n    }\n}\n
+===================================================================
+--- compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java	(date 1330080250000)
++++ compiler/frontend/src/org/jetbrains/jet/lang/types/JetStandardLibrary.java	(revision )
+@@ -462,6 +462,11 @@
+         return volatileType;
+     }
+ 
++    @NotNull
++    public Collection<ClassDescriptor> getArrayClasses() {
++        return primitiveTypeToArrayClass.values();
++    }
++
+     public final boolean isVolatile(PropertyDescriptor descriptor) {
+         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
+         if(annotations != null) {

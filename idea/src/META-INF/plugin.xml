@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Kotlin</name>
   <description>Kotlin language support</description>
-  <version>@snapshot@</version>
+  <version>1.0</version>
   <vendor>JetBrains</vendor>
 
   <depends optional="true">JUnit</depends>
@@ -43,6 +43,14 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
+      
+      <action id="Kotlin.TranslateToJs" class="org.jetbrains.jet.plugin.actions.TranslateToJsAction"
+              text="Translate Kotlin to JavaScript.">
+          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift W"/>
+         <add-to-group group-id="CodeMenu" anchor="last"/>
+     </action>
+
+      
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

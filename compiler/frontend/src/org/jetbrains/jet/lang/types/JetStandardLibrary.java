@@ -462,6 +462,11 @@ public class JetStandardLibrary {
         return volatileType;
     }
 
+    @NotNull
+    public Collection<ClassDescriptor> getArrayClasses() {
+        return primitiveTypeToArrayClass.values();
+    }
+
     public final boolean isVolatile(PropertyDescriptor descriptor) {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if(annotations != null) {

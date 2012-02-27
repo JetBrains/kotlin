@@ -56,13 +56,9 @@ public class JavaToKotlinActionUtil {
     }
 
     @NotNull
-    static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
+    /*package*/ static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
+        Set<VirtualFile> filesSet = allVirtualFiles(vFiles);
         final PsiManager manager = PsiManager.getInstance(project);
-        Set<VirtualFile> filesSet = new HashSet<VirtualFile>();
-        for (VirtualFile f : vFiles) {
-            filesSet.add(f);
-            filesSet.addAll(getChildrenRecursive(f));
-        }
         final List<PsiFile> res = new ArrayList<PsiFile>();
         for (final VirtualFile file : filesSet) {
             final PsiFile psiFile = manager.findFile(file);
@@ -71,6 +67,16 @@ public class JavaToKotlinActionUtil {
             }
         }
         return res;
+    }
+
+    @NotNull
+    public static Set<VirtualFile> allVirtualFiles(@NotNull VirtualFile[] vFiles) {
+        Set<VirtualFile> filesSet = new HashSet<VirtualFile>();
+        for (VirtualFile f : vFiles) {
+            filesSet.add(f);
+            filesSet.addAll(getChildrenRecursive(f));
+        }
+        return filesSet;
     }
 
     static void reformatFiles(List<VirtualFile> allJetFiles, final Project project) {
