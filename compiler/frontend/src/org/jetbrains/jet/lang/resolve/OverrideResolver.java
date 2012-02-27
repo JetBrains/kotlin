@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
-import org.jetbrains.jet.util.LinkedMultiMap;
+import com.intellij.util.containers.LinkedMultiMap;
 
 import java.util.*;
 
