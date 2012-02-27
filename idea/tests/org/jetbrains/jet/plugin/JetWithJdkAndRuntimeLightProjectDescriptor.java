@@ -21,14 +21,14 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.apache.commons.lang.SystemUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ForTestCompileStdlib;
 
 /**
@@ -52,11 +52,25 @@ public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectD
     }
 
     @Override
-    public void configureModule(Module module, ModifiableRootModel model, ContentEntry contentEntry) {
+    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
         Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary("ktl").getModifiableModel();
         VirtualFile cd = JarFileSystem.getInstance().findFileByPath(ForTestCompileStdlib.stdlibJarForTests() + "!/");
         assert cd != null;
         modifiableModel.addRoot(cd, OrderRootType.CLASSES);
         modifiableModel.commit();
+    }
+
+    public static void unConfigureModule(@NotNull ModifiableRootModel model) {
+        for (OrderEntry orderEntry : model.getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry) {
+                LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) orderEntry;
+
+                Library library = libraryOrderEntry.getLibrary();
+                if (library != null && library.getName().equals("ktl")) {
+                    model.getModuleLibraryTable().removeLibrary(library);
+                    break;
+                }
+            }
+        }
     }
 }

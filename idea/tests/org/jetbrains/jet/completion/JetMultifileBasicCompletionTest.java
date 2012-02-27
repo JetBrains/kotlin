@@ -27,6 +27,10 @@ public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase 
         doFileTest(2);
     }
 
+    public void testNotImportedExtensionFunction() throws Exception {
+        doFileTest(2);
+    }
+
     public void testExtensionFunction() throws Exception {
         // TODO: fix and uncomment
         // doFileTest();

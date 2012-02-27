@@ -131,6 +131,7 @@ public class JetCompletionContributor extends CompletionContributor {
                     }
                 }
 
+                // Iterate through the function with attempt to resolve found functions
                 for (String functionFQN : functionFQNs) {
                     // System.out.println(functionFQN);
 

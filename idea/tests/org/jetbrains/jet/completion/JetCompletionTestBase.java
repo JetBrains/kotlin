@@ -22,7 +22,12 @@ import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import org.apache.commons.lang.SystemUtils;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 /**
@@ -47,30 +52,69 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
             final String fileText = getFile().getText();
 
-            Integer completionTime = completionUtils.getExecutionTime(fileText);
-            
-            complete(completionTime == null ? 1 : completionTime);
+            boolean withKotlinRuntime = ExpectedCompletionUtils.getPrefixedInt(fileText, "// RUNTIME:") != null;
 
-            final String[] expected = completionUtils.itemsShouldExist(fileText);
-            final String[] unexpected = completionUtils.itemsShouldAbsent(fileText);
-            Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
+            try {
+                if (withKotlinRuntime) {
+                    configureWithKotlinRuntime();
+                }
 
-            assertTrue("Should be some assertions about completion", expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
+                Integer completionTime = completionUtils.getExecutionTime(fileText);
 
-            assertContainsItems(expected);
-            assertNotContainItems(unexpected);
+                complete(completionTime == null ? 1 : completionTime);
 
-            if (itemsNumber != null) {
-                assertEquals(itemsNumber.intValue(), myItems.length);
+                final String[] expected = completionUtils.itemsShouldExist(fileText);
+                final String[] unexpected = completionUtils.itemsShouldAbsent(fileText);
+                Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
+
+                assertTrue("Should be some assertions about completion", expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
+
+                assertContainsItems(expected);
+                assertNotContainItems(unexpected);
+
+                if (itemsNumber != null) {
+                    assertEquals(itemsNumber.intValue(), myItems.length);
+                }
             }
+            finally {
+                if (withKotlinRuntime) {
+                    unConfigureKotlinRuntime();
+                }
+            }
+
+
         } catch (Exception e) {
             throw new AssertionError(e);
         }
     }
 
+    protected static void configureWithKotlinRuntime() {
+        final ModuleRootManager rootManager = ModuleRootManager.getInstance(getModule());
+        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+
+        rootModel.setSdk(getFullJavaJDK());
+        JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE.configureModule(getModule(), rootModel, null);
+
+        rootModel.commit();
+    }
+
+    protected void unConfigureKotlinRuntime() {
+        final ModuleRootManager rootManager = ModuleRootManager.getInstance(getModule());
+        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+
+        rootModel.setSdk(getProjectJDK());
+        JetWithJdkAndRuntimeLightProjectDescriptor.unConfigureModule(rootModel);
+
+        rootModel.commit();
+    }
+
     @Override
     protected Sdk getProjectJDK() {
         return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    protected static Sdk getFullJavaJDK() {
+        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
     }
 
     @Override
