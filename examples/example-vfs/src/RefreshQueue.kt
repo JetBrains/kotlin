@@ -50,9 +50,12 @@ internal object RefreshQueue {
     /* Checks for changes in virtual file recursively, notifying listeners. */
     private fun refreshFile(file : VirtualFile) {
         FileSystem.assertCanWrite()
+        val fileInfo = FileSystem.fileToInfo[file.path]
+        assert(fileInfo != null)
+        if (fileInfo == null) {
+            return
+        }
         if (file.isDirectory()) {
-            val fileToInfo = FileSystem.fileToInfo
-            val fileInfo = fileToInfo[file.path]
             val oldChildren = fileInfo.children
             val newChildren = file.children()
 
@@ -69,9 +72,6 @@ internal object RefreshQueue {
 
             commonChildren.foreach{ refreshFile(it) }
         } else {
-            val fileInfo = FileSystem.fileToInfo[file.path]
-            assert(fileInfo != null)
-
             val newModificationTime = file.modificationTime()
             if (fileInfo.lastModified != newModificationTime) {
                 fileInfo.lastModified = newModificationTime

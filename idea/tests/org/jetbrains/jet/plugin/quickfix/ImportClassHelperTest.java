@@ -21,6 +21,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
+import java.io.IOException;
+
 /**
  * @author Nikolay Krasko
  */
@@ -46,6 +48,30 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
             }
         });
         checkResultByFile(getTestName(false) + ".kt.after");
+    }
+
+    public void testInsertInEmptyFile() throws IOException {
+        configureFromFileText("testInsertInEmptyFile.kt", "");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                ImportClassHelper.addImportDirective("java.util.ArrayList", (JetFile) getFile());
+            }
+        });
+
+        checkResultByText("import java.util.ArrayList");
+    }
+
+    public void testInsertInPackageOnlyFile() throws IOException {
+        configureFromFileText("testInsertInPackageOnlyFile.kt", "package some");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                ImportClassHelper.addImportDirective("java.util.ArrayList", (JetFile) getFile());
+            }
+        });
+
+        checkResultByText("package some\n\nimport java.util.ArrayList");
     }
 
     @Override

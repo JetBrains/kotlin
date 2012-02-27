@@ -88,19 +88,19 @@ public class StdlibTest extends CodegenTestCase {
     }
 
     //from NamespaceGenTest
-    public void testPredicateOperator() throws Exception {
-        loadText("fun foo(s: String) = s?startsWith(\"J\")");
-        final Method main = generateFunction();
-        try {
-            assertEquals("JetBrains", main.invoke(null, "JetBrains"));
-            assertNull(main.invoke(null, "IntelliJ"));
-        } catch (Throwable t) {
-//            System.out.println(generateToText());
-            t.printStackTrace();
-            throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
-        }
-    }
-
+//    public void testPredicateOperator() throws Exception {
+//        loadText("fun foo(s: String) = s?startsWith(\"J\")");
+//        final Method main = generateFunction();
+//        try {
+//            assertEquals("JetBrains", main.invoke(null, "JetBrains"));
+//            assertNull(main.invoke(null, "IntelliJ"));
+//        } catch (Throwable t) {
+////            System.out.println(generateToText());
+//            t.printStackTrace();
+//            throw t instanceof Exception ? (Exception)t : new RuntimeException(t);
+//        }
+//    }
+//
     public void testForInString() throws Exception {
         loadText("fun foo() : Int {        var sum = 0\n" +
                  "        for(c in \"239\")\n" +

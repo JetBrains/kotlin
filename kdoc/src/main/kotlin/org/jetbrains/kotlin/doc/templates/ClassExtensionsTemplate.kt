@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
+import org.jetbrains.kotlin.model.KProperty
 
-class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass, var functions: Collection<KFunction>) : ClassTemplate(m, p, k) {
+class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass,
+        val functions: Collection<KFunction>, val properties: Collection<KProperty>) : ClassTemplate(m, p, k) {
 
     override fun pageTitle(): String = "${klass.name} Extensions fom ${pkg.name} (${model.title})"
 
@@ -31,6 +33,7 @@ from package ${link(pkg)}
 </PRE>
 
 <P>""")
+        printPropertySummary(properties)
         printFunctionSummary(functions)
         printFunctionDetail(functions)
         println("""<!-- ========= END OF CLASS EXTENSIONS DATA ========= -->

@@ -55,8 +55,12 @@ inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Co
 }
 
 /** Converts the nullable List into an empty List if its null */
-inline fun <T> java.util.List<T>?.notNull() : List<T>
-    = if (this != null) this else Collections.EMPTY_LIST as List<T>
+inline fun <T> java.util.List<T>?.notNull() : java.util.List<T>
+    = if (this != null) this else Collections.EMPTY_LIST as java.util.List<T>
+
+/** Converts the nullable Set into an empty Set if its null */
+inline fun <T> java.util.Set<T>?.notNull() : java.util.Set<T>
+    = if (this != null) this else Collections.EMPTY_SET as java.util.Set<T>
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

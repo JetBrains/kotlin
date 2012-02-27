@@ -91,6 +91,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         if (fd.getReceiverParameter().exists()) {
             result.setNeedsReceiver(fd);
         }
+        result.setNeedsThis(getInternalType(fd));
         result.requestGenerateCallee(Type.getObjectType(getInternalClassName(fd)));
         return result;
     }
@@ -334,6 +335,16 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
         else {
             return "jet/Function" + paramCount;
+        }
+    }
+
+    public static ClassDescriptor getInternalType(FunctionDescriptor descriptor) {
+        final int paramCount = descriptor.getValueParameters().size();
+        if (descriptor.getReceiverParameter().exists()) {
+            return JetStandardClasses.getReceiverFunction(paramCount);
+        }
+        else {
+            return JetStandardClasses.getFunction(paramCount);
         }
     }
 

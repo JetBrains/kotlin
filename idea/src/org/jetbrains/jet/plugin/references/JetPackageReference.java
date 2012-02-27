@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.references;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -33,7 +32,7 @@ public class JetPackageReference extends JetPsiReference {
 
     private JetNamespaceHeader packageExpression;
 
-    public JetPackageReference(JetNamespaceHeader expression) {
+    public JetPackageReference(@NotNull JetNamespaceHeader expression) {
         super(expression);
         packageExpression = expression;
     }
@@ -48,11 +47,10 @@ public class JetPackageReference extends JetPsiReference {
                 bindingContext, TipsManager.getReferenceVariants(packageExpression, bindingContext));
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
-        PsiElement element = getElement();
-        if (element == null) return null;
-        return new TextRange(0, element.getTextLength());
+        return new TextRange(0, getElement().getTextLength());
     }
 
     @NotNull

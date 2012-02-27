@@ -7,7 +7,7 @@ fun test(s: String?) {
    val <!UNUSED_VARIABLE!>d<!>: Int = s?.length ?: <!TYPE_MISMATCH!>"empty"<!>
    val e: String = <!TYPE_MISMATCH!>s?.length<!> ?: "empty"
    val <!UNUSED_VARIABLE!>f<!>: Int = s?.length ?: b ?: 1
-   val <!UNUSED_VARIABLE!>g<!>: Int? = e? startsWith("s")?.length
+   val <!UNUSED_VARIABLE!>g<!>: Boolean? = e.startsWith("s")//?.length
 }
 
 fun String.startsWith(<!UNUSED_PARAMETER!>s<!>: String): Boolean = true

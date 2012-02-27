@@ -128,6 +128,9 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetPsiChecker"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.DebugInfoAnnotator"/>
 
+      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.JetStatementGroupSelectioner"/>
+      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.JetCodeBlockSelectioner"/>
+
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>

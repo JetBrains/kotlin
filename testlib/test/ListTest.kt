@@ -27,4 +27,15 @@ class ListTest() : TestSupport() {
     val t = data.last
     assertEquals("bar", t)
   }
+
+  fun testWithIndices() {
+    val withIndices = data.withIndices()
+    var index = 0
+    for (withIndex in withIndices) {
+      assertEquals(withIndex._1, index)
+      assertEquals(withIndex._2, data[index])
+      index++
+    }
+    assertEquals(data.size(), index)
+  }
 }

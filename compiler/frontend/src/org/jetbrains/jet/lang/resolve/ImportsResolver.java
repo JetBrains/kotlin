@@ -194,27 +194,31 @@ public class ImportsResolver {
             }
 
             JetExpression selectorExpression = importedReference.getSelectorExpression();
-            assert selectorExpression instanceof JetSimpleNameExpression;
-            JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
-            JetSimpleNameExpression lastReference = getLastReference(receiverExpression);
-            if (lastReference == null || !canImportMembersFrom(declarationDescriptors, lastReference)) {
-                return Collections.emptyList();
+
+            if (selectorExpression instanceof JetSimpleNameExpression) {
+                JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
+                JetSimpleNameExpression lastReference = getLastReference(receiverExpression);
+                if (lastReference == null || !canImportMembersFrom(declarationDescriptors, lastReference)) {
+                    return Collections.emptyList();
+                }
+
+                Collection<? extends DeclarationDescriptor> result;
+                for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
+                    if (declarationDescriptor instanceof NamespaceDescriptor) {
+                        result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope(), true);
+                        if (!result.isEmpty()) return result;
+                    }
+                    if (declarationDescriptor instanceof ClassDescriptor) {
+                        result = lookupObjectMembers((ClassDescriptor) declarationDescriptor, selector);
+                        if (!result.isEmpty()) return result;
+                    }
+                    if (declarationDescriptor instanceof VariableDescriptor) {
+                        result = lookupVariableMembers((VariableDescriptor) declarationDescriptor, selector);
+                        if (!result.isEmpty()) return result;
+                    }
+                }
             }
-            Collection<? extends DeclarationDescriptor> result;
-            for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
-                if (declarationDescriptor instanceof NamespaceDescriptor) {
-                    result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope(), true);
-                    if (!result.isEmpty()) return result;
-                }
-                if (declarationDescriptor instanceof ClassDescriptor) {
-                    result = lookupObjectMembers((ClassDescriptor) declarationDescriptor, selector);
-                    if (!result.isEmpty()) return result;
-                }
-                if (declarationDescriptor instanceof VariableDescriptor) {
-                    result = lookupVariableMembers((VariableDescriptor) declarationDescriptor, selector);
-                    if (!result.isEmpty()) return result;
-                }
-            }
+
             return Collections.emptyList();
         }
 

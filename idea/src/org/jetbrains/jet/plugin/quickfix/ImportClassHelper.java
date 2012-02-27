@@ -89,9 +89,14 @@ public class ImportClassHelper {
         }
         else {
             List<JetDeclaration> declarations = file.getDeclarations();
-            assert !declarations.isEmpty();
-            JetDeclaration firstDeclaration = declarations.iterator().next();
-            firstDeclaration.getParent().addBefore(newDirective, firstDeclaration);
+
+            if (!declarations.isEmpty()) {
+                JetDeclaration firstDeclaration = declarations.iterator().next();
+                firstDeclaration.getParent().addBefore(newDirective, firstDeclaration);
+            }
+            else {
+                file.getNamespaceHeader().getParent().addAfter(newDirective, file.getNamespaceHeader());
+            }
         }
     }
 

@@ -92,9 +92,8 @@ JetFile: Imports_ERR.jet
                 PsiElement(IDENTIFIER)('foo')
             PsiElement(DOT)('.')
             PsiWhiteSpace(' ')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Expecting type name
-                PsiElement(as)('as')
+            PsiErrorElement:Expecting type name
+              PsiElement(as)('as')
     PsiWhiteSpace(' ')
     ANNOTATION_ENTRY
       CONSTRUCTOR_CALLEE
@@ -122,9 +121,8 @@ JetFile: Imports_ERR.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
             PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Expecting type name
-                PsiElement(MUL)('*')
+            PsiErrorElement:Expecting type name
+              PsiElement(MUL)('*')
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting namespace or top level declaration
     PsiElement(as)('as')
@@ -156,9 +154,8 @@ JetFile: Imports_ERR.jet
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('bar')
             PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiErrorElement:Expecting type name
-                PsiElement(MUL)('*')
+            PsiErrorElement:Expecting type name
+              PsiElement(MUL)('*')
   PsiWhiteSpace(' ')
   PsiErrorElement:Expecting namespace or top level declaration
     PsiElement(as)('as')
@@ -182,10 +179,9 @@ JetFile: Imports_ERR.jet
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
+      PsiErrorElement:Qualified name must be a '.'-separated identifier list
+        <empty list>
+    PsiWhiteSpace(' ')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   IMPORT_DIRECTIVE
@@ -199,10 +195,9 @@ JetFile: Imports_ERR.jet
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
       PsiElement(DOT)('.')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
+      PsiErrorElement:Qualified name must be a '.'-separated identifier list
+        <empty list>
+    PsiWhiteSpace(' ')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   IMPORT_DIRECTIVE
@@ -212,10 +207,9 @@ JetFile: Imports_ERR.jet
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('foo')
       PsiElement(DOT)('.')
-      PsiWhiteSpace(' ')
-      REFERENCE_EXPRESSION
-        PsiErrorElement:Qualified name must be a '.'-separated identifier list
-          <empty list>
+      PsiErrorElement:Qualified name must be a '.'-separated identifier list
+        <empty list>
+    PsiWhiteSpace(' ')
     PsiElement(as)('as')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('bar')

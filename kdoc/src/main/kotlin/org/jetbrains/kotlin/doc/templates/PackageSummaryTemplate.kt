@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.model.KModel
 import org.jetbrains.kotlin.model.KPackage
 import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.extensionFunctions
+import org.jetbrains.kotlin.model.inheritedExtensionFunctions
 
 class PackageSummaryTemplate(val model: KModel, pkg: KPackage) : PackageTemplateSupport(pkg) {
     override fun render() {
@@ -263,7 +264,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
     }
 
     protected fun printExtensionFunctions(): Unit {
-        val map = extensionFunctions(pkg.functions)
+        val map = inheritedExtensionFunctions(pkg.functions)
         if (! map.isEmpty()) {
             print("""<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">

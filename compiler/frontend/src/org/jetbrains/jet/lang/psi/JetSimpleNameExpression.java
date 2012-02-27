@@ -81,27 +81,27 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
 
     @Nullable @IfNotParsed
     public String getReferencedName() {
-        PsiElement referencedNameElement = getReferencedNameElement();
-        if (referencedNameElement == null) {
-            return null;
-        }
-        String text = referencedNameElement.getNode().getText();
+        String text = getReferencedNameElement().getNode().getText();
         return text != null ? JetPsiUtil.unquoteIdentifierOrFieldReference(text) : null;
     }
 
-    @Nullable @IfNotParsed
+    @NotNull
     public PsiElement getReferencedNameElement() {
         PsiElement element = findChildByType(REFERENCE_TOKENS);
         if (element == null) {
             element = findChildByType(JetExpressionParsing.ALL_OPERATIONS);
         }
-        return element;
+
+        if (element != null) {
+            return element;
+        }
+
+        return this;
     }
 
     @Nullable @IfNotParsed
     public IElementType getReferencedNameElementType() {
-        PsiElement element = getReferencedNameElement();
-        return element == null ? null : element.getNode().getElementType();
+        return getReferencedNameElement().getNode().getElementType();
     }
 
     @NotNull

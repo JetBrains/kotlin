@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetContainerNode;
@@ -44,7 +45,7 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
         return indicesNode == null ? PsiReference.EMPTY_ARRAY : new PsiReference[] { new JetArrayAccessReference(expression) };
     }
 
-    public JetArrayAccessReference(JetArrayAccessExpression expression) {
+    public JetArrayAccessReference(@NotNull JetArrayAccessExpression expression) {
         super(expression);
         this.expression = expression;
     }

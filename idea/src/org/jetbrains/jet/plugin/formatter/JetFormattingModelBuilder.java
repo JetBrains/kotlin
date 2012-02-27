@@ -44,6 +44,8 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
         return new SpacingBuilder(settings)
+                .after(NAMESPACE_HEADER).blankLines(1)
+
                 .before(IMPORT_DIRECTIVE).lineBreakInCode()
                 .between(IMPORT_DIRECTIVE, CLASS).blankLines(1)
                 .between(IMPORT_DIRECTIVE, FUN).blankLines(1)

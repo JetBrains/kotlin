@@ -138,7 +138,7 @@ public interface JetNodeTypes {
     JetNodeType DOT_QUALIFIED_EXPRESSION  = new JetNodeType("DOT_QUALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
     JetNodeType HASH_QUALIFIED_EXPRESSION = new JetNodeType("HASH_QUALIFIED_EXPRESSION", JetHashQualifiedExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
-    JetNodeType PREDICATE_EXPRESSION      = new JetNodeType("PREDICATE_EXPRESSION", JetPredicateExpression.class);
+//    JetNodeType PREDICATE_EXPRESSION      = new JetNodeType("PREDICATE_EXPRESSION", JetPredicateExpression.class);
 
     JetNodeType OBJECT_LITERAL            = new JetNodeType("OBJECT_LITERAL", JetObjectLiteralExpression.class);
     JetNodeType ROOT_NAMESPACE            = new JetNodeType("ROOT_NAMESPACE", JetRootNamespaceExpression.class);

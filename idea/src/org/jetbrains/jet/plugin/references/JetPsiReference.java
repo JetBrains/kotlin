@@ -22,6 +22,7 @@ import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -36,12 +37,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_
 import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
+
+    @NotNull
     protected final JetReferenceExpression myExpression;
 
-    protected JetPsiReference(JetReferenceExpression expression) {
+    protected JetPsiReference(@NotNull JetReferenceExpression expression) {
         this.myExpression = expression;
     }
 
+    @NotNull
     @Override
     public PsiElement getElement() {
         return myExpression;
@@ -69,6 +73,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         throw new IncorrectOperationException();
     }
 
+    @NotNull
     @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
         throw new IncorrectOperationException();
@@ -90,6 +95,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         return false;
     }
 
+    @Nullable
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);

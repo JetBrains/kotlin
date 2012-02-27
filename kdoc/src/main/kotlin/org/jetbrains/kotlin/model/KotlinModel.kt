@@ -65,14 +65,54 @@ fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, S
 }
 
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
+fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass, SortedSet<KProperty>> {
+    val map = extensionProperties(properties)
+    // for each class, lets walk its base classes and add any other extension properties from base classes
+    val classes = map.keySet().toList()
+    val answer = TreeMap<KClass, SortedSet<KProperty>>()
+    for (c in map.keySet()) {
+        val allProperties = map.get(c).notNull().toSortedSet()
+        answer.put(c, allProperties)
+        val des = c.descendants()
+        for (b in des) {
+            val list = map.get(b)
+            if (list != null) {
+                if (allProperties != null) {
+                    for (f in list) {
+                        if (f != null) {
+                            // add the proeprties from the base class if we don't have a matching method
+                            if (!allProperties.any{ it.name == f.name}) {
+                                allProperties.add(f)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return answer
+}
+
+
+// TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionFunctions(functions: Collection<KFunction>): Map<KClass, List<KFunction>> {
-    //fun extensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
     functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
     return map
 }
 
-trait KClassOrPackage {
+// TODO for some reason the SortedMap causes kotlin to freak out a little :)
+fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KProperty>> {
+    val map = TreeMap<KClass, List<KProperty>>()
+    properties.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    return map
+}
+
+abstract class KClassOrPackage : KAnnotated() {
+
+    public open val functions: SortedSet<KFunction> = TreeSet<KFunction>()
+
+    public open val properties: SortedSet<KProperty> = TreeSet<KProperty>()
 }
 
 class KModel(var context: BindingContext, var title: String = "Documentation", var version: String = "TODO") {
@@ -131,7 +171,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         }
         if (created) {
             pkg.description = commentsFor(descriptor)
-            addFunctions(pkg, pkg.functions, descriptor.getMemberScope())
+            addFunctions(pkg, descriptor.getMemberScope())
             if (pkg.functions.notEmpty()) {
                 pkg.local = true
             }
@@ -139,23 +179,26 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         return pkg;
     }
 
-    protected fun addFunctions(owner: KClassOrPackage, list: Collection<KFunction>, scope: JetScope): Unit {
+    protected fun addFunctions(owner: KClassOrPackage, scope: JetScope): Unit {
         try {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
-                    if (owner is KClass) {
-                        val name = descriptor.getName()
-                        val returnType = getClass(descriptor.getReturnType())
-                        if (returnType != null) {
-                            val property = KProperty(owner, descriptor, name, returnType)
-                            owner.properties.add(property)
-                        }
+                    val name = descriptor.getName()
+                    val returnType = getClass(descriptor.getReturnType())
+                    if (returnType != null) {
+                        val receiver = descriptor.getReceiverParameter()
+                        val extensionClass = if (receiver is ExtensionReceiver) {
+                            getClass(receiver.getType())
+                        } else null
+
+                        val property = KProperty(owner, descriptor, name, returnType, extensionClass)
+                        owner.properties.add(property)
                     }
                 } else if (descriptor is CallableDescriptor) {
                     val function = createFunction(owner, descriptor)
                     if (function != null) {
-                        list.add(function)
+                        owner.functions.add(function)
                     }
                 }
             }
@@ -271,8 +314,7 @@ abstract class KAnnotated {
 
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
         val name: String, var external: Boolean = false,
-        var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
-        var local: Boolean = false) : KAnnotated(), Comparable<KPackage>, KClassOrPackage {
+        var local: Boolean = false) : KClassOrPackage(), Comparable<KPackage> {
 
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
@@ -296,7 +338,7 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
                     klass.baseClasses.add(sc)
                 }
             }
-            model.addFunctions(klass, klass.functions, classElement.getDefaultType().getMemberScope())
+            model.addFunctions(klass, classElement.getDefaultType().getMemberScope())
         }
         return klass
     }
@@ -364,11 +406,9 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
-        var functions: SortedSet<KFunction> = TreeSet<KFunction>(),
-        var properties: SortedSet<KProperty> = TreeSet<KProperty>(),
         var baseClasses: List<KClass> = arrayList<KClass>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2) : KAnnotated(), Comparable<KClass>, KClassOrPackage {
+        var sourceLine: Int = 2) : KClassOrPackage(), Comparable<KClass> {
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -444,7 +484,7 @@ class KFunction(val owner: KClassOrPackage, val name: String,
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
-        val returnType: KClass) : KAnnotated(), Comparable<KProperty> {
+        val returnType: KClass, val extensionClass: KClass?) : KAnnotated(), Comparable<KProperty> {
 
     override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 

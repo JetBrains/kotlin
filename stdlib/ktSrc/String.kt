@@ -10,6 +10,8 @@ inline fun String.equalsIgnoreCase(anotherString: String) = (this as java.lang.S
 
 inline fun String.indexOf(str : String) = (this as java.lang.String).indexOf(str)
 
+inline fun String.matches(regex : String): Boolean = (this as java.lang.String).matches(regex)
+
 inline fun String.indexOf(str : String, fromIndex : Int) = (this as java.lang.String).indexOf(str, fromIndex)
 
 inline fun String.replace(oldChar: Char, newChar : Char) = (this as java.lang.String).replace(oldChar, newChar).sure()

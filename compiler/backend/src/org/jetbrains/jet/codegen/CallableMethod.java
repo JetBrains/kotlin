@@ -124,7 +124,7 @@ public class CallableMethod implements Callable {
     }
 
     public boolean isNeedsThis() {
-        return thisClass != null;
+        return thisClass != null && generateCalleeType == null;
     }
 
     public boolean isNeedsReceiver() {
