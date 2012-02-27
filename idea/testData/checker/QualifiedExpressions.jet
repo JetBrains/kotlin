@@ -7,7 +7,7 @@ fun test(s: String?) {
    val <warning>d</warning>: Int = s?.length ?: <error>"empty"</error>
    val e: String = <error>s?.length</error> ?: "empty"
    val <warning>f</warning>: Int = s?.length ?: b ?: 1
-   val <warning>g</warning>: Int? = e? startsWith("s")?.length
+   val <warning>g</warning>: Boolean? = e.startsWith("s")//?.length
 }
 
 fun String.startsWith(<warning>s</warning>: String): Boolean = true

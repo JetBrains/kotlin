@@ -460,9 +460,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertType("true && false", "Boolean");
         assertType("true || false", "Boolean");
         assertType("null ?: false", "Boolean");
-        assertType("WithPredicate()?isValid()", "WithPredicate?");
-        assertType("WithPredicate()?isValid(1)", "WithPredicate?");
-        assertType("WithPredicate()?p", "WithPredicate?");
+//        assertType("WithPredicate()?isValid()", "WithPredicate?");
+//        assertType("WithPredicate()?isValid(1)", "WithPredicate?");
+//        assertType("WithPredicate()?p", "WithPredicate?");
     }
 
     public void testSupertypes() throws Exception {

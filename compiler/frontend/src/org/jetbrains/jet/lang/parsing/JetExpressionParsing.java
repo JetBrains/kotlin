@@ -385,13 +385,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 expression.done(SAFE_ACCESS_EXPRESSION);
             }
-            else if (at(QUEST)) {
-                advance(); // QUEST
-
-                parseCallExpression();
-
-                expression.done(PREDICATE_EXPRESSION);
-            }
+//            else if (at(QUEST)) {
+//                advance(); // QUEST
+//
+//                parseCallExpression();
+//
+//                expression.done(PREDICATE_EXPRESSION);
+//            }
 //            else if (at(HASH)) {
 //                advance(); // HASH
 //
