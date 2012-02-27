@@ -25,10 +25,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -201,7 +198,7 @@ public class CompileSession {
     public ClassFileFactory generate() {
         Project project = myEnvironment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactory.BINARIES, myFileNameTransformer);
-        generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
+        generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 
         List<CompilerPlugin> fileProcessors = myEnvironment.getCompilerPlugins();

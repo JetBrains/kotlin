@@ -17,23 +17,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
-import org.jetbrains.jet.lang.types.JetStandardClasses;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
-
-import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -67,10 +58,6 @@ public class NamespaceCodegen {
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
         final ClassCodegen classCodegen = state.forClass();
-
-        if (v.generateCode()) {
-            GenerationState.prepareAnonymousClasses(file, state.getTypeMapper());
-        }
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {

@@ -403,6 +403,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         JvmMethodSignature constructorMethod;
         CallableMethod callableMethod;
+        boolean hasThis0 = typeMapper.hasThis0(descriptor);
         if (constructorDescriptor == null) {
             BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, false);
             
@@ -411,9 +412,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             
             signatureWriter.writeParametersStart();
             
-            if (CodegenUtil.hasThis0(descriptor)) {
+            if (hasThis0) {
                 signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
-                typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter, false);
+                typeMapper.mapType(typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter, false);
                 signatureWriter.writeParameterTypeEnd();
             }
 
@@ -425,7 +426,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             callableMethod = new CallableMethod("", "", "", constructorMethod, INVOKESPECIAL);
         }
         else {
-            callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
+            callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
             constructorMethod = callableMethod.getSignature();
         }
 
@@ -435,13 +436,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int insert = 0;
         if(closure != null) {
-            if(closure.captureThis) {
-                if(!CodegenUtil.hasThis0(descriptor))
+            if(closure.captureThis != null) {
+                if(!hasThis0)
                     consArgTypes.add(insert, new JvmMethodParameterSignature(Type.getObjectType(context.getThisDescriptor().getName()), "", JvmMethodParameterKind.THIS0));
                 insert++;
             }
             else {
-                if(CodegenUtil.hasThis0(descriptor))
+                if(hasThis0)
                     insert++;
             }
 
@@ -469,7 +470,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     declarationDescriptor = ((ClassDescriptor)declarationDescriptor).getUnsubstitutedPrimaryConstructor();
                 }
                 ConstructorDescriptor superConstructor = (ConstructorDescriptor) declarationDescriptor;
-                CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+                CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(superConstructor.getContainingDeclaration()));
                 firstSuperArgument = insert;
                 for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
                     consArgTypes.add(insert++, new JvmMethodParameterSignature(t, "", JvmMethodParameterKind.SHARED_VAR));
@@ -494,7 +495,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (constructorDescriptor != null) {
             int i = 0;
 
-            if (CodegenUtil.hasThis0(descriptor)) {
+            if (hasThis0) {
                 i++;
             }
 
@@ -514,7 +515,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 ? constructorDescriptor.getValueParameters()
                 : Collections.<ValueParameterDescriptor>emptyList();
 
-        ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, descriptor, kind);
+        ConstructorFrameMap frameMap = new ConstructorFrameMap(callableMethod, constructorDescriptor, hasThis0);
 
         final InstructionAdapter iv = new InstructionAdapter(mv);
         ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, constructorContext, state);
@@ -548,9 +549,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             List<Type> parameterTypes = new ArrayList<Type>();
             assert superType != null;
             ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            if (CodegenUtil.hasThis0(superClassDescriptor)) {
+            if (typeMapper.hasThis0(superClassDescriptor)) {
                 iv.load(1, JetTypeMapper.TYPE_OBJECT);
-                parameterTypes.add(typeMapper.mapType(CodegenUtil.getOuterClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
+                parameterTypes.add(typeMapper.mapType(typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION));
             }
             Method superCallMethod = new Method("<init>", Type.VOID_TYPE, parameterTypes.toArray(new Type[parameterTypes.size()]));
             iv.invokespecial(typeMapper.mapType(superClassDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "<init>", superCallMethod.getDescriptor());
@@ -587,9 +588,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        final ClassDescriptor outerDescriptor = getOuterClassDescriptor();
-        if (outerDescriptor != null && !CodegenUtil.isClassObject(outerDescriptor)) {
-            final Type type = typeMapper.mapType(outerDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+        final ClassDescriptor outerDescriptor = typeMapper.getClosureAnnotator().getEclosingClassDescriptor(descriptor);
+        if (typeMapper.hasThis0(descriptor) && outerDescriptor != null) {
+            final Type type = typeMapper.mapType(outerDescriptor.getDefaultType());
             String interfaceDesc = type.getDescriptor();
             final String fieldName = "this$0";
             v.newField(myClass, ACC_FINAL, fieldName, interfaceDesc, null, null);
@@ -714,15 +715,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    @Nullable
-    private ClassDescriptor getOuterClassDescriptor() {
-        if (myClass.getParent() instanceof JetClassObject) {
-            return null;
-        }
-
-        return CodegenUtil.getOuterClassDescriptor(descriptor);
-    }
-
     private void generateDelegatorToConstructorCall(InstructionAdapter iv, ExpressionCodegen codegen, JetCallElement constructorCall,
                                                     ConstructorDescriptor constructorDescriptor,
                                                     ConstructorFrameMap frameMap, int firstSuperArgument) {
@@ -734,11 +726,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             iv.load(frameMap.getOuterThisIndex(), typeMapper.mapType(((ClassDescriptor) descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION));
         }
 
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
+        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
 
         if(myClass instanceof JetObjectDeclaration && superCall instanceof JetDelegatorToSuperCall && ((JetObjectDeclaration) myClass).isObjectLiteral()) {
             ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, ((JetDelegatorToSuperCall) superCall).getCalleeExpression().getConstructorReferenceExpression());
-            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(superConstructor.getContainingDeclaration()));
             int nextVar = firstSuperArgument+1;
             for(Type t : superCallable.getSignature().getAsmMethod().getArgumentTypes()) {
                 iv.load(nextVar, t);
@@ -799,7 +791,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 if (specifier instanceof JetDelegatorToSuperCall) {
                     final JetDelegatorToSuperCall superCall = (JetDelegatorToSuperCall) specifier;
                     ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
-                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                    CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
                     codegen.invokeMethodWithArguments(method, superCall, StackValue.none());
                 }
                 else {
@@ -818,13 +810,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (constructorDescriptor == null) {
             throw new UnsupportedOperationException("failed to get descriptor for secondary constructor");
         }
-        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind);
+        CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
         int flags = ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getAsmMethod().getDescriptor(), null, null);
         if (v.generateCode()) {
             mv.visitCode();
 
-            ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, descriptor, kind);
+            ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
 
             final InstructionAdapter iv = new InstructionAdapter(mv);
             ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, context, state);

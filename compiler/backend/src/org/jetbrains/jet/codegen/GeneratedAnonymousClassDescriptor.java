@@ -28,11 +28,11 @@ import java.util.List;
 public class GeneratedAnonymousClassDescriptor {
     private final String classname;
     private Method constructor;
-    private final boolean captureThis;
+    private final Type captureThis;
     private final Type captureReceiver;
     private List<StackValue> args = new ArrayList<StackValue>();
 
-    public GeneratedAnonymousClassDescriptor(String classname, Method constructor, boolean captureThis, Type captureReceiver) {
+    public GeneratedAnonymousClassDescriptor(String classname, Method constructor, Type captureThis, Type captureReceiver) {
         this.classname = classname;
         this.constructor = constructor;
         this.captureThis = captureThis;
@@ -56,7 +56,7 @@ public class GeneratedAnonymousClassDescriptor {
     }
 
     public boolean isCaptureThis() {
-        return captureThis;
+        return captureThis != null;
     }
 
     public Type isCaptureReceiver() {

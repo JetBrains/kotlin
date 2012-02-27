@@ -22,7 +22,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
@@ -102,7 +101,7 @@ public class GenerationState {
     }
 
     public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
-        String className = typeMapper.classNameForAnonymousClass(expression);
+        String className = typeMapper.getClosureAnnotator().classNameForAnonymousClass(expression);
         return Pair.create(className, factory.forAnonymousSubclass(className));
     }
 
@@ -113,7 +112,7 @@ public class GenerationState {
     public BindingContext compile(JetFile file) {
         final BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        compileCorrectFiles(bindingContext, Collections.singletonList(file));
+        compileCorrectFiles(bindingContext, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
         return bindingContext;
 //        NamespaceCodegen codegen = forNamespace(namespace);
 //        bindingContexts.push(bindingContext);
@@ -129,12 +128,13 @@ public class GenerationState {
 //        }
     }
 
-    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files) {
-        compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION);
+    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, boolean annotate) {
+        compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION, annotate);
     }
 
-    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, CompilationErrorHandler errorHandler) {
-        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
+    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, CompilationErrorHandler errorHandler, boolean annotate) {
+        ClosureAnnotator closureAnnotator = !annotate ? null : new ClosureAnnotator(bindingContext, files);
+        typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
         bindingContexts.push(bindingContext);
         try {
             for (JetFile namespace : files) {
@@ -172,28 +172,8 @@ public class GenerationState {
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
         ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
-        CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION);
+        CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
-    }
-
-    public static void prepareAnonymousClasses(PsiElement element, final JetTypeMapper typeMapper) {
-        element.acceptChildren(new JetVisitorVoid() {
-            @Override
-            public void visitJetElement(JetElement element) {
-                super.visitJetElement(element);
-                element.acceptChildren(this);
-            }
-
-            @Override
-            public void visitObjectLiteralExpression(JetObjectLiteralExpression expression) {
-                typeMapper.classNameForAnonymousClass(expression.getObjectDeclaration());
-            }
-
-            @Override
-            public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
-                typeMapper.classNameForAnonymousClass(expression.getFunctionLiteral());
-            }
-        });
     }
 
     public String createText() {
