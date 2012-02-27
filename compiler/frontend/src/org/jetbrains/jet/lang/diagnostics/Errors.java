@@ -131,11 +131,11 @@ public interface Errors {
     DiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     DiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory3.create(ERROR, "Abstract property {0} in non-abstract class {1}", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory3<JetFunction, String, ClassDescriptor, JetClass> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = DiagnosticFactory3.create(ERROR, "Abstract function {0} in non-abstract class {1}", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory1<PsiElement, NamedFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
-    DiagnosticFactory1<JetFunction, NamedFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract", PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory1<JetModifierListOwner, NamedFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+    DiagnosticFactory1<PsiElement, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract", PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
 
-    DiagnosticFactory1<JetFunction, NamedFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, "Function {0} must have a body", PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, "Function {0} must have a body", PositioningStrategies.POSITION_NAME_IDENTIFIER);
     DiagnosticFactory<PsiElement> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory.create(ERROR, "Non final member in a final class");
 
     DiagnosticFactory<PsiElement> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory.create(ERROR, "Public or protected member should specify a type");
