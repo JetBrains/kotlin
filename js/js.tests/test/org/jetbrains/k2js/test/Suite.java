@@ -46,9 +46,9 @@ public final class Suite extends TranslationTest {
         });
     }
 
-    //NOTE: just to avoid warning
-    public void testNothing() {
-    }
+//    //NOTE: just to avoid warning
+//    public void testNothing() {
+//    }
 
     @Override
     protected String mainDirectory() {

@@ -14,16 +14,10 @@
             <element id="module-output" name="stdlib" />
             <element id="module-output" name="util" />
             <element id="module-output" name="j2k" />
-            <element id="module-output" name="js.ast" />
-            <element id="library" level="project" name="js_libs" />
+            <element id="module-output" name="js.libraries" />
             <element id="module-output" name="js.translator" />
-            <element id="file-copy" path="$APPLICATION_HOME_DIR$/lib/annotations.jar" />
-            <element id="library" level="application" name="idea-full" />
-            <element id="library" level="project" name="idea-full" />
-            <element id="module-output" name="cli" />
-            <element id="library" level="project" name="intellij-core" />
-            <element id="module-output" name="js.lib" />
           </element>
+          <element id="library" level="project" name="js-libs" />
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

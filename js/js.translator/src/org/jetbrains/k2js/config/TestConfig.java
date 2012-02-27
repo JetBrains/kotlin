@@ -18,10 +18,10 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import core.Dummy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
@@ -56,32 +56,20 @@ public final class TestConfig extends Config {
             "/html5/image.kt"
     );
 
-    @NotNull
-    private static JetCoreEnvironment getTestEnvironment() {
-        if (testOnlyEnvironment == null) {
-            testOnlyEnvironment = new JetCoreEnvironment(new Disposable() {
-                @Override
-                public void dispose() {
-                }
-            });
-        }
-        return testOnlyEnvironment;
-    }
-
-    @Nullable
-    private static /*var*/ JetCoreEnvironment testOnlyEnvironment = null;
-
-
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
 
-    public TestConfig() {
+    @NotNull
+    private final Project project;
+
+    public TestConfig(@NotNull Project project) {
+        this.project = project;
     }
 
     @NotNull
     @Override
     public Project getProject() {
-        return getTestEnvironment().getProject();
+        return project;
     }
 
     @NotNull
@@ -92,7 +80,7 @@ public final class TestConfig extends Config {
             //TODO: close stream?
             InputStream stream = Dummy.class.getResourceAsStream(libFileName);
             try {
-                String text = readString(stream);
+                String text = FileUtil.loadTextAndClose(stream);
                 file = JetFileUtils.createPsiFile(libFileName, text, project);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -110,17 +98,17 @@ public final class TestConfig extends Config {
         return jsLibFiles;
     }
 
-    @NotNull
-    private static String readString(@NotNull InputStream is) throws IOException {
-        char[] buf = new char[2048];
-        Reader r = new InputStreamReader(is, "UTF-8");
-        StringBuilder s = new StringBuilder();
-        while (true) {
-            int n = r.read(buf);
-            if (n < 0)
-                break;
-            s.append(buf, 0, n);
-        }
-        return s.toString();
-    }
+//    @NotNull
+//    private static String readString(@NotNull InputStream is) throws IOException {
+//        char[] buf = new char[2048];
+//        Reader r = new InputStreamReader(is, "UTF-8");
+//        StringBuilder s = new StringBuilder();
+//        while (true) {
+//            int n = r.read(buf);
+//            if (n < 0)
+//                break;
+//            s.append(buf, 0, n);
+//        }
+//        return s.toString();
+//    }
 }

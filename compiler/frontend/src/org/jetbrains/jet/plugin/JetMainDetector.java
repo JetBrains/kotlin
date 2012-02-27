@@ -52,15 +52,6 @@ public class JetMainDetector {
     }
 
     @Nullable
-    public static String getMainClassFQName(@NotNull List<JetFile> files) {
-        JetFile file = getFileWithMain(files);
-        if (file == null) {
-            return null;
-        }
-        return JetPsiUtil.getFQName(file);
-    }
-
-    @Nullable
     public static JetFile getFileWithMain(@NotNull List<JetFile> files) {
         for (JetFile file : files) {
             if (hasMain(file.getDeclarations())) {

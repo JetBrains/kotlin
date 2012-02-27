@@ -16,6 +16,10 @@
 
 package org.jetbrains.k2js.test;
 
+import com.google.dart.compiler.backend.js.ast.JsProgram;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -29,7 +33,10 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
 //TODO: spread the test* methods amongst classes that actually use them
 
@@ -43,6 +50,19 @@ public abstract class TranslationTest extends BaseTest {
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
     private static final String EXPECTED = "expected/";
+
+    public void testTranslateFile(@NotNull String inputFile,
+                                         @NotNull String outputFile) throws Exception {
+        testTranslateFiles(Collections.singletonList(inputFile), outputFile);
+    }
+
+    public void testTranslateFiles(@NotNull List<String> inputFiles,
+                                          @NotNull String outputFile) throws Exception {
+        K2JSTranslator translator = new K2JSTranslator(new TestConfig(getProject()));
+        List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
+        JsProgram program = translator.generateProgram(psiFiles);
+        K2JSTranslator.saveProgramToFile(outputFile, program);
+    }
 
     protected String kotlinLibraryPath() {
         return KOTLIN_JS_LIB;
@@ -97,8 +117,8 @@ public abstract class TranslationTest extends BaseTest {
     }
 
     protected void translateFile(String filename) throws Exception {
-        K2JSTranslator.testTranslateFile(getInputFilePath(filename),
-                getOutputFilePath(filename));
+        testTranslateFile(getInputFilePath(filename),
+                          getOutputFilePath(filename));
     }
 
     protected void translateFilesInDir(String dirName) throws Exception {
@@ -109,8 +129,8 @@ public abstract class TranslationTest extends BaseTest {
             fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
         }
         assert dir.isDirectory();
-        K2JSTranslator.testTranslateFiles(fullFilePaths,
-                getOutputFilePath(dirName + ".kt"));
+        testTranslateFiles(fullFilePaths,
+                           getOutputFilePath(dirName + ".kt"));
     }
 
     protected List<String> generateFilenameList(String inputFile) {

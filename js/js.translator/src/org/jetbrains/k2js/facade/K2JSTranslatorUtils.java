@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.facade;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -33,9 +34,9 @@ public class K2JSTranslatorUtils {
     private static String EXCEPTION = "exception=";
 
     @Nullable
-    public String translateToJS(@NotNull String code, @NotNull String arguments) {
+    public String translateToJS(@NotNull Project project, @NotNull String code, @NotNull String arguments) {
         try {
-            return generateJSCode(code, arguments);
+            return generateJSCode(project, code, arguments);
         } catch (AssertionError e) {
             reportException(e);
             return EXCEPTION + "Translation error.";
@@ -49,9 +50,9 @@ public class K2JSTranslatorUtils {
     }
 
     @Nullable
-    public BindingContext getBindingContext(@NotNull String programText) {
+    public BindingContext getBindingContext(@NotNull Project project, @NotNull String programText) {
         try {
-            K2JSTranslator k2JSTranslator = new K2JSTranslator(new TestConfig());
+            K2JSTranslator k2JSTranslator = new K2JSTranslator(new TestConfig(project));
             return k2JSTranslator.analyzeProgramCode(programText);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -61,8 +62,8 @@ public class K2JSTranslatorUtils {
     }
 
     @NotNull
-    private String generateJSCode(@NotNull String code, @NotNull String arguments) {
-        String generatedCode = (new K2JSTranslator(new TestConfig())).translateStringWithCallToMain(code, arguments);
+    private String generateJSCode(@NotNull Project project, @NotNull String code, @NotNull String arguments) {
+        String generatedCode = (new K2JSTranslator(new TestConfig(project))).translateStringWithCallToMain(code, arguments);
         return generatedCode;
     }
 

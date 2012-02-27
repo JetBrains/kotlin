@@ -64,20 +64,7 @@ public final class K2JSTranslator {
         writer.close();
     }
 
-    public static void testTranslateFile(@NotNull String inputFile,
-                                         @NotNull String outputFile) throws Exception {
-        testTranslateFiles(Collections.singletonList(inputFile), outputFile);
-    }
-
-    public static void testTranslateFiles(@NotNull List<String> inputFiles,
-                                          @NotNull String outputFile) throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new TestConfig());
-        List<JetFile> psiFiles = createPsiFileList(inputFiles, translator.getProject());
-        JsProgram program = translator.generateProgram(psiFiles);
-        saveProgramToFile(outputFile, program);
-    }
-
-    private static void saveProgramToFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
+    public static void saveProgramToFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
         CodeGenerator generator = new CodeGenerator();
         generator.generateToFile(program, new File(outputFile));
     }
@@ -123,7 +110,7 @@ public final class K2JSTranslator {
 
 
     @NotNull
-    private JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
+    public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
         return Translation.generateAst(bindingContext, Analyzer.withJsLibAdded(filesToTranslate, config));

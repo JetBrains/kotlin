@@ -36,7 +36,7 @@ public abstract class BaseTest extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        // createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk();
     }
 
     @Override
