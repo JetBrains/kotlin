@@ -27,6 +27,8 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+
 /**
  * @author Pavel Talanov
  */
@@ -42,7 +44,7 @@ public enum LengthIntrinsic implements FunctionIntrinsic {
         assert arguments.isEmpty() : "Length expression must have zero arguments.";
         //TODO: provide better way
         JsNameRef lengthProperty = AstUtil.newQualifiedNameRef("length");
-        AstUtil.setQualifier(lengthProperty, receiver);
+        setQualifier(lengthProperty, receiver);
         return lengthProperty;
     }
 }

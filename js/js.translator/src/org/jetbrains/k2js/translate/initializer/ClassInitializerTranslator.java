@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
 
 /**
  * @author Pavel Talanov
@@ -57,10 +56,11 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @Override
     @NotNull
     protected JsFunction generateInitializerFunction() {
-        JsFunction result = functionWithScope(initializerMethodScope);
+        //TODO: look for duplication of this code
+        JsFunction result = new JsFunction(initializerMethodScope.jsScope());
         //NOTE: that while we translateAsLocalNameReference constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
-        result.setParameters(translatePrimaryConstructorParameters());
+        setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
         result.setBody(generateInitializerMethodBody());
         return result;
@@ -69,7 +69,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     private JsBlock generateInitializerMethodBody() {
         initializerStatements.addAll(translateClassInitializers(classDeclaration));
-        return AstUtil.newBlock(initializerStatements);
+        return newBlock(initializerStatements);
     }
 
     private void mayBeAddCallToSuperMethod() {
@@ -84,8 +84,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         //TODO: look into
         JsName superMethodName = initializerMethodScope.jsScope().declareName(Namer.superMethodName());
         List<JsExpression> arguments = translateArguments(superCall);
-        initializerStatements.add(AstUtil.convertToStatement
-                (AstUtil.newInvocation(AstUtil.thisQualifiedReference(superMethodName), arguments)));
+        initializerStatements.add(convertToStatement(newInvocation(thisQualifiedReference(superMethodName), arguments)));
     }
 
     @NotNull

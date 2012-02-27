@@ -31,6 +31,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
@@ -39,6 +40,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
  */
 public final class RangeForTranslator extends ForTranslator {
 
+    //TODO: inspection
     @NotNull
     public static JsStatement translate(@NotNull JetForExpression expression,
                                         @NotNull TranslationContext context) {
@@ -67,8 +69,8 @@ public final class RangeForTranslator extends ForTranslator {
         rangeExpression = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
         JsExpression isReversed = callFunction("get_reversed");
         JsConditional incrVarValue = new JsConditional(isReversed,
-                program().getNumberLiteral(-1),
-                program().getNumberLiteral(1));
+                                                       program().getNumberLiteral(-1),
+                                                       program().getNumberLiteral(1));
         incrVar = context().declareTemporary(incrVarValue);
         start = context().declareTemporary(callFunction("get_start"));
         end = context().declareTemporary(new JsBinaryOperation(JsBinaryOperator.ADD, callFunction("get_end"), incrVar.reference()));
@@ -78,7 +80,7 @@ public final class RangeForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(rangeExpression, incrVar, start, end);
         blockStatements.add(generateForExpression());
-        return AstUtil.newBlock(blockStatements);
+        return newBlock(blockStatements);
     }
 
     @NotNull
@@ -93,12 +95,12 @@ public final class RangeForTranslator extends ForTranslator {
 
     @NotNull
     private JsVars initExpression() {
-        return AstUtil.newVar(parameterName, start.reference());
+        return newVar(parameterName, start.reference());
     }
 
     @NotNull
     private JsExpression getCondition() {
-        return AstUtil.notEqual(parameterName.makeRef(), end.reference());
+        return notEqual(parameterName.makeRef(), end.reference());
     }
 
     @NotNull
@@ -109,7 +111,7 @@ public final class RangeForTranslator extends ForTranslator {
     @NotNull
     private JsExpression getField(@NotNull String fieldName) {
         JsNameRef nameRef = AstUtil.newQualifiedNameRef(fieldName);
-        AstUtil.setQualifier(nameRef, rangeExpression.reference());
+        setQualifier(nameRef, rangeExpression.reference());
         return nameRef;
     }
 

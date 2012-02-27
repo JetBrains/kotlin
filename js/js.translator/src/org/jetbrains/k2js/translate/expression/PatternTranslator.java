@@ -28,7 +28,10 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
+
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -50,11 +53,12 @@ public final class PatternTranslator extends AbstractTranslator {
         JetPattern pattern = getPattern(expression);
         JsExpression resultingExpression = translatePattern(pattern, left);
         if (expression.isNegated()) {
-            return AstUtil.negated(resultingExpression);
+            return negated(resultingExpression);
         }
         return resultingExpression;
     }
 
+    //TODO: inspection
     @NotNull
     private JetPattern getPattern(@NotNull JetIsExpression expression) {
         JetPattern pattern = expression.getPattern();
@@ -79,14 +83,14 @@ public final class PatternTranslator extends AbstractTranslator {
         //TODO: look into using intrinsics or other mechanisms to implement this logic
         JsName className = getClassReference(pattern).getName();
         if (className.getIdent().equals("String")) {
-            return AstUtil.typeof(expressionToMatch, program().getStringLiteral("string"));
+            return typeof(expressionToMatch, program().getStringLiteral("string"));
         }
         if (className.getIdent().equals("Int")) {
-            return AstUtil.typeof(expressionToMatch, program().getStringLiteral("number"));
+            return typeof(expressionToMatch, program().getStringLiteral("number"));
         }
 
         JsInvocation isCheck = AstUtil.newInvocation(context().namer().isOperationReference(),
-                expressionToMatch, getClassReference(pattern));
+                                                     expressionToMatch, getClassReference(pattern));
         if (isNullable(pattern)) {
             return addNullCheck(expressionToMatch, isCheck);
         }
@@ -95,12 +99,12 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
-        return AstUtil.or(TranslationUtils.isNullCheck(context(), expressionToMatch), isCheck);
+        return or(TranslationUtils.isNullCheck(context(), expressionToMatch), isCheck);
     }
 
     private boolean isNullable(JetTypePattern pattern) {
         return BindingUtils.getTypeByReference(bindingContext(),
-                getTypeReference(pattern)).isNullable();
+                                               getTypeReference(pattern)).isNullable();
     }
 
     @NotNull
@@ -109,6 +113,7 @@ public final class PatternTranslator extends AbstractTranslator {
         return getClassNameReferenceForTypeReference(typeReference);
     }
 
+    //TODO: inspection: util?
     @NotNull
     private JetTypeReference getTypeReference(@NotNull JetTypePattern pattern) {
         JetTypeReference typeReference = pattern.getTypeReference();
@@ -129,6 +134,6 @@ public final class PatternTranslator extends AbstractTranslator {
         assert patternExpression != null : "Expression patter should have an expression.";
         JsExpression expressionToMatchAgainst =
                 Translation.translateAsExpression(patternExpression, context());
-        return AstUtil.equals(expressionToMatch, expressionToMatchAgainst);
+        return JsAstUtils.equals(expressionToMatch, expressionToMatchAgainst);
     }
 }

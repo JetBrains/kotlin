@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
 
 /**
@@ -60,7 +61,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression overloadedMethodInvocation() {
-        AstUtil.setQualifier(operationReference, accessTranslator.translateAsGet());
+        setQualifier(operationReference, accessTranslator.translateAsGet());
         return AstUtil.newInvocation(operationReference, right);
     }
 

@@ -30,13 +30,16 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.newAliasForThis;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.removeAliasForThis;
 
 
 /**
@@ -108,7 +111,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction generateFunctionObject() {
-        functionObject.setParameters(translateParameters());
+        setParameters(functionObject, translateParameters());
         translateBody();
         functionObject.setBody(functionBody);
         restoreContext();
@@ -126,7 +129,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsFunction createFunctionObject() {
         if (isDeclaration()) {
-            return functionWithScope(context().getScopeForDescriptor(descriptor));
+            return context().getFunctionObject(descriptor);
         }
         if (isLiteral()) {
             //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
@@ -143,7 +146,7 @@ public final class FunctionTranslator extends AbstractTranslator {
             return;
         }
         JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
-        functionBody.addStatement(wrapWithReturnIfNeeded(realBody, mustAddReturnToGeneratedFunctionBody()));
+        functionBody.getStatements().add(wrapWithReturnIfNeeded(realBody, mustAddReturnToGeneratedFunctionBody()));
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
@@ -153,15 +156,15 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
+    private static JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
         if (!needsReturn) {
-            return AstUtil.convertToBlock(body);
+            return convertToBlock(body);
         }
-        return AstUtil.convertToBlock(lastExpressionReturned(body));
+        return convertToBlock(lastExpressionReturned(body));
     }
 
-    private JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return AstUtil.mutateLastExpression(body, new AstUtil.Mutator() {
+    private static JsNode lastExpressionReturned(@NotNull JsNode body) {
+        return mutateLastExpression(body, new JsAstUtils.Mutator() {
             @Override
             @NotNull
             public JsNode mutate(@NotNull JsNode node) {
@@ -177,7 +180,8 @@ public final class FunctionTranslator extends AbstractTranslator {
     private TranslationContext functionBodyContext() {
         if (isLiteral()) {
             return context().innerJsScope(functionObject.getScope());
-        } else {
+        }
+        else {
             return context().newDeclaration(functionDeclaration);
         }
     }
@@ -218,6 +222,6 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private boolean isDeclaration() {
         return (functionDeclaration instanceof JetNamedFunction) ||
-                (functionDeclaration instanceof JetPropertyAccessor);
+               (functionDeclaration instanceof JetPropertyAccessor);
     }
 }

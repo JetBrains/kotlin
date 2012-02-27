@@ -26,6 +26,8 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
+
 /**
  * @author Pavel Talanov
  */
@@ -43,6 +45,6 @@ public enum ArrayFunctionConstructorIntrinsic implements FunctionIntrinsic {
         assert arguments.size() == 2;
         //TODO: provide better mechanism
         JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef("Kotlin.arrayFromFun");
-        return AstUtil.newInvocation(iteratorFunName, arguments);
+        return newInvocation(iteratorFunName, arguments);
     }
 }

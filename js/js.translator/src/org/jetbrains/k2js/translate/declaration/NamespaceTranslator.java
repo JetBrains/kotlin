@@ -29,6 +29,9 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+
 /**
  * @author Pavel.Talanov
  *         <p/>
@@ -62,7 +65,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     public JsStatement getInitializeStatement() {
         JsNameRef initializeMethodReference = Namer.initializeMethodReference();
-        AstUtil.setQualifier(initializeMethodReference, namespaceName.makeRef());
+        setQualifier(initializeMethodReference, namespaceName.makeRef());
         return AstUtil.newInvocation(initializeMethodReference).makeStmt();
     }
 
@@ -76,7 +79,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
         addMemberDeclarations(namespaceDeclaration);
         addClassesDeclarations(namespaceDeclaration);
-        return AstUtil.newVar(namespaceName, namespaceDeclaration);
+        return newVar(namespaceName, namespaceDeclaration);
     }
 
     private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {
@@ -93,6 +96,9 @@ public final class NamespaceTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         propertyList.add(Translation.generateNamespaceInitializerMethod(descriptor, context()));
         propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(descriptor, context()));
-        return new JsObjectLiteral(propertyList);
+        //TODO: make util, search for dups
+        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
+        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
+        return jsObjectLiteral;
     }
 }

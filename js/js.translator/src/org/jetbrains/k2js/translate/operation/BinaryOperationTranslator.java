@@ -35,12 +35,12 @@ import org.jetbrains.k2js.translate.reference.CallType;
 
 import java.util.Arrays;
 
-import static com.google.dart.compiler.util.AstUtil.not;
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isEquals;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -140,7 +140,8 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
 
         if (isInOrNotInOperation(expression)) {
             return callBuilder.receiver(rightExpression).args(leftExpression);
-        } else {
+        }
+        else {
             return callBuilder.receiver(leftExpression).args(rightExpression);
         }
     }
@@ -149,7 +150,8 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     private JsExpression mayBeWrapWithNegation(@NotNull JsExpression result) {
         if (isNotInOperation(expression)) {
             return not(result);
-        } else {
+        }
+        else {
             return result;
         }
     }

@@ -25,7 +25,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
-import static com.google.dart.compiler.util.AstUtil.sum;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.sum;
+
 
 /**
  * @author Pavel Talanov
@@ -66,7 +67,8 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         void append(@NotNull JsExpression expression) {
             if (resultingExpression == null) {
                 resultingExpression = expression;
-            } else {
+            }
+            else {
                 resultingExpression = sum(resultingExpression, expression);
             }
         }

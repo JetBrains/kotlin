@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -27,6 +26,8 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
 
 /**
  * @author Pavel Talanov
@@ -57,8 +58,9 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
         JsName nativePropertyName = context().getNameForDescriptor(propertyDescriptor);
         JsExpression realQualifier = getQualifier();
         if (realQualifier != null) {
-            return AstUtil.qualified(nativePropertyName, realQualifier);
-        } else {
+            return qualified(nativePropertyName, realQualifier);
+        }
+        else {
             return nativePropertyName.makeRef();
         }
     }
@@ -66,7 +68,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression setTo) {
-        return AstUtil.assignment(translateAsGet(), setTo);
+        return assignment(translateAsGet(), setTo);
     }
 
     @Nullable

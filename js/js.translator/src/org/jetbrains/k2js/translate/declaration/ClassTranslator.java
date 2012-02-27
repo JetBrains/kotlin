@@ -86,9 +86,11 @@ public final class ClassTranslator extends AbstractTranslator {
     private JsInvocation classCreateMethodInvocation() {
         if (isObject()) {
             return AstUtil.newInvocation(context().namer().objectCreationMethodReference());
-        } else if (isTrait()) {
+        }
+        else if (isTrait()) {
             return AstUtil.newInvocation(context().namer().traitCreationMethodReference());
-        } else {
+        }
+        else {
             return AstUtil.newInvocation(context().namer().classCreationMethodReference());
         }
     }
@@ -163,7 +165,10 @@ public final class ClassTranslator extends AbstractTranslator {
         }
         propertyList.addAll(translatePropertiesAsConstructorParameters());
         propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration, context()));
-        return new JsObjectLiteral(propertyList);
+        //TODO: util?
+        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
+        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
+        return jsObjectLiteral;
     }
 
     @NotNull

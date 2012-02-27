@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.general.Translation;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.dart.compiler.util.AstUtil.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 
 /**
  * @author Pavel Talanov

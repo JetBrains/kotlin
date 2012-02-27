@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNullLiteral;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
@@ -30,6 +29,7 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static com.google.dart.compiler.util.AstUtil.newSequence;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.notEqual;
 
 /**
  * @author Pavel Talanov
@@ -44,7 +44,7 @@ public enum CallType {
             TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
             JsNullLiteral nullLiteral = context.program().getNullLiteral();
             //TODO: find similar not null checks
-            JsBinaryOperation notNullCheck = AstUtil.notEqual(temporaryVariable.reference(), nullLiteral);
+            JsBinaryOperation notNullCheck = notEqual(temporaryVariable.reference(), nullLiteral);
             JsConditional callMethodIfNotNullElseNull =
                     new JsConditional(notNullCheck, constructor.construct(temporaryVariable.reference()), nullLiteral);
             return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);

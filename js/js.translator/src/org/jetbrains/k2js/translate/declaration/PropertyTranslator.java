@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.declaration;
 
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -31,10 +30,11 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
  * @author Pavel Talanov
@@ -74,7 +74,8 @@ public final class PropertyTranslator extends AbstractTranslator {
     private void addGetter() {
         if (hasCustomGetter()) {
             accessors.add(translateCustomAccessor(getCustomGetterDeclaration()));
-        } else {
+        }
+        else {
             accessors.add(generateDefaultGetter());
         }
     }
@@ -82,7 +83,8 @@ public final class PropertyTranslator extends AbstractTranslator {
     private void addSetter() {
         if (hasCustomSetter()) {
             accessors.add(translateCustomAccessor(getCustomSetterDeclaration()));
-        } else {
+        }
+        else {
             accessors.add(generateDefaultSetter());
         }
     }
@@ -115,15 +117,15 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsPropertyInitializer generateDefaultGetter() {
         PropertyGetterDescriptor getterDescriptor = property.getGetter();
         assert getterDescriptor != null : "Getter descriptor should not be null";
-        return AstUtil.newNamedMethod(context().getNameForDescriptor(getterDescriptor),
-                generateDefaultGetterFunction(getterDescriptor));
+        return newNamedMethod(context().getNameForDescriptor(getterDescriptor),
+                              generateDefaultGetterFunction(getterDescriptor));
     }
 
     @NotNull
     private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor descriptor) {
         JsReturn returnExpression = new JsReturn(backingFieldReference(context(), property));
-        JsFunction getterFunction = functionWithScope(context().getScopeForDescriptor(descriptor));
-        getterFunction.setBody(AstUtil.convertToBlock(returnExpression));
+        JsFunction getterFunction = context().getFunctionObject(descriptor);
+        getterFunction.setBody(convertToBlock(returnExpression));
         return getterFunction;
     }
 
@@ -131,18 +133,18 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsPropertyInitializer generateDefaultSetter() {
         PropertySetterDescriptor setterDescriptor = property.getSetter();
         assert setterDescriptor != null : "Setter descriptor should not be null";
-        return AstUtil.newNamedMethod(context().getNameForDescriptor(setterDescriptor),
-                generateDefaultSetterFunction(setterDescriptor));
+        return newNamedMethod(context().getNameForDescriptor(setterDescriptor),
+                              generateDefaultSetterFunction(setterDescriptor));
     }
 
     @NotNull
     private JsFunction generateDefaultSetterFunction(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
-        JsFunction result = functionWithScope(context().getScopeForDescriptor(propertySetterDescriptor));
+        JsFunction result = context().getFunctionObject(propertySetterDescriptor);
         JsParameter defaultParameter =
                 new JsParameter(propertyAccessContext(propertySetterDescriptor).jsScope().declareTemporary());
         JsStatement assignment = assignmentToBackingField(context(), property, defaultParameter.getName().makeRef());
-        result.setParameters(Arrays.asList(defaultParameter));
-        result.setBody(AstUtil.convertToBlock(assignment));
+        setParameters(result, defaultParameter);
+        result.setBody(convertToBlock(assignment));
         return result;
     }
 

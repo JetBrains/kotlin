@@ -26,8 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
-import java.util.Arrays;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -48,14 +49,14 @@ public final class PrimitiveRangeToIntrinsic implements FunctionIntrinsic {
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "RangeTo must have one argument.";
         JsExpression rangeEnd = arguments.get(0);
-        JsBinaryOperation rangeSize = AstUtil.sum(AstUtil.subtract(rangeEnd, rangeStart),
-                context.program().getNumberLiteral(1));
+        JsBinaryOperation rangeSize = sum(subtract(rangeEnd, rangeStart),
+                                          context.program().getNumberLiteral(1));
         //TODO: provide a way not to hard code this value
         JsNew numberRangeConstructorInvocation
                 = new JsNew(AstUtil.newQualifiedNameRef("Kotlin.NumberRange"));
         //TODO: add tests and correct expression for reversed ranges.
         JsBooleanLiteral isRangeReversed = context.program().getFalseLiteral();
-        numberRangeConstructorInvocation.setArguments(Arrays.asList(rangeStart, rangeSize, isRangeReversed));
+        setArguments(numberRangeConstructorInvocation, rangeStart, rangeSize, isRangeReversed);
         return numberRangeConstructorInvocation;
     }
 }

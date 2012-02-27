@@ -25,9 +25,12 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -63,7 +66,7 @@ public class WhenTranslator extends AbstractTranslator {
     JsNode translate() {
         JsFor resultingFor = generateDummyFor();
         List<JsStatement> entries = translateEntries();
-        resultingFor.setBody(AstUtil.newBlock(entries));
+        resultingFor.setBody(newBlock(entries));
         context().addStatementToCurrentBlock(resultingFor);
         return result.reference();
     }
@@ -80,7 +83,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
         JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                dummyCounter.reference(), program().getNumberLiteral(currentEntryNumber));
+                                                                                dummyCounter.reference(), program().getNumberLiteral(currentEntryNumber));
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }
@@ -118,8 +121,8 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     JsStatement withReturnValueCaptured(@NotNull JsNode node) {
 
-        return AstUtil.convertToStatement(AstUtil.mutateLastExpression(node,
-                new AstUtil.SaveLastExpressionMutator(result.reference())));
+        return convertToStatement(mutateLastExpression(node,
+                                                       new JsAstUtils.SaveLastExpressionMutator(result.reference())));
     }
 
     @NotNull
@@ -139,7 +142,7 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression anyOfThemIsTrue(List<JsExpression> conditions) {
+    private static JsExpression anyOfThemIsTrue(List<JsExpression> conditions) {
         assert !conditions.isEmpty() : "When entry (not else) should have at least one condition";
         JsExpression current = null;
         for (JsExpression condition : conditions) {
@@ -150,11 +153,12 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
+    private static JsExpression addCaseCondition(@Nullable JsExpression current, @NotNull JsExpression condition) {
         if (current == null) {
             return condition;
-        } else {
-            return AstUtil.or(current, condition);
+        }
+        else {
+            return or(current, condition);
         }
     }
 
@@ -167,7 +171,7 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsBlock addDummyBreak(@NotNull JsStatement statement) {
+    private static JsBlock addDummyBreak(@NotNull JsStatement statement) {
         return AstUtil.newBlock(statement, new JsBreak());
     }
 
@@ -176,12 +180,12 @@ public class WhenTranslator extends AbstractTranslator {
         JsExpression patternMatchExpression = Translation.patternTranslator(context()).
                 translatePattern(getPattern(condition), expressionToMatch);
         if (isNegated(condition)) {
-            return AstUtil.negated(patternMatchExpression);
+            return negated(patternMatchExpression);
         }
         return patternMatchExpression;
     }
 
-    private boolean isNegated(@NotNull JetWhenCondition condition) {
+    private static boolean isNegated(@NotNull JetWhenCondition condition) {
         if (condition instanceof JetWhenConditionIsPattern) {
             return ((JetWhenConditionIsPattern) condition).isNegated();
         }
@@ -189,13 +193,15 @@ public class WhenTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JetPattern getPattern(@NotNull JetWhenCondition condition) {
+    private static JetPattern getPattern(@NotNull JetWhenCondition condition) {
         JetPattern pattern;
         if (condition instanceof JetWhenConditionIsPattern) {
             pattern = ((JetWhenConditionIsPattern) condition).getPattern();
-        } else if (condition instanceof JetWhenConditionWithExpression) {
+        }
+        else if (condition instanceof JetWhenConditionWithExpression) {
             pattern = ((JetWhenConditionWithExpression) condition).getPattern();
-        } else {
+        }
+        else {
             throw new AssertionError("Wrong type of JetWhenCondition");
         }
         assert pattern != null : "Condition should have a non null pattern.";

@@ -33,6 +33,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
@@ -54,7 +55,7 @@ public final class ArrayForTranslator extends ForTranslator {
         //TODO: better check
         //TODO: IMPORTANT!
         return getClassDescriptorForType(rangeType).getName().equals("Array")
-                || getClassDescriptorForType(rangeType).getName().equals("IntArray");
+               || getClassDescriptorForType(rangeType).getName().equals("IntArray");
     }
 
     @NotNull
@@ -78,7 +79,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(loopRange, end);
         blockStatements.add(generateForExpression());
-        return AstUtil.newBlock(blockStatements);
+        return newBlock(blockStatements);
     }
 
     @NotNull
@@ -94,19 +95,19 @@ public final class ArrayForTranslator extends ForTranslator {
     @NotNull
     private JsStatement getBody() {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
-        JsStatement currentVar = AstUtil.newVar(parameterName, arrayAccess);
+        JsStatement currentVar = newVar(parameterName, arrayAccess);
         JsStatement realBody = Translation.translateAsStatement(getLoopBody(expression), context());
         return AstUtil.newBlock(currentVar, realBody);
     }
 
     @NotNull
     private JsVars initExpression() {
-        return AstUtil.newVar(index.name(), program().getNumberLiteral(0));
+        return newVar(index.name(), program().getNumberLiteral(0));
     }
 
     @NotNull
     private JsExpression getCondition() {
-        return AstUtil.notEqual(index.reference(), end.reference());
+        return notEqual(index.reference(), end.reference());
     }
 
     @NotNull

@@ -17,12 +17,11 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsFunction;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.functionWithScope;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newBlock;
 
 /**
  * @author Pavel Talanov
@@ -41,8 +40,8 @@ public final class NamespaceInitializerTranslator extends AbstractInitializerTra
     @Override
     @NotNull
     protected JsFunction generateInitializerFunction() {
-        JsFunction result = functionWithScope(initializerMethodScope);
-        result.setBody(AstUtil.newBlock(translateNamespaceInitializers(namespace)));
+        JsFunction result = new JsFunction(initializerMethodScope.jsScope());
+        result.setBody(newBlock(translateNamespaceInitializers(namespace)));
         return result;
     }
 

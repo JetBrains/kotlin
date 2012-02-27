@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getThisObject;
 
 /**
@@ -134,7 +135,7 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression constructorCall() {
         JsExpression constructorReference = translateAsFunctionWithNoThisObject(descriptor);
         JsNew constructorCall = new JsNew(constructorReference);
-        constructorCall.setArguments(arguments);
+        setArguments(constructorCall, arguments);
         return constructorCall;
     }
 
@@ -149,7 +150,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     private boolean isExtensionFunctionLiteral() {
         boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
-                || descriptor instanceof ExpressionAsFunctionDescriptor;
+                            || descriptor instanceof ExpressionAsFunctionDescriptor;
         return isExtensionFunction() && isLiteral;
     }
 
@@ -170,7 +171,7 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression constructExtensionLiteralCall(@NotNull JsExpression realReceiver) {
         List<JsExpression> callArguments = generateExtensionCallArgumentList(realReceiver);
         JsInvocation callMethodInvocation = generateCallMethodInvocation();
-        callMethodInvocation.setArguments(callArguments);
+        setArguments(callMethodInvocation, callArguments);
         return callMethodInvocation;
     }
 
@@ -179,7 +180,7 @@ public final class CallTranslator extends AbstractTranslator {
         JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
         JsInvocation callMethodInvocation = new JsInvocation();
         callMethodInvocation.setQualifier(callMethodNameRef);
-        AstUtil.setQualifier(callMethodInvocation, callParameters().functionReference);
+        setQualifier(callMethodInvocation, callParameters().functionReference);
         return callMethodInvocation;
     }
 
@@ -219,8 +220,8 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression constructExtensionFunctionCall(@NotNull JsExpression receiver) {
         List<JsExpression> argumentList = generateExtensionCallArgumentList(receiver);
         JsExpression functionReference = callParameters().functionReference;
-        AstUtil.setQualifier(functionReference, callParameters().receiver);
-        return AstUtil.newInvocation(functionReference, argumentList);
+        setQualifier(functionReference, callParameters().receiver);
+        return newInvocation(functionReference, argumentList);
     }
 
     @NotNull
@@ -241,9 +242,9 @@ public final class CallTranslator extends AbstractTranslator {
             public JsExpression construct(@Nullable JsExpression receiver) {
                 JsExpression functionReference = callParameters.functionReference;
                 if (receiver != null) {
-                    AstUtil.setQualifier(functionReference, receiver);
+                    setQualifier(functionReference, receiver);
                 }
-                return AstUtil.newInvocation(functionReference, arguments);
+                return newInvocation(functionReference, arguments);
             }
         }, context());
     }

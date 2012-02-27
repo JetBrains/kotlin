@@ -22,6 +22,8 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+
 /**
  * @author Pavel Talanov
  *         <p/>
@@ -71,7 +73,8 @@ public final class Namer {
     public static String getNameForAccessor(@NotNull String propertyName, boolean isGetter) {
         if (isGetter) {
             return getNameForGetter(propertyName);
-        } else {
+        }
+        else {
             return getNameForSetter(propertyName);
         }
     }
@@ -139,17 +142,17 @@ public final class Namer {
     }
 
     @NotNull
-    private JsNameRef createMethodReference(@NotNull JsName name) {
+    private static JsNameRef createMethodReference(@NotNull JsName name) {
         JsNameRef qualifier = name.makeRef();
         JsNameRef reference = AstUtil.newQualifiedNameRef("create");
-        AstUtil.setQualifier(reference, qualifier);
+        setQualifier(reference, qualifier);
         return reference;
     }
 
     @NotNull
     private JsNameRef kotlin(@NotNull JsNameRef reference) {
         JsNameRef kotlinReference = kotlinName.makeRef();
-        AstUtil.setQualifier(reference, kotlinReference);
+        setQualifier(reference, kotlinReference);
         return reference;
     }
 

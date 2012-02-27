@@ -16,10 +16,8 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.backend.js.ast.JsProgram;
-import com.google.dart.compiler.backend.js.ast.JsRootScope;
+import com.google.common.collect.Maps;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,6 +29,7 @@ import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 
+import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
@@ -54,7 +53,7 @@ public final class StaticContext {
         StandardClasses standardClasses =
                 StandardClasses.bindImplementations(namer.getKotlinScope());
         return new StaticContext(program, bindingContext, aliaser,
-                namer, intrinsics, standardClasses, scope);
+                                 namer, intrinsics, standardClasses, scope);
     }
 
     @NotNull
@@ -86,6 +85,9 @@ public final class StaticContext {
     private final Generator<JsNameRef> qualifiers = new QualifierGenerator();
     @NotNull
     private final Generator<Boolean> qualifierIsNull = new QualifierIsNullGenerator();
+
+    @NotNull
+    private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
 
     //TODO: too many parameters in constructor
@@ -142,6 +144,14 @@ public final class StaticContext {
         NamingScope namingScope = scopes.get(descriptor);
         assert namingScope != null : "Must have a scope for descriptor";
         return namingScope;
+    }
+
+    @NotNull
+    public JsFunction getFunctionWithScope(@NotNull CallableDescriptor descriptor) {
+        NamingScope scope = getScopeForDescriptor(descriptor);
+        JsFunction function = scopeToFunction.get(scope);
+        assert scope.jsScope().equals(function.getScope()) : "Inconsistency.";
+        return function;
     }
 
     @NotNull
@@ -216,7 +226,8 @@ public final class StaticContext {
                     if (annotation != null) {
                         name = AnnotationsUtils.getAnnotationStringParameter(descriptor, LIBRARY_ANNOTATION_FQNAME);
                         name = (!name.isEmpty()) ? name : descriptor.getName();
-                    } else {
+                    }
+                    else {
                         ClassDescriptor containingClass = getContainingClass(descriptor);
                         if (containingClass == null) return null;
                         if (getAnnotationByName(containingClass, LIBRARY_ANNOTATION_FQNAME) != null) {
@@ -264,7 +275,8 @@ public final class StaticContext {
                     if (annotation != null) {
                         name = AnnotationsUtils.getAnnotationStringParameter(descriptor, NATIVE_ANNOTATION_FQNAME);
                         name = (!name.isEmpty()) ? name : descriptor.getName();
-                    } else {
+                    }
+                    else {
                         ClassDescriptor containingClass = getContainingClass(descriptor);
                         if (containingClass == null) return null;
                         if (getAnnotationByName(containingClass, NATIVE_ANNOTATION_FQNAME) != null) {
@@ -286,7 +298,8 @@ public final class StaticContext {
                         Set<? extends FunctionDescriptor> overriddenDescriptors = ((FunctionDescriptor) descriptor).getOverriddenDescriptors();
                         if (overriddenDescriptors.isEmpty()) {
                             return null;
-                        } else {
+                        }
+                        else {
                             //assert overriddenDescriptors.size() == 1;
                             //TODO: for now translator can't deal with multiple inheritance good enough
                             for (FunctionDescriptor overriddenDescriptor : overriddenDescriptors) {
@@ -360,6 +373,20 @@ public final class StaticContext {
                     return enclosingScope.innerScope("Scope for member " + descriptor.getName());
                 }
             };
+            Rule<NamingScope> createFunctionObjectsForCallableDescriptors = new Rule<NamingScope>() {
+                @Override
+                public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof CallableDescriptor)) {
+                        return null;
+                    }
+                    NamingScope enclosingScope = getEnclosingScope(descriptor);
+                    JsFunction correspondingFunction = new JsFunction(enclosingScope.jsScope());
+                    NamingScope newScope = enclosingScope.innerScope(correspondingFunction.getScope());
+                    scopeToFunction.put(newScope, correspondingFunction);
+                    return newScope;
+                }
+            };
+            addRule(createFunctionObjectsForCallableDescriptors);
             addRule(generateNewScopesForClassesWithNoAncestors);
             addRule(generateInnerScopesForDerivedClasses);
             addRule(generateNewScopesForNamespaceDescriptors);
@@ -439,7 +466,7 @@ public final class StaticContext {
         }
     }
 
-    private class QualifierIsNullGenerator extends Generator<Boolean> {
+    private static class QualifierIsNullGenerator extends Generator<Boolean> {
 
         private QualifierIsNullGenerator() {
             Rule<Boolean> propertiesHaveNoQualifiers = new Rule<Boolean>() {

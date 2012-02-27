@@ -19,7 +19,6 @@ package org.jetbrains.k2js.translate.general;
 import com.google.dart.compiler.backend.js.JsNamer;
 import com.google.dart.compiler.backend.js.JsPrettyNamer;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -38,6 +37,9 @@ import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToExpression;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
+
 /**
  * @author Pavel Talanov
  *         <p/>
@@ -45,6 +47,9 @@ import java.util.List;
  *         Goal is to simlify interaction between translators.
  */
 public final class Translation {
+
+    private Translation() {
+    }
 
     @NotNull
     public static FunctionTranslator functionTranslator(@NotNull JetDeclarationWithBody function,
@@ -76,13 +81,13 @@ public final class Translation {
     @NotNull
     public static JsExpression translateAsExpression(@NotNull JetExpression expression,
                                                      @NotNull TranslationContext context) {
-        return AstUtil.convertToExpression(translateExpression(expression, context));
+        return convertToExpression(translateExpression(expression, context));
     }
 
     @NotNull
     public static JsStatement translateAsStatement(@NotNull JetExpression expression,
                                                    @NotNull TranslationContext context) {
-        return AstUtil.convertToStatement(translateExpression(expression, context));
+        return convertToStatement(translateExpression(expression, context));
     }
 
     @NotNull

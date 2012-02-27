@@ -30,6 +30,8 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
@@ -62,10 +64,10 @@ public final class IteratorForTranslator extends ForTranslator {
     @NotNull
     private JsBlock generateCycleBody() {
         JsBlock cycleBody = new JsBlock();
-        JsStatement parameterAssignment = AstUtil.newVar(parameterName, nextMethodInvocation());
+        JsStatement parameterAssignment = newVar(parameterName, nextMethodInvocation());
         JsNode originalBody = Translation.translateExpression(getLoopBody(expression), context().innerBlock(cycleBody));
-        cycleBody.addStatement(parameterAssignment);
-        cycleBody.addStatement(AstUtil.convertToBlock(originalBody));
+        cycleBody.getStatements().add(parameterAssignment);
+        cycleBody.getStatements().add(convertToBlock(originalBody));
         return cycleBody;
     }
 

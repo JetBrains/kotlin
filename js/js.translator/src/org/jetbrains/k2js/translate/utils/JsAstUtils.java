@@ -1,0 +1,288 @@
+/*
+ * Copyright 2000-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.k2js.translate.utils;
+
+import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.*;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * @author Pavel Talanov
+ */
+public final class JsAstUtils {
+
+    private JsAstUtils() {
+    }
+
+    @NotNull
+    public static JsPropertyInitializer newNamedMethod(@NotNull JsName name, @NotNull JsFunction function) {
+        JsNameRef methodName = name.makeRef();
+        return new JsPropertyInitializer(methodName, function);
+    }
+
+    @NotNull
+    public static JsStatement convertToStatement(@NotNull JsNode jsNode) {
+        assert (jsNode instanceof JsExpression) || (jsNode instanceof JsStatement)
+                : "Unexpected node of type: " + jsNode.getClass().toString();
+        if (jsNode instanceof JsExpression) {
+            return new JsExprStmt((JsExpression) jsNode);
+        }
+        return (JsStatement) jsNode;
+    }
+
+    @NotNull
+    public static JsBlock convertToBlock(@NotNull JsNode jsNode) {
+        if (jsNode instanceof JsBlock) {
+            return (JsBlock) jsNode;
+        }
+        JsStatement jsStatement = convertToStatement(jsNode);
+        return new JsBlock(jsStatement);
+    }
+
+    @NotNull
+    public static JsExpression convertToExpression(@NotNull JsNode jsNode) {
+        assert jsNode instanceof JsExpression : "Unexpected node of type: " + jsNode.getClass().toString();
+        return (JsExpression) jsNode;
+    }
+
+    public static JsNameRef thisQualifiedReference(@NotNull JsName name) {
+        JsNameRef result = name.makeRef();
+        result.setQualifier(new JsThisRef());
+        return result;
+    }
+
+    @NotNull
+    public static JsBlock newBlock(List<JsStatement> statements) {
+        JsBlock result = new JsBlock();
+        setStatements(result, statements);
+        return result;
+    }
+
+    @NotNull
+    public static JsPrefixOperation negated(@NotNull JsExpression expression) {
+        return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
+    }
+
+    @NotNull
+    public static JsStatement newAssignmentStatement(@NotNull JsNameRef nameRef, @NotNull JsExpression expr) {
+        return convertToStatement(new JsBinaryOperation(JsBinaryOperator.ASG, nameRef, expr));
+    }
+
+    @NotNull
+    public static JsExpression extractExpressionFromStatement(@NotNull JsStatement statement) {
+        assert statement instanceof JsExprStmt : "Cannot extract expression from statement: " + statement;
+        return (((JsExprStmt) statement).getExpression());
+    }
+
+    @NotNull
+    public static JsBinaryOperation and(@NotNull JsExpression op1, @NotNull JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation or(@NotNull JsExpression op1, @NotNull JsExpression op2) {
+        return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
+    }
+
+    //TODO refactor
+    public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
+        if (selector instanceof JsInvocation) {
+            setQualifier(((JsInvocation) selector).getQualifier(), receiver);
+            return;
+        }
+        if (selector instanceof JsNameRef) {
+            JsNameRef nameRef = (JsNameRef) selector;
+            JsExpression qualifier = nameRef.getQualifier();
+            if (qualifier == null) {
+                nameRef.setQualifier(receiver);
+            }
+            else {
+                setQualifier(qualifier, receiver);
+            }
+            return;
+        }
+        throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
+    }
+
+    public static JsNameRef qualified(@NotNull JsName selector, @Nullable JsExpression qualifier) {
+        JsNameRef reference = selector.makeRef();
+        setQualifier(reference, qualifier);
+        return reference;
+    }
+
+    @NotNull
+    public static JsBinaryOperation equals(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.EQ, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsBinaryOperation notEqual(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+        return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
+    }
+
+    @NotNull
+    public static JsExpression equalsTrue(@NotNull JsExpression expression, @NotNull JsProgram program) {
+        return equals(expression, program.getTrueLiteral());
+    }
+
+    @NotNull
+    public static JsExpression assignment(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ASG, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation sum(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation subtract(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.SUB, left, right);
+    }
+
+    @NotNull
+    public static JsPrefixOperation not(@NotNull JsExpression expression) {
+        return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
+    }
+
+    @NotNull
+    public static JsBinaryOperation typeof(@NotNull JsExpression expression, @NotNull JsStringLiteral string) {
+        return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+    }
+
+    public interface Mutator {
+        JsNode mutate(JsNode node);
+    }
+
+
+    //TODO: move somewhere
+    //TODO: refactor and review
+    public static JsNode mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
+        if (node instanceof JsBlock) {
+            JsBlock block = (JsBlock) node;
+            List<JsStatement> statements = block.getStatements();
+
+            if (statements.isEmpty()) return block;
+
+            int size = statements.size();
+            statements.set(size - 1,
+                           convertToStatement(mutateLastExpression(statements.get(size - 1), mutator)));
+            return block;
+        }
+        if (node instanceof JsIf) {
+            JsIf ifExpr = (JsIf) node;
+            ifExpr.setThenStmt(convertToStatement(mutateLastExpression(ifExpr.getThenStmt(), mutator)));
+            JsStatement elseStmt = ifExpr.getElseStmt();
+            if (elseStmt != null) {
+                ifExpr.setElseStmt(convertToStatement(mutateLastExpression(elseStmt, mutator)));
+            }
+            return ifExpr;
+        }
+        if (node instanceof JsExprStmt) {
+            return convertToStatement(mutateLastExpression(((JsExprStmt) node).getExpression(), mutator));
+        }
+        return mutator.mutate(node);
+    }
+
+
+    public static final class SaveLastExpressionMutator implements Mutator {
+
+        @NotNull
+        private final JsExpression toAssign;
+
+        public SaveLastExpressionMutator(@NotNull JsExpression toAssign) {
+            this.toAssign = toAssign;
+        }
+
+        @Override
+        public JsNode mutate(JsNode node) {
+            if (!(node instanceof JsExpression)) {
+                return node;
+            }
+            return assignment(toAssign, (JsExpression) node);
+        }
+    }
+
+
+    @NotNull
+    public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
+        JsVars.JsVar var = new JsVars.JsVar(name);
+        if (expr != null) {
+            var.setInitExpr(expr);
+        }
+        JsVars vars = new JsVars();
+        vars.add(var);
+        return vars;
+    }
+
+    public static void addVarDeclaration(@NotNull JsBlock block, @NotNull JsVars vars) {
+        LinkedList<JsStatement> statementLinkedList = Lists.newLinkedList(block.getStatements());
+        statementLinkedList.offer(vars);
+        setStatements(block, statementLinkedList);
+    }
+
+    public static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
+        List<JsStatement> statementList = block.getStatements();
+        statementList.clear();
+        statementList.addAll(statements);
+    }
+
+    public static void setArguments(@NotNull JsInvocation invocation, @NotNull List<JsExpression> newArgs) {
+        List<JsExpression> arguments = invocation.getArguments();
+        assert arguments.isEmpty() : "Arguments already set.";
+        arguments.addAll(newArgs);
+    }
+
+    public static void setArguments(@NotNull JsInvocation invocation, JsExpression... arguments) {
+        setArguments(invocation, Arrays.asList(arguments));
+    }
+
+    public static void setArguments(@NotNull JsNew invocation, @NotNull List<JsExpression> newArgs) {
+        List<JsExpression> arguments = invocation.getArguments();
+        assert arguments.isEmpty() : "Arguments already set.";
+        arguments.addAll(newArgs);
+    }
+
+    public static void setArguments(@NotNull JsNew invocation, JsExpression... arguments) {
+        setArguments(invocation, Arrays.asList(arguments));
+    }
+
+    public static void setParameters(@NotNull JsFunction function, @NotNull List<JsParameter> newParams) {
+        List<JsParameter> parameters = function.getParameters();
+        assert parameters.isEmpty() : "Arguments already set.";
+        parameters.addAll(newParams);
+    }
+
+    public static void setParameters(@NotNull JsFunction function, JsParameter... arguments) {
+        setParameters(function, Arrays.asList(arguments));
+    }
+
+    @NotNull
+    public static JsInvocation newInvocation(@NotNull JsExpression target, List<JsExpression> params) {
+        JsInvocation invoke = new JsInvocation();
+        invoke.setQualifier(target);
+        for (JsExpression expr : params) {
+            invoke.getArguments().add(expr);
+        }
+        return invoke;
+    }
+}

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodReferenceForOverloadedOperation;
 
 /**
@@ -47,14 +48,14 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
     }
 
     @NotNull
-    protected JsExpression translate() {
+    private JsExpression translate() {
         return translateAsMethodCall();
     }
 
     @Override
     @NotNull
     protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        AstUtil.setQualifier(operationReference, receiver);
+        setQualifier(operationReference, receiver);
         return AstUtil.newInvocation(operationReference);
     }
 

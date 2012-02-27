@@ -18,18 +18,21 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
 
 /**
  * @author Pavel Talanov
  */
 public final class ReferenceTranslator {
+
+    private ReferenceTranslator() {
+    }
 
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
@@ -50,7 +53,7 @@ public final class ReferenceTranslator {
             return translateAsLocalNameReference(referencedDescriptor, context);
         }
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        return AstUtil.qualified(referencedName, qualifier);
+        return qualified(referencedName, qualifier);
     }
 
     @NotNull

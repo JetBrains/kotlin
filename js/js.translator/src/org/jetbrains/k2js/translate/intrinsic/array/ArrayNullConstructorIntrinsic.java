@@ -26,6 +26,8 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
+
 /**
  * @author Pavel Talanov
  */
@@ -42,6 +44,6 @@ public enum ArrayNullConstructorIntrinsic implements FunctionIntrinsic {
         assert arguments.size() == 1;
         //TODO: provide better mechanism
         JsNameRef nullArrayFunName = AstUtil.newQualifiedNameRef("Kotlin.nullArray");
-        return AstUtil.newInvocation(nullArrayFunName, arguments);
+        return newInvocation(nullArrayFunName, arguments);
     }
 }

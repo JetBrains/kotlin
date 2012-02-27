@@ -26,6 +26,9 @@ import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+
 /**
  * @author Pavel Talanov
  */
@@ -41,7 +44,7 @@ public enum CharAtIntrinsic implements FunctionIntrinsic {
         assert arguments.size() == 1 : "get Char expression must have 1 arguments.";
         //TODO: provide better way
         JsNameRef charAtReference = AstUtil.newQualifiedNameRef("charAt");
-        AstUtil.setQualifier(charAtReference, receiver);
-        return AstUtil.newInvocation(charAtReference, arguments);
+        setQualifier(charAtReference, receiver);
+        return newInvocation(charAtReference, arguments);
     }
 }

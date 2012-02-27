@@ -16,9 +16,7 @@
 
 package org.jetbrains.k2js.translate.expression.foreach;
 
-import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -30,6 +28,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
@@ -82,7 +81,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(rangeEnd);
         blockStatements.add(generateForExpression());
-        return AstUtil.newBlock(blockStatements);
+        return newBlock(blockStatements);
     }
 
     @NotNull
@@ -97,12 +96,12 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsVars initExpression() {
-        return AstUtil.newVar(parameterName, rangeStart);
+        return newVar(parameterName, rangeStart);
     }
 
     @NotNull
     private JsExpression getCondition() {
-        return AstUtil.notEqual(parameterName.makeRef(), rangeEnd.reference());
+        return notEqual(parameterName.makeRef(), rangeEnd.reference());
     }
 
     @NotNull

@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.translate.context;
 
-import com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +24,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
-
-import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 
@@ -41,15 +38,13 @@ public final class TranslationContext {
     private final DynamicContext dynamicContext;
     @NotNull
     private final StaticContext staticContext;
-    @NotNull
-    private final Map<JsScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
         JsProgram program = staticContext.getProgram();
         JsBlock globalBlock = program.getGlobalBlock();
         return new TranslationContext(staticContext,
-                DynamicContext.rootContext(staticContext.getRootScope(), globalBlock));
+                                      DynamicContext.rootContext(staticContext.getRootScope(), globalBlock));
     }
 
     private TranslationContext(@NotNull StaticContext staticContext, @NotNull DynamicContext dynamicContext) {
@@ -153,6 +148,11 @@ public final class TranslationContext {
     @NotNull
     public JsScope jsScope() {
         return dynamicContext.jsScope();
+    }
+
+    @NotNull
+    public JsFunction getFunctionObject(@NotNull CallableDescriptor descriptor) {
+        return staticContext.getFunctionWithScope(descriptor);
     }
 
     public void addStatementToCurrentBlock(@NotNull JsStatement statement) {
