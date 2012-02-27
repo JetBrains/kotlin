@@ -26,7 +26,8 @@ fun main(args : Array<String>) {
     FileSystem.addVirtualFileListener{ event ->
             println(event)
             if (event is VirtualFileChangedEvent) {
-                println("new file size is ${event.file.size()}")
+                // FIXME explicit type casting to avoid overload ambiguity (KT-1461)
+                println("new file size is ${(event as VirtualFileChangedEvent).file.size()}")
             }
     }
 
