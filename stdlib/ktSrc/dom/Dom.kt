@@ -56,6 +56,7 @@ var Element.id : String
 get() = this.getAttribute("id")?: ""
 set(value) {
     this.setAttribute("id", value)
+    this.setIdAttribute("id", true)
 }
 
 var Element.style : String
@@ -73,12 +74,32 @@ set(value) {
 
 
 // Helper methods
+fun Element.hasClass(cssClass: String): Boolean {
+    val c = this.cssClass
+    return if (c != null)
+        c.matches("""(^|\s+)$cssClass($|\s+)""")
+    else false
+}
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
 fun Document?.get(selector: String): List<Element> {
     val root = this?.getDocumentElement()
     return if (root != null) {
-        root.get(selector)
+        if (selector == "*") {
+            elements
+        } else if (selector.startsWith(".")) {
+            elements.filter{ it.hasClass(selector.substring(1)) }.toList()
+        } else if (selector.startsWith("#")) {
+            val id = selector.substring(1)
+            val element = this?.getElementById(id)
+            return if (element != null)
+                Collections.singletonList(element).sure() as List<Element>
+            else
+                Collections.EMPTY_LIST.sure() as List<Element>
+        } else {
+            //  assume its a vanilla element name
+            this?.getElementsByTagName(selector).toElementList()
+        }
     } else {
         Collections.EMPTY_LIST as List<Element>
     }
@@ -86,13 +107,20 @@ fun Document?.get(selector: String): List<Element> {
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
 fun Element.get(selector: String): List<Element> {
-    if (selector.startsWith(".")) {
-        // TODO filter by CSS style class
+    return if (selector == "*") {
+        elements
+    } else if (selector.startsWith(".")) {
+        elements.filter{ it.hasClass(selector.substring(1)) }.toList()
     } else if (selector.startsWith("#")) {
-        // TODO lookup by ID
+        val element = this.getOwnerDocument()?.getElementById(selector.substring(1))
+        return if (element != null)
+            Collections.singletonList(element).sure() as List<Element>
+        else
+            Collections.EMPTY_LIST.sure() as List<Element>
+    } else {
+        //  assume its a vanilla element name
+        this.getElementsByTagName(selector).toElementList()
     }
-    // TODO assume its a vanilla element name
-    return this.getElementsByTagName(selector).toElementList()
 }
 
 /** Returns the attribute value or null if its not present */
@@ -104,6 +132,13 @@ inline fun Element?.attribute(name: String): String? {
 inline fun Element?.children(): List<Node> {
     return this?.getChildNodes().toList()
 }
+
+val Document?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
+val Element?.elements : List<Element>
+get() = this?.getElementsByTagName("*").toElementList()
+
 
 inline fun Element?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
@@ -188,6 +223,8 @@ class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
     override fun size(): Int = nodeList.getLength()
 
 }
+
+
 // Syntax sugar
 
 inline fun Node.plus(child: Node?): Node {
