@@ -61,6 +61,27 @@
         </java>
     </target>
 
+    <target name="compileKunit" depends="jarRT">
+        <mkdir dir="${output}/classes/kunit"/>
+        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
+            <classpath>
+              <path refid="classpath"/>
+              <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+            <arg value="-stdlib"/>
+            <arg value="${kotlin-home}/lib/kotlin-runtime.jar"/>
+            <arg value="-src"/>
+            <arg value="${basedir}/kunit/src/main/kotlin"/>
+            <arg value="-output"/>
+            <arg value="${output}/classes/kunit"/>
+            <arg value="-module"/>
+            <arg value="${basedir}/kunit/module.kt"/>
+        </java>
+        <jar destfile="${kotlin-home}/lib/kotlin-test.jar">
+            <fileset dir="${output}/classes/kunit"/>
+        </jar>
+    </target>
+
     <target name="compileKdoc">
         <mkdir dir="${output}/classes/kdoc"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
@@ -77,6 +98,9 @@
             <arg value="-module"/>
             <arg value="${basedir}/kdoc/module.kt"/>
         </java>
+        <jar destfile="${kotlin-home}/lib/kotlin-doc.jar">
+            <fileset dir="${output}/classes/kdoc"/>
+        </jar>
     </target>
 
 
@@ -172,7 +196,7 @@
         </java>
     </target>
 
-    <target name="jarRT" depends="compile,compileStdlib">
+    <target name="jarRT" depends="compile,copyKotlinJars,compileStdlib">
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
@@ -212,7 +236,7 @@
         </copy>
     </target>
 
-    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar"/>
+    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar,compileKunit,compileKdoc"/>
 
     <target name="doc" depends="dist,docStdlib"/>
 
