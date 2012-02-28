@@ -9,6 +9,3 @@ fun String.helloWithParams(i : Int) : String {
 
 fun String.helloFunPreventAutoInsert() {
 }
-
-fun Int.helloFake() {
-}
