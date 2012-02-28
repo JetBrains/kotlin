@@ -135,7 +135,7 @@ public class JetCompletionContributor extends CompletionContributor {
                 for (String functionFQN : functionFQNs) {
                     // System.out.println(functionFQN);
 
-                    List<FunctionDescriptor> functionDescriptors = ExpressionTypingUtils.canCallBeResolved(
+                    List<FunctionDescriptor> functionDescriptors = ExpressionTypingUtils.canFindSuitableCall(
                             functionFQN, position.getProject(), receiverExpression, expressionType, scope);
 
                     // System.out.println(!functionDescriptors.isEmpty());

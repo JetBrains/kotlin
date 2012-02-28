@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -39,7 +37,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -167,15 +164,15 @@ public class ExpressionTypingUtils {
     }
 
     /**
-     * Check that function with the given qualified name can be resolved in given scope for given receiver
+     * Check that function or property with the given qualified name can be resolved in given scope for given receiver
      *
-     * @param functionFQN
+     * @param callableFQN
      * @param project
      * @param scope
      * @return
      */
-    public static ArrayList<FunctionDescriptor> canCallBeResolved(
-            @NotNull String functionFQN,
+    public static List<FunctionDescriptor> canFindSuitableCall(
+            @NotNull String callableFQN,
             @NotNull Project project,
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
@@ -184,7 +181,7 @@ public class ExpressionTypingUtils {
         WritableScopeWithImports writableScopeWithImports = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
 
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, functionFQN);
+        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN);
 
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(receiverExpression, receiverType);
 
@@ -209,19 +206,23 @@ public class ExpressionTypingUtils {
 
         writableScopeWithImports.changeLockLevel(WritableScope.LockLevel.READING);
 
-        OverloadResolutionResults<FunctionDescriptor> resolutionResult =
-                ControlStructureTypingVisitor.resolveFakeCall(expressionReceiver, context, QualifiedNamesUtil.fqnToShortName(functionFQN));
+        return ControlStructureTypingVisitor.resolveFakeCallWithReceiverOnly(expressionReceiver, context, QualifiedNamesUtil.fqnToShortName(callableFQN));
 
-        if (!resolutionResult.isSuccess()) {
-            return new ArrayList<FunctionDescriptor>();
-        }
 
-        ArrayList<FunctionDescriptor> resolvedDescriptors = new ArrayList<FunctionDescriptor>();
-
-        for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : resolutionResult.getResultingCalls()) {
-            resolvedDescriptors.add(resolvedCall.getCandidateDescriptor());
-        }
-
-        return resolvedDescriptors;
+//        OverloadResolutionResults.Code resultCode = resolutionResult.getResultCode();
+//        if (resultCode == OverloadResolutionResults.Code.SUCCESS ||
+//                resultCode == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH ||
+//                resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
+//
+//            ArrayList<FunctionDescriptor> resolvedDescriptors = new ArrayList<FunctionDescriptor>();
+//
+//            for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : resolutionResult.getResultingCalls()) {
+//                resolvedDescriptors.add(resolvedCall.getCandidateDescriptor());
+//            }
+//
+//            return resolvedDescriptors;
+//        }
+//
+//        return new ArrayList<FunctionDescriptor>();
     }
 }

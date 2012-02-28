@@ -168,7 +168,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                     candidateCall.recordValueArgument(valueParameter, new VarargValueArgument());
                 }
                 else {
-                    //                    tracing.reportWrongValueArguments(temporaryTrace, "No value passed for parameter " + valueParameter.getName());
+                    // tracing.reportWrongValueArguments(temporaryTrace, "No value passed for parameter " + valueParameter.getName());
                     tracing.noValueForParameter(temporaryTrace, valueParameter);
                     error = true;
                 }

@@ -140,7 +140,9 @@ public class CallMaker {
         }
     }
 
-    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<JetExpression> argumentExpressions) {
+    public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverDescriptor explicitReceiver,
+                                               @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
+                                               @NotNull List<JetExpression> argumentExpressions) {
         List<ValueArgument> arguments = Lists.newArrayList();
         for (JetExpression argumentExpression : argumentExpressions) {
             arguments.add(makeValueArgument(argumentExpression, calleeExpression));

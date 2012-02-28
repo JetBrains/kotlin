@@ -7,4 +7,5 @@ fun firstFun() {
 
 // EXIST: helloFun
 // EXIST: helloFunPreventAutoInsert
-// NUMBER: 2
+// EXIST: helloWithParams
+// NUMBER: 3
