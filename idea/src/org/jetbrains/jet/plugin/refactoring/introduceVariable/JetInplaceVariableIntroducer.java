@@ -66,7 +66,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
     @Nullable
     protected JComponent getComponent() {
         if (!myDoNotChangeVar) {
-            myVarCheckbox = new NonFocusableCheckBox("Declare variable");
+            myVarCheckbox = new NonFocusableCheckBox("Declare with var");
             myVarCheckbox.setSelected(isVar);
             myVarCheckbox.setMnemonic('v');
             myVarCheckbox.addActionListener(new ActionListener() {
@@ -85,7 +85,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
         }
 
         if (myExprType != null) {
-            myExprTypeCheckbox = new NonFocusableCheckBox("Add type annotation");
+            myExprTypeCheckbox = new NonFocusableCheckBox("Specify type explicitly");
             myExprTypeCheckbox.setSelected(false);
             myExprTypeCheckbox.setMnemonic('t');
             myExprTypeCheckbox.addActionListener(new ActionListener() {
