@@ -116,7 +116,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected String generateToText() {
-        GenerationState state = new GenerationState(getProject(), ClassBuilderFactory.TEXT);
+        GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.TEXT);
         AnalyzingUtils.checkForSyntacticErrors(myFile);
         state.compile(myFile);
 
@@ -159,7 +159,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
-            GenerationState state = new GenerationState(getProject(), ClassBuilderFactory.BINARIES);
+            GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.binaries(false));
             AnalyzingUtils.checkForSyntacticErrors(myFile);
             state.compile(myFile);
 

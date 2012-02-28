@@ -115,7 +115,7 @@ public class FunctionCodegen {
             
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(), jvmSignature.getGenericsSignature(), null);
             AnnotationCodegen.forMethod(mv).genAnnotations(functionDescriptor, state.getTypeMapper());
-            if(v.generateCode()) {
+            if(v.generateCode() != ClassBuilder.Mode.SIGNATURES) {
                 int start = 0;
                 if (needJetAnnotations) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
@@ -164,8 +164,12 @@ public class FunctionCodegen {
                 }
             }
 
+            if (!isAbstract && v.generateCode() == ClassBuilder.Mode.STUBS) {
+                StubCodegen.generateStubCode(mv);
+            }
 
-            if (!isAbstract && v.generateCode()) {
+
+            if (!isAbstract && v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
                 
                 Label methodBegin = new Label();
@@ -323,7 +327,10 @@ public class FunctionCodegen {
                 descriptor = descriptor.replace("(","(L" + ownerInternalName + ";");
             final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor, null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
-            if (v.generateCode()) {
+            if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                StubCodegen.generateStubCode(mv);
+            }
+            else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
 
                 FrameMap frameMap = owner.prepareFrame(state.getTypeMapper());
@@ -443,7 +450,10 @@ public class FunctionCodegen {
             int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
 
             final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
-            if (v.generateCode()) {
+            if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                StubCodegen.generateStubCode(mv);
+            }
+            else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
 
                 Type[] argTypes = overriden.getArgumentTypes();
@@ -481,7 +491,10 @@ public class FunctionCodegen {
         int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
         final MethodVisitor mv = v.newMethod(null, flags, method.getName(), method.getDescriptor(), null, null);
-        if (v.generateCode()) {
+        if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+            StubCodegen.generateStubCode(mv);
+        }
+        else if (v.generateCode() == ClassBuilder.Mode.FULL) {
             mv.visitCode();
 
             Type[] argTypes = method.getArgumentTypes();

@@ -89,7 +89,7 @@ public class NamespaceCodegen {
 
     private void generateStaticInitializers(JetFile namespace) {
         MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
-        if (v.generateCode()) {
+        if (v.generateCode() == ClassBuilder.Mode.FULL) {
             mv.visitCode();
 
             FrameMap frameMap = new FrameMap();

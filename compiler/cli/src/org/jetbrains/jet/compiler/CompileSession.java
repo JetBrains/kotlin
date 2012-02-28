@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.compiler;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -56,6 +57,7 @@ public class CompileSession {
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
     private final FileNameTransformer myFileNameTransformer;
     private List<String> myErrors = new ArrayList<String>();
+    private boolean stubs = false;
 
     public BindingContext getMyBindingContext() {
         return myBindingContext;
@@ -71,7 +73,11 @@ public class CompileSession {
         myEnvironment = environment;
         myFileNameTransformer = fileNameTransformer;
     }
-    
+
+    public void setStubs(boolean stubs) {
+        this.stubs = stubs;
+    }
+
     public void addSources(String path) {
         if(path == null)
             return;
@@ -172,8 +178,10 @@ public class CompileSession {
     }
 
     private void analyzeAndReportSemanticErrors(ErrorCollector errorCollector) {
+        Predicate<PsiFile> filesToAnalyzeCompletely =
+                stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
-                myEnvironment.getProject(), mySourceFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+                myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
         for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
             errorCollector.report(diagnostic);
@@ -197,7 +205,7 @@ public class CompileSession {
     @NotNull
     public ClassFileFactory generate() {
         Project project = myEnvironment.getProject();
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactory.BINARIES, myFileNameTransformer);
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 

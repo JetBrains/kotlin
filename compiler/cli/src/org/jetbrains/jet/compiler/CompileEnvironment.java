@@ -60,6 +60,7 @@ public class CompileEnvironment {
     private URL myStdlib;
 
     private boolean ignoreErrors = false;
+    private boolean stubs = false;
 
     public CompileEnvironment() {
         this(FileNameTransformer.IDENTITY);
@@ -81,6 +82,10 @@ public class CompileEnvironment {
 
     public void setIgnoreErrors(boolean ignoreErrors) {
         this.ignoreErrors = ignoreErrors;
+    }
+
+    public void setStubs(boolean stubs) {
+        this.stubs = stubs;
     }
 
     public void dispose() {
@@ -229,6 +234,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = new CompileSession(myEnvironment);
+        moduleCompileSession.setStubs(stubs);
 
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
@@ -349,6 +355,8 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
+        session.setStubs(stubs);
+
         session.addSources(sourceFileOrDir);
 
         String mainClass = null;

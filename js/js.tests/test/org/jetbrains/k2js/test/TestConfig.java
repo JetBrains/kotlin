@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.k2js.test;
 
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import core.Dummy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +38,6 @@ import java.util.List;
 //TODO: review/refactor
 public final class TestConfig extends Config {
 
-    //TODO: provide some generic way to get the files of the project
     @NotNull
     private static final List<String> LIB_FILE_NAMES = Arrays.asList(
             "/core/annotations.kt",
@@ -55,6 +53,8 @@ public final class TestConfig extends Config {
             "/html5/files.kt",
             "/html5/image.kt"
     );
+
+    private static final String LIBRARIES_LOCATION = "js.libraries/src";
 
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
@@ -78,14 +78,21 @@ public final class TestConfig extends Config {
         for (String libFileName : LIB_FILE_NAMES) {
             JetFile file = null;
             //TODO: close stream?
-            InputStream stream = Dummy.class.getResourceAsStream(libFileName);
             try {
-                String text = FileUtil.loadTextAndClose(stream);
-                file = JetFileUtils.createPsiFile(libFileName, text, project);
-            } catch (IOException e) {
-                e.printStackTrace();
+                @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+                InputStream stream = new FileInputStream(LIBRARIES_LOCATION + libFileName);
+                try {
+                    String text = FileUtil.loadTextAndClose(stream);
+                    file = JetFileUtils.createPsiFile(libFileName, text, project);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                libFiles.add(file);
+            } catch (FileNotFoundException e) {
+                //TODO: throw generic expception
+                throw new AssertionError("Lib files not found.");
             }
-            libFiles.add(file);
+
         }
         return libFiles;
     }
@@ -97,18 +104,4 @@ public final class TestConfig extends Config {
         }
         return jsLibFiles;
     }
-
-//    @NotNull
-//    private static String readString(@NotNull InputStream is) throws IOException {
-//        char[] buf = new char[2048];
-//        Reader r = new InputStreamReader(is, "UTF-8");
-//        StringBuilder s = new StringBuilder();
-//        while (true) {
-//            int n = r.read(buf);
-//            if (n < 0)
-//                break;
-//            s.append(buf, 0, n);
-//        }
-//        return s.toString();
-//    }
 }

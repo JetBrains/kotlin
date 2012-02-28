@@ -136,7 +136,7 @@ public abstract class ClassBodyCodegen {
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
             final MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,"<clinit>", "()V", null, null);
-            if (v.generateCode()) {
+            if (v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
 
                 InstructionAdapter v = new InstructionAdapter(mv);

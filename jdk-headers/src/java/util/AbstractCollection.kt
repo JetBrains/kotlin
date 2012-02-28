@@ -1,5 +1,5 @@
 package java.util
-abstract public open class AbstractCollection<erased E> protected () : java.util.Collection<E> {
+abstract public open class AbstractCollection<erased E> protected () : java.lang.Object(), java.util.Collection<E> {
     abstract override public fun iterator() : java.util.Iterator<E>
     abstract override public fun size() : Int
     override public fun isEmpty() : Boolean {}

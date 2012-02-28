@@ -17,7 +17,6 @@
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" />
       <module fileurl="file://$PROJECT_DIR$/j2k/tests/j2k-tests.iml" filepath="$PROJECT_DIR$/j2k/tests/j2k-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" filepath="$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/js/js.libraries/js.libraries.iml" filepath="$PROJECT_DIR$/js/js.libraries/js.libraries.iml" />
       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" />
       <module fileurl="file://$PROJECT_DIR$/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/stdlib/stdlib.iml" />

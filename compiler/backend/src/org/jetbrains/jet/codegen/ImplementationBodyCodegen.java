@@ -272,7 +272,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type[] argTypes = method.getArgumentTypes();
 
             MethodVisitor mv = v.newMethod(null, ACC_PUBLIC| ACC_BRIDGE| ACC_FINAL, bridge.getName(), method.getDescriptor(), null, null);
-            if (v.generateCode()) {
+            if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                StubCodegen.generateStubCode(mv);
+            }
+            else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
 
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -300,7 +303,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Method originalMethod = originalSignature.getJvmMethodSignature().getAsmMethod();
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature.getPropertyTypeKotlinSignature(), originalSignature.getJvmMethodSignature().getKotlinTypeParameter());
-                if (v.generateCode()) {
+                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                    StubCodegen.generateStubCode(mv);
+                }
+                else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                     mv.visitCode();
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -323,7 +329,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 Method originalMethod = originalSignature2.getJvmMethodSignature().getAsmMethod();
                 MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | ACC_BRIDGE | ACC_FINAL, method.getName(), method.getDescriptor(), null, null);
                 PropertyCodegen.generateJetPropertyAnnotation(mv, originalSignature2.getPropertyTypeKotlinSignature(), originalSignature2.getJvmMethodSignature().getKotlinTypeParameter());
-                if (v.generateCode()) {
+                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                    StubCodegen.generateStubCode(mv);
+                }
+                else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                     mv.visitCode();
 
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -482,8 +491,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int flags = ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.newMethod(myClass, flags, constructorMethod.getName(), constructorMethod.getAsmMethod().getDescriptor(), constructorMethod.getGenericsSignature(), null);
-        if (!v.generateCode()) return;
-        
+        if (v.generateCode() == ClassBuilder.Mode.SIGNATURES) return;
+
         AnnotationVisitor jetConstructorVisitor = mv.visitAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getDescriptor(), true);
         if (constructorDescriptor == null) {
             jetConstructorVisitor.visit(JvmStdlibNames.JET_CONSTRUCTOR_HIDDEN_FIELD, true);
@@ -507,6 +516,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, Boolean.TRUE);
                 jetValueParameterAnnotation.visitEnd();
             }
+        }
+
+        if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+            StubCodegen.generateStubCode(mv);
+            return;
         }
 
         mv.visitCode();
@@ -678,7 +692,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     Method functionOriginal = typeMapper.mapSignature(fun.getName(), fun.getOriginal()).getAsmMethod();
 
                     final MethodVisitor mv = v.newMethod(myClass, flags, function.getName(), function.getDescriptor(), null, null);
-                    if (v.generateCode()) {
+                    if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                        StubCodegen.generateStubCode(mv);
+                    }
+                    else if (v.generateCode() == ClassBuilder.Mode.FULL) {
                         mv.visitCode();
 
                         codegen.generateThisOrOuter(descriptor);
@@ -813,7 +830,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor, kind, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
         int flags = ACC_PUBLIC; // TODO
         final MethodVisitor mv = v.newMethod(constructor, flags, "<init>", method.getSignature().getAsmMethod().getDescriptor(), null, null);
-        if (v.generateCode()) {
+        if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+            StubCodegen.generateStubCode(mv);
+        }
+        else if (v.generateCode() == ClassBuilder.Mode.FULL) {
             mv.visitCode();
 
             ConstructorFrameMap frameMap = new ConstructorFrameMap(method, constructorDescriptor, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
