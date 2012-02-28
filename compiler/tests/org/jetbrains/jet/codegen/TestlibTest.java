@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.Test;
@@ -82,11 +81,11 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addToClasspath(junitJar);
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            VirtualFile path = localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test");
-            session.addSources(path);
+            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test"));
+            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../kunit/src"));
 
-            if (!session.analyze(System.out)) {
-                throw new RuntimeException();
+            if (!session.analyze(System.err)) {
+                throw new RuntimeException("There were compilation errors");
             }
 
             ClassFileFactory classFileFactory = session.generate();
