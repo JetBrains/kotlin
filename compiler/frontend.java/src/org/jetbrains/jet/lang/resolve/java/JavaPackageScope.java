@@ -24,6 +24,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -39,6 +40,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.migration.PsiMigrationImpl");
 
+    @NotNull
     private final String packageFQN;
 
     private Collection<DeclarationDescriptor> allDescriptors;
@@ -47,13 +49,26 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
             @NotNull String packageFQN,
             @NotNull NamespaceDescriptor containingDescriptor,
             @NotNull JavaSemanticServices semanticServices) {
-        super(containingDescriptor, semanticServices);
+        super(containingDescriptor, semanticServices, getPiClass(packageFQN, semanticServices));
         this.packageFQN = packageFQN;
+    }
+
+    private static PsiClass getPiClass(String packageFQN, JavaSemanticServices semanticServices) {
+        // TODO: move this check outside
+        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
+        // Kotlin functions are already there
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
+        if (kotlinNamespaceDescriptor != null) {
+            return null;
+        } else {
+            // TODO: what is GlobalSearchScope
+            return semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
+        }
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(name));
+        return semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name));
     }
 
     @Override
@@ -64,25 +79,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(name));
-    }
-
-    @Override
-    protected PsiClassWrapper psiClass() {
-        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
-        // Kotlin functions are already there
-        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
-        if (kotlinNamespaceDescriptor != null) {
-            return null;
-        }
-
-        // TODO: what is GlobalSearchScope
-        PsiClass psiClass = semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName(JvmAbi.PACKAGE_CLASS));
-        if (psiClass == null) {
-            return null;
-        }
-
-        return new PsiClassWrapper(psiClass);
+        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(packageFQN, name));
     }
 
     @Override
@@ -150,7 +147,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
         return allDescriptors;
     }
 
-    private String getQualifiedName(String name) {
+    private static String getQualifiedName(@NotNull String packageFQN, @NotNull String name) {
         return (packageFQN.isEmpty() ? "" : packageFQN + ".") + name;
     }
 }

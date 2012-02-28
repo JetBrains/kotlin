@@ -417,7 +417,7 @@ public class JavaDescriptorResolver {
         return classData;
     }
 
-    private void checkPsiClassIsNotJet(PsiClass psiClass) {
+    static void checkPsiClassIsNotJet(PsiClass psiClass) {
         if (psiClass instanceof JetJavaMirrorMarker) {
             throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass");
         }
@@ -443,6 +443,8 @@ public class JavaDescriptorResolver {
         if (classObjectPsiClass == null) {
             return null;
         }
+
+        checkPsiClassIsNotJet(psiClass);
 
         ResolverBinaryClassData classData = new ResolverBinaryClassData();
         classData.kotlin = true;

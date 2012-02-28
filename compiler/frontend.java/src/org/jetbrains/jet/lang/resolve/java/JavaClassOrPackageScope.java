@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -35,12 +35,17 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
     protected final ClassOrNamespaceDescriptor descriptor;
+    @NotNull
     protected final JavaSemanticServices semanticServices;
-    private Ref<PsiClassWrapper> myPsiClassMemo;
+    @Nullable
+    protected final PsiClass psiClass;
 
-    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices) {
+    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices, @Nullable PsiClass psiClass) {
         this.descriptor = descriptor;
         this.semanticServices = semanticServices;
+        this.psiClass = psiClass;
+
+        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
     }
 
     @NotNull
@@ -49,42 +54,29 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
         return descriptor;
     }
 
-    @Nullable
-    protected abstract PsiClassWrapper psiClass();
-
     protected abstract boolean staticMembers();
 
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        PsiClassWrapper psiClass = memoPsiClass();
-
         if (psiClass == null) {
             return Collections.emptySet();
         }
 
         // TODO: cache
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(
-                descriptor, psiClass.getPsiClass(), name, staticMembers());
-    }
-
-    private PsiClassWrapper memoPsiClass() {
-        if (myPsiClassMemo != null) return myPsiClassMemo.get();
-        PsiClassWrapper answer = psiClass();
-        myPsiClassMemo = new Ref<PsiClassWrapper>(answer);
-        return answer;
+                descriptor, psiClass, name, staticMembers());
     }
 
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-        PsiClassWrapper psiClassForPackage = memoPsiClass();
 
-        if (psiClassForPackage == null) {
+        if (psiClass == null) {
             return Collections.emptySet();
         }
 
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClassForPackage.getPsiClass(), name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClass, name, staticMembers());
     }
 
 }
