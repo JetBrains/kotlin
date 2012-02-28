@@ -23,12 +23,10 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
@@ -40,7 +38,6 @@ import org.objectweb.asm.commons.Method;
 import org.objectweb.asm.signature.SignatureWriter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -136,11 +133,11 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         ClassDescriptor thisDescriptor = context.getThisDescriptor();
         final Type enclosingType = thisDescriptor == null ? null : state.getTypeMapper().mapType(thisDescriptor.getDefaultType());
         if (enclosingType == null)
-            captureThis = false;
+            captureThis = null;
 
         final Method constructor = generateConstructor(funClass, fun);
 
-        if (captureThis) {
+        if (captureThis != null) {
             cv.newField(fun, ACC_FINAL, "this$0", enclosingType.getDescriptor(), null, null);
         }
 
@@ -189,17 +186,8 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         }
     }
 
-    private boolean generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
-        int arity = funDescriptor.getValueParameters().size();
-
-        ClassDescriptorImpl function = new ClassDescriptorImpl(
-                funDescriptor,
-                Collections.<AnnotationDescriptor>emptyList(),
-                name);
-        function = function.initialize(
-                false,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                Collections.singleton((funDescriptor.getReceiverParameter().exists() ? JetStandardClasses.getReceiverFunction(arity) : JetStandardClasses.getFunction(arity)).getDefaultType()), JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
+    private Type generateBody(FunctionDescriptor funDescriptor, ClassBuilder cv, JetDeclarationWithBody body) {
+        ClassDescriptor function = state.getTypeMapper().getClosureAnnotator().classDescriptorForFunctionDescriptor(funDescriptor, name);
 
         final CodegenContext.ClosureContext closureContext = context.intoClosure(funDescriptor, function, name, this, state.getTypeMapper());
         FunctionCodegen fc = new FunctionCodegen(closureContext, cv, state);
@@ -248,7 +236,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     }
 
     private Method generateConstructor(String funClass, PsiElement fun) {
-        int argCount = captureThis ? 1 : 0;
+        int argCount = captureThis != null ? 1 : 0;
         argCount += (captureReceiver != null ? 1 : 0);
 
         ArrayList<DeclarationDescriptor> variableDescriptors = new ArrayList<DeclarationDescriptor>();
@@ -270,7 +258,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         Type[] argTypes = new Type[argCount];
 
         int i = 0;
-        if (captureThis) {
+        if (captureThis != null) {
             argTypes[i++] = state.getTypeMapper().mapType(context.getThisDescriptor().getDefaultType());
         }
 
@@ -285,7 +273,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 argTypes[i++] = type;
             }
             else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final Type type = Type.getObjectType(state.getTypeMapper().classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)));
+                final Type type = Type.getObjectType(state.getTypeMapper().getClosureAnnotator().classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)));
                 argTypes[i++] = type;
             }
         }
@@ -304,11 +292,11 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 StackValue.local(0, JetTypeMapper.TYPE_OBJECT).put(JetTypeMapper.TYPE_OBJECT, iv);
                 StackValue.local(i, type).put(type, iv);
                 final String fieldName;
-                if (captureThis && i == 1) {
+                if (captureThis != null && i == 1) {
                     fieldName = "this$0";
                 }
                 else {
-                    if (captureReceiver != null && (captureThis && i == 2 || !captureThis && i == 1)) {
+                    if (captureReceiver != null && (captureThis != null && i == 2 || captureThis == null && i == 1)) {
                         fieldName = "receiver$0";
                     }
                     else {

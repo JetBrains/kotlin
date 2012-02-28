@@ -16,19 +16,33 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
-* @author abreslav
-*/
-public interface Diagnostic {
+ * @author abreslav
+ */
+public interface Diagnostic<E extends PsiElement> {//todo
 
     @NotNull
-    DiagnosticFactory getFactory();
+    AbstractDiagnosticFactory getFactory();
 
     @NotNull
     String getMessage();
 
     @NotNull
     Severity getSeverity();
+
+    @NotNull
+    E getPsiElement();
+
+    @NotNull
+    List<TextRange> getTextRanges();
+
+    @NotNull
+    PsiFile getPsiFile();
 }

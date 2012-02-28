@@ -809,7 +809,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
         if(closureCodegen.superCall != null) {
             ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, closureCodegen.superCall.getCalleeExpression().getConstructorReferenceExpression());
-            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION);
+            CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(superConstructor.getContainingDeclaration()));
             Type[] argumentTypes = superCallable.getSignature().getAsmMethod().getArgumentTypes();
             Collections.addAll(consArgTypes, argumentTypes);
             ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, closureCodegen.superCall.getCalleeExpression());
@@ -2258,7 +2258,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                     receiver.put(receiver.type, v);
                 }
 
-                CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION);
+                CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) constructorDescriptor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(((ConstructorDescriptor) constructorDescriptor).getContainingDeclaration()));
                 invokeMethodWithArguments(method, expression, StackValue.none());
             }
         }

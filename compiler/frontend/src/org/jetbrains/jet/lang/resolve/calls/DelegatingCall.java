@@ -85,12 +85,6 @@ public class DelegatingCall implements Call {
     }
 
     @Override
-    @NotNull
-    public ASTNode getCallNode() {
-        return delegate.getCallNode();
-    }
-
-    @Override
     @Nullable
     public PsiElement getCallElement() {
         return delegate.getCallElement();

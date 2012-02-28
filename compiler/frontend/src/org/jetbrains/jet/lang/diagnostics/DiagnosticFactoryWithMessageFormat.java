@@ -16,23 +16,22 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.psi.PsiElement;
+
 import java.text.MessageFormat;
 
 /**
 * @author abreslav
 */
-public abstract class DiagnosticFactoryWithMessageFormat extends DiagnosticFactoryWithSeverity {
+public abstract class DiagnosticFactoryWithMessageFormat<P extends PsiElement> extends DiagnosticFactoryWithPsiElement<P> {
     protected final MessageFormat messageFormat;
-    protected final Renderer renderer;
 
     public DiagnosticFactoryWithMessageFormat(Severity severity, String message) {
-        this(severity, message, Renderer.TO_STRING);
+        this(severity, message, PositioningStrategies.DEFAULT);
     }
-
-    public DiagnosticFactoryWithMessageFormat(Severity severity, String message, Renderer renderer) {
-        super(severity);
+    
+    public DiagnosticFactoryWithMessageFormat(Severity severity, String message, PositioningStrategy<? super P> positioningStrategy) {
+        super(severity, positioningStrategy);
         this.messageFormat = new MessageFormat(message);
-        this.renderer = renderer;
     }
-
 }

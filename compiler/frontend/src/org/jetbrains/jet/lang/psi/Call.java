@@ -55,8 +55,5 @@ public interface Call {
     JetTypeArgumentList getTypeArgumentList();
 
     @NotNull
-    ASTNode getCallNode();
-
-    @Nullable
     PsiElement getCallElement();
 }

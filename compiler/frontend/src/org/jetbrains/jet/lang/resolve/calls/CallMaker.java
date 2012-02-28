@@ -71,24 +71,18 @@ public class CallMaker {
 
     private static class CallImpl implements Call {
 
-        private final ASTNode callNode;
         private final PsiElement callElement;
         private final ReceiverDescriptor explicitReceiver;
         private ASTNode callOperationNode;
         private final JetExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
 
-        protected CallImpl(@NotNull ASTNode callNode, @Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
-            this.callNode = callNode;
+        protected CallImpl(@Nullable PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
             this.calleeExpression = calleeExpression;
             this.valueArguments = valueArguments;
-        }
-
-        protected CallImpl(@NotNull PsiElement callElement, @NotNull ReceiverDescriptor explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
-            this(callElement.getNode(), callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments);
         }
 
         @Override
@@ -114,11 +108,6 @@ public class CallMaker {
         }
 
         @NotNull
-        @Override
-        public ASTNode getCallNode() {
-            return callNode;
-        }
-
         @Override
         public PsiElement getCallElement() {
             return callElement;
@@ -147,7 +136,7 @@ public class CallMaker {
 
         @Override
         public String toString() {
-            return getCallNode().getText();
+            return getCallElement().getText();
         }
     }
 
@@ -237,11 +226,6 @@ public class CallMaker {
             }
 
             @NotNull
-            @Override
-            public ASTNode getCallNode() {
-                return callElement.getNode();
-            }
-
             @Override
             public PsiElement getCallElement() {
                 return callElement;

@@ -18,12 +18,12 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
@@ -52,12 +52,22 @@ public class ChangeToBackingFieldFix extends JetIntentionAction<JetSimpleNameExp
         element.replace(backingField);
     }
 
-    public static JetIntentionActionFactory<JetSimpleNameExpression> createFactory() {
-        return new JetIntentionActionFactory<JetSimpleNameExpression>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetSimpleNameExpression> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetSimpleNameExpression;
-                return new ChangeToBackingFieldFix((JetSimpleNameExpression) diagnostic.getPsiElement());
+            public JetIntentionAction<JetSimpleNameExpression> createAction(Diagnostic diagnostic) {
+                JetSimpleNameExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetSimpleNameExpression.class);
+                if (expression == null) {
+                    PsiElement element = diagnostic.getPsiElement();
+                    if (element instanceof JetQualifiedExpression && ((JetQualifiedExpression) element).getReceiverExpression() instanceof JetThisExpression) {
+                        JetExpression selector = ((JetQualifiedExpression) element).getSelectorExpression();
+                        if (selector instanceof JetSimpleNameExpression) {
+                            expression = (JetSimpleNameExpression) selector;
+                        }
+                    }
+                }
+                if (expression == null) return null;
+                return new ChangeToBackingFieldFix(expression);
             }
         };
     }

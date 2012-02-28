@@ -21,12 +21,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
@@ -36,13 +35,14 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
-* @author svtk
-*/
-public class RemoveModifierFix {
+ * @author svtk
+ */
+public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
     private final boolean isRedundant;
 
-    public RemoveModifierFix(JetKeywordToken modifier, boolean isRedundant) {
+    public RemoveModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, boolean isRedundant) {
+        super(element);
         this.modifier = modifier;
         this.isRedundant = isRedundant;
     }
@@ -56,8 +56,10 @@ public class RemoveModifierFix {
         }
         return JetBundle.message("remove.modifier", modifier.getValue());
     }
-    
-    private static String getFamilyName() {
+
+    @NotNull
+    @Override
+    public String getFamilyName() {
         return JetBundle.message("remove.modifier.family");
     }
 
@@ -87,111 +89,53 @@ public class RemoveModifierFix {
         }
         return modifierList;
     }
-    
-    private class RemoveModifierFromListOwner extends JetIntentionAction<JetModifierListOwner> {
-        public RemoveModifierFromListOwner(@NotNull JetModifierListOwner element) {
-            super(element);
-        }
 
-        @NotNull
-        @Override
-        public String getText() {
-            return makeText(element, modifier, isRedundant);
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return RemoveModifierFix.getFamilyName();
-        }
-
-        @Override
-        public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-            JetModifierListOwner newElement = (JetModifierListOwner) element.copy();
-            element.replace(removeModifier(newElement, modifier));
-        }
+    @NotNull
+    @Override
+    public String getText() {
+        return makeText(element, modifier, isRedundant);
     }
 
-    private class RemoveModifierFromList extends JetIntentionAction<JetModifierList> {
-        public RemoveModifierFromList(@NotNull JetModifierList element) {
-            super(element);
-        }
-
-        @NotNull
-        @Override
-        public String getText() {
-            return makeText(null, modifier, isRedundant);
-        }
-
-        @NotNull
-        @Override
-        public String getFamilyName() {
-            return RemoveModifierFix.getFamilyName();
-        }
-
-        @Override
-        public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-            JetModifierList newElement = (JetModifierList) element.copy();
-            element.replace(RemoveModifierFix.removeModifierFromList(newElement, modifier));
-        }
+    @Override
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+        JetModifierListOwner newElement = (JetModifierListOwner) element.copy();
+        element.replace(removeModifier(newElement, modifier));
     }
 
 
-    public static JetIntentionActionFactory<JetModifierListOwner> createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier, final boolean isRedundant) {
-        return new JetIntentionActionFactory<JetModifierListOwner>() {
-            @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
-                return new RemoveModifierFix(modifier, isRedundant).new RemoveModifierFromListOwner((JetModifierListOwner) diagnostic.getPsiElement());
-            }
-        };
-    }
-    
-    private static RemoveModifierFix createRemoveModifierFixFromDiagnostic(DiagnosticWithPsiElement diagnostic, boolean isRedundant) {
-        DiagnosticWithParameters<PsiElement> diagnosticWithParameters = JetIntentionAction.assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.MODIFIER);
-        JetKeywordToken modifier = diagnosticWithParameters.getParameter(DiagnosticParameters.MODIFIER);
-        return new RemoveModifierFix(modifier, isRedundant);
-    }
-
-    public static JetIntentionActionFactory<JetModifierListOwner> createRemoveModifierFromListOwnerFactory(final boolean isRedundant) {
-        return new JetIntentionActionFactory<JetModifierListOwner>() {
-            @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
-                return createRemoveModifierFixFromDiagnostic(diagnostic, isRedundant).new RemoveModifierFromListOwner((JetModifierListOwner) diagnostic.getPsiElement());
-            }
-        };
-    }
-
-    public static JetIntentionActionFactory<JetModifierList> createRemoveModifierFromListFactory(final boolean isRedundant) {
-        return new JetIntentionActionFactory<JetModifierList>() {
-            @Override
-            public JetIntentionAction<JetModifierList> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetModifierList;
-                return createRemoveModifierFixFromDiagnostic(diagnostic, isRedundant).new RemoveModifierFromList((JetModifierList) diagnostic.getPsiElement());
-            }
-        };
-    }
-
-    public static JetIntentionActionFactory<JetModifierList> createRemoveModifierFromListFactory(final JetKeywordToken modifier, final boolean isRedundant) {
-        return new JetIntentionActionFactory<JetModifierList>() {
-            @Override
-            public JetIntentionAction<JetModifierList> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetModifierList;
-                return new RemoveModifierFix(modifier, isRedundant).new RemoveModifierFromList((JetModifierList) diagnostic.getPsiElement());
-            }
-        };
-    }
-
-    public static JetIntentionActionFactory<JetModifierListOwner> createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier) {
+    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier) {
         return createRemoveModifierFromListOwnerFactory(modifier, false);
     }
 
-    public static JetIntentionActionFactory<JetModifierList> createRemoveModifierFromListFactory() {
-        return createRemoveModifierFromListFactory(false);
+    public static JetIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier, final boolean isRedundant) {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+                if (modifierListOwner == null) return null;
+                return new RemoveModifierFix(modifierListOwner, modifier, isRedundant);
+            }
+        };
     }
 
-    public static JetIntentionActionFactory<JetModifierList> createRemoveModifierFromListFactory(final JetKeywordToken modifier) {
-        return createRemoveModifierFromListFactory(modifier, false);
+    public static JetIntentionActionFactory createRemoveModifierFactory() {
+        return createRemoveModifierFactory(false);
+    }
+
+    public static JetIntentionActionFactory createRemoveModifierFactory(final boolean isRedundant) {
+        return new JetIntentionActionFactory() {
+            @Nullable
+            @Override
+            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+                if (modifierListOwner == null) return null;
+                PsiElement psiElement = diagnostic.getPsiElement();
+                IElementType elementType = psiElement.getNode().getElementType();
+                if (!(elementType instanceof JetKeywordToken)) return null;
+                JetKeywordToken modifier = (JetKeywordToken) elementType;
+                return new RemoveModifierFix(modifierListOwner, modifier, isRedundant);
+            }
+        };
     }
 }

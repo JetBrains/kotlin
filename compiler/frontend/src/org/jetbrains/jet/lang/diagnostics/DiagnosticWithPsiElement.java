@@ -16,15 +16,28 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author abreslav
- */
-public interface DiagnosticWithPsiElement<T extends PsiElement> extends DiagnosticWithTextRange {
-    @NotNull
-    T getPsiElement();
+import java.util.List;
 
-    <P> DiagnosticWithPsiElement<T> add(DiagnosticParameter<P> parameterType, P parameter);
+/**
+ * @author svtk
+ */
+public class DiagnosticWithPsiElement<P extends PsiElement> extends AbstractDiagnostic<P> {
+    public DiagnosticWithPsiElement(@NotNull P psiElement, @NotNull DiagnosticFactoryWithPsiElement<P> factory, @NotNull Severity severity, @NotNull String message) {
+        super(psiElement, factory, severity, message);
+    }
+
+    @NotNull
+    @Override
+    public DiagnosticFactoryWithPsiElement<P> getFactory() {
+        return (DiagnosticFactoryWithPsiElement<P>)super.getFactory();
+    }
+
+    @NotNull
+    public List<TextRange> getTextRanges() {
+        return getFactory().getTextRanges(this);
+    }
 }

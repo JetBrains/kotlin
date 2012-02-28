@@ -23,23 +23,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 
 /**
-* @author svtk
-*/
+ * @author svtk
+ */
 public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
-    private JetType type;
-
-    public AddReturnTypeFix(@NotNull JetNamedDeclaration element, JetType type) {
+    public AddReturnTypeFix(@NotNull JetNamedDeclaration element) {
         super(element);
-        this.type = type;
     }
 
     @NotNull
@@ -56,13 +51,16 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) && !ErrorUtils.isErrorType(type);
+        JetType type = QuickFixUtil.getDeclarationReturnType(element);
+        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
         if (!(file instanceof JetFile)) return;
         PsiElement newElement;
+        JetType type = QuickFixUtil.getDeclarationReturnType(element);
+        if (type == null) return;
         if (element instanceof JetProperty) {
             newElement = addPropertyType(project, (JetProperty) element, type);
         }
@@ -70,7 +68,7 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
             assert element instanceof JetFunction;
             newElement = addFunctionType(project, (JetFunction) element, type);
         }
-        ImportClassHelper.addImportDirectiveIfNeeded(type, (JetFile)file);
+        ImportClassHelper.addImportDirectiveIfNeeded(type, (JetFile) file);
         element.replace(newElement);
     }
 
@@ -79,7 +77,7 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
         return true;
     }
 
-    public static JetProperty addPropertyType(Project project, JetProperty property, JetType type) {
+    public static JetProperty addPropertyType(@NotNull Project project, @NotNull JetProperty property, @NotNull JetType type) {
         JetProperty newProperty = (JetProperty) property.copy();
         JetTypeReference typeReference = JetPsiFactory.createType(project, type.toString());
         Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
@@ -88,7 +86,7 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
         return newProperty;
     }
 
-    public static JetFunction addFunctionType(Project project, JetFunction function, JetType type) {
+    public static JetFunction addFunctionType(@NotNull Project project, @NotNull JetFunction function, @NotNull JetType type) {
         JetFunction newFunction = (JetFunction) function.copy();
         JetTypeReference typeReference = JetPsiFactory.createType(project, type.toString());
         Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
@@ -103,14 +101,13 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
         element.addRangeAfter(colon.getFirst(), colon.getSecond(), anchor);
     }
 
-    public static JetIntentionActionFactory<JetNamedDeclaration> createFactory() {
-        return new JetIntentionActionFactory<JetNamedDeclaration>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetNamedDeclaration> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetNamedDeclaration;
-                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = assertAndCastToDiagnosticWithParameters(diagnostic, DiagnosticParameters.TYPE);
-                JetType type = diagnosticWithParameters.getParameter(DiagnosticParameters.TYPE);
-                return new AddReturnTypeFix((JetNamedDeclaration) diagnostic.getPsiElement(), type);
+            public JetIntentionAction<JetNamedDeclaration> createAction(Diagnostic diagnostic) {
+                JetNamedDeclaration declaration = QuickFixUtil.getParentElementOfType(diagnostic, JetNamedDeclaration.class);
+                if (declaration == null) return null;
+                return new AddReturnTypeFix(declaration);
             }
         };
     }

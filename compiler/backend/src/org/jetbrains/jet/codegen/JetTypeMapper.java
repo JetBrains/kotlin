@@ -21,10 +21,12 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.objectweb.asm.Opcodes;
@@ -51,9 +53,17 @@ public class JetTypeMapper {
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
 
     private final JetStandardLibrary standardLibrary;
-    private final BindingContext bindingContext;
-    private final Map<JetElement, String> classNamesForAnonymousClasses = new HashMap<JetElement, String>();
-    private final Map<String, Integer> anonymousSubclassesCount = new HashMap<String, Integer>();
+    public final BindingContext bindingContext;
+
+    public boolean hasThis0(ClassDescriptor classDescriptor) {
+        return closureAnnotator.hasThis0(classDescriptor);
+    }
+
+    public ClosureAnnotator getClosureAnnotator() {
+        return closureAnnotator;
+    }
+
+    private final ClosureAnnotator closureAnnotator;
 
     private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
     private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
@@ -72,13 +82,10 @@ public class JetTypeMapper {
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
 
-    public JetStandardLibrary getStandardLibrary() {
-        return standardLibrary;
-    }
-
-    public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext) {
+    public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext, ClosureAnnotator closureAnnotator) {
         this.standardLibrary = standardLibrary;
         this.bindingContext = bindingContext;
+        this.closureAnnotator = closureAnnotator;
         initKnownTypes();
         initKnownTypeNames();
     }
@@ -193,7 +200,7 @@ public class JetTypeMapper {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            return classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
+            return closureAnnotator.classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
         }
         if(name.contains("/"))
             return name;
@@ -667,21 +674,20 @@ public class JetTypeMapper {
         return new JvmPropertyAccessorSignature(jvmMethodSignature, jvmMethodSignature.getKotlinParameterType(jvmMethodSignature.getParameterCount() - 1));
     }
 
-    private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor) {
+    private JvmMethodSignature mapConstructorSignature(ConstructorDescriptor descriptor, boolean hasThis0) {
         
         BothSignatureWriter signatureWriter = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD, true);
         
         List<ValueParameterDescriptor> parameters = descriptor.getOriginal().getValueParameters();
-        ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
 
         // constructor type parmeters are fake
         writeFormalTypeParameters(Collections.<TypeParameterDescriptor>emptyList(), signatureWriter);
 
         signatureWriter.writeParametersStart();
 
-        if (CodegenUtil.hasThis0(classDescriptor)) {
+        if (hasThis0) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
-            mapType(CodegenUtil.getOuterClassDescriptor(classDescriptor).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter);
+            mapType(closureAnnotator.getEclosingClassDescriptor(descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -698,8 +704,8 @@ public class JetTypeMapper {
         return signatureWriter.makeJvmMethodSignature("<init>");
     }
 
-    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind) {
-        final JvmMethodSignature method = mapConstructorSignature(descriptor);
+    public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
+        final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
         String owner = mapType(descriptor.getContainingDeclaration().getDefaultType(), kind).getInternalName();
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
@@ -724,54 +730,6 @@ public class JetTypeMapper {
         else {
             return defaultFlags;
         }
-    }
-
-    String classNameForAnonymousClass(JetElement expression) {
-        if(expression instanceof JetObjectLiteralExpression) {
-            JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
-            expression = jetObjectLiteralExpression.getObjectDeclaration();
-        }
-
-        if(expression instanceof JetFunctionLiteralExpression) {
-            JetFunctionLiteralExpression jetFunctionLiteralExpression = (JetFunctionLiteralExpression) expression;
-            expression = jetFunctionLiteralExpression.getFunctionLiteral();
-        }
-
-        String name = classNamesForAnonymousClasses.get(expression);
-        if (name != null) {
-            return name;
-        }
-
-        @SuppressWarnings("unchecked")
-        PsiElement container = PsiTreeUtil.getParentOfType(expression, JetFile.class, JetClass.class, JetObjectDeclaration.class, JetFunctionLiteral.class);
-
-        String baseName;
-        if(container instanceof JetFile) {
-            baseName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(((JetFile) container)), true);
-        }
-        else if(container instanceof JetClass) {
-            ClassDescriptor aClass = bindingContext.get(BindingContext.CLASS, container);
-            baseName = mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-
-            ClassDescriptor myClass = bindingContext.get(BindingContext.CLASS, expression);
-            if(CodegenUtil.isClassObject(myClass)) {
-                return mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + JvmAbi.CLASS_OBJECT_SUFFIX;
-            }
-            else
-                baseName = classNameForAnonymousClass((JetElement) container);
-        }
-        else {
-            baseName = classNameForAnonymousClass((JetElement) container);
-        }
-
-        Integer count = anonymousSubclassesCount.get(baseName);
-        if (count == null) count = 0;
-
-        anonymousSubclassesCount.put(baseName, count + 1);
-
-        final String className = baseName + "$" + (count + 1);
-        classNamesForAnonymousClasses.put(expression, className);
-        return className;
     }
 
     public Collection<String> allJvmNames(JetClassOrObject jetClass) {
@@ -856,7 +814,7 @@ public class JetTypeMapper {
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-            return Type.getObjectType(classNameForAnonymousClass((JetElement) psiElement));
+            return Type.getObjectType(closureAnnotator.classNameForAnonymousClass((JetElement) psiElement));
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType()));

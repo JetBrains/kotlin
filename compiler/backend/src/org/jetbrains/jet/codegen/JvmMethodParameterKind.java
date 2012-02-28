@@ -24,9 +24,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 public enum JvmMethodParameterKind {
     VALUE,
     THIS,
-    /** @see CodegenUtil#hasThis0(ClassDescriptor) */
     THIS0,
     RECEIVER,
-    TYPE_INFO,
     SHARED_VAR,
 }

@@ -68,7 +68,7 @@ public abstract class CodegenContext {
 
     protected StackValue outerExpression;
 
-    protected boolean outerWasUsed ;
+    protected Type outerWasUsed ;
 
     public CodegenContext(DeclarationDescriptor contextType, OwnerKind contextKind, @Nullable CodegenContext parentContext, @Nullable ObjectOrClosureCodegen closureCodegen) {
         this.contextType = contextType;
@@ -100,7 +100,7 @@ public abstract class CodegenContext {
         if(outerExpression == null)
             throw new UnsupportedOperationException();
 
-        outerWasUsed = true;
+        outerWasUsed = outerExpression.type;
         return prefix != null ? StackValue.composed(prefix, outerExpression) : outerExpression;
     }
 

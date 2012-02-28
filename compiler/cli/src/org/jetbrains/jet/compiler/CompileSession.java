@@ -25,18 +25,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
-import org.jetbrains.jet.codegen.ClassFileFactory;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
@@ -190,7 +187,7 @@ public class CompileSession {
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = SimpleDiagnosticFactory.create(Severity.ERROR, message).on(element);
+                    Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
                     errorCollector.report(diagnostic);
                 }
             });
@@ -201,7 +198,7 @@ public class CompileSession {
     public ClassFileFactory generate() {
         Project project = myEnvironment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactory.BINARIES, myFileNameTransformer);
-        generationState.compileCorrectFiles(myBindingContext, mySourceFiles);
+        generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 
         List<CompilerPlugin> fileProcessors = myEnvironment.getCompilerPlugins();

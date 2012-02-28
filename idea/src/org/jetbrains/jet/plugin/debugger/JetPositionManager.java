@@ -34,7 +34,7 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.lang.psi.*;
@@ -154,18 +154,8 @@ public class JetPositionManager implements PositionManager {
         }
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
-        file.acceptChildren(new JetVisitorVoid() {
-            @Override
-            public void visitJetElement(JetElement element) {
-                element.acceptChildren(this);
-            }
-
-            @Override
-            public void visitClass(JetClass klass) {
-                GenerationState.prepareAnonymousClasses(klass, typeMapper);
-            }
-        });
+        ClosureAnnotator closureAnnotator = new ClosureAnnotator(bindingContext, Collections.singleton(file));
+        final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
         myTypeMappers.put(file, typeMapper);
         return typeMapper;
     }

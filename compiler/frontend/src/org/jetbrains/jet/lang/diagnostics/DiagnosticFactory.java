@@ -16,22 +16,30 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 /**
-* @author abreslav
-*/
-public interface DiagnosticFactory {
-    @NotNull
-    List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic);
+ * @author svtk
+ */
+public class DiagnosticFactory<P extends PsiElement> extends DiagnosticFactoryWithPsiElement<P> {
+    protected final String message;
+
+    protected DiagnosticFactory(Severity severity, String message, PositioningStrategy<? super P> positioningStrategy) {
+        super(severity, positioningStrategy);
+        this.message = message;
+    }
+
+    public static <T extends PsiElement> DiagnosticFactory<T> create(Severity severity, String message) {
+        return create(severity, message, PositioningStrategies.DEFAULT);
+    }
+
+    public static <T extends PsiElement> DiagnosticFactory<T> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
+        return new DiagnosticFactory<T>(severity, message, positioningStrategy);
+    }
 
     @NotNull
-    PsiFile getPsiFile(@NotNull Diagnostic diagnostic);
-    
-    @NotNull
-    String getName();
+    public Diagnostic<P> on(@NotNull P element) {
+        return new DiagnosticWithPsiElement<P>(element, this, severity, message);
+    }
 }

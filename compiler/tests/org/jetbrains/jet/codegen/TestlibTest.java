@@ -96,7 +96,8 @@ public class TestlibTest extends CodegenTestCase {
                     new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
-            JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext());
+            ClosureAnnotator closureAnnotator = new ClosureAnnotator(session.getMyBindingContext(), session.getSourceFileNamespaces());
+            JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext(), closureAnnotator);
             TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {

@@ -16,18 +16,22 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameter;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElementImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.types.DeferredType;
+import org.jetbrains.jet.lang.types.JetType;
 
 /**
  * @author svtk
@@ -36,54 +40,12 @@ public class QuickFixUtil {
     private QuickFixUtil() {
     }
 
-    public static <T extends PsiElement, P extends T> JetIntentionActionFactory<PsiElement> createFactoryRedirectingAdditionalInfoToAnotherFactory(final JetIntentionActionFactory<T> factory, final DiagnosticParameter<P> parameter) {
-        return new JetIntentionActionFactory<PsiElement>() {
+    public static <T extends PsiElement> JetIntentionActionFactory createFactoryRedirectingAdditionalInfoToAnotherFactory(final JetIntentionActionFactory factory, final Class<T> aClass) {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<PsiElement> createAction(DiagnosticWithPsiElement diagnostic) {
-
-                DiagnosticWithParameters<PsiElement> diagnosticWithParameters = JetIntentionAction.assertAndCastToDiagnosticWithParameters(diagnostic, parameter);
-                P element = diagnosticWithParameters.getParameter(parameter);
-                return (JetIntentionAction<PsiElement>) factory.createAction(new DiagnosticWithPsiElementImpl<T>(diagnostic.getFactory(), diagnostic.getSeverity(), diagnostic.getMessage(), element));
-            }
-        };
-    }
-
-    public static <T extends PsiElement, P extends T> JetIntentionActionFactory<PsiElement> createFactoryRedirectingAdditionalInfoIfAnyToAnotherFactory(final JetIntentionActionFactory<T> factory, final DiagnosticParameter<P> parameter) {
-        return new JetIntentionActionFactory<PsiElement>() {
-            @Override
-            public JetIntentionAction<PsiElement> createAction(DiagnosticWithPsiElement diagnostic) {
-
-                if (diagnostic instanceof DiagnosticWithParameters && ((DiagnosticWithParameters<PsiElement>) diagnostic).hasParameter(parameter)) {
-                    P element = ((DiagnosticWithParameters<PsiElement>) diagnostic).getParameter(parameter);
-                    return (JetIntentionAction<PsiElement>) factory.createAction(new DiagnosticWithPsiElementImpl<T>(diagnostic.getFactory(), diagnostic.getSeverity(), diagnostic.getMessage(), element));
-                }
-                return createDoNothingAction(diagnostic);
-            }
-        };
-    }
-
-    public static JetIntentionAction<PsiElement> createDoNothingAction(DiagnosticWithPsiElement diagnostic) {
-        return new JetIntentionAction<PsiElement>(diagnostic.getPsiElement()) {
-            @Override
-            public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-                return false;
-            }
-
-            @NotNull
-            @Override
-            public String getText() {
-                throw new UnsupportedOperationException();
-            }
-
-            @NotNull
-            @Override
-            public String getFamilyName() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-                throw new UnsupportedOperationException();
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                T element = getParentElementOfType(diagnostic, aClass);
+                return factory.createAction(new FakeDiagnosticForQuickFixes(element));
             }
         };
     }
@@ -94,5 +56,24 @@ public class QuickFixUtil {
             return true;
         }
         return false;
+    }
+
+    @Nullable
+    public static <T extends PsiElement> T getParentElementOfType(Diagnostic diagnostic, Class<T> aClass) {
+        return PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), aClass, false);
+    }
+
+    @Nullable
+    public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
+        PsiFile file = declaration.getContainingFile();
+        if (!(file instanceof JetFile)) return null;
+        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) file, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+        if (!(descriptor instanceof CallableDescriptor)) return null;
+        JetType type = ((CallableDescriptor) descriptor).getReturnType();
+        if (type instanceof DeferredType) {
+            type = ((DeferredType) type).getActualType();
+        }
+        return type;
     }
 }

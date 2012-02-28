@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDelegationSpecifier;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperClass;
@@ -61,12 +61,14 @@ public class ChangeToInvocationFix extends JetIntentionAction<JetDelegatorToSupe
         element.replace(specifier);
     }
 
-    public static JetIntentionActionFactory<JetDelegatorToSuperClass> createFactory() {
-        return new JetIntentionActionFactory<JetDelegatorToSuperClass>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetDelegatorToSuperClass> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetDelegatorToSuperClass;
-                return new ChangeToInvocationFix((JetDelegatorToSuperClass) diagnostic.getPsiElement());
+            public JetIntentionAction<JetDelegatorToSuperClass> createAction(Diagnostic diagnostic) {
+                if (diagnostic.getPsiElement() instanceof JetDelegatorToSuperClass) {
+                    return new ChangeToInvocationFix((JetDelegatorToSuperClass) diagnostic.getPsiElement());
+                }
+                return null;
             }
         };
     }

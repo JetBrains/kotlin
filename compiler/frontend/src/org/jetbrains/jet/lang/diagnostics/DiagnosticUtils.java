@@ -84,10 +84,10 @@ public class DiagnosticUtils {
         }
     }
 
-    public static String formatPosition(Diagnostic diagnostic) {
-        PsiFile file = diagnostic.getFactory().getPsiFile(diagnostic);
+    public static String formatPosition(Diagnostic<PsiElement> diagnostic) {
+        PsiFile file = diagnostic.getPsiFile();
         Document document = file.getViewProvider().getDocument();
-        TextRange firstRange = diagnostic.getFactory().getTextRanges(diagnostic).iterator().next();
+        TextRange firstRange = diagnostic.getTextRanges().iterator().next();
         int offset = firstRange.getStartOffset();
         if (document != null) {
             int lineNumber = document.getLineNumber(offset);

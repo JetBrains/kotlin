@@ -23,12 +23,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithTextRange;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -72,8 +72,8 @@ public class CheckerTestUtil {
     public static List<Diagnostic> getDiagnosticsIncludingSyntaxErrors(BindingContext bindingContext, PsiElement root) {
         ArrayList<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(bindingContext.getDiagnostics());
-        for (TextRange textRange : AnalyzingUtils.getSyntaxErrorRanges(root)) {
-            diagnostics.add(new SyntaxErrorDiagnostic(textRange, root.getContainingFile()));
+        for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
+            diagnostics.add(new SyntaxErrorDiagnostic(errorElement));
         }
         return diagnostics;
     }
@@ -159,7 +159,7 @@ public class CheckerTestUtil {
 
     private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
         for (Diagnostic diagnostic : actual) {
-            if (!diagnostic.getFactory().getPsiFile(diagnostic).equals(callbacks.getFile())) continue;
+            if (!diagnostic.getPsiFile().equals(callbacks.getFile())) continue;
             List<TextRange> textRanges = getTextRanges(diagnostic);
             for (TextRange textRange : textRanges) {
                 callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
@@ -209,11 +209,11 @@ public class CheckerTestUtil {
         return matcher.replaceAll("");
     }
     
-    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, BindingContext bindingContext, List<TextRange> syntaxErrors) {
+    public static StringBuffer addDiagnosticMarkersToText(PsiFile psiFile, BindingContext bindingContext, List<PsiErrorElement> syntaxErrors) {
         Collection<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
         diagnostics.addAll(bindingContext.getDiagnostics());
-        for (TextRange syntaxError : syntaxErrors) {
-            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError, psiFile));
+        for (PsiErrorElement syntaxError : syntaxErrors) {
+            diagnostics.add(new SyntaxErrorDiagnostic(syntaxError));
         }
 
         return addDiagnosticMarkersToText(psiFile, diagnostics);
@@ -225,7 +225,7 @@ public class CheckerTestUtil {
         diagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
             public boolean apply(@Nullable Diagnostic diagnostic) {
-                if (diagnostic == null || !psiFile.equals(diagnostic.getFactory().getPsiFile(diagnostic))) return false;
+                if (diagnostic == null || !psiFile.equals(diagnostic.getPsiFile())) return false;
                 return true;
             }
         });
@@ -297,20 +297,8 @@ public class CheckerTestUtil {
         result.append("<!>");
     }
 
-    private static class SyntaxErrorDiagnosticFactory implements DiagnosticFactory {
+    private static class SyntaxErrorDiagnosticFactory extends AbstractDiagnosticFactory {
         private static final SyntaxErrorDiagnosticFactory instance = new SyntaxErrorDiagnosticFactory();
-
-        @NotNull
-        @Override
-        public List<TextRange> getTextRanges(@NotNull Diagnostic diagnostic) {
-            return Collections.singletonList(((SyntaxErrorDiagnostic) diagnostic).textRange);
-        }
-
-        @NotNull
-        @Override
-        public PsiFile getPsiFile(@NotNull Diagnostic diagnostic) {
-            return ((SyntaxErrorDiagnostic)diagnostic).getPsiFile();
-        }
 
         @NotNull
         @Override
@@ -319,19 +307,16 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class SyntaxErrorDiagnostic implements DiagnosticWithTextRange {
+    public static class SyntaxErrorDiagnostic implements Diagnostic {
+        private final PsiErrorElement errorElement;
 
-        private final TextRange textRange;
-        private final PsiFile psiFile;
-
-        public SyntaxErrorDiagnostic(@NotNull TextRange textRange, @NotNull PsiFile psiFile) {
-            this.textRange = textRange;
-            this.psiFile = psiFile;
+        public SyntaxErrorDiagnostic(@NotNull PsiErrorElement errorElement) {
+            this.errorElement = errorElement;
         }
 
         @NotNull
         @Override
-        public DiagnosticFactory getFactory() {
+        public AbstractDiagnosticFactory getFactory() {
             return SyntaxErrorDiagnosticFactory.instance;
         }
 
@@ -349,14 +334,20 @@ public class CheckerTestUtil {
 
         @NotNull
         @Override
-        public TextRange getTextRange() {
-            return textRange;
+        public PsiErrorElement getPsiElement() {
+            return errorElement;
+        }
+
+        @NotNull
+        @Override
+        public List<TextRange> getTextRanges() {
+            return Collections.singletonList(errorElement.getTextRange());
         }
 
         @NotNull
         @Override
         public PsiFile getPsiFile() {
-            return psiFile;
+            return errorElement.getContainingFile();
         }
     }
     
@@ -380,7 +371,7 @@ public class CheckerTestUtil {
     }
 
     private static List<TextRange> getTextRanges(Diagnostic currentDiagnostic) {
-        return currentDiagnostic.getFactory().getTextRanges(currentDiagnostic);
+        return currentDiagnostic.getTextRanges();
     }
 
     private static class DiagnosticDescriptor {

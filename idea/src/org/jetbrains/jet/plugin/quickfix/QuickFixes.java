@@ -19,12 +19,9 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticParameters;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.diagnostics.PsiElementOnlyDiagnosticFactory;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
@@ -35,109 +32,107 @@ import java.util.Collection;
 * @author svtk
 */
 public class QuickFixes {
-    private static final Multimap<PsiElementOnlyDiagnosticFactory, JetIntentionActionFactory> jetActionMap = HashMultimap.create();
-    private static final Multimap<DiagnosticFactory, IntentionAction> actionMap = HashMultimap.create();
 
-    public static Collection<JetIntentionActionFactory> get(PsiElementOnlyDiagnosticFactory diagnosticFactory) {
-        return jetActionMap.get(diagnosticFactory);
+    private static final Multimap<AbstractDiagnosticFactory, JetIntentionActionFactory> factories = HashMultimap.create();
+    private static final Multimap<AbstractDiagnosticFactory, IntentionAction> actions = HashMultimap.create();
+
+    public static Collection<JetIntentionActionFactory> getActionFactories(AbstractDiagnosticFactory diagnosticFactory) {
+        return factories.get(diagnosticFactory);
     }
 
-    public static Collection<IntentionAction> get(DiagnosticFactory diagnosticFactory) {
-        return actionMap.get(diagnosticFactory);
+    public static Collection<IntentionAction> getActions(AbstractDiagnosticFactory diagnosticFactory) {
+        return actions.get(diagnosticFactory);
     }
 
     private QuickFixes() {}
 
-    private static <T extends PsiElement> void add(PsiElementOnlyDiagnosticFactory<? extends T> diagnosticFactory, JetIntentionActionFactory<T> actionFactory) {
-        jetActionMap.put(diagnosticFactory, actionFactory);
-    }
-
     static {
-        JetIntentionActionFactory<JetModifierListOwner> removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.ABSTRACT_KEYWORD);
-        JetIntentionActionFactory<JetModifierListOwner> addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD});
+        JetIntentionActionFactory removeAbstractModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.ABSTRACT_KEYWORD);
+        JetIntentionActionFactory addAbstractModifierFactory = AddModifierFix.createFactory(JetTokens.ABSTRACT_KEYWORD, new JetToken[]{JetTokens.OPEN_KEYWORD, JetTokens.FINAL_KEYWORD});
 
-        add(Errors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_PROPERTY_NOT_IN_CLASS, removeAbstractModifierFactory);
-        
-        JetIntentionActionFactory<JetProperty> removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
-        add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_NOT_IN_CLASS, removeAbstractModifierFactory);
 
-        add(Errors.ABSTRACT_PROPERTY_WITH_GETTER, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_PROPERTY_WITH_GETTER, removePartsFromPropertyFactory);
+        JetIntentionActionFactory removePartsFromPropertyFactory = RemovePartsFromPropertyFix.createFactory();
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_INITIALIZER, removePartsFromPropertyFactory);
 
-        add(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removePartsFromPropertyFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_GETTER, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_GETTER, removePartsFromPropertyFactory);
 
-        add(Errors.PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_WITH_SETTER, removePartsFromPropertyFactory);
 
-        add(Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
+        factories.put(Errors.PROPERTY_INITIALIZER_IN_TRAIT, removePartsFromPropertyFactory);
 
-        JetIntentionActionFactory<PsiElement> addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, DiagnosticParameters.CLASS);
-        add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
+        factories.put(Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, addAbstractModifierFactory);
 
-        JetIntentionActionFactory<JetFunction> removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
-        add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
+        JetIntentionActionFactory addAbstractToClassFactory = QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addAbstractModifierFactory, JetClass.class);
+        factories.put(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
-        add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
-        add(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
+        JetIntentionActionFactory removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory();
+        factories.put(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, addAbstractToClassFactory);
 
-        JetIntentionActionFactory<JetFunction> addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
-        add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
-        add(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
+        factories.put(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeAbstractModifierFactory);
+        factories.put(Errors.ABSTRACT_FUNCTION_WITH_BODY, removeFunctionBodyFactory);
 
-        add(Errors.NON_MEMBER_ABSTRACT_FUNCTION, removeAbstractModifierFactory);
-        add(Errors.NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
+        JetIntentionActionFactory addFunctionBodyFactory = AddFunctionBodyFix.createFactory();
+        factories.put(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addAbstractModifierFactory);
+        factories.put(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, addFunctionBodyFactory);
 
-        add(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListFactory(JetTokens.OVERRIDE_KEYWORD));
-        add(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
+        factories.put(Errors.NON_MEMBER_ABSTRACT_FUNCTION, removeAbstractModifierFactory);
+        factories.put(Errors.NON_MEMBER_FUNCTION_NO_BODY, addFunctionBodyFactory);
 
-        add(Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
-        add(Errors.USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
+        factories.put(Errors.NOTHING_TO_OVERRIDE, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OVERRIDE_KEYWORD));
+        factories.put(Errors.VIRTUAL_MEMBER_HIDDEN, AddModifierFix.createFactory(JetTokens.OVERRIDE_KEYWORD, new JetToken[] {JetTokens.OPEN_KEYWORD}));
 
-        JetIntentionActionFactory<JetPropertyAccessor> changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
-        add(Errors.WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
-        add(Errors.WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
+        factories.put(Errors.USELESS_CAST_STATIC_ASSERT_IS_FINE, ReplaceOperationInBinaryExpressionFix.createChangeCastToStaticAssertFactory());
+        factories.put(Errors.USELESS_CAST, RemoveRightPartOfBinaryExpressionFix.createRemoveCastFactory());
 
-        add(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
+        JetIntentionActionFactory changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory();
+        factories.put(Errors.WRONG_SETTER_PARAMETER_TYPE, changeAccessorTypeFactory);
+        factories.put(Errors.WRONG_GETTER_RETURN_TYPE, changeAccessorTypeFactory);
 
-        JetIntentionActionFactory<JetModifierList> removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory(true);
-        add(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
-        add(Errors.REDUNDANT_MODIFIER_IN_TRAIT, removeRedundantModifierFactory);
-        add(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.FINAL_KEYWORD));
+        factories.put(Errors.USELESS_ELVIS, RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory());
 
-        JetIntentionActionFactory<JetModifierListOwner> addOpenModifierFactory = AddModifierFix.createFactory(JetTokens.OPEN_KEYWORD, new JetToken[]{JetTokens.FINAL_KEYWORD});
-        JetIntentionActionFactory<JetModifierListOwner> removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OPEN_KEYWORD);
-        add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, DiagnosticParameters.CLASS));
-        add(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
+        JetIntentionActionFactory removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true);
+        factories.put(Errors.REDUNDANT_MODIFIER, removeRedundantModifierFactory);
+        factories.put(Errors.ABSTRACT_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.ABSTRACT_KEYWORD, true));
+        factories.put(Errors.OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OPEN_KEYWORD, true));
+        factories.put(Errors.TRAIT_CAN_NOT_BE_FINAL, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.FINAL_KEYWORD));
 
-        JetIntentionActionFactory<JetModifierList> removeModifierFactory = RemoveModifierFix.createRemoveModifierFromListFactory();
-        add(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
-        add(Errors.REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
-        add(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
+        JetIntentionActionFactory addOpenModifierFactory = AddModifierFix.createFactory(JetTokens.OPEN_KEYWORD, new JetToken[]{JetTokens.FINAL_KEYWORD});
+        JetIntentionActionFactory removeOpenModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(JetTokens.OPEN_KEYWORD);
+        factories.put(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, QuickFixUtil.createFactoryRedirectingAdditionalInfoToAnotherFactory(addOpenModifierFactory, JetClass.class));
+        factories.put(Errors.NON_FINAL_MEMBER_IN_FINAL_CLASS, removeOpenModifierFactory);
 
-        add(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
+        JetIntentionActionFactory removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory();
+        factories.put(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, removeModifierFactory);
+        factories.put(Errors.REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
+        factories.put(Errors.ILLEGAL_MODIFIER, removeModifierFactory);
 
-        JetIntentionActionFactory<JetSimpleNameExpression> changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
-        add(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
-        add(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
+        factories.put(Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
 
-        JetIntentionActionFactory<JetSimpleNameExpression> unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
-        add(Errors.UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
+        JetIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
+        factories.put(Errors.INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
+        factories.put(Errors.INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
 
-        add(Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToInvocationFix.createFactory());
-        
+        JetIntentionActionFactory unresolvedReferenceFactory = ImportClassAndFunFix.createFactory();
+        factories.put(Errors.UNRESOLVED_REFERENCE, unresolvedReferenceFactory);
+
+        factories.put(Errors.SUPERTYPE_NOT_INITIALIZED_DEFAULT, ChangeToInvocationFix.createFactory());
+
         ImplementMethodsHandler implementMethodsHandler = new ImplementMethodsHandler();
-        actionMap.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
-        actionMap.put(Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
+        actions.put(Errors.ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
+        actions.put(Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
 
         ChangeVariableMutabilityFix changeVariableMutabilityFix = new ChangeVariableMutabilityFix();
-        actionMap.put(Errors.VAL_WITH_SETTER, changeVariableMutabilityFix);
-        actionMap.put(Errors.VAL_REASSIGNMENT, changeVariableMutabilityFix);
+        actions.put(Errors.VAL_WITH_SETTER, changeVariableMutabilityFix);
+        actions.put(Errors.VAL_REASSIGNMENT, changeVariableMutabilityFix);
 
-        actionMap.put(Errors.UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
-        actionMap.put(Errors.UNSAFE_CALL, new ReplaceCallFix(true));
+        actions.put(Errors.UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
+        actions.put(Errors.UNSAFE_CALL, new ReplaceCallFix(true));
     }
 }

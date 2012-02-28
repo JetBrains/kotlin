@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.objectweb.asm.Type;
@@ -33,10 +32,10 @@ public class ConstructorFrameMap extends FrameMap {
     private int myOuterThisIndex = -1;
     private int myTypeInfoIndex  = -1;
 
-    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, ClassDescriptor classDescriptor, OwnerKind kind) {
+    public ConstructorFrameMap(CallableMethod callableMethod, @Nullable ConstructorDescriptor descriptor, boolean hasThis0) {
         enterTemp(); // this
         if (descriptor != null) {
-            if (CodegenUtil.hasThis0(classDescriptor)) {
+            if (hasThis0) {
                 myOuterThisIndex = enterTemp();   // outer class instance
             }
         }

@@ -43,7 +43,9 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -184,8 +186,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         };
         
         List<JetFile> files = Collections.singletonList(file);
-        final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(files);
-        state.compileCorrectFiles(context, files);
+//todo:
+//        final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(files);
+        final BindingContext context = AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
+        state.compileCorrectFiles(context, files, CompilationErrorHandler.THROW_EXCEPTION, true);
         state.getFactory().files();
 
         return answer;

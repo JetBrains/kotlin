@@ -38,6 +38,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -203,7 +204,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         try {
             BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
             AnalyzingUtils.throwExceptionOnErrors(binding);
-            state.compileCorrectFiles(binding, Collections.singletonList(file));
+            state.compileCorrectFiles(binding, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
         } catch (Exception e) {
             StringWriter out = new StringWriter(1024);
             e.printStackTrace(new PrintWriter(out));

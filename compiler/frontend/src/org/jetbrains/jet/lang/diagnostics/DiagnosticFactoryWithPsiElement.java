@@ -16,18 +16,24 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 
-/**
- * @author svtk
- */
-public class SimplePsiElementOnlyDiagnosticFactory<T extends PsiElement> extends SimpleDiagnosticFactoryWithPsiElement<T> implements PsiElementOnlyDiagnosticFactory<T> {
+import java.util.List;
 
-    public static <T extends PsiElement> SimplePsiElementOnlyDiagnosticFactory<T> create(Severity severity, String message) {
-        return new SimplePsiElementOnlyDiagnosticFactory<T>(severity, message);
+/**
+ * @author abreslav
+ */
+public abstract class DiagnosticFactoryWithPsiElement<P extends PsiElement> extends AbstractDiagnosticFactory {
+    protected final Severity severity;
+    protected final PositioningStrategy<? super P> positioningStrategy;
+
+    public DiagnosticFactoryWithPsiElement(Severity severity, PositioningStrategy<? super P> positioningStrategy) {
+        this.severity = severity;
+        this.positioningStrategy = positioningStrategy;
     }
 
-    protected SimplePsiElementOnlyDiagnosticFactory(Severity severity, String message) {
-        super(severity, message);
+    protected List<TextRange> getTextRanges(Diagnostic<P> diagnostic) {
+        return positioningStrategy.mark(diagnostic.getPsiElement());
     }
 }

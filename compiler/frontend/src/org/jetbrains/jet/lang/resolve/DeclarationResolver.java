@@ -189,8 +189,7 @@ public class DeclarationResolver {
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetSecondaryConstructor constructor) {
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
-//            context.getTrace().getErrorHandler().genericError(constructor.getNameNode(), "A trait may not have a constructor");
-            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode()));
+            context.getTrace().report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode().getPsi()));
         }
         ConstructorDescriptor constructorDescriptor = context.getDescriptorResolver().resolveSecondaryConstructorDescriptor(
                 classDescriptor.getScopeForMemberResolution(),

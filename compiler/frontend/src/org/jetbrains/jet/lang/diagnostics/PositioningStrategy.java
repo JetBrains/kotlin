@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,32 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
-* @author abreslav
+* @author svtk
 */
-public class SimpleDiagnosticFactory extends SimpleDiagnosticFactoryWithPsiElement<PsiElement> {
-    public static SimpleDiagnosticFactory create(Severity severity, String message) {
-        return new SimpleDiagnosticFactory(severity, message);
-    }
-
-    protected SimpleDiagnosticFactory(Severity severity, String message) {
-        super(severity, message);
+public class PositioningStrategy<P extends PsiElement> {
+    @NotNull
+    public List<TextRange> mark(@NotNull P element) {
+        return markElement(element);
     }
 
     @NotNull
-    public Diagnostic on(@NotNull PsiFile psiFile, @NotNull TextRange range) {
-        return new GenericDiagnostic(this, severity, message, psiFile, range);
+    protected static List<TextRange> markElement(@NotNull PsiElement element) {
+        return Collections.singletonList(element.getTextRange());
     }
 
     @NotNull
-    public Diagnostic on(@NotNull ASTNode node) {
-        return on(DiagnosticUtils.getContainingFile(node), node.getTextRange());
+    protected static List<TextRange> markNode(@NotNull ASTNode node) {
+        return Collections.singletonList(node.getTextRange());
+    }
+
+    @NotNull
+    protected static List<TextRange> markRange(@NotNull TextRange range) {
+        return Collections.singletonList(range);
     }
 }

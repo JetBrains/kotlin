@@ -59,21 +59,6 @@ public class CodegenUtil {
         return false;
     }
 
-    public static boolean hasThis0(ClassDescriptor classDescriptor) {
-        return getOuterClassDescriptor(classDescriptor) != null && !isClassObject(classDescriptor);
-    }
-
-    public static ClassDescriptor getOuterClassDescriptor(DeclarationDescriptor descriptor) {
-        DeclarationDescriptor outerDescriptor = descriptor.getContainingDeclaration();
-        while(outerDescriptor != null) {
-            if(outerDescriptor instanceof ClassDescriptor)
-                break;
-
-            outerDescriptor = outerDescriptor.getContainingDeclaration();
-        }
-        return (ClassDescriptor) outerDescriptor;
-    }
-
     public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
         SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(

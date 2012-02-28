@@ -31,6 +31,11 @@ public class ObjectGenTest extends CodegenTestCase {
 //        System.out.println(generateToText());
     }
 
+    public void testObjectLiteralInClosure() throws Exception {
+        blackBoxFile("objects/objectLiteralInClosure.jet");
+//        System.out.println(generateToText());
+    }
+
     public void testMethodOnObject() throws Exception {
         blackBoxFile("objects/methodOnObject.jet");
     }

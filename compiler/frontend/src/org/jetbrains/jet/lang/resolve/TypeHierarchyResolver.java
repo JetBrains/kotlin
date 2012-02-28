@@ -368,7 +368,7 @@ public class TypeHierarchyResolver {
             ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
             PsiElement psiElement = context.getTrace().get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
 
-            ASTNode node = null;
+            PsiElement elementToMark = null;
             if (psiElement instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
                 for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
@@ -376,19 +376,19 @@ public class TypeHierarchyResolver {
                     if (typeReference == null) continue;
                     JetType supertype = context.getTrace().get(TYPE, typeReference);
                     if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
-                        node = typeReference.getNode();
+                        elementToMark = typeReference;
                     }
                 }
             }
-            if (node == null && psiElement instanceof PsiNameIdentifierOwner) {
+            if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
                 PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
                 PsiElement nameIdentifier = namedElement.getNameIdentifier();
                 if (nameIdentifier != null) {
-                    node = nameIdentifier.getNode();
+                    elementToMark = nameIdentifier;
                 }
             }
-            if (node != null) {
-                context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(node));
+            if (elementToMark != null) {
+                context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
             }
         }
     }

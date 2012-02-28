@@ -18,11 +18,14 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -67,12 +70,15 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
         element.replace(newElement);
     }
     
-    public static JetIntentionActionFactory<JetFunction> createFactory() {
-        return new JetIntentionActionFactory<JetFunction>() {
+    public static JetIntentionActionFactory createFactory() {
+        return new JetIntentionActionFactory() {
+            @Nullable
             @Override
-            public JetIntentionAction<JetFunction> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetFunction;
-                return new AddFunctionBodyFix((JetFunction) diagnostic.getPsiElement());
+            public JetIntentionAction createAction(Diagnostic diagnostic) {
+                PsiElement element = diagnostic.getPsiElement();
+                JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class, false);
+                if (function == null) return null;
+                return new AddFunctionBodyFix(function);
             }
         };
     }

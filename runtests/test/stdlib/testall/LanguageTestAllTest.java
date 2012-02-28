@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package stdlib.testall;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import junit.framework.TestSuite;
+import test.language.*;
 
 /**
- * @author abreslav
  */
-public interface DiagnosticWithTextRange extends Diagnostic {
-    @NotNull
-    TextRange getTextRange();
-
-    @NotNull
-    PsiFile getPsiFile();
-
+public class LanguageTestAllTest {
+  public static TestSuite suite() {
+    return new TestSuite(NullableCollectionsTest.class);
+  }
 }

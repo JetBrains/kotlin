@@ -16,23 +16,38 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 
 /**
-* @author abreslav
-*/
-public class UnresolvedReferenceDiagnostic extends DiagnosticWithPsiElementImpl<JetReferenceExpression> {
+ * @author abreslav
+ */
+public class UnresolvedReferenceDiagnostic extends AbstractDiagnostic<JetReferenceExpression> {
 
     public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression, String message) {
-        super(Errors.UNRESOLVED_REFERENCE, ERROR, message, referenceExpression);
+        super(referenceExpression, Errors.UNRESOLVED_REFERENCE, ERROR, message);
     }
 
     @NotNull
     @Override
     public String getMessage() {
         return super.getMessage() + ": " + getPsiElement().getText();
+    }
+
+    @NotNull
+    @Override
+    public List<TextRange> getTextRanges() {
+        JetReferenceExpression element = getPsiElement();
+        if (element instanceof JetArrayAccessExpression) {
+            return ((JetArrayAccessExpression) element).getBracketRanges();
+        }
+        return Collections.singletonList(element.getTextRange());
     }
 }

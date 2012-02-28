@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
@@ -120,17 +120,14 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         return true;
     }
 
-    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced) {
-        return new JetIntentionActionFactory<JetModifierListOwner>() {
+    public static JetIntentionActionFactory createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced) {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetModifierListOwner;
-                return new AddModifierFix((JetModifierListOwner) diagnostic.getPsiElement(), modifier, modifiersThatCanBeReplaced);
+            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+                if (modifierListOwner == null) return null;
+                return new AddModifierFix(modifierListOwner, modifier, modifiersThatCanBeReplaced);
             }
         };
-    }
-    
-    public static JetIntentionActionFactory<JetModifierListOwner> createFactory(final JetKeywordToken modifier) {
-        return createFactory(modifier, new JetToken[0]);
     }
 }

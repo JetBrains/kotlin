@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithPsiElement;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -30,9 +30,16 @@ import org.jetbrains.jet.plugin.JetBundle;
 /**
  * @author svtk
  */
-public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
-    public RemoveRightPartOfBinaryExpressionFix(@NotNull T element) {
+public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
+    private final String message;
+    
+    public RemoveRightPartOfBinaryExpressionFix(@NotNull T element, String message) {
         super(element);
+        this.message = message;
+    }
+
+    public String getText() {
+        return message;
     }
 
     @NotNull
@@ -53,34 +60,24 @@ public abstract class RemoveRightPartOfBinaryExpressionFix<T extends JetExpressi
         }
     }
 
-    public static JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS> createRemoveCastFactory() {
-        return new JetIntentionActionFactory<JetBinaryExpressionWithTypeRHS>() {
+    public static JetIntentionActionFactory createRemoveCastFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetBinaryExpressionWithTypeRHS;
-                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>((JetBinaryExpressionWithTypeRHS) diagnostic.getPsiElement()) {
-                    @NotNull
-                    @Override
-                    public String getText() {
-                        return JetBundle.message("remove.cast");
-                    }
-                };
+            public JetIntentionAction<JetBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
+                JetBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpressionWithTypeRHS.class);
+                if (expression == null) return null;
+                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpressionWithTypeRHS>(expression, JetBundle.message("remove.cast"));
             }
         };
     }
 
-    public static JetIntentionActionFactory<JetBinaryExpression> createRemoveElvisOperatorFactory() {
-        return new JetIntentionActionFactory<JetBinaryExpression>() {
+    public static JetIntentionActionFactory createRemoveElvisOperatorFactory() {
+        return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetBinaryExpression> createAction(DiagnosticWithPsiElement diagnostic) {
-                assert diagnostic.getPsiElement() instanceof JetBinaryExpression;
-                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>((JetBinaryExpression) diagnostic.getPsiElement()) {
-                    @NotNull
-                    @Override
-                    public String getText() {
-                        return JetBundle.message("remove.elvis.operator");
-                    }
-                };
+            public JetIntentionAction<JetBinaryExpression> createAction(Diagnostic diagnostic) {
+                JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
+                if (expression == null) return null;
+                return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>(expression, JetBundle.message("remove.elvis.operator"));
             }
         };
     }

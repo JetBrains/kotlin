@@ -151,7 +151,7 @@ public class CallResolver {
         }
         else {
             JetValueArgumentList valueArgumentList = call.getValueArgumentList();
-            ASTNode reportAbsenceOn = valueArgumentList == null ? call.getCallNode() : valueArgumentList.getNode();
+            PsiElement reportAbsenceOn = valueArgumentList == null ? call.getCallElement() : valueArgumentList;
             if (calleeExpression instanceof JetConstructorCalleeExpression) {
                 assert !call.getExplicitReceiver().exists();
 
@@ -336,7 +336,7 @@ public class CallResolver {
 
             @Override
             public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {
-                trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallNode(), descriptors));
+                trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallElement(), descriptors));
             }
 
             @Override
@@ -346,20 +346,20 @@ public class CallResolver {
 
             @Override
             public void instantiationOfAbstractClass(@NotNull BindingTrace trace) {
-                trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallNode()));
+                trace.report(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS.on(call.getCallElement()));
             }
 
             @Override
             public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {
                 assert !status.isSuccessful();
-                trace.report(TYPE_INFERENCE_FAILED.on(call.getCallNode(), status));
+                trace.report(TYPE_INFERENCE_FAILED.on(call.getCallElement(), status));
             }
 
             @Override
             public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
                 ASTNode callOperationNode = call.getCallOperationNode();
                 if (callOperationNode != null) {
-                    trace.report(UNSAFE_CALL.on(callOperationNode, type));
+                    trace.report(UNSAFE_CALL.on(callOperationNode.getPsi(), type));
                 }
                 else {
                     PsiElement callElement = call.getCallElement();
@@ -382,9 +382,7 @@ public class CallResolver {
             public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
                 ASTNode callOperationNode = call.getCallOperationNode();
                 assert callOperationNode != null;
-                PsiElement callElement = call.getCallElement();
-                assert callElement != null;
-                trace.report(UNNECESSARY_SAFE_CALL.on((JetElement) callOperationNode.getTreeParent().getPsi(), callOperationNode, type));
+                trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
             }
 
             @Override

@@ -30,7 +30,7 @@ import java.util.Map;
  * @author alex.tkachman
  */
 public class ObjectOrClosureCodegen {
-    protected boolean captureThis;
+    protected Type captureThis;
     protected Type captureReceiver;
 
     public final GenerationState state;
@@ -83,7 +83,7 @@ public class ObjectOrClosureCodegen {
             if (idx < 0) return null;
 
             JetElement expression = (JetElement) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
-            String cn = state.getTypeMapper().classNameForAnonymousClass(expression);
+            String cn = state.getTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
             Type localType = Type.getObjectType(cn);
 
             StackValue outerValue = StackValue.local(idx, localType);
@@ -131,6 +131,6 @@ public class ObjectOrClosureCodegen {
     }
 
     public boolean isConst () {
-        return !captureThis && captureReceiver != null && closure.isEmpty();
+        return captureThis == null && captureReceiver == null && closure.isEmpty();
     }
 }
