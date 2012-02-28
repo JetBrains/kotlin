@@ -109,7 +109,7 @@ public class StubClassBuilder extends ClassBuilder {
     }
 
     @Override
-    public boolean generateCode() {
-        return false;
+    public Mode generateCode() {
+        return Mode.SIGNATURES;
     }
 }

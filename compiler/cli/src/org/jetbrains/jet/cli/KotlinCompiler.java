@@ -69,8 +69,8 @@ public class KotlinCompiler {
         @Argument(value = "help", alias = "h", description = "show help")
         public boolean help;
 
-        @Argument(value = "ignoreErrors", description = "Emit byte code even if there are compilation errors (not recommended)")
-        public boolean ignoreErrors;
+        @Argument(value = "stubs", description = "Compile stubs: ignore function bodies")
+        public boolean stubs;
 
         @Argument(value = "transformNamesToJava", description = "Transform Kotlin file names to *.java. This option is needed for compiling kotlinized Java library headers")
         public boolean transformNamesToJava;
@@ -119,14 +119,10 @@ public class KotlinCompiler {
 
         CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
         try {
-            environment.setIgnoreErrors(arguments.ignoreErrors);
-            if (arguments.ignoreErrors) {
-                // To avoid outputting error messages
-                environment.setErrorStream(new PrintStream(new ByteArrayOutputStream()));
-            }
-            else {
-                environment.setErrorStream(errStream);
-            }
+            environment.setIgnoreErrors(false);
+            environment.setErrorStream(errStream);
+
+            environment.setStubs(arguments.stubs);
 
             if (arguments.docOutputDir != null) {
                 KDocLoader factory = new KDocLoader(arguments.docOutputDir);

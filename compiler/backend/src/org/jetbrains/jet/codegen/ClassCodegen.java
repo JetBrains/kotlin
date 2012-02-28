@@ -40,7 +40,7 @@ public class ClassCodegen {
 
         final CodegenContext contextForInners = context.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state.getTypeMapper());
 
-        if (!classBuilder.generateCode()) {
+        if (classBuilder.generateCode() == ClassBuilder.Mode.SIGNATURES) {
             // Outer class implementation must happen prior inner classes so we get proper scoping tree in JetLightClass's delegate
             generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
         }
@@ -54,7 +54,7 @@ public class ClassCodegen {
             }
         }
 
-        if (classBuilder.generateCode()) {
+        if (classBuilder.generateCode() != ClassBuilder.Mode.SIGNATURES) {
             generateImplementation(context, aClass, OwnerKind.IMPLEMENTATION, contextForInners.accessors, classBuilder);
         }
         

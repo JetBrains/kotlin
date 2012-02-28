@@ -36,6 +36,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Alarm;
+import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
@@ -200,7 +201,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
     }
 
     protected String generateToText(JetFile file) {
-        GenerationState state = new GenerationState(myProject, ClassBuilderFactory.TEXT);
+        GenerationState state = new GenerationState(myProject, ClassBuilderFactories.TEXT);
         try {
             BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
             AnalyzingUtils.throwExceptionOnErrors(binding);
