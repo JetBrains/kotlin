@@ -26,7 +26,10 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.intrinsic.array.*;
+import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArraySizeIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.CharAtIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
@@ -94,9 +97,8 @@ public final class Intrinsics {
     }
 
     private void declareNullConstructorIntrinsic() {
-        //TODO:
         FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("Array").iterator().next();
-        functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
+        functionIntrinsics.put(nullArrayConstructor, new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 
     //TODO: some dangerous operation unchecked here
@@ -109,12 +111,12 @@ public final class Intrinsics {
         PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, "size");
         functionIntrinsics.put(sizeProperty.getGetter(), ArraySizeIntrinsic.INSTANCE);
         PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
-        functionIntrinsics.put(indicesProperty.getGetter(), ArrayIndicesIntrinsic.INSTANCE);
+        functionIntrinsics.put(indicesProperty.getGetter(), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
         FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
-        functionIntrinsics.put(iteratorFunction, ArrayIteratorIntrinsic.INSTANCE);
+        functionIntrinsics.put(iteratorFunction, new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
         ConstructorDescriptor arrayConstructor =
                 ((ClassDescriptor) arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
-        functionIntrinsics.put(arrayConstructor, ArrayFunctionConstructorIntrinsic.INSTANCE);
+        functionIntrinsics.put(arrayConstructor, new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
     }
 
     private List<JetType> getLibraryArrayTypes() {

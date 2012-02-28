@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.intrinsic.array;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
@@ -31,20 +32,42 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 /**
  * @author Pavel Talanov
  */
-public enum ArrayFunctionConstructorIntrinsic implements FunctionIntrinsic {
+public final class CallStandardMethodIntrinsic implements FunctionIntrinsic {
 
-    INSTANCE;
+    @NotNull
+    private final String methodName;
 
+    private final boolean receiverShouldBeNotNull;
+    private final int expectedParamsNumber;
+
+    public CallStandardMethodIntrinsic(@NotNull String methodName, boolean receiverShouldBeNotNull, int expectedParamsNumber) {
+        this.methodName = methodName;
+        this.receiverShouldBeNotNull = receiverShouldBeNotNull;
+        this.expectedParamsNumber = expectedParamsNumber;
+    }
 
     @NotNull
     @Override
     public JsExpression apply(@Nullable JsExpression receiver,
                               @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
-        assert receiver == null;
-        assert arguments.size() == 2;
-        //TODO: provide better mechanism
-        JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef("Kotlin.arrayFromFun");
-        return newInvocation(iteratorFunName, arguments);
+        assert (receiver != null == receiverShouldBeNotNull);
+        assert arguments.size() == expectedParamsNumber;
+        List<JsExpression> args = composeArguments(receiver, arguments);
+        JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef(methodName);
+        return newInvocation(iteratorFunName, composeArguments(receiver, arguments));
+    }
+
+    @NotNull
+    private static List<JsExpression> composeArguments(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments) {
+        if (receiver != null) {
+            List<JsExpression> args = Lists.newArrayList();
+            args.add(receiver);
+            args.addAll(arguments);
+            return args;
+        }
+        else {
+            return arguments;
+        }
     }
 }
