@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
@@ -70,7 +70,10 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        JsExpression length = LengthIntrinsic.INSTANCE.apply(loopRange.reference(), Collections.<JsExpression>emptyList(), context());
+        FunctionIntrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
+        JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
+                                                            Collections.<JsExpression>emptyList(),
+                                                            context());
         end = context().declareTemporary(length);
         index = context().declareTemporary(program().getNumberLiteral(0));
     }

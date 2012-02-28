@@ -28,11 +28,10 @@ import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.array.ArraySizeIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.BuiltInPropertyIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.CharAtIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
@@ -64,6 +63,9 @@ public final class Intrinsics {
     private final Map<FunctionDescriptor, CompareToIntrinsic> compareToIntrinsics =
             new HashMap<FunctionDescriptor, CompareToIntrinsic>();
 
+    @NotNull
+    private final FunctionIntrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
+
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
     }
@@ -77,6 +79,11 @@ public final class Intrinsics {
         declareStringIntrinsics();
         declareTuplesIntrinsics();
         declareArrayIntrinsics();
+    }
+
+    @NotNull
+    public FunctionIntrinsic getLengthPropertyIntrinsic() {
+        return lengthPropertyIntrinsic;
     }
 
     private void declareTuplesIntrinsics() {
@@ -109,7 +116,8 @@ public final class Intrinsics {
         FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
         functionIntrinsics.put(getFunction, ArrayGetIntrinsic.INSTANCE);
         PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, "size");
-        functionIntrinsics.put(sizeProperty.getGetter(), ArraySizeIntrinsic.INSTANCE);
+        functionIntrinsics.put(sizeProperty.getGetter(), lengthPropertyIntrinsic);
+        //TODO: excessive object creation
         PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
         functionIntrinsics.put(indicesProperty.getGetter(), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
         FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
@@ -139,7 +147,7 @@ public final class Intrinsics {
     private void declareStringIntrinsics() {
         PropertyDescriptor lengthProperty =
                 getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), "length");
-        functionIntrinsics.put(lengthProperty.getGetter(), LengthIntrinsic.INSTANCE);
+        functionIntrinsics.put(lengthProperty.getGetter(), new BuiltInPropertyIntrinsic("length"));
         FunctionDescriptor getFunction =
                 getFunctionByName(library.getString().getDefaultType().getMemberScope(), "get");
         functionIntrinsics.put(getFunction, CharAtIntrinsic.INSTANCE);
