@@ -30,16 +30,16 @@ public final class ObjectTest extends TranslationTest {
 
 
     public void testObjectWithMethods() throws Exception {
-        testFooBoxIsTrue("objectWithMethods.kt");
+        checkFooBoxIsTrue("objectWithMethods.kt");
     }
 
 
     public void testObjectDeclaration() throws Exception {
-        testFooBoxIsTrue("objectDeclaration.kt");
+        checkFooBoxIsTrue("objectDeclaration.kt");
     }
 
 
     public void testObjectInMethod() throws Exception {
-        testFooBoxIsTrue("objectInMethod.kt");
+        checkFooBoxIsTrue("objectInMethod.kt");
     }
 }

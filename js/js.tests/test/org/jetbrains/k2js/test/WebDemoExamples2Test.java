@@ -29,22 +29,22 @@ public final class WebDemoExamples2Test extends TranslationTest {
     }
 
     public void testBottles() throws Exception {
-        testWithMain("bottles", "2", "2");
-        testWithMain("bottles", "");
+        performTestWithMain("bottles", "2", "2");
+        performTestWithMain("bottles", "");
     }
 
     public void testLife() throws Exception {
-        testWithMain("life", "", "2");
+        performTestWithMain("life", "", "2");
     }
 
     public void testBuilder() throws Exception {
-        testWithMain("builder", "");
-        testWithMain("builder", "1", "over9000");
+        performTestWithMain("builder", "");
+        performTestWithMain("builder", "1", "over9000");
     }
 
     //TODO: comparator LinkedList dependencies
 //    @Test
 //    public void maze() throws Exception {
-//        testWithMain("maze", "");
+//        performTestWithMain("maze", "");
 //    }
 }

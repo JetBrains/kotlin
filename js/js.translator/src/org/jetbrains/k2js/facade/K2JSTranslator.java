@@ -61,8 +61,11 @@ public final class K2JSTranslator {
         }
         String callToMain = translator.generateCallToMain(fileWithMain, "");
         FileWriter writer = new FileWriter(new File(outputPath));
-        writer.write(programCode + callToMain);
-        writer.close();
+        try {
+            writer.write(programCode + callToMain);
+        } finally {
+            writer.close();
+        }
     }
 
     public static void saveProgramToFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
@@ -79,6 +82,8 @@ public final class K2JSTranslator {
     }
 
     //TODO: refactor
+    //TODO: web demo related method
+    @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
@@ -103,6 +108,8 @@ public final class K2JSTranslator {
         return generator.generateToString(program);
     }
 
+    //TODO: relates to web demo
+    @SuppressWarnings("UnusedDeclaration")
     @NotNull
     public BindingContext analyzeProgramCode(@NotNull String programText) {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
@@ -126,7 +133,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private List<String> parseString(@NotNull String argumentString) {
+    private static List<String> parseString(@NotNull String argumentString) {
         List<String> result = new ArrayList<String>();
         StringTokenizer stringTokenizer = new StringTokenizer(argumentString);
         while (stringTokenizer.hasMoreTokens()) {

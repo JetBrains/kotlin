@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.facade.K2JSTranslator;
@@ -27,9 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -158,13 +156,17 @@ public abstract class TranslationTest extends BaseTest {
         return getExpectedPath() + testName + ".out";
     }
 
-    protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
+    protected static void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
         FileReader reader = new FileReader(inputFile);
-        context.evaluateReader(scope, reader, inputFile, 1, null);
-        reader.close();
+        try {
+            context.evaluateReader(scope, reader, inputFile, 1, null);
+        } finally {
+            reader.close();
+        }
     }
 
-    protected void runRhinoTest(List<String> fileNames, RhinoResultChecker checker) throws Exception {
+    protected static void runRhinoTest(@NotNull List<String> fileNames,
+                                       @NotNull RhinoResultChecker checker) throws Exception {
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects();
         for (String filename : fileNames) {
@@ -174,11 +176,11 @@ public abstract class TranslationTest extends BaseTest {
         Context.exit();
     }
 
-    public void testFooBoxIsTrue(String filename) throws Exception {
+    public void checkFooBoxIsTrue(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", true);
     }
 
-    public void testFooBoxIsOk(String filename) throws Exception {
+    public void checkFooBoxIsOk(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", "OK");
     }
 
@@ -188,21 +190,16 @@ public abstract class TranslationTest extends BaseTest {
                      new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
 
-    protected void testWithMain(String testName, String testId, String... args) throws Exception {
+    protected void performTestWithMain(String testName, String testId, String... args) throws Exception {
         checkOutput(testName + ".kt", readFile(expected(testName + testId)), args);
     }
 
     private static String readFile(String path) throws IOException {
         FileInputStream stream = new FileInputStream(new File(path));
         try {
-            FileChannel fc = stream.getChannel();
-            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            /* Instead of using default, pass in a decoder. */
-            return Charset.defaultCharset().decode(bb).toString();
+            return FileUtil.loadTextAndClose(stream);
         } finally {
             stream.close();
         }
     }
-
-
 }

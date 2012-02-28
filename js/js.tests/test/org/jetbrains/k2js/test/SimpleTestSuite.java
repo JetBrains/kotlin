@@ -29,7 +29,7 @@ public final class SimpleTestSuite extends UsefulTestCase {
         return Suite.suiteForDirectory("simple/", new Suite.SingleFileTester() {
             @Override
             public void performTest(@NotNull Suite test, @NotNull String filename) throws Exception {
-                test.testFooBoxIsTrue(filename);
+                test.checkFooBoxIsTrue(filename);
             }
         });
     }

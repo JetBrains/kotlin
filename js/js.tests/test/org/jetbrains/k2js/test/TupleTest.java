@@ -29,11 +29,11 @@ public final class TupleTest extends TranslationTest {
     }
 
     public void testTwoElements() throws Exception {
-        testFooBoxIsTrue("twoElements.kt");
+        checkFooBoxIsTrue("twoElements.kt");
     }
 
     public void testMultipleMembers() throws Exception {
-        testFooBoxIsTrue("multipleMembers.kt");
+        checkFooBoxIsTrue("multipleMembers.kt");
     }
 
 

@@ -29,38 +29,38 @@ public class StandardClassesTest extends TranslationTest {
 
 
     public void testArray() throws Exception {
-        testFooBoxIsTrue("array.kt");
+        checkFooBoxIsTrue("array.kt");
     }
 
 
     public void testArrayAccess() throws Exception {
-        testFooBoxIsTrue("arrayAccess.kt");
+        checkFooBoxIsTrue("arrayAccess.kt");
     }
 
 
     public void testArrayIsFilledWithNulls() throws Exception {
-        testFooBoxIsTrue("arrayIsFilledWithNulls.kt");
+        checkFooBoxIsTrue("arrayIsFilledWithNulls.kt");
     }
 
 
     public void testArrayFunctionConstructor() throws Exception {
-        testFooBoxIsTrue("arrayFunctionConstructor.kt");
+        checkFooBoxIsTrue("arrayFunctionConstructor.kt");
     }
 
 
     public void testArraySize() throws Exception {
-        testFooBoxIsTrue("arraySize.kt");
+        checkFooBoxIsTrue("arraySize.kt");
     }
 
     //TODO: this feature in not supported for some time
     //TODO: support it. Probably configurable.
 //    (expected = JavaScriptException.class)
 //    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
-//        testFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
+//        checkFooBoxIsTrue("arrayThrowsExceptionOnOOBaccess.kt");
 //    }
 
 
     public void testArraysIterator() throws Exception {
-        testFooBoxIsTrue("arraysIterator.kt");
+        checkFooBoxIsTrue("arraysIterator.kt");
     }
 }

@@ -30,41 +30,41 @@ public final class TraitTest extends TranslationTest {
 
 
     public void testTraitAddsFunctionsToClass() throws Exception {
-        testFooBoxIsTrue("traitAddsFunctionsToClass.kt");
+        checkFooBoxIsTrue("traitAddsFunctionsToClass.kt");
     }
 
 
     public void testClassDerivesFromClassAndTrait() throws Exception {
-        testFooBoxIsTrue("classDerivesFromClassAndTrait.kt");
+        checkFooBoxIsTrue("classDerivesFromClassAndTrait.kt");
     }
 
 
     public void testClassDerivesFromTraitAndClass() throws Exception {
-        testFooBoxIsTrue("classDerivesFromTraitAndClass.kt");
+        checkFooBoxIsTrue("classDerivesFromTraitAndClass.kt");
     }
 
 
     public void testExample() throws Exception {
-        testFooBoxIsTrue("example.kt");
+        checkFooBoxIsTrue("example.kt");
     }
 
 
     public void testTraitExtendsTrait() throws Exception {
-        testFooBoxIsTrue("traitExtendsTrait.kt");
+        checkFooBoxIsTrue("traitExtendsTrait.kt");
     }
 
 
     public void testTraitExtendsTwoTraits() throws Exception {
-        testFooBoxIsTrue("traitExtendsTwoTraits.kt");
+        checkFooBoxIsTrue("traitExtendsTwoTraits.kt");
     }
 
 
     public void testFunDelegation() throws Exception {
-        testFooBoxIsOk("funDelegation.jet");
+        checkFooBoxIsOk("funDelegation.jet");
     }
 
 
     public void testDefinitionOrder() throws Exception {
-        testFooBoxIsTrue("definitionOrder.kt");
+        checkFooBoxIsTrue("definitionOrder.kt");
     }
 }

@@ -29,11 +29,11 @@ public class StringTest extends AbstractExpressionTest {
     }
 
     public void testStringConstant() throws Exception {
-        testFooBoxIsTrue("stringConstant.kt");
+        checkFooBoxIsTrue("stringConstant.kt");
     }
 
     public void testStringAssignment() throws Exception {
-        testFooBoxIsTrue("stringAssignment.kt");
+        checkFooBoxIsTrue("stringAssignment.kt");
     }
 
     public void testIntInTemplate() throws Exception {
@@ -49,6 +49,6 @@ public class StringTest extends AbstractExpressionTest {
     }
 
     public void testToStringMethod() throws Exception {
-        testFooBoxIsTrue("objectToStringCallInTemplate.kt");
+        checkFooBoxIsTrue("objectToStringCallInTemplate.kt");
     }
 }
