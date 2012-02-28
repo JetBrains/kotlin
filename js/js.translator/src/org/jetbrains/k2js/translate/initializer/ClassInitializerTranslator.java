@@ -48,8 +48,9 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
 
     public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
-        super(context.getScopeForElement(classDeclaration).innerScope
-                ("initializer " + classDeclaration.getName()), context);
+        // Note: it's important we use scope for class descriptor because anonymous function used in property initializers
+        // belong to the properties themselves
+        super(context.getScopeForDescriptor(getClassDescriptor(context.bindingContext(), classDeclaration)), context);
         this.classDeclaration = classDeclaration;
     }
 
@@ -83,6 +84,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall) {
         //TODO: look into
         JsName superMethodName = initializerMethodScope.jsScope().declareName(Namer.superMethodName());
+        superMethodName.setObfuscatable(false);
         List<JsExpression> arguments = translateArguments(superCall);
         initializerStatements.add(convertToStatement(newInvocation(thisQualifiedReference(superMethodName), arguments)));
     }

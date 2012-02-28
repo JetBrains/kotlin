@@ -41,8 +41,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRight
 public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new RangeLiteralForTranslator(expression, context).translate());
     }
 

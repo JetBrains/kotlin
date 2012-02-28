@@ -34,7 +34,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
 /**
@@ -43,8 +42,8 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 public final class ArrayForTranslator extends ForTranslator {
 
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new ArrayForTranslator(expression, context).translate());
     }
 
@@ -90,7 +89,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private JsStatement getBody() {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
         JsStatement currentVar = newVar(parameterName, arrayAccess);
-        JsStatement realBody = Translation.translateAsStatement(getLoopBody(expression), context());
+        JsStatement realBody = translateOriginalBodyExpression();
         return AstUtil.newBlock(currentVar, realBody);
     }
 

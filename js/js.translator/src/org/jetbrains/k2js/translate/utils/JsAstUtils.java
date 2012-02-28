@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -180,6 +181,23 @@ public final class JsAstUtils {
         result.setIncrExpr(incrExpression);
         result.setBody(body);
         return result;
+    }
+
+    public static boolean ownsName(@NotNull JsScope scope, @NotNull JsName name) {
+        Iterator<JsName> nameIterator = scope.getAllNames();
+        while (nameIterator.hasNext()) {
+            if (nameIterator.next() == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    public static JsObjectLiteral newObjectLiteral(@NotNull List<JsPropertyInitializer> propertyList) {
+        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
+        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
+        return jsObjectLiteral;
     }
 
     public interface Mutator {

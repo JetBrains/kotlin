@@ -23,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetMainDetector;
-import org.jetbrains.k2js.analyze.Analyzer;
+import org.jetbrains.k2js.analyze.AnalyzerFacade;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.IDEAConfig;
 import org.jetbrains.k2js.generate.CodeGenerator;
@@ -113,15 +113,15 @@ public final class K2JSTranslator {
     @NotNull
     public BindingContext analyzeProgramCode(@NotNull String programText) {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
-        return Analyzer.analyzeFiles(Arrays.asList(file), config);
+        return AnalyzerFacade.analyzeFiles(Arrays.asList(file), config);
     }
 
 
     @NotNull
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         JetStandardLibrary.initialize(config.getProject());
-        BindingContext bindingContext = Analyzer.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, Analyzer.withJsLibAdded(filesToTranslate, config));
+        BindingContext bindingContext = AnalyzerFacade.analyzeFilesAndCheckErrors(filesToTranslate, config);
+        return Translation.generateAst(bindingContext, AnalyzerFacade.withJsLibAdded(filesToTranslate, config));
     }
 
 
