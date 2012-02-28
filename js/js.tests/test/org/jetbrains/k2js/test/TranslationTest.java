@@ -19,7 +19,6 @@ package org.jetbrains.k2js.test;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -51,20 +50,20 @@ public abstract class TranslationTest extends BaseTest {
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
     private static final String EXPECTED = "expected/";
 
-    public void testTranslateFile(@NotNull String inputFile,
-                                         @NotNull String outputFile) throws Exception {
-        testTranslateFiles(Collections.singletonList(inputFile), outputFile);
+    public void translateFile(@NotNull String inputFile,
+                              @NotNull String outputFile) throws Exception {
+        traslateFiles(Collections.singletonList(inputFile), outputFile);
     }
 
-    public void testTranslateFiles(@NotNull List<String> inputFiles,
-                                          @NotNull String outputFile) throws Exception {
+    public void traslateFiles(@NotNull List<String> inputFiles,
+                              @NotNull String outputFile) throws Exception {
         K2JSTranslator translator = new K2JSTranslator(new TestConfig(getProject()));
         List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
         JsProgram program = translator.generateProgram(psiFiles);
         K2JSTranslator.saveProgramToFile(outputFile, program);
     }
 
-    protected String kotlinLibraryPath() {
+    protected static String kotlinLibraryPath() {
         return KOTLIN_JS_LIB;
     }
 
@@ -78,7 +77,7 @@ public abstract class TranslationTest extends BaseTest {
 
     protected abstract String mainDirectory();
 
-    private String testFilesPath() {
+    private String pathToTestFiles() {
         return TEST_FILES + suiteDirectoryName() + mainDirectory();
     }
 
@@ -87,17 +86,18 @@ public abstract class TranslationTest extends BaseTest {
     }
 
     private String getOutputPath() {
-        return testFilesPath() + outDirectoryName();
+        return pathToTestFiles() + outDirectoryName();
     }
 
     protected String getInputPath() {
-        return testFilesPath() + casesDirectoryName();
+        return pathToTestFiles() + casesDirectoryName();
     }
 
     private String getExpectedPath() {
-        return testFilesPath() + expectedDirectoryName();
+        return pathToTestFiles() + expectedDirectoryName();
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     private String expectedDirectoryName() {
         return EXPECTED;
     }
@@ -106,19 +106,19 @@ public abstract class TranslationTest extends BaseTest {
                                       String functionName, Object expectedResult) throws Exception {
         translateFile(filename);
         runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
-                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+                     new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     protected void testMultiFile(String dirName, String namespaceName,
                                  String functionName, Object expectedResult) throws Exception {
         translateFilesInDir(dirName);
         runRhinoTest(generateFilenameList(getOutputFilePath(dirName + ".kt")),
-                new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+                     new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     protected void translateFile(String filename) throws Exception {
-        testTranslateFile(getInputFilePath(filename),
-                          getOutputFilePath(filename));
+        translateFile(getInputFilePath(filename),
+                      getOutputFilePath(filename));
     }
 
     protected void translateFilesInDir(String dirName) throws Exception {
@@ -129,8 +129,8 @@ public abstract class TranslationTest extends BaseTest {
             fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
         }
         assert dir.isDirectory();
-        testTranslateFiles(fullFilePaths,
-                           getOutputFilePath(dirName + ".kt"));
+        traslateFiles(fullFilePaths,
+                      getOutputFilePath(dirName + ".kt"));
     }
 
     protected List<String> generateFilenameList(String inputFile) {
@@ -185,7 +185,7 @@ public abstract class TranslationTest extends BaseTest {
     protected void checkOutput(String filename, String expectedResult, String... args) throws Exception {
         translateFile(filename);
         runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
-                new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
+                     new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
 
     protected void testWithMain(String testName, String testId, String... args) throws Exception {

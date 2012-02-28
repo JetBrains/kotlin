@@ -26,7 +26,6 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.k2js.analyze.Analyzer;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.IDEAConfig;
-import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.GenerationUtils;
@@ -35,10 +34,12 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNamespaceName;
-import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
 //TODO: clean up the code
 
