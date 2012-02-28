@@ -23,7 +23,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.newInvocation;
 /**
  * @author Pavel Talanov
  */
-public final class CallStandardMethodIntrinsic implements FunctionIntrinsic {
+public final class CallStandardMethodIntrinsic implements Intrinsic {
 
     @NotNull
     private final String methodName;

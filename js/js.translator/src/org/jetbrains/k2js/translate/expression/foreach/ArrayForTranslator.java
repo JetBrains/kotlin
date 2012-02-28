@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
@@ -70,7 +70,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        FunctionIntrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
+        Intrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
         JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
                                                             Collections.<JsExpression>emptyList(),
                                                             context());
@@ -81,19 +81,10 @@ public final class ArrayForTranslator extends ForTranslator {
     @NotNull
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(loopRange, end);
-        blockStatements.add(generateForExpression());
+        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrExpression(), getBody()));
         return newBlock(blockStatements);
     }
 
-    @NotNull
-    private JsFor generateForExpression() {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression());
-        result.setCondition(getCondition());
-        result.setIncrExpr(getIncrExpression());
-        result.setBody(getBody());
-        return result;
-    }
 
     @NotNull
     private JsStatement getBody() {
@@ -104,7 +95,7 @@ public final class ArrayForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsVars initExpression() {
+    private JsVars getInitExpression() {
         return newVar(index.name(), program().getNumberLiteral(0));
     }
 

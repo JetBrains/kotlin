@@ -169,6 +169,19 @@ public final class JsAstUtils {
         return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
     }
 
+    @NotNull
+    public static JsFor generateForExpression(@NotNull JsVars initExpression,
+                                              @NotNull JsExpression condition,
+                                              @NotNull JsExpression incrExpression,
+                                              @NotNull JsStatement body) {
+        JsFor result = new JsFor();
+        result.setInitVars(initExpression);
+        result.setCondition(condition);
+        result.setIncrExpr(incrExpression);
+        result.setBody(body);
+        return result;
+    }
+
     public interface Mutator {
         JsNode mutate(JsNode node);
     }

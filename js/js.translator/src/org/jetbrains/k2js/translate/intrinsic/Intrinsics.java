@@ -52,8 +52,8 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByNa
 public final class Intrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, FunctionIntrinsic> functionIntrinsics =
-            new HashMap<FunctionDescriptor, FunctionIntrinsic>();
+    private final Map<FunctionDescriptor, Intrinsic> functionIntrinsics =
+            new HashMap<FunctionDescriptor, Intrinsic>();
 
     @NotNull
     private final Map<FunctionDescriptor, EqualsIntrinsic> equalsIntrinsics =
@@ -64,7 +64,7 @@ public final class Intrinsics {
             new HashMap<FunctionDescriptor, CompareToIntrinsic>();
 
     @NotNull
-    private final FunctionIntrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
+    private final Intrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
 
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
@@ -82,7 +82,7 @@ public final class Intrinsics {
     }
 
     @NotNull
-    public FunctionIntrinsic getLengthPropertyIntrinsic() {
+    public Intrinsic getLengthPropertyIntrinsic() {
         return lengthPropertyIntrinsic;
     }
 
@@ -183,7 +183,7 @@ public final class Intrinsics {
     }
 
     @NotNull
-    public FunctionIntrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public Intrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
         return functionIntrinsics.get(descriptor.getOriginal());
     }
 

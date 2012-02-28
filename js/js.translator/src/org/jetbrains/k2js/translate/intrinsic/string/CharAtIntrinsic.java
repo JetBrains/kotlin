@@ -22,7 +22,7 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 /**
  * @author Pavel Talanov
  */
-public enum CharAtIntrinsic implements FunctionIntrinsic {
+public enum CharAtIntrinsic implements Intrinsic {
 
     INSTANCE;
 

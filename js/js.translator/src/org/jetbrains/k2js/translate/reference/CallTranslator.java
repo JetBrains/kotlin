@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -121,10 +121,10 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
-        FunctionIntrinsic functionIntrinsic =
+        Intrinsic intrinsic =
                 context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
         JsExpression receiverExpression = resolveThisObject(/*do not get qualifier*/false);
-        return functionIntrinsic.apply(receiverExpression, arguments, context());
+        return intrinsic.apply(receiverExpression, arguments, context());
     }
 
     private boolean isConstructor() {

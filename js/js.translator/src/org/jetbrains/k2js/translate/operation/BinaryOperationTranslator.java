@@ -33,8 +33,6 @@ import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
 import org.jetbrains.k2js.translate.reference.CallBuilder;
 import org.jetbrains.k2js.translate.reference.CallType;
 
-import java.util.Arrays;
-
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
@@ -42,8 +40,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isEquals;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRightExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
 
 
 /**
@@ -105,9 +102,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         assert operationDescriptor != null : "Equals operation must resolve to descriptor.";
         EqualsIntrinsic intrinsic = context().intrinsics().getEqualsIntrinsic(operationDescriptor);
         intrinsic.setNegated(expression.getOperationToken().equals(JetTokens.EXCLEQ));
-        JsExpression left = translateLeftExpression(context(), expression);
-        JsExpression right = translateRightExpression(context(), expression);
-        return intrinsic.apply(left, Arrays.asList(right), context());
+        return applyIntrinsicToBinaryExpression(context(), intrinsic, expression);
     }
 
     @NotNull

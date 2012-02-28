@@ -29,12 +29,11 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.Arrays;
-
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isCompareTo;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.applyIntrinsicToBinaryExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;
 
 /**
  * @author Pavel Talanov
@@ -93,8 +92,7 @@ public final class CompareToTranslator extends AbstractTranslator {
     private JsExpression intrinsicCompareTo() {
         CompareToIntrinsic intrinsic = context().intrinsics().getCompareToIntrinsic(descriptor);
         intrinsic.setComparisonToken((JetToken) expression.getOperationToken());
-        JsExpression left = translateLeftExpression(context(), expression);
-        JsExpression right = translateRightExpression(context(), expression);
-        return intrinsic.apply(left, Arrays.asList(right), context());
+        return applyIntrinsicToBinaryExpression(context(), intrinsic, expression);
     }
+
 }

@@ -22,14 +22,14 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
-public enum ArraySetIntrinsic implements FunctionIntrinsic {
+public enum ArraySetIntrinsic implements Intrinsic {
 
     INSTANCE;
 

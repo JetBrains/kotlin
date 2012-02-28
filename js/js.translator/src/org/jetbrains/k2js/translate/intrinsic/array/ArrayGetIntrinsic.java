@@ -21,14 +21,14 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
-public enum ArrayGetIntrinsic implements FunctionIntrinsic {
+public enum ArrayGetIntrinsic implements Intrinsic {
 
     INSTANCE;
 

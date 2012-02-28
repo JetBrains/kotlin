@@ -80,18 +80,11 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     @NotNull
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(rangeEnd);
-        blockStatements.add(generateForExpression());
+        blockStatements.add(generateForExpression(initExpression(),
+                                                  getCondition(),
+                                                  getIncrExpression(),
+                                                  translateOriginalBodyExpression()));
         return newBlock(blockStatements);
-    }
-
-    @NotNull
-    private JsFor generateForExpression() {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression());
-        result.setCondition(getCondition());
-        result.setIncrExpr(getIncrExpression());
-        result.setBody(translateOriginalBodyExpression());
-        return result;
     }
 
     @NotNull
