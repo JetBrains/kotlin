@@ -3,7 +3,7 @@ package test.collections
 import std.*
 import std.io.*
 import std.util.*
-import stdhack.test.*
+import kool.test.*
 import java.util.*
 import java.io.*
 
@@ -15,7 +15,7 @@ class OldStdlibTest() : TestSupport() {
     }
 
     fun testCollectionSize() {
-        assert {
+        assertTrue {
             Arrays.asList(0, 1, 2)?.size == 3
         }
     }

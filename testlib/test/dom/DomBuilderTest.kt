@@ -3,7 +3,7 @@ package test.dom
 import std.*
 import std.dom.*
 import std.util.*
-import stdhack.test.*
+import kool.test.*
 import org.w3c.dom.*
 
 class DomBuilderTest() : TestSupport() {
@@ -11,7 +11,7 @@ class DomBuilderTest() : TestSupport() {
     fun testBuildDocument() {
         var doc = createDocument()
 
-        assert {
+        assertTrue {
             doc["grandchild"].isEmpty()
         }
 
@@ -53,7 +53,7 @@ class DomBuilderTest() : TestSupport() {
 
         val root = doc.rootElement
         if (root != null) {
-            assert {
+            assertTrue {
                 root.hasClass("bar")
             }
 

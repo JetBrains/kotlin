@@ -1,6 +1,6 @@
 package test.collections
 
-import stdhack.test.*
+import kool.test.*
 
 // TODO can we avoid importing all this stuff by default I wonder?
 // e.g. making println and the collection builder methods public by default?

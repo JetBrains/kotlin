@@ -2,7 +2,7 @@ package test.language
 
 import junit.framework.TestCase
 import java.util.Collection
-import stdhack.test.*
+import kool.test.*
 
 class NullableCollectionsTest : TestCase() {
 

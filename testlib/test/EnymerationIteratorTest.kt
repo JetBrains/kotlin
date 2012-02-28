@@ -1,7 +1,7 @@
 
 import java.util.Vector
 import junit.framework.TestCase
-import stdhack.test.assertEquals
+import kool.test.assertEquals
 
 class EnumerationIteratorTest() : TestCase() {
     fun testIteration () {

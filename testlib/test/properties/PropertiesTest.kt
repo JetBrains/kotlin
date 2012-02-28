@@ -3,7 +3,7 @@ package test.properties
 import std.*
 import std.properties.*
 import std.util.*
-import stdhack.test.*
+import kool.test.*
 import java.util.*
 import junit.framework.TestCase
 

@@ -1,6 +1,6 @@
 package testjc
 
-import stdhack.test.*
+import kool.test.*
 
 class C()
 

@@ -2,7 +2,7 @@ package test.stdlib.issues
 
 import java.util.List
 import std.util.*
-import stdhack.test.*
+import kool.test.*
 
 private fun listDifference<T>(first : List<T>, second : List<T>) : List<T> {
     return first.filter{ !second.contains(it) }.toList()

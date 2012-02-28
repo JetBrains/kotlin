@@ -1,7 +1,7 @@
 package test.collections
 
 import std.*
-import stdhack.test.*
+import kool.test.*
 
 class StandardCollectionTest() : TestSupport() {
 
@@ -13,7 +13,7 @@ class StandardCollectionTest() : TestSupport() {
     // TODO requires KT-924 to be implemented
     val data: Iterable<String> = std.util.arrayList("foo", "bar")
 
-    assert {
+    assertTrue {
       data.any{it.startsWith("f")}
     }
     assertNot {

@@ -2,7 +2,7 @@ package test.dom
 
 import std.*
 import std.dom.*
-import stdhack.test.*
+import kool.test.*
 import org.w3c.dom.*
 
 class DomTest() : TestSupport() {

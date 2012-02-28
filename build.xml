@@ -133,7 +133,7 @@
         </java>
     </target>
 
-    <target name="compileTestlib" depends="jarRT">
+    <target name="compileTestlib" depends="compileKunit">
         <mkdir dir="${output}/classes/testlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
@@ -157,6 +157,7 @@
         <junit printsummary="yes" haltonfailure="true">
           <classpath>
               <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
+              <pathelement location="${kotlin-home}/lib/kotlin-test.jar"/>
               <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
               <fileset dir="${basedir}/testlib/lib">
                 <include name="**/*.jar"/>

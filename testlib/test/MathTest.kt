@@ -4,7 +4,7 @@ import std.math.*
 import java.math.BigInteger
 import java.math.BigDecimal
 
-import stdhack.test.*
+import kool.test.*
 
 class MathTest : TestSupport() {
     fun testBigInteger() {
