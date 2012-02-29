@@ -803,17 +803,27 @@ public class JavaDescriptorResolver {
         return resolveNamespace(psiPackage);
     }
 
-    public PsiClass findClass(String qualifiedName) {
+    @Nullable
+    public PsiClass findClass(@NotNull String qualifiedName) {
         PsiClass original = javaFacade.findClass(qualifiedName, javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
+        PsiClass result = original;
         if (altClass != null) {
             if (altClass instanceof ClsClassImpl) {
                 altClass.putUserData(ClsClassImpl.DELEGATE_KEY, original);
             }
 
-            return altClass;
+            result = altClass;
         }
-        return original;
+
+        if (result != null) {
+            String actualQualifiedName = result.getQualifiedName();
+            if (!actualQualifiedName.equals(qualifiedName)) {
+                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
+            }
+        }
+
+        return result;
     }
 
     /*package*/ PsiPackage findPackage(String qualifiedName) {
