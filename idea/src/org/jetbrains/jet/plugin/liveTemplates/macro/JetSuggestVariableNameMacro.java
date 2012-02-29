@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.JetBundle;
 public class JetSuggestVariableNameMacro extends Macro {
     @Override
     public String getName() {
-        return "suggestVariableName";
+        return "kotlinSuggestVariableName";
     }
 
     @Override

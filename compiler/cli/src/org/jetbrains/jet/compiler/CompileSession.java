@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,8 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.io.File;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -84,11 +84,11 @@ public class CompileSession {
 
         VirtualFile vFile = myEnvironment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
-            myErrors.add("ERROR: File/directory not found: " + path);
+            myErrors.add("File/directory not found: " + path);
             return;
         }
         if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            myErrors.add("ERROR: Not a Kotlin file: " + path);
+            myErrors.add("Not a Kotlin file: " + path);
             return;
         }
 
@@ -135,40 +135,26 @@ public class CompileSession {
         return mySourceFiles;
     }
 
-    public boolean analyze(final PrintStream out) {
-        if (!myErrors.isEmpty()) {
-            for (String error : myErrors) {
-                out.println(error);
-            }
-            return false;
+    public boolean analyze(@NotNull PrintStream out, @NotNull MessageRenderer renderer) {
+        MessageCollector collector = new MessageCollector(renderer);
+
+        for (String error : myErrors) {
+            collector.report(Severity.ERROR, error, null, -1, -1);
         }
 
-        final ErrorCollector errorCollector = new ErrorCollector();
+        reportSyntaxErrors(collector);
+        analyzeAndReportSemanticErrors(collector);
 
-        reportSyntaxErrors(errorCollector);
-        analyzeAndReportSemanticErrors(errorCollector);
+        collector.printTo(out);
 
-
-        boolean hasIncompleteHierarchyErrors;
-        Collection<ClassDescriptor> incompletes = myBindingContext.getKeys(BindingContext.INCOMPLETE_HIERARCHY);
-        if (!incompletes.isEmpty()) {
-            out.println(Severity.ERROR + ":: The following classes have incomplete hierarchies:");
-            for (ClassDescriptor incomplete : incompletes) {
-                out.println(Severity.ERROR + "::    " + fqName(incomplete));
-            }
-            hasIncompleteHierarchyErrors = true;
-        } else {
-            hasIncompleteHierarchyErrors = false;
-        }
-
-        errorCollector.flushTo(out);
-        return !errorCollector.hasErrors() && !hasIncompleteHierarchyErrors;
+        return !collector.hasErrors();
     }
 
     /**
      * @see JetTypeMapper#getFQName(DeclarationDescriptor)
+     * TODO possibly duplicates DescriptorUtils#getFQName(DeclarationDescriptor)
      */
-    private String fqName(ClassOrNamespaceDescriptor descriptor) {
+    private static String fqName(ClassOrNamespaceDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration == null || containingDeclaration instanceof ModuleDescriptor || containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
             return descriptor.getName();
@@ -177,18 +163,31 @@ public class CompileSession {
         }
     }
 
-    private void analyzeAndReportSemanticErrors(ErrorCollector errorCollector) {
+    private void analyzeAndReportSemanticErrors(MessageCollector collector) {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
         for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
-            errorCollector.report(diagnostic);
+            reportDiagnostic(collector, diagnostic);
+        }
+
+        reportIncompleteHierarchies(collector);
+    }
+
+    private void reportIncompleteHierarchies(MessageCollector collector) {
+        Collection<ClassDescriptor> incompletes = myBindingContext.getKeys(BindingContext.INCOMPLETE_HIERARCHY);
+        if (!incompletes.isEmpty()) {
+            StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
+            for (ClassDescriptor incomplete : incompletes) {
+                message.append("    ").append(fqName(incomplete)).append("\n");
+            }
+            collector.report(Severity.ERROR, message.toString(), null, -1, -1);
         }
     }
 
-    private void reportSyntaxErrors(final ErrorCollector errorCollector) {
+    private void reportSyntaxErrors(final MessageCollector messageCollector) {
         for (JetFile file : mySourceFiles) {
             file.accept(new PsiRecursiveElementWalkingVisitor() {
                 @Override
@@ -196,10 +195,17 @@ public class CompileSession {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
                     Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
-                    errorCollector.report(diagnostic);
+                    reportDiagnostic(messageCollector, diagnostic);
                 }
             });
         }
+    }
+
+    private static void reportDiagnostic(MessageCollector collector, Diagnostic diagnostic) {
+        DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
+        VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
+        String path = virtualFile == null ? null : virtualFile.getPath();
+        collector.report(diagnostic.getSeverity(), diagnostic.getMessage(), path, lineAndColumn.getLine(), lineAndColumn.getColumn());
     }
 
     @NotNull

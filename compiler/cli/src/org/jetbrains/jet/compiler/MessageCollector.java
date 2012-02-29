@@ -18,9 +18,8 @@ package org.jetbrains.jet.compiler;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 
 import java.io.PrintStream;
@@ -29,27 +28,28 @@ import java.util.Collection;
 /**
 * @author alex.tkachman
 */
-class ErrorCollector {
-    private final Multimap<PsiFile, Diagnostic> maps = LinkedHashMultimap.create();
+/*package*/ class MessageCollector {
+    // File path (nullable) -> error message
+    private final Multimap<String, String> groupedMessages = LinkedHashMultimap.create();
 
+    private final MessageRenderer renderer;
     private boolean hasErrors;
 
-    public ErrorCollector() {
+    public MessageCollector(@NotNull MessageRenderer renderer) {
+        this.renderer = renderer;
     }
 
-    public void report(Diagnostic diagnostic) {
-        hasErrors |= diagnostic.getSeverity() == Severity.ERROR;
-        maps.put(diagnostic.getPsiFile(), diagnostic);
+    public void report(@NotNull Severity severity, @NotNull String message, @Nullable String path, int line, int column) {
+        hasErrors |= severity == Severity.ERROR;
+        groupedMessages.put(path, renderer.render(severity, message, path, line, column));
     }
 
-    public void flushTo(final PrintStream out) {
-        if(!maps.isEmpty()) {
-            for (PsiFile psiFile : maps.keySet()) {
-                String path = psiFile.getVirtualFile().getPath();
-                Collection<Diagnostic> diagnostics = maps.get(psiFile);
-                for (Diagnostic diagnostic : diagnostics) {
-                    String position = DiagnosticUtils.formatPosition(diagnostic);
-                    out.println(diagnostic.getSeverity().toString() + ": " + path + ":" + position + " " + diagnostic.getMessage());
+    public void printTo(@NotNull PrintStream out) {
+        if (!groupedMessages.isEmpty()) {
+            for (String path : groupedMessages.keySet()) {
+                Collection<String> diagnostics = groupedMessages.get(path);
+                for (String diagnostic : diagnostics) {
+                    out.println(diagnostic);
                 }
             }
         }

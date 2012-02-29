@@ -37,6 +37,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.*;
@@ -199,10 +201,10 @@ public class JetCompiler implements TranslatingCompiler {
             try {
                 String line = reader.readLine();
                 if (line == null) break;
-                listener.onTextAvailable(new ProcessEvent(NullProcessHandler.INSTANCE, line), ProcessOutputTypes.STDOUT);
+                listener.onTextAvailable(new ProcessEvent(NullProcessHandler.INSTANCE, line + "\n"), ProcessOutputTypes.STDERR);
             } catch (IOException e) {
                 // Can't be
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -218,7 +220,7 @@ public class JetCompiler implements TranslatingCompiler {
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir) };
+            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags" };
 
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
@@ -228,7 +230,7 @@ public class JetCompiler implements TranslatingCompiler {
                 return ((Integer) rc).intValue();
             }
             else {
-                throw new RuntimeException("Unexpected return: " + rc);
+                throw new IllegalStateException("Unexpected return: " + rc);
             }
         } catch (Throwable e) {
             LOG.error(e);
@@ -267,6 +269,7 @@ public class JetCompiler implements TranslatingCompiler {
         params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
         params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
         params.getProgramParametersList().add("-output", path(outputDir));
+        params.getProgramParametersList().add("-tags");
 
         for (File jar : kompilerClasspath(kotlinHome, compileContext)) {
             params.getClassPath().add(jar);
@@ -302,77 +305,7 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     private static ProcessAdapter createProcessListener(final CompileContext compileContext) {
-        return new ProcessAdapter() {
-            StringBuilder stderr = null;
-
-            @Override
-            public void onTextAvailable(ProcessEvent event, Key outputType) {
-                String text = event.getText();
-                String levelCode = parsePrefix(text);
-                if (outputType == ProcessOutputTypes.STDERR) {
-                    if (stderr == null) {
-                        stderr = new StringBuilder();
-                    }
-                    stderr.append(text);
-                    return;
-                }
-                if (levelCode != null) {
-                    CompilerMessageCategory category = categories.get(levelCode);
-                    text = text.substring(levelCode.length());
-
-                    String path = "";
-                    int line = -1;
-                    int column = -1;
-                    int colonIndex = text.indexOf(':');
-                    if (text.startsWith(":")) {
-                        text = text.substring(1);
-                    } else if (colonIndex > 0) {
-                        path = "file://" + text.substring(0, colonIndex).trim();
-                        text = text.substring(colonIndex + 1);
-
-                        Pattern position = Pattern.compile("\\((\\d+),\\s*(\\d+)\\)");
-
-                        Matcher matcher = position.matcher(text);
-                        if (matcher.find()) {
-                            line = Integer.parseInt(matcher.group(1));
-                            column = Integer.parseInt(matcher.group(2));
-                            text = text.substring(matcher.group(0).length());
-                        }
-                    }
-
-                    compileContext.addMessage(category, text, path, line, column);
-                }
-                else {
-                    compileContext.addMessage(INFORMATION, text, "", -1, -1);
-                }
-            }
-
-            @Override
-            public void processTerminated(ProcessEvent event) {
-                if (event.getExitCode() != 0) {
-                    compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + event.getExitCode(), "", -1, -1);
-                }
-                // By alex.tkachman:
-                if (stderr != null) {
-                    compileContext.addMessage(ERROR, "stderr output:\r\n" + stderr.toString(), "", -1, -1);
-                }
-            }
-        };
-    }
-
-    private static String[] messagePrefixes = new String[] {"ERROR:", "WARNING:", "INFO:"} ;
-    private static Map<String, CompilerMessageCategory> categories = new HashMap<String, CompilerMessageCategory>();
-    static {
-        categories.put("ERROR:", ERROR);
-        categories.put("WARNING:", WARNING);
-        categories.put("INFORMATION:", INFORMATION);
-    }
-
-    private static String parsePrefix(String message) {
-        for (String prefix : messagePrefixes) {
-            if (message.startsWith(prefix)) return prefix;
-        }
-        return null;
+        return new CompilerProcessListener(compileContext);
     }
 
     private static String path(VirtualFile root) {
@@ -404,6 +337,169 @@ public class JetCompiler implements TranslatingCompiler {
         @Override
         public OutputStream getProcessInput() {
             throw new UnsupportedOperationException("getProcessInput is not implemented");
+        }
+    }
+
+    private static class CompilerProcessListener extends ProcessAdapter {
+        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION)", Pattern.MULTILINE);
+        private static final Pattern OPEN_TAG_END_PATTERN = Pattern.compile(">", Pattern.MULTILINE | Pattern.DOTALL);
+        private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("\\s*(path|line|column)\\s*=\\s*\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
+        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION)>", Pattern.MULTILINE | Pattern.DOTALL);
+
+        private enum State {
+            WAITING, ATTRIBUTES, MESSAGE
+        }
+
+        private static class CompilerMessage {
+            private CompilerMessageCategory messageCategory;
+            private boolean isException;
+            private @Nullable String url;
+            private @Nullable Integer line;
+            private @Nullable Integer column;
+            private String message;
+
+            public void setMessageCategoryFromString(String tagName) {
+                boolean exception = "EXCEPTION".equals(tagName);
+                if (Severity.ERROR.toString().equals(tagName) || exception) {
+                    messageCategory = ERROR;
+                    isException = exception;
+                }
+                else if (Severity.WARNING.toString().equals(tagName)) {
+                    messageCategory = WARNING;
+                }
+                else {
+                    messageCategory = INFORMATION;
+                }
+            }
+
+            public void setAttributeFromStrings(String name, String value) {
+                if ("path".equals(name)) {
+                    url = "file://" + value.trim();
+                }
+                else if ("line".equals(name)) {
+                    line = safeParseInt(value);
+                }
+                else if ("column".equals(name)) {
+                    column = safeParseInt(value);
+                }
+            }
+
+            @Nullable
+            private static Integer safeParseInt(String value) {
+                try {
+                    return Integer.parseInt(value.trim());
+                }
+                catch (NumberFormatException e) {
+                    return null;
+                }
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+            public void reportTo(CompileContext compileContext) {
+                compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line, column == null ? -1 : column);
+                if (isException) {
+                    LOG.error(message);
+                }
+            }
+        }
+
+        private final CompileContext compileContext;
+        private final StringBuilder output = new StringBuilder();
+        private int firstUnprocessedIndex = 0;
+        private State state = State.WAITING;
+        private CompilerMessage currentCompilerMessage;
+
+        public CompilerProcessListener(CompileContext compileContext) {
+            this.compileContext = compileContext;
+        }
+
+        @Override
+        public void onTextAvailable(ProcessEvent event, Key outputType) {
+            String text = event.getText();
+            if (outputType == ProcessOutputTypes.STDERR) {
+                output.append(text);
+
+                // We loop until the state stabilizes
+                State lastState;
+                do {
+                    lastState = state;
+                    switch (state) {
+                        case WAITING: {
+                            Matcher matcher = matcher(DIAGNOSTIC_PATTERN);
+                            if (find(matcher)) {
+                                currentCompilerMessage = new CompilerMessage();
+                                currentCompilerMessage.setMessageCategoryFromString(matcher.group(1));
+                                state = State.ATTRIBUTES;
+                            }
+                            break;
+                        }
+                        case ATTRIBUTES: {
+                            Matcher matcher = matcher(ATTRIBUTE_PATTERN);
+                            int indexDelta = 0;
+                            while (matcher.find()) {
+                                handleSkippedOutput(output.subSequence(firstUnprocessedIndex + indexDelta, firstUnprocessedIndex + matcher.start()));
+                                currentCompilerMessage.setAttributeFromStrings(matcher.group(1), matcher.group(2));
+                                indexDelta = matcher.end();
+
+                            }
+                            firstUnprocessedIndex += indexDelta;
+
+                            Matcher endMatcher = matcher(OPEN_TAG_END_PATTERN);
+                            if (find(endMatcher)) {
+                                state = State.MESSAGE;
+                            }
+                            break;
+                        }
+                        case MESSAGE: {
+                            Matcher matcher = matcher(MESSAGE_PATTERN);
+                            if (find(matcher)) {
+                                currentCompilerMessage.setMessage(matcher.group(1));
+                                currentCompilerMessage.reportTo(compileContext);
+                                state = State.WAITING;
+                            }
+                            break;
+                        }
+                    }
+                }
+                while (state != lastState);
+
+            }
+            else {
+                compileContext.addMessage(INFORMATION, text, "", -1, -1);
+            }
+        }
+
+        private boolean find(Matcher matcher) {
+            boolean result = matcher.find();
+            if (result) {
+                handleSkippedOutput(output.subSequence(firstUnprocessedIndex, firstUnprocessedIndex + matcher.start()));
+                firstUnprocessedIndex += matcher.end();
+            }
+            return result;
+        }
+
+        private Matcher matcher(Pattern pattern) {
+            return pattern.matcher(output.subSequence(firstUnprocessedIndex, output.length()));
+        }
+
+        @Override
+        public void processTerminated(ProcessEvent event) {
+            if (firstUnprocessedIndex < output.length()) {
+                handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
+            }
+            if (event.getExitCode() != 0) {
+                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + event.getExitCode(), "", -1, -1);
+            }
+        }
+
+        private void handleSkippedOutput(CharSequence substring) {
+            String message = substring.toString();
+            if (!message.trim().isEmpty()) {
+                compileContext.addMessage(ERROR, message, "", -1, -1);
+            }
         }
     }
 }

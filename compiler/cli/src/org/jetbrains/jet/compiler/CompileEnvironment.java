@@ -55,7 +55,9 @@ import java.util.jar.*;
 public class CompileEnvironment {
     private JetCoreEnvironment myEnvironment;
     private final Disposable myRootDisposable;
-    private PrintStream myErrorStream = System.out;
+    private final MessageRenderer myMessageRenderer;
+    private PrintStream myErrorStream = System.err;
+
     private final FileNameTransformer myFileNameTransformer;
     private URL myStdlib;
 
@@ -63,10 +65,10 @@ public class CompileEnvironment {
     private boolean stubs = false;
 
     public CompileEnvironment() {
-        this(FileNameTransformer.IDENTITY);
+        this(FileNameTransformer.IDENTITY, MessageRenderer.PLAIN);
     }
 
-    public CompileEnvironment(FileNameTransformer fileNameTransformer) {
+    public CompileEnvironment(FileNameTransformer fileNameTransformer, MessageRenderer messageRenderer) {
         myRootDisposable = new Disposable() {
             @Override
             public void dispose() {
@@ -74,6 +76,7 @@ public class CompileEnvironment {
         };
         myEnvironment = new JetCoreEnvironment(myRootDisposable);
         myFileNameTransformer = fileNameTransformer;
+        myMessageRenderer = messageRenderer;
     }
 
     public void setErrorStream(PrintStream errorStream) {
@@ -145,7 +148,7 @@ public class CompileEnvironment {
         File rtJar = findRtJar(javaHome);
 
         if (rtJar == null || !rtJar.exists()) {
-            throw new CompileEnvironmentException("No JDK rt.jar found under" + javaHome);
+            throw new CompileEnvironmentException("No JDK rt.jar found under " + javaHome);
         }
 
         return rtJar;
@@ -164,8 +167,8 @@ public class CompileEnvironment {
         return null;
     }
 
-    public void compileModuleScript(String moduleFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        final List<Module> modules = loadModuleScript(moduleFile);
+    public boolean compileModuleScript(String moduleFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
+        List<Module> modules = loadModuleScript(moduleFile);
 
         if (modules == null) {
             throw new CompileEnvironmentException("Module script " + moduleFile + " compilation failed");
@@ -178,20 +181,22 @@ public class CompileEnvironment {
         final String directory = new File(moduleFile).getParent();
         for (Module moduleBuilder : modules) {
             ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
-            if (moduleFactory != null) {
-                if (outputDir != null) {
-                    writeToOutputDirectory(moduleFactory, outputDir);
-                }
-                else {
-                    String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
-                    try {
-                        writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
-                    } catch (FileNotFoundException e) {
-                        throw new CompileEnvironmentException("Invalid jar path " + path, e);
-                    }
+            if (moduleFactory == null) {
+                return false;
+            }
+            if (outputDir != null) {
+                writeToOutputDirectory(moduleFactory, outputDir);
+            }
+            else {
+                String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+                try {
+                    writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                } catch (FileNotFoundException e) {
+                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
                 }
             }
         }
+        return true;
     }
 
     public List<Module> loadModuleScript(String moduleFile) {
@@ -199,7 +204,7 @@ public class CompileEnvironment {
         scriptCompileSession.addSources(moduleFile);
         ensureRuntime();
 
-        if (!scriptCompileSession.analyze(myErrorStream)) {
+        if (!scriptCompileSession.analyze(myErrorStream, myMessageRenderer)) {
             return null;
         }
         final ClassFileFactory factory = scriptCompileSession.generate();
@@ -258,7 +263,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!moduleCompileSession.analyze(myErrorStream) && !ignoreErrors) {
+        if (!moduleCompileSession.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
             return null;
         }
         return moduleCompileSession.generate();
@@ -345,7 +350,7 @@ public class CompileEnvironment {
         CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
         session.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
 
-        if (!session.analyze(myErrorStream) && !ignoreErrors) {
+        if (!session.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
             return null;
         }
 
@@ -370,7 +375,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!session.analyze(myErrorStream) && !ignoreErrors) {
+        if (!session.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
             return false;
         }
 
