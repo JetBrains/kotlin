@@ -65,21 +65,88 @@ set(value) {
     this.setAttribute("style", value)
 }
 
-// TODO can we come up with a better name; 'class' is a reserved word?
-var Element.cssClass : String
+var Element.classes : String
 get() = this.getAttribute("class")?: ""
 set(value) {
     this.setAttribute("class", value)
 }
 
+var Element.classSet : Set<String>
+get() {
+    val answer = LinkedHashSet<String>()
+    val array = this.classes.split("""\s""")
+    for (s in array) {
+        if (s != null && s.size > 0) {
+            answer.add(s)
+        }
+    }
+    return answer
+}
+set(value) {
+    this.classes = value.join(" ")
+}
+
 
 // Helper methods
+
+/** Returns true if the element has the given CSS class style in its 'class' attribute */
 fun Element.hasClass(cssClass: String): Boolean {
-    val c = this.cssClass
+    val c = this.classes
     return if (c != null)
-        c.matches("""(^|\s+)$cssClass($|\s+)""")
+        c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
     else false
 }
+
+/** Adds the given CSS class to this element's 'class' attribute */
+fun Element.addClass(cssClass: String): Boolean {
+    val classSet = this.classSet
+    val answer = classSet.add(cssClass)
+    if (answer) {
+        this.classSet = classSet
+    }
+    return answer
+}
+
+/** Removes the given CSS class to this element's 'class' attribute */
+fun Element.removeClass(cssClass: String): Boolean {
+    val classSet = this.classSet
+    val answer = classSet.remove(cssClass)
+    if (answer) {
+        this.classSet = classSet
+    }
+    return answer
+}
+
+/** TODO this approach generates compiler errors...
+
+fun Element.addClass(varargs cssClasses: Array<String>): Boolean {
+    val set = this.classSet
+    var answer = false
+    for (cs in cssClasses) {
+        if (set.add(cs)) {
+            answer = true
+        }
+    }
+    if (answer) {
+        this.classSet = classSet
+    }
+    return answer
+}
+
+fun Element.removeClass(varargs cssClasses: Array<String>): Boolean {
+    val set = this.classSet
+    var answer = false
+    for (cs in cssClasses) {
+        if (set.remove(cs)) {
+            answer = true
+        }
+    }
+    if (answer) {
+        this.classSet = classSet
+    }
+    return answer
+}
+*/
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
 fun Document?.get(selector: String): List<Element> {
