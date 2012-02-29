@@ -27,9 +27,9 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static com.google.dart.compiler.util.AstUtil.newSequence;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
 
 /**
  * @author Pavel Talanov
@@ -42,11 +42,10 @@ public enum CallType {
                                    @NotNull TranslationContext context) {
             assert receiver != null;
             TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
+            JsBinaryOperation notNullCheck = TranslationUtils.notNullCheck(context, temporaryVariable.reference());
             JsNullLiteral nullLiteral = context.program().getNullLiteral();
-            //TODO: find similar not null checks
-            JsBinaryOperation notNullCheck = inequality(temporaryVariable.reference(), nullLiteral);
-            JsConditional callMethodIfNotNullElseNull =
-                    new JsConditional(notNullCheck, constructor.construct(temporaryVariable.reference()), nullLiteral);
+            JsExpression methodCall = constructor.construct(temporaryVariable.reference());
+            JsConditional callMethodIfNotNullElseNull = new JsConditional(notNullCheck, methodCall, nullLiteral);
             return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);
         }
     },

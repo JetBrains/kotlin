@@ -73,14 +73,6 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(jetExpression, context);
     }
 
-    //TODO: refactor backing field reference generation to use the generic way
-    @NotNull
-    public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
-                                                  @NotNull JetProperty expression) {
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), expression);
-        return backingFieldReference(context, propertyDescriptor);
-    }
-
     @NotNull
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
@@ -165,14 +157,6 @@ public final class TranslationUtils {
         JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
         return Translation.translateAsExpression(baseExpression, context);
     }
-
-    //TODO:
-    @NotNull
-    public static JsExpression translateReceiver(@NotNull TranslationContext context,
-                                                 @NotNull JetDotQualifiedExpression expression) {
-        return Translation.translateAsExpression(expression.getReceiverExpression(), context);
-    }
-
 
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
