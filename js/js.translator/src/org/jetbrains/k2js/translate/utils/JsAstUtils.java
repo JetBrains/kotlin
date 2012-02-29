@@ -98,24 +98,23 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
     }
 
-    //TODO refactor
     public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
+        assert (selector instanceof JsInvocation || selector instanceof JsNameRef);
         if (selector instanceof JsInvocation) {
             setQualifier(((JsInvocation) selector).getQualifier(), receiver);
             return;
         }
-        if (selector instanceof JsNameRef) {
-            JsNameRef nameRef = (JsNameRef) selector;
-            JsExpression qualifier = nameRef.getQualifier();
-            if (qualifier == null) {
-                nameRef.setQualifier(receiver);
-            }
-            else {
-                setQualifier(qualifier, receiver);
-            }
-            return;
+        setQualifierForNameRef((JsNameRef) selector, receiver);
+    }
+
+    private static void setQualifierForNameRef(@NotNull JsNameRef selector, @Nullable JsExpression receiver) {
+        JsExpression qualifier = selector.getQualifier();
+        if (qualifier == null) {
+            selector.setQualifier(receiver);
         }
-        throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
+        else {
+            setQualifier(qualifier, receiver);
+        }
     }
 
     public static JsNameRef qualified(@NotNull JsName selector, @Nullable JsExpression qualifier) {
