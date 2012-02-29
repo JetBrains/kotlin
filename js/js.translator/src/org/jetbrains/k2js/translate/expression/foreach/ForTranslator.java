@@ -31,8 +31,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopParameter;
 /**
  * @author Pavel Talanov
  */
-
-//TODO: create util class for managing stuff like binary operations
 public abstract class ForTranslator extends AbstractTranslator {
 
     @NotNull
