@@ -46,9 +46,9 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     public static JsExpression translate(@NotNull JetBinaryExpression expression,
                                          @NotNull TranslationContext context) {
         if (isIntrinsicOperation(context, expression)) {
-            return IntrinsicAssignmentTranslator.translate(expression, context);
+            return IntrinsicAssignmentTranslator.doTranslate(expression, context);
         }
-        return OverloadedAssignmentTranslator.translate(expression, context);
+        return OverloadedAssignmentTranslator.doTranslate(expression, context);
     }
 
     @NotNull

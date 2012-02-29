@@ -38,8 +38,11 @@ import java.util.List;
  */
 public final class JetFileUtils {
 
+    private JetFileUtils() {
+    }
+
     @NotNull
-    public static String loadFile(@NotNull String path) throws IOException {
+    private static String loadFile(@NotNull String path) throws IOException {
         return doLoadFile(path);
     }
 
@@ -58,7 +61,7 @@ public final class JetFileUtils {
     }
 
     @NotNull
-    public static JetFile loadPsiFile(@NotNull String name, @NotNull Project project) {
+    private static JetFile loadPsiFile(@NotNull String name, @NotNull Project project) {
         try {
             return createPsiFile(name, loadFile(name), project);
         } catch (IOException e) {
@@ -82,7 +85,7 @@ public final class JetFileUtils {
                                                   @NotNull Project project) {
         List<JetFile> psiFiles = new ArrayList<JetFile>();
         for (String inputFile : inputFiles) {
-            psiFiles.add(JetFileUtils.loadPsiFile(inputFile, project));
+            psiFiles.add(loadPsiFile(inputFile, project));
         }
         return psiFiles;
     }

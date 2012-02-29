@@ -29,7 +29,6 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
@@ -39,7 +38,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
  */
 public final class RangeForTranslator extends ForTranslator {
 
-    //TODO: inspection
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
                                           @NotNull TranslationContext context) {

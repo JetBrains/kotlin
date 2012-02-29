@@ -73,8 +73,6 @@ public class JetLiveTemplateCompletionContributor extends CompletionContributor 
             for (final TemplateImpl possible : templates) {
                 result.addElement(new LiveTemplateLookupElement(possible, false));
             }
-            
-            addSynonym(templates, result, "anonymous", "object");
         }
     }
 
@@ -96,23 +94,5 @@ public class JetLiveTemplateCompletionContributor extends CompletionContributor 
         public boolean skipElement(LookupElement element, CompletionLocation location) {
             return element instanceof LiveTemplateLookupElement && ((LiveTemplateLookupElement) element).sudden;
         }
-    }
-
-
-    /* custom code start */
-    private static void addSynonym(List<TemplateImpl> templates, @NotNull CompletionResultSet result, @NotNull String standardName, @NotNull final String synonym) {
-        for (TemplateImpl t : templates) {
-            if (standardName.equals(t.getKey())) {
-                result.addElement(new LiveTemplateLookupElement(t, false) {
-                    @NotNull
-                    @Override
-                    public String getLookupString() {
-                        return synonym;
-                    }
-                });
-                return;
-            }
-        }
-
     }
 }

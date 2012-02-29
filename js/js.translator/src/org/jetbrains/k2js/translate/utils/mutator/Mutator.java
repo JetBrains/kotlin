@@ -14,33 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.utils;
+package org.jetbrains.k2js.translate.utils.mutator;
 
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-
-//TODO: very thin class
 
 /**
  * @author Pavel Talanov
  */
-public final class GenerationUtils {
-
-    private GenerationUtils() {
-    }
-
+public interface Mutator {
     @NotNull
-    public static String generateCallToMain(@NotNull String namespaceName, @NotNull List<String> arguments) {
-        String constructArguments = "var args = [];\n";
-        int index = 0;
-        for (String argument : arguments) {
-            constructArguments = constructArguments + "args[" + index + "]= \"" + argument + "\";\n";
-            index++;
-        }
-        String callMain = namespaceName + ".main(args);\n";
-        return constructArguments + callMain;
-    }
-
-
+    JsNode mutate(@NotNull JsNode node);
 }

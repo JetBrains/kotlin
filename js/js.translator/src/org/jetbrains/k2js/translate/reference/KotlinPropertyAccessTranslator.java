@@ -37,7 +37,7 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @NotNull
     private final PropertyDescriptor propertyDescriptor;
     @NotNull
-    ResolvedCall<?> resolvedCall;
+    private final ResolvedCall<?> resolvedCall;
 
     //TODO: too many params in constructor
     /*package*/ KotlinPropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,

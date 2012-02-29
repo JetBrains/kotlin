@@ -148,7 +148,7 @@ public final class PsiUtils {
         JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
         String name = namespaceHeader.getName();
         assert name != null : "NamespaceHeader must have a name";
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             return Namer.getAnonymousNamespaceName();
         }
         return name;
@@ -159,5 +159,19 @@ public final class PsiUtils {
         JetExpression rangeExpression = expression.getLoopRange();
         assert rangeExpression != null;
         return rangeExpression;
+    }
+
+    @NotNull
+    public static JetPattern getPattern(@NotNull JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        assert pattern != null : "Pattern should not be null";
+        return pattern;
+    }
+
+    @NotNull
+    public static JetTypeReference getTypeReference(@NotNull JetTypePattern pattern) {
+        JetTypeReference typeReference = pattern.getTypeReference();
+        assert typeReference != null : "Type pattern should contain a type reference";
+        return typeReference;
     }
 }

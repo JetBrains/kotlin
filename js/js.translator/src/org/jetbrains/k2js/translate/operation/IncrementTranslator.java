@@ -46,9 +46,9 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {
         if (isIntrinsicOperation(context, expression)) {
-            return IntrinsicIncrementTranslator.translate(expression, context);
+            return IntrinsicIncrementTranslator.doTranslate(expression, context);
         }
-        return OverloadedIncrementTranslator.translate(expression, context);
+        return OverloadedIncrementTranslator.doTranslate(expression, context);
     }
 
     @NotNull
@@ -73,7 +73,8 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         }
         if (isVariableReassignment) {
             return asPostfixWithReassignment();
-        } else {
+        }
+        else {
             return asPostfixWithNoReassignment();
         }
     }
@@ -100,7 +101,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         TemporaryVariable t2 = context().declareTemporary(t1.reference());
         JsExpression variableReassignment = variableReassignment(t1.reference());
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
-                variableReassignment, t2.reference());
+                                   variableReassignment, t2.reference());
     }
 
     //TODO: TEST

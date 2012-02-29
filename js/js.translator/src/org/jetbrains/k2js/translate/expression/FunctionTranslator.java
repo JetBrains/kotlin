@@ -21,7 +21,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -30,16 +32,18 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.newAliasForThis;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.removeAliasForThis;
+import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 
 /**
@@ -128,15 +132,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction createFunctionObject() {
-        //  if (isDeclaration()) {
         return context().getFunctionObject(descriptor);
-//        }
-//        if (isLiteral()) {
-//            //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
-//            //TODO: must investigate
-//            return new JsFunction(context().jsScope());
-//        }
-        //  throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     private void translateBody() {
@@ -164,7 +160,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private static JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return mutateLastExpression(body, new JsAstUtils.Mutator() {
+        return mutateLastExpression(body, new Mutator() {
             @Override
             @NotNull
             public JsNode mutate(@NotNull JsNode node) {
@@ -218,10 +214,5 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private boolean isLiteral() {
         return functionDeclaration instanceof JetFunctionLiteralExpression;
-    }
-
-    private boolean isDeclaration() {
-        return (functionDeclaration instanceof JetNamedFunction) ||
-               (functionDeclaration instanceof JetPropertyAccessor);
     }
 }

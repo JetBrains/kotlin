@@ -36,8 +36,8 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
 
     @NotNull
-    public static JsExpression translate(@NotNull JetBinaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull JetBinaryExpression expression,
+                                           @NotNull TranslationContext context) {
         return (new IntrinsicAssignmentTranslator(expression, context)).translate();
     }
 
@@ -47,7 +47,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
     }
 
     @NotNull
-    protected JsExpression translate() {
+    private JsExpression translate() {
         if (isAssignment(getOperationToken(expression))) {
             return translateAsPlainAssignment();
         }

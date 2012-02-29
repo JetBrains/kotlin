@@ -197,6 +197,7 @@ public final class Intrinsics {
         return equalsIntrinsics.get(descriptor.getOriginal());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private final class IntrinsicDeclarationVisitor extends DeclarationDescriptorVisitor<Void, Void> {
 
         @Override

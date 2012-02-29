@@ -35,8 +35,8 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 
 
     @NotNull
-    public static JsExpression translate(@NotNull JetUnaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull JetUnaryExpression expression,
+                                           @NotNull TranslationContext context) {
         return (new IntrinsicIncrementTranslator(expression, context))
                 .translate();
     }
@@ -47,7 +47,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     }
 
     @NotNull
-    protected JsExpression translate() {
+    private JsExpression translate() {
         if (isPrimitiveExpressionIncrement()) {
             return jsUnaryExpression();
         }
@@ -64,7 +64,8 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
         JsExpression getExpression = accessTranslator.translateAsGet();
         if (isPrefix(expression)) {
             return new JsPrefixOperation(operator, getExpression);
-        } else {
+        }
+        else {
             return new JsPostfixOperation(operator, getExpression);
         }
     }

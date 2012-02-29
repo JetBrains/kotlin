@@ -18,7 +18,6 @@ package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -28,8 +27,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,9 +34,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.jetbrains.k2js.translate.general.Translation.translateAsStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationForName;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 
 /**
  * @author Pavel Talanov
@@ -60,26 +59,17 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     }
 
     @NotNull
-    private JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
-                                             @NotNull JetExpression initializer) {
+    private static JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
+                                                    @NotNull JetExpression initializer) {
         JsExpression initExpression = Translation.translateAsExpression(initializer, context);
-        return assignmentToBackingField(property, initExpression, context);
-    }
-
-    //TODO:
-    @NotNull
-    JsStatement assignmentToBackingField(@NotNull JetProperty property, @NotNull JsExpression initExpression,
-                                         @NotNull TranslationContext context) {
-
-        PropertyDescriptor propertyDescriptor = BindingUtils.getPropertyDescriptor(context.bindingContext(), property);
-        return TranslationUtils.assignmentToBackingField(context, propertyDescriptor, initExpression);
+        return assignmentToBackingField(context, property, initExpression);
     }
 
     @Override
     @NotNull
     public List<JsStatement> visitAnonymousInitializer(@NotNull JetClassInitializer initializer,
                                                        @NotNull TranslationContext context) {
-        return Arrays.asList(Translation.translateAsStatement(initializer.getBody(), context));
+        return Arrays.asList(translateAsStatement(initializer.getBody(), context));
     }
 
     @Override
@@ -95,11 +85,9 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
                                                         @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptorForObjectDeclaration
                 = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
-        JsName objectPropertyName = context.getNameForDescriptor(propertyDescriptorForObjectDeclaration);
         JetObjectDeclaration objectDeclaration = getObjectDeclarationForName(objectName);
         JsInvocation objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
-        return singletonList(TranslationUtils.assignmentToBackingField(context,
-                propertyDescriptorForObjectDeclaration, objectValue));
+        return singletonList(assignmentToBackingField(context, propertyDescriptorForObjectDeclaration, objectValue));
     }
 
     @NotNull

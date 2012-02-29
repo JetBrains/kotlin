@@ -18,11 +18,13 @@ package org.jetbrains.jet.plugin.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +46,14 @@ public abstract class JetTemplateContextType extends TemplateContextType {
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
-            if (element instanceof PsiWhiteSpace) {
+            if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
                 return false;
-            } else if (element instanceof LeafPsiElement) {
+            }
+            else if (PsiTreeUtil.getParentOfType(element, JetNamespaceHeader.class) != null
+                    || PsiTreeUtil.getParentOfType(element, JetImportDirective.class) != null) {
+                return false;
+            }
+            else if (element instanceof LeafPsiElement) {
                 IElementType elementType = ((LeafPsiElement) element).getElementType();
                 if (elementType == JetTokens.IDENTIFIER && !(element.getParent() instanceof JetReferenceExpression)) {
                     return false;
@@ -135,6 +142,10 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             if (parent instanceof JetSimpleNameExpression) {
                 parent = parent.getParent();
             }
+            if (parent instanceof JetBinaryExpression) {
+                // Example: sout<caret> foo()
+                parent = parent.getParent();
+            }
             return parent instanceof JetBlockExpression;
         }
     }
@@ -147,8 +158,8 @@ public abstract class JetTemplateContextType extends TemplateContextType {
         @Override
         protected boolean isInContext(@NotNull PsiElement element) {
             return element.getParent() instanceof JetExpression && !(element.getParent() instanceof JetConstantExpression) &&
-                    !(element.getParent().getParent() instanceof JetDotQualifiedExpression)
-                    && !(element.getParent() instanceof JetParameter);
+                   !(element.getParent().getParent() instanceof JetDotQualifiedExpression)
+                   && !(element.getParent() instanceof JetParameter);
         }
     }
 }

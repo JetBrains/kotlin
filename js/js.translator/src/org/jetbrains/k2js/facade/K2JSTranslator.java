@@ -74,7 +74,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private Config config;
+    private final Config config;
 
 
     public K2JSTranslator(@NotNull Config config) {
@@ -126,7 +126,7 @@ public final class K2JSTranslator {
 
 
     @NotNull
-    public String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
+    public static String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
         String namespaceName = getNamespaceName(file);
         List<String> arguments = parseString(argumentString);
         return GenerationUtils.generateCallToMain(namespaceName, arguments);

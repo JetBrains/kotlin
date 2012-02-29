@@ -21,13 +21,13 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
 import java.util.Set;
@@ -90,7 +90,7 @@ public final class StaticContext {
     private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
 
-    //TODO: too many parameters in constructor
+    //qTODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
                           @NotNull Aliaser aliaser,
                           @NotNull Namer namer, @NotNull Intrinsics intrinsics,
@@ -132,11 +132,6 @@ public final class StaticContext {
     @NotNull
     public NamingScope getRootScope() {
         return rootScope;
-    }
-
-    @NotNull
-    public StandardClasses getStandardClasses() {
-        return standardClasses;
     }
 
     @NotNull
@@ -217,24 +212,15 @@ public final class StaticContext {
                 }
             };
 
-            Rule<JsName> namesAnnotatedAsLibraryHasUnobfuscatableNames = new Rule<JsName>() {
+            Rule<JsName> predefinedObjectsHasUnobfuscatableNames = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    //TODO: refactor
-                    String name = null;
-                    AnnotationDescriptor annotation = getAnnotationByName(descriptor, LIBRARY_ANNOTATION_FQNAME);
-                    if (annotation != null) {
-                        name = AnnotationsUtils.getAnnotationStringParameter(descriptor, LIBRARY_ANNOTATION_FQNAME);
-                        name = (!name.isEmpty()) ? name : descriptor.getName();
-                    }
-                    else {
-                        ClassDescriptor containingClass = getContainingClass(descriptor);
-                        if (containingClass == null) return null;
-                        if (getAnnotationByName(containingClass, LIBRARY_ANNOTATION_FQNAME) != null) {
-                            name = descriptor.getName();
+                    for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+                        if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                            continue;
                         }
-                    }
-                    if (name != null) {
+                        String name = getNameForAnnotatedObject(descriptor, annotation);
+                        name = (name != null) ? name : descriptor.getName();
                         return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
                     }
                     return null;
@@ -267,29 +253,7 @@ public final class StaticContext {
                 }
 
             };
-            Rule<JsName> namesForNativeObjectsAreUnobfuscatable = new Rule<JsName>() {
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    String name = null;
-                    AnnotationDescriptor annotation = getAnnotationByName(descriptor, NATIVE_ANNOTATION_FQNAME);
-                    if (annotation != null) {
-                        name = AnnotationsUtils.getAnnotationStringParameter(descriptor, NATIVE_ANNOTATION_FQNAME);
-                        name = (!name.isEmpty()) ? name : descriptor.getName();
-                    }
-                    else {
-                        ClassDescriptor containingClass = getContainingClass(descriptor);
-                        if (containingClass == null) return null;
-                        if (getAnnotationByName(containingClass, NATIVE_ANNOTATION_FQNAME) != null) {
-                            name = descriptor.getName();
-                        }
-                    }
-                    if (name != null) {
-                        return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
-                    }
-                    return null;
 
-                }
-            };
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -302,9 +266,7 @@ public final class StaticContext {
                         else {
                             //assert overriddenDescriptors.size() == 1;
                             //TODO: for now translator can't deal with multiple inheritance good enough
-                            for (FunctionDescriptor overriddenDescriptor : overriddenDescriptors) {
-                                return getNameForDescriptor(overriddenDescriptor);
-                            }
+                            return getNameForDescriptor(overriddenDescriptors.iterator().next());
                         }
                     }
                     return null;
@@ -312,8 +274,7 @@ public final class StaticContext {
             };
             addRule(namesForStandardClasses);
             addRule(constructorHasTheSameNameAsTheClass);
-            addRule(namesAnnotatedAsLibraryHasUnobfuscatableNames);
-            addRule(namesForNativeObjectsAreUnobfuscatable);
+            addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(toStringHack);
             addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
@@ -440,27 +401,13 @@ public final class StaticContext {
 
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
-                        return namer.kotlinObject();
-                    }
-                    return null;
-                }
-            };
-            Rule<JsNameRef> membersOfAnnotatedClassesHaveKotlinQualifier = new Rule<JsNameRef>() {
-                @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    ClassDescriptor containingClass = getContainingClass(descriptor);
-                    if (containingClass == null) {
-                        return null;
-                    }
-                    if (getAnnotationByName(descriptor, LIBRARY_ANNOTATION_FQNAME) != null) {
+                    if (isLibraryObject(descriptor)) {
                         return namer.kotlinObject();
                     }
                     return null;
                 }
             };
             addRule(libraryObjectsHaveKotlinQualifier);
-            addRule(membersOfAnnotatedClassesHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(namespacesHaveNoQualifiers);
             addRule(namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);

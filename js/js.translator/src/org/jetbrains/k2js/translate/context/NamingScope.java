@@ -46,6 +46,7 @@ public final class NamingScope {
         return innerScope(innerJsScope);
     }
 
+    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
     public NamingScope innerScope(@NotNull JsScope correspondingScope) {
         return new NamingScope(correspondingScope);

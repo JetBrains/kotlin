@@ -53,7 +53,6 @@ public final class CallStandardMethodIntrinsic implements Intrinsic {
                               @NotNull TranslationContext context) {
         assert (receiver != null == receiverShouldBeNotNull);
         assert arguments.size() == expectedParamsNumber;
-        List<JsExpression> args = composeArguments(receiver, arguments);
         JsNameRef iteratorFunName = AstUtil.newQualifiedNameRef(methodName);
         return newInvocation(iteratorFunName, composeArguments(receiver, arguments));
     }

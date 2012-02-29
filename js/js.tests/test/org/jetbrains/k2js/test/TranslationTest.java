@@ -51,11 +51,11 @@ public abstract class TranslationTest extends BaseTest {
 
     public void translateFile(@NotNull String inputFile,
                               @NotNull String outputFile) throws Exception {
-        traslateFiles(Collections.singletonList(inputFile), outputFile);
+        translateFiles(Collections.singletonList(inputFile), outputFile);
     }
 
-    public void traslateFiles(@NotNull List<String> inputFiles,
-                              @NotNull String outputFile) throws Exception {
+    public void translateFiles(@NotNull List<String> inputFiles,
+                               @NotNull String outputFile) throws Exception {
         K2JSTranslator translator = new K2JSTranslator(new TestConfig(getProject()));
         List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
         JsProgram program = translator.generateProgram(psiFiles);
@@ -158,8 +158,8 @@ public abstract class TranslationTest extends BaseTest {
             fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
         }
         assert dir.isDirectory();
-        traslateFiles(fullFilePaths,
-                      getOutputFilePath(dirName + ".kt"));
+        translateFiles(fullFilePaths,
+                       getOutputFilePath(dirName + ".kt"));
     }
 
     protected List<String> generateFilenameList(String inputFile) {

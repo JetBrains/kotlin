@@ -70,8 +70,6 @@ public final class AnalyzerFacade {
         }
     }
 
-    //TODO: use some mechanism to avoid this
-    //TODO: move method somewhere
     @NotNull
     public static List<JetFile> withJsLibAdded(@NotNull List<JetFile> files, @NotNull Config config) {
         List<JetFile> allFiles = new ArrayList<JetFile>();
@@ -109,7 +107,7 @@ public final class AnalyzerFacade {
     private static final class JsConfiguration implements Configuration {
 
         @NotNull
-        private Project project;
+        private final Project project;
 
         public static JsConfiguration jsLibConfiguration(@NotNull Project project) {
             return new JsConfiguration(project);

@@ -161,7 +161,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private JsPropertyInitializer getClassNameToClassObject(@NotNull ClassDescriptor classDescriptor) {
         JsName className = context().getNameForDescriptor(classDescriptor);
-        JsNameRef alreadyDefinedClassReferernce = qualified(className, getDeclarationsObjectName().makeRef());
-        return new JsPropertyInitializer(className.makeRef(), alreadyDefinedClassReferernce);
+        JsNameRef alreadyDefinedClassReference = qualified(className, getDeclarationsObjectName().makeRef());
+        return new JsPropertyInitializer(className.makeRef(), alreadyDefinedClassReference);
     }
 }

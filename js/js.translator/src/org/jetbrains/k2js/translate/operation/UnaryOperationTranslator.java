@@ -34,6 +34,9 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 
 public final class UnaryOperationTranslator {
 
+    private UnaryOperationTranslator() {
+    }
+
     @NotNull
     public static JsExpression translate(@NotNull JetUnaryExpression expression,
                                          @NotNull TranslationContext context) {

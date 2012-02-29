@@ -16,21 +16,12 @@
 
 package org.jetbrains.k2js.utils;
 
-import com.google.common.base.Predicates;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.StandardConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -44,9 +35,9 @@ import java.util.Collections;
  * @author abreslav
  */
 public class JetTestUtils {
-    public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
 
 
+    private static final BindingTrace DUMMY_TRACE = new BindingTrace() {
         @Override
         public BindingContext getBindingContext() {
             return new BindingContext() {
@@ -149,8 +140,11 @@ public class JetTestUtils {
         }
     };
 
+    private JetTestUtils() {
+    }
 
-    public static void mkdirs(File file) throws IOException {
+
+    private static void mkdirs(File file) throws IOException {
         if (file.isDirectory()) {
             return;
         }

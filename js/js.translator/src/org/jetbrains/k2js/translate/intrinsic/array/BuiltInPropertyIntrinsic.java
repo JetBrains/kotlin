@@ -15,6 +15,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 /**
  * @author Pavel Talanov
  */
+//TODO: find should be usages
 public final class BuiltInPropertyIntrinsic implements Intrinsic {
 
     @NotNull
@@ -30,7 +31,6 @@ public final class BuiltInPropertyIntrinsic implements Intrinsic {
                               @NotNull TranslationContext context) {
         assert receiver != null;
         assert arguments.isEmpty() : "Length expression must have zero arguments.";
-        //TODO: provide better way
         JsNameRef lengthProperty = AstUtil.newQualifiedNameRef(propertyName);
         setQualifier(lengthProperty, receiver);
         return lengthProperty;

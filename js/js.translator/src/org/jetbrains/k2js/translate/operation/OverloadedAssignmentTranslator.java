@@ -32,8 +32,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodRefer
 public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
-    public static JsExpression translate(@NotNull JetBinaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull JetBinaryExpression expression,
+                                           @NotNull TranslationContext context) {
         return (new OverloadedAssignmentTranslator(expression, context)).translate();
     }
 
@@ -47,7 +47,7 @@ public final class OverloadedAssignmentTranslator extends AssignmentTranslator {
     }
 
     @NotNull
-    protected JsExpression translate() {
+    private JsExpression translate() {
         if (isVariableReassignment) {
             return reassignment();
         }

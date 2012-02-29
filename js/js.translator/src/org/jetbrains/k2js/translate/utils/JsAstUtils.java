@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -89,12 +90,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression extractExpressionFromStatement(@NotNull JsStatement statement) {
-        assert statement instanceof JsExprStmt : "Cannot extract expression from statement: " + statement;
-        return (((JsExprStmt) statement).getExpression());
-    }
-
-    @NotNull
     public static JsBinaryOperation and(@NotNull JsExpression op1, @NotNull JsExpression op2) {
         return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
     }
@@ -104,24 +99,23 @@ public final class JsAstUtils {
         return new JsBinaryOperation(JsBinaryOperator.OR, op1, op2);
     }
 
-    //TODO refactor
     public static void setQualifier(@NotNull JsExpression selector, @Nullable JsExpression receiver) {
+        assert (selector instanceof JsInvocation || selector instanceof JsNameRef);
         if (selector instanceof JsInvocation) {
             setQualifier(((JsInvocation) selector).getQualifier(), receiver);
             return;
         }
-        if (selector instanceof JsNameRef) {
-            JsNameRef nameRef = (JsNameRef) selector;
-            JsExpression qualifier = nameRef.getQualifier();
-            if (qualifier == null) {
-                nameRef.setQualifier(receiver);
-            }
-            else {
-                setQualifier(qualifier, receiver);
-            }
-            return;
+        setQualifierForNameRef((JsNameRef) selector, receiver);
+    }
+
+    private static void setQualifierForNameRef(@NotNull JsNameRef selector, @Nullable JsExpression receiver) {
+        JsExpression qualifier = selector.getQualifier();
+        if (qualifier == null) {
+            selector.setQualifier(receiver);
         }
-        throw new AssertionError("Set qualifier should be applied only to JsInvocation or JsNameRef instances");
+        else {
+            setQualifier(qualifier, receiver);
+        }
     }
 
     public static JsNameRef qualified(@NotNull JsName selector, @Nullable JsExpression qualifier) {
@@ -138,11 +132,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation inequality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
-    }
-
-    @NotNull
-    public static JsExpression equalsTrue(@NotNull JsExpression expression, @NotNull JsProgram program) {
-        return equality(expression, program.getTrueLiteral());
     }
 
     @NotNull
@@ -205,60 +194,6 @@ public final class JsAstUtils {
         return jsObjectLiteral;
     }
 
-    public interface Mutator {
-        JsNode mutate(JsNode node);
-    }
-
-
-    //TODO: move somewhere
-    //TODO: refactor and review
-    public static JsNode mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
-        if (node instanceof JsBlock) {
-            JsBlock block = (JsBlock) node;
-            List<JsStatement> statements = block.getStatements();
-
-            if (statements.isEmpty()) return block;
-
-            int size = statements.size();
-            statements.set(size - 1,
-                           convertToStatement(mutateLastExpression(statements.get(size - 1), mutator)));
-            return block;
-        }
-        if (node instanceof JsIf) {
-            JsIf ifExpr = (JsIf) node;
-            ifExpr.setThenStmt(convertToStatement(mutateLastExpression(ifExpr.getThenStmt(), mutator)));
-            JsStatement elseStmt = ifExpr.getElseStmt();
-            if (elseStmt != null) {
-                ifExpr.setElseStmt(convertToStatement(mutateLastExpression(elseStmt, mutator)));
-            }
-            return ifExpr;
-        }
-        if (node instanceof JsExprStmt) {
-            return convertToStatement(mutateLastExpression(((JsExprStmt) node).getExpression(), mutator));
-        }
-        return mutator.mutate(node);
-    }
-
-
-    public static final class SaveLastExpressionMutator implements Mutator {
-
-        @NotNull
-        private final JsExpression toAssign;
-
-        public SaveLastExpressionMutator(@NotNull JsExpression toAssign) {
-            this.toAssign = toAssign;
-        }
-
-        @Override
-        public JsNode mutate(JsNode node) {
-            if (!(node instanceof JsExpression)) {
-                return node;
-            }
-            return assignment(toAssign, (JsExpression) node);
-        }
-    }
-
-
     @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         JsVars.JsVar var = new JsVars.JsVar(name);
@@ -276,7 +211,7 @@ public final class JsAstUtils {
         setStatements(block, statementLinkedList);
     }
 
-    public static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
+    private static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
         List<JsStatement> statementList = block.getStatements();
         statementList.clear();
         statementList.addAll(statements);
@@ -286,10 +221,6 @@ public final class JsAstUtils {
         List<JsExpression> arguments = invocation.getArguments();
         assert arguments.isEmpty() : "Arguments already set.";
         arguments.addAll(newArgs);
-    }
-
-    public static void setArguments(@NotNull JsInvocation invocation, JsExpression... arguments) {
-        setArguments(invocation, Arrays.asList(arguments));
     }
 
     public static void setArguments(@NotNull JsNew invocation, @NotNull List<JsExpression> newArgs) {
@@ -320,5 +251,14 @@ public final class JsAstUtils {
             invoke.getArguments().add(expr);
         }
         return invoke;
+    }
+
+    @NotNull
+    public static List<JsStatement> temporariesInitialization(@NotNull TemporaryVariable... temporaries) {
+        List<JsStatement> result = Lists.newArrayList();
+        for (TemporaryVariable temporary : temporaries) {
+            result.add(temporary.assignmentExpression().makeStmt());
+        }
+        return result;
     }
 }
