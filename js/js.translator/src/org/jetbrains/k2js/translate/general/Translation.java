@@ -116,7 +116,7 @@ public final class Translation {
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.getStatements().addAll(Translation.translateFiles(files, context));
+        block.getStatements().addAll(translateFiles(files, context));
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());
         return context.program();

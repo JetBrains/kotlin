@@ -31,7 +31,6 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;

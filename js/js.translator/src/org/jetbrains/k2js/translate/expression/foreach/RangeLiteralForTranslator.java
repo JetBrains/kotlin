@@ -27,7 +27,6 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;

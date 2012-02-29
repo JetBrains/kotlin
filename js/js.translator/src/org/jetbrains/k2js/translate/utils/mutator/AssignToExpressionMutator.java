@@ -14,30 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.translate.expression.foreach;
+package org.jetbrains.k2js.translate.utils.mutator;
 
-import com.google.common.collect.Lists;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 
-import java.util.List;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 
 /**
  * @author Pavel Talanov
  */
-//TODO: consider moving some of the binary/unary operations stuff here
-public final class ForTranslatorUtils {
+public final class AssignToExpressionMutator implements Mutator {
 
-    private ForTranslatorUtils() {
+    @NotNull
+    private final JsExpression toAssign;
+
+    public AssignToExpressionMutator(@NotNull JsExpression toAssign) {
+        this.toAssign = toAssign;
     }
 
     @NotNull
-    public static List<JsStatement> temporariesInitialization(@NotNull TemporaryVariable... temporaries) {
-        List<JsStatement> result = Lists.newArrayList();
-        for (TemporaryVariable temporary : temporaries) {
-            result.add(temporary.assignmentExpression().makeStmt());
+    @Override
+    public JsNode mutate(@NotNull JsNode node) {
+        if (!(node instanceof JsExpression)) {
+            return node;
         }
-        return result;
+        return assignment(toAssign, (JsExpression) node);
     }
 }

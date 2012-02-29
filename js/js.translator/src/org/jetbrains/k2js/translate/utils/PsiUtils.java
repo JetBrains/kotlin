@@ -160,4 +160,18 @@ public final class PsiUtils {
         assert rangeExpression != null;
         return rangeExpression;
     }
+
+    @NotNull
+    public static JetPattern getPattern(@NotNull JetIsExpression expression) {
+        JetPattern pattern = expression.getPattern();
+        assert pattern != null : "Pattern should not be null";
+        return pattern;
+    }
+
+    @NotNull
+    public static JetTypeReference getTypeReference(@NotNull JetTypePattern pattern) {
+        JetTypeReference typeReference = pattern.getTypeReference();
+        assert typeReference != null : "Type pattern should contain a type reference";
+        return typeReference;
+    }
 }
