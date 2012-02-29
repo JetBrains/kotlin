@@ -47,7 +47,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     // For file context will be updated after each construction
     // For other tree sub-elements it's immutable.
     private BindingContext context;
-    
+
     private String elementText;
 
     public JetStructureViewElement(NavigatablePsiElement element, BindingContext context) {
@@ -78,7 +78,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     public boolean canNavigateToSource() {
         return myElement.canNavigateToSource();
     }
-    
+
     @Override
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
@@ -103,12 +103,12 @@ public class JetStructureViewElement implements StructureViewTreeElement {
                             myElement,
                             open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED);
                 }
-                
+
                 return null;
             }
         };
     }
-    
+
     @Override
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
@@ -132,6 +132,13 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         else if (myElement instanceof JetClassOrObject) {
             return wrapDeclarations(((JetClassOrObject) myElement).getDeclarations());
         }
+        else if (myElement instanceof JetClassObject) {
+            JetObjectDeclaration objectDeclaration = ((JetClassObject) myElement).getObjectDeclaration();
+            if (objectDeclaration != null) {
+                return wrapDeclarations(objectDeclaration.getDeclarations());
+            }
+        }
+
         return new TreeElement[0];
     }
 
@@ -165,7 +172,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
 
         return text;
     }
-    
+
     private TreeElement[] wrapDeclarations(List<JetDeclaration> declarations) {
         TreeElement[] result = new TreeElement[declarations.size()];
         for (int i = 0; i < declarations.size(); i++) {
@@ -173,7 +180,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         }
         return result;
     }
-    
+
     public static String getDescriptorTreeText(@NotNull DeclarationDescriptor descriptor) {
         StringBuilder textBuilder;
 
