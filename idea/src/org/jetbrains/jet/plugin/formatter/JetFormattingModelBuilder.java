@@ -50,6 +50,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .between(IMPORT_DIRECTIVE, CLASS).blankLines(1)
                 .between(IMPORT_DIRECTIVE, FUN).blankLines(1)
                 .between(IMPORT_DIRECTIVE, PROPERTY).blankLines(1)
+                .between(IMPORT_DIRECTIVE, OBJECT_DECLARATION).blankLines(1)
 
                 .before(FUN).lineBreakInCode()
                 .before(PROPERTY).lineBreakInCode()

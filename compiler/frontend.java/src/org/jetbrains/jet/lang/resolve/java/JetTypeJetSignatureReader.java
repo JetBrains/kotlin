@@ -83,7 +83,10 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitClassType(String name, boolean nullable, boolean forceReal) {
-        String ourName = name.replace('/', '.');
+        String ourName = name
+                .replace('/', '.')
+                .replace('$', '.') // TODO: not sure
+                ;
         
         this.classDescriptor = null;
         if (this.classDescriptor == null && !forceReal) {

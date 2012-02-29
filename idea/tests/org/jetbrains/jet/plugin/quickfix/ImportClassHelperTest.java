@@ -28,26 +28,19 @@ import java.io.IOException;
  */
 public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
     public void testDoNotImportIfGeneralExist() {
-        configureByFile(getTestName(false) + ".kt");
-        ImportClassHelper.addImportDirective("jettesting.data.testFunction", (JetFile) getFile());
-        checkResultByFile(getTestName(false) + ".kt.after");
+        testImportInFile("jettesting.data.testFunction");
     }
 
     public void testDoNotImportIfGeneralSpaceExist() {
-        configureByFile(getTestName(false) + ".kt");
-        ImportClassHelper.addImportDirective("jettesting.data.testFunction", (JetFile) getFile());
-        checkResultByFile(getTestName(false) + ".kt.after");
+        testImportInFile("jettesting.data.testFunction");
     }
 
     public void testNoDefaultImport() {
-        configureByFile(getTestName(false) + ".kt");
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                ImportClassHelper.addImportDirective("std.io.println", (JetFile) getFile());
-            }
-        });
-        checkResultByFile(getTestName(false) + ".kt.after");
+        testImportInFile("std.io.println");
+    }
+
+    public void testImportBeforeObject() {
+        testImportInFile("java.util.HashSet");
     }
 
     public void testInsertInEmptyFile() throws IOException {
@@ -72,6 +65,17 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         });
 
         checkResultByText("package some\n\nimport java.util.ArrayList");
+    }
+
+    public void testImportInFile(final String importString) {
+        configureByFile(getTestName(false) + ".kt");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                ImportClassHelper.addImportDirective(importString, (JetFile) getFile());
+            }
+        });
+        checkResultByFile(getTestName(false) + ".kt.after");
     }
 
     @Override

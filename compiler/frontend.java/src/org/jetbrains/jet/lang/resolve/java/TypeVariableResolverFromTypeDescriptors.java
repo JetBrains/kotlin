@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.List;
@@ -29,25 +31,52 @@ public class TypeVariableResolverFromTypeDescriptors implements TypeVariableReso
 
     @NotNull
     private final List<TypeParameterDescriptor> typeParameters;
-    @Nullable
-    private final TypeVariableResolver parent;
+    @NotNull
+    private final DeclarationDescriptor typeParametersOwner;
+    @NotNull
+    private final String context;
 
-    public TypeVariableResolverFromTypeDescriptors(@NotNull List<TypeParameterDescriptor> typeParameters, @Nullable TypeVariableResolver parent) {
+    public TypeVariableResolverFromTypeDescriptors(
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull DeclarationDescriptor owner,
+            @NotNull String context) {
         this.typeParameters = typeParameters;
-        this.parent = parent;
+        this.typeParametersOwner = owner;
+        this.context = context;
+
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            if (typeParameter.getContainingDeclaration() != owner) {
+                throw new IllegalStateException();
+            }
+        }
     }
 
     @NotNull
     @Override
     public TypeParameterDescriptor getTypeVariable(@NotNull String name) {
+        return getTypeVariable(name, typeParameters, typeParametersOwner, context);
+    }
+
+    @NotNull
+    private static TypeParameterDescriptor getTypeVariable(
+            @NotNull String name,
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull DeclarationDescriptor owner,
+            @NotNull String context) {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
             if (typeParameter.getName().equals(name)) {
                 return typeParameter;
             }
         }
-        if (parent != null) {
-            return parent.getTypeVariable(name);
+
+        DeclarationDescriptor containingDeclaration = owner.getContainingDeclaration();
+        if (containingDeclaration != null) {
+            return getTypeVariable(
+                    name,
+                    TypeVariableResolvers.getTypeParameterDescriptors((ClassOrNamespaceDescriptor) containingDeclaration),
+                    containingDeclaration,
+                    context);
         }
-        throw new RuntimeException("type parameter not found by name " + name); // TODO report properly
+        throw new RuntimeException("type parameter not found by name '" + name + "' in " + context);
     }
 }

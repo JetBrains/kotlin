@@ -1,6 +1,8 @@
 // NOTE this file is auto-generated from stdlib/ktSrc/JavaIterables.kt
 package std
 
+import std.util.*
+
 import java.util.*
 
 /** Returns true if any elements in the collection match the given predicate */
@@ -23,6 +25,16 @@ inline fun <T> Array<T>.all(predicate: (T)-> Boolean) : Boolean {
   return true
 }
 
+/** Returns the number of items which match the given predicate  */
+inline fun <T> Array<T>.count(predicate: (T)-> Boolean) : Int {
+  var answer = 0
+  for (elem in this) {
+    if (predicate(elem))
+      answer += 1
+  }
+  return answer
+}
+
 /** Returns the first item in the collection which matches the given predicate or null if none matched */
 inline fun <T> Array<T>.find(predicate: (T)-> Boolean) : T? {
   for (elem in this) {
@@ -32,8 +44,11 @@ inline fun <T> Array<T>.find(predicate: (T)-> Boolean) : T? {
   return null
 }
 
-/** Returns a new collection containing all elements in this collection which match the given predicate */
-inline fun <T> Array<T>.filter(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
+/** Returns a new List containing all elements in this collection which match the given predicate */
+inline fun <T> Array<T>.filter(predicate: (T)-> Boolean) : Collection<T> = filterTo(java.util.ArrayList<T>(), predicate)
+
+/** Filters all elements in this collection which match the given predicate into the given result collection */
+inline fun <T, C: Collection<in T>> Array<T>.filterTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (predicate(elem))
       result.add(elem)
@@ -42,7 +57,10 @@ inline fun <T> Array<T>.filter(result: Collection<T> = ArrayList<T>(), predicate
 }
 
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
-inline fun <T> Array<T>.filterNot(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
+inline fun <T> Array<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
+
+/** Returns a new collection containing all elements in this collection which do not match the given predicate */
+inline fun <T, C: Collection<in T>> Array<T>.filterNotTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (!predicate(elem))
       result.add(elem)
@@ -72,6 +90,42 @@ inline fun <T> Array<T>.foreach(operation: (element: T) -> Unit) {
     operation(elem)
 }
 
+/**
+ * Folds all the values from from left to right with the initial value to perform the operation on sequential pairs of values
+ *
+ * For example to sum together all numeric values in a collection of numbers it would be
+ * {code}val total = numbers.fold(0){(a, b) -> a + b}{code}
+ */
+inline fun <T> Array<T>.fold(initial: T, operation: (it: T, it2: T) -> T): T {
+  var answer = initial
+  for (elem in this) {
+    answer = operation(answer, elem)
+  }
+  return answer
+}
+
+/**
+ * Folds all the values from right to left with the initial value to perform the operation on sequential pairs of values
+ */
+inline fun <T> Array<T>.foldRight(initial: T, operation: (it: T, it2: T) -> T): T {
+  val reversed = this.reverse()
+  return reversed.fold(initial, operation)
+}
+
+/**
+ * Iterates through the collection performing the transformation on each element and using the result
+ * as the key in a map to group elements by the result
+ */
+inline fun <T,K> Array<T>.groupBy(result: Map<K,List<T>> = HashMap<K,List<T>>(), toKey: (T)-> K) : Map<K,List<T>> {
+  for (elem in this) {
+    val key = toKey(elem)
+    val list = result.getOrPut(key){ ArrayList<T>() }
+    list.add(elem)
+  }
+  return result
+}
+
+
 /** Creates a String from all the elements in the collection, using the seperator between them and using the given prefix and postfix if supplied */
 inline fun <T> Array<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
   val buffer = StringBuilder(prefix)
@@ -87,18 +141,33 @@ inline fun <T> Array<T>.join(separator: String, prefix: String = "", postfix: St
   return buffer.toString().sure()
 }
 
+/** Returns a reversed List of this collection */
+inline fun <T> Array<T>.reverse() : List<T> {
+  val answer = LinkedList<T>()
+  for (elem in this) {
+    answer.addFirst(elem)
+  }
+  return answer
+}
+
+/* Copies the collection into the given collection */
 inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
   for (elem in this)
     result.add(elem)
   return result
 }
 
+/* Converts the collection into a LinkedList */
 inline fun <T> Array<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
+/* Converts the collection into a List */
 inline fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
 
+/* Converts the collection into a Set */
 inline fun <T> Array<T>.toSet() : Set<T> = this.to(HashSet<T>())
 
+/* Converts the collection into a SortedSet */
+inline fun <T> Array<T>.toSortedSet() : SortedSet<T> = this.to(TreeSet<T>())
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 inline fun <in T> Array<T>.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {

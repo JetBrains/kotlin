@@ -8,6 +8,7 @@ import org.w3c.dom.*
 
 class DomBuilderTest() : TestSupport() {
 
+
     fun testBuildDocument() {
         var doc = createDocument()
 
@@ -18,13 +19,20 @@ class DomBuilderTest() : TestSupport() {
         doc.addElement("foo") {
             id = "id1"
             style = "bold"
-            cssClass = "bar"
+            classes = "bar"
             addElement("child") {
                 id = "id2"
-                cssClass = "another"
+                classes = "another"
                 addElement("grandChild") {
                     id = "id3"
-                    cssClass = "tiny"
+                    classes = " bar tiny"
+                    addText("Hello World!")
+                // TODO support neater syntax sugar for adding text?
+                // += "Hello World!"
+                }
+                addElement("grandChild2") {
+                    id = "id3"
+                    classes = "tiny thing bar "
                     addText("Hello World!")
                 // TODO support neater syntax sugar for adding text?
                 // += "Hello World!"
@@ -37,8 +45,8 @@ class DomBuilderTest() : TestSupport() {
         // test css selections on document
         assertEquals(0, doc[".doesNotExist"].size())
         assertEquals(1, doc[".another"].size())
-        assertEquals(1, doc[".tiny"].size())
-        assertEquals(1, doc[".bar"].size())
+        assertEquals(3, doc[".bar"].size())
+        assertEquals(2, doc[".tiny"].size())
 
         // element tag selections
         assertEquals(0, doc["doesNotExist"].size())
@@ -60,8 +68,8 @@ class DomBuilderTest() : TestSupport() {
             // test css selections on element
             assertEquals(0, root[".doesNotExist"].size())
             assertEquals(1, root[".another"].size())
-            assertEquals(1, root[".tiny"].size())
-            assertEquals(0, root[".bar"].size())
+            assertEquals(2, root[".bar"].size())
+            assertEquals(2, root[".tiny"].size())
 
             // element tag selections
             assertEquals(0, root["doesNotExist"].size())
@@ -77,12 +85,32 @@ class DomBuilderTest() : TestSupport() {
             fail("No root!")
         }
 
-
         val grandChild = doc["grandChild"].first
         if (grandChild != null) {
             println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
             assertEquals("Hello World!", grandChild.text)
-            assertEquals("tiny", grandChild.attribute("class") ?: "")
+            assertEquals(" bar tiny", grandChild.attribute("class"))
+
+            // test the classSet
+            val classSet = grandChild.classSet
+
+            assertTrue(classSet.contains("bar"))
+            assertTrue(classSet.contains("tiny"))
+            assertTrue(classSet.size == 2 )
+            assertFalse(classSet.contains("doesNotExist"))
+
+            // lets add a new class and some existing classes
+            grandChild.addClass("bar")
+            grandChild.addClass("newThingy")
+            assertEquals("bar tiny newThingy", grandChild.classes)
+
+            // remove
+            grandChild.removeClass("bar")
+            assertEquals("tiny newThingy", grandChild.classes)
+
+            grandChild.removeClass("tiny")
+            assertEquals("newThingy", grandChild.classes)
+
         } else {
             fail("Not an Element $grandChild")
         }

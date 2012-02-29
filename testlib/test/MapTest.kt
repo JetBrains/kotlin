@@ -39,14 +39,12 @@ class MapTest() : TestSupport() {
     fun testSetViaIndexOperators() {
         val map = java.util.HashMap<String, String>()
         assertTrue{ map.empty }
-        // TODO cannot use map.size due to compiler bug
-        assertEquals(map.size(), 0)
+        assertEquals(map.size, 0)
 
         map["name"] = "James"
 
         assertTrue{ !map.empty }
-        // TODO cannot use map.size due to compiler bug
-        assertEquals(map.size(), 1)
+        assertEquals(map.size, 1)
         assertEquals("James", map["name"])
     }
 }

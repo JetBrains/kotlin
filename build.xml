@@ -151,6 +151,20 @@
         </java>
     </target>
 
+    <target name="generateStdlib" depends="compileTestlib" description="Generates the stdlib APIs for arrays and kotlin collections">
+        <java classname="kotlin.tools.namespace" failonerror="true" fork="true">
+            <classpath>
+                <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
+                <pathelement location="${kotlin-home}/lib/kotlin-test.jar"/>
+                <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
+                <fileset dir="${basedir}/testlib/lib">
+                  <include name="**/*.jar"/>
+                </fileset>
+              <pathelement path="${output}/classes/testlib"/>
+            </classpath>
+        </java>
+    </target>
+
     <target name="testlib" depends="compileTestlib">
         <mkdir dir="${output}/test-reports"/>
 

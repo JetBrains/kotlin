@@ -58,11 +58,11 @@ fun main(args: Array<String>) {
 
 
   // JavaIterables - Generic iterable stuff
-  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package std", File(srcDir, "JavaIterables.kt")) {
+  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package std\n\nimport std.util.*", File(srcDir, "JavaIterables.kt")) {
       it.replaceAll("java.lang.Iterable<T>", "Array<T>")
   }
 
-  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package std", File(srcDir, "JavaIterables.kt")) {
+  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package std\n\nimport std.util.*", File(srcDir, "JavaIterables.kt")) {
     it.replaceAll("java.lang.Iterable<T>", "Iterable<T>")
   }
 

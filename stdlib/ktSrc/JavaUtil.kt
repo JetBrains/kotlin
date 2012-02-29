@@ -96,4 +96,10 @@ val <T> List<T>.last : T?
     get() = this.tail
 
 
+/** Returns true if the collection is not empty */
+inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
+
+/** Converts the nullable collection into an empty collection if its null */
+inline fun <T> java.util.Collection<T>?.notNull() : Collection<T>
+    = if (this != null) this else Collections.EMPTY_LIST as Collection<T>
 

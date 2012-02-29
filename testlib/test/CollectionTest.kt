@@ -67,7 +67,7 @@ class CollectionTest() : TestSupport() {
 
     fun testFilterIntoLinkedList() {
         // TODO would be nice to avoid the <String>
-        val foo = data.filter(linkedList<String>()){it.startsWith("f")}
+        val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
 
         assertTrue {
             foo.all{it.startsWith("f")}
@@ -82,7 +82,7 @@ class CollectionTest() : TestSupport() {
 
     fun testFilterIntoSortedSet() {
         // TODO would be nice to avoid the <String>
-        val foo = data.filter(hashSet<String>()){it.startsWith("f")}
+        val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
         assertTrue {
             foo.all{it.startsWith("f")}
@@ -244,6 +244,29 @@ class CollectionTest() : TestSupport() {
         fails { arrayList<Int>().last() }
         fails { linkedList<String>().last() }
         fails { hashSet<Char>().last() }
+    }
+
+    fun testSubscript() {
+        val list = arrayList("foo", "bar")
+        assertEquals("foo", list[0])
+        assertEquals("bar", list[1])
+
+        // lists throw an exception if out of range
+        fails {
+            assertEquals(null, list[2])
+        }
+
+        // lets try update the list
+        list[0] = "new"
+        list[1] = "thing"
+
+        // lists don't allow you to set past the end of the list
+        fails {
+            list[2] = "works"
+        }
+
+        list.add("works")
+        assertEquals(arrayList("new", "thing", "works"), list)
     }
 
     fun testIndices() {

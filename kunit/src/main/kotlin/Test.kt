@@ -65,7 +65,7 @@ inline fun <T> expect(expected: T, message: String, block: ()-> T) {
 }
 
 /** Asserts that given function block fails by throwing an exception */
-fun fails(block: ()-> Any): Exception? {
+fun fails(block: ()-> Unit): Exception? {
     try {
         block()
         Assert.fail("Expected an exception to be thrown")
@@ -77,7 +77,7 @@ fun fails(block: ()-> Any): Exception? {
 }
 
 /** Asserts that a block fails with a specific exception being thrown */
-fun <T: Exception> failsWith(block: ()-> Any) {
+fun <T: Exception> failsWith(block: ()-> Unit) {
     try {
         block()
         Assert.fail("Expected an exception to be thrown")

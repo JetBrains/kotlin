@@ -1,0 +1,4 @@
+import java.util.HashSet
+
+object some {
+}

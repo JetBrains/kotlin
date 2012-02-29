@@ -104,3 +104,5 @@ inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStrea
 /** Returns true if the array is not empty */
 inline fun <T> Array<T>.notEmpty() : Boolean = this.size > 0
 
+/** Returns true if the array is empty */
+inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
