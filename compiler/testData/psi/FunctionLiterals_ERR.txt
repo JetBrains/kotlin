@@ -278,7 +278,7 @@ JetFile: FunctionLiterals_ERR.jet
                         VALUE_PARAMETER
                           PsiElement(IDENTIFIER)('a')
                         PsiWhiteSpace(' ')
-                        PsiErrorElement:To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}
+                        PsiErrorElement:To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType -> ...}
                           PsiElement(COLON)(':')
                           PsiWhiteSpace(' ')
                           TYPE_REFERENCE
