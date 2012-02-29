@@ -41,8 +41,11 @@ inline fun <T> java.lang.Iterable<T>.find(predicate: (T)-> Boolean) : T? {
   return null
 }
 
-/** Returns a new collection containing all elements in this collection which match the given predicate */
-inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
+/** Returns a new List containing all elements in this collection which match the given predicate */
+inline fun <T> java.lang.Iterable<T>.filter(predicate: (T)-> Boolean) : Collection<T> = filterTo(java.util.ArrayList<T>(), predicate)
+
+/** Filters all elements in this collection which match the given predicate into the given result collection */
+inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (predicate(elem))
       result.add(elem)
@@ -51,7 +54,10 @@ inline fun <T> java.lang.Iterable<T>.filter(result: Collection<T> = ArrayList<T>
 }
 
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
-inline fun <T> java.lang.Iterable<T>.filterNot(result: Collection<T> = ArrayList<T>(), predicate: (T)-> Boolean) : Collection<T> {
+inline fun <T> java.lang.Iterable<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
+
+/** Returns a new collection containing all elements in this collection which do not match the given predicate */
+inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterNotTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (!predicate(elem))
       result.add(elem)
