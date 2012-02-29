@@ -52,8 +52,7 @@ public final class PrimitiveRangeToIntrinsic implements Intrinsic {
         JsBinaryOperation rangeSize = sum(subtract(rangeEnd, rangeStart),
                                           context.program().getNumberLiteral(1));
         //TODO: provide a way not to hard code this value
-        JsNew numberRangeConstructorInvocation
-                = new JsNew(AstUtil.newQualifiedNameRef("Kotlin.NumberRange"));
+        JsNew numberRangeConstructorInvocation = new JsNew(AstUtil.newQualifiedNameRef("Kotlin.NumberRange"));
         //TODO: add tests and correct expression for reversed ranges.
         JsBooleanLiteral isRangeReversed = context.program().getFalseLiteral();
         setArguments(numberRangeConstructorInvocation, rangeStart, rangeSize, isRangeReversed);

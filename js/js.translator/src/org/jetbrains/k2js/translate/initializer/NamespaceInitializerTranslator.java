@@ -40,6 +40,7 @@ public final class NamespaceInitializerTranslator extends AbstractInitializerTra
     @Override
     @NotNull
     protected JsFunction generateInitializerFunction() {
+        //NOTE: namespace has no constructor
         JsFunction result = new JsFunction(initializerMethodScope.jsScope());
         result.setBody(newBlock(translateNamespaceInitializers(namespace)));
         return result;

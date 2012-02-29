@@ -38,7 +38,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
  */
 public final class RangeForTranslator extends ForTranslator {
 
-    //TODO: inspection
     @NotNull
     public static JsStatement doTranslate(@NotNull JetForExpression expression,
                                           @NotNull TranslationContext context) {

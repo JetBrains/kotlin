@@ -30,7 +30,6 @@ public final class BuiltInPropertyIntrinsic implements Intrinsic {
                               @NotNull TranslationContext context) {
         assert receiver != null;
         assert arguments.isEmpty() : "Length expression must have zero arguments.";
-        //TODO: provide better way
         JsNameRef lengthProperty = AstUtil.newQualifiedNameRef(propertyName);
         setQualifier(lengthProperty, receiver);
         return lengthProperty;

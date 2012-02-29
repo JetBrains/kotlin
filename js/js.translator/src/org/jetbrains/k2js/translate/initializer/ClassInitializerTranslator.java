@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -27,15 +28,15 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.PsiUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgumentList;
 
 /**
  * @author Pavel Talanov
@@ -57,14 +58,22 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @Override
     @NotNull
     protected JsFunction generateInitializerFunction() {
-        //TODO: look for duplication of this code
-        JsFunction result = new JsFunction(initializerMethodScope.jsScope());
-        //NOTE: that while we translateAsLocalNameReference constructor parameters we also add property initializer statements
+        //TODO: it's inconsistent that we scope for class and function for constructor, currently have problems implementing better way
+        ConstructorDescriptor primaryConstructor = getConstructor();
+        JsFunction result = context().getFunctionObject(primaryConstructor);
+        //NOTE: while we translate constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
         result.setBody(generateInitializerMethodBody());
         return result;
+    }
+
+    private ConstructorDescriptor getConstructor() {
+        ConstructorDescriptor primaryConstructor =
+                getClassDescriptor(context().bindingContext(), classDeclaration).getUnsubstitutedPrimaryConstructor();
+        assert primaryConstructor != null : "Traits do not have initialize methods.";
+        return primaryConstructor;
     }
 
     @NotNull
@@ -91,8 +100,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     @NotNull
     private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
-        //TODO: use the same mechanism as in call translator
-        return TranslationUtils.translateArgumentList(context(), superCall.getValueArguments());
+        return translateArgumentList(context(), superCall.getValueArguments());
     }
 
     @Nullable
@@ -103,13 +111,12 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
                 result = (JetDelegatorToSuperCall) specifier;
             }
         }
-        //assert result != null : "Class must call ancestor's constructor.";
         return result;
     }
 
     @NotNull
     List<JsParameter> translatePrimaryConstructorParameters() {
-        List<JetParameter> parameterList = PsiUtils.getPrimaryConstructorParameters(classDeclaration);
+        List<JetParameter> parameterList = getPrimaryConstructorParameters(classDeclaration);
         List<JsParameter> result = new ArrayList<JsParameter>();
         for (JetParameter jetParameter : parameterList) {
             result.add(translateParameter(jetParameter));
