@@ -18,7 +18,7 @@ class MapTest() : TestSupport() {
 
         val b = data.getOrElse("foo"){3}
         assertEquals(3, b)
-        assertEquals(0, data.size)
+        assertEquals(0, data.size())
     }
 
     fun testGetOrPut() {
@@ -33,18 +33,20 @@ class MapTest() : TestSupport() {
 
     fun testSizeAndEmpty() {
         assertTrue{ data.empty }
-        assertEquals(data.size, 0)
+        // TODO using size breaks a test case
+        assertEquals(data.size(), 0)
     }
 
     fun testSetViaIndexOperators() {
         val map = java.util.HashMap<String, String>()
         assertTrue{ map.empty }
-        assertEquals(map.size, 0)
+        // TODO using size breaks a test case
+        assertEquals(map.size(), 0)
 
         map["name"] = "James"
 
         assertTrue{ !map.empty }
-        assertEquals(map.size, 1)
+        assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }
 }
