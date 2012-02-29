@@ -45,7 +45,7 @@ public final class AnnotationsUtils {
         return getAnnotationByName(descriptor, annotationFQNAme) != null;
     }
 
-    @NotNull
+    @Nullable
     public static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
                                                       @NotNull String annotationFQName) {
         AnnotationDescriptor annotationDescriptor =
@@ -53,16 +53,25 @@ public final class AnnotationsUtils {
         assert annotationDescriptor != null;
         //TODO: this is a quick fix for unsupported default args problem
         if (annotationDescriptor.getValueArguments().isEmpty()) {
-            return "";
+            return null;
         }
         CompileTimeConstant<?> constant = annotationDescriptor.getValueArguments().iterator().next();
         //TODO: this is a quick fix for unsupported default args problem
         if (constant == null) {
-            return "";
+            return null;
         }
         Object value = constant.getValue();
         assert value instanceof String : "Native function annotation should have one String parameter";
         return (String) value;
+    }
+
+    @Nullable
+    public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
+                                                   @NotNull String annotationFQName) {
+        if (!hasAnnotation(declarationDescriptor, annotationFQName)) {
+            return null;
+        }
+        return getAnnotationStringParameter(declarationDescriptor, annotationFQName);
     }
 
     @Nullable
@@ -93,12 +102,12 @@ public final class AnnotationsUtils {
         return hasAnnotationOrInsideAnnotatedClass(descriptor, LIBRARY_ANNOTATION_FQNAME);
     }
 
-    //TODO: the use of this method is splattered across the code which can be hard to track
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
         return isLibraryObject(descriptor) || isNativeObject(descriptor);
     }
 
-    private static boolean hasAnnotationOrInsideAnnotatedClass(DeclarationDescriptor descriptor, String annotationFQName) {
+    public static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor,
+                                                              @NotNull String annotationFQName) {
         if (getAnnotationByName(descriptor, annotationFQName) != null) {
             return true;
         }

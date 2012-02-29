@@ -110,7 +110,7 @@ public final class BindingUtils {
             if (descriptor instanceof NamespaceDescriptor) {
                 continue;
             }
-            JetDeclaration declaration = BindingUtils.getDeclarationForDescriptor(bindingContext, descriptor);
+            JetDeclaration declaration = getDeclarationForDescriptor(bindingContext, descriptor);
             if (declaration != null) {
                 declarations.add(declaration);
             }
