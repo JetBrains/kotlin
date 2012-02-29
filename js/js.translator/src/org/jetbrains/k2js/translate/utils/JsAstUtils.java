@@ -89,12 +89,6 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsExpression extractExpressionFromStatement(@NotNull JsStatement statement) {
-        assert statement instanceof JsExprStmt : "Cannot extract expression from statement: " + statement;
-        return (((JsExprStmt) statement).getExpression());
-    }
-
-    @NotNull
     public static JsBinaryOperation and(@NotNull JsExpression op1, @NotNull JsExpression op2) {
         return new JsBinaryOperation(JsBinaryOperator.AND, op1, op2);
     }
@@ -138,11 +132,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation inequality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
-    }
-
-    @NotNull
-    public static JsExpression equalsTrue(@NotNull JsExpression expression, @NotNull JsProgram program) {
-        return equality(expression, program.getTrueLiteral());
     }
 
     @NotNull
@@ -286,10 +275,6 @@ public final class JsAstUtils {
         List<JsExpression> arguments = invocation.getArguments();
         assert arguments.isEmpty() : "Arguments already set.";
         arguments.addAll(newArgs);
-    }
-
-    public static void setArguments(@NotNull JsInvocation invocation, JsExpression... arguments) {
-        setArguments(invocation, Arrays.asList(arguments));
     }
 
     public static void setArguments(@NotNull JsNew invocation, @NotNull List<JsExpression> newArgs) {
