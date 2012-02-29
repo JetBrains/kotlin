@@ -46,14 +46,14 @@ public final class TranslationUtils {
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return notEqual(expressionToCheck, nullLiteral);
+        return inequality(expressionToCheck, nullLiteral);
     }
 
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
                                                 @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return JsAstUtils.equals(expressionToCheck, nullLiteral);
+        return equality(expressionToCheck, nullLiteral);
     }
 
     @NotNull

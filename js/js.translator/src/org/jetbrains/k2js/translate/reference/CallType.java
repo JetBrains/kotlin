@@ -29,7 +29,7 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static com.google.dart.compiler.util.AstUtil.newSequence;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.notEqual;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
 
 /**
  * @author Pavel Talanov
@@ -44,7 +44,7 @@ public enum CallType {
             TemporaryVariable temporaryVariable = context.declareTemporary(receiver);
             JsNullLiteral nullLiteral = context.program().getNullLiteral();
             //TODO: find similar not null checks
-            JsBinaryOperation notNullCheck = notEqual(temporaryVariable.reference(), nullLiteral);
+            JsBinaryOperation notNullCheck = inequality(temporaryVariable.reference(), nullLiteral);
             JsConditional callMethodIfNotNullElseNull =
                     new JsConditional(notNullCheck, constructor.construct(temporaryVariable.reference()), nullLiteral);
             return newSequence(temporaryVariable.assignmentExpression(), callMethodIfNotNullElseNull);

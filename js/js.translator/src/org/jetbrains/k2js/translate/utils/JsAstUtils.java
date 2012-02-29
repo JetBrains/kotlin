@@ -131,18 +131,18 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation equals(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+    public static JsBinaryOperation equality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.EQ, arg1, arg2);
     }
 
     @NotNull
-    public static JsBinaryOperation notEqual(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+    public static JsBinaryOperation inequality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
     }
 
     @NotNull
     public static JsExpression equalsTrue(@NotNull JsExpression expression, @NotNull JsProgram program) {
-        return equals(expression, program.getTrueLiteral());
+        return equality(expression, program.getTrueLiteral());
     }
 
     @NotNull
@@ -153,6 +153,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation sum(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation addAssign(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, left, right);
     }
 
     @NotNull
@@ -167,7 +172,7 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsBinaryOperation typeof(@NotNull JsExpression expression, @NotNull JsStringLiteral string) {
-        return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+        return equality(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
     }
 
     @NotNull

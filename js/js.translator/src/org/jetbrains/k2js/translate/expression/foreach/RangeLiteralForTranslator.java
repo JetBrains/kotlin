@@ -94,7 +94,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(parameterName.makeRef(), rangeEnd.reference());
+        return inequality(parameterName.makeRef(), rangeEnd.reference());
     }
 
     @NotNull

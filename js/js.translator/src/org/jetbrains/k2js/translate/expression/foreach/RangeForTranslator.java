@@ -73,7 +73,7 @@ public final class RangeForTranslator extends ForTranslator {
                                                        program().getNumberLiteral(1));
         incrVar = context().declareTemporary(incrVarValue);
         start = context().declareTemporary(callFunction("get_start"));
-        end = context().declareTemporary(new JsBinaryOperation(JsBinaryOperator.ADD, callFunction("get_end"), incrVar.reference()));
+        end = context().declareTemporary(sum(callFunction("get_end"), incrVar.reference()));
     }
 
     @NotNull
@@ -100,12 +100,12 @@ public final class RangeForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(parameterName.makeRef(), end.reference());
+        return inequality(parameterName.makeRef(), end.reference());
     }
 
     @NotNull
     private JsExpression getIncrExpression() {
-        return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, parameterName.makeRef(), incrVar.reference());
+        return addAssign(parameterName.makeRef(), incrVar.reference());
     }
 
     @NotNull

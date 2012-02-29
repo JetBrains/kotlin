@@ -100,7 +100,7 @@ public final class ArrayForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(index.reference(), end.reference());
+        return inequality(index.reference(), end.reference());
     }
 
     @NotNull
