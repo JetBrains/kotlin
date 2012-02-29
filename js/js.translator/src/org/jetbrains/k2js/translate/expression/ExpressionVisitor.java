@@ -35,8 +35,8 @@ import org.jetbrains.k2js.translate.operation.IncrementTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.k2js.translate.reference.*;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
 
@@ -44,6 +44,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
+import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 /**
  * @author Pavel Talanov
@@ -161,10 +162,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return ifStatement;
         }
         TemporaryVariable result = context.declareTemporary(context.program().getNullLiteral());
-        JsAstUtils.SaveLastExpressionMutator saveResultToTemporaryMutator =
-                new JsAstUtils.SaveLastExpressionMutator(result.reference());
-        JsNode mutatedIfStatement = mutateLastExpression(ifStatement,
-                                                         saveResultToTemporaryMutator);
+        AssignToExpressionMutator saveResultToTemporaryMutator =
+                new AssignToExpressionMutator(result.reference());
+        JsNode mutatedIfStatement = mutateLastExpression(ifStatement, saveResultToTemporaryMutator);
         JsStatement resultingStatement = convertToStatement(mutatedIfStatement);
         context.addStatementToCurrentBlock(resultingStatement);
         return result.reference();

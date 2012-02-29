@@ -193,60 +193,6 @@ public final class JsAstUtils {
         return jsObjectLiteral;
     }
 
-    public interface Mutator {
-        JsNode mutate(JsNode node);
-    }
-
-
-    //TODO: move somewhere
-    //TODO: refactor and review
-    public static JsNode mutateLastExpression(@NotNull JsNode node, @NotNull Mutator mutator) {
-        if (node instanceof JsBlock) {
-            JsBlock block = (JsBlock) node;
-            List<JsStatement> statements = block.getStatements();
-
-            if (statements.isEmpty()) return block;
-
-            int size = statements.size();
-            statements.set(size - 1,
-                           convertToStatement(mutateLastExpression(statements.get(size - 1), mutator)));
-            return block;
-        }
-        if (node instanceof JsIf) {
-            JsIf ifExpr = (JsIf) node;
-            ifExpr.setThenStmt(convertToStatement(mutateLastExpression(ifExpr.getThenStmt(), mutator)));
-            JsStatement elseStmt = ifExpr.getElseStmt();
-            if (elseStmt != null) {
-                ifExpr.setElseStmt(convertToStatement(mutateLastExpression(elseStmt, mutator)));
-            }
-            return ifExpr;
-        }
-        if (node instanceof JsExprStmt) {
-            return convertToStatement(mutateLastExpression(((JsExprStmt) node).getExpression(), mutator));
-        }
-        return mutator.mutate(node);
-    }
-
-
-    public static final class SaveLastExpressionMutator implements Mutator {
-
-        @NotNull
-        private final JsExpression toAssign;
-
-        public SaveLastExpressionMutator(@NotNull JsExpression toAssign) {
-            this.toAssign = toAssign;
-        }
-
-        @Override
-        public JsNode mutate(JsNode node) {
-            if (!(node instanceof JsExpression)) {
-                return node;
-            }
-            return assignment(toAssign, (JsExpression) node);
-        }
-    }
-
-
     @NotNull
     public static JsVars newVar(@NotNull JsName name, @Nullable JsExpression expr) {
         JsVars.JsVar var = new JsVars.JsVar(name);

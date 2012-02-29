@@ -30,16 +30,18 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.newAliasForThis;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.removeAliasForThis;
+import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 
 /**
@@ -164,7 +166,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private static JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return mutateLastExpression(body, new JsAstUtils.Mutator() {
+        return mutateLastExpression(body, new Mutator() {
             @Override
             @NotNull
             public JsNode mutate(@NotNull JsNode node) {

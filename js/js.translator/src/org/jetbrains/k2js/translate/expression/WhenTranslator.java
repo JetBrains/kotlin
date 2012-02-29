@@ -25,7 +25,8 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
+import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,8 +122,8 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     JsStatement withReturnValueCaptured(@NotNull JsNode node) {
 
-        return convertToStatement(mutateLastExpression(node,
-                                                       new JsAstUtils.SaveLastExpressionMutator(result.reference())));
+        return convertToStatement(LastExpressionMutator.mutateLastExpression(node,
+                                                                             new AssignToExpressionMutator(result.reference())));
     }
 
     @NotNull
