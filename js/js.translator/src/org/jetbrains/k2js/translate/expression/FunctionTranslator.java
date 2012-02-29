@@ -21,7 +21,9 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -130,15 +132,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction createFunctionObject() {
-        //  if (isDeclaration()) {
         return context().getFunctionObject(descriptor);
-//        }
-//        if (isLiteral()) {
-//            //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
-//            //TODO: must investigate
-//            return new JsFunction(context().jsScope());
-//        }
-        //  throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     private void translateBody() {
@@ -220,10 +214,5 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private boolean isLiteral() {
         return functionDeclaration instanceof JetFunctionLiteralExpression;
-    }
-
-    private boolean isDeclaration() {
-        return (functionDeclaration instanceof JetNamedFunction) ||
-               (functionDeclaration instanceof JetPropertyAccessor);
     }
 }
