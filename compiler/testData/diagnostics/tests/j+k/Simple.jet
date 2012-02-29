@@ -1,0 +1,9 @@
+// FILE: A.java
+
+class A {
+    void f() { }
+}
+
+// FILE: B.kt
+
+fun foo(a: A) = a.f()
