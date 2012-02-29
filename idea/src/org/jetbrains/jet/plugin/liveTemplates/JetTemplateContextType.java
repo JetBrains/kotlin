@@ -136,6 +136,10 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             if (parent instanceof JetSimpleNameExpression) {
                 parent = parent.getParent();
             }
+            if (parent instanceof JetBinaryExpression) {
+                // Example: sout<caret> foo()
+                parent = parent.getParent();
+            }
             return parent instanceof JetBlockExpression;
         }
     }
