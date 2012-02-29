@@ -67,7 +67,7 @@ class CollectionTest() : TestSupport() {
 
     fun testFilterIntoLinkedList() {
         // TODO would be nice to avoid the <String>
-        val foo = data.filter(linkedList<String>()){it.startsWith("f")}
+        val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
 
         assertTrue {
             foo.all{it.startsWith("f")}
@@ -82,7 +82,7 @@ class CollectionTest() : TestSupport() {
 
     fun testFilterIntoSortedSet() {
         // TODO would be nice to avoid the <String>
-        val foo = data.filter(hashSet<String>()){it.startsWith("f")}
+        val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
         assertTrue {
             foo.all{it.startsWith("f")}
