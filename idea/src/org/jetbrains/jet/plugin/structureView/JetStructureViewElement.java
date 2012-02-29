@@ -157,6 +157,10 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             if (myElement instanceof JetClassInitializer) {
                 return "<class initializer>";
             }
+
+            if (myElement instanceof JetClassObject) {
+                return "<class object>";
+            }
         }
 
         return text;
