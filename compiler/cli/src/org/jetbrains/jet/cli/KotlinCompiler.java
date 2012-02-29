@@ -19,12 +19,8 @@ package org.jetbrains.jet.cli;
 import com.sampullara.cli.Args;
 import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.compiler.CompilerPlugin;
-import org.jetbrains.jet.compiler.FileNameTransformer;
+import org.jetbrains.jet.compiler.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -72,6 +68,9 @@ public class KotlinCompiler {
         @Argument(value = "stubs", description = "Compile stubs: ignore function bodies")
         public boolean stubs;
 
+        @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
+        public boolean tags;
+
         @Argument(value = "transformNamesToJava", description = "Transform Kotlin file names to *.java. This option is needed for compiling kotlinized Java library headers")
         public boolean transformNamesToJava;
     }
@@ -108,7 +107,8 @@ public class KotlinCompiler {
             return 1;
         }
         catch (Throwable t) {
-            t.printStackTrace();
+            // Always use tags
+            errStream.println(MessageRenderer.TAGS.renderException(t));
             return 1;
         }
 
@@ -117,7 +117,11 @@ public class KotlinCompiler {
             return 0;
         }
 
-        CompileEnvironment environment = new CompileEnvironment(arguments.transformNamesToJava ? ANY_EXTENSION_TO_JAVA : FileNameTransformer.IDENTITY);
+        FileNameTransformer fileNameTransformer = arguments.transformNamesToJava
+                                                  ? ANY_EXTENSION_TO_JAVA
+                                                  : FileNameTransformer.IDENTITY;
+        MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+        CompileEnvironment environment = new CompileEnvironment(fileNameTransformer, messageRenderer);
         try {
             environment.setIgnoreErrors(false);
             environment.setErrorStream(errStream);
@@ -138,16 +142,18 @@ public class KotlinCompiler {
 
             if (arguments.module != null) {
                 environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
-                return 0;
             }
             else {
-                if (!environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime)) {
-                    return 1;
-                }
+                environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
 
             return 0;
-        } finally {
+        }
+        catch (Throwable t) {
+            errStream.println(messageRenderer.renderException(t));
+            return 1;
+        }
+        finally {
             environment.dispose();
         }
     }

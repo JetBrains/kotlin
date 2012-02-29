@@ -99,7 +99,7 @@ public class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        KotlinCompiler.exec("-output", destdir.getPath(), "-src", "./stdlib/ktSrc", "-stdlib", destdir.getAbsolutePath());
+        KotlinCompiler.exec(System.err, "-output", destdir.getPath(), "-src", "./stdlib/ktSrc", "-stdlib", destdir.getAbsolutePath());
     }
     
     private static List<File> javaFilesInDir(File dir) {
