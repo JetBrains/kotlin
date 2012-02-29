@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -112,21 +111,12 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             }
         });
 
-        boolean importJdk = expectedText.contains("+JDK");
-//        Configuration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : Configuration.EMPTY;
-
         List<JetFile> jetFiles = Lists.newArrayList();
         for (TestFile testFileFile : testFileFiles) {
             jetFiles.add(testFileFile.jetFile);
         }
 
-        BindingContext bindingContext;
-        if (importJdk) {
-            bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
-        }
-        else {
-            bindingContext = AnalyzingUtils.analyzeFiles(getProject(), Configuration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
-        }
+        BindingContext bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
         boolean ok = true;
 
