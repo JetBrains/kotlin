@@ -27,6 +27,7 @@ import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
 import java.util.Set;
@@ -216,15 +217,18 @@ public final class StaticContext {
                 }
             };
 
-            Rule<JsName> namesAnnotatedAsLibraryHasUnobfuscatableNames = new Rule<JsName>() {
+            Rule<JsName> predefinedObjectsHasUnobfuscatableNames = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!isLibraryObject(descriptor)) {
-                        return null;
+                    for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+                        if (!hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                            continue;
+                        }
+                        String name = getNameForAnnotatedObject(descriptor, annotation);
+                        name = (name != null) ? name : descriptor.getName();
+                        return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
                     }
-                    String name = getNameForAnnotatedObject(descriptor, LIBRARY_ANNOTATION_FQNAME);
-                    name = (name != null) ? name : descriptor.getName();
-                    return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
+                    return null;
                 }
             };
             Rule<JsName> propertiesCorrespondToSpeciallyTreatedBackingFieldNames = new Rule<JsName>() {
@@ -254,17 +258,7 @@ public final class StaticContext {
                 }
 
             };
-            Rule<JsName> namesForNativeObjectsAreUnobfuscatable = new Rule<JsName>() {
-                @Override
-                public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!isNativeObject(descriptor)) {
-                        return null;
-                    }
-                    String name = getNameForAnnotatedObject(descriptor, NATIVE_ANNOTATION_FQNAME);
-                    name = (name != null) ? name : descriptor.getName();
-                    return getEnclosingScope(descriptor).declareUnobfuscatableName(name);
-                }
-            };
+
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
@@ -285,8 +279,7 @@ public final class StaticContext {
             };
             addRule(namesForStandardClasses);
             addRule(constructorHasTheSameNameAsTheClass);
-            addRule(namesAnnotatedAsLibraryHasUnobfuscatableNames);
-            addRule(namesForNativeObjectsAreUnobfuscatable);
+            addRule(predefinedObjectsHasUnobfuscatableNames);
             addRule(toStringHack);
             addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
@@ -413,27 +406,13 @@ public final class StaticContext {
 
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (getAnnotationByName(descriptor, AnnotationsUtils.LIBRARY_ANNOTATION_FQNAME) != null) {
-                        return namer.kotlinObject();
-                    }
-                    return null;
-                }
-            };
-            Rule<JsNameRef> membersOfAnnotatedClassesHaveKotlinQualifier = new Rule<JsNameRef>() {
-                @Override
-                public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
-                    ClassDescriptor containingClass = getContainingClass(descriptor);
-                    if (containingClass == null) {
-                        return null;
-                    }
-                    if (getAnnotationByName(descriptor, LIBRARY_ANNOTATION_FQNAME) != null) {
+                    if (isLibraryObject(descriptor)) {
                         return namer.kotlinObject();
                     }
                     return null;
                 }
             };
             addRule(libraryObjectsHaveKotlinQualifier);
-            addRule(membersOfAnnotatedClassesHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
             addRule(namespacesHaveNoQualifiers);
             addRule(namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);

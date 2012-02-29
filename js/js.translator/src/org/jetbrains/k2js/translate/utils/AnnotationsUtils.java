@@ -31,25 +31,18 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getContainingCl
  */
 public final class AnnotationsUtils {
 
-    @NotNull
-    public static final String NATIVE_ANNOTATION_FQNAME = "js.native";
-    @NotNull
-    public static final String LIBRARY_ANNOTATION_FQNAME = "js.library";
-
     private AnnotationsUtils() {
     }
 
-    //TODO: make public, use when necessary
     private static boolean hasAnnotation(@NotNull DeclarationDescriptor descriptor,
-                                         @NotNull String annotationFQNAme) {
-        return getAnnotationByName(descriptor, annotationFQNAme) != null;
+                                         @NotNull PredefinedAnnotation annotation) {
+        return getAnnotationByName(descriptor, annotation) != null;
     }
 
     @Nullable
     public static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                      @NotNull String annotationFQName) {
-        AnnotationDescriptor annotationDescriptor =
-                getAnnotationByName(declarationDescriptor, annotationFQName);
+                                                      @NotNull PredefinedAnnotation annotation) {
+        AnnotationDescriptor annotationDescriptor = getAnnotationByName(declarationDescriptor, annotation);
         assert annotationDescriptor != null;
         //TODO: this is a quick fix for unsupported default args problem
         if (annotationDescriptor.getValueArguments().isEmpty()) {
@@ -67,19 +60,19 @@ public final class AnnotationsUtils {
 
     @Nullable
     public static String getNameForAnnotatedObject(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                   @NotNull String annotationFQName) {
-        if (!hasAnnotation(declarationDescriptor, annotationFQName)) {
+                                                   @NotNull PredefinedAnnotation annotation) {
+        if (!hasAnnotation(declarationDescriptor, annotation)) {
             return null;
         }
-        return getAnnotationStringParameter(declarationDescriptor, annotationFQName);
+        return getAnnotationStringParameter(declarationDescriptor, annotation);
     }
 
     @Nullable
     public static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
-                                                           @NotNull String FQName) {
+                                                           @NotNull PredefinedAnnotation annotation) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String annotationClassFQName = getAnnotationClassFQName(annotationDescriptor);
-            if (annotationClassFQName.equals(FQName)) {
+            if (annotationClassFQName.equals(annotation.getFQName())) {
                 return annotationDescriptor;
             }
         }
@@ -95,26 +88,31 @@ public final class AnnotationsUtils {
     }
 
     public static boolean isNativeObject(@NotNull DeclarationDescriptor descriptor) {
-        return hasAnnotationOrInsideAnnotatedClass(descriptor, NATIVE_ANNOTATION_FQNAME);
+        return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.NATIVE);
     }
 
     public static boolean isLibraryObject(@NotNull DeclarationDescriptor descriptor) {
-        return hasAnnotationOrInsideAnnotatedClass(descriptor, LIBRARY_ANNOTATION_FQNAME);
+        return hasAnnotationOrInsideAnnotatedClass(descriptor, PredefinedAnnotation.LIBRARY);
     }
 
     public static boolean isPredefinedObject(@NotNull DeclarationDescriptor descriptor) {
-        return isLibraryObject(descriptor) || isNativeObject(descriptor);
+        for (PredefinedAnnotation annotation : PredefinedAnnotation.values()) {
+            if (hasAnnotationOrInsideAnnotatedClass(descriptor, annotation)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean hasAnnotationOrInsideAnnotatedClass(@NotNull DeclarationDescriptor descriptor,
-                                                              @NotNull String annotationFQName) {
-        if (getAnnotationByName(descriptor, annotationFQName) != null) {
+                                                              @NotNull PredefinedAnnotation annotation) {
+        if (getAnnotationByName(descriptor, annotation) != null) {
             return true;
         }
         ClassDescriptor containingClass = getContainingClass(descriptor);
         if (containingClass == null) {
             return false;
         }
-        return (getAnnotationByName(containingClass, annotationFQName) != null);
+        return (getAnnotationByName(containingClass, annotation) != null);
     }
 }
