@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -165,10 +166,7 @@ public final class ClassTranslator extends AbstractTranslator {
         }
         propertyList.addAll(translatePropertiesAsConstructorParameters());
         propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration, context()));
-        //TODO: util?
-        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
-        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
-        return jsObjectLiteral;
+        return JsAstUtils.newObjectLiteral(propertyList);
     }
 
     @NotNull

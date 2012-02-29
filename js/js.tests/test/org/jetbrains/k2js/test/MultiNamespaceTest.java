@@ -28,15 +28,15 @@ public class MultiNamespaceTest extends TranslationTest {
     }
 
     public void testFunctionsVisibleFromOtherNamespace() throws Exception {
-        testFooBoxIsTrue("functionsVisibleFromOtherNamespace");
+        checkFooBoxIsTrue("functionsVisibleFromOtherNamespace");
     }
 
     public void testClassesInheritedFromOtherNamespace() throws Exception {
-        testFooBoxIsTrue("classesInheritedFromOtherNamespace");
+        checkFooBoxIsTrue("classesInheritedFromOtherNamespace");
     }
 
     @Override
-    public void testFooBoxIsTrue(String dirName) throws Exception {
+    public void checkFooBoxIsTrue(String dirName) throws Exception {
         testMultiFile(dirName, "foo", "box", true);
     }
 }

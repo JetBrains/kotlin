@@ -45,6 +45,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testExtensionFromStandardLibrary() {
+        doTest();
+    }
+
     public void testFromImports() {
         doTest();
     }
@@ -100,6 +104,8 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     public void testVariableClassName() {
         doTest();
     }
+
+
 
     @Override
     protected String getTestDataPath() {

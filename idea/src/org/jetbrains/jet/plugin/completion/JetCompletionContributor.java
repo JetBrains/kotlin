@@ -21,7 +21,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -29,19 +31,23 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetUserType;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Nikolay Krasko
@@ -52,20 +58,20 @@ public class JetCompletionContributor extends CompletionContributor {
                new CompletionProvider<CompletionParameters>() {
                    @Override
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
-                                                 final @NotNull CompletionResultSet result) {
+                                                 @NotNull CompletionResultSet result) {
 
-                       final HashSet<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
+                       Set<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
 
                        if (result.getPrefixMatcher().getPrefix().isEmpty()) {
                            return;
                        }
 
-                       final PsiElement position = parameters.getPosition();
+                       PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
                            return;
                        }
 
-                       final JetSimpleNameReference jetReference = getJetReference(parameters);
+                       JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
                            for (Object variant : jetReference.getVariants()) {
                                addReferenceVariant(result, variant, positions);
@@ -74,6 +80,7 @@ public class JetCompletionContributor extends CompletionContributor {
                            if (shouldRunTopLevelCompletion(parameters)) {
                                addClasses(parameters, result, positions);
                                addJetTopLevelFunctions(result, position, positions);
+                               addJetExtensionFunctions(jetReference.getExpression(), result, position);
                            }
 
                            result.stopHere();
@@ -82,10 +89,66 @@ public class JetCompletionContributor extends CompletionContributor {
                });
     }
 
+    // TODO: Make it work for properties
+    private static void addJetExtensionFunctions(JetSimpleNameExpression expression, CompletionResultSet result, PsiElement position) {
+
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) position.getContainingFile());
+        JetExpression receiverExpression = expression.getReceiverExpression();
+
+
+        if (receiverExpression != null) {
+            JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            JetScope scope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+
+            if (expressionType != null && scope != null) {
+                JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
+                Collection<String> extensionFunctionsNames = namesCache.getAllJetExtensionFunctionsNames(
+                        GlobalSearchScope.allScope(position.getProject()));
+
+                Set<String> functionFQNs = new HashSet<String>();
+
+                // Collect all possible extension function qualified names
+                for (String name : extensionFunctionsNames) {
+                    if (result.getPrefixMatcher().prefixMatches(name)) {
+                        Collection<PsiElement> extensionFunctions =
+                                namesCache.getJetExtensionFunctionsByName(name, GlobalSearchScope.allScope(position.getProject()));
+
+                        for (PsiElement extensionFunction : extensionFunctions) {
+                            if (extensionFunction instanceof JetNamedFunction) {
+                                functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
+                            }
+                            else if (extensionFunction instanceof PsiMethod) {
+                                PsiMethod function = (PsiMethod) extensionFunction;
+                                PsiClass containingClass = function.getContainingClass();
+
+                                if (containingClass != null) {
+                                    String classFQN = containingClass.getQualifiedName();
+
+                                    if (classFQN != null) {
+                                        String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
+                                        functionFQNs.add(QualifiedNamesUtil.combine(classParentFQN, function.getName()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Iterate through the function with attempt to resolve found functions
+                for (String functionFQN : functionFQNs) {
+                    for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
+                            functionFQN, position.getProject(), receiverExpression, expressionType, scope)) {
+                        result.addElement(DescriptorLookupConverter.createLookupElement(context, functionDescriptor));
+                    }
+                }
+            }
+        }
+    }
+
     private static void addReferenceVariant(
             @NotNull CompletionResultSet result,
             @NotNull Object variant,
-            @NotNull final HashSet<LookupPositionObject> positions) {
+            @NotNull Set<LookupPositionObject> positions) {
 
         if (variant instanceof LookupElement) {
             addCompletionToResult(result, (LookupElement) variant, positions);
@@ -96,15 +159,15 @@ public class JetCompletionContributor extends CompletionContributor {
     }
 
     private static void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position,
-                                                @NotNull final HashSet<LookupPositionObject> positions) {
+                                                @NotNull Set<LookupPositionObject> positions) {
 
         String actualPrefix = result.getPrefixMatcher().getPrefix();
 
-        final Project project = position.getProject();
+        Project project = position.getProject();
 
-        final JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-        final Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
+        JetShortNamesCache namesCache = JetCacheManager.getInstance(position.getProject()).getNamesCache();
+        GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+        Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
         BindingContext resolutionContext = namesCache.getResolutionContext(scope);
 
@@ -121,9 +184,9 @@ public class JetCompletionContributor extends CompletionContributor {
      * Jet classes will be added as java completions for unification
      */
     private static void addClasses(
-            @NotNull final CompletionParameters parameters,
+            @NotNull CompletionParameters parameters,
             @NotNull final CompletionResultSet result,
-            @NotNull final HashSet<LookupPositionObject> positions) {
+            @NotNull final Set<LookupPositionObject> positions) {
 
         JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
             @Override
@@ -134,7 +197,7 @@ public class JetCompletionContributor extends CompletionContributor {
     }
 
     private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters) {
-        final PsiElement element = parameters.getPosition();
+        PsiElement element = parameters.getPosition();
 
         if (parameters.getInvocationCount() > 1) {
             return true;
@@ -158,9 +221,9 @@ public class JetCompletionContributor extends CompletionContributor {
 
     @Nullable
     private static JetSimpleNameReference getJetReference(@NotNull CompletionParameters parameters) {
-        final PsiElement element = parameters.getPosition();
+        PsiElement element = parameters.getPosition();
         if (element.getParent() != null) {
-            final PsiElement parent = element.getParent();
+            PsiElement parent = element.getParent();
             PsiReference[] references = parent.getReferences();
 
             if (references.length != 0) {
@@ -176,11 +239,11 @@ public class JetCompletionContributor extends CompletionContributor {
     }
 
     private static void addCompletionToResult(
-            @NotNull final CompletionResultSet result,
+            @NotNull CompletionResultSet result,
             @NotNull LookupElement element,
-            @NotNull HashSet<LookupPositionObject> positions) {
+            @NotNull Set<LookupPositionObject> positions) {
 
-        final LookupPositionObject lookupPosition = getLookupPosition(element);
+        LookupPositionObject lookupPosition = getLookupPosition(element);
         if (lookupPosition != null) {
             if (!positions.contains(lookupPosition)) {
                 positions.add(lookupPosition);
@@ -195,19 +258,24 @@ public class JetCompletionContributor extends CompletionContributor {
     }
 
     private static LookupPositionObject getLookupPosition(LookupElement element) {
-        final Object lookupObject = element.getObject();
+        Object lookupObject = element.getObject();
         if (lookupObject instanceof PsiElement) {
 //            PsiElement psiElement = (PsiElement) lookupObject;
             return new LookupPositionObject((PsiElement) lookupObject);
         }
         else if (lookupObject instanceof JetLookupObject) {
 //            JetLookupObject jetLookupObject = (JetLookupObject) lookupObject;
-            final PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
+            PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
             if (psiElement != null) {
                 return new LookupPositionObject(psiElement);
             }
         }
 
         return null;
+    }
+
+    @Override
+    public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+        super.beforeCompletion(context);    //To change body of overridden methods use File | Settings | File Templates.
     }
 }

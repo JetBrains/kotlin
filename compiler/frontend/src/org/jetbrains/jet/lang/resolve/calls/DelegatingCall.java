@@ -84,8 +84,8 @@ public class DelegatingCall implements Call {
         return delegate.getTypeArgumentList();
     }
 
+    @NotNull
     @Override
-    @Nullable
     public PsiElement getCallElement() {
         return delegate.getCallElement();
     }

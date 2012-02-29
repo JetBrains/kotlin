@@ -41,8 +41,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateRight
 public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new RangeLiteralForTranslator(expression, context).translate());
     }
 
@@ -80,18 +80,11 @@ public final class RangeLiteralForTranslator extends ForTranslator {
     @NotNull
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(rangeEnd);
-        blockStatements.add(generateForExpression());
+        blockStatements.add(generateForExpression(initExpression(),
+                                                  getCondition(),
+                                                  getIncrExpression(),
+                                                  translateOriginalBodyExpression()));
         return newBlock(blockStatements);
-    }
-
-    @NotNull
-    private JsFor generateForExpression() {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression());
-        result.setCondition(getCondition());
-        result.setIncrExpr(getIncrExpression());
-        result.setBody(translateOriginalBodyExpression());
-        return result;
     }
 
     @NotNull
@@ -101,7 +94,7 @@ public final class RangeLiteralForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(parameterName.makeRef(), rangeEnd.reference());
+        return inequality(parameterName.makeRef(), rangeEnd.reference());
     }
 
     @NotNull

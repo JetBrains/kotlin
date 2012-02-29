@@ -32,8 +32,8 @@ public final class NamespaceInitializerTranslator extends AbstractInitializerTra
     private final NamespaceDescriptor namespace;
 
     public NamespaceInitializerTranslator(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
-        super(context.getScopeForDescriptor(namespace).innerScope
-                ("initializer " + namespace.getName()), context);
+        //NOTE:
+        super(context.getScopeForDescriptor(namespace), context);
         this.namespace = namespace;
     }
 

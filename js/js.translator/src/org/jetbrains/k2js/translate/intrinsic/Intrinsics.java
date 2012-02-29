@@ -26,10 +26,12 @@ import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
-import org.jetbrains.k2js.translate.intrinsic.array.*;
+import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.BuiltInPropertyIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.array.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.CharAtIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
@@ -50,8 +52,8 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByNa
 public final class Intrinsics {
 
     @NotNull
-    private final Map<FunctionDescriptor, FunctionIntrinsic> functionIntrinsics =
-            new HashMap<FunctionDescriptor, FunctionIntrinsic>();
+    private final Map<FunctionDescriptor, Intrinsic> functionIntrinsics =
+            new HashMap<FunctionDescriptor, Intrinsic>();
 
     @NotNull
     private final Map<FunctionDescriptor, EqualsIntrinsic> equalsIntrinsics =
@@ -60,6 +62,9 @@ public final class Intrinsics {
     @NotNull
     private final Map<FunctionDescriptor, CompareToIntrinsic> compareToIntrinsics =
             new HashMap<FunctionDescriptor, CompareToIntrinsic>();
+
+    @NotNull
+    private final Intrinsic lengthPropertyIntrinsic = new BuiltInPropertyIntrinsic("length");
 
     public static Intrinsics standardLibraryIntrinsics(@NotNull JetStandardLibrary library) {
         return new Intrinsics(library);
@@ -74,6 +79,11 @@ public final class Intrinsics {
         declareStringIntrinsics();
         declareTuplesIntrinsics();
         declareArrayIntrinsics();
+    }
+
+    @NotNull
+    public Intrinsic getLengthPropertyIntrinsic() {
+        return lengthPropertyIntrinsic;
     }
 
     private void declareTuplesIntrinsics() {
@@ -94,9 +104,8 @@ public final class Intrinsics {
     }
 
     private void declareNullConstructorIntrinsic() {
-        //TODO:
         FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("Array").iterator().next();
-        functionIntrinsics.put(nullArrayConstructor, ArrayNullConstructorIntrinsic.INSTANCE);
+        functionIntrinsics.put(nullArrayConstructor, new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 
     //TODO: some dangerous operation unchecked here
@@ -107,14 +116,15 @@ public final class Intrinsics {
         FunctionDescriptor getFunction = getFunctionByName(arrayMemberScope, "get");
         functionIntrinsics.put(getFunction, ArrayGetIntrinsic.INSTANCE);
         PropertyDescriptor sizeProperty = getPropertyByName(arrayMemberScope, "size");
-        functionIntrinsics.put(sizeProperty.getGetter(), ArraySizeIntrinsic.INSTANCE);
+        functionIntrinsics.put(sizeProperty.getGetter(), lengthPropertyIntrinsic);
+        //TODO: excessive object creation
         PropertyDescriptor indicesProperty = getPropertyByName(arrayMemberScope, "indices");
-        functionIntrinsics.put(indicesProperty.getGetter(), ArrayIndicesIntrinsic.INSTANCE);
+        functionIntrinsics.put(indicesProperty.getGetter(), new CallStandardMethodIntrinsic("Kotlin.arrayIndices", true, 0));
         FunctionDescriptor iteratorFunction = getFunctionByName(arrayMemberScope, "iterator");
-        functionIntrinsics.put(iteratorFunction, ArrayIteratorIntrinsic.INSTANCE);
+        functionIntrinsics.put(iteratorFunction, new CallStandardMethodIntrinsic("Kotlin.arrayIterator", true, 0));
         ConstructorDescriptor arrayConstructor =
                 ((ClassDescriptor) arrayMemberScope.getContainingDeclaration()).getConstructors().iterator().next();
-        functionIntrinsics.put(arrayConstructor, ArrayFunctionConstructorIntrinsic.INSTANCE);
+        functionIntrinsics.put(arrayConstructor, new CallStandardMethodIntrinsic("Kotlin.arrayFromFun", false, 2));
     }
 
     private List<JetType> getLibraryArrayTypes() {
@@ -137,7 +147,7 @@ public final class Intrinsics {
     private void declareStringIntrinsics() {
         PropertyDescriptor lengthProperty =
                 getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), "length");
-        functionIntrinsics.put(lengthProperty.getGetter(), LengthIntrinsic.INSTANCE);
+        functionIntrinsics.put(lengthProperty.getGetter(), new BuiltInPropertyIntrinsic("length"));
         FunctionDescriptor getFunction =
                 getFunctionByName(library.getString().getDefaultType().getMemberScope(), "get");
         functionIntrinsics.put(getFunction, CharAtIntrinsic.INSTANCE);
@@ -173,7 +183,7 @@ public final class Intrinsics {
     }
 
     @NotNull
-    public FunctionIntrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
+    public Intrinsic getFunctionIntrinsic(@NotNull FunctionDescriptor descriptor) {
         return functionIntrinsics.get(descriptor.getOriginal());
     }
 

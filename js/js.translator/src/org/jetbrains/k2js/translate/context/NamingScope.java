@@ -19,8 +19,7 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Iterator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 /**
  * @author Pavel Talanov
@@ -80,7 +79,7 @@ public final class NamingScope {
         String result = name;
         while (true) {
             JsName existingNameWithSameIdent = scope.findExistingName(result);
-            boolean isDuplicate = (existingNameWithSameIdent != null) && ownsName(scope, existingNameWithSameIdent);
+            boolean isDuplicate = (existingNameWithSameIdent != null) && JsAstUtils.ownsName(scope, existingNameWithSameIdent);
 
             if (!isDuplicate) break;
 
@@ -88,17 +87,6 @@ public final class NamingScope {
             obfuscate++;
         }
         return result;
-    }
-
-    //TODO: util?
-    private static boolean ownsName(@NotNull JsScope scope, @NotNull JsName name) {
-        Iterator<JsName> nameIterator = scope.getAllNames();
-        while (nameIterator.hasNext()) {
-            if (nameIterator.next() == name) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

@@ -419,7 +419,7 @@ public class JavaDescriptorResolver {
 
     static void checkPsiClassIsNotJet(PsiClass psiClass) {
         if (psiClass instanceof JetJavaMirrorMarker) {
-            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass");
+            throw new IllegalStateException("trying to resolve fake jet PsiClass as regular PsiClass: " + psiClass);
         }
     }
 

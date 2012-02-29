@@ -23,7 +23,27 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
  */
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
 
+    public void testDoNotCompleteWithConstraints() {
+        doFileTest(2);
+    }
+
     public void testTopLevelFunction() throws Exception {
+        doFileTest(2);
+    }
+
+    public void todotestExtensionFunctionOnUnresolved() throws Exception {
+        doFileTest(2);
+    }
+
+    public void testExtensionOnNullable() throws Exception {
+        doFileTest(2);
+    }
+
+    public void todotestExtensionProperty() throws Exception {
+        doFileTest(2);
+    }
+
+    public void testNotImportedExtensionFunction() throws Exception {
         doFileTest(2);
     }
 

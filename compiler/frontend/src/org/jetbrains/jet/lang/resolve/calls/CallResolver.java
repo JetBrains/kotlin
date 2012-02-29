@@ -366,7 +366,11 @@ public class CallResolver {
                     if (callElement instanceof JetBinaryExpression) {
                         JetBinaryExpression binaryExpression = (JetBinaryExpression) callElement;
                         JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
-                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ? operationReference.getText() : OperatorConventions.getNameForOperationSymbol((JetToken) operationReference.getReferencedNameElementType());
+
+                        String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ?
+                                operationReference.getText() :
+                                OperatorConventions.getNameForOperationSymbol((JetToken) operationReference.getReferencedNameElementType());
+
                         JetExpression right = binaryExpression.getRight();
                         if (right != null) {
                             trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, right.getText()));
@@ -433,6 +437,7 @@ public class CallResolver {
             @NotNull ResolutionTask<D> task, @NotNull TracingStrategy tracing
     ) {
         OverloadResolutionResultsImpl<D> results = performResolution(trace, scope, expectedType, task, tracing);
+
         // If resolution fails, we should check for some of the following situations:
         //   class A {
         //     val foo = Bar() // The following is intended to be an anonymous initializer,
@@ -448,7 +453,8 @@ public class CallResolver {
         //      {...} // intended to be a returned from the outer literal
         //    }
         //  }
-        EnumSet<OverloadResolutionResults.Code> someFailed = EnumSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES, OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
+        EnumSet<OverloadResolutionResults.Code> someFailed = EnumSet.of(OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES,
+                                                                        OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
         if (someFailed.contains(results.getResultCode()) && !task.getCall().getFunctionLiteralArguments().isEmpty()) {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
@@ -658,7 +664,7 @@ public class CallResolver {
         return results;
     }
 
-    private JetType getEffectiveExpectedType(ValueParameterDescriptor valueParameterDescriptor) {
+    private static JetType getEffectiveExpectedType(ValueParameterDescriptor valueParameterDescriptor) {
         JetType effectiveExpectedType = valueParameterDescriptor.getVarargElementType();
         if (effectiveExpectedType == null) {
             effectiveExpectedType = valueParameterDescriptor.getType();
@@ -666,7 +672,7 @@ public class CallResolver {
         return effectiveExpectedType;
     }
 
-    private void recordAutoCastIfNecessary(ReceiverDescriptor receiver, BindingTrace trace) {
+    private static void recordAutoCastIfNecessary(ReceiverDescriptor receiver, BindingTrace trace) {
         if (receiver instanceof AutoCastReceiver) {
             AutoCastReceiver autoCastReceiver = (AutoCastReceiver) receiver;
             ReceiverDescriptor original = autoCastReceiver.getOriginal();
@@ -703,7 +709,9 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor> void replaceValueParametersWithSubstitutedOnes(ResolvedCallImpl<D> candidateCall, @NotNull D substitutedDescriptor) {
+    private static <D extends CallableDescriptor> void replaceValueParametersWithSubstitutedOnes(
+            ResolvedCallImpl<D> candidateCall, @NotNull D substitutedDescriptor) {
+
         Map<ValueParameterDescriptor, ValueParameterDescriptor> parameterMap = Maps.newHashMap();
         for (ValueParameterDescriptor valueParameterDescriptor : substitutedDescriptor.getValueParameters()) {
             parameterMap.put(valueParameterDescriptor.getOriginal(), valueParameterDescriptor);
@@ -726,7 +734,9 @@ public class CallResolver {
         return result;
     }
 
-    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(TracingStrategy tracing, ResolvedCallImpl<D> candidateCall, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument, ResolutionTask<D> task) {
+    private <D extends CallableDescriptor> ResolutionStatus checkReceiver(TracingStrategy tracing, ResolvedCallImpl<D> candidateCall,
+                                                                          ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
+                                                                          ResolutionTask<D> task) {
         ResolutionStatus result = SUCCESS;
         if (receiverParameter.exists() && receiverArgument.exists()) {
             ASTNode callOperationNode = task.getCall().getCallOperationNode();
@@ -841,6 +851,7 @@ public class CallResolver {
                         return OverloadResolutionResultsImpl.manyFailedCandidates(results.getResultingCalls());
                     }
                 }
+
                 assert false : "Should not be reachable, cause every status must belong to some level";
 
                 Set<ResolvedCallImpl<D>> noOverrides = OverridingUtil.filterOverrides(failedCandidates, MAP_TO_CANDIDATE);
@@ -849,8 +860,10 @@ public class CallResolver {
                     tracing.recordAmbiguity(trace, noOverrides);
                     return OverloadResolutionResultsImpl.manyFailedCandidates(noOverrides);
                 }
+
                 failedCandidates = noOverrides;
             }
+
             ResolvedCallImpl<D> failed = failedCandidates.iterator().next();
             failed.getTrace().commit();
             return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
@@ -861,7 +874,7 @@ public class CallResolver {
         }
     }
 
-    private <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallImpl<D>> results) {
+    private static <D extends CallableDescriptor> boolean allClean(Collection<ResolvedCallImpl<D>> results) {
         for (ResolvedCallImpl<D> result : results) {
             if (result.isDirty()) return false;
         }
@@ -939,7 +952,8 @@ public class CallResolver {
         return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, candidates, Collections.<ResolvedCallImpl<FunctionDescriptor>>emptySet());
     }
 
-    private List<ResolvedCallImpl<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver, String name, List<JetType> parameterTypes) {
+    private List<ResolvedCallImpl<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
+                                                                                      String name, List<JetType> parameterTypes) {
         List<ResolvedCallImpl<FunctionDescriptor>> result = Lists.newArrayList();
         if (receiver.exists()) {
             Collection<ResolvedCallImpl<FunctionDescriptor>> extensionFunctionDescriptors = ResolvedCallImpl.convertCollection(scope.getFunctions(name));
@@ -966,7 +980,8 @@ public class CallResolver {
         }
     }
 
-    private boolean lookupExactSignature(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, List<JetType> parameterTypes, List<ResolvedCallImpl<FunctionDescriptor>> result) {
+    private static boolean lookupExactSignature(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, List<JetType> parameterTypes,
+                                                List<ResolvedCallImpl<FunctionDescriptor>> result) {
         boolean found = false;
         for (ResolvedCallImpl<FunctionDescriptor> resolvedCall : candidates) {
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
@@ -979,7 +994,8 @@ public class CallResolver {
         return found;
     }
 
-    private boolean findExtensionFunctions(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, ReceiverDescriptor receiver, List<JetType> parameterTypes, List<ResolvedCallImpl<FunctionDescriptor>> result) {
+    private boolean findExtensionFunctions(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, ReceiverDescriptor receiver,
+                                           List<JetType> parameterTypes, List<ResolvedCallImpl<FunctionDescriptor>> result) {
         boolean found = false;
         for (ResolvedCallImpl<FunctionDescriptor> resolvedCall : candidates) {
             FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
@@ -994,7 +1010,7 @@ public class CallResolver {
         return found;
     }
 
-    private boolean checkValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> parameterTypes) {
+    private static boolean checkValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull List<JetType> parameterTypes) {
         List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
         if (valueParameters.size() != parameterTypes.size()) return false;
         for (int i = 0; i < valueParameters.size(); i++) {

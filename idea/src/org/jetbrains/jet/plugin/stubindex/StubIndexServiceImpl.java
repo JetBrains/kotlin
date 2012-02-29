@@ -43,13 +43,15 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexFunction(PsiJetFunctionStub stub, IndexSink sink) {
         String name = stub.getName();
         if (name != null) {
-            if (!stub.isExtension()) {
-                if (stub.isTopLevel()) {
+            if (stub.isTopLevel()) {
+                // Collection only top level functions as only they are expected in completion without explicit import
+                if (!stub.isExtension()) {
                     sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_SHORT_NAME_KEY, name);
+                    // sink.occurrence(JetIndexKeys.TOP_LEVEL_FUNCTION_FQNAME_KEY, name);
+                } else {
+                    sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
+                    // sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_FQNAME_KEY, name);
                 }
-            }
-            else {
-                sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_SHORT_NAME_KEY, name);
             }
         }
     }

@@ -205,6 +205,7 @@ public final class BindingUtils {
     }
 
 
+    //TODO: refactor duplication
     //TODO: check where we use there, suspicious
     public static boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ConstructorDescriptor) {

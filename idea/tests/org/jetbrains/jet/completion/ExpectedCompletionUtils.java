@@ -68,17 +68,17 @@ public class ExpectedCompletionUtils {
 
     @Nullable
     public Integer getExpectedNumber(String fileText) {
-        final String[] numberStrings = findListWithPrefix(numberLinePrefix, fileText);
-        if (numberStrings.length > 0) {
-            return Integer.parseInt(numberStrings[0]);
-        }
-
-        return null;
+        return getPrefixedInt(fileText, numberLinePrefix);
     }
 
     @Nullable
     public Integer getExecutionTime(String fileText) {
-        final String[] numberStrings = findListWithPrefix(executionTimePrefix, fileText);
+        return getPrefixedInt(fileText, executionTimePrefix);
+    }
+
+    @Nullable
+    public static Integer getPrefixedInt(String fileText, String prefix) {
+        final String[] numberStrings = findListWithPrefix(prefix, fileText);
         if (numberStrings.length > 0) {
             return Integer.parseInt(numberStrings[0]);
         }

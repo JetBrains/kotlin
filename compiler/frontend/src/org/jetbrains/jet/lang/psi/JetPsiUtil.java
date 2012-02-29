@@ -17,13 +17,13 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,6 +36,9 @@ import java.util.Set;
 public class JetPsiUtil {
 
     public static final String NO_NAME_PROVIDED = "<no name provided>";
+
+    private JetPsiUtil() {
+    }
 
     @Nullable
     public static JetExpression deparenthesize(@NotNull JetExpression expression) {
@@ -155,6 +158,32 @@ public class JetPsiUtil {
             return makeFQName(getFQName(((JetClassOrObject) parent)), jetClass);
         }
         return jetClass.getName();
+    }
+
+    public static String getFQName(JetNamedFunction jetNamedFunction) {
+
+        String functionName = jetNamedFunction.getName();
+        if (functionName == null) {
+            return functionName;
+        }
+
+        @SuppressWarnings("unchecked")
+        PsiElement qualifiedElement = PsiTreeUtil.getParentOfType(
+                jetNamedFunction,
+                JetFile.class, JetClassOrObject.class, JetNamedFunction.class);
+
+        String firstPart = "";
+        if (qualifiedElement instanceof JetFile) {
+            firstPart = getFQName((JetFile) qualifiedElement);
+        }
+        else if (qualifiedElement instanceof JetClassOrObject) {
+            firstPart = getFQName((JetClassOrObject) qualifiedElement);
+        }
+        else if (qualifiedElement instanceof JetNamedFunction) {
+            firstPart = getFQName((JetNamedFunction) qualifiedElement);
+        }
+
+        return QualifiedNamesUtil.combine(firstPart, functionName);
     }
 
     @Nullable @JetElement.IfNotParsed

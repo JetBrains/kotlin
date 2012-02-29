@@ -22,6 +22,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.text.MessageFormat;
 
 /**
+ * A specific type for subtype constraint of types.
+ *
  * @author abreslav
  */
 public enum ConstraintType implements Comparable<ConstraintType> {
@@ -33,7 +35,7 @@ public enum ConstraintType implements Comparable<ConstraintType> {
     EXPECTED_TYPE("Resulting type is {0} but {1} was expected"),
     PARAMETER_BOUND("Type parameter bound is not satisfied: {0} is not a subtype of {1}");
 
-    private final String errorMessageTemplate; // {0} is subtype, {1} is supertye
+    private final String errorMessageTemplate; // {0} is subtype, {1} is supertype
 
     private ConstraintType(@NotNull String errorMessageTemplate) {
         this.errorMessageTemplate = errorMessageTemplate;

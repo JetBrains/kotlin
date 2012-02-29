@@ -82,8 +82,8 @@ public class WhenTranslator extends AbstractTranslator {
 
     @NotNull
     private JsStatement surroundWithDummyIf(@NotNull JsStatement entryStatement) {
-        JsExpression stepNumberEqualsCurrentEntryNumber = new JsBinaryOperation(JsBinaryOperator.EQ,
-                                                                                dummyCounter.reference(), program().getNumberLiteral(currentEntryNumber));
+        JsNumberLiteral jsEntryNumber = program().getNumberLiteral(this.currentEntryNumber);
+        JsExpression stepNumberEqualsCurrentEntryNumber = equality(dummyCounter.reference(), jsEntryNumber);
         currentEntryNumber++;
         return new JsIf(stepNumberEqualsCurrentEntryNumber, entryStatement, null);
     }

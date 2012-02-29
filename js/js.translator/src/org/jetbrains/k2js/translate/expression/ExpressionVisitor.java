@@ -224,6 +224,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return translateAsExpression(expression, context);
     }
 
+    //NOTE: since JsWhile and JsDoWhile do not have an ancestor, cannot avoid duplication here
     @Override
     @NotNull
     public JsNode visitWhileExpression(@NotNull JetWhileExpression expression, @NotNull TranslationContext context) {

@@ -29,8 +29,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**
  * @author Pavel.Talanov
@@ -96,9 +95,6 @@ public final class NamespaceTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
         propertyList.add(Translation.generateNamespaceInitializerMethod(descriptor, context()));
         propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(descriptor, context()));
-        //TODO: make util, search for dups
-        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
-        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
-        return jsObjectLiteral;
+        return newObjectLiteral(propertyList);
     }
 }

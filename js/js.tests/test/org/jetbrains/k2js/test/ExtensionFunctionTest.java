@@ -28,38 +28,38 @@ public final class ExtensionFunctionTest extends TranslationTest {
     }
 
     public void testIntExtension() throws Exception {
-        testFooBoxIsTrue("intExtension.kt");
+        checkFooBoxIsTrue("intExtension.kt");
     }
 
     public void testExtensionWithImplicitReceiver() throws Exception {
-        testFooBoxIsTrue("extensionWithImplicitReceiver.kt");
+        checkFooBoxIsTrue("extensionWithImplicitReceiver.kt");
     }
 
     public void testExtensionFunctionOnExpression() throws Exception {
-        testFooBoxIsTrue("extensionFunctionOnExpression.kt");
+        checkFooBoxIsTrue("extensionFunctionOnExpression.kt");
     }
 
     public void testExtensionUsedInsideClass() throws Exception {
-        testFooBoxIsTrue("extensionUsedInsideClass.kt");
+        checkFooBoxIsTrue("extensionUsedInsideClass.kt");
     }
 
     public void testVirtualExtension() throws Exception {
-        testFooBoxIsTrue("virtualExtension.kt");
+        checkFooBoxIsTrue("virtualExtension.kt");
     }
 
     public void testVirtualExtensionOverride() throws Exception {
-        testFooBoxIsTrue("virtualExtensionOverride.kt");
+        checkFooBoxIsTrue("virtualExtensionOverride.kt");
     }
 
     public void testExtensionLiteralPassedToFunction() throws Exception {
-        testFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
+        checkFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
     }
 
     public void testExtensionInsideFunctionLiteral() throws Exception {
-        testFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
+        checkFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
     }
 
     public void testGenericExtension() throws Exception {
-        testFooBoxIsOk("generic.kt");
+        checkFooBoxIsOk("generic.kt");
     }
 }

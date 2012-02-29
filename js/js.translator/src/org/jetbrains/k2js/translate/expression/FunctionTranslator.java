@@ -128,15 +128,15 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private JsFunction createFunctionObject() {
-        if (isDeclaration()) {
-            return context().getFunctionObject(descriptor);
-        }
-        if (isLiteral()) {
-            //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
-            //TODO: must investigate
-            return new JsFunction(context().jsScope());
-        }
-        throw new AssertionError("Unsupported type of functionDeclaration.");
+        //  if (isDeclaration()) {
+        return context().getFunctionObject(descriptor);
+//        }
+//        if (isLiteral()) {
+//            //TODO: changing this piece of code to more natural "same as for declaration" results in life test failing
+//            //TODO: must investigate
+//            return new JsFunction(context().jsScope());
+//        }
+        //  throw new AssertionError("Unsupported type of functionDeclaration.");
     }
 
     private void translateBody() {

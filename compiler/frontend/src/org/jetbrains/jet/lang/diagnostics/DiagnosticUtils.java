@@ -43,7 +43,7 @@ public class DiagnosticUtils {
         if (element != null) {
             return atLocation(element.getContainingFile(), element.getTextRange());
         }
-        return "' at offset " + startOffset + " (line and file unknown)";
+        return "' at offset " + startOffset + " (line and file unknown: no PSI element)";
     }
 
     @Nullable
@@ -63,7 +63,7 @@ public class DiagnosticUtils {
 
     @NotNull
     public static String atLocation(@NotNull PsiFile file, @NotNull TextRange textRange) {
-        Document document = file.getViewProvider().getDocument();//PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        Document document = file.getViewProvider().getDocument();
         return atLocation(file, textRange, document);
     }
 
@@ -72,31 +72,28 @@ public class DiagnosticUtils {
         int offset = textRange.getStartOffset();
         VirtualFile virtualFile = file.getVirtualFile();
         String pathSuffix = virtualFile == null ? "" : " in " + virtualFile.getPath();
-        if (document != null) {
-            int lineNumber = document.getLineNumber(offset);
-            int lineStartOffset = document.getLineStartOffset(lineNumber);
-            int column = offset - lineStartOffset;
-
-            return "' at line " + (lineNumber + 1) + ":" + (column + 1) + pathSuffix;
-        }
-        else {
-            return "' at offset " + offset + " (line unknown)" + pathSuffix;
-        }
+        return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
     }
 
-    public static String formatPosition(Diagnostic<PsiElement> diagnostic) {
+    @NotNull
+    public static LineAndColumn getLineAndColumn(@NotNull Diagnostic<? extends PsiElement> diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         Document document = file.getViewProvider().getDocument();
         TextRange firstRange = diagnostic.getTextRanges().iterator().next();
-        int offset = firstRange.getStartOffset();
-        if (document != null) {
-            int lineNumber = document.getLineNumber(offset);
-            int lineStartOffset = document.getLineStartOffset(lineNumber);
-            int column = offset - lineStartOffset;
+        return offsetToLineAndColumn(document, firstRange.getStartOffset());
+    }
 
-            return "(" + (lineNumber + 1) + "," + (column + 1) + ")";
+    @NotNull
+    public static LineAndColumn offsetToLineAndColumn(Document document, int offset) {
+        if (document == null) {
+            return new LineAndColumn(-1, offset);
         }
-        return "(offset: " + offset + " line unknown)";
+
+        int lineNumber = document.getLineNumber(offset);
+        int lineStartOffset = document.getLineStartOffset(lineNumber);
+        int column = offset - lineStartOffset;
+
+        return new LineAndColumn(lineNumber + 1, column + 1);
     }
 
     public static void throwIfRunningOnServer(Throwable e) {
@@ -109,6 +106,33 @@ public class DiagnosticUtils {
                 throw (Error) e;
             }
             throw new RuntimeException(e);
+        }
+    }
+
+    public static final class LineAndColumn {
+        private final int line;
+        private final int column;
+
+        public LineAndColumn(int line, int column) {
+            this.line = line;
+            this.column = column;
+        }
+
+        public int getLine() {
+            return line;
+        }
+
+        public int getColumn() {
+            return column;
+        }
+
+        // NOTE: This method is used for presenting positions to the user
+        @Override
+        public String toString() {
+            if (line < 0) {
+                return "(offset: " + column + " line unknown)";
+            }
+            return "(" + line + "," + column + ")";
         }
     }
 }

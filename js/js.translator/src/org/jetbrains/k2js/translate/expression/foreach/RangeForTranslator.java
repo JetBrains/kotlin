@@ -32,7 +32,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
 /**
@@ -42,8 +41,8 @@ public final class RangeForTranslator extends ForTranslator {
 
     //TODO: inspection
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new RangeForTranslator(expression, context).translate());
     }
 
@@ -52,6 +51,7 @@ public final class RangeForTranslator extends ForTranslator {
         JetExpression loopRange = getLoopRange(expression);
         JetType rangeType = BindingUtils.getTypeForExpression(context.bindingContext(), loopRange);
         //TODO: better check
+        //TODO: long range?
         return getClassDescriptorForType(rangeType).getName().equals("IntRange");
     }
 
@@ -73,7 +73,7 @@ public final class RangeForTranslator extends ForTranslator {
                                                        program().getNumberLiteral(1));
         incrVar = context().declareTemporary(incrVarValue);
         start = context().declareTemporary(callFunction("get_start"));
-        end = context().declareTemporary(new JsBinaryOperation(JsBinaryOperator.ADD, callFunction("get_end"), incrVar.reference()));
+        end = context().declareTemporary(sum(callFunction("get_end"), incrVar.reference()));
     }
 
     @NotNull
@@ -89,7 +89,7 @@ public final class RangeForTranslator extends ForTranslator {
         result.setInitVars(initExpression());
         result.setCondition(getCondition());
         result.setIncrExpr(getIncrExpression());
-        result.setBody(Translation.translateAsStatement(getLoopBody(expression), context()));
+        result.setBody(translateOriginalBodyExpression());
         return result;
     }
 
@@ -100,12 +100,12 @@ public final class RangeForTranslator extends ForTranslator {
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(parameterName.makeRef(), end.reference());
+        return inequality(parameterName.makeRef(), end.reference());
     }
 
     @NotNull
     private JsExpression getIncrExpression() {
-        return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, parameterName.makeRef(), incrVar.reference());
+        return addAssign(parameterName.makeRef(), incrVar.reference());
     }
 
     @NotNull

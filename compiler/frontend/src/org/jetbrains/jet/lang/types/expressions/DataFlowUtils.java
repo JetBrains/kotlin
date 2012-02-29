@@ -42,6 +42,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
  * @author abreslav
  */
 public class DataFlowUtils {
+    private DataFlowUtils() {
+    }
+
     @NotNull
     public static DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @Nullable final WritableScope scopeToExtend, final ExpressionTypingContext context) {
         if (condition == null) return context.dataFlowInfo;

@@ -25,28 +25,20 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl;
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
-
-import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.RECEIVER;
 
 /**
  * @author Nikolay Krasko, Alefas
@@ -146,7 +138,9 @@ public final class TipsManager {
                             return false;
                         }
                         for (ReceiverDescriptor receiverDescriptor : result) {
-                            if (checkReceiverResolution(receiverDescriptor, callableDescriptor)) return false;
+                            if (ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor, callableDescriptor)) {
+                                return false;
+                            }
                         }
                         return true;
                     }
@@ -183,51 +177,10 @@ public final class TipsManager {
                                                   new Predicate<CallableDescriptor>() {
                                                       @Override
                                                       public boolean apply(CallableDescriptor callableDescriptor) {
-                                                          return checkReceiverResolution(receiverDescriptor, callableDescriptor);
+                                                          return ExpressionTypingUtils.checkIsExtensionCallable(receiverDescriptor, callableDescriptor);
                                                       }
                                                   }));
 
         return descriptorsSet;
     }
-
-    /*
-    * Checks if receiver declaration could be resolved to call expected receiver.
-    */
-    private static boolean checkReceiverResolution (
-            @NotNull ReceiverDescriptor expectedReceiver,
-            @NotNull CallableDescriptor receiverArgument
-    ) {
-        JetType type = expectedReceiver.getType();
-        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
-        if (type.isNullable()) {
-            JetType notNullableType = TypeUtils.makeNotNullable(type);
-            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
-        }
-        return false;
-    }
-
-    private static boolean checkReceiverResolution (
-            @NotNull ReceiverDescriptor expectedReceiver,
-            @NotNull JetType receiverType,
-            @NotNull CallableDescriptor receiverArgument
-    ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
-        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
-            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
-        }
-
-        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
-        if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintSystem.addSubtypingConstraint(
-                    RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
-        }
-        else if (expectedReceiver.exists() || receiverParameter.exists()) {
-            // Only one of receivers exist
-            return false;
-        }
-
-        ConstraintSystemSolution solution = constraintSystem.solve();
-        return solution.getStatus().isSuccessful();
-    }
-
 }

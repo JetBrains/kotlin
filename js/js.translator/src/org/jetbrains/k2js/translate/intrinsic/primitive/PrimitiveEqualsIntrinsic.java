@@ -21,11 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.EqualsIntrinsic;
-import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.notEqual;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.equality;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.inequality;
 
 /**
  * @author Pavel Talanov
@@ -46,10 +46,10 @@ public final class PrimitiveEqualsIntrinsic extends EqualsIntrinsic {
         assert arguments.size() == 1 : "Equals operation should have one argument";
         assert receiver != null;
         if (isNegated()) {
-            return notEqual(receiver, arguments.get(0));
+            return inequality(receiver, arguments.get(0));
         }
         else {
-            return JsAstUtils.equals(receiver, arguments.get(0));
+            return equality(receiver, arguments.get(0));
         }
     }
 

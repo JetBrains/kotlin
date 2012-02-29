@@ -24,8 +24,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
@@ -44,14 +46,14 @@ public final class TranslationUtils {
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return notEqual(expressionToCheck, nullLiteral);
+        return inequality(expressionToCheck, nullLiteral);
     }
 
     @NotNull
     public static JsBinaryOperation isNullCheck(@NotNull TranslationContext context,
                                                 @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();
-        return JsAstUtils.equals(expressionToCheck, nullLiteral);
+        return equality(expressionToCheck, nullLiteral);
     }
 
     @NotNull
@@ -69,14 +71,6 @@ public final class TranslationUtils {
         JetExpression jetExpression = argument.getArgumentExpression();
         assert jetExpression != null : "Argument with no expression";
         return Translation.translateAsExpression(jetExpression, context);
-    }
-
-    //TODO: refactor backing field reference generation to use the generic way
-    @NotNull
-    public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
-                                                  @NotNull JetProperty expression) {
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), expression);
-        return backingFieldReference(context, propertyDescriptor);
     }
 
     @NotNull
@@ -164,14 +158,6 @@ public final class TranslationUtils {
         return Translation.translateAsExpression(baseExpression, context);
     }
 
-    //TODO:
-    @NotNull
-    public static JsExpression translateReceiver(@NotNull TranslationContext context,
-                                                 @NotNull JetDotQualifiedExpression expression) {
-        return Translation.translateAsExpression(expression.getReceiverExpression(), context);
-    }
-
-
     @NotNull
     public static JsExpression translateLeftExpression(@NotNull TranslationContext context,
                                                        @NotNull JetBinaryExpression expression) {
@@ -227,4 +213,12 @@ public final class TranslationUtils {
         context.aliaser().removeAliasForThis(descriptor);
     }
 
+    @NotNull
+    public static JsExpression applyIntrinsicToBinaryExpression(@NotNull TranslationContext context,
+                                                                @NotNull Intrinsic intrinsic,
+                                                                @NotNull JetBinaryExpression binaryExpression) {
+        JsExpression left = translateLeftExpression(context, binaryExpression);
+        JsExpression right = translateRightExpression(context, binaryExpression);
+        return intrinsic.apply(left, Arrays.asList(right), context);
+    }
 }

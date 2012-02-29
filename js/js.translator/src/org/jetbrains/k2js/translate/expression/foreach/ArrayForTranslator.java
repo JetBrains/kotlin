@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.intrinsic.string.LengthIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collections;
@@ -34,7 +34,6 @@ import java.util.List;
 import static org.jetbrains.k2js.translate.expression.foreach.ForTranslatorUtils.temporariesInitialization;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
-import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopBody;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 
 /**
@@ -43,8 +42,8 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 public final class ArrayForTranslator extends ForTranslator {
 
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new ArrayForTranslator(expression, context).translate());
     }
 
@@ -70,7 +69,10 @@ public final class ArrayForTranslator extends ForTranslator {
     private ArrayForTranslator(@NotNull JetForExpression forExpression, @NotNull TranslationContext context) {
         super(forExpression, context);
         loopRange = context.declareTemporary(Translation.translateAsExpression(getLoopRange(expression), context));
-        JsExpression length = LengthIntrinsic.INSTANCE.apply(loopRange.reference(), Collections.<JsExpression>emptyList(), context());
+        Intrinsic lengthPropertyIntrinsic = context().intrinsics().getLengthPropertyIntrinsic();
+        JsExpression length = lengthPropertyIntrinsic.apply(loopRange.reference(),
+                                                            Collections.<JsExpression>emptyList(),
+                                                            context());
         end = context().declareTemporary(length);
         index = context().declareTemporary(program().getNumberLiteral(0));
     }
@@ -78,36 +80,27 @@ public final class ArrayForTranslator extends ForTranslator {
     @NotNull
     private JsBlock translate() {
         List<JsStatement> blockStatements = temporariesInitialization(loopRange, end);
-        blockStatements.add(generateForExpression());
+        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrExpression(), getBody()));
         return newBlock(blockStatements);
     }
 
-    @NotNull
-    private JsFor generateForExpression() {
-        JsFor result = new JsFor();
-        result.setInitVars(initExpression());
-        result.setCondition(getCondition());
-        result.setIncrExpr(getIncrExpression());
-        result.setBody(getBody());
-        return result;
-    }
 
     @NotNull
     private JsStatement getBody() {
         JsArrayAccess arrayAccess = new JsArrayAccess(loopRange.reference(), index.reference());
         JsStatement currentVar = newVar(parameterName, arrayAccess);
-        JsStatement realBody = Translation.translateAsStatement(getLoopBody(expression), context());
+        JsStatement realBody = translateOriginalBodyExpression();
         return AstUtil.newBlock(currentVar, realBody);
     }
 
     @NotNull
-    private JsVars initExpression() {
+    private JsVars getInitExpression() {
         return newVar(index.name(), program().getNumberLiteral(0));
     }
 
     @NotNull
     private JsExpression getCondition() {
-        return notEqual(index.reference(), end.reference());
+        return inequality(index.reference(), end.reference());
     }
 
     @NotNull

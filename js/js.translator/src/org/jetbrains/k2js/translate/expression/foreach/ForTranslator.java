@@ -39,15 +39,15 @@ public abstract class ForTranslator extends AbstractTranslator {
     public static JsStatement translate(@NotNull JetForExpression expression,
                                         @NotNull TranslationContext context) {
         if (RangeLiteralForTranslator.isApplicable(expression, context)) {
-            return RangeLiteralForTranslator.translate(expression, context);
+            return RangeLiteralForTranslator.doTranslate(expression, context);
         }
         if (RangeForTranslator.isApplicable(expression, context)) {
-            return RangeForTranslator.translate(expression, context);
+            return RangeForTranslator.doTranslate(expression, context);
         }
         if (ArrayForTranslator.isApplicable(expression, context)) {
-            return ArrayForTranslator.translate(expression, context);
+            return ArrayForTranslator.doTranslate(expression, context);
         }
-        return IteratorForTranslator.translate(expression, context);
+        return IteratorForTranslator.doTranslate(expression, context);
     }
 
     @NotNull
@@ -67,7 +67,6 @@ public abstract class ForTranslator extends AbstractTranslator {
         return context().getNameForElement(loopParameter);
     }
 
-    //TODO: look for should-be-usages
     @NotNull
     protected JsStatement translateOriginalBodyExpression() {
         return Translation.translateAsStatement(getLoopBody(expression), context());

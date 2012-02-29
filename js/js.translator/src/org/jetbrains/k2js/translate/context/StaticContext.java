@@ -323,6 +323,7 @@ public final class StaticContext {
         }
     }
 
+    @NotNull
     private NamingScope getEnclosingScope(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = getContainingDeclaration(descriptor);
         return getScopeForDescriptor(containingDeclaration.getOriginal());

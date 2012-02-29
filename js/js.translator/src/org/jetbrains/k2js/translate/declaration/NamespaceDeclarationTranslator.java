@@ -100,7 +100,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
+    private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
         List<JsStatement> result = Lists.newArrayList();
         for (NamespaceTranslator translator : namespaceTranslators) {
             result.add(translator.getDeclarationStatement());
@@ -109,7 +109,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsStatement> initializeStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
+    private static List<JsStatement> initializeStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
         List<JsStatement> result = Lists.newArrayList();
         for (NamespaceTranslator translator : namespaceTranslators) {
             result.add(translator.getInitializeStatement());

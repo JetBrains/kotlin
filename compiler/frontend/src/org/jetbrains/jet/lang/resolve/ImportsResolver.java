@@ -68,7 +68,7 @@ public class ImportsResolver {
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
                 Collection<? extends DeclarationDescriptor> descriptors = importResolver.processImportReference(importDirective, namespaceScope, delayedImporter);
-                if (descriptors != null && descriptors.size() == 1) {
+                if (descriptors.size() == 1) {
                     resolvedDirectives.put(importDirective, descriptors.iterator().next());
                 }
             }
@@ -144,14 +144,15 @@ public class ImportsResolver {
             this.firstPhase = firstPhase;
         }
 
-        @Nullable
+        @NotNull
         public Collection<? extends DeclarationDescriptor> processImportReference(@NotNull JetImportDirective importDirective, @NotNull JetScope scope, @NotNull Importer importer) {
             if (importDirective.isAbsoluteInRootNamespace()) {
                 trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
-                return null;
+                return Collections.emptyList();
             }
             JetExpression importedReference = importDirective.getImportedReference();
-            if (importedReference == null) return null;
+            if (importedReference == null) return Collections.emptyList();
+
             Collection<? extends DeclarationDescriptor> descriptors;
             if (importedReference instanceof JetQualifiedExpression) {
                 descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression) importedReference, scope);
@@ -163,19 +164,23 @@ public class ImportsResolver {
 
             JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
             if (importDirective.isAllUnder()) {
-                if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression)) return null;
+                if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression)) {
+                    return Collections.emptyList();
+                }
+
                 for (DeclarationDescriptor descriptor : descriptors) {
                     importer.addAllUnderImport(descriptor);
                 }
-                return null;
+                return Collections.emptyList();
             }
 
             String aliasName = getAliasName(importDirective);
-            if (aliasName == null) return null;
+            if (aliasName == null) return Collections.emptyList();
 
             for (DeclarationDescriptor descriptor : descriptors) {
                 importer.addAliasImport(descriptor, aliasName);
             }
+
             return descriptors;
         }
 

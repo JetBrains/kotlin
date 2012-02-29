@@ -41,8 +41,8 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 public final class IteratorForTranslator extends ForTranslator {
 
     @NotNull
-    public static JsStatement translate(@NotNull JetForExpression expression,
-                                        @NotNull TranslationContext context) {
+    public static JsStatement doTranslate(@NotNull JetForExpression expression,
+                                          @NotNull TranslationContext context) {
         return (new IteratorForTranslator(expression, context).translate());
     }
 
@@ -61,6 +61,7 @@ public final class IteratorForTranslator extends ForTranslator {
         return AstUtil.newBlock(iterator.assignmentExpression().makeStmt(), cycle);
     }
 
+    //TODO: check whether complex logic with blocks is needed
     @NotNull
     private JsBlock generateCycleBody() {
         JsBlock cycleBody = new JsBlock();

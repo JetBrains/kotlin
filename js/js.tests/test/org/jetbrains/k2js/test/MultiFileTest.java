@@ -29,15 +29,15 @@ public final class MultiFileTest extends TranslationTest {
     }
 
     public void testFunctionsVisibleFromOtherFile() throws Exception {
-        testFooBoxIsTrue("functionsVisibleFromOtherFile");
+        checkFooBoxIsTrue("functionsVisibleFromOtherFile");
     }
 
     public void testClassesInheritedFromOtherFile() throws Exception {
-        testFooBoxIsTrue("classesInheritedFromOtherFile");
+        checkFooBoxIsTrue("classesInheritedFromOtherFile");
     }
 
     @Override
-    public void testFooBoxIsTrue(String dirName) throws Exception {
+    public void checkFooBoxIsTrue(String dirName) throws Exception {
         testMultiFile(dirName, "foo", "box", true);
     }
 }

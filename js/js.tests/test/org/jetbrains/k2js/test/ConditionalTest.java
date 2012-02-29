@@ -33,7 +33,7 @@ public class ConditionalTest extends AbstractExpressionTest {
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
         try {
-            testFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
             fail();
         } catch (JavaScriptException e) {
 

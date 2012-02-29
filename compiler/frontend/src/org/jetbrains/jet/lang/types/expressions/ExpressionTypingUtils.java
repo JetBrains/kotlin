@@ -25,24 +25,22 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetPattern;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.TraceBasedRedeclarationHandler;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,7 +51,10 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author abreslav
  */
 public class ExpressionTypingUtils {
-    
+
+    private ExpressionTypingUtils() {
+    }
+
     @Nullable
     protected static ExpressionReceiver getExpressionReceiver(@NotNull JetExpression expression, @Nullable JetType type) {
         if (type == null) return null;
@@ -164,5 +165,85 @@ public class ExpressionTypingUtils {
                 false
         );
         return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
+    }
+
+    /**
+     * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
+     *
+     * @param callableFQN
+     * @param project
+     * @param scope
+     * @return
+     */
+    public static List<CallableDescriptor> canFindSuitableCall(
+            @NotNull String callableFQN,
+            @NotNull Project project,
+            @NotNull JetExpression receiverExpression,
+            @NotNull JetType receiverType,
+            @NotNull JetScope scope) {
+
+        WritableScopeWithImports writableScopeWithImports = new WritableScopeImpl(
+                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
+
+        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN);
+
+        ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(new BindingTraceContext(), false);
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = importResolver.processImportReference(
+                importDirective, scope,
+                new Importer.StandardImporter(writableScopeWithImports, false));
+
+        List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
+        ReceiverDescriptor receiverDescriptor = new ExpressionReceiver(receiverExpression, receiverType);
+
+        for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
+            if (declarationDescriptor instanceof CallableDescriptor) {
+                CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
+
+                if (checkIsExtensionCallable(receiverDescriptor, callableDescriptor)) {
+                    callableExtensionDescriptors.add(callableDescriptor);
+                }
+            }
+        }
+
+        return callableExtensionDescriptors;
+    }
+
+    /*
+    * Checks if receiver declaration could be resolved to call expected receiver.
+    */
+    public static boolean checkIsExtensionCallable (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        JetType type = expectedReceiver.getType();
+        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
+        if (type.isNullable()) {
+            JetType notNullableType = TypeUtils.makeNotNullable(type);
+            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
+        }
+        return false;
+    }
+
+    private static boolean checkReceiverResolution (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull JetType receiverType,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
+        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
+            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+        }
+
+        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
+        if (expectedReceiver.exists() && receiverParameter.exists()) {
+            constraintSystem.addSubtypingConstraint(ConstraintType.RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
+        }
+        else if (expectedReceiver.exists() || receiverParameter.exists()) {
+            // Only one of receivers exist
+            return false;
+        }
+
+        ConstraintSystemSolution solution = constraintSystem.solve();
+        return solution.getStatus().isSuccessful();
     }
 }

@@ -22,6 +22,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.compiler.CompileSession;
+import org.jetbrains.jet.compiler.MessageRenderer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -84,7 +85,7 @@ public class TestlibTest extends CodegenTestCase {
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test"));
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../kunit/src"));
 
-            if (!session.analyze(System.err)) {
+            if (!session.analyze(System.err, MessageRenderer.PLAIN)) {
                 throw new RuntimeException("There were compilation errors");
             }
 

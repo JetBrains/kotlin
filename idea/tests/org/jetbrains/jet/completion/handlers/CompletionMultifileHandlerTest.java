@@ -26,6 +26,10 @@ import java.io.File;
  */
 public class CompletionMultifileHandlerTest extends CompletionTestCase {
 
+    public void testExtensionFunctions() throws Exception {
+        doTest();
+    }
+
     public void testTopLevelFunctionImport() throws Exception {
         doTest();
     }

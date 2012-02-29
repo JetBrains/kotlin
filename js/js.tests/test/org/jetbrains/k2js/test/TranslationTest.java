@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test;
 
 import com.google.dart.compiler.backend.js.ast.JsProgram;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.facade.K2JSTranslator;
@@ -27,9 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +42,8 @@ import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
  */
 public abstract class TranslationTest extends BaseTest {
 
-    public final static String TEST_FILES = "js.translator/testFiles/";
+    private static final boolean DELETE_OUT = false;
+    public static final String TEST_FILES = "js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
@@ -61,6 +60,32 @@ public abstract class TranslationTest extends BaseTest {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
         JsProgram program = translator.generateProgram(psiFiles);
         K2JSTranslator.saveProgramToFile(outputFile, program);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (!shouldCreateOut()) {
+            return;
+        }
+        File outDir = new File(getOutputPath());
+        assert (!outDir.exists() || outDir.isDirectory()) : "If out already exists it should be a directory.";
+        if (!outDir.exists()) {
+            boolean success = outDir.mkdir();
+            assert success;
+        }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (!shouldCreateOut() || !DELETE_OUT) {
+            return;
+        }
+        File outDir = new File(getOutputPath());
+        assert outDir.exists();
+        boolean success = FileUtil.delete(outDir);
+        assert success;
     }
 
     protected static String kotlinLibraryPath() {
@@ -116,6 +141,10 @@ public abstract class TranslationTest extends BaseTest {
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
+    protected boolean shouldCreateOut() {
+        return true;
+    }
+
     protected void translateFile(String filename) throws Exception {
         translateFile(getInputFilePath(filename),
                       getOutputFilePath(filename));
@@ -126,7 +155,7 @@ public abstract class TranslationTest extends BaseTest {
         File dir = new File(dirPath);
         List<String> fullFilePaths = new ArrayList<String>();
         for (String fileName : dir.list()) {
-            fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
+            fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
         }
         assert dir.isDirectory();
         traslateFiles(fullFilePaths,
@@ -158,13 +187,17 @@ public abstract class TranslationTest extends BaseTest {
         return getExpectedPath() + testName + ".out";
     }
 
-    protected void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
+    protected static void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
         FileReader reader = new FileReader(inputFile);
-        context.evaluateReader(scope, reader, inputFile, 1, null);
-        reader.close();
+        try {
+            context.evaluateReader(scope, reader, inputFile, 1, null);
+        } finally {
+            reader.close();
+        }
     }
 
-    protected void runRhinoTest(List<String> fileNames, RhinoResultChecker checker) throws Exception {
+    protected static void runRhinoTest(@NotNull List<String> fileNames,
+                                       @NotNull RhinoResultChecker checker) throws Exception {
         Context context = Context.enter();
         Scriptable scope = context.initStandardObjects();
         for (String filename : fileNames) {
@@ -174,11 +207,11 @@ public abstract class TranslationTest extends BaseTest {
         Context.exit();
     }
 
-    public void testFooBoxIsTrue(String filename) throws Exception {
+    public void checkFooBoxIsTrue(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", true);
     }
 
-    public void testFooBoxIsOk(String filename) throws Exception {
+    public void checkFooBoxIsOk(String filename) throws Exception {
         testFunctionOutput(filename, "foo", "box", "OK");
     }
 
@@ -188,21 +221,16 @@ public abstract class TranslationTest extends BaseTest {
                      new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
 
-    protected void testWithMain(String testName, String testId, String... args) throws Exception {
+    protected void performTestWithMain(String testName, String testId, String... args) throws Exception {
         checkOutput(testName + ".kt", readFile(expected(testName + testId)), args);
     }
 
     private static String readFile(String path) throws IOException {
         FileInputStream stream = new FileInputStream(new File(path));
         try {
-            FileChannel fc = stream.getChannel();
-            MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            /* Instead of using default, pass in a decoder. */
-            return Charset.defaultCharset().decode(bb).toString();
+            return FileUtil.loadTextAndClose(stream);
         } finally {
             stream.close();
         }
     }
-
-
 }

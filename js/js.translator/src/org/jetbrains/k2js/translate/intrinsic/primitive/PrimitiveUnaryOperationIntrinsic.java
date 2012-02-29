@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public final class PrimitiveUnaryOperationIntrinsic implements FunctionIntrinsic {
+public final class PrimitiveUnaryOperationIntrinsic implements Intrinsic {
 
     @NotNull
     public static PrimitiveUnaryOperationIntrinsic newInstance(@NotNull JetToken token) {

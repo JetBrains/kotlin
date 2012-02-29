@@ -115,11 +115,6 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                     return;
                 }
 
-                // No auto import for qualified expressions
-                if (PsiTreeUtil.getParentOfType(element, JetQualifiedExpression.class) != null) {
-                    return;
-                }
-
                 if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
                     final DeclarationDescriptor descriptor = ((JetLookupObject) item.getObject()).getDescriptor();
                     if (descriptor instanceof SimpleFunctionDescriptor) {
@@ -127,6 +122,13 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                         final JetFile file = (JetFile) context.getFile();
                         SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) descriptor;
                         final String fqn = DescriptorUtils.getFQName(functionDescriptor);
+
+                        // Don't insert import for qualified expression if don't try to insert extension function
+                        if (PsiTreeUtil.getParentOfType(element, JetQualifiedExpression.class) != null &&
+                                !functionDescriptor.getReceiverParameter().exists()) {
+
+                            return;
+                        }
 
                         if (DescriptorUtils.isTopLevelFunction(functionDescriptor)) {
                             ApplicationManager.getApplication().runWriteAction(new Runnable() {

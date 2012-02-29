@@ -19,9 +19,10 @@ package org.jetbrains.k2js.translate.utils;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -130,18 +131,18 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation equals(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+    public static JsBinaryOperation equality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.EQ, arg1, arg2);
     }
 
     @NotNull
-    public static JsBinaryOperation notEqual(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
+    public static JsBinaryOperation inequality(@NotNull JsExpression arg1, @NotNull JsExpression arg2) {
         return new JsBinaryOperation(JsBinaryOperator.NEQ, arg1, arg2);
     }
 
     @NotNull
     public static JsExpression equalsTrue(@NotNull JsExpression expression, @NotNull JsProgram program) {
-        return equals(expression, program.getTrueLiteral());
+        return equality(expression, program.getTrueLiteral());
     }
 
     @NotNull
@@ -152,6 +153,11 @@ public final class JsAstUtils {
     @NotNull
     public static JsBinaryOperation sum(@NotNull JsExpression left, @NotNull JsExpression right) {
         return new JsBinaryOperation(JsBinaryOperator.ADD, left, right);
+    }
+
+    @NotNull
+    public static JsBinaryOperation addAssign(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.ASG_ADD, left, right);
     }
 
     @NotNull
@@ -166,7 +172,37 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsBinaryOperation typeof(@NotNull JsExpression expression, @NotNull JsStringLiteral string) {
-        return equals(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+        return equality(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
+    }
+
+    @NotNull
+    public static JsFor generateForExpression(@NotNull JsVars initExpression,
+                                              @NotNull JsExpression condition,
+                                              @NotNull JsExpression incrExpression,
+                                              @NotNull JsStatement body) {
+        JsFor result = new JsFor();
+        result.setInitVars(initExpression);
+        result.setCondition(condition);
+        result.setIncrExpr(incrExpression);
+        result.setBody(body);
+        return result;
+    }
+
+    public static boolean ownsName(@NotNull JsScope scope, @NotNull JsName name) {
+        Iterator<JsName> nameIterator = scope.getAllNames();
+        while (nameIterator.hasNext()) {
+            if (nameIterator.next() == name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    public static JsObjectLiteral newObjectLiteral(@NotNull List<JsPropertyInitializer> propertyList) {
+        JsObjectLiteral jsObjectLiteral = new JsObjectLiteral();
+        jsObjectLiteral.getPropertyInitializers().addAll(propertyList);
+        return jsObjectLiteral;
     }
 
     public interface Mutator {

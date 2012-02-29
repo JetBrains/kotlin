@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.StandardConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -40,9 +39,9 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public final class Analyzer {
+public final class AnalyzerFacade {
 
-    private Analyzer() {
+    private AnalyzerFacade() {
     }
 
     @NotNull
@@ -58,10 +57,10 @@ public final class Analyzer {
                                               @NotNull Config config) {
         Project project = config.getProject();
         return AnalyzingUtils.analyzeFiles(project,
-                JsConfiguration.jsLibConfiguration(project),
-                withJsLibAdded(files, config),
-                notLibFiles(config.getLibFiles()),
-                JetControlFlowDataTraceFactory.EMPTY);
+                                           JsConfiguration.jsLibConfiguration(project),
+                                           withJsLibAdded(files, config),
+                                           notLibFiles(config.getLibFiles()),
+                                           JetControlFlowDataTraceFactory.EMPTY);
     }
 
     private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
@@ -105,7 +104,6 @@ public final class Analyzer {
                 JetControlFlowDataTraceFactory.EMPTY,
                 bindingTraceContext,
                 semanticServices);
-//        return AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, flowDataTraceFactory);
     }
 
     private static final class JsConfiguration implements Configuration {

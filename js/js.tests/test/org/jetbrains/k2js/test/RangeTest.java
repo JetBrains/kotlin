@@ -30,20 +30,20 @@ public final class RangeTest extends TranslationTest {
 
 
     public void testExplicitRange() throws Exception {
-        testFooBoxIsTrue("explicitRange.kt");
+        checkFooBoxIsTrue("explicitRange.kt");
     }
 
 
     public void testRangeSugarSyntax() throws Exception {
-        testFooBoxIsTrue("rangeSugarSyntax.kt");
+        checkFooBoxIsTrue("rangeSugarSyntax.kt");
     }
 
 
     public void testIntInRange() throws Exception {
-        testFooBoxIsTrue("intInRange.kt");
+        checkFooBoxIsTrue("intInRange.kt");
     }
 
     public void testIteratingOverRanges() throws Exception {
-        testFooBoxIsTrue("iteratingOverRanges.kt");
+        checkFooBoxIsTrue("iteratingOverRanges.kt");
     }
 }

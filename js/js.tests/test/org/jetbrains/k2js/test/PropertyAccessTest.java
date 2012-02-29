@@ -30,12 +30,12 @@ public final class PropertyAccessTest extends TranslationTest {
 
 
     public void testAccessToInstanceProperty() throws Exception {
-        testFooBoxIsTrue("accessToInstanceProperty.kt");
+        checkFooBoxIsTrue("accessToInstanceProperty.kt");
     }
 
 
     public void testTwoClassesWithProperties() throws Exception {
-        testFooBoxIsTrue("twoClassesWithProperties.kt");
+        checkFooBoxIsTrue("twoClassesWithProperties.kt");
     }
 
 
@@ -45,55 +45,55 @@ public final class PropertyAccessTest extends TranslationTest {
 
 
     public void testCustomGetter() throws Exception {
-        testFooBoxIsTrue("customGetter.kt");
+        checkFooBoxIsTrue("customGetter.kt");
     }
 
 
     public void testCustomSetter() throws Exception {
-        testFooBoxIsTrue("customSetter.kt");
+        checkFooBoxIsTrue("customSetter.kt");
     }
 
 
     public void testSafeCall() throws Exception {
-        testFooBoxIsTrue("safeCall.kt");
+        checkFooBoxIsTrue("safeCall.kt");
     }
 
 
     //TODO: place safecalls under distinkt category
     public void testSafeCallReturnsNullIfFails() throws Exception {
-        testFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
+        checkFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
 
 
     public void testNamespacePropertyInitializer() throws Exception {
-        testFooBoxIsTrue("namespacePropertyInitializer.kt");
+        checkFooBoxIsTrue("namespacePropertyInitializer.kt");
     }
 
 
     public void testNamespacePropertySet() throws Exception {
-        testFooBoxIsTrue("namespacePropertySet.kt");
+        checkFooBoxIsTrue("namespacePropertySet.kt");
     }
 
     public void testNamespaceCustomAccessors() throws Exception {
-        testFooBoxIsTrue("namespaceCustomAccessors.kt");
+        checkFooBoxIsTrue("namespaceCustomAccessors.kt");
     }
 
 
     public void testClassUsesNamespaceProperties() throws Exception {
-        testFooBoxIsTrue("classUsesNamespaceProperties.kt");
+        checkFooBoxIsTrue("classUsesNamespaceProperties.kt");
     }
 
 
     public void testSafeAccess() throws Exception {
-        testFooBoxIsTrue("safeAccess.kt");
+        checkFooBoxIsTrue("safeAccess.kt");
     }
 
     public void testSafeExtensionFunctionCall() throws Exception {
-        testFooBoxIsOk("safeExtensionFunctionCall.kt");
+        checkFooBoxIsOk("safeExtensionFunctionCall.kt");
     }
 
     public void testExtensionLiteralSafeCall() throws Exception {
-        testFooBoxIsTrue("extensionLiteralSafeCall.kt");
+        checkFooBoxIsTrue("extensionLiteralSafeCall.kt");
     }
 
 }

@@ -35,6 +35,7 @@ public final class Suite extends TranslationTest {
         this.name = testName;
         this.tester = tester;
         this.testMain = suiteDirName;
+        setName(name);
     }
 
     public Suite() {
@@ -46,8 +47,13 @@ public final class Suite extends TranslationTest {
         });
     }
 
-//    //NOTE: just to avoid warning
+    //NOTE: just to avoid warning
     public void testNothing() {
+    }
+
+    @Override
+    protected boolean shouldCreateOut() {
+        return false;
     }
 
     @Override
@@ -62,13 +68,15 @@ public final class Suite extends TranslationTest {
     public static Test suiteForDirectory(@NotNull final String mainName, @NotNull final SingleFileTester testMethod) {
 
         return TranslatorTestCaseBuilder.suiteForDirectory(TranslationTest.TEST_FILES,
-                                                           mainName + casesDirectoryName(), true, new TranslatorTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String name) {
-                return (new Suite(name, mainName, testMethod));
-            }
-        });
+                                                           mainName + casesDirectoryName(),
+                                                           true,
+                                                           new TranslatorTestCaseBuilder.NamedTestFactory() {
+                                                               @NotNull
+                                                               @Override
+                                                               public Test createTest(@NotNull String name) {
+                                                                   return (new Suite(name, mainName, testMethod));
+                                                               }
+                                                           });
     }
 
     protected static interface SingleFileTester {
