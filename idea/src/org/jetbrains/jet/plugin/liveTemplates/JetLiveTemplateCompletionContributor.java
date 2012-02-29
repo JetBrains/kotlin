@@ -46,6 +46,9 @@ public class JetLiveTemplateCompletionContributor extends CompletionContributor 
             protected void addCompletions(@NotNull CompletionParameters parameters,
                                           ProcessingContext context,
                                           @NotNull final CompletionResultSet result) {
+                if (parameters.getInvocationCount() == 0) {
+                    return;
+                }
                 final PsiFile file = parameters.getPosition().getContainingFile();
                 final int offset = parameters.getOffset();
                 final List<TemplateImpl> templates = listApplicableTemplates(file, offset);
