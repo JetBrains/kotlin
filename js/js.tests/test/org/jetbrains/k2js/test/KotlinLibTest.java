@@ -55,7 +55,7 @@ public final class KotlinLibTest extends TranslationTest {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("trait.js")),
-                new RhinoPropertyTypesChecker("foo", propertyToType));
+                     new RhinoPropertyTypesChecker("foo", propertyToType));
     }
 
 
@@ -63,56 +63,61 @@ public final class KotlinLibTest extends TranslationTest {
         final Map<String, Class<? extends Scriptable>> propertyToType
                 = new HashMap<String, Class<? extends Scriptable>>();
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
-                new RhinoPropertyTypesChecker("foo", propertyToType));
+                     new RhinoPropertyTypesChecker("foo", propertyToType));
     }
 
     //
     // TODO:Refactor calls to function result checker with test
     public void testNamespaceHasDeclaredFunction() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespace.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testNamespaceHasDeclaredClasses() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("namespaceWithClasses.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testIsSameType() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isSameType.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testIsAncestorType() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isAncestorType.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testIsComplexTest() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("isComplexTest.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testCommaExpression() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("commaExpression.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testArray() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("array.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
     }
 
 
     public void testHashMap() throws Exception {
         runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases("hashMap.js")),
-                new RhinoFunctionResultChecker("test", true));
+                     new RhinoFunctionResultChecker("test", true));
+    }
+
+    @Override
+    protected boolean shouldCreateOut() {
+        return false;
     }
 
 }

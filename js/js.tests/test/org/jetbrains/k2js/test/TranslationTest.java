@@ -42,7 +42,8 @@ import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
  */
 public abstract class TranslationTest extends BaseTest {
 
-    public final static String TEST_FILES = "js.translator/testFiles/";
+    private static final boolean DELETE_OUT = true;
+    public static final String TEST_FILES = "js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
@@ -59,6 +60,33 @@ public abstract class TranslationTest extends BaseTest {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
         JsProgram program = translator.generateProgram(psiFiles);
         K2JSTranslator.saveProgramToFile(outputFile, program);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        //noinspection PointlessBooleanExpression
+        if (!shouldCreateOut() || !DELETE_OUT) {
+            return;
+        }
+        File outDir = new File(getOutputPath());
+        assert (!outDir.exists() || outDir.isDirectory()) : "If out already exists it should be a directory.";
+        if (!outDir.exists()) {
+            boolean success = outDir.mkdir();
+            assert success;
+        }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (!shouldCreateOut()) {
+            return;
+        }
+        File outDir = new File(getOutputPath());
+        assert outDir.exists();
+        boolean success = FileUtil.delete(outDir);
+        assert success;
     }
 
     protected static String kotlinLibraryPath() {
@@ -114,6 +142,10 @@ public abstract class TranslationTest extends BaseTest {
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
+    protected boolean shouldCreateOut() {
+        return true;
+    }
+
     protected void translateFile(String filename) throws Exception {
         translateFile(getInputFilePath(filename),
                       getOutputFilePath(filename));
@@ -124,7 +156,7 @@ public abstract class TranslationTest extends BaseTest {
         File dir = new File(dirPath);
         List<String> fullFilePaths = new ArrayList<String>();
         for (String fileName : dir.list()) {
-            fullFilePaths.add(getInputFilePath(dirName) + "\\" + fileName);
+            fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
         }
         assert dir.isDirectory();
         traslateFiles(fullFilePaths,

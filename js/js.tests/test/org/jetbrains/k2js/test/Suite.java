@@ -46,8 +46,13 @@ public final class Suite extends TranslationTest {
         });
     }
 
-//    //NOTE: just to avoid warning
+    //NOTE: just to avoid warning
     public void testNothing() {
+    }
+
+    @Override
+    protected boolean shouldCreateOut() {
+        return false;
     }
 
     @Override
