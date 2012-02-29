@@ -43,6 +43,7 @@ public final class Namer {
     private static final String KOTLIN_OBJECT_NAME = "Kotlin";
     private static final String ANONYMOUS_NAMESPACE = "Anonymous";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
+    private static final String CLASSES_OBJECT_NAME = "classes";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -66,7 +67,7 @@ public final class Namer {
 
     @NotNull
     public static String nameForClassesVariable() {
-        return "classes";
+        return CLASSES_OBJECT_NAME;
     }
 
     @NotNull

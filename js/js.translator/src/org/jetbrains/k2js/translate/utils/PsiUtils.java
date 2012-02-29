@@ -148,7 +148,7 @@ public final class PsiUtils {
         JetNamespaceHeader namespaceHeader = psiFile.getNamespaceHeader();
         String name = namespaceHeader.getName();
         assert name != null : "NamespaceHeader must have a name";
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             return Namer.getAnonymousNamespaceName();
         }
         return name;

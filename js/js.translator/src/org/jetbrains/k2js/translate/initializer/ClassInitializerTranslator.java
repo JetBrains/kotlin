@@ -61,7 +61,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         //TODO: it's inconsistent that we scope for class and function for constructor, currently have problems implementing better way
         ConstructorDescriptor primaryConstructor = getConstructor();
         JsFunction result = context().getFunctionObject(primaryConstructor);
-        //NOTE: while we translate constructor parameters we also add property initializer statements
+        //NOTE: while we doTranslate constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
@@ -91,7 +91,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     }
 
     private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall) {
-        //TODO: look into
+        //TODO: can be problematic to maintain
         JsName superMethodName = initializerMethodScope.jsScope().declareName(Namer.superMethodName());
         superMethodName.setObfuscatable(false);
         List<JsExpression> arguments = translateArguments(superCall);

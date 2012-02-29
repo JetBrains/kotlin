@@ -221,4 +221,12 @@ public final class TranslationUtils {
         JsExpression right = translateRightExpression(context, binaryExpression);
         return intrinsic.apply(left, Arrays.asList(right), context);
     }
+
+    @NotNull
+    public static JsStatement assignmentToBackingField(@NotNull TranslationContext context, @NotNull JetProperty property,
+                                                       @NotNull JsExpression initExpression) {
+
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
+        return assignmentToBackingField(context, propertyDescriptor, initExpression);
+    }
 }

@@ -36,13 +36,13 @@ public class DynamicContext {
 
     //TODO: current/block scope logic unclear. is it necessary?
     @NotNull
-    private NamingScope currentScope;
+    private final NamingScope currentScope;
 
     @NotNull
-    private NamingScope blockScope;
+    private final NamingScope blockScope;
 
     @NotNull
-    private JsBlock currentBlock;
+    private final JsBlock currentBlock;
 
     private DynamicContext(@NotNull NamingScope scope, @NotNull NamingScope blockScope, @NotNull JsBlock block) {
         this.currentScope = scope;
@@ -53,11 +53,6 @@ public class DynamicContext {
     @NotNull
     public DynamicContext innerScope(@NotNull JsScope scope) {
         return new DynamicContext(currentScope.innerScope(scope), blockScope, currentBlock);
-    }
-
-    @NotNull
-    public NamingScope getScope() {
-        return blockScope;
     }
 
     @NotNull

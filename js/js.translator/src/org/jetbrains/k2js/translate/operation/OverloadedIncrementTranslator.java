@@ -32,8 +32,8 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodRefer
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
 
     @NotNull
-    public static JsExpression translate(@NotNull JetUnaryExpression expression,
-                                         @NotNull TranslationContext context) {
+    public static JsExpression doTranslate(@NotNull JetUnaryExpression expression,
+                                           @NotNull TranslationContext context) {
         return (new OverloadedIncrementTranslator(expression, context))
                 .translate();
     }

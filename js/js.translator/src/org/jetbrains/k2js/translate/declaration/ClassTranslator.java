@@ -152,7 +152,7 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    private ClassDescriptor findAndRemoveAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
+    private static ClassDescriptor findAndRemoveAncestorClass(@NotNull List<ClassDescriptor> superclassDescriptors) {
         ClassDescriptor ancestorClass = findAncestorClass(superclassDescriptors);
         superclassDescriptors.remove(ancestorClass);
         return ancestorClass;

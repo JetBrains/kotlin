@@ -107,7 +107,7 @@ public final class AnalyzerFacade {
     private static final class JsConfiguration implements Configuration {
 
         @NotNull
-        private Project project;
+        private final Project project;
 
         public static JsConfiguration jsLibConfiguration(@NotNull Project project) {
             return new JsConfiguration(project);

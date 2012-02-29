@@ -135,11 +135,6 @@ public final class StaticContext {
     }
 
     @NotNull
-    public StandardClasses getStandardClasses() {
-        return standardClasses;
-    }
-
-    @NotNull
     public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         NamingScope namingScope = scopes.get(descriptor);
         assert namingScope != null : "Must have a scope for descriptor";

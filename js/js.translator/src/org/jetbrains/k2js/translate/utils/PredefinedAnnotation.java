@@ -32,7 +32,7 @@ public enum PredefinedAnnotation {
     }
 
     @NotNull
-    private String fqName;
+    private final String fqName;
 
     @NotNull
     public String getFQName() {

@@ -40,8 +40,11 @@ public final class CodeGenerator {
     public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {
         generateCode(program);
         FileWriter writer = new FileWriter(file);
-        writer.write(output.toString());
-        writer.close();
+        try {
+            writer.write(output.toString());
+        } finally {
+            writer.close();
+        }
     }
 
     @NotNull

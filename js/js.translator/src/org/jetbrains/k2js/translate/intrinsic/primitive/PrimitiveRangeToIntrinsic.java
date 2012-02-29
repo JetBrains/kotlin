@@ -48,6 +48,7 @@ public final class PrimitiveRangeToIntrinsic implements Intrinsic {
     public JsExpression apply(@Nullable JsExpression rangeStart, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert arguments.size() == 1 : "RangeTo must have one argument.";
+        assert rangeStart != null;
         JsExpression rangeEnd = arguments.get(0);
         JsBinaryOperation rangeSize = sum(subtract(rangeEnd, rangeStart),
                                           context.program().getNumberLiteral(1));

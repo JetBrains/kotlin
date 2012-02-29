@@ -54,9 +54,9 @@ public final class CallTranslator extends AbstractTranslator {
         }
 
         @Nullable
-        public /*var*/ JsExpression receiver;
+        public final JsExpression receiver;
         @NotNull
-        public /*var*/ JsExpression functionReference;
+        public final JsExpression functionReference;
     }
 
     //NOTE: receiver may mean this object as well

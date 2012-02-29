@@ -40,8 +40,8 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
-                                                      @NotNull PredefinedAnnotation annotation) {
+    private static String getAnnotationStringParameter(@NotNull DeclarationDescriptor declarationDescriptor,
+                                                       @NotNull PredefinedAnnotation annotation) {
         AnnotationDescriptor annotationDescriptor = getAnnotationByName(declarationDescriptor, annotation);
         assert annotationDescriptor != null;
         //TODO: this is a quick fix for unsupported default args problem
@@ -68,8 +68,8 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    public static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
-                                                           @NotNull PredefinedAnnotation annotation) {
+    private static AnnotationDescriptor getAnnotationByName(@NotNull DeclarationDescriptor descriptor,
+                                                            @NotNull PredefinedAnnotation annotation) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             String annotationClassFQName = getAnnotationClassFQName(annotationDescriptor);
             if (annotationClassFQName.equals(annotation.getFQName())) {

@@ -211,7 +211,7 @@ public final class JsAstUtils {
         setStatements(block, statementLinkedList);
     }
 
-    public static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
+    private static void setStatements(@NotNull JsBlock block, @NotNull List<JsStatement> statements) {
         List<JsStatement> statementList = block.getStatements();
         statementList.clear();
         statementList.addAll(statements);

@@ -67,16 +67,17 @@ public final class DescriptorUtils {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
                 "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
-                        "Found: " + functionDescriptors.size();
+                "Found: " + functionDescriptors.size();
         //noinspection LoopStatementThatDoesntLoop
         for (FunctionDescriptor descriptor : functionDescriptors) {
             return descriptor;
         }
         throw new AssertionError("In scope " + scope
-                + " supposed to be exactly one " + name + " function.");
+                                 + " supposed to be exactly one " + name + " function.");
     }
 
-    //TODO: some stange stuff happening to this method
+    //TODO: some strange stuff happening to this method
+    //TODO: inspect
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
@@ -156,7 +157,7 @@ public final class DescriptorUtils {
     @NotNull
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
         String name = descriptor.getName();
-        if (name.equals("")) {
+        if (name.isEmpty()) {
             return Namer.getAnonymousNamespaceName();
         }
         return name;

@@ -125,7 +125,7 @@ public final class CallExpressionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private List<JsExpression> wrapInArrayLiteral(@NotNull List<JsExpression> translatedArgs) {
+    private static List<JsExpression> wrapInArrayLiteral(@NotNull List<JsExpression> translatedArgs) {
         JsArrayLiteral argsWrappedInArray = new JsArrayLiteral();
         argsWrappedInArray.getExpressions().addAll(translatedArgs);
         return Arrays.<JsExpression>asList(argsWrappedInArray);

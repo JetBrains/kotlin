@@ -98,7 +98,7 @@ public final class ClassSorter {
         }
     }
 
-    private boolean isDerivedClass(@NotNull ClassDescriptor ancestor, @NotNull ClassDescriptor derived) {
+    private static boolean isDerivedClass(@NotNull ClassDescriptor ancestor, @NotNull ClassDescriptor derived) {
         return (getSuperclassDescriptors(derived).contains(ancestor));
     }
 

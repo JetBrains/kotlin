@@ -27,6 +27,9 @@ import java.util.List;
  */
 public final class GenerationUtils {
 
+    private GenerationUtils() {
+    }
+
     @NotNull
     public static String generateCallToMain(@NotNull String namespaceName, @NotNull List<String> arguments) {
         String constructArguments = "var args = [];\n";

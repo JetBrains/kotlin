@@ -39,12 +39,13 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReferenc
 public abstract class PropertyAccessTranslator extends AccessTranslator {
 
     @NotNull
-    public static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
-                                                       @NotNull ResolvedCall<?> resolvedCall,
-                                                       @NotNull TranslationContext context) {
+    private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
+                                                        @NotNull ResolvedCall<?> resolvedCall,
+                                                        @NotNull TranslationContext context) {
         if (isNativeObject(descriptor)) {
             return new NativePropertyAccessTranslator(descriptor, /*qualifier = */ null, context);
-        } else {
+        }
+        else {
             return new KotlinPropertyAccessTranslator(descriptor, /*qualifier = */ null, resolvedCall, context);
         }
     }
@@ -58,7 +59,8 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
         if (isNativeObject(propertyDescriptor) || isBackingFieldReference(expression)) {
             result = new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
-        } else {
+        }
+        else {
             ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
             result = new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier, resolvedCall, context);
         }
@@ -67,8 +69,8 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     }
 
     @NotNull
-    /*package*/ static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
-                                                                @NotNull TranslationContext context) {
+    private static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
+                                                            @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert descriptor instanceof PropertyDescriptor : "Must be a property descriptor.";
@@ -95,8 +97,8 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     }
 
 
-    public static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
-                                                  @NotNull TranslationContext context) {
+    private static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
+                                                   @NotNull TranslationContext context) {
         JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
         assert selector != null : "Only names are allowed after the dot";
         return canBePropertyGetterCall(selector, context);

@@ -89,12 +89,6 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public NamingScope getScopeForElement(@NotNull PsiElement element) {
-        DeclarationDescriptor descriptorForElement = getDescriptorForElement(bindingContext(), element);
-        return getScopeForDescriptor(descriptorForElement);
-    }
-
-    @NotNull
     public JsName getNameForElement(@NotNull PsiElement element) {
         DeclarationDescriptor descriptor = getDescriptorForElement(bindingContext(), element);
         return getNameForDescriptor(descriptor);
@@ -133,16 +127,6 @@ public final class TranslationContext {
     @NotNull
     public JsProgram program() {
         return staticContext.getProgram();
-    }
-
-    @NotNull
-    private StandardClasses standardClasses() {
-        return staticContext.getStandardClasses();
-    }
-
-    @NotNull
-    public NamingScope getScope() {
-        return dynamicContext.getScope();
     }
 
     @NotNull
