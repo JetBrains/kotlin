@@ -209,4 +209,13 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     public Icon getElementIcon(final int flags) {
         return PsiClassImplUtil.getClassIcon(flags, this);
     }
+
+    @Override
+    public String toString() {
+        try {
+            return JetLightClass.class.getSimpleName() + ":" + getQualifiedName();
+        } catch (Throwable e) {
+            return JetLightClass.class.getSimpleName() + ":" + e.toString();
+        }
+    }
 }
