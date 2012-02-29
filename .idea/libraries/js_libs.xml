@@ -3,6 +3,9 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/js.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dartc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/args4j-2.0.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/guava-10.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/json.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

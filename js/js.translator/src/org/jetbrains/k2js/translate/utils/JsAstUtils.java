@@ -19,8 +19,8 @@ package org.jetbrains.k2js.translate.utils;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
