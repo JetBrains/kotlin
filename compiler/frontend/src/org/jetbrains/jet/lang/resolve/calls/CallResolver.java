@@ -113,39 +113,6 @@ public class CallResolver {
         return doResolveCall(trace, scope, call, expectedType, tasks, functionReference);
     }
 
-    /**
-     * Get all function from the given scope with the given name and check is they could be satisfied for call on given
-     * receiver.
-     *
-     * @param trace
-     * @param scope
-     * @param call
-     * @param name
-     * @return
-     */
-    public List<FunctionDescriptor> resolveCallsByReceiver(
-            @NotNull BindingTrace trace,
-            @NotNull JetScope scope,
-            @NotNull final Call call,
-            @NotNull String name) {
-
-        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(
-                scope, call, name, trace.getBindingContext(), dataFlowInfo);
-
-        ArrayList<FunctionDescriptor> functionDescriptors = new ArrayList<FunctionDescriptor>();
-
-        for (ResolutionTask<FunctionDescriptor> task : tasks) {
-            Collection<ResolvedCallImpl<FunctionDescriptor>> candidates = task.getCandidates();
-            for (ResolvedCallImpl<FunctionDescriptor> candidate : candidates) {
-                if (checkIsExtensionCallable(call.getExplicitReceiver(), candidate.getCandidateDescriptor())) {
-                    functionDescriptors.add(candidate.getCandidateDescriptor());
-                }
-            }
-        }
-
-        return functionDescriptors;
-    }
-
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveSimpleCallToFunctionDescriptor(
             @NotNull BindingTrace trace,
@@ -1052,45 +1019,5 @@ public class CallResolver {
             if (!TypeUtils.equalTypes(expectedType, valueParameter.getType())) return false;
         }
         return true;
-    }
-
-    /*
-     * Checks if receiver declaration could be resolved to call expected receiver.
-     */
-    public static boolean checkIsExtensionCallable (
-            @NotNull ReceiverDescriptor expectedReceiver,
-            @NotNull CallableDescriptor receiverArgument
-    ) {
-        JetType type = expectedReceiver.getType();
-        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
-        if (type.isNullable()) {
-            JetType notNullableType = TypeUtils.makeNotNullable(type);
-            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
-        }
-        return false;
-    }
-
-    private static boolean checkReceiverResolution (
-            @NotNull ReceiverDescriptor expectedReceiver,
-            @NotNull JetType receiverType,
-            @NotNull CallableDescriptor receiverArgument
-    ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
-        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
-            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
-        }
-
-        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
-        if (expectedReceiver.exists() && receiverParameter.exists()) {
-            constraintSystem.addSubtypingConstraint(
-                    RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
-        }
-        else if (expectedReceiver.exists() || receiverParameter.exists()) {
-            // Only one of receivers exist
-            return false;
-        }
-
-        ConstraintSystemSolution solution = constraintSystem.solve();
-        return solution.getStatus().isSuccessful();
     }
 }

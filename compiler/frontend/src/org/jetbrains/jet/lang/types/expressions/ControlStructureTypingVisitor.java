@@ -355,14 +355,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         return context.replaceBindingTrace(fakeTrace).resolveCallWithGivenName(call, fake, name);
     }
 
-    public static List<FunctionDescriptor> resolveFakeCallWithReceiverOnly(ExpressionReceiver receiver,
-                                                                           ExpressionTypingContext context, String name) {
-        JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.getProject(), "fake");
-        BindingTrace fakeTrace = new BindingTraceContext();
-        Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
-        return context.replaceBindingTrace(fakeTrace).resolveForReceiverOnly(call, fake, name);
-    }
-
     @Nullable
     private static FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
         OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());

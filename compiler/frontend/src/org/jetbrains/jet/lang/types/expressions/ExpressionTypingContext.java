@@ -204,12 +204,6 @@ import java.util.Map;
 //        return results == null ? null : results.getResultingDescriptor();
     }
 
-    @NotNull
-    public List<FunctionDescriptor> resolveForReceiverOnly(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
-        return getCallResolver().resolveCallsByReceiver(trace, scope, call, name);
-    }
-
-
     @Nullable
     public FunctionDescriptor resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
         OverloadResolutionResults<FunctionDescriptor> results = getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType);

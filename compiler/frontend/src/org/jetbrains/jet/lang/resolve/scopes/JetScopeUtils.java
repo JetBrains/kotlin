@@ -35,7 +35,7 @@ public final class JetScopeUtils {
 
     /**
      * Get receivers in order of locality, so that the closest (the most local) receiver goes first
-     * A wrapper for {@link JetScope#getImplicitReceiversHierarchy(java.util.List)}
+     * A wrapper for {@link JetScope#getImplicitReceiversHierarchy(List)}
      *
      * @param scope Scope for getting receivers hierarchy.
      * @return receivers hierarchy.

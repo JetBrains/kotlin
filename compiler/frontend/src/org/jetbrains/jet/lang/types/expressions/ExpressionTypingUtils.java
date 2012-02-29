@@ -25,18 +25,22 @@ import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
+import org.jetbrains.jet.lang.types.Variance;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -164,14 +168,14 @@ public class ExpressionTypingUtils {
     }
 
     /**
-     * Check that function or property with the given qualified name can be resolved in given scope for given receiver
+     * Check that function or property with the given qualified name can be resolved in given scope and called on given receiver
      *
      * @param callableFQN
      * @param project
      * @param scope
      * @return
      */
-    public static List<FunctionDescriptor> canFindSuitableCall(
+    public static List<CallableDescriptor> canFindSuitableCall(
             @NotNull String callableFQN,
             @NotNull Project project,
             @NotNull JetExpression receiverExpression,
@@ -183,46 +187,63 @@ public class ExpressionTypingUtils {
 
         JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN);
 
-        ExpressionReceiver expressionReceiver = new ExpressionReceiver(receiverExpression, receiverType);
-
         ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(new BindingTraceContext(), false);
-        importResolver.processImportReference(
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = importResolver.processImportReference(
                 importDirective, scope,
                 new Importer.StandardImporter(writableScopeWithImports, false));
 
-        ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                project,
-                JetSemanticServices.createSemanticServices(project),
-                new HashMap<JetPattern, DataFlowInfo>(),
-                new HashMap<JetPattern, List<VariableDescriptor>>(),
-                new LabelResolver(),
-                new BindingTraceContext(),
-                writableScopeWithImports,
-                DataFlowInfo.EMPTY,
-                TypeUtils.NO_EXPECTED_TYPE,
-                TypeUtils.NO_EXPECTED_TYPE,
-                false
-        );
+        List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
+        ReceiverDescriptor receiverDescriptor = new ExpressionReceiver(receiverExpression, receiverType);
 
-        writableScopeWithImports.changeLockLevel(WritableScope.LockLevel.READING);
+        for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
+            if (declarationDescriptor instanceof CallableDescriptor) {
+                CallableDescriptor callableDescriptor = (CallableDescriptor) declarationDescriptor;
 
-        return ControlStructureTypingVisitor.resolveFakeCallWithReceiverOnly(expressionReceiver, context, QualifiedNamesUtil.fqnToShortName(callableFQN));
+                if (checkIsExtensionCallable(receiverDescriptor, callableDescriptor)) {
+                    callableExtensionDescriptors.add(callableDescriptor);
+                }
+            }
+        }
 
+        return callableExtensionDescriptors;
+    }
 
-//        OverloadResolutionResults.Code resultCode = resolutionResult.getResultCode();
-//        if (resultCode == OverloadResolutionResults.Code.SUCCESS ||
-//                resultCode == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH ||
-//                resultCode == OverloadResolutionResults.Code.MANY_FAILED_CANDIDATES) {
-//
-//            ArrayList<FunctionDescriptor> resolvedDescriptors = new ArrayList<FunctionDescriptor>();
-//
-//            for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : resolutionResult.getResultingCalls()) {
-//                resolvedDescriptors.add(resolvedCall.getCandidateDescriptor());
-//            }
-//
-//            return resolvedDescriptors;
-//        }
-//
-//        return new ArrayList<FunctionDescriptor>();
+    /*
+    * Checks if receiver declaration could be resolved to call expected receiver.
+    */
+    public static boolean checkIsExtensionCallable (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        JetType type = expectedReceiver.getType();
+        if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
+        if (type.isNullable()) {
+            JetType notNullableType = TypeUtils.makeNotNullable(type);
+            if (checkReceiverResolution(expectedReceiver, notNullableType, receiverArgument)) return true;
+        }
+        return false;
+    }
+
+    private static boolean checkReceiverResolution (
+            @NotNull ReceiverDescriptor expectedReceiver,
+            @NotNull JetType receiverType,
+            @NotNull CallableDescriptor receiverArgument
+    ) {
+        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
+        for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
+            constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
+        }
+
+        ReceiverDescriptor receiverParameter = receiverArgument.getReceiverParameter();
+        if (expectedReceiver.exists() && receiverParameter.exists()) {
+            constraintSystem.addSubtypingConstraint(ConstraintType.RECEIVER.assertSubtyping(receiverType, receiverParameter.getType()));
+        }
+        else if (expectedReceiver.exists() || receiverParameter.exists()) {
+            // Only one of receivers exist
+            return false;
+        }
+
+        ConstraintSystemSolution solution = constraintSystem.solve();
+        return solution.getStatus().isSuccessful();
     }
 }
