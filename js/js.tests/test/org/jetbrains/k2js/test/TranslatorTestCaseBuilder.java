@@ -53,6 +53,7 @@ public abstract class TranslatorTestCaseBuilder {
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
                                               final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
+        suite.setName(dataPath);
         appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
         return suite;
     }
@@ -75,7 +76,8 @@ public abstract class TranslatorTestCaseBuilder {
                     return extensionFilter.accept(file, s) && filter.accept(file, s);
                 }
             };
-        } else {
+        }
+        else {
             resultFilter = extensionFilter;
         }
         File dir = new File(baseDataDir + dataPath);
