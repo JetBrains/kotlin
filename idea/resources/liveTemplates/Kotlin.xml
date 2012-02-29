@@ -169,4 +169,26 @@
             <option name="KOTLIN_NAMESPACE" value="true"/>
         </context>
     </template>
+
+
+    <!-- Synonyms -->
+
+    <!-- Synonym for main -->
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.main"
+              name="psvm" toReformat="true" toShortenFQNames="true"
+              value="fun main(args : Array&lt;String&gt;) {&#10;  $END$&#10;}">
+        <context>
+            <option name="KOTLIN_NAMESPACE" value="true" />
+        </context>
+    </template>
+
+    <!-- Synonym for anonymous -->
+    <template resource-bundle="org.jetbrains.jet.plugin.JetBundle" key="livetemplate.description.anonymous"
+              name="object" id="kt-object" toReformat="true" toShortenFQNames="true" value="object : $SUPERTYPE$ {&#10;$END$&#10;}">
+        <variable alwaysStopAt="true" defaultValue="&quot;Object&quot;" expression="anonymousSuper()" name="SUPERTYPE" />
+        <context>
+            <option name="KOTLIN_STATEMENT" value="true"/>
+            <option name="KOTLIN_EXPRESSION" value="true"/>
+        </context>
+    </template>
 </templateSet>
