@@ -35,6 +35,10 @@ public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase 
         doFileTest(2);
     }
 
+    public void testExtensionOnNullable() throws Exception {
+        doFileTest(2);
+    }
+
     public void todotestExtensionProperty() throws Exception {
         doFileTest(2);
     }
