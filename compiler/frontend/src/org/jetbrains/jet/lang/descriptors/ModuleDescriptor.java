@@ -25,7 +25,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class ModuleDescriptor extends DeclarationDescriptorImpl {
+public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor {
     public ModuleDescriptor(String name) {
         super(null, Collections.<AnnotationDescriptor>emptyList(), name);
     }

@@ -16,23 +16,41 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
  */
 public class TypeVariableResolvers {
 
-    public static TypeVariableResolver classTypeVariableResolver(ClassOrNamespaceDescriptor clazz) {
+    @NotNull
+    public static List<TypeParameterDescriptor> getTypeParameterDescriptors(@NotNull ClassOrNamespaceDescriptor clazz) {
         if (clazz instanceof ClassDescriptor) {
-            return new TypeVariableResolverFromTypeDescriptors(((ClassDescriptor) clazz).getTypeConstructor().getParameters(), new TypeVariableResolverFromOuters(clazz.getContainingDeclaration()));
+            return ((ClassDescriptor) clazz).getTypeConstructor().getParameters();
         } else {
-            return new TypeVariableResolverFromTypeDescriptors(new ArrayList<TypeParameterDescriptor>(0), null);
+            return new ArrayList<TypeParameterDescriptor>(0);
         }
+    }
+
+    @NotNull
+    public static TypeVariableResolver classTypeVariableResolver(@NotNull ClassOrNamespaceDescriptor clazz, @NotNull String context) {
+        return typeVariableResolverFromTypeParameters(getTypeParameterDescriptors(clazz), clazz, context);
+    }
+
+    @NotNull
+    public static TypeVariableResolver typeVariableResolverFromTypeParameters(
+            @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull DeclarationDescriptor owner, @NotNull String context) {
+
+        return new TypeVariableResolverFromTypeDescriptors(typeParameters, owner, context);
     }
     
 }
