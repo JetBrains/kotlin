@@ -89,7 +89,7 @@ class DomBuilderTest() : TestSupport() {
         if (grandChild != null) {
             println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
             assertEquals("Hello World!", grandChild.text)
-            assertEquals(" bar tiny", grandChild.attribute("class") ?: "")
+            assertEquals(" bar tiny", grandChild.attribute("class"))
 
             // test the classSet
             val classSet = grandChild.classSet
