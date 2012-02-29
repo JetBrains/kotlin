@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.liveTemplates;
 
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
@@ -44,7 +45,7 @@ public abstract class JetTemplateContextType extends TemplateContextType {
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         if (PsiUtilBase.getLanguageAtOffset(file, offset).isKindOf(JetLanguage.INSTANCE)) {
             PsiElement element = file.findElementAt(offset);
-            if (element instanceof PsiWhiteSpace) {
+            if (element instanceof PsiWhiteSpace || element instanceof PsiComment) {
                 return false;
             } else if (element instanceof LeafPsiElement) {
                 IElementType elementType = ((LeafPsiElement) element).getElementType();
