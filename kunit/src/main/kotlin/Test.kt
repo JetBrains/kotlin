@@ -77,7 +77,7 @@ fun fails(block: ()-> Unit): Exception? {
 }
 
 /** Asserts that a block fails with a specific exception being thrown */
-fun <T: Exception> failsWith(block: ()-> Any) {
+fun <T: Exception> failsWith(block: ()-> Unit) {
     try {
         block()
         Assert.fail("Expected an exception to be thrown")
