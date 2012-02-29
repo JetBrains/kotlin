@@ -767,9 +767,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * whenEntry
-     *   // TODO : consider empty after =>
-     *   : whenCondition{","} "=>" element SEMI
-     *   : "else" "=>" element SEMI
+     *   // TODO : consider empty after ->
+     *   : whenCondition{","} "->" element SEMI
+     *   : "else" "->" element SEMI
      *   ;
      */
     private void parseWhenEntry() {
@@ -779,7 +779,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ELSE_KEYWORD
 
             if (!at(ARROW)) {
-                errorUntil("Expecting '=>'", TokenSet.create(ARROW,
+                errorUntil("Expecting '->'", TokenSet.create(ARROW,
                         RBRACE, EOL_OR_SEMICOLON));
             }
 
@@ -792,7 +792,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     parseExpressionPreferringBlocks();
                 }
             } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
-                 errorAndAdvance("Expecting '=>'");
+                 errorAndAdvance("Expecting '->'");
             }
         } else {
             parseWhenEntryNotElse();
@@ -803,7 +803,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * : whenCondition{","} "=>" element SEMI
+     * : whenCondition{","} "->" element SEMI
      */
     private void parseWhenEntryNotElse() {
         if (!myJetParsing.parseIdeTemplate()) {
@@ -1188,7 +1188,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 //                        if (firstLParPos >= 0) {
 //                            errorUntilOffset("Expecting '('", firstLParPos);
 //                        } else {
-//                            errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] => ...}",
+//                            errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] -> ...}",
 //                                doubleArrowPos);
 //                            dontExpectParameters = true;
 //                        }
@@ -1203,7 +1203,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 //                    parseFunctionLiteralShorthandParameterList();
 //                }
 //
-//                expectNoAdvance(ARROW, "Expecting '=>'");
+//                expectNoAdvance(ARROW, "Expecting '->'");
 //            }
         }
         if (!paramsFound) {
@@ -1258,7 +1258,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 PsiBuilder.Marker errorMarker = mark();
                 advance(); // COLON
                 myJetParsing.parseTypeRef();
-                errorMarker.error("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType => ...}");
+                errorMarker.error("To specify a type of a parameter or a return type, use the full notation: {(parameter : Type) : ReturnType -> ...}");
             }
             else if (at(ARROW)) {
                 break;
@@ -1505,7 +1505,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /**
-     * If it has no =>, it's a block, otherwise a function literal
+     * If it has no ->, it's a block, otherwise a function literal
      */
     private void parseExpressionPreferringBlocks() {
         if (at(LBRACE)) {
