@@ -37,9 +37,11 @@ import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.io.IOException;
@@ -68,24 +70,32 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
         PsiJavaFileStub js = getJavaStub(project, file);
         if (js != null) {
             if (js.getPackageName() != null && js.getPackageName().length() > 0) {
-                builder.append("package ").append(js.getPackageName()).append(";\n\n");
+                builder.append("package ").append(js.getPackageName()).append("\n\n");
             }
 
             PsiClass psiClass = js.getClasses()[0];
             JavaDescriptorResolver jdr = jss.getDescriptorResolver();
             ClassDescriptor cd = jdr.resolveClass(psiClass);
-            builder.append(DescriptorRenderer.TEXT.render(cd));
+            if (cd != null) {
+                builder.append(DescriptorRenderer.COMPACT.render(cd));
+
+                builder.append(" {\n");
+
+                JetScope memberScope = cd.getDefaultType().getMemberScope();
+                for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                    if (member.getContainingDeclaration() == cd) {
+                        builder.append("    ").append(DescriptorRenderer.COMPACT.render(member)).append("\n");
+                    }
+                }
+
+                builder.append("}");
+            }
         }
         return builder.toString();
     }
 
     @Override
     public Language obtainLanguageForFile(VirtualFile file) {
-        // TODO using random project is ugly
-        Project firstProject = ProjectManager.getInstance().getOpenProjects()[0];
-        if (isKotlinClass(firstProject, file) && !file.getNameWithoutExtension().contains("$")) {
-            return JetLanguage.INSTANCE;
-        }
         return null;
     }
 
