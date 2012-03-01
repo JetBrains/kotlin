@@ -1,8 +1,0 @@
-kotlin.modules
-std
-std.concurrent
-std.dom
-std.io
-std.math
-std.properties
-std.util
