@@ -75,12 +75,12 @@ abstract class KDocTemplate() : TextTemplate() {
             val name = if (fullName) c.name else c.simpleName
             "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>${typeArguments(t)}"
         } else {
-            t.name
+            "${t.name}${typeArguments(t)}"
         }
     }
 
     open fun typeArguments(t: KType): String {
-        val text = t.arguments.map<KType, String>() { it.name + typeArguments(it) }.join(", ")
+        val text = t.arguments.map<KType, String>() { link(it) }.join(", ")
         return if (text.length() == 0) "" else "&lt;$text&gt;"
     }
 
