@@ -55,6 +55,10 @@ public final class ClassInheritanceTest extends TranslationTest {
     public void testDefinitionOrder() throws Exception {
         checkFooBoxIsTrue("definitionOrder.kt");
     }
+
+    public void testAbstractVarOverride() throws Exception {
+        checkFooBoxIsTrue("abstractVarOverride.kt");
+    }
 }
 
 

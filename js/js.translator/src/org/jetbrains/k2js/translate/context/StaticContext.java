@@ -30,7 +30,6 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
-import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
@@ -258,18 +257,14 @@ public final class StaticContext {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     //TODO: refactor
-                    if (descriptor instanceof FunctionDescriptor) {
-                        Set<? extends FunctionDescriptor> overriddenDescriptors = ((FunctionDescriptor) descriptor).getOverriddenDescriptors();
-                        if (overriddenDescriptors.isEmpty()) {
-                            return null;
-                        }
-                        else {
-                            //assert overriddenDescriptors.size() == 1;
-                            //TODO: for now translator can't deal with multiple inheritance good enough
-                            return getNameForDescriptor(overriddenDescriptors.iterator().next());
-                        }
+                    if (!(descriptor instanceof FunctionDescriptor)) {
+                        return null;
                     }
-                    return null;
+                    FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor((FunctionDescriptor) descriptor);
+                    if (overriddenDescriptor == null) {
+                        return null;
+                    }
+                    return getNameForDescriptor(overriddenDescriptor);
                 }
             };
             addRule(namesForStandardClasses);
@@ -278,8 +273,8 @@ public final class StaticContext {
             addRule(toStringHack);
             addRule(propertiesCorrespondToSpeciallyTreatedBackingFieldNames);
             addRule(namespacesShouldBeDefinedInRootScope);
-            addRule(accessorsHasNamesWithSpecialPrefixes);
             addRule(overridingDescriptorsReferToOriginalName);
+            addRule(accessorsHasNamesWithSpecialPrefixes);
             addRule(memberDeclarationsInsideParentsScope);
         }
     }

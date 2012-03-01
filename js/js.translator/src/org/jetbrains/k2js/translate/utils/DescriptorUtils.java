@@ -219,5 +219,27 @@ public final class DescriptorUtils {
         return classDescriptors;
     }
 
+    @Nullable
+    public static FunctionDescriptor getOverriddenDescriptor(@NotNull FunctionDescriptor functionDescriptor) {
+        Set<? extends FunctionDescriptor> overriddenDescriptors = functionDescriptor.getOverriddenDescriptors();
+        if (overriddenDescriptors.isEmpty()) {
+            return null;
+        }
+        else {
+            //TODO: for now translator can't deal with multiple inheritance good enough
+            return overriddenDescriptors.iterator().next();
+        }
+    }
 
+    //TODO:?
+//    @NotNull
+//    public static FunctionDescriptor getOverriddenOrThis(@NotNull FunctionDescriptor functionDescriptor) {
+//        FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor(functionDescriptor);
+//        if (overriddenDescriptor != null) {
+//            return overriddenDescriptor;
+//        }
+//        else {
+//            return functionDescriptor;
+//        }
+//    }
 }
