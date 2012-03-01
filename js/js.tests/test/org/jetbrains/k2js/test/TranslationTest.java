@@ -21,8 +21,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.facade.K2JSTranslator;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.Scriptable;
 
 import java.io.File;
 import java.io.FileInputStream;

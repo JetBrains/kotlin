@@ -16,7 +16,7 @@
 
 package org.jetbrains.k2js.test;
 
-import org.mozilla.javascript.JavaScriptException;
+import sun.org.mozilla.javascript.internal.JavaScriptException;
 
 /**
  * @author Pavel Talanov

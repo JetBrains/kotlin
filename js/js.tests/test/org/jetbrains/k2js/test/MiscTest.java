@@ -31,7 +31,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testLocalPropertys() throws Exception {
-        testFunctionOutput("localProperty.jet", "foo", "box", 50);
+        testFunctionOutput("localProperty.jet", "foo", "box", 50.0);
     }
 
     public void testIntRange() throws Exception {

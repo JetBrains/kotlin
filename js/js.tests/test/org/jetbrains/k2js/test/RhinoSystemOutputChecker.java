@@ -18,8 +18,8 @@ package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.utils.GenerationUtils;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.Scriptable;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
         // System.out.println(trimmedActual);
         // System.out.println(trimmedExpected);
         assertTrue("Returned:\n" + trimmedActual + "END_OF_RETURNED\nExpected:\n" + trimmedExpected
-                + "END_OF_EXPECTED\n", trimmedExpected.equals(trimmedActual));
+                   + "END_OF_EXPECTED\n", trimmedExpected.equals(trimmedActual));
     }
 
     private String getSystemOutput(@NotNull Context context, @NotNull Scriptable scope) {

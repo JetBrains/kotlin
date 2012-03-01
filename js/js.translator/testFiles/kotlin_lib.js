@@ -42,9 +42,6 @@
 
 
         function keys(object) {
-            if (Type(object) !== OBJECT_TYPE) {
-                throw new TypeError();
-            }
             var results = [];
             for (var property in object) {
                 if (object.hasOwnProperty(property)) {

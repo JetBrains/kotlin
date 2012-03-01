@@ -17,8 +17,8 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.Nullable;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.Scriptable;
 
 import static org.junit.Assert.assertTrue;
 
@@ -45,7 +45,7 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
     public void runChecks(Context context, Scriptable scope) throws Exception {
         Object result = evaluateFunction(context, scope);
         assertTrue("Result is not what expected! Expected: " + expectedResult + " Evaluated : " + result,
-                result.equals(expectedResult));
+                   result.equals(expectedResult));
         String report = namespaceName + "." + functionName + "() = " + Context.toString(result);
         System.out.println(report);
     }

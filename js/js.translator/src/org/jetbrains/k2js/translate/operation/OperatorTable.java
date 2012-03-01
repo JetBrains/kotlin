@@ -28,13 +28,9 @@ import java.util.Map;
 /**
  * @author Pavel Talanov
  */
-
-//TODO: refactor using guava builders
 public final class OperatorTable {
 
     //TODO : not all operators , add and test bit operators
-
-
     private static final Map<JetToken, JsBinaryOperator> binaryOperatorsMap = ImmutableBiMap.<JetToken, JsBinaryOperator>builder()
             .put(JetTokens.PLUS, JsBinaryOperator.ADD)
             .put(JetTokens.MINUS, JsBinaryOperator.SUB)

@@ -29,7 +29,7 @@ public final class ClassInheritanceTest extends TranslationTest {
     }
 
     public void testInitializersOfBasicClassExecute() throws Exception {
-        testFunctionOutput("initializersOfBasicClassExecute.kt", "foo", "box", 3);
+        testFunctionOutput("initializersOfBasicClassExecute.kt", "foo", "box", 3.0);
     }
 
     public void testMethodOverride() throws Exception {

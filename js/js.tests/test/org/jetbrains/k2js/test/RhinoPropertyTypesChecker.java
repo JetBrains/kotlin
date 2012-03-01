@@ -16,9 +16,10 @@
 
 package org.jetbrains.k2js.test;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.NativeObject;
+import sun.org.mozilla.javascript.internal.Scriptable;
+import sun.org.mozilla.javascript.internal.ScriptableObject;
 
 import java.util.Map;
 
@@ -48,9 +49,12 @@ public final class RhinoPropertyTypesChecker implements RhinoResultChecker {
         for (Map.Entry<String, Class<? extends Scriptable>> entry : nameToClassMap.entrySet()) {
             String name = entry.getKey();
             Class expectedClass = entry.getValue();
-            assertTrue(object + " must contain key " + name, object.containsKey(name));
+
+            Object property = ScriptableObject.getProperty(object, name);
+            assertTrue(object + " must contain key " + name, property != null);
             assertTrue(object + "'s property " + name + " must be of type " + expectedClass,
-                    expectedClass.isInstance(object.get(name)));
+                       expectedClass.isInstance(property
+                       ));
         }
     }
 

@@ -16,8 +16,8 @@
 
 package org.jetbrains.k2js.test;
 
-import org.mozilla.javascript.NativeObject;
-import org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.NativeObject;
+import sun.org.mozilla.javascript.internal.Scriptable;
 
 import static org.junit.Assert.assertTrue;
 
