@@ -44,6 +44,8 @@ import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
 
+//TODO: class is monstrous, should be refactored.
+
 /**
  * @author Pavel Talanov
  *         <p/>
@@ -79,6 +81,8 @@ public final class Intrinsics {
         declareStringIntrinsics();
         declareTuplesIntrinsics();
         declareArrayIntrinsics();
+        FunctionDescriptor intToDouble = getFunctionByName(library.getInt().getDefaultType().getMemberScope(), "toDouble");
+        functionIntrinsics.put(intToDouble, ReturnReceiverIntrinsic.INSTANCE);
     }
 
     @NotNull
