@@ -3,6 +3,7 @@
 
     <property name="build.number" value="snapshot"/>
     <property name="jdk16.home" value="${java.home}"/>
+    <property name="fail.on.plugin.verifier.error" value="true"/>
 
     <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
@@ -67,7 +68,7 @@
     </target>
 
     <target name="verifyPlugin">
-        <java fork="true" failonerror="true" jar="${plugin.verifier}">
+        <java fork="true" failonerror="${fail.on.plugin.verifier.error}" jar="${plugin.verifier}">
             <arg value="-r" />
             <arg value="${jdk16.home}" />
             <arg value="${plugin.zip}" />
