@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.model.KFunction
 import java.util.Collection
 import org.jetbrains.kotlin.model.KProperty
 import org.jetbrains.kotlin.model.KType
+import java.util.List
 
 abstract class KDocTemplate() : TextTemplate() {
     open fun rootHref(pkg: KPackage): String {
@@ -62,7 +63,6 @@ abstract class KDocTemplate() : TextTemplate() {
     }
 
     open fun link(c: KClass, fullName: Boolean = false): String {
-        // TODO if a class is a generic type parameter, just return the name...
         val prefix = if (c.isAnnotation()) "@" else ""
         val name = if (fullName) c.name else c.simpleName
         return "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>"
@@ -70,18 +70,32 @@ abstract class KDocTemplate() : TextTemplate() {
 
     open fun link(t: KType, fullName: Boolean = false): String {
         val c = t.klass
+        val arguments = t.arguments
         return if (c != null) {
             val prefix = if (c.isAnnotation()) "@" else ""
-            val name = if (fullName) c.name else c.simpleName
-            "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>${typeArguments(t)}"
+            if (c.name.startsWith("jet.Function") && arguments.notEmpty()) {
+                val rt = arguments.last()
+                // TODO use drop()
+                val rest = arguments.subList(0, arguments.size - 1).notNull()
+                "${typeArguments(rest, "(", ")")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
+            } else if (c.name.startsWith("jet.Tuple")) {
+                if (arguments.isEmpty()) {
+                    "Unit"
+                } else {
+                    "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">#</a>${typeArguments(arguments, "(", ")")}"
+                }
+            } else {
+                val name = if (fullName) c.name else c.simpleName
+                "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>${typeArguments(arguments)}"
+            }
         } else {
-            "${t.name}${typeArguments(t)}"
+            "${t.name}${typeArguments(arguments)}"
         }
     }
 
-    open fun typeArguments(t: KType): String {
-        val text = t.arguments.map<KType, String>() { link(it) }.join(", ")
-        return if (text.length() == 0) "" else "&lt;$text&gt;"
+    open fun typeArguments(arguments: List<KType>, val prefix: String = "&lt;", val postfix: String = "&gt;"): String {
+        val text = arguments.map<KType, String>() { link(it) }.join(", ")
+        return if (text.length() == 0) "" else "$prefix$text$postfix"
     }
 
     open fun link(p: KPackage): String {
