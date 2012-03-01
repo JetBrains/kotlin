@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsStringLiteral;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -81,17 +80,18 @@ public final class StringTemplateTranslator extends AbstractTranslator {
             append(Translation.translateAsExpression(entryExpression, context()));
         }
 
-        //TODO: duplication
         @Override
         public void visitLiteralStringTemplateEntry(@NotNull JetLiteralStringTemplateEntry entry) {
-            JsStringLiteral stringConstant = program().getStringLiteral(entry.getText());
-            append(stringConstant);
+            appendText(entry.getText());
         }
 
         @Override
         public void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry) {
-            JsStringLiteral escapedValue = program().getStringLiteral(entry.getUnescapedValue());
-            append(escapedValue);
+            appendText(entry.getUnescapedValue());
+        }
+
+        private void appendText(@NotNull String text) {
+            append(program().getStringLiteral(text));
         }
 
         @NotNull

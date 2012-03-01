@@ -109,6 +109,7 @@ public final class Translation {
         return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
     }
 
+    @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
                                         @NotNull List<JetFile> files) {
         //TODO: move some of the code somewhere
