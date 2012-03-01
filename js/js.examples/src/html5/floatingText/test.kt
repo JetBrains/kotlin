@@ -68,7 +68,7 @@ class HelloKotlin() {
 fun renderBackground() {
     context.save()
     context.fillStyle = "#5C7EED"
-    context.fillRect(0.0, 0.0, width, height)
+    context.fillRect(0.0, 0.0, width.toDouble(), height.toDouble())
     context.restore()
 }
 

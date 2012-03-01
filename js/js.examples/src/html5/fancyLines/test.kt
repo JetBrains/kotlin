@@ -10,7 +10,7 @@ import js.*;
 import html5.*;
 import jquery.*;
 
-fun main() {
+fun main(args : Array<String>) {
     //jq is a name for JQuery function
     jq {
         FancyLines().run();
@@ -54,7 +54,7 @@ class FancyLines() {
 
     fun blank() {
         context.fillStyle = "rgba(255,255,1,0.1)";
-        context.fillRect(0.0, 0.0, width, height);
+        context.fillRect(0.0, 0.0, width.toDouble(), height.toDouble());
     }
 
     fun run() {

@@ -176,8 +176,8 @@ class Creature(override var pos : Vector, val state : CanvasState) : Shape() {
 }
 
 class CanvasState(val canvas : Canvas) {
-    var width = canvas.width
-    var height = canvas.height
+    var width = canvas.width.toDouble()
+    var height = canvas.height.toDouble()
     val size : Vector
         get() = v(width, height)
     val context = getContext()
@@ -311,7 +311,7 @@ class Vector(val x : Double = 0.0, val y : Double = 0.0) {
         get() = this * (1.0 / Math.sqrt(sqr))
 }
 
-fun main() {
+fun main(args : Array<String>) {
     val state = CanvasState(getCanvas())
     state.addShape(Kotlin)
     state.addShape(Creature(state.size * 0.25, state))
