@@ -91,7 +91,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     }
 
     fun printFunctionDetail(function: KFunction): Unit {
-        println("""<A NAME="${function.name}{${function.parameterTypeText}})"><!-- --></A><A NAME="${function.name}(${function.typeParametersText})"><!-- --></A><H3>""")
+        println("""<A NAME="${function.name}{${function.parameterTypeText}}"><!-- --></A><A NAME="${function.link}"><!-- --></A><H3>""")
         println("""${function.name}</H3>""")
         println("""<PRE>""")
         println("""<FONT SIZE="-1">""")

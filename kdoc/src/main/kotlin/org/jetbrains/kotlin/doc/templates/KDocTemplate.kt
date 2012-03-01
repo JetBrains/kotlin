@@ -54,12 +54,13 @@ abstract class KDocTemplate() : TextTemplate() {
     }
 
     open fun sourceHref(f: KFunction): String {
-        return if (f.owner is KClass) {
-            "${rootHref(f.owner.pkg)}src-html/${f.owner.simpleName}.html#line.${f.sourceLine}"
-        } else {
+        val owner = f.owner
+        return if (owner is KClass) {
+            "${rootHref(owner.pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+        } else if (owner is KPackage) {
             // TODO how to find the function in a package???
-            ""
-        }
+            "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+        } else href(f)
     }
 
     open fun link(c: KClass, fullName: Boolean = false): String {
