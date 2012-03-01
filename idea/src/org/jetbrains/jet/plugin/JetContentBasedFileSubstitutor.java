@@ -35,6 +35,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -103,6 +104,14 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
     @Override
     public SyntaxHighlighter createHighlighter(Project project, VirtualFile vFile) {
         return new JetHighlighter();
+    }
+
+    @Nullable
+    @Override
+    public PsiFile getDecompiledPsiFile(PsiFile psiFile) {
+        Project project = psiFile.getProject();
+        String text = obtainFileText(project, psiFile.getVirtualFile());
+        return PsiFileFactory.getInstance(project).createFileFromText("", JetLanguage.INSTANCE, text);
     }
 
     private static boolean isKotlinClass(Project project, VirtualFile file) {
