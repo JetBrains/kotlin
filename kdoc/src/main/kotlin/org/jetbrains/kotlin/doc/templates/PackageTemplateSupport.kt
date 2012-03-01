@@ -27,7 +27,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
+<B>Function Summary</B></FONT></TH>
 </TR>""")
 
             for (f in functions) {
@@ -53,7 +53,6 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             printTypeParameters(function)
             println("""<BR>""")
             print(link(function.returnType))
-            printTypeParameterNames(function.returnType.typeParameters)
             println("""</CODE></FONT></TD>
 </TR>
 </TABLE>""")
@@ -80,7 +79,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
             <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
             <TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-            <B>Method Detail</B></FONT></TH>
+            <B>Function Detail</B></FONT></TH>
             </TR>
             </TABLE>
             """)
@@ -101,7 +100,6 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
         printTypeParameters(function)
         print(link(function.returnType))
-        printTypeParameterNames(function.returnType.typeParameters)
 
         print(""" <A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
         printParameters(function)
@@ -218,24 +216,12 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         for (p in method.parameters) {
             if (first) first = false else print(", ")
             print("${p.name}:&nbsp;")
-            print(link(p.klass))
-            printTypeParameterNames(method.typeParameters)
+            print(link(p.aType))
         }
         print(")")
     }
 
-    fun printTypeParameterNames(typeParameters: List<KTypeParameter>): Unit {
-        if (!typeParameters.isEmpty()) {
-            print("&lt")
-            var separator = ""
-            for (t in typeParameters) {
-                print(separator)
-                separator = ", "
-                print(t.name)
-            }
-            print("&gt;")
-        }
-    }
+
     fun printAnnotations(annotations: Collection<KAnnotation>): Unit {
         for (a in annotations) {
             println(link(a))

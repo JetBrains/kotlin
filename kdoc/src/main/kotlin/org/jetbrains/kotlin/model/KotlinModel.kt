@@ -25,11 +25,14 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
 
 fun qualifiedName(descriptor: DeclarationDescriptor?): String {
-    if (descriptor == null || descriptor is ModuleDescriptor || descriptor is JavaNamespaceDescriptor) {
+    if (descriptor == null || descriptor is ModuleDescriptor) {
         return ""
     } else {
         val parent = containerName(descriptor)
-        val name = descriptor.getName() ?: ""
+        var name = descriptor.getName() ?: ""
+        if (name.startsWith("<")) {
+            name = ""
+        }
         val answer = if (parent.length() > 0) parent + "." + name else name
         return if (answer.startsWith(".")) answer.substring(1) else answer
     }
@@ -172,12 +175,24 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         }
         if (created) {
             pkg.description = commentsFor(descriptor)
-            addFunctions(pkg, descriptor.getMemberScope())
-            if (pkg.functions.notEmpty()) {
-                pkg.local = true
-            }
+            val scope = descriptor.getMemberScope()
+            addFunctions(pkg, scope)
+            pkg.local = isLocal(descriptor)
         }
         return pkg;
+    }
+
+    protected fun isLocal(descriptor: DeclarationDescriptor): Boolean {
+        return if (descriptor is ModuleDescriptor) {
+            true
+        } else {
+            val parent = descriptor.getContainingDeclaration()
+            if (parent != null) {
+                isLocal(parent)
+            } else {
+                false
+            }
+        }
     }
 
     protected fun addFunctions(owner: KClassOrPackage, scope: JetScope): Unit {
@@ -186,14 +201,14 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             for (descriptor in descriptors) {
                 if (descriptor is PropertyDescriptor) {
                     val name = descriptor.getName()
-                    val returnType = getClass(descriptor.getReturnType())
+                    val returnType = getType(descriptor.getReturnType())
                     if (returnType != null) {
                         val receiver = descriptor.getReceiverParameter()
                         val extensionClass = if (receiver is ExtensionReceiver) {
-                            getClass(receiver.getType())
+                            getType(receiver.getType())
                         } else null
 
-                        val property = KProperty(owner, descriptor, name, returnType, extensionClass)
+                        val property = KProperty(owner, descriptor, name, returnType, extensionClass?.klass)
                         owner.properties.add(property)
                     }
                 } else if (descriptor is CallableDescriptor) {
@@ -210,7 +225,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     }
 
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
-        val returnType = getClass(descriptor.getReturnType())
+        val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
             val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
             addTypeParameters(function.typeParameters, descriptor.getTypeParameters())
@@ -226,7 +241,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             }
             val receiver = descriptor.getReceiverParameter()
             if (receiver is ExtensionReceiver) {
-                function.extensionClass = getClass(receiver.getType())
+                function.extensionClass = getType(receiver.getType())?.klass
             }
             return function
         }
@@ -252,7 +267,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     }
 
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
-        val returnType = getClass(descriptor.getReturnType())
+        val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
             val name = descriptor.getName()
             val answer = KParameter(name, returnType)
@@ -290,12 +305,13 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     }
 
 
-    fun getClass(aType: JetType?): KClass? {
+    fun getType(aType: JetType?): KType? {
         if (aType != null) {
             val classifierDescriptor = aType.constructor.declarationDescriptor
-            if (classifierDescriptor is ClassDescriptor) {
-                return getClass(classifierDescriptor)
-            }
+            val klass = if (classifierDescriptor is ClassDescriptor) {
+                getClass(classifierDescriptor)
+            } else null
+            return KType(aType, this, klass)
         }
         return null
     }
@@ -332,6 +348,16 @@ abstract class KAnnotated {
     public open var deprecated: Boolean = false
 }
 
+abstract class KNamed(val name: String) : KAnnotated(), Comparable<KNamed> {
+
+    override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
+
+    fun equals(other: KPackage) = name == other.name
+
+    fun toString() = name
+}
+
+
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
         val name: String, var external: Boolean = false,
         var local: Boolean = false) : KClassOrPackage(), Comparable<KPackage> {
@@ -349,17 +375,17 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
             KClass(this, descriptor, name)
         }
         if (created) {
-            local = true
             klass.description = model.commentsFor(descriptor)
             val typeConstructor = descriptor.getTypeConstructor()
             val superTypes = typeConstructor.getSupertypes()
             for (st in superTypes) {
-                val sc = model.getClass(st)
+                val sc = model.getType(st)
                 if (sc != null) {
                     klass.baseClasses.add(sc)
                 }
             }
-            model.addFunctions(klass, descriptor.getDefaultType().getMemberScope())
+            val scope = descriptor.getDefaultType().getMemberScope()
+            model.addFunctions(klass, scope)
             model.addTypeParameters(klass.typeParameters, typeConstructor.getParameters())
         }
         return klass
@@ -422,6 +448,24 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
     fun packageFunctions() = functions.filter{ it.extensionClass == null }
 }
 
+class KType(val jetType: JetType, val model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>()) : KNamed(klass?.name ?: jetType.toString()) {
+    {
+        if (klass != null) {
+            this.description = klass.description
+            this.detailedDescription = klass.detailedDescription
+        }
+        for (arg in jetType.arguments) {
+            if (arg != null) {
+                val argJetType = arg.getType()
+                val t = model.getType(argJetType)
+                if (t != null) {
+                    $arguments.add(t)
+                }
+            }
+        }
+    }
+}
+
 class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         val simpleName: String,
         var kind: String = "class", var group: String = "Other",
@@ -429,7 +473,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
-        var baseClasses: List<KClass> = arrayList<KClass>(),
+        var baseClasses: List<KType> = arrayList<KType>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
         var sourceLine: Int = 2) : KClassOrPackage(), Comparable<KClass> {
 
@@ -447,6 +491,9 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
     }
 
     public val name: String = pkg.qualifiedName(simpleName)
+
+    public val model: KModel = pkg.model
+
     public val packageName: String = pkg.name
 
     /** Returns the name as a directory using '/' instead of '.' */
@@ -459,16 +506,19 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
     /** Returns all of the base classes and all of their descendants */
     fun descendants(answer: Set<KClass> = LinkedHashSet<KClass>()): Set<KClass> {
-        answer.addAll(baseClasses)
         for (b in baseClasses) {
-            b.descendants(answer)
+            val c = b.klass
+            if (c != null) {
+                answer.add(c)
+                c.descendants(answer)
+            }
         }
         return answer
     }
 }
 
 class KFunction(val owner: KClassOrPackage, val name: String,
-        var returnType: KClass,
+        var returnType: KType,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
@@ -507,7 +557,7 @@ class KFunction(val owner: KClassOrPackage, val name: String,
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
-        val returnType: KClass, val extensionClass: KClass?) : KAnnotated(), Comparable<KProperty> {
+        val returnType: KType, val extensionClass: KClass?) : KAnnotated(), Comparable<KProperty> {
 
     override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 
@@ -519,14 +569,14 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
 }
 
 class KParameter(val name: String,
-        var klass: KClass) : KAnnotated()  {
+        var aType: KType) : KAnnotated()  {
 
-    fun toString() = "$name: ${klass.name}"
+    fun toString() = "$name: ${aType.name}"
 }
 
 class KTypeParameter(val name: String,
-                val descriptor: TypeParameterDescriptor,
-                var extends: List<KClass> = arrayList<KClass>()) : KAnnotated() {
+        val descriptor: TypeParameterDescriptor,
+        var extends: List<KClass> = arrayList<KClass>()) : KAnnotated() {
 
     fun toString() = "$name"
 }

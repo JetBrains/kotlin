@@ -53,7 +53,7 @@ class JavadocStyleHtmlDoclet() : Doclet {
                 if (c != null) {
                     val functions = map.get(c).notNull()
                     val properties = pmap.get(c).notNull()
-                    run("${p.nameAsPath}/${c.simpleName}-extensions.html",
+                    run("${p.nameAsPath}/${c.nameAsPath}-extensions.html",
                     ClassExtensionsTemplate(model, p, c, functions, properties))
                 }
             }

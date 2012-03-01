@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.doc.templates
 
+import std.*
+import std.util.*
 import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KAnnotation
 import org.jetbrains.kotlin.model.KPackage
@@ -7,6 +9,7 @@ import org.jetbrains.kotlin.template.TextTemplate
 import org.jetbrains.kotlin.model.KFunction
 import java.util.Collection
 import org.jetbrains.kotlin.model.KProperty
+import org.jetbrains.kotlin.model.KType
 
 abstract class KDocTemplate() : TextTemplate() {
     open fun rootHref(pkg: KPackage): String {
@@ -63,6 +66,22 @@ abstract class KDocTemplate() : TextTemplate() {
         val prefix = if (c.isAnnotation()) "@" else ""
         val name = if (fullName) c.name else c.simpleName
         return "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>"
+    }
+
+    open fun link(t: KType, fullName: Boolean = false): String {
+        val c = t.klass
+        return if (c != null) {
+            val prefix = if (c.isAnnotation()) "@" else ""
+            val name = if (fullName) c.name else c.simpleName
+            "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>${typeArguments(t)}"
+        } else {
+            t.name
+        }
+    }
+
+    open fun typeArguments(t: KType): String {
+        val text = t.arguments.map<KType, String>() { it.name + typeArguments(it) }.join(", ")
+        return if (text.length() == 0) "" else "&lt;$text&gt;"
     }
 
     open fun link(p: KPackage): String {
