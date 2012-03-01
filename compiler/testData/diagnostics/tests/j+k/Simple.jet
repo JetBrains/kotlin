@@ -1,9 +1,12 @@
-// FILE: A.java
+// FILE: aa/A.java
+// +JDK
+package aa;
 
-class A {
+public class A {
     void f() { }
 }
 
 // FILE: B.kt
+import aa.A
 
 fun foo(a: A) = a.f()
