@@ -22,7 +22,6 @@ import com.intellij.openapi.fileTypes.ContentBasedClassFileProcessor;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -39,10 +38,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.io.IOException;
@@ -76,14 +75,23 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
             PsiClass psiClass = js.getClasses()[0];
             JavaDescriptorResolver jdr = jss.getDescriptorResolver();
+
+            if (psiClass.getName().equals("namespace")) { // TODO better check for namespace
+                NamespaceDescriptor nd = jdr.resolveNamespace(js.getPackageName());
+
+                if (nd != null) {
+                    for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
+                        builder.append(DescriptorRenderer.COMPACT.render(member)).append("\n\n");
+                    }
+                }
+            }
             ClassDescriptor cd = jdr.resolveClass(psiClass);
             if (cd != null) {
                 builder.append(DescriptorRenderer.COMPACT.render(cd));
 
                 builder.append(" {\n");
 
-                JetScope memberScope = cd.getDefaultType().getMemberScope();
-                for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
+                for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
                     if (member.getContainingDeclaration() == cd) {
                         builder.append("    ").append(DescriptorRenderer.COMPACT.render(member)).append("\n");
                     }
