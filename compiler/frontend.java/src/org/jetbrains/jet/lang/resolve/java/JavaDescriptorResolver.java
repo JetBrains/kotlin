@@ -819,7 +819,7 @@ public class JavaDescriptorResolver {
         if (result != null) {
             String actualQualifiedName = result.getQualifiedName();
             if (!actualQualifiedName.equals(qualifiedName)) {
-                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
+//                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
             }
         }
 
