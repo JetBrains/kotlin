@@ -77,12 +77,12 @@ abstract class KDocTemplate() : TextTemplate() {
                 val rt = arguments.last()
                 // TODO use drop()
                 val rest = arguments.subList(0, arguments.size - 1).notNull()
-                "${typeArguments(rest, "(", ")")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
+                "${typeArguments(rest, "(", ")", "()")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
             } else if (c.name.startsWith("jet.Tuple")) {
                 if (arguments.isEmpty()) {
                     "Unit"
                 } else {
-                    "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">#</a>${typeArguments(arguments, "(", ")")}"
+                    "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">#</a>${typeArguments(arguments, "(", ")", "()")}"
                 }
             } else {
                 val name = if (fullName) c.name else c.simpleName
@@ -93,9 +93,9 @@ abstract class KDocTemplate() : TextTemplate() {
         }
     }
 
-    open fun typeArguments(arguments: List<KType>, val prefix: String = "&lt;", val postfix: String = "&gt;"): String {
+    open fun typeArguments(arguments: List<KType>, val prefix: String = "&lt;", val postfix: String = "&gt;", val empty: String = ""): String {
         val text = arguments.map<KType, String>() { link(it) }.join(", ")
-        return if (text.length() == 0) "" else "$prefix$text$postfix"
+        return if (text.length() == 0) empty else "$prefix$text$postfix"
     }
 
     open fun link(p: KPackage): String {
