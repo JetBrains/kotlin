@@ -37,6 +37,13 @@ import java.util.List;
  */
 public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
+    public static final DescriptorRenderer COMPACT = new DescriptorRenderer() {
+        @Override
+        protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
+    };
+
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
 
     public static final DescriptorRenderer HTML = new DescriptorRenderer() {
@@ -182,8 +189,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         if (declarationDescriptor == null) return lt() + "null>";
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
-        appendDefinedIn(declarationDescriptor, stringBuilder);
+        if (shouldRenderDefinedIn()) {
+            appendDefinedIn(declarationDescriptor, stringBuilder);
+        }
         return stringBuilder.toString();
+    }
+
+    protected boolean shouldRenderDefinedIn() {
+        return true;
     }
 
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
@@ -198,7 +211,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     public String renderAsObject(@NotNull ClassDescriptor classDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         rootVisitor.renderClassDescriptor(classDescriptor, stringBuilder, "object");
-        appendDefinedIn(classDescriptor, stringBuilder);
+        if (shouldRenderDefinedIn()) {
+            appendDefinedIn(classDescriptor, stringBuilder);
+        }
         return stringBuilder.toString();
     }
 
@@ -341,8 +356,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                         builder.append(", ");
                     }
                 }
-                builder.append("> ");
-                return true;
+                builder.append(">");
             }
             return false;
         }
