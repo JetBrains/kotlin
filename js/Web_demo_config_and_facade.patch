@@ -1,0 +1,242 @@
+Index: js/js.translator/src/org/jetbrains/k2js/facade/WebDemoTranslatorFacade.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- js/js.translator/src/org/jetbrains/k2js/facade/WebDemoTranslatorFacade.java	(revision )
++++ js/js.translator/src/org/jetbrains/k2js/facade/WebDemoTranslatorFacade.java	(revision )
+@@ -0,0 +1,89 @@
++/*
++* Copyright 2000-2012 JetBrains s.r.o.
++*
++* Licensed under the Apache License, Version 2.0 (the "License");
++* you may not use this file except in compliance with the License.
++* You may obtain a copy of the License at
++*
++* http://www.apache.org/licenses/LICENSE-2.0
++*
++* Unless required by applicable law or agreed to in writing, software
++* distributed under the License is distributed on an "AS IS" BASIS,
++* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++* See the License for the specific language governing permissions and
++* limitations under the License.
++*/
++
++package org.jetbrains.k2js.facade;
++
++import com.intellij.openapi.project.Project;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++import org.jetbrains.jet.lang.psi.JetFile;
++import org.jetbrains.jet.lang.resolve.BindingContext;
++import org.jetbrains.k2js.analyze.AnalyzerFacade;
++import org.jetbrains.k2js.config.WebDemoConfig;
++import org.jetbrains.k2js.utils.JetFileUtils;
++
++import java.util.Arrays;
++
++/**
++ * @author Pavel Talanov
++ */
++@SuppressWarnings("UnusedDeclaration")
++public final class WebDemoTranslatorFacade {
++
++    @SuppressWarnings("FieldCanBeLocal")
++    private static String EXCEPTION = "exception=";
++
++    private WebDemoTranslatorFacade() {
++    }
++
++    @SuppressWarnings("UnusedDeclaration")
++    @Nullable
++    public static BindingContext analyzeProgramCode(@NotNull Project project, @NotNull String programText) {
++        try {
++            JetFile file = JetFileUtils.createPsiFile("test", programText, project);
++            return AnalyzerFacade.analyzeFiles(Arrays.asList(file), new WebDemoConfig(project));
++        } catch (Throwable e) {
++            reportException(e);
++            return null;
++        }
++    }
++
++
++    @SuppressWarnings("UnusedDeclaration")
++    @NotNull
++    public static String translateStringWithCallToMain(@NotNull Project project,
++                                                       @NotNull String programText, @NotNull String argumentsString) {
++        try {
++            return doTranslate(project, programText, argumentsString);
++
++        } catch (AssertionError e) {
++            reportException(e);
++            return EXCEPTION + "Translation error.";
++        } catch (UnsupportedOperationException e) {
++            reportException(e);
++            return EXCEPTION + "Unsupported feature.";
++        } catch (Throwable e) {
++            reportException(e);
++            return EXCEPTION + "Unexpected exception.";
++        }
++    }
++
++    @NotNull
++    private static String doTranslate(@NotNull Project project, @NotNull String programText,
++                                      @NotNull String argumentsString) {
++        K2JSTranslator translator = new K2JSTranslator(new WebDemoConfig(project));
++        JetFile file = JetFileUtils.createPsiFile("test", programText, project);
++        String programCode = translator.generateProgramCode(file) + "\n";
++        String flushOutput = "Kotlin.System.flush();\n";
++        String callToMain = K2JSTranslator.generateCallToMain(file, argumentsString);
++        String programOutput = "Kotlin.System.output();\n";
++        return programCode + flushOutput + callToMain + programOutput;
++    }
++
++    private static void reportException(@NotNull Throwable e) {
++        //TODO:
++    }
++}
+Index: js/js.libraries/src/org/jetbrains/k2js/config/Loader.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- js/js.libraries/src/org/jetbrains/k2js/config/Loader.java	(revision )
++++ js/js.libraries/src/org/jetbrains/k2js/config/Loader.java	(revision )
+@@ -0,0 +1,25 @@
++/*
++ * Copyright 2000-2012 JetBrains s.r.o.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.jetbrains.k2js.config;
++
++/**
++ * @author Pavel Talanov
++ */
++//TODO: delegate loading to this class
++//NOTE: this class is for loading resources
++public final class Loader {
++}
+Index: js/js.translator/src/org/jetbrains/k2js/config/WebDemoConfig.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- js/js.translator/src/org/jetbrains/k2js/config/WebDemoConfig.java	(revision )
++++ js/js.translator/src/org/jetbrains/k2js/config/WebDemoConfig.java	(revision )
+@@ -0,0 +1,70 @@
++/*
++ * Copyright 2000-2012 JetBrains s.r.o.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.jetbrains.k2js.config;
++
++import com.intellij.openapi.project.Project;
++import com.intellij.openapi.util.io.FileUtil;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
++import org.jetbrains.jet.lang.psi.JetFile;
++import org.jetbrains.k2js.utils.JetFileUtils;
++
++import java.io.IOException;
++import java.io.InputStream;
++import java.util.ArrayList;
++import java.util.List;
++
++/**
++ * @author Pavel Talanov
++ */
++//TODO: dup with TestConfig
++public final class WebDemoConfig extends Config {
++
++    @Nullable
++    private /*var*/ List<JetFile> jsLibFiles = null;
++
++    public WebDemoConfig(@NotNull Project project) {
++        super(project);
++    }
++
++    @NotNull
++    private static List<JetFile> initLibFiles(@NotNull Project project) {
++        List<JetFile> libFiles = new ArrayList<JetFile>();
++        for (String libFileName : LIB_FILE_NAMES) {
++            JetFile file = null;
++            //TODO: close stream?
++            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
++            InputStream stream = Loader.class.getResourceAsStream(libFileName);
++            try {
++                String text = FileUtil.loadTextAndClose(stream);
++                file = JetFileUtils.createPsiFile(libFileName, text, project);
++            } catch (IOException e) {
++                e.printStackTrace();
++            }
++            libFiles.add(file);
++        }
++        return libFiles;
++    }
++
++    @NotNull
++    public List<JetFile> getLibFiles() {
++        if (jsLibFiles == null) {
++            jsLibFiles = initLibFiles(getProject());
++        }
++        return jsLibFiles;
++    }
++}
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"ProjectModuleManager\">\n    <modules>\n      <module fileurl=\"file://$PROJECT_DIR$/Jet.iml\" filepath=\"$PROJECT_DIR$/Jet.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/backend/backend.iml\" filepath=\"$PROJECT_DIR$/compiler/backend/backend.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/build-tools/build-tools.iml\" filepath=\"$PROJECT_DIR$/build-tools/build-tools.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/cli/cli.iml\" filepath=\"$PROJECT_DIR$/compiler/cli/cli.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml\" filepath=\"$PROJECT_DIR$/compiler/tests/compiler-tests.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/examples/example-vfs/example-vfs.iml\" filepath=\"$PROJECT_DIR$/examples/example-vfs/example-vfs.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/examples/examples.iml\" filepath=\"$PROJECT_DIR$/examples/examples.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/frontend/frontend.iml\" filepath=\"$PROJECT_DIR$/compiler/frontend/frontend.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml\" filepath=\"$PROJECT_DIR$/compiler/frontend.java/frontend.java.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/grammar/grammar.iml\" filepath=\"$PROJECT_DIR$/grammar/grammar.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/idea/idea.iml\" filepath=\"$PROJECT_DIR$/idea/idea.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/idea_runner/idea_runner.iml\" filepath=\"$PROJECT_DIR$/idea_runner/idea_runner.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/j2k/j2k.iml\" filepath=\"$PROJECT_DIR$/j2k/j2k.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/j2k/tests/j2k-tests.iml\" filepath=\"$PROJECT_DIR$/j2k/tests/j2k-tests.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml\" filepath=\"$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/js/js.tests/js.tests.iml\" filepath=\"$PROJECT_DIR$/js/js.tests/js.tests.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/js/js.translator/js.translator.iml\" filepath=\"$PROJECT_DIR$/js/js.translator/js.translator.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/stdlib/stdlib.iml\" filepath=\"$PROJECT_DIR$/stdlib/stdlib.iml\" />\n      <module fileurl=\"file://$PROJECT_DIR$/compiler/util/util.iml\" filepath=\"$PROJECT_DIR$/compiler/util/util.iml\" />\n    </modules>\n  </component>\n</project>\n\n
+===================================================================
+--- .idea/modules.xml	(date 1330610502000)
++++ .idea/modules.xml	(revision )
+@@ -17,6 +17,7 @@
+       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" />
+       <module fileurl="file://$PROJECT_DIR$/j2k/tests/j2k-tests.iml" filepath="$PROJECT_DIR$/j2k/tests/j2k-tests.iml" />
+       <module fileurl="file://$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" filepath="$PROJECT_DIR$/compiler/jet.as.java.psi/jet.as.java.psi.iml" />
++      <module fileurl="file://$PROJECT_DIR$/js/js.libraries/js.libraries.iml" filepath="$PROJECT_DIR$/js/js.libraries/js.libraries.iml" />
+       <module fileurl="file://$PROJECT_DIR$/js/js.tests/js.tests.iml" filepath="$PROJECT_DIR$/js/js.tests/js.tests.iml" />
+       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" />
+       <module fileurl="file://$PROJECT_DIR$/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/stdlib/stdlib.iml" />
+Index: js/js.translator/js.translator.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<module type=\"JAVA_MODULE\" version=\"4\">\n  <component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\">\n    <exclude-output />\n    <content url=\"file://$MODULE_DIR$\">\n      <sourceFolder url=\"file://$MODULE_DIR$/src\" isTestSource=\"false\" />\n    </content>\n    <orderEntry type=\"inheritedJdk\" />\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\n    <orderEntry type=\"module\" module-name=\"frontend\" />\n    <orderEntry type=\"library\" name=\"js-libs\" level=\"project\" />\n    <orderEntry type=\"library\" scope=\"PROVIDED\" name=\"intellij-core\" level=\"project\" />\n  </component>\n</module>\n\n
+===================================================================
+--- js/js.translator/js.translator.iml	(date 1330610502000)
++++ js/js.translator/js.translator.iml	(revision )
+@@ -10,6 +10,7 @@
+     <orderEntry type="module" module-name="frontend" />
+     <orderEntry type="library" name="js-libs" level="project" />
+     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
++    <orderEntry type="module" module-name="js.libraries" />
+   </component>
+ </module>
+ 
