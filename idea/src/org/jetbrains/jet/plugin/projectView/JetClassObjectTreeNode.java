@@ -33,12 +33,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * User: Alefas
- * Date: 15.02.12
+ * @author slukjanov aka Frostman
  */
-public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObject> {
-    protected JetClassOrObjectTreeNode(Project project, JetClassOrObject jetClassOrObject, ViewSettings viewSettings) {
-        super(project, jetClassOrObject, viewSettings);
+public class JetClassObjectTreeNode extends AbstractPsiBasedNode<JetClassObject> {
+    protected JetClassObjectTreeNode(Project project, JetClassObject classObject, ViewSettings viewSettings) {
+        super(project, classObject, viewSettings);
     }
 
     @Override
@@ -50,28 +49,29 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
     protected Collection<AbstractTreeNode> getChildrenImpl() {
         if (getSettings().isShowMembers()) {
             ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-            List<JetDeclaration> declarations = getValue().getDeclarations();
-            for (JetDeclaration declaration : declarations) {
-                if (declaration instanceof JetClassOrObject) {
-                    result.add(new JetClassOrObjectTreeNode(getProject(), (JetClassOrObject) declaration, getSettings()));
-                }
-                else if (declaration instanceof JetClassObject) {
-                    result.add(new JetClassObjectTreeNode(getProject(), (JetClassObject) declaration, getSettings()));
-                }
-                else {
-                    result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));
+            JetClassOrObject object = getValue().getObjectDeclaration();
+            if (object != null) {
+                List<JetDeclaration> declarations = object.getDeclarations();
+                for (JetDeclaration declaration : declarations) {
+                    if (declaration instanceof JetClassOrObject) {
+                        result.add(new JetClassOrObjectTreeNode(
+                                getProject(),
+                                (JetClassOrObject) declaration,
+                                getSettings()));
+                    }
+                    else {
+                        result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));
+                    }
                 }
             }
+
             return result;
         } else return Collections.emptyList();
     }
 
     @Override
     protected void updateImpl(PresentationData data) {
-        JetClassOrObject value = getValue();
-        if (value != null) {
-            data.setPresentableText(value.getName());
-        }
+        data.setPresentableText("<class object>");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
         return super.canRepresent(element) || canRepresent(getValue(), element);
     }
 
-    private boolean canRepresent(JetClassOrObject value, Object element) {
+    private boolean canRepresent(JetClassObject value, Object element) {
         if (value == null || !value.isValid()) return false;
         PsiFile file = value.getContainingFile();
         if (file != null && (file == element || file.getVirtualFile() == element)) return true;
