@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KFunction
 import org.jetbrains.kotlin.model.KAnnotation
 import org.jetbrains.kotlin.model.KProperty
+import org.jetbrains.kotlin.model.KTypeParameter
 
 
 abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
@@ -39,32 +40,33 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
     }
 
-    fun printFunctionSummary(method: KFunction): Unit {
-        val deprecated = if (method.deprecated) "<B>Deprecated.</B>" else ""
+    fun printFunctionSummary(function: KFunction): Unit {
+        val deprecated = if (function.deprecated) "<B>Deprecated.</B>" else ""
         print("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>""")
-        if (!method.typeParameters.isEmpty()) {
+        if (!function.typeParameters.isEmpty()) {
             println("""<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
             <TR ALIGN="right" VALIGN="">
             <TD NOWRAP><FONT SIZE="-1">
             <CODE>""")
-            printTypeParameters(method)
+            printTypeParameters(function)
             println("""<BR>""")
-            print(link(method.returnType))
+            print(link(function.returnType))
+            printTypeParameterNames(function.returnType.typeParameters)
             println("""</CODE></FONT></TD>
 </TR>
 </TABLE>""")
         } else {
-            print(link(method.returnType))
+            print(link(function.returnType))
         }
         println("""</CODE></FONT></TD>""")
-        print("""<TD><CODE><B><A HREF="${href(method)}">${method.name}</A></B>""")
-        printParameters(method)
+        print("""<TD><CODE><B><A HREF="${href(function)}">${function.name}</A></B>""")
+        printParameters(function)
         println("""</CODE>""")
         println("""""")
         println("""<BR>""")
-        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${method.detailedDescription}</TD>""")
+        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${function.detailedDescription}</TD>""")
         println("""</TR>""")
     }
 
@@ -99,6 +101,8 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
         printTypeParameters(function)
         print(link(function.returnType))
+        printTypeParameterNames(function.returnType.typeParameters)
+
         print(""" <A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
         printParameters(function)
         val exlist = function.exceptions
@@ -204,7 +208,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
                     }
                 }
             }
-            print("&gt")
+            print("&gt;&nbsp;")
         }
     }
 
@@ -215,10 +219,23 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             if (first) first = false else print(", ")
             print("${p.name}:&nbsp;")
             print(link(p.klass))
+            printTypeParameterNames(method.typeParameters)
         }
         print(")")
     }
 
+    fun printTypeParameterNames(typeParameters: List<KTypeParameter>): Unit {
+        if (!typeParameters.isEmpty()) {
+            print("&lt")
+            var separator = ""
+            for (t in typeParameters) {
+                print(separator)
+                separator = ", "
+                print(t.name)
+            }
+            print("&gt;")
+        }
+    }
     fun printAnnotations(annotations: Collection<KAnnotation>): Unit {
         for (a in annotations) {
             println(link(a))

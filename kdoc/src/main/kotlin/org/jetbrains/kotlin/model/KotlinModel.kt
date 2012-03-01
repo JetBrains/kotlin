@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
 
@@ -212,6 +213,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         val returnType = getClass(descriptor.getReturnType())
         if (returnType != null) {
             val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
+            addTypeParameters(function.typeParameters, descriptor.getTypeParameters())
             function.description = commentsFor(descriptor)
             val params = descriptor.getValueParameters()
             for (param in params) {
@@ -229,6 +231,24 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             return function
         }
         return null
+    }
+
+    protected fun addTypeParameters(answer: List<KTypeParameter>, descriptors: List<TypeParameterDescriptor?>): Unit {
+        for (typeParam in descriptors) {
+            if (typeParam != null) {
+                val p = createTypeParameter(typeParam)
+                if (p != null){
+                    answer.add(p)
+                }
+            }
+        }
+    }
+
+    protected fun createTypeParameter(descriptor: TypeParameterDescriptor): KTypeParameter? {
+        val name = descriptor.getName()
+        val answer = KTypeParameter(name, descriptor)
+        answer.description = commentsFor(descriptor)
+        return answer
     }
 
     protected fun createParameter(descriptor: ValueParameterDescriptor): KParameter? {
@@ -322,23 +342,25 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
 
     fun toString() = "KPackage($name)"
 
-    fun getClass(name: String, classElement: ClassDescriptor): KClass {
+    fun getClass(name: String, descriptor: ClassDescriptor): KClass {
         var created = false
         val klass = classMap.getOrPut(name) {
             created = true
-            KClass(this, classElement, name)
+            KClass(this, descriptor, name)
         }
         if (created) {
             local = true
-            klass.description = model.commentsFor(classElement)
-            val superTypes = classElement.getTypeConstructor().getSupertypes()
+            klass.description = model.commentsFor(descriptor)
+            val typeConstructor = descriptor.getTypeConstructor()
+            val superTypes = typeConstructor.getSupertypes()
             for (st in superTypes) {
                 val sc = model.getClass(st)
                 if (sc != null) {
                     klass.baseClasses.add(sc)
                 }
             }
-            model.addFunctions(klass, classElement.getDefaultType().getMemberScope())
+            model.addFunctions(klass, descriptor.getDefaultType().getMemberScope())
+            model.addTypeParameters(klass.typeParameters, typeConstructor.getParameters())
         }
         return klass
     }
@@ -404,6 +426,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         val simpleName: String,
         var kind: String = "class", var group: String = "Other",
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
+        var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
         var baseClasses: List<KClass> = arrayList<KClass>(),
@@ -477,7 +500,7 @@ class KFunction(val owner: KClassOrPackage, val name: String,
     public val parameterTypeText: String
     get() {
         if (_parameterTypeText == null) {
-            _parameterTypeText = typeParameters.map{ it.klass.name }.join(", ")
+            _parameterTypeText = typeParameters.map{ it.name }.join(", ")
         }
         return _parameterTypeText.sure()
     }
@@ -502,12 +525,10 @@ class KParameter(val name: String,
 }
 
 class KTypeParameter(val name: String,
-        var klass: KClass,
-        var extends: List<KClass> = arrayList<KClass>())  {
+                val descriptor: TypeParameterDescriptor,
+                var extends: List<KClass> = arrayList<KClass>()) : KAnnotated() {
 
-    fun toString() = if (extends.isEmpty()) name else {
-        "$name extends ${extends.map{it.name}.join(" & ")}"
-    }
+    fun toString() = "$name"
 }
 
 class KAnnotation(var klass: KClass) : KAnnotated()  {
