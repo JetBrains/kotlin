@@ -11,10 +11,10 @@ class SomeOther<S> : Some<S> {
     override fun someFoo() {
         throw UnsupportedOperationException()
     }
-    override fun someGenericFoo(): S {
+    override fun someGenericFoo() : S {
         throw UnsupportedOperationException()
     }
-    override fun someOtherFoo(): Int {
+    override fun someOtherFoo() : Int {
         throw UnsupportedOperationException()
     }
 }
