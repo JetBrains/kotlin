@@ -95,7 +95,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private String generateProgramCode(@NotNull JetFile psiFile) {
+        /*package*/ String generateProgramCode(@NotNull JetFile psiFile) {
         JsProgram program = generateProgram(Arrays.asList(psiFile));
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
@@ -107,15 +107,6 @@ public final class K2JSTranslator {
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
-
-    //TODO: relates to web demo
-    @SuppressWarnings("UnusedDeclaration")
-    @NotNull
-    public BindingContext analyzeProgramCode(@NotNull String programText) {
-        JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
-        return AnalyzerFacade.analyzeFiles(Arrays.asList(file), config);
-    }
-
 
     @NotNull
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {

@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import sun.org.mozilla.javascript.internal.Context;
 import sun.org.mozilla.javascript.internal.Scriptable;
