@@ -26,6 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
+    private String heredoc;
 
     private void pushState(int state) {
         states.push(new State(yystate(), lBraceCount));
@@ -45,7 +46,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 %eof{  return;
 %eof}
 
-%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY
+%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY HEREDOC
 %state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
@@ -107,6 +108,26 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 LONG_TEMPLATE_ENTRY_END=\}
 
 %%
+
+// HEREDOCS
+
+(\<\<\<){IDENTIFIER}\n      {
+                                this.heredoc = yytext().toString().substring(3).trim();
+                                pushState(HEREDOC);
+                                return JetTokens.OPEN_QUOTE;
+                            }
+<HEREDOC>[^\n]*\n           {
+                                String text = yytext().toString().trim();
+                                if (this.heredoc.equals(text)) {
+                                    this.heredoc = null;
+                                    popState();
+                                    yypushback(1);
+                                    return JetTokens.CLOSING_QUOTE;
+                                } else {
+                                    return JetTokens.REGULAR_STRING_PART;
+                                }
+                            }
+
 
 // String templates
 
