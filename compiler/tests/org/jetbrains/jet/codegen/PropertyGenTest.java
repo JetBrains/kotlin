@@ -214,4 +214,9 @@ public class PropertyGenTest extends CodegenTestCase {
     public void testKt1398() throws Exception {
         blackBoxFile("regressions/kt1398.kt");
     }
+
+    public void testKt1482() throws Exception {
+        createEnvironmentWithFullJdk();
+        blackBoxFile("regressions/kt1482.kt");
+    }
 }

@@ -140,7 +140,7 @@ public class PropertyCodegen {
 
     private void generateDefaultGetter(JetProperty p) {
         final PropertyDescriptor propertyDescriptor = (PropertyDescriptor) state.getBindingContext().get(BindingContext.VARIABLE, p);
-        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+        int flags = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0) | (propertyDescriptor.getModality() == Modality.ABSTRACT ? Opcodes.ACC_ABSTRACT : 0);
         generateDefaultGetter(propertyDescriptor, flags, p);
     }
 
@@ -170,29 +170,31 @@ public class PropertyCodegen {
         }
 
         if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
-            mv.visitCode();
-            if (v.generateCode() == ClassBuilder.Mode.STUBS) {
-                StubCodegen.generateStubThrow(mv);
-            } else {
-                InstructionAdapter iv = new InstructionAdapter(mv);
-                if (kind != OwnerKind.NAMESPACE) {
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
+            if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
+                mv.visitCode();
+                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                    StubCodegen.generateStubThrow(mv);
+                } else {
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+                    if (kind != OwnerKind.NAMESPACE) {
+                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                    }
+                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
+                    if (kind instanceof OwnerKind.DelegateKind) {
+                        OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
+                        dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                        iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
+                    }
+                    else {
+                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
+                                state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                type.getDescriptor());
+                    }
+                    iv.areturn(type);
                 }
-                final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
-                if (kind instanceof OwnerKind.DelegateKind) {
-                    OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                    dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
-                    iv.invokeinterface(dk.getOwnerClass(), getterName, descriptor);
-                }
-                else {
-                    iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                            state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
-                            type.getDescriptor());
-                }
-                iv.areturn(type);
             }
-            FunctionCodegen.endVisit(mv, "getter", origin);
         }
+        FunctionCodegen.endVisit(mv, "getter", origin);
     }
 
     public static void generateJetPropertyAnnotation(MethodVisitor mv, @NotNull String kotlinType, @NotNull String typeParameters) {
@@ -238,37 +240,38 @@ public class PropertyCodegen {
         }
 
         if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
-            mv.visitCode();
-            if (v.generateCode() == ClassBuilder.Mode.STUBS) {
-                StubCodegen.generateStubThrow(mv);
-            } else {
-                InstructionAdapter iv = new InstructionAdapter(mv);
-                final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
-                int paramCode = 0;
-                if (kind != OwnerKind.NAMESPACE) {
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    paramCode = 1;
-                }
+            if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
+                mv.visitCode();
+                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                    StubCodegen.generateStubThrow(mv);
+                } else {
+                    InstructionAdapter iv = new InstructionAdapter(mv);
+                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
+                    int paramCode = 0;
+                    if (kind != OwnerKind.NAMESPACE) {
+                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        paramCode = 1;
+                    }
 
-                if (kind instanceof OwnerKind.DelegateKind) {
-                    OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
-                    iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
+                    if (kind instanceof OwnerKind.DelegateKind) {
+                        OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
+                        iv.load(0, JetTypeMapper.TYPE_OBJECT);
+                        dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
 
-                    iv.load(paramCode, type);
-                    iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);
-                }
-                else {
-                    iv.load(paramCode, type);
-                    iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                            state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
-                            type.getDescriptor());
-                }
+                        iv.load(paramCode, type);
+                        iv.invokeinterface(dk.getOwnerClass(), setterName(propertyDescriptor.getName()), descriptor);
+                    }
+                    else {
+                        iv.load(paramCode, type);
+                        iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
+                                state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                type.getDescriptor());
+                    }
 
-                iv.visitInsn(Opcodes.RETURN);
+                    iv.visitInsn(Opcodes.RETURN);
+                }
             }
             FunctionCodegen.endVisit(mv, "setter", origin);
-            mv.visitEnd();
         }
     }
 
