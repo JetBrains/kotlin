@@ -70,7 +70,7 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
         PsiJavaFileStub js = getJavaStub(project, file);
         if (js != null) {
             if (js.getPackageName() != null && js.getPackageName().length() > 0) {
-                builder.append("package ").append(js.getPackageName()).append("\n\n");
+                builder.append("package ").append(js.getPackageName()).append("\n\n\n");
             }
 
             PsiClass psiClass = js.getClasses()[0];
@@ -81,23 +81,27 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
                 if (nd != null) {
                     for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
+                        if (member instanceof ClassDescriptor && member.getName().equals("namespace")) {
+                            continue;
+                        }
                         builder.append(DescriptorRenderer.COMPACT.render(member)).append("\n\n");
                     }
                 }
-            }
-            ClassDescriptor cd = jdr.resolveClass(psiClass);
-            if (cd != null) {
-                builder.append(DescriptorRenderer.COMPACT.render(cd));
+            } else {
+                ClassDescriptor cd = jdr.resolveClass(psiClass);
+                if (cd != null) {
+                    builder.append(DescriptorRenderer.COMPACT.render(cd));
 
-                builder.append(" {\n");
+                    builder.append(" {\n");
 
-                for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
-                    if (member.getContainingDeclaration() == cd) {
-                        builder.append("    ").append(DescriptorRenderer.COMPACT.render(member)).append("\n");
+                    for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
+                        if (member.getContainingDeclaration() == cd) {
+                            builder.append("    ").append(DescriptorRenderer.COMPACT.render(member)).append("\n\n");
+                        }
                     }
-                }
 
-                builder.append("}");
+                    builder.append("}");
+                }
             }
         }
         return builder.toString();
