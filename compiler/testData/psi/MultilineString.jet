@@ -1,0 +1,66 @@
+fun wrap(x:String) {
+    return x
+}
+
+fun demo() {
+
+  val foo = "Hiram"
+  // Multi line strings
+  #"
+  \n  
+  \t ${foo}
+  "
+
+  #"""
+  \n  
+  \t ${foo}
+  """
+
+  #"EOS
+  \n  
+  \t ${foo}
+  "EOS
+
+  wrap(#"
+  \n  
+  \t ${foo}
+  ")
+
+  // Multi line raw strings
+  #!' 
+\n \r 
+\x ${foo}
+  '
+  #!''' 
+\n \r 
+\x ${foo}
+  '''
+  #!'EOS 
+\n \r 
+\x ${foo}
+  'EOS
+  
+  wrap(#!' 
+\n \r 
+\x ${foo}
+  ')
+
+  #!" 
+\n \r 
+\x ${foo}
+  "
+  #!""" 
+\n \r 
+\x ${foo}
+  """
+  #!"EOS 
+\n \r 
+\x ${foo}
+  "EOS
+  
+  wrap(#!" 
+\n \r 
+\x ${foo}
+  ")
+
+}

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lexer.JetTokens;
     
     private int commentStart;
     private int commentDepth;
+    private String terminator;
 
     private void pushState(int state) {
         states.push(new State(yystate(), lBraceCount));
@@ -65,7 +66,7 @@ import org.jetbrains.jet.lexer.JetTokens;
   return;
 %eof}
 
-%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY BLOCK_COMMENT DOC_COMMENT
+%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY BLOCK_COMMENT DOC_COMMENT MULTILINE_RAW_STRING MULTI_LINE_STRING SINGLELINE_RAW_STRING
 %state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
@@ -115,23 +116,127 @@ ESCAPE_SEQUENCE=\\(u{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}|[^\n])
 THREE_QUO = (\"\"\")
 ONE_TWO_QUO = (\"[^\"]) | (\"\"[^\"])
 QUO_STRING_CHAR = [^\"] | {ONE_TWO_QUO}
-RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
 
 REGULAR_STRING_PART=[^\\\"\n\$]+
 SHORT_TEMPLATE_ENTRY=\${IDENTIFIER}
 LONELY_DOLLAR=\$
 LONG_TEMPLATE_ENTRY_START=\$\{
 LONG_TEMPLATE_ENTRY_END=\}
-
+MULTILINE_DELIMITER=[^\ \t\f\r\n]*([\ \t\f\r]*\n)
 %%
 
-// String templates
+// --------------------------------------------
+// Multi line raw strings.
+// --------------------------------------------
+(\#\!(\'|\")){MULTILINE_DELIMITER}
+            {
+                this.terminator = yytext().toString().substring(2).trim();
+                yybegin(MULTILINE_RAW_STRING);
+                return JetTokens.OPEN_QUOTE;
+            }
+
+<MULTILINE_RAW_STRING>[^\n]*\n
+            {
+                String text = yytext().toString();
+                int delimiterPos = text.indexOf(this.terminator);
+                if ( delimiterPos > 0 ) {
+                    yypushback(text.length() - delimiterPos);
+                } else if ( delimiterPos == 0 ) {
+                    // Don't consume any of the trailing tokens.
+                    yypushback(text.length() - this.terminator.length());
+                    yybegin(YYINITIAL);
+                    this.terminator = null;
+                    return JetTokens.CLOSING_QUOTE;
+                }
+                return JetTokens.REGULAR_STRING_PART;
+            }
+
+// --------------------------------------------
+// Multi line string.
+// --------------------------------------------
+(\#\"){MULTILINE_DELIMITER}
+            {
+                this.terminator = yytext().toString().substring(1).trim();
+                pushState(MULTI_LINE_STRING);
+                return JetTokens.OPEN_QUOTE;
+            }
+<MULTI_LINE_STRING> {ESCAPE_SEQUENCE}
+            { return JetTokens.ESCAPE_SEQUENCE; }
+<MULTI_LINE_STRING>[^\n\\]*\n?
+            {
+                String text = yytext().toString();
+                int delimiterPos = text.indexOf(this.terminator);
+                int templatePos = text.indexOf("${");
+                if( templatePos == 0 ) {
+                    yypushback(text.length() - 2);
+                    pushState(LONG_TEMPLATE_ENTRY);
+                    return JetTokens.LONG_TEMPLATE_ENTRY_START;
+                } else {
+                    if( templatePos > 0 && ( delimiterPos<0  || templatePos<delimiterPos) ) {
+                        yypushback(text.length() - templatePos);
+                        return JetTokens.REGULAR_STRING_PART;
+                    }
+                    if ( delimiterPos > 0 ) {
+                        yypushback(text.length() - delimiterPos);
+                    } else if ( delimiterPos == 0 ) {
+                        // Don't consume any of the trailing tokens.
+                        yypushback(text.length() - this.terminator.length());
+                        yybegin(YYINITIAL);
+                        this.terminator = null;
+                        return JetTokens.CLOSING_QUOTE;
+                    }
+                    return JetTokens.REGULAR_STRING_PART;
+                }
+            }
+
+// --------------------------------------------
+// Single line raw strings.
+// --------------------------------------------
+\!((\'+)|(\"+))
+            {
+                this.terminator = yytext().toString().substring(1);
+                yybegin(SINGLELINE_RAW_STRING);
+                return JetTokens.OPEN_QUOTE;
+            }
+<SINGLELINE_RAW_STRING> ([^\"\'\n])+
+            {
+                return JetTokens.REGULAR_STRING_PART;
+            }
+<SINGLELINE_RAW_STRING> \n
+            {
+                yybegin(YYINITIAL);
+                yypushback(1);
+                return JetTokens.DANGLING_NEWLINE;
+            }
+<SINGLELINE_RAW_STRING> ((\'+)|(\"+))
+            {
+                String text = yytext().toString();
+                int delimiterPos = text.indexOf(this.terminator);
+                if ( delimiterPos > 0 ) {
+                    yypushback(text.length() - delimiterPos);
+                } else if ( delimiterPos == 0 ) {
+                    // Don't consume any of the trailing tokens.
+                    yypushback(text.length() - this.terminator.length());
+                    yybegin(YYINITIAL);
+                    this.terminator = null;
+                    return JetTokens.CLOSING_QUOTE;
+                }
+                return JetTokens.REGULAR_STRING_PART;
+            }
+
+// --------------------------------------------
+// The original triple quote multi line raw string.
+// --------------------------------------------
 
 {THREE_QUO}                      { pushState(RAW_STRING); return JetTokens.OPEN_QUOTE; }
 <RAW_STRING> \n                  { return JetTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \"                  { return JetTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \\                  { return JetTokens.REGULAR_STRING_PART; }
 <RAW_STRING> {THREE_QUO}         { popState(); return JetTokens.CLOSING_QUOTE; }
+
+// --------------------------------------------
+// Single line string.
+// --------------------------------------------
 
 \"                          { pushState(STRING); return JetTokens.OPEN_QUOTE; }
 <STRING> \n                 { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }
