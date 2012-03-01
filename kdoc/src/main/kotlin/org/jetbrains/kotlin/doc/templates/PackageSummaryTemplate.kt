@@ -276,7 +276,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
                 val c = e?.getKey()
                 if (c != null) {
                     println("""<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="${pkg.nameAsRelativePath}${c.name}.html" title="extensions on ${pkg.name}">${c.name}</A></B></TD>
+<TD WIDTH="15%"><B><A HREF="${extensionsHref(pkg, c)}" title="extensions on ${pkg.name}">${c.name}</A></B></TD>
 <TD>""")
                     val list = e?.getValue()
                     if (list != null) {
