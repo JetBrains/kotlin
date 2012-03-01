@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * @author abreslav
@@ -91,7 +91,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
+            allDescriptors = Sets.newLinkedHashSet();
 
             final PsiPackage javaPackage = semanticServices.getDescriptorResolver().findPackage(packageFQN);
 
@@ -118,7 +118,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
                     // TODO: Temp hack for collection function descriptors from java
                     if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        HashSet<String> methodNames = new HashSet<String>();
+                        LinkedHashSet<String> methodNames = new LinkedHashSet<String>();
                         for (PsiMethod psiMethod : psiClass.getMethods()) {
                             methodNames.add(psiMethod.getName());
                         }
