@@ -131,6 +131,16 @@
             <arg value="-docOutput"/>
             <arg value="${output}/apidoc/stdlib"/>
         </java>
+
+        <fail message="No stdlib API docs generated.">
+            <condition>
+                <not>
+                    <resourcecount count="1">
+                        <fileset id="fs" dir="${output}/apidoc/stdlib" includes="index.html"/>
+                    </resourcecount>
+                </not>
+            </condition>
+        </fail>
     </target>
 
     <target name="compileTestlib" depends="compileKunit">
