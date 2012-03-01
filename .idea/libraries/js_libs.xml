@@ -4,7 +4,7 @@
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dartc.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/args4j-2.0.12.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/json.jar!/" />
-      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/js-1.7R2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/js.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
