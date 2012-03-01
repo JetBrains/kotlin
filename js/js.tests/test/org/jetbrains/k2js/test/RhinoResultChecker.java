@@ -16,12 +16,12 @@
 
 package org.jetbrains.k2js.test;
 
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.Scriptable;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 /**
  * @author Pavel Talanov
  */
 public interface RhinoResultChecker {
-    void runChecks(Context context, Scriptable scope) throws Exception;
+    public void runChecks(Context context, Scriptable scope) throws Exception;
 }

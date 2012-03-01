@@ -17,8 +17,8 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.Nullable;
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.Scriptable;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 import static org.junit.Assert.assertTrue;
 

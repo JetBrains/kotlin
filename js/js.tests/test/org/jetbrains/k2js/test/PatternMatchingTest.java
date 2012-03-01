@@ -16,7 +16,7 @@
 
 package org.jetbrains.k2js.test;
 
-import sun.org.mozilla.javascript.internal.JavaScriptException;
+import org.mozilla.javascript.JavaScriptException;
 
 /**
  * @author Pavel Talanov
@@ -80,7 +80,6 @@ public final class PatternMatchingTest extends TranslationTest {
         checkFooBoxIsTrue("whenAsExpression.kt");
     }
 
-    //TODO:
     public void whenAsExpressionWithThrow() throws Exception {
         try {
             checkFooBoxIsTrue("whenAsExpressionWithThrow.kt");

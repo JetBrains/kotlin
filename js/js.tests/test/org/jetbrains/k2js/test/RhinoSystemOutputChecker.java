@@ -18,8 +18,8 @@ package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.utils.GenerationUtils;
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.Scriptable;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 import java.util.List;
 

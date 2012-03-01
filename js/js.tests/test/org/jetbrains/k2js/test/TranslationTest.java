@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
-import sun.org.mozilla.javascript.internal.Context;
-import sun.org.mozilla.javascript.internal.Scriptable;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
 
 import java.io.File;
 import java.io.FileInputStream;

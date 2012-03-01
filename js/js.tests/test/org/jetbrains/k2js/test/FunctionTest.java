@@ -95,7 +95,6 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
 
-    //TODO: this test passes even if does nothing
     public void testkt921() throws Exception {
         try {
             checkOutput("KT-921.kt", "");
