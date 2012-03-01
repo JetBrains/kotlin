@@ -1,0 +1,24 @@
+fun box() : String {
+
+  val hello="Hiram"
+  val world="Chirino"
+
+  val s = <<<EOS
+ ${hello}
+ [\n]
+ ${world}
+EOS
+
+  if (s != " \${hello}\n [\\n]\n \${world}\n") return "Fail: '$s'"
+
+  val s2 = <<<$EOS
+ ${hello}
+ [\n]
+ ${world}
+EOS
+
+  if (s2 != " Hiram\n [\\n]\n Chirino\n") return "Fail: '$s'"
+
+
+  return "OK"
+}
