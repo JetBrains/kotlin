@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,9 +31,35 @@ import java.util.List;
 public abstract class Config {
 
     @NotNull
-    public abstract Project getProject();
+    protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
+            "/core/annotations.kt",
+            "/jquery/common.kt",
+            "/jquery/ui.kt",
+            "/core/javautil.kt",
+            "/core/javalang.kt",
+            "/core/core.kt",
+            "/core/math.kt",
+            "/core/json.kt",
+            "/raphael/raphael.kt",
+            "/html5/canvas.kt",
+            "/html5/files.kt",
+            "/html5/image.kt"
+    );
+
+    protected static final String LIBRARIES_LOCATION = "js.libraries/src";
+
+    @NotNull
+    private final Project project;
+
+    public Config(@NotNull Project project) {
+        this.project = project;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project;
+    }
 
     @NotNull
     public abstract List<JetFile> getLibFiles();
-
 }

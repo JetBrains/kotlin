@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.FileInputStream;
@@ -29,7 +28,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,38 +36,12 @@ import java.util.List;
 //TODO: review/refactor
 public final class TestConfig extends Config {
 
-    @NotNull
-    private static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "/core/annotations.kt",
-            "/jquery/common.kt",
-            "/jquery/ui.kt",
-            "/core/javautil.kt",
-            "/core/javalang.kt",
-            "/core/core.kt",
-            "/core/math.kt",
-            "/core/json.kt",
-            "/raphael/raphael.kt",
-            "/html5/canvas.kt",
-            "/html5/files.kt",
-            "/html5/image.kt"
-    );
-
-    private static final String LIBRARIES_LOCATION = "js.libraries/src";
 
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
 
-    @NotNull
-    private final Project project;
-
     public TestConfig(@NotNull Project project) {
-        this.project = project;
-    }
-
-    @NotNull
-    @Override
-    public Project getProject() {
-        return project;
+        super(project);
     }
 
     @NotNull

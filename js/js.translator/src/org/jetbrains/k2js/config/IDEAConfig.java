@@ -28,17 +28,8 @@ import java.util.List;
  */
 public final class IDEAConfig extends Config {
 
-    @NotNull
-    private final Project project;
-
     public IDEAConfig(@NotNull Project project) {
-        this.project = project;
-    }
-
-    @NotNull
-    @Override
-    public Project getProject() {
-        return project;
+        super(project);
     }
 
     @NotNull
