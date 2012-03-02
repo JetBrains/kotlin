@@ -20,7 +20,8 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 
-public final class ExampleTestSuite extends UsefulTestCase {
+@SuppressWarnings("JUnitTestCaseWithNoTests")
+public final class ExamplesTest extends UsefulTestCase {
 
     public static Test suite() {
         return Suite.suiteForDirectory("examples/", new Suite.SingleFileTester() {

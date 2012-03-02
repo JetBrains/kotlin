@@ -35,12 +35,15 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        // checkOutput("intRange.kt", " ");
         checkFooBoxIsTrue("intRange.kt");
     }
 
 
     public void testSafecallComputesExpressionOnlyOnce() throws Exception {
         checkFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
+    }
+
+    public void testClassWithoutNamespace() throws Exception {
+        testFunctionOutput("classWithoutNamespace.kt", "Anonymous", "box", true);
     }
 }

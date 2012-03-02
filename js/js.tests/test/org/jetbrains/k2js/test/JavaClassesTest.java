@@ -22,7 +22,7 @@ package org.jetbrains.k2js.test;
 @SuppressWarnings("FieldCanBeLocal")
 public abstract class JavaClassesTest extends TranslationTest {
 
-    private final String SUITE = "java/";
+    private static final String SUITE = "java/";
 
     @Override
     protected String suiteDirectoryName() {

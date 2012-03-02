@@ -95,7 +95,7 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
 
-    public void testkt921() throws Exception {
+    public void testKT921() throws Exception {
         try {
             checkOutput("KT-921.kt", "");
         } catch (Throwable e) {
