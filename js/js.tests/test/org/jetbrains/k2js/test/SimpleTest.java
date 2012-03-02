@@ -25,11 +25,9 @@ import org.jetbrains.k2js.test.utils.SuiteBuilder;
  * @author Pavel Talanov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class SimpleTestSuite extends UsefulTestCase {
-
+public final class SimpleTest extends UsefulTestCase {
     public static Test suite() throws Exception {
         return SuiteBuilder.suiteForDirectory("simple/", new SuiteBuilder.Tester() {
-
             @Override
             public void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception {
                 test.checkFooBoxIsTrue(filename);

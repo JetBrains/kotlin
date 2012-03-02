@@ -60,7 +60,6 @@ public abstract class SuiteBuilder extends TranslationTest {
         final SuiteBuilder singleFileTest = new SuiteBuilder(main) {
         };
         singleFileTest.setUp();
-
         return TranslatorTestCaseBuilder.suiteForDirectory(TEST_FILES + main + casesDirectoryName(),
                                                            true,
                                                            new TranslatorTestCaseBuilder.NamedTestFactory() {

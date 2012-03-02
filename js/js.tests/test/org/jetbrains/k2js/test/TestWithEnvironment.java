@@ -26,7 +26,7 @@ import org.jetbrains.jet.compiler.JetCoreEnvironment;
 /**
  * @author Pavel Talanov
  */
-public abstract class BaseTest extends UsefulTestCase {
+public abstract class TestWithEnvironment extends UsefulTestCase {
 
     @Nullable
     protected JetCoreEnvironment myEnvironment;

@@ -38,7 +38,7 @@ public class MultiNamespaceTest extends TranslationTest {
 
     @Override
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        testMultiFile(dirName, "foo", "box", true);
+        runMultiFileTest(dirName, "foo", "box", true);
     }
 }
 

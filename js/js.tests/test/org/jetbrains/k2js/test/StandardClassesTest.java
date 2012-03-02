@@ -19,7 +19,7 @@ package org.jetbrains.k2js.test;
 /**
  * @author Pavel Talanov
  */
-public class StandardClassesTest extends TranslationTest {
+public final class StandardClassesTest extends TranslationTest {
 
     public StandardClassesTest() {
         super("standardClasses/");
