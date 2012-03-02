@@ -1158,7 +1158,9 @@ public class JavaDescriptorResolver {
             }
 
             boolean isFinal;
-            if (members.setter == null && members.getter == null) {
+            if (!scopeData.kotlin) {
+                isFinal = true;
+            } else if (members.setter == null && members.getter == null) {
                 isFinal = false;
             } else if (members.getter != null) {
                 isFinal = members.getter.getMember().isFinal();
@@ -1185,11 +1187,20 @@ public class JavaDescriptorResolver {
             } else {
                 isVar = members.setter != null;
             }
-            
+
+            Modality modality;
+            if (isFinal) {
+                modality = Modality.FINAL;
+            }
+            else {
+                modality = anyMember.getMember().isAbstract() ? Modality.ABSTRACT : Modality.OPEN;
+            }
+
+
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     owner,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    isFinal && !staticMembers ? Modality.FINAL : Modality.OPEN, // TODO: abstract
+                    modality,
                     resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
                     isVar,
                     false,

@@ -49,6 +49,8 @@ public abstract class PsiMemberWrapper {
         return psiMember.hasModifierProperty(PsiModifier.FINAL);
     }
 
+    public abstract boolean isAbstract();
+
     public String getName() {
         return psiMember.getName();
     }

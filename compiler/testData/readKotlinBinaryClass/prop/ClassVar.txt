@@ -2,5 +2,5 @@ namespace test
 
 final class test.ClassVar : jet.Any {
     final /*constructor*/ fun <init>(): test.ClassVar
-    var aa: jet.Int
+    final var aa: jet.Int
 }

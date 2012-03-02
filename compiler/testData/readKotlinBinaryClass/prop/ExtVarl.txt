@@ -1,4 +1,4 @@
 namespace test
 
-val jet.String.junk: jet.Int
-var jet.Int.junk: jet.Short
+final val jet.String.junk: jet.Int
+final var jet.Int.junk: jet.Short

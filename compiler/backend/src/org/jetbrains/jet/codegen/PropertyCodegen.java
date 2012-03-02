@@ -160,6 +160,10 @@ public class PropertyCodegen {
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
 
+        if (propertyDescriptor.getModality() == Modality.FINAL) {
+            flags |= Opcodes.ACC_FINAL;
+        }
+
         JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
@@ -230,6 +234,10 @@ public class PropertyCodegen {
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
+
+        if (propertyDescriptor.getModality() == Modality.FINAL) {
+            flags |= Opcodes.ACC_FINAL;
+        }
 
         JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();

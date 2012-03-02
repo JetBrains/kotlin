@@ -2,5 +2,5 @@ namespace test
 
 final class test.ExtValPIntInClass</*0,r*/ P : jet.Any?> : jet.Any {
     final /*constructor*/ fun </*0,r*/ P : jet.Any?><init>(): test.ExtValPIntInClass</*0,r*/ P : jet.Any?>
-    var /*0,r*/ P : jet.Any??.asas: jet.Int
+    final var /*0,r*/ P : jet.Any??.asas: jet.Int
 }

@@ -4,6 +4,6 @@ final class test.ClassObjectDeclaresProperty : jet.Any {
     final /*constructor*/ fun <init>(): test.ClassObjectDeclaresProperty
     final object test.ClassObjectDeclaresProperty.<no name provided> : jet.Any {
         final /*constructor*/ fun <init>(): test.ClassObjectDeclaresProperty.<no name provided>
-        var s: jet.String
+        final var s: jet.String
     }
 }

@@ -2,5 +2,5 @@ namespace test
 
 final class test.FinalFieldAsVal : jet.Any {
     final /*constructor*/ fun <init>(): test.FinalFieldAsVal
-    val f: jet.Int
+    final val f: jet.Int
 }

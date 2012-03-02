@@ -2,5 +2,5 @@ namespace test
 
 final class test.ExtValInClass : jet.Any {
     final /*constructor*/ fun <init>(): test.ExtValInClass
-    val jet.Int.asas: java.util.List<jet.Int>?
+    final val jet.Int.asas: java.util.List<jet.Int>?
 }

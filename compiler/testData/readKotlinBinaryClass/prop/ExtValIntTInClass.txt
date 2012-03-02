@@ -2,5 +2,5 @@ namespace test
 
 final class test.ExtValInClass</*0,r*/ T : jet.Any?> : jet.Any {
     final /*constructor*/ fun </*0,r*/ T : jet.Any?><init>(): test.ExtValInClass</*0,r*/ T : jet.Any?>
-    val jet.Int.asas: /*0,r*/ T : jet.Any?
+    final val jet.Int.asas: /*0,r*/ T : jet.Any?
 }

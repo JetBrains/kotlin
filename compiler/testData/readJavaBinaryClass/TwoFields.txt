@@ -2,6 +2,6 @@ namespace test
 
 final class test.TwoFields : jet.Any {
     final /*constructor*/ fun <init>(): test.TwoFields
-    var a: jet.Int
-    var b: jet.Short
+    final var a: jet.Int
+    final var b: jet.Short
 }

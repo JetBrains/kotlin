@@ -2,5 +2,5 @@ namespace test
 
 final class test.ExtPropInClass : jet.Any {
     final /*constructor*/ fun <init>(): test.ExtPropInClass
-    var jet.Int.itIs: jet.Int
+    final var jet.Int.itIs: jet.Int
 }

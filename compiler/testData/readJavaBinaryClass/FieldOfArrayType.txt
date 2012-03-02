@@ -2,5 +2,5 @@ namespace test
 
 open class test.FieldOfArrayType : jet.Any {
     final /*constructor*/ fun <init>(): test.FieldOfArrayType
-    var files: jet.Array<java.io.File?>?
+    final var files: jet.Array<java.io.File?>?
 }

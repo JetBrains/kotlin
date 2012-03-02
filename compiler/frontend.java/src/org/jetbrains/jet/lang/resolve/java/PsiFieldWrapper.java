@@ -36,4 +36,9 @@ public class PsiFieldWrapper extends PsiMemberWrapper {
     public PsiType getType() {
         return getPsiField().getType();
     }
+
+    @Override
+    public boolean isAbstract() {
+        return false;
+    }
 }

@@ -258,6 +258,9 @@ class NamespaceComparator {
         }
 
         public void serialize(PropertyDescriptor prop) {
+            serialize(prop.getModality());
+            sb.append(" ");
+
             if (!prop.getAnnotations().isEmpty()) {
                 new Serializer(sb).serializeSeparated(prop.getAnnotations(), " ");
                 sb.append(" ");
