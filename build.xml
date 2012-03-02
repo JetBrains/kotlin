@@ -124,12 +124,16 @@
                 <!-- TODO Dirty Hack until kdoc jar has stdlib inside it -->
                 <pathelement location="${output}/classes/stdlib"/>
             </classpath>
+<!--
             <arg value="-src"/>
             <arg value="${basedir}/stdlib/ktSrc"/>
+-->
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
             <arg value="-docOutput"/>
             <arg value="${output}/apidoc/stdlib"/>
+            <arg value="-module"/>
+            <arg value="${basedir}/modules/ApiDocsModule.kt"/>
         </java>
 
         <fail message="No stdlib API docs generated.">
