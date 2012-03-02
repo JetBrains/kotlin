@@ -20,30 +20,38 @@ import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.compiled.ClsAnnotationImpl;
+import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 3/2/12
  */
+@SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
     private JetFile myJetFile;
     private String myText;
-//    private Map<ClsElementImpl, JetElement> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetElement>();
+    private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
 
     private static final Object LOCK = new String("decompiled data lock");
     private static final Key<JetDecompiledData> USER_DATA_KEY = new Key<JetDecompiledData>("USER_DATA_KEY");
@@ -56,8 +64,13 @@ public class JetDecompiledData {
         return myJetFile;
     }
 
+    @NotNull
     public String getText() {
         return myText;
+    }
+
+    public JetDeclaration getJetDeclarationByClsElement(ClsElementImpl clsElement) {
+        return myClsElementsToJetElements.get(clsElement);
     }
 
     @Nullable
@@ -109,77 +122,96 @@ public class JetDecompiledData {
         JetDecompiledData result = new JetDecompiledData();
 
         Project project = clsFile.getProject();
-        result.myText = getJetText(project, clsFile.getVirtualFile());
-        result.myJetFile = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(clsFile.getName(), JetLanguage.INSTANCE, result.myText);
+        result.buildTextAndTree(project, clsFile.getVirtualFile());
 
         return result;
     }
 
 
-    @NotNull
-    private static String getJetText(Project project, VirtualFile file) {
+    private void buildTextAndTree(Project project, VirtualFile file) {
         StringBuilder builder = new StringBuilder();
 
+        BindingTraceContext trace = new BindingTraceContext();
         JavaSemanticServices jss = new JavaSemanticServices(
                 project,
                 JetSemanticServices.createSemanticServices(project),
-                new BindingTraceContext());
-        PsiClassOwner clsFile = (PsiClassOwner) PsiManager.getInstance(project).findFile(file);
-        if (clsFile != null) {
-            builder.append(PsiBundle.message("psi.decompiled.text.header"));
-            builder.append("\n\n");
+                trace);
+        ClsFileImpl clsFile = (ClsFileImpl) PsiManager.getInstance(project).findFile(file);
+        assert clsFile != null;
+        builder.append(PsiBundle.message("psi.decompiled.text.header"));
+        builder.append("\n\n");
 
-            String packageName = clsFile.getPackageName();
-            if (packageName == null) {
-                packageName = "";
+        String packageName = clsFile.getPackageName();
+        if (packageName.length() > 0) {
+            builder.append("package ").append(packageName).append("\n\n");
+        }
+
+        PsiClass psiClass = clsFile.getClasses()[0];
+        JavaDescriptorResolver jdr = jss.getDescriptorResolver();
+
+        Map<PsiElement, TextRange> clsMembersToRanges = new HashMap<PsiElement, TextRange>();
+
+        if (psiClass.getName().equals("namespace")) { // TODO better check for namespace
+            NamespaceDescriptor nd = jdr.resolveNamespace(packageName);
+
+            if (nd != null) {
+                for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
+                    if (member instanceof ClassDescriptor && member.getName().equals("namespace") || member instanceof NamespaceDescriptor) {
+                        continue;
+                    }
+                    PsiElement clsElement = trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, member);
+                    clsMembersToRanges.put(clsElement, appendMemberDescriptor(builder, member));
+                }
             }
-            if (packageName.length() > 0) {
-                builder.append("package ").append(packageName).append("\n\n");
-            }
+        } else {
+            ClassDescriptor cd = jdr.resolveClass(psiClass);
+            if (cd != null) {
+                int classStart = builder.length();
 
-            PsiClass psiClass = clsFile.getClasses()[0];
-            JavaDescriptorResolver jdr = jss.getDescriptorResolver();
+                builder.append(DescriptorRenderer.COMPACT.render(cd));
 
-            if (psiClass.getName().equals("namespace")) { // TODO better check for namespace
-                NamespaceDescriptor nd = jdr.resolveNamespace(packageName);
+                builder.append(" {\n");
 
-                if (nd != null) {
-                    for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
-                        if (member instanceof ClassDescriptor && member.getName().equals("namespace") || member instanceof NamespaceDescriptor) {
-                            continue;
-                        }
-                        appendMemberDescriptor(builder, member);
+                for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
+                    if (member.getContainingDeclaration() == cd) {
+                        builder.append("    ");
+                        PsiElement clsElement = trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, member);
+                        clsMembersToRanges.put(clsElement, appendMemberDescriptor(builder, member));
                     }
                 }
-            } else {
-                ClassDescriptor cd = jdr.resolveClass(psiClass);
-                if (cd != null) {
-                    builder.append(DescriptorRenderer.COMPACT.render(cd));
 
-                    builder.append(" {\n");
+                builder.append("}");
 
-                    for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
-                        if (member.getContainingDeclaration() == cd) {
-                            builder.append("    ");
-                            appendMemberDescriptor(builder, member);
-                        }
-                    }
-
-                    builder.append("}");
-                }
+                PsiElement clsClass = trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, cd);
+                clsMembersToRanges.put(clsClass, new TextRange(classStart, builder.length()));
             }
         }
-        return builder.toString();
+
+        myText = builder.toString();
+        myJetFile = (JetFile) PsiFileFactory.getInstance(project).createFileFromText("", JetLanguage.INSTANCE, myText);
+        for (Map.Entry<PsiElement, TextRange> clsMemberToRange : clsMembersToRanges.entrySet()) {
+            PsiElement clsMember = clsMemberToRange.getKey();
+            assert clsMember instanceof ClsElementImpl;
+
+            TextRange range = clsMemberToRange.getValue();
+            JetDeclaration jetDeclaration = PsiTreeUtil.findElementOfClassAtRange(myJetFile, range.getStartOffset(), range.getEndOffset(), JetDeclaration.class);
+            assert jetDeclaration != null;
+            myClsElementsToJetElements.put((ClsElementImpl) clsMember, jetDeclaration);
+        }
     }
 
-    private static void appendMemberDescriptor(StringBuilder builder, DeclarationDescriptor member) {
+    private static TextRange appendMemberDescriptor(StringBuilder builder, DeclarationDescriptor member) {
         String decompiledComment = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
+        int startOffset = builder.length();
         builder.append(DescriptorRenderer.COMPACT.render(member));
+        int endOffset = builder.length();
         if (member instanceof FunctionDescriptor) {
             builder.append(" { ").append(decompiledComment).append(" }");
+            endOffset = builder.length();
         } else if (member instanceof PropertyDescriptor) {
             builder.append(" ").append(decompiledComment);
         }
         builder.append("\n\n");
+        return new TextRange(startOffset, endOffset);
     }
 }
