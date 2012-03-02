@@ -34,7 +34,6 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -131,7 +130,7 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
         return new JetHighlighter();
     }
 
-    @Nullable
+    @NotNull
     @Override
     public PsiFile getDecompiledPsiFile(PsiFile psiFile) {
         Project project = psiFile.getProject();
