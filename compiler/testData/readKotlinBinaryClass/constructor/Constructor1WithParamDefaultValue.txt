@@ -1,0 +1,5 @@
+namespace test
+
+final class test.ClassWithConstructorWithValueParamWithDefaultValue : jet.Any {
+    final /*constructor*/ fun <init>(/*0*/ p: jet.Int = ?): test.ClassWithConstructorWithValueParamWithDefaultValue
+}
