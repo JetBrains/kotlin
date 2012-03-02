@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -137,29 +138,23 @@ public class FunctionCodegen {
                     }
 
                     if(receiverParameter.exists()) {
-                        AnnotationVisitor av = mv.visitParameterAnnotation(start++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, "this$receiver");
-                        if(receiverParameter.getType().isNullable()) {
-                            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
-                        }
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_RECEIVER_FIELD, true);
+                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, start++);
+                        av.writeName("this$receiver");
+                        av.writeNullable(receiverParameter.getType().isNullable());
+                        av.writeReceiver();
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(0) != null) {
-                            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(0).getKotlinSignature());
+                            av.writeType(jvmSignature.getKotlinParameterTypes().get(0).getKotlinSignature());
                         }
                         av.visitEnd();
                     }
                     for(int i = 0; i != paramDescrs.size(); ++i) {
-                        AnnotationVisitor av = mv.visitParameterAnnotation(i + start, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
+                        JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                        av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, parameterDescriptor.getName());
-                        if(parameterDescriptor.hasDefaultValue()) {
-                            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, true);
-                        }
-                        if(parameterDescriptor.getType().isNullable()) {
-                            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NULLABLE_FIELD, true);
-                        }
+                        av.writeName(parameterDescriptor.getName());
+                        av.writeHasDefaultValue(parameterDescriptor.hasDefaultValue());
+                        av.writeNullable(parameterDescriptor.getType().isNullable());
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
-                            av.visit(JvmStdlibNames.JET_VALUE_PARAMETER_TYPE_FIELD, jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
+                            av.writeType(jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
                         }
                         av.visitEnd();
                     }

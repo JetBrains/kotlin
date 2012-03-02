@@ -27,6 +27,7 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
+import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -515,11 +516,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             for (ValueParameterDescriptor valueParameter : constructorDescriptor.getValueParameters()) {
-                AnnotationVisitor jetValueParameterAnnotation =
-                        mv.visitParameterAnnotation(i++, JvmStdlibNames.JET_VALUE_PARAMETER.getDescriptor(), true);
-                jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_NAME_FIELD, valueParameter.getName());
-                if(valueParameter.hasDefaultValue())
-                    jetValueParameterAnnotation.visit(JvmStdlibNames.JET_VALUE_PARAMETER_HAS_DEFAULT_VALUE_FIELD, Boolean.TRUE);
+                JetValueParameterAnnotationWriter jetValueParameterAnnotation = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i++);
+                jetValueParameterAnnotation.writeName(valueParameter.getName());
+                jetValueParameterAnnotation.writeHasDefaultValue(valueParameter.hasDefaultValue());
                 jetValueParameterAnnotation.visitEnd();
             }
         }
