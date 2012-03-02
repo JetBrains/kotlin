@@ -21,13 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class TraitTest extends TranslationTest {
 
-    final private static String MAIN = "trait/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public TraitTest() {
+        super("trait/");
     }
-
 
     public void testTraitAddsFunctionsToClass() throws Exception {
         checkFooBoxIsTrue("traitAddsFunctionsToClass.kt");

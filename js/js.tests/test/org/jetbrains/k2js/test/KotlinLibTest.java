@@ -17,21 +17,22 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
+import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import java.util.Arrays;
+
+import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 
 /**
  * @author Pavel Talanov
  */
 public final class KotlinLibTest extends TranslationTest {
 
-    final private static String MAIN = "kotlinLib/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public KotlinLibTest() {
+        super("kotlinLib/");
     }
 
     public void testKotlinJsLibRunsWithRhino() throws Exception {

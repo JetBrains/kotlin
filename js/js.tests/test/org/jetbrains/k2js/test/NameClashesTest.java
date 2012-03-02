@@ -21,11 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class NameClashesTest extends TranslationTest {
 
-    private static final String MAIN = "nameClashes/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public NameClashesTest() {
+        super("nameClashes/");
     }
 
     public void testMethodOverload() throws Exception {

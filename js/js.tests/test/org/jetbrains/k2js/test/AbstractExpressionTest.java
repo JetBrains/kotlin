@@ -16,15 +16,14 @@
 
 package org.jetbrains.k2js.test;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Pavel Talanov
  */
 public abstract class AbstractExpressionTest extends TranslationTest {
 
-    private static final String SUITE = "expression/";
-
-    @Override
-    protected String suiteDirectoryName() {
-        return SUITE;
+    public AbstractExpressionTest(@NotNull String main) {
+        super("expression/" + main);
     }
 }

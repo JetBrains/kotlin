@@ -20,11 +20,9 @@ package org.jetbrains.k2js.test;
  * @author Pavel Talanov
  */
 public final class ExtensionFunctionTest extends TranslationTest {
-    final private static String MAIN = "extensionFunction/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ExtensionFunctionTest() {
+        super("extensionFunction/");
     }
 
     public void testIntExtension() throws Exception {

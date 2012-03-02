@@ -21,13 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class PropertyAccessTest extends TranslationTest {
 
-    final private static String MAIN = "propertyAccess/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public PropertyAccessTest() {
+        super("propertyAccess/");
     }
-
 
     public void testAccessToInstanceProperty() throws Exception {
         checkFooBoxIsTrue("accessToInstanceProperty.kt");
@@ -40,7 +36,7 @@ public final class PropertyAccessTest extends TranslationTest {
 
 
     public void testSetter() throws Exception {
-        testFunctionOutput("setter.kt", "foo", "f", 99.0);
+        runFunctionOutputTest("setter.kt", "foo", "f", 99.0);
     }
 
 

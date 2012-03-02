@@ -23,11 +23,8 @@ import org.mozilla.javascript.JavaScriptException;
  */
 public final class ArrayListTest extends JavaClassesTest {
 
-    private static final String MAIN = "arrayList/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ArrayListTest() {
+        super("arrayList/");
     }
 
     public void testEmptyList() throws Exception {

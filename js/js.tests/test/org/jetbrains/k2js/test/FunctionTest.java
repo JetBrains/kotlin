@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public class FunctionTest extends AbstractExpressionTest {
 
-    final private static String MAIN = "function/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public FunctionTest() {
+        super("function/");
     }
 
     public void testFunctionUsedBeforeDeclaration() throws Exception {
@@ -61,7 +58,7 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testEnclosingThis() throws Exception {
-        testFunctionOutput("enclosingThis.kt", "Anonymous", "box", "OK");
+        runFunctionOutputTest("enclosingThis.kt", "Anonymous", "box", "OK");
     }
 
 

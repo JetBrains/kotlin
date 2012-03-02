@@ -21,13 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class RangeTest extends TranslationTest {
 
-    final private static String MAIN = "range/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public RangeTest() {
+        super("range/");
     }
-
 
     public void testExplicitRange() throws Exception {
         checkFooBoxIsTrue("explicitRange.kt");

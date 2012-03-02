@@ -25,15 +25,14 @@ import org.mozilla.javascript.JavaScriptException;
  *         most probably because that functionality has very little support
  */
 public final class MiscTest extends AbstractExpressionTest {
-    final private static String MAIN = "misc/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+
+    public MiscTest() {
+        super("misc/");
     }
 
     public void testLocalPropertys() throws Exception {
-        testFunctionOutput("localProperty.jet", "foo", "box", 50);
+        runFunctionOutputTest("localProperty.jet", "foo", "box", 50);
     }
 
     public void testIntRange() throws Exception {
@@ -46,7 +45,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        testFunctionOutput("classWithoutNamespace.kt", "Anonymous", "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", "Anonymous", "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {

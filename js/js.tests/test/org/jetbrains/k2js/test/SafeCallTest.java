@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public final class SafeCallTest extends TranslationTest {
 
-    final private static String MAIN = "safeCall/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public SafeCallTest() {
+        super("safeCall/");
     }
 
     public void testSafeAccess() throws Exception {

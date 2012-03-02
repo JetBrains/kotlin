@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public final class WebDemoExamples2Test extends TranslationTest {
 
-    final private static String MAIN = "webDemoExamples2/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public WebDemoExamples2Test() {
+        super("webDemoExamples2/");
     }
 
     public void testBottles() throws Exception {

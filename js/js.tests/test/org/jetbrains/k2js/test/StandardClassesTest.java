@@ -20,13 +20,10 @@ package org.jetbrains.k2js.test;
  * @author Pavel Talanov
  */
 public class StandardClassesTest extends TranslationTest {
-    final private static String MAIN = "standardClasses/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public StandardClassesTest() {
+        super("standardClasses/");
     }
-
 
     public void testArray() throws Exception {
         checkFooBoxIsTrue("array.kt");

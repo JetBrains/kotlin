@@ -20,11 +20,9 @@ package org.jetbrains.k2js.test;
  * @author Pavel Talanov
  */
 public final class ExtensionPropertyTest extends TranslationTest {
-    final private static String MAIN = "extensionProperty/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ExtensionPropertyTest() {
+        super("extensionProperty/");
     }
 
     public void testSimplePropertyWithGetter() throws Exception {

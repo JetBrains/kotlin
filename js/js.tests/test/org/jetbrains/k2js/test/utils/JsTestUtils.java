@@ -14,16 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.utils;
 
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class JavaClassesTest extends TranslationTest {
+public final class JsTestUtils {
 
-    public JavaClassesTest(@NotNull String main) {
-        super("java/" + main);
+    private JsTestUtils() {
+    }
+
+    public static String convertToDotJsFile(@NotNull String filename) {
+        return filename.substring(0, filename.lastIndexOf('.')) + ".js";
+    }
+
+    @NotNull
+    public static String readFile(@NotNull String path) throws IOException {
+        FileInputStream stream = new FileInputStream(new File(path));
+        try {
+            return FileUtil.loadTextAndClose(stream);
+        } finally {
+            stream.close();
+        }
     }
 }

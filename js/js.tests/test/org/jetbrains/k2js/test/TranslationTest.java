@@ -16,31 +16,28 @@
 
 package org.jetbrains.k2js.test;
 
-import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.TestConfig;
-import org.jetbrains.k2js.facade.K2JSTranslator;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
+import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
+import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
+import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
+import static org.jetbrains.k2js.test.utils.JsTestUtils.convertToDotJsFile;
+import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
+import static org.jetbrains.k2js.test.utils.TranslationUtils.translateFiles;
 
 //TODO: spread the test* methods amongst classes that actually use them
 
 /**
  * @author Pavel Talanov
  */
+@SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
 public abstract class TranslationTest extends BaseTest {
 
     private static final boolean DELETE_OUT = false;
@@ -50,17 +47,16 @@ public abstract class TranslationTest extends BaseTest {
     private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
     private static final String EXPECTED = "expected/";
 
-    public void translateFile(@NotNull String inputFile,
-                              @NotNull String outputFile) throws Exception {
-        translateFiles(Collections.singletonList(inputFile), outputFile);
+    @NotNull
+    private String mainDirectory = "";
+
+    public TranslationTest(@NotNull String main) {
+        this.mainDirectory = main;
     }
 
-    public void translateFiles(@NotNull List<String> inputFiles,
-                               @NotNull String outputFile) throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new TestConfig(getProject()));
-        List<JetFile> psiFiles = createPsiFileList(inputFiles, getProject());
-        JsProgram program = translator.generateProgram(psiFiles);
-        K2JSTranslator.saveProgramToFile(outputFile, program);
+    @NotNull
+    public String getMainDirectory() {
+        return mainDirectory;
     }
 
     @Override
@@ -80,6 +76,7 @@ public abstract class TranslationTest extends BaseTest {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        //noinspection ConstantConditions,PointlessBooleanExpression
         if (!shouldCreateOut() || !DELETE_OUT) {
             return;
         }
@@ -101,21 +98,20 @@ public abstract class TranslationTest extends BaseTest {
         return OUT;
     }
 
-    protected abstract String mainDirectory();
-
-    private String pathToTestFiles() {
-        return TEST_FILES + suiteDirectoryName() + mainDirectory();
+    private static String expectedDirectoryName() {
+        return EXPECTED;
     }
 
-    protected String suiteDirectoryName() {
-        return "";
+    @NotNull
+    private String pathToTestFiles() {
+        return TEST_FILES + getMainDirectory();
     }
 
     private String getOutputPath() {
         return pathToTestFiles() + outDirectoryName();
     }
 
-    protected String getInputPath() {
+    private String getInputPath() {
         return pathToTestFiles() + casesDirectoryName();
     }
 
@@ -123,21 +119,16 @@ public abstract class TranslationTest extends BaseTest {
         return pathToTestFiles() + expectedDirectoryName();
     }
 
-    @SuppressWarnings("MethodMayBeStatic")
-    private String expectedDirectoryName() {
-        return EXPECTED;
-    }
-
-    protected void testFunctionOutput(String filename, String namespaceName,
-                                      String functionName, Object expectedResult) throws Exception {
-        translateFile(filename);
+    protected void runFunctionOutputTest(String filename, String namespaceName,
+                                         String functionName, Object expectedResult) throws Exception {
+        generateJsFromFile(filename);
         runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     protected void testMultiFile(String dirName, String namespaceName,
                                  String functionName, Object expectedResult) throws Exception {
-        translateFilesInDir(dirName);
+        generateJsFromDir(dirName);
         runRhinoTest(generateFilenameList(getOutputFilePath(dirName + ".kt")),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
@@ -146,12 +137,11 @@ public abstract class TranslationTest extends BaseTest {
         return true;
     }
 
-    protected void translateFile(String filename) throws Exception {
-        translateFile(getInputFilePath(filename),
-                      getOutputFilePath(filename));
+    protected void generateJsFromFile(@NotNull String filename) throws Exception {
+        TranslationUtils.translateFile(getProject(), getInputFilePath(filename), getOutputFilePath(filename));
     }
 
-    protected void translateFilesInDir(String dirName) throws Exception {
+    protected void generateJsFromDir(@NotNull String dirName) throws Exception {
         String dirPath = getInputFilePath(dirName);
         File dir = new File(dirPath);
         List<String> fullFilePaths = new ArrayList<String>();
@@ -159,79 +149,44 @@ public abstract class TranslationTest extends BaseTest {
             fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
         }
         assert dir.isDirectory();
-        translateFiles(fullFilePaths,
-                       getOutputFilePath(dirName + ".kt"));
+        translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"));
     }
 
-    protected List<String> generateFilenameList(String inputFile) {
+    protected static List<String> generateFilenameList(@NotNull String inputFile) {
         return Arrays.asList(kotlinLibraryPath(), inputFile);
     }
 
-    //TODO: refactor filename generation logic
-    protected String getOutputFilePath(String filename) {
+    private String getOutputFilePath(@NotNull String filename) {
         return getOutputPath() + convertToDotJsFile(filename);
     }
 
-    private String convertToDotJsFile(String filename) {
-        return filename.substring(0, filename.lastIndexOf('.')) + ".js";
-    }
-
-    private String getInputFilePath(String filename) {
+    private String getInputFilePath(@NotNull String filename) {
         return getInputPath() + filename;
     }
 
-    protected String cases(String filename) {
+    protected String cases(@NotNull String filename) {
         return getInputFilePath(filename);
     }
 
-    private String expected(String testName) {
+    private String expected(@NotNull String testName) {
         return getExpectedPath() + testName + ".out";
     }
 
-    protected static void runFileWithRhino(String inputFile, Context context, Scriptable scope) throws Exception {
-        FileReader reader = new FileReader(inputFile);
-        try {
-            context.evaluateReader(scope, reader, inputFile, 1, null);
-        } finally {
-            reader.close();
-        }
+    public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
+        runFunctionOutputTest(filename, "foo", "box", true);
     }
 
-    protected static void runRhinoTest(@NotNull List<String> fileNames,
-                                       @NotNull RhinoResultChecker checker) throws Exception {
-        Context context = Context.enter();
-        Scriptable scope = context.initStandardObjects();
-        for (String filename : fileNames) {
-            runFileWithRhino(filename, context, scope);
-        }
-        checker.runChecks(context, scope);
-        Context.exit();
-    }
-
-    public void checkFooBoxIsTrue(String filename) throws Exception {
-        testFunctionOutput(filename, "foo", "box", true);
-    }
-
-    public void checkFooBoxIsOk(String filename) throws Exception {
-        testFunctionOutput(filename, "foo", "box", "OK");
+    public void checkFooBoxIsOk(@NotNull String filename) throws Exception {
+        runFunctionOutputTest(filename, "foo", "box", "OK");
     }
 
     protected void checkOutput(String filename, String expectedResult, String... args) throws Exception {
-        translateFile(filename);
+        generateJsFromFile(filename);
         runRhinoTest(generateFilenameList(getOutputFilePath(filename)),
                      new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
 
     protected void performTestWithMain(String testName, String testId, String... args) throws Exception {
         checkOutput(testName + ".kt", readFile(expected(testName + testId)), args);
-    }
-
-    private static String readFile(String path) throws IOException {
-        FileInputStream stream = new FileInputStream(new File(path));
-        try {
-            return FileUtil.loadTextAndClose(stream);
-        } finally {
-            stream.close();
-        }
     }
 }

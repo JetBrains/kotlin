@@ -16,16 +16,16 @@
 
 package org.jetbrains.k2js.test;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Pavel Talanov
  */
 public final class MultiFileTest extends TranslationTest {
 
-    final private static String MAIN = "multiFile/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public MultiFileTest() {
+        super("multiFile/");
     }
 
     public void testFunctionsVisibleFromOtherFile() throws Exception {
@@ -37,7 +37,7 @@ public final class MultiFileTest extends TranslationTest {
     }
 
     @Override
-    public void checkFooBoxIsTrue(String dirName) throws Exception {
+    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
         testMultiFile(dirName, "foo", "box", true);
     }
 }

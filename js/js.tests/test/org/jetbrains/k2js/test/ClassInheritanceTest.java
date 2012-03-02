@@ -21,15 +21,12 @@ package org.jetbrains.k2js.test;
  */
 public final class ClassInheritanceTest extends TranslationTest {
 
-    final private static String MAIN = "inheritance/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ClassInheritanceTest() {
+        super("inheritance/");
     }
 
     public void testInitializersOfBasicClassExecute() throws Exception {
-        testFunctionOutput("initializersOfBasicClassExecute.kt", "foo", "box", 3);
+        runFunctionOutputTest("initializersOfBasicClassExecute.kt", "foo", "box", 3);
     }
 
     public void testMethodOverride() throws Exception {

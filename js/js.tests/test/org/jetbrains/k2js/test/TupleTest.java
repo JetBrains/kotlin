@@ -21,11 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class TupleTest extends TranslationTest {
 
-    final private static String MAIN = "tuple/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public TupleTest() {
+        super("tuple/");
     }
 
     public void testTwoElements() throws Exception {

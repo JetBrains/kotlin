@@ -21,13 +21,9 @@ package org.jetbrains.k2js.test;
  */
 public final class OperatorOverloadingTest extends TranslationTest {
 
-    final private static String MAIN = "operatorOverloading/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public OperatorOverloadingTest() {
+        super("operatorOverloading/");
     }
-
 
     public void testPlusOverload() throws Exception {
         checkFooBoxIsTrue("plusOverload.kt");

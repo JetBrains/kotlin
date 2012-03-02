@@ -19,13 +19,10 @@ package org.jetbrains.k2js.test;
 /**
  * @author Pavel Talanov
  */
-public class StringTest extends AbstractExpressionTest {
+public final class StringTest extends AbstractExpressionTest {
 
-    final private static String MAIN = "string/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public StringTest() {
+        super("string/");
     }
 
     public void testStringConstant() throws Exception {
@@ -37,15 +34,15 @@ public class StringTest extends AbstractExpressionTest {
     }
 
     public void testIntInTemplate() throws Exception {
-        testFunctionOutput("intInTemplate.kt", "foo", "box", "my age is 3");
+        runFunctionOutputTest("intInTemplate.kt", "foo", "box", "my age is 3");
     }
 
     public void testStringInTemplate() throws Exception {
-        testFunctionOutput("stringInTemplate.kt", "foo", "box", "oHelloo");
+        runFunctionOutputTest("stringInTemplate.kt", "foo", "box", "oHelloo");
     }
 
     public void testMultipleExpressionInTemplate() throws Exception {
-        testFunctionOutput("multipleExpressionsInTemplate.kt", "foo", "box", "left = 3\nright = 2\nsum = 5\n");
+        runFunctionOutputTest("multipleExpressionsInTemplate.kt", "foo", "box", "left = 3\nright = 2\nsum = 5\n");
     }
 
     public void testToStringMethod() throws Exception {

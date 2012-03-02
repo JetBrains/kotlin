@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public final class ForeachTest extends AbstractExpressionTest {
 
-    final private static String MAIN = "for/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ForeachTest() {
+        super("for/");
     }
 
     public void testForIteratesOverArray() throws Exception {

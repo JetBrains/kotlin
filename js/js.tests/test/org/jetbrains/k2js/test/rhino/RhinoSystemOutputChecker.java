@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.utils.GenerationUtils;

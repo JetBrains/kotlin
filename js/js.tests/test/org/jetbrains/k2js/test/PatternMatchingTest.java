@@ -23,11 +23,8 @@ import org.mozilla.javascript.JavaScriptException;
  */
 public final class PatternMatchingTest extends TranslationTest {
 
-    final private static String MAIN = "patternMatching/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public PatternMatchingTest() {
+        super("patternMatching/");
     }
 
     public void testWhenType() throws Exception {
@@ -59,7 +56,7 @@ public final class PatternMatchingTest extends TranslationTest {
     }
 
     public void testMultipleCases() throws Exception {
-        testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
+        runFunctionOutputTest("multipleCases.kt", "foo", "box", 2.0);
     }
 
     public void testMatchNullableType() throws Exception {

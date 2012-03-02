@@ -16,15 +16,16 @@
 
 package org.jetbrains.k2js.test;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Pavel Talanov
  */
 public class MultiNamespaceTest extends TranslationTest {
-    final private static String MAIN = "multiNamespace/";
 
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+
+    public MultiNamespaceTest() {
+        super("multiNamespace/");
     }
 
     public void testFunctionsVisibleFromOtherNamespace() throws Exception {
@@ -36,7 +37,7 @@ public class MultiNamespaceTest extends TranslationTest {
     }
 
     @Override
-    public void checkFooBoxIsTrue(String dirName) throws Exception {
+    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
         testMultiFile(dirName, "foo", "box", true);
     }
 }

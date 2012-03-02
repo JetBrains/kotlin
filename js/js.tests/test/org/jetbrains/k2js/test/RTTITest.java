@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public class RTTITest extends TranslationTest {
 
-    final private static String MAIN = "rtti/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public RTTITest() {
+        super("rtti/");
     }
 
     public void testIsSameClass() throws Exception {

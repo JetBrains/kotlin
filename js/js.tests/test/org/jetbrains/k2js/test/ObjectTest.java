@@ -21,11 +21,8 @@ package org.jetbrains.k2js.test;
  */
 public final class ObjectTest extends TranslationTest {
 
-    private static final String MAIN = "object/";
-
-    @Override
-    protected String mainDirectory() {
-        return MAIN;
+    public ObjectTest() {
+        super("object/");
     }
 
     public void testObjectWithMethods() throws Exception {

@@ -44,21 +44,21 @@ public abstract class TranslatorTestCaseBuilder {
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath,
+    public static TestSuite suiteForDirectory(@NotNull final String dataPath,
                                               boolean recursive, @NotNull NamedTestFactory factory) {
-        return suiteForDirectory(baseDataDir, dataPath, recursive, emptyFilter, factory);
+        return suiteForDirectory(dataPath, recursive, emptyFilter, factory);
     }
 
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
+    public static TestSuite suiteForDirectory(@NotNull final String dataPath, boolean recursive,
                                               final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         suite.setName(dataPath);
-        appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
+        appendTestsInDirectory(dataPath, recursive, filter, factory, suite);
         return suite;
     }
 
-    public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive,
+    public static void appendTestsInDirectory(String dataPath, boolean recursive,
                                               final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
         final String extensionJet = ".jet";
         final String extensionKt = ".kt";
@@ -80,7 +80,7 @@ public abstract class TranslatorTestCaseBuilder {
         else {
             resultFilter = extensionFilter;
         }
-        File dir = new File(baseDataDir + dataPath);
+        File dir = new File(dataPath);
         FileFilter dirFilter = new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -93,7 +93,7 @@ public abstract class TranslatorTestCaseBuilder {
             List<File> subdirs = Arrays.asList(files);
             Collections.sort(subdirs);
             for (File subdir : subdirs) {
-                suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory));
+                suite.addTest(suiteForDirectory(dataPath + "/" + subdir.getName(), recursive, filter, factory));
             }
         }
         List<File> files = Arrays.asList(dir.listFiles(resultFilter));
