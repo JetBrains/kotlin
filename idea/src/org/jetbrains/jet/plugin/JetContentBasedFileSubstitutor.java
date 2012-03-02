@@ -22,17 +22,9 @@ import com.intellij.openapi.fileTypes.ContentBasedClassFileProcessor;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.compiled.ClassFileStubBuilder;
 import com.intellij.psi.impl.compiled.ClsAnnotationImpl;
-import com.intellij.psi.impl.compiled.ClsFileImpl;
-import com.intellij.psi.impl.java.stubs.ClsStubPsiFactory;
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
-import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
-import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -41,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -52,7 +43,33 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
     @Override
     public boolean isApplicable(Project project, VirtualFile vFile) {
-        return isKotlinClass(project, vFile);
+        if (!FileTypeManager.getInstance().isFileOfType(vFile, JavaClassFileType.INSTANCE)) {
+            return false;
+        }
+        PsiClassOwner clsFile = (PsiClassOwner) PsiManager.getInstance(project).findFile(vFile);
+        if (clsFile == null) {
+            return false;
+        }
+        // TODO multiple?
+        if (clsFile.getClasses().length != 1) {
+            throw new AssertionError("Multiple classes in file: " + Arrays.toString(clsFile.getClasses()));
+        }
+        PsiClass psiClass = clsFile.getClasses()[0];
+        // TODO add better check
+        if (psiClass.getName().equals("namespace")) {
+            return true;
+        }
+        PsiModifierList modifierList = psiClass.getModifierList();
+        if (modifierList != null) {
+            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
+                if (annotation instanceof ClsAnnotationImpl) {
+                    if (((ClsAnnotationImpl) annotation).getStub().getText().startsWith("@jet.runtime.typeinfo.JetClass")) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @NotNull
@@ -64,20 +81,24 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
                 project,
                 JetSemanticServices.createSemanticServices(project),
                 new BindingTraceContext());
-        PsiJavaFileStub js = getJavaStub(project, file);
-        if (js != null) {
+        PsiClassOwner clsFile = (PsiClassOwner) PsiManager.getInstance(project).findFile(file);
+        if (clsFile != null) {
             builder.append(PsiBundle.message("psi.decompiled.text.header"));
             builder.append("\n\n");
 
-            if (js.getPackageName() != null && js.getPackageName().length() > 0) {
-                builder.append("package ").append(js.getPackageName()).append("\n\n");
+            String packageName = clsFile.getPackageName();
+            if (packageName == null) {
+                packageName = "";
+            }
+            if (packageName.length() > 0) {
+                builder.append("package ").append(packageName).append("\n\n");
             }
 
-            PsiClass psiClass = js.getClasses()[0];
+            PsiClass psiClass = clsFile.getClasses()[0];
             JavaDescriptorResolver jdr = jss.getDescriptorResolver();
 
             if (psiClass.getName().equals("namespace")) { // TODO better check for namespace
-                NamespaceDescriptor nd = jdr.resolveNamespace(js.getPackageName());
+                NamespaceDescriptor nd = jdr.resolveNamespace(packageName);
 
                 if (nd != null) {
                     for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
@@ -137,62 +158,5 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
         String text = obtainFileText(project, psiFile.getVirtualFile());
         return PsiFileFactory.getInstance(project).createFileFromText("", JetLanguage.INSTANCE, text);
     }
-
-    private static boolean isKotlinClass(Project project, VirtualFile file) {
-        if (!FileTypeManager.getInstance().isFileOfType(file, JavaClassFileType.INSTANCE)) {
-            return false;
-        }
-        PsiJavaFileStub javaStub = getJavaStub(project, file);
-        if (javaStub == null) {
-            return false;
-        }
-        // TODO multiple?
-        if (javaStub.getClasses().length != 1) {
-            throw new AssertionError("Multiple classes in file: " + Arrays.toString(javaStub.getClasses()));
-        }
-        PsiClass psiClass = javaStub.getClasses()[0];
-        // TODO add better check
-        if (psiClass.getName().equals("namespace")) {
-            return true;
-        }
-        PsiModifierList modifierList = psiClass.getModifierList();
-        if (modifierList != null) {
-            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
-                if (annotation instanceof ClsAnnotationImpl) {
-                    if (((ClsAnnotationImpl) annotation).getStub().getText().startsWith("@jet.runtime.typeinfo.JetClass")) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static PsiJavaFileStub getJavaStub(Project project, VirtualFile file) {
-        try {
-            byte[] bytes = StreamUtil.loadFromStream(file.getInputStream());
-            final PsiJavaFileStubImpl stub = (PsiJavaFileStubImpl) new ClassFileStubBuilder().buildStubTree(file, bytes, project);
-            if (stub == null) {
-                return null;
-            }
-            stub.setPsiFactory(new ClsStubPsiFactory()); // TODO is it needed?
-            PsiManagerImpl manager = (PsiManagerImpl) PsiManager.getInstance(project);
-            ClsFileImpl fakeFile = new ClsFileImpl(manager, new ClassFileViewProvider(manager, file)) {
-                @NotNull
-                @Override
-                public PsiClassHolderFileStub getStub() {
-                    return stub;
-                }
-            };
-
-            fakeFile.setPhysical(false);
-            stub.setPsi(fakeFile);
-            return stub;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-
 }
 
