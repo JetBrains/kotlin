@@ -169,13 +169,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return classOrObject != null;
     }
 
+    protected abstract String getNoMethodsFoundHint();
+
     public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file,
                        boolean implementAll) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {
-            HintManager.getInstance().showErrorHint(editor, "No methods to implement have been found");
+            HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
             return;
         }
         List<DescriptorClassMember> members = membersFromDescriptors(missingImplementations);
