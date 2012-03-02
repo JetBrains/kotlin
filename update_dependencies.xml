@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="build.zip" value="ideaIC-114.SNAPSHOT.win.zip"/>
+    <property name="build.zip" value="ideaIC-116.SNAPSHOT.win.zip"/>
 
     <target name="update">
         <execute_update/>
