@@ -1,4 +1,4 @@
-package org.jetbrains.k2js.translate.intrinsic.array;
+package org.jetbrains.k2js.translate.intrinsic;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
@@ -6,7 +6,6 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
 
 import java.util.List;
 
@@ -30,9 +29,9 @@ public final class BuiltInPropertyIntrinsic implements Intrinsic {
     public JsExpression apply(@Nullable JsExpression receiver, @NotNull List<JsExpression> arguments,
                               @NotNull TranslationContext context) {
         assert receiver != null;
-        assert arguments.isEmpty() : "Length expression must have zero arguments.";
-        JsNameRef lengthProperty = AstUtil.newQualifiedNameRef(propertyName);
-        setQualifier(lengthProperty, receiver);
-        return lengthProperty;
+        assert arguments.isEmpty() : "Properties can't have arguments.";
+        JsNameRef propertyReference = AstUtil.newQualifiedNameRef(propertyName);
+        setQualifier(propertyReference, receiver);
+        return propertyReference;
     }
 }

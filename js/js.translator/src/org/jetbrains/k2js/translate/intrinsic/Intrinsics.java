@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.types.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.array.BuiltInPropertyIntrinsic;
-import org.jetbrains.k2js.translate.intrinsic.array.CallStandardMethodIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.CharAtIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
@@ -83,6 +81,8 @@ public final class Intrinsics {
         declareArrayIntrinsics();
         FunctionDescriptor intToDouble = getFunctionByName(library.getInt().getDefaultType().getMemberScope(), "toDouble");
         functionIntrinsics.put(intToDouble, ReturnReceiverIntrinsic.INSTANCE);
+        FunctionDescriptor toStringFunction = getFunctionByName(library.getLibraryScope(), "toString");
+        functionIntrinsics.put(toStringFunction, new BuiltInFunctionIntrinsic("toString"));
     }
 
     @NotNull

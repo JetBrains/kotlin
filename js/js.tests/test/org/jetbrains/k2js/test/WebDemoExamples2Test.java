@@ -41,10 +41,4 @@ public final class WebDemoExamples2Test extends TranslationTest {
         performTestWithMain("builder", "");
         performTestWithMain("builder", "1", "over9000");
     }
-
-    //TODO: comparator LinkedList dependencies
-//    @Test
-//    public void maze() throws Exception {
-//        performTestWithMain("maze", "");
-//    }
 }

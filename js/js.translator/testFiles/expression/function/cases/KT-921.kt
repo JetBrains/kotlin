@@ -47,7 +47,7 @@ fun<T> Dump(items:ArrayList<T>)
 {
   for(item in items)
    print(item.toString() + ", ")
-  println()
+  println("end")
 }
 
 fun main(args:Array<String>)
@@ -56,12 +56,13 @@ fun main(args:Array<String>)
   val x = ArrayList<Int>()
   v.add(1)
   v.add(2)
+  v.add(3)
   lifetime( 
   {
     v.view(it, {(itemLifetime, item)->
       x.add(item)
       Dump(x)          
-      itemLifetime.attach { x.remove(item as Any); Dump(x) }
+      itemLifetime.attach { x.remove(item as Any); Dump(x); println("!") }
     })
   })
 }
