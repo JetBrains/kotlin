@@ -2,7 +2,7 @@ abstract class ClassValAbstract {
     abstract val a: Int
 
     class object {
-        val methods = (this as java.lang.Object).getClass()?.classLoader?.loadClass("ClassValAbstract")?.getMethods()
+        val methods = (this as java.lang.Object).getClass()?.getClassLoader()?.loadClass("ClassValAbstract")?.getMethods()
     }
 }
 

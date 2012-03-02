@@ -12,49 +12,49 @@ public val suite : TestSuite? = testSuite<Int>("test group") {
     setUp = {
         staticState += 10
         state = staticState
-        println("test '$name' started")
+        println("test '${getName()}' started")
     }
 
     tearDown = {
-        println("test '$name' ended")
+        println("test '${getName()}' ended")
     }
 
     "test 1" - {
         Assert.assertEquals(state, 20)
-        println("test '$name': state: $state")
+        println("test '${getName()}': state: $state")
     }
 
     "test 2" - {
         assert(state == 31, "message")
-        println("test '$name': state: $state")
+        println("test '${getName()}': state: $state")
     }
 
     "test 3" - {
         Assert.assertEquals(state, 40)
-        println("test '$name': state: $state")
+        println("test '${getName()}': state: $state")
     }
 
     testSuite<Any>("nested test suite") {
         setUp = {
             staticState += 10
             state = staticState
-            println("nested test '$name' started")
+            println("nested test '${getName()}' started")
         }
 
         tearDown = {
-            println("nested test '$name' ended")
+            println("nested test '${getName()}' ended")
         }
 
         "nested test 1" - {
-            println("test '$name'")
+            println("test '${getName()}'")
         }
 
         "nested test 2" - {
-            println("test '$name'")
+            println("test '${getName()}'")
         }
 
         "nested test 3" - {
-            println("test '$name'")
+            println("test '${getName()}'")
         }
     }
 }
