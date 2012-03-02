@@ -28,7 +28,6 @@ public final class ObjectTest extends TranslationTest {
         return MAIN;
     }
 
-
     public void testObjectWithMethods() throws Exception {
         checkFooBoxIsTrue("objectWithMethods.kt");
     }

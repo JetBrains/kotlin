@@ -18,7 +18,8 @@ package org.jetbrains.k2js.test;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.UsefulTestCase;
-import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 
@@ -26,10 +27,13 @@ import org.jetbrains.jet.compiler.JetCoreEnvironment;
  * @author Pavel Talanov
  */
 public abstract class BaseTest extends UsefulTestCase {
-    @NonNls
+
+    @Nullable
     protected JetCoreEnvironment myEnvironment;
 
+    @NotNull
     public Project getProject() {
+        assert myEnvironment != null : "Environment should be created beforehand.";
         return myEnvironment.getProject();
     }
 

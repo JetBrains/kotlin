@@ -16,6 +16,8 @@
 
 package org.jetbrains.k2js.test;
 
+import org.mozilla.javascript.JavaScriptException;
+
 /**
  * @author Pavel Talanov
  *         <p/>
@@ -45,5 +47,14 @@ public final class MiscTest extends AbstractExpressionTest {
 
     public void testClassWithoutNamespace() throws Exception {
         testFunctionOutput("classWithoutNamespace.kt", "Anonymous", "box", true);
+    }
+
+    public void testIfElseAsExpressionWithThrow() throws Exception {
+        try {
+            checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            fail();
+        } catch (JavaScriptException e) {
+
+        }
     }
 }

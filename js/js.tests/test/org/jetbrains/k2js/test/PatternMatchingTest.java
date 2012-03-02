@@ -30,57 +30,47 @@ public final class PatternMatchingTest extends TranslationTest {
         return MAIN;
     }
 
-
     public void testWhenType() throws Exception {
         checkFooBoxIsTrue("whenType.kt");
     }
-
 
     public void testWhenNotType() throws Exception {
         checkFooBoxIsTrue("whenNotType.kt");
     }
 
-
     public void testWhenExecutesOnlyOnce() throws Exception {
         checkFooBoxIsTrue("whenExecutesOnlyOnce.kt");
     }
-
 
     public void testWhenValue() throws Exception {
         checkFooBoxIsTrue("whenValue.kt");
     }
 
-
     public void testWhenNotValue() throws Exception {
         checkFooBoxIsTrue("whenNotValue.kt");
     }
-
 
     public void testWhenValueOrType() throws Exception {
         checkFooBoxIsTrue("whenValueOrType.kt");
     }
 
-
     public void testWhenWithIf() throws Exception {
         checkFooBoxIsTrue("whenWithIf.kt");
     }
-
 
     public void testMultipleCases() throws Exception {
         testFunctionOutput("multipleCases.kt", "foo", "box", 2.0);
     }
 
-
     public void testMatchNullableType() throws Exception {
         checkFooBoxIsTrue("matchNullableType.kt");
     }
-
 
     public void testWhenAsExpression() throws Exception {
         checkFooBoxIsTrue("whenAsExpression.kt");
     }
 
-    public void whenAsExpressionWithThrow() throws Exception {
+    public void testWhenAsExpressionWithThrow() throws Exception {
         try {
             checkFooBoxIsTrue("whenAsExpressionWithThrow.kt");
             fail();

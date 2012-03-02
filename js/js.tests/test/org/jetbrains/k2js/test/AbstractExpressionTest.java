@@ -21,7 +21,7 @@ package org.jetbrains.k2js.test;
  */
 public abstract class AbstractExpressionTest extends TranslationTest {
 
-    private final String SUITE = "expression/";
+    private static final String SUITE = "expression/";
 
     @Override
     protected String suiteDirectoryName() {
