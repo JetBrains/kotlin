@@ -51,6 +51,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -135,7 +136,7 @@ class NamespaceComparator {
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
             compareDeclarationSets(fa, fb, sb);
         }
-        
+
         return sb.toString();
     }
 
@@ -155,7 +156,7 @@ class NamespaceComparator {
             strings.add(sb.toString());
         }
 
-        Collections.sort(strings);
+        Collections.sort(strings, new MemberComparator());
 
         StringBuilder r = new StringBuilder();
         for (String string : strings) {
@@ -163,6 +164,25 @@ class NamespaceComparator {
             r.append("\n");
         }
         return r.toString();
+    }
+
+    /**
+     * This comparator only affects test output, you can drop it if you don't want to understand it.
+     */
+    private static class MemberComparator implements Comparator<String> {
+
+        @NotNull
+        private String normalize(String s) {
+            return s.replaceFirst(
+                    "^ *(private|final|abstract|open|override|fun|val|var|/\\*.*?\\*/|((?!<init>)<.*?>)| )*",
+                    "")
+               + s;
+        }
+
+        @Override
+        public int compare(@NotNull String a, @NotNull String b) {
+            return normalize(a).compareTo(normalize(b));
+        }
     }
 
     private void compareClassifiers(@NotNull ClassifierDescriptor a, @NotNull ClassifierDescriptor b, @NotNull StringBuilder sb) {
@@ -226,7 +246,7 @@ class NamespaceComparator {
                 new Serializer(sb).serializeSeparated(fun.getAnnotations(), " ");
                 sb.append(" ");
             }
-            
+
             if (!fun.getOverriddenDescriptors().isEmpty()) {
                 sb.append("override /*" + fun.getOverriddenDescriptors().size() + "*/ ");
             }
@@ -500,7 +520,7 @@ class NamespaceComparator {
                 serializeCommaSeparated(klass.getTypeConstructor().getParameters());
                 sb.append(">");
             }
-            
+
             if (!klass.getTypeConstructor().getSupertypes().isEmpty()) {
                 sb.append(" : ");
                 new Serializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
@@ -533,12 +553,12 @@ class NamespaceComparator {
                 memberStrings.add(memberSb.toString());
             }
 
-            Collections.sort(memberStrings);
+            Collections.sort(memberStrings, new MemberComparator());
 
             for (String memberString : memberStrings) {
                 sb.append(indent(memberString));
             }
-            
+
             if (klass.getClassObjectDescriptor() != null) {
                 StringBuilder sbForClassObject = new StringBuilder();
                 new FullContentSerialier(sbForClassObject).serialize(klass.getClassObjectDescriptor());
