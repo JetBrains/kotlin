@@ -36,6 +36,8 @@ class Boolean : Comparable<Boolean> {
   fun xor(other : Boolean) : Boolean
 
   fun equals(other : Any?) : Boolean
+
+  override fun compareTo(that : Boolean) : Int
 }
 
 trait CharSequence {
@@ -50,6 +52,11 @@ class String() : Comparable<String>, CharSequence {
   fun plus(other : Any?) : String
 
   fun equals(other : Any?) : Boolean
+
+  override fun compareTo(that : String) : Int
+  override fun get(index : Int) : Char
+  override fun toString() : String
+  override val length: Int
 }
 
 open class Throwable(message : String? = null, cause: Throwable? = null) {

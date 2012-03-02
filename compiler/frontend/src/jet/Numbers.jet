@@ -93,6 +93,17 @@ class Double : Number, Comparable<Double>  {
   fun dec() : Double
   fun plus() : Double
   fun minus() : Double
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Float : Number, Comparable<Float>  {
@@ -172,6 +183,17 @@ class Float : Number, Comparable<Float>  {
   fun dec() : Float
   fun plus() : Float
   fun minus() : Float
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Long : Number, Comparable<Long> {
@@ -259,6 +281,17 @@ class Long : Number, Comparable<Long> {
   fun or(other : Long) : Long
   fun xor(other : Long) : Long
   fun inv() : Long
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Int : Number, Comparable<Int> {
@@ -346,6 +379,17 @@ class Int : Number, Comparable<Int> {
   fun or(other : Int) : Int
   fun xor(other : Int) : Int
   fun inv() : Int
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Char : Number, Comparable<Char> {
@@ -425,6 +469,17 @@ class Char : Number, Comparable<Char> {
   fun dec() : Char
   fun plus() : Int
   fun minus() : Int
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Short : Number, Comparable<Short> {
@@ -504,6 +559,17 @@ class Short : Number, Comparable<Short> {
   fun dec() : Short
   fun plus() : Short
   fun minus() : Short
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }
 
 class Byte : Number, Comparable<Byte> {
@@ -583,4 +649,15 @@ class Byte : Number, Comparable<Byte> {
   fun dec() : Byte
   fun plus() : Byte
   fun minus() : Byte
+
+  override fun toDouble() : Double
+  override fun toFloat() : Float
+  override fun toLong() : Long
+  override fun toInt() : Int
+  override fun toChar() : Char
+  override fun toShort() : Short
+  override fun toByte() : Byte
+
+  override fun hashCode() : Int
+  override fun equals(val other : Any?) : Boolean
 }

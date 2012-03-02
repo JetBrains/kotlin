@@ -5,9 +5,9 @@ trait Range<in T : Comparable<T>> {
 }
 
 class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
-    fun iterator () : IntIterator
+    override fun iterator () : IntIterator
 
-    fun contains (elem: Int) : Boolean
+    override fun contains (elem: Int) : Boolean
 
     val end : Int
 
@@ -21,9 +21,9 @@ class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
 }
 
 class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
-    fun iterator () : LongIterator
+    override fun iterator () : LongIterator
 
-    fun contains (elem: Long) : Boolean
+    override fun contains (elem: Long) : Boolean
 
     val iteratorStart : Long
 
@@ -37,9 +37,9 @@ class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
 }
 
 class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
-    fun iterator () : ByteIterator
+    override fun iterator () : ByteIterator
 
-    fun contains (elem: Byte) : Boolean
+    override fun contains (elem: Byte) : Boolean
 
     val end : Byte
 
@@ -53,9 +53,9 @@ class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
 }
 
 class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterable {
-    fun iterator () : ShortIterator
+    override fun iterator () : ShortIterator
 
-    fun contains (elem: Byte) : Boolean
+    override fun contains (elem: Short) : Boolean
 
     val iteratorStart : Short
 
@@ -69,9 +69,9 @@ class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterabl
 }
 
 class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
-    fun iterator () : CharIterator
+    override fun iterator () : CharIterator
 
-    fun contains (elem: Char) : Boolean
+    override fun contains (elem: Char) : Boolean
 
     val iteratorStart : Char
 
@@ -85,7 +85,7 @@ class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
 }
 
 class FloatRange(val start : Float, val size : Float) : Range<Float> {
-    fun contains (elem: Float) : Boolean
+    override fun contains (elem: Float) : Boolean
 
     val end : Float
 
@@ -97,7 +97,7 @@ class FloatRange(val start : Float, val size : Float) : Range<Float> {
 }
 
 class DoubleRange(val start : Double, val size : Double) : Range<Double> {
-    fun contains (elem: Double) : Boolean
+    override fun contains (elem: Double) : Boolean
 
     val end : Double
 
