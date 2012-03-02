@@ -53,18 +53,6 @@ public final class PropertyAccessTest extends TranslationTest {
         checkFooBoxIsTrue("customSetter.kt");
     }
 
-
-    public void testSafeCall() throws Exception {
-        checkFooBoxIsTrue("safeCall.kt");
-    }
-
-
-    //TODO: place safecalls under distinkt category
-    public void testSafeCallReturnsNullIfFails() throws Exception {
-        checkFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
-    }
-
-
     public void testNamespacePropertyInitializer() throws Exception {
         checkFooBoxIsTrue("namespacePropertyInitializer.kt");
     }
@@ -81,15 +69,6 @@ public final class PropertyAccessTest extends TranslationTest {
 
     public void testClassUsesNamespaceProperties() throws Exception {
         checkFooBoxIsTrue("classUsesNamespaceProperties.kt");
-    }
-
-
-    public void testSafeAccess() throws Exception {
-        checkFooBoxIsTrue("safeAccess.kt");
-    }
-
-    public void testSafeExtensionFunctionCall() throws Exception {
-        checkFooBoxIsOk("safeExtensionFunctionCall.kt");
     }
 
     public void testExtensionLiteralSafeCall() throws Exception {

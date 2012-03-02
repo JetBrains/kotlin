@@ -99,7 +99,7 @@ public class FunctionTest extends AbstractExpressionTest {
         try {
             checkOutput("KT-921.kt", "");
         } catch (Throwable e) {
-            System.out.println(e);
+            fail();
         }
     }
 
