@@ -22,7 +22,7 @@ import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetClassObject;
 
 import java.util.Collection;
 
@@ -30,12 +30,11 @@ import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.canReprese
 import static org.jetbrains.jet.plugin.projectView.JetProjectViewUtil.getClassOrObjectChildren;
 
 /**
- * User: Alefas
- * Date: 15.02.12
+ * @author slukjanov aka Frostman
  */
-public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObject> {
-    protected JetClassOrObjectTreeNode(Project project, JetClassOrObject jetClassOrObject, ViewSettings viewSettings) {
-        super(project, jetClassOrObject, viewSettings);
+public class JetClassObjectTreeNode extends AbstractPsiBasedNode<JetClassObject> {
+    protected JetClassObjectTreeNode(Project project, JetClassObject classObject, ViewSettings viewSettings) {
+        super(project, classObject, viewSettings);
     }
 
     @Override
@@ -45,15 +44,12 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
 
     @Override
     protected Collection<AbstractTreeNode> getChildrenImpl() {
-        return getClassOrObjectChildren(getValue(), getProject(), getSettings());
+        return getClassOrObjectChildren(getValue().getObjectDeclaration(), getProject(), getSettings());
     }
 
     @Override
     protected void updateImpl(PresentationData data) {
-        JetClassOrObject value = getValue();
-        if (value != null) {
-            data.setPresentableText(value.getName());
-        }
+        data.setPresentableText("<class object>");
     }
 
     @Override
