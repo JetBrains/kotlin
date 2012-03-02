@@ -31,10 +31,10 @@ import static org.jetbrains.k2js.test.utils.JsTestUtils.convertToDotJsFile;
 public abstract class BasicTest extends TestWithEnvironment {
 
     private static final boolean DELETE_OUT = false;
-    public static final String TEST_FILES = "js.translator/testFiles/";
+    private static final String TEST_FILES = "js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
-    private static final String KOTLIN_JS_LIB = TEST_FILES + "kotlin_lib.js";
+    private static final String KOTLIN_JS_LIB = pathToTestFilesRoot() + "kotlin_lib.js";
     private static final String EXPECTED = "expected/";
 
     @NotNull
@@ -99,7 +99,12 @@ public abstract class BasicTest extends TestWithEnvironment {
 
     @NotNull
     private String pathToTestFiles() {
-        return TEST_FILES + getMainDirectory();
+        return pathToTestFilesRoot() + getMainDirectory();
+    }
+
+    @NotNull
+    protected static String pathToTestFilesRoot() {
+        return TEST_FILES;
     }
 
     private String getOutputPath() {

@@ -55,12 +55,11 @@ public abstract class SuiteBuilder extends SingleFileTranslationTest {
         }
     }
 
-
     public static Test suiteForDirectory(@NotNull final String main, @NotNull final SuiteBuilder.Tester testMethod) throws Exception {
         final SuiteBuilder singleFileTest = new SuiteBuilder(main) {
         };
         singleFileTest.setUp();
-        return TranslatorTestCaseBuilder.suiteForDirectory(TEST_FILES + main + casesDirectoryName(),
+        return TranslatorTestCaseBuilder.suiteForDirectory(pathToTestFilesRoot() + main + casesDirectoryName(),
                                                            true,
                                                            new TranslatorTestCaseBuilder.NamedTestFactory() {
                                                                @NotNull
