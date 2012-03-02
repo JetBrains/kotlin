@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.k2js.test.config;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.FileInputStream;

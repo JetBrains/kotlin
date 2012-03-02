@@ -20,8 +20,8 @@ import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.config.TestConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.k2js.test.config.TestConfig;
 
 import java.util.Collections;
 import java.util.List;
