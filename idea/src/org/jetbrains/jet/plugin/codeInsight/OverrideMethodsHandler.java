@@ -44,4 +44,9 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     protected String getChooserTitle() {
         return "Override Members";
     }
+
+    @Override
+    protected String getNoMethodsFoundHint() {
+        return "No methods to override have been found";
+    }
 }

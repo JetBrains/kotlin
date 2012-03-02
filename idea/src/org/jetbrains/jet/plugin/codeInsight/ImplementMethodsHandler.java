@@ -44,6 +44,11 @@ public class ImplementMethodsHandler extends OverrideImplementMethodsHandler imp
         return "Implement Members";
     }
 
+    @Override
+    protected String getNoMethodsFoundHint() {
+        return "No methods to implement have been found";
+    }
+
     @NotNull
     @Override
     public String getText() {
