@@ -167,20 +167,21 @@ public class CompileEnvironment {
         return null;
     }
 
-    public boolean compileModuleScript(String moduleFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        List<Module> modules = loadModuleScript(moduleFile);
+    public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
+        List<Module> modules = loadModuleScript(moduleScriptFile);
 
         if (modules == null) {
-            throw new CompileEnvironmentException("Module script " + moduleFile + " compilation failed");
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
         }
 
         if (modules.isEmpty()) {
-            throw new CompileEnvironmentException("No modules where defined by " + moduleFile);
+            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
         }
 
-        final String directory = new File(moduleFile).getParent();
+        final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
-            ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
+            CompileEnvironment compileEnvironment = new CompileEnvironment(myFileNameTransformer, myMessageRenderer);
+            ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
             }
