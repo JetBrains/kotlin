@@ -16,11 +16,12 @@
 
 package org.jetbrains.k2js.test;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertToDotJsFile;
@@ -81,8 +82,8 @@ public abstract class BasicTest extends TestWithEnvironment {
         assert success;
     }
 
-    protected static String kotlinLibraryPath() {
-        return KOTLIN_JS_LIB;
+    protected List<String> additionalJSFiles() {
+        return Collections.singletonList(KOTLIN_JS_LIB);
     }
 
     protected static String casesDirectoryName() {
@@ -98,7 +99,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    private String pathToTestFiles() {
+    protected String pathToTestFiles() {
         return pathToTestFilesRoot() + getMainDirectory();
     }
 
@@ -107,34 +108,44 @@ public abstract class BasicTest extends TestWithEnvironment {
         return TEST_FILES;
     }
 
+    @NotNull
     private String getOutputPath() {
         return pathToTestFiles() + outDirectoryName();
     }
 
+    @NotNull
     private String getInputPath() {
         return pathToTestFiles() + casesDirectoryName();
     }
 
+    @NotNull
     private String getExpectedPath() {
         return pathToTestFiles() + expectedDirectoryName();
     }
 
-    protected static List<String> withKotlinJsLib(@NotNull String inputFile) {
-        return Arrays.asList(kotlinLibraryPath(), inputFile);
+    @NotNull
+    protected List<String> withAdditionalFiles(@NotNull String inputFile) {
+        List<String> allFiles = Lists.newArrayList(additionalJSFiles());
+        allFiles.add(inputFile);
+        return allFiles;
     }
 
+    @NotNull
     protected String getOutputFilePath(@NotNull String filename) {
         return getOutputPath() + convertToDotJsFile(filename);
     }
 
+    @NotNull
     protected String getInputFilePath(@NotNull String filename) {
         return getInputPath() + filename;
     }
 
+    @NotNull
     protected String cases(@NotNull String filename) {
         return getInputFilePath(filename);
     }
 
+    @NotNull
     protected String expected(@NotNull String testName) {
         return getExpectedPath() + testName + ".out";
     }

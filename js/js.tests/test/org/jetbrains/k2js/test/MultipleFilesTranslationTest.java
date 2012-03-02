@@ -19,11 +19,10 @@ package org.jetbrains.k2js.test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
+import static org.jetbrains.k2js.test.utils.JsTestUtils.getAllFilesInDir;
 import static org.jetbrains.k2js.test.utils.TranslationUtils.translateFiles;
 
 /**
@@ -36,20 +35,14 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
     }
 
     protected void generateJsFromDir(@NotNull String dirName) throws Exception {
-        String dirPath = getInputFilePath(dirName);
-        File dir = new File(dirPath);
-        List<String> fullFilePaths = new ArrayList<String>();
-        for (String fileName : dir.list()) {
-            fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
-        }
-        assert dir.isDirectory();
+        List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
         translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"));
     }
 
     protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
                                     @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
         generateJsFromDir(dirName);
-        runRhinoTest(withKotlinJsLib(getOutputFilePath(dirName + ".kt")),
+        runRhinoTest(withAdditionalFiles(getOutputFilePath(dirName + ".kt")),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 

@@ -39,7 +39,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     public void runFunctionOutputTest(String filename, String namespaceName,
                                       String functionName, Object expectedResult) throws Exception {
         generateJsFromFile(filename);
-        runRhinoTest(withKotlinJsLib(getOutputFilePath(filename)),
+        runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
@@ -57,7 +57,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
 
     protected void checkOutput(@NotNull String filename, @NotNull String expectedResult, @NotNull String... args) throws Exception {
         generateJsFromFile(filename);
-        runRhinoTest(withKotlinJsLib(getOutputFilePath(filename)),
+        runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
                      new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
     }
 

@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
@@ -43,5 +45,16 @@ public final class JsTestUtils {
         } finally {
             stream.close();
         }
+    }
+
+    @NotNull
+    public static List<String> getAllFilesInDir(@NotNull String dirName) {
+        File dir = new File(dirName);
+        assert dir.isDirectory();
+        List<String> fullFilePaths = new ArrayList<String>();
+        for (String fileName : dir.list()) {
+            fullFilePaths.add(dirName + "/" + fileName);
+        }
+        return fullFilePaths;
     }
 }

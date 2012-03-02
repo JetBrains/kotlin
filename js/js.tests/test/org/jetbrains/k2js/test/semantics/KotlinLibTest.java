@@ -23,8 +23,6 @@ import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
-import java.util.Arrays;
-
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 
 /**
@@ -37,7 +35,7 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
     }
 
     public void testKotlinJsLibRunsWithRhino() throws Exception {
-        runRhinoTest(Arrays.asList(kotlinLibraryPath()), new RhinoResultChecker() {
+        runRhinoTest(additionalJSFiles(), new RhinoResultChecker() {
             @Override
             public void runChecks(Context context, Scriptable scope) throws Exception {
                 //do nothing
@@ -85,7 +83,7 @@ public final class KotlinLibTest extends SingleFileTranslationTest {
 
 
     private void runJavascriptTest(@NotNull String filename) throws Exception {
-        runRhinoTest(Arrays.asList(kotlinLibraryPath(), cases(filename)),
+        runRhinoTest(withAdditionalFiles(cases(filename)),
                      new RhinoFunctionResultChecker("test", true));
     }
 
