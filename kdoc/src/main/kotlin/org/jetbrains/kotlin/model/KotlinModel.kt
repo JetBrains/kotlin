@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 
-fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.containingDeclaration)
+fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.getContainingDeclaration())
 
 fun qualifiedName(descriptor: DeclarationDescriptor?): String {
     if (descriptor == null || descriptor is ModuleDescriptor) {
@@ -307,7 +307,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
 
     fun getType(aType: JetType?): KType? {
         if (aType != null) {
-            val classifierDescriptor = aType.constructor.declarationDescriptor
+            val classifierDescriptor = aType.getConstructor().getDeclarationDescriptor()
             val klass = if (classifierDescriptor is ClassDescriptor) {
                 getClass(classifierDescriptor)
             } else null
@@ -318,7 +318,7 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
 
     fun getClass(classElement: ClassDescriptor): KClass? {
         val name = classElement.getName()
-        val container = classElement.containingDeclaration
+        val container = classElement.getContainingDeclaration()
         if (name != null && container is NamespaceDescriptor) {
             val pkg = getPackage(container)
             return pkg.getClass(name, classElement)
@@ -454,7 +454,7 @@ class KType(val jetType: JetType, val model: KModel, val klass: KClass?, val arg
             this.description = klass.description
             this.detailedDescription = klass.detailedDescription
         }
-        for (arg in jetType.arguments) {
+        for (arg in jetType.getArguments()) {
             if (arg != null) {
                 val argJetType = arg.getType()
                 val t = model.getType(argJetType)
