@@ -36,9 +36,7 @@ import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -69,8 +67,11 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
                 new BindingTraceContext());
         PsiJavaFileStub js = getJavaStub(project, file);
         if (js != null) {
+            builder.append(PsiBundle.message("psi.decompiled.text.header"));
+            builder.append("\n\n");
+
             if (js.getPackageName() != null && js.getPackageName().length() > 0) {
-                builder.append("package ").append(js.getPackageName()).append("\n\n\n");
+                builder.append("package ").append(js.getPackageName()).append("\n\n");
             }
 
             PsiClass psiClass = js.getClasses()[0];
@@ -81,10 +82,10 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
                 if (nd != null) {
                     for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
-                        if (member instanceof ClassDescriptor && member.getName().equals("namespace")) {
+                        if (member instanceof ClassDescriptor && member.getName().equals("namespace") || member instanceof NamespaceDescriptor) {
                             continue;
                         }
-                        builder.append(DescriptorRenderer.COMPACT.render(member)).append("\n\n");
+                        appendMemberDescriptor(builder, member);
                     }
                 }
             } else {
@@ -96,7 +97,8 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
                     for (DeclarationDescriptor member : cd.getDefaultType().getMemberScope().getAllDescriptors()) {
                         if (member.getContainingDeclaration() == cd) {
-                            builder.append("    ").append(DescriptorRenderer.COMPACT.render(member)).append("\n\n");
+                            builder.append("    ");
+                            appendMemberDescriptor(builder, member);
                         }
                     }
 
@@ -105,6 +107,17 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
             }
         }
         return builder.toString();
+    }
+
+    private static void appendMemberDescriptor(StringBuilder builder, DeclarationDescriptor member) {
+        String decompiledComment = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
+        builder.append(DescriptorRenderer.COMPACT.render(member));
+        if (member instanceof FunctionDescriptor) {
+            builder.append(" { ").append(decompiledComment).append(" }");
+        } else if (member instanceof PropertyDescriptor) {
+            builder.append(" ").append(decompiledComment);
+        }
+        builder.append("\n\n");
     }
 
     @Override
