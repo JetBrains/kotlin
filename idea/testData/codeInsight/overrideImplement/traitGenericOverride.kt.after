@@ -4,7 +4,7 @@ trait G<T> {
 
 class GC<T>() : G<T> {
 
-    override fun foo(t: T): T {
+    override fun foo(t : T) : T {
         throw UnsupportedOperationException()
     }
 }
