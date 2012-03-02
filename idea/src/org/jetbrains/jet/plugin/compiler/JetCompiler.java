@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
@@ -116,39 +117,10 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-
-        StringBuilder script = new StringBuilder();
-
-        script.append("import kotlin.modules.*\n");
-        script.append("fun project() {\n");
-        script.append("module(\"" + moduleChunk.getNodes().iterator().next().getName() + "\") {\n");
-
-        for (VirtualFile sourceFile : files) {
-            script.append("sources += \"" + path(sourceFile) + "\"\n");
-        }
-
         ModuleChunk chunk = new ModuleChunk((CompileContextEx) compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
+        String moduleName = moduleChunk.getNodes().iterator().next().getName();
 
-        // TODO: have a bootclasspath in script API
-        for (VirtualFile root : chunk.getCompilationBootClasspathFiles()) {
-            script.append("classpath += \"" + path(root) + "\"\n");
-        }
-
-        for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
-            script.append("classpath += \"" + path(root) + "\"\n");
-        }
-
-        // This is for java files in same roots
-        for (VirtualFile root : chunk.getSourceRoots()) {
-            script.append("classpath += \"" + path(root) + "\"\n");
-        }
-
-        if (tests && mainOutput != null) {
-            script.append("classpath += \"" + path(mainOutput) + "\"\n");
-        }
-
-        script.append("}\n");
-        script.append("}\n");
+        CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, Sets.newHashSet(compileContext.getAllOutputDirectories()));
 
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
@@ -164,6 +136,59 @@ public class JetCompiler implements TranslatingCompiler {
         else {
             runInProcess(compileContext, outputDir, kotlinHome, scriptFile);
         }
+    }
+
+    private static CharSequence generateModuleScript(String moduleName, ModuleChunk chunk, List<VirtualFile> files, boolean tests, VirtualFile mainOutput, Set<VirtualFile> allOutputDirectories) {
+        StringBuilder script = new StringBuilder();
+
+        if (tests) {
+            script.append("// Module script for tests\n");
+        }
+        else {
+            script.append("// Module script for production\n");
+        }
+
+        script.append("import kotlin.modules.*\n");
+        script.append("fun project() {\n");
+        script.append("    module(\"" + moduleName + "\") {\n");
+
+        for (VirtualFile sourceFile : files) {
+            script.append("        sources += \"" + path(sourceFile) + "\"\n");
+        }
+
+        // TODO: have a bootclasspath in script API
+        script.append("        // Boot classpath\n");
+        for (VirtualFile root : chunk.getCompilationBootClasspathFiles()) {
+            script.append("        classpath += \"" + path(root) + "\"\n");
+        }
+
+        script.append("        // Compilation classpath\n");
+        for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
+            String path = path(root);
+            if (allOutputDirectories.contains(root)) {
+                // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
+                // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
+                // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
+                script.append("        // Output directory, commented out\n");
+                script.append("        // ");
+            }
+            script.append("        classpath += \"" + path + "\"\n");
+        }
+
+        // This is for java files in same roots
+        script.append("        // Java classpath (for Java sources)\n");
+        for (VirtualFile root : chunk.getSourceRoots()) {
+            script.append("        classpath += \"" + path(root) + "\"\n");
+        }
+
+        script.append("        // Main output\n");
+        if (tests && mainOutput != null) {
+            script.append("        classpath += \"" + path(mainOutput) + "\"\n");
+        }
+
+        script.append("    }\n");
+        script.append("}\n");
+        return script;
     }
 
     private static List<File> kompilerClasspath(File kotlinHome, CompileContext context) {
