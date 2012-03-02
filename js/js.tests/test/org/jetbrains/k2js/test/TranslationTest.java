@@ -40,8 +40,8 @@ public abstract class TranslationTest extends BasicTest {
         super(main);
     }
 
-    protected void runFunctionOutputTest(String filename, String namespaceName,
-                                         String functionName, Object expectedResult) throws Exception {
+    public void runFunctionOutputTest(String filename, String namespaceName,
+                                      String functionName, Object expectedResult) throws Exception {
         generateJsFromFile(filename);
         runRhinoTest(withKotlinJsLib(getOutputFilePath(filename)),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
