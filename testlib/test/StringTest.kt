@@ -6,6 +6,15 @@ import kool.test.*
 import junit.framework.*
 
 class StringTest() : TestCase() {
+
+    fun testHeredoc() {
+        val a = <<<EOS
+line1
+line2
+EOS
+        assertTrue("line1\nline2\n" == a)
+    }
+
     fun testStringIterator() {
         var sum = 0
         for(c in "239")
