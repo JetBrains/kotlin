@@ -17,12 +17,12 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class JavaClassesTest extends TranslationTest {
+public abstract class JavaClassesTest extends SingleFileTranslationTest {
 
     public JavaClassesTest(@NotNull String main) {
         super("java/" + main);

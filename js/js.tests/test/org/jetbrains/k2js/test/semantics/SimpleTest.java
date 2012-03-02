@@ -19,7 +19,7 @@ package org.jetbrains.k2js.test.semantics;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.SuiteBuilder;
 
 /**
@@ -30,7 +30,7 @@ public final class SimpleTest extends UsefulTestCase {
     public static Test suite() throws Exception {
         return SuiteBuilder.suiteForDirectory("simple/", new SuiteBuilder.Tester() {
             @Override
-            public void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception {
+            public void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception {
                 test.checkFooBoxIsTrue(filename);
             }
         });

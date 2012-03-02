@@ -21,22 +21,18 @@ import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
-import static org.jetbrains.k2js.test.utils.TranslationUtils.translateFiles;
 
 /**
  * @author Pavel Talanov
  */
 @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-public abstract class TranslationTest extends BasicTest {
+public abstract class SingleFileTranslationTest extends BasicTest {
 
-    public TranslationTest(@NotNull String main) {
+    public SingleFileTranslationTest(@NotNull String main) {
         super(main);
     }
 
@@ -47,28 +43,9 @@ public abstract class TranslationTest extends BasicTest {
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    protected void runMultiFileTest(String dirName, String namespaceName,
-                                    String functionName, Object expectedResult) throws Exception {
-        generateJsFromDir(dirName);
-        runRhinoTest(withKotlinJsLib(getOutputFilePath(dirName + ".kt")),
-                     new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
-    }
-
     protected void generateJsFromFile(@NotNull String filename) throws Exception {
         TranslationUtils.translateFile(getProject(), getInputFilePath(filename), getOutputFilePath(filename));
     }
-
-    protected void generateJsFromDir(@NotNull String dirName) throws Exception {
-        String dirPath = getInputFilePath(dirName);
-        File dir = new File(dirPath);
-        List<String> fullFilePaths = new ArrayList<String>();
-        for (String fileName : dir.list()) {
-            fullFilePaths.add(getInputFilePath(dirName) + "/" + fileName);
-        }
-        assert dir.isDirectory();
-        translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"));
-    }
-
 
     public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
         runFunctionOutputTest(filename, "foo", "box", true);

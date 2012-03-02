@@ -16,12 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class WebDemoExamples2Test extends TranslationTest {
+public final class WebDemoExamples2Test extends SingleFileTranslationTest {
 
     public WebDemoExamples2Test() {
         super("webDemoExamples2/");

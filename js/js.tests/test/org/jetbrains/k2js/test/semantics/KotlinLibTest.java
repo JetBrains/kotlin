@@ -17,7 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.mozilla.javascript.Context;
@@ -30,7 +30,7 @@ import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 /**
  * @author Pavel Talanov
  */
-public final class KotlinLibTest extends TranslationTest {
+public final class KotlinLibTest extends SingleFileTranslationTest {
 
     public KotlinLibTest() {
         super("kotlinLib/");

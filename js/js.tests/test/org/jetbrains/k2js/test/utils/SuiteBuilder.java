@@ -19,21 +19,21 @@ package org.jetbrains.k2js.test.utils;
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
 
 /**
  * @author Pavel Talanov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public abstract class SuiteBuilder extends TranslationTest {
+public abstract class SuiteBuilder extends SingleFileTranslationTest {
 
     private SuiteBuilder(@NotNull String pathToMain) {
         super(pathToMain);
     }
 
     public interface Tester {
-        void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception;
+        void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception;
     }
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")

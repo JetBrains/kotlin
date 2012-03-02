@@ -16,14 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class MultiFileTest extends TranslationTest {
-
+public final class MultiFileTest extends MultipleFilesTranslationTest {
 
     public MultiFileTest() {
         super("multiFile/");
@@ -35,10 +33,5 @@ public final class MultiFileTest extends TranslationTest {
 
     public void testClassesInheritedFromOtherFile() throws Exception {
         checkFooBoxIsTrue("classesInheritedFromOtherFile");
-    }
-
-    @Override
-    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, "foo", "box", true);
     }
 }

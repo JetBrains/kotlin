@@ -16,12 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class OperatorOverloadingTest extends TranslationTest {
+public final class OperatorOverloadingTest extends SingleFileTranslationTest {
 
     public OperatorOverloadingTest() {
         super("operatorOverloading/");

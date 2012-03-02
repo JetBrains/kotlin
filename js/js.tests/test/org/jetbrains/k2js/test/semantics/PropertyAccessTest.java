@@ -16,12 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class PropertyAccessTest extends TranslationTest {
+public final class PropertyAccessTest extends SingleFileTranslationTest {
 
     public PropertyAccessTest() {
         super("propertyAccess/");

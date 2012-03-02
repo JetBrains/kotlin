@@ -16,13 +16,12 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.TranslationTest;
+import org.jetbrains.k2js.test.MultipleFilesTranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public class MultiNamespaceTest extends TranslationTest {
+public class MultiNamespaceTest extends MultipleFilesTranslationTest {
 
 
     public MultiNamespaceTest() {
@@ -37,9 +36,5 @@ public class MultiNamespaceTest extends TranslationTest {
         checkFooBoxIsTrue("classesInheritedFromOtherNamespace");
     }
 
-    @Override
-    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, "foo", "box", true);
-    }
 }
 
