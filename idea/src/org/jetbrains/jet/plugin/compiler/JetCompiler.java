@@ -122,8 +122,6 @@ public class JetCompiler implements TranslatingCompiler {
 
         CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, Sets.newHashSet(compileContext.getAllOutputDirectories()));
 
-        compileContext.addMessage(STATISTICS, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
-
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
@@ -138,6 +136,8 @@ public class JetCompiler implements TranslatingCompiler {
         else {
             runInProcess(compileContext, outputDir, kotlinHome, scriptFile);
         }
+
+        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
     }
 
     private static CharSequence generateModuleScript(String moduleName, ModuleChunk chunk, List<VirtualFile> files, boolean tests, VirtualFile mainOutput, Set<VirtualFile> allOutputDirectories) {
