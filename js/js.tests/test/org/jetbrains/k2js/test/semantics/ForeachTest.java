@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
 /**
  * @author Pavel Talanov
  */
-public final class ObjectTest extends TranslationTest {
+public final class ForeachTest extends AbstractExpressionTest {
 
-    public ObjectTest() {
-        super("object/");
+    public ForeachTest() {
+        super("for/");
     }
 
-    public void testObjectWithMethods() throws Exception {
-        checkFooBoxIsTrue("objectWithMethods.kt");
+    public void testForIteratesOverArray() throws Exception {
+        checkFooBoxIsTrue("forIteratesOverArray.kt");
     }
 
-
-    public void testObjectDeclaration() throws Exception {
-        checkFooBoxIsTrue("objectDeclaration.kt");
-    }
-
-
-    public void testObjectInMethod() throws Exception {
-        checkFooBoxIsTrue("objectInMethod.kt");
+    public void testForOnEmptyArray() throws Exception {
+        checkFooBoxIsTrue("forOnEmptyArray.kt");
     }
 }

@@ -20,7 +20,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.TranslationTest;
-import org.jetbrains.k2js.test.TranslatorTestCaseBuilder;
+import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
 
 /**
  * @author Pavel Talanov

@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class TupleTest extends TranslationTest {
+public abstract class AbstractExpressionTest extends TranslationTest {
 
-
-    public TupleTest() {
-        super("tuple/");
+    public AbstractExpressionTest(@NotNull String main) {
+        super("expression/" + main);
     }
-
-    public void testTwoElements() throws Exception {
-        checkFooBoxIsTrue("twoElements.kt");
-    }
-
-    public void testMultipleMembers() throws Exception {
-        checkFooBoxIsTrue("multipleMembers.kt");
-    }
-
-
 }
-

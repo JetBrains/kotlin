@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.test.TranslationTest;
 import org.mozilla.javascript.JavaScriptException;
 
 /**

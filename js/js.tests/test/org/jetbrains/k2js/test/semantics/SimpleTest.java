@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
 import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 import org.jetbrains.k2js.test.utils.SuiteBuilder;
 
+/**
+ * @author Pavel Talanov
+ */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class ExamplesTest extends UsefulTestCase {
-
+public final class SimpleTest extends UsefulTestCase {
     public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForDirectory("examples/", new SuiteBuilder.Tester() {
+        return SuiteBuilder.suiteForDirectory("simple/", new SuiteBuilder.Tester() {
             @Override
             public void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception {
-                test.runFunctionOutputTest(filename, "Anonymous", "box", "OK");
+                test.checkFooBoxIsTrue(filename);
             }
         });
     }

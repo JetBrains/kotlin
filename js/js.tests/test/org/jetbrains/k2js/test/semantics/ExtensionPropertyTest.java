@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
+
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class ForeachTest extends AbstractExpressionTest {
+public final class ExtensionPropertyTest extends TranslationTest {
 
-    public ForeachTest() {
-        super("for/");
+    public ExtensionPropertyTest() {
+        super("extensionProperty/");
     }
 
-    public void testForIteratesOverArray() throws Exception {
-        checkFooBoxIsTrue("forIteratesOverArray.kt");
+    public void testSimplePropertyWithGetter() throws Exception {
+        checkFooBoxIsTrue("simplePropertyWithGetter.kt");
     }
 
-    public void testForOnEmptyArray() throws Exception {
-        checkFooBoxIsTrue("forOnEmptyArray.kt");
+    public void testPropertyWithGetterAndSetter() throws Exception {
+        checkFooBoxIsTrue("propertyWithGetterAndSetter.kt");
+    }
+
+    public void testAbsExtension() throws Exception {
+        checkFooBoxIsTrue("absExtension.kt");
     }
 }

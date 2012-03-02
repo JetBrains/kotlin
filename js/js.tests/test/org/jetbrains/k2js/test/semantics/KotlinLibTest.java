@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.mozilla.javascript.Context;

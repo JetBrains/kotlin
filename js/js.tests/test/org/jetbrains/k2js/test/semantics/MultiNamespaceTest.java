@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
-import com.intellij.testFramework.UsefulTestCase;
-import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.k2js.test.utils.SuiteBuilder;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-@SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class SimpleTest extends UsefulTestCase {
-    public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForDirectory("simple/", new SuiteBuilder.Tester() {
-            @Override
-            public void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception {
-                test.checkFooBoxIsTrue(filename);
-            }
-        });
+public class MultiNamespaceTest extends TranslationTest {
+
+
+    public MultiNamespaceTest() {
+        super("multiNamespace/");
+    }
+
+    public void testFunctionsVisibleFromOtherNamespace() throws Exception {
+        checkFooBoxIsTrue("functionsVisibleFromOtherNamespace");
+    }
+
+    public void testClassesInheritedFromOtherNamespace() throws Exception {
+        checkFooBoxIsTrue("classesInheritedFromOtherNamespace");
+    }
+
+    @Override
+    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
+        runMultiFileTest(dirName, "foo", "box", true);
     }
 }
+

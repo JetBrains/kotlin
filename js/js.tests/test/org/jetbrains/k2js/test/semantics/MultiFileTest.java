@@ -14,16 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class AbstractExpressionTest extends TranslationTest {
+public final class MultiFileTest extends TranslationTest {
 
-    public AbstractExpressionTest(@NotNull String main) {
-        super("expression/" + main);
+
+    public MultiFileTest() {
+        super("multiFile/");
+    }
+
+    public void testFunctionsVisibleFromOtherFile() throws Exception {
+        checkFooBoxIsTrue("functionsVisibleFromOtherFile");
+    }
+
+    public void testClassesInheritedFromOtherFile() throws Exception {
+        checkFooBoxIsTrue("classesInheritedFromOtherFile");
+    }
+
+    @Override
+    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
+        runMultiFileTest(dirName, "foo", "box", true);
     }
 }

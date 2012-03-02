@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public abstract class JavaClassesTest extends TranslationTest {
+public class RTTITest extends TranslationTest {
 
-    public JavaClassesTest(@NotNull String main) {
-        super("java/" + main);
+    public RTTITest() {
+        super("rtti/");
+    }
+
+    public void testIsSameClass() throws Exception {
+        checkFooBoxIsTrue("isSameClass.kt");
+    }
+
+    public void testNotIsOtherClass() throws Exception {
+        checkFooBoxIsTrue("notIsOtherClass.kt");
     }
 }

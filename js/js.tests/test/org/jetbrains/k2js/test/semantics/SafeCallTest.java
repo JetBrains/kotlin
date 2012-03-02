@@ -14,30 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class MultiFileTest extends TranslationTest {
+public final class SafeCallTest extends TranslationTest {
 
-
-    public MultiFileTest() {
-        super("multiFile/");
+    public SafeCallTest() {
+        super("safeCall/");
     }
 
-    public void testFunctionsVisibleFromOtherFile() throws Exception {
-        checkFooBoxIsTrue("functionsVisibleFromOtherFile");
+    public void testSafeAccess() throws Exception {
+        checkFooBoxIsTrue("safeAccess.kt");
     }
 
-    public void testClassesInheritedFromOtherFile() throws Exception {
-        checkFooBoxIsTrue("classesInheritedFromOtherFile");
+    public void testSafeExtensionFunctionCall() throws Exception {
+        checkFooBoxIsOk("safeExtensionFunctionCall.kt");
     }
 
-    @Override
-    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, "foo", "box", true);
+    public void testSafeCall() throws Exception {
+        checkFooBoxIsTrue("safeCall.kt");
+    }
+
+    public void testSafeCallReturnsNullIfFails() throws Exception {
+        checkFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
     }
 }

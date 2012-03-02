@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
+
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public final class SafeCallTest extends TranslationTest {
+public final class ObjectTest extends TranslationTest {
 
-    public SafeCallTest() {
-        super("safeCall/");
+    public ObjectTest() {
+        super("object/");
     }
 
-    public void testSafeAccess() throws Exception {
-        checkFooBoxIsTrue("safeAccess.kt");
+    public void testObjectWithMethods() throws Exception {
+        checkFooBoxIsTrue("objectWithMethods.kt");
     }
 
-    public void testSafeExtensionFunctionCall() throws Exception {
-        checkFooBoxIsOk("safeExtensionFunctionCall.kt");
+
+    public void testObjectDeclaration() throws Exception {
+        checkFooBoxIsTrue("objectDeclaration.kt");
     }
 
-    public void testSafeCall() throws Exception {
-        checkFooBoxIsTrue("safeCall.kt");
-    }
 
-    public void testSafeCallReturnsNullIfFails() throws Exception {
-        checkFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
+    public void testObjectInMethod() throws Exception {
+        checkFooBoxIsTrue("objectInMethod.kt");
     }
 }

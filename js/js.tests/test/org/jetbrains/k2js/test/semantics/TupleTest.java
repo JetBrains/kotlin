@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
+
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public class RTTITest extends TranslationTest {
+public final class TupleTest extends TranslationTest {
 
-    public RTTITest() {
-        super("rtti/");
+
+    public TupleTest() {
+        super("tuple/");
     }
 
-    public void testIsSameClass() throws Exception {
-        checkFooBoxIsTrue("isSameClass.kt");
+    public void testTwoElements() throws Exception {
+        checkFooBoxIsTrue("twoElements.kt");
     }
 
-    public void testNotIsOtherClass() throws Exception {
-        checkFooBoxIsTrue("notIsOtherClass.kt");
+    public void testMultipleMembers() throws Exception {
+        checkFooBoxIsTrue("multipleMembers.kt");
     }
+
+
 }
+

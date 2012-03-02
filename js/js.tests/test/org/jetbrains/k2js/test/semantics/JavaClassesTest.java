@@ -14,31 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test;
+package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.TranslationTest;
 
 /**
  * @author Pavel Talanov
  */
-public class MultiNamespaceTest extends TranslationTest {
+public abstract class JavaClassesTest extends TranslationTest {
 
-
-    public MultiNamespaceTest() {
-        super("multiNamespace/");
-    }
-
-    public void testFunctionsVisibleFromOtherNamespace() throws Exception {
-        checkFooBoxIsTrue("functionsVisibleFromOtherNamespace");
-    }
-
-    public void testClassesInheritedFromOtherNamespace() throws Exception {
-        checkFooBoxIsTrue("classesInheritedFromOtherNamespace");
-    }
-
-    @Override
-    public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
-        runMultiFileTest(dirName, "foo", "box", true);
+    public JavaClassesTest(@NotNull String main) {
+        super("java/" + main);
     }
 }
-
