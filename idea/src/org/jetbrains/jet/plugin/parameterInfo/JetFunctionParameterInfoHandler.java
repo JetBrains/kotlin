@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -190,7 +190,7 @@ public class JetFunctionParameterInfoHandler implements
             if (descriptor instanceof FunctionDescriptor) {
                 JetFile file = (JetFile) argumentList.getContainingFile();
                 BindingContext bindingContext =
-                        AnalyzerFacade.analyzeFileWithCache(file, AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -328,8 +328,8 @@ public class JetFunctionParameterInfoHandler implements
         if (element.getParent() instanceof JetCallElement) {
             callExpression = (JetCallElement) element.getParent();
         } else return null;
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) file,
-                                                                            AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) file,
+                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;

@@ -44,7 +44,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class AnalyzerFacade {
+public class AnalyzerFacadeForJVM {
 
     public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
         @Override

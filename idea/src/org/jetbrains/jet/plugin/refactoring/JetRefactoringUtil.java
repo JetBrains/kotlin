@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
@@ -102,8 +102,8 @@ public class JetRefactoringUtil {
                 }
                 if (addExpression) {
                     JetExpression expression = (JetExpression) element;
-                    BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                        AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+                    BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                                              AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.

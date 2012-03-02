@@ -49,7 +49,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -187,8 +187,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         
         List<JetFile> files = Collections.singletonList(file);
 //todo:
-//        final BindingContext context = AnalyzerFacade.shallowAnalyzeFiles(files);
-        final BindingContext context = AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
+//        final BindingContext context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(files);
+        final BindingContext context = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
         state.compileCorrectFiles(context, files, CompilationErrorHandler.THROW_EXCEPTION, true);
         state.getFactory().files();
 

@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -85,7 +85,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
         AnalyzingUtils.checkForSyntacticErrors(psiFile);
 
-        BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, "test");
     }

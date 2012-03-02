@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetFileUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.Arrays;
@@ -83,11 +83,11 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static BindingContext analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacade.analyzeFileWithCache(file, WHOLE_PROJECT_DECLARATION_PROVIDER);
+        return AnalyzerFacadeForJVM.analyzeFileWithCache(file, WHOLE_PROJECT_DECLARATION_PROVIDER);
     }
 
     @NotNull
     public static BindingContext analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacade.analyzeProjectWithCache(project, JetFileUtil.collectJetFiles(project, scope));
+        return AnalyzerFacadeForJVM.analyzeProjectWithCache(project, JetFileUtil.collectJetFiles(project, scope));
     }
 }

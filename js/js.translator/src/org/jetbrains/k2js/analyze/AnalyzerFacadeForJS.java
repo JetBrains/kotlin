@@ -39,9 +39,9 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public final class AnalyzerFacade {
+public final class AnalyzerFacadeForJS {
 
-    private AnalyzerFacade() {
+    private AnalyzerFacadeForJS() {
     }
 
     @NotNull

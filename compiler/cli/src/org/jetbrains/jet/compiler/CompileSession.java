@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 
@@ -166,7 +166,7 @@ public class CompileSession {
     private void analyzeAndReportSemanticErrors(MessageCollector collector) {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
-        myBindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(
+        myBindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
         for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {

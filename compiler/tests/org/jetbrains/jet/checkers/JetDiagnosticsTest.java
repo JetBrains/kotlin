@@ -18,14 +18,10 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import junit.framework.Test;
@@ -40,10 +36,9 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -173,7 +168,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
         BindingContext bindingContext;
         if (importJdk) {
-            bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+            bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
         else {
             bindingContext = AnalyzingUtils.analyzeFiles(getProject(), Configuration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);

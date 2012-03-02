@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
@@ -95,8 +95,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 return;
             }
         }
-        BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                            AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         if (expressionType instanceof NamespaceType) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
@@ -348,8 +348,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
         final ArrayList<JetExpression> result = new ArrayList<JetExpression>();
 
-        final BindingContext bindingContext = AnalyzerFacade.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                            AnalyzerFacade.SINGLE_DECLARATION_PROVIDER);
+        final BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
+                                                                                        AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override

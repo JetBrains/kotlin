@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
@@ -136,7 +136,7 @@ public abstract class ExpectedResolveData {
         JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         JetStandardLibrary lib = semanticServices.getStandardLibrary();
 
-        BindingContext bindingContext = AnalyzerFacade.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
                 UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;

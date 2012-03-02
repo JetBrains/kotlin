@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.util.Collections;
 import java.util.List;
@@ -97,7 +97,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         }
 
         public void test(final @NotNull PsiFile psiFile) {
-            BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(
+            BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                     (JetFile) psiFile,
                     JetControlFlowDataTraceFactory.EMPTY);
 

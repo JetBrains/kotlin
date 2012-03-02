@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacade;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 
 import java.util.Collections;
@@ -110,7 +110,7 @@ public class GenerationState {
     }
 
     public BindingContext compile(JetFile file) {
-        final BindingContext bindingContext = AnalyzerFacade.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
+        final BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         compileCorrectFiles(bindingContext, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
         return bindingContext;
