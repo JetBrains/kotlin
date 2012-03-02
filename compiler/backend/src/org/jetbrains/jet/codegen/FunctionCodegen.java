@@ -113,7 +113,10 @@ public class FunctionCodegen {
             if (isStatic || kind == OwnerKind.TRAIT_IMPL)
                 flags |= ACC_STATIC;
 
-            boolean isAbstract = !isStatic && !(kind == OwnerKind.TRAIT_IMPL) && (bodyExpressions == null || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration()));
+            boolean isAbstract = (
+                        functionDescriptor.getModality() == Modality.ABSTRACT
+                        || CodegenUtil.isInterface(functionDescriptor.getContainingDeclaration())
+                    ) && !isStatic && kind != OwnerKind.TRAIT_IMPL;
             if (isAbstract) flags |= ACC_ABSTRACT;
             
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(), jvmSignature.getGenericsSignature(), null);
