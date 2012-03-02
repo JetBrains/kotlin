@@ -122,6 +122,8 @@ public class JetCompiler implements TranslatingCompiler {
 
         CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, Sets.newHashSet(compileContext.getAllOutputDirectories()));
 
+        compileContext.addMessage(STATISTICS, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
+
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
