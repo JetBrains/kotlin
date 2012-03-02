@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 

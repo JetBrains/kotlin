@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
+import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.JetSignatureUtils;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
@@ -41,7 +45,7 @@ public class BothSignatureWriter {
 
     private static final boolean DEBUG_SIGNATURE_WRITER = true;
 
-    enum Mode {
+    public enum Mode {
         METHOD(CheckSignatureAdapter.METHOD_SIGNATURE),
         CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),
         ;

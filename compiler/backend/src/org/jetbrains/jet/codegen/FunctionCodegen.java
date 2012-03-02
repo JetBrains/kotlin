@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;

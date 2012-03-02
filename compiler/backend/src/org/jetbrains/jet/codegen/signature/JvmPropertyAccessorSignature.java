@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 
 /**
  * @author Stepan Koltsov
