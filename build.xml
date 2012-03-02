@@ -259,6 +259,10 @@
             <fileset dir="${idea.sdk}/core" includes="*.jar"/>
             <fileset dir="${basedir}/lib" includes="*.jar"/>
         </copy>
+        <copy todir="${kotlin-home}/bin">
+            <fileset dir="${basedir}/compiler/cli/bin"/>
+        </copy>
+        <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
     <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jar,buildToolsJar,compileKunit,compileKdoc"/>
