@@ -78,7 +78,7 @@ public class JetIconProvider extends IconProvider {
             }
             return icon;
         }
-        if (psiElement instanceof JetObjectDeclaration) {
+        if (psiElement instanceof JetObjectDeclaration || psiElement instanceof JetClassObject) {
             return ICON_FOR_OBJECT;
         }
         if (psiElement instanceof JetParameter) {
