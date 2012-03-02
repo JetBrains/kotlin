@@ -1,4 +1,4 @@
-package.jet
+package jet
 
 trait Iterator<out T> {
   fun next()  : T
