@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
@@ -132,22 +131,22 @@ public class AnalyzingUtils {
 
             @Override
             public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                scope.addClassifierDescriptor(classDescriptor);
+                throw new IllegalStateException("A class shouldn't sit right under a module: " + classDescriptor);
             }
 
             @Override
             public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-
+                throw new IllegalStateException("An object shouldn't sit right under a module: " + objectDescriptor);
             }
 
             @Override
             public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                scope.addFunctionDescriptor(functionDescriptor);
+                throw new IllegalStateException("A function shouldn't sit right under a module: " + functionDescriptor);
             }
 
             @Override
             public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                scope.addPropertyDescriptor(propertyDescriptor);
+                throw new IllegalStateException("A property shouldn't sit right under a module: " + propertyDescriptor);
             }
 
             @Override
