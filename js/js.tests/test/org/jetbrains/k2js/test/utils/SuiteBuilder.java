@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.test.utils;
 
+import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.TranslationTest;
@@ -24,29 +25,41 @@ import org.jetbrains.k2js.test.TranslatorTestCaseBuilder;
 /**
  * @author Pavel Talanov
  */
-public abstract class SingleFileTest extends TranslationTest {
+@SuppressWarnings("JUnitTestCaseWithNoTests")
+public abstract class SuiteBuilder extends TranslationTest {
 
-    @NotNull
-    private final Tester tester;
-    @NotNull
-    private final String name;
-
-    protected SingleFileTest(@NotNull String pathToMain, @NotNull String name, @NotNull Tester tester) {
+    private SuiteBuilder(@NotNull String pathToMain) {
         super(pathToMain);
-        setName(name);
-        this.tester = tester;
-        this.name = name;
     }
 
     public interface Tester {
         void performTest(@NotNull TranslationTest test, @NotNull String filename) throws Exception;
     }
 
-    public void runTest() throws Exception {
-        tester.performTest(this, name);
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
+    private class SingleFileTest extends UsefulTestCase {
+
+        public SingleFileTest(@NotNull String name, @NotNull Tester tester) {
+            setName(name);
+            this.tester = tester;
+            this.name = name;
+        }
+
+        @NotNull
+        private final Tester tester;
+        @NotNull
+        private final String name;
+
+        public void runTest() throws Exception {
+            tester.performTest(SuiteBuilder.this, name);
+        }
     }
 
-    public static Test suiteForDirectory(@NotNull final String main, @NotNull final SingleFileTest.Tester testMethod) {
+
+    public static Test suiteForDirectory(@NotNull final String main, @NotNull final SuiteBuilder.Tester testMethod) throws Exception {
+        final SuiteBuilder singleFileTest = new SuiteBuilder(main) {
+        };
+        singleFileTest.setUp();
 
         return TranslatorTestCaseBuilder.suiteForDirectory(TEST_FILES + main + casesDirectoryName(),
                                                            true,
@@ -54,8 +67,7 @@ public abstract class SingleFileTest extends TranslationTest {
                                                                @NotNull
                                                                @Override
                                                                public Test createTest(@NotNull String name) {
-                                                                   return (new SingleFileTest(main, name, testMethod) {
-                                                                   });
+                                                                   return singleFileTest.new SingleFileTest(name, testMethod);
                                                                }
                                                            });
     }
