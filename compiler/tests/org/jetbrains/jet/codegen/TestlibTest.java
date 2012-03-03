@@ -89,7 +89,7 @@ public class TestlibTest extends CodegenTestCase {
                 throw new RuntimeException("There were compilation errors");
             }
 
-            ClassFileFactory classFileFactory = session.generate();
+            ClassFileFactory classFileFactory = session.generate(false);
 
             final GeneratedClassLoader loader = new GeneratedClassLoader(
                     classFileFactory,

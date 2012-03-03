@@ -181,6 +181,8 @@ public class CompileEnvironment {
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
             CompileEnvironment compileEnvironment = new CompileEnvironment(myFileNameTransformer, myMessageRenderer);
+            // copy across any compiler plugins
+            compileEnvironment.getMyEnvironment().getCompilerPlugins().addAll(myEnvironment.getCompilerPlugins());
             ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
@@ -208,7 +210,7 @@ public class CompileEnvironment {
         if (!scriptCompileSession.analyze(myErrorStream, myMessageRenderer)) {
             return null;
         }
-        final ClassFileFactory factory = scriptCompileSession.generate();
+        final ClassFileFactory factory = scriptCompileSession.generate(true);
 
         return runDefineModules(moduleFile, factory);
     }
@@ -267,7 +269,7 @@ public class CompileEnvironment {
         if (!moduleCompileSession.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
             return null;
         }
-        return moduleCompileSession.generate();
+        return moduleCompileSession.generate(false);
     }
 
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {
@@ -355,7 +357,7 @@ public class CompileEnvironment {
             return null;
         }
 
-        ClassFileFactory factory = session.generate();
+        ClassFileFactory factory = session.generate(false);
         return new GeneratedClassLoader(factory);
     }
 
@@ -380,7 +382,7 @@ public class CompileEnvironment {
             return false;
         }
 
-        ClassFileFactory factory = session.generate();
+        ClassFileFactory factory = session.generate(false);
         if (jar != null) {
             try {
                 writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);

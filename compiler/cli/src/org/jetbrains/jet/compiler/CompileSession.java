@@ -209,16 +209,18 @@ public class CompileSession {
     }
 
     @NotNull
-    public ClassFileFactory generate() {
+    public ClassFileFactory generate(boolean module) {
         Project project = myEnvironment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), myFileNameTransformer);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 
-        List<CompilerPlugin> fileProcessors = myEnvironment.getCompilerPlugins();
-        if (fileProcessors != null) {
-            for (CompilerPlugin processor : fileProcessors) {
-                processor.processFiles(myBindingContext, getSourceFileNamespaces());
+        List<CompilerPlugin> plugins = myEnvironment.getCompilerPlugins();
+        if (!module) {
+            if (plugins != null) {
+                for (CompilerPlugin plugin : plugins) {
+                    plugin.processFiles(myBindingContext, getSourceFileNamespaces());
+                }
             }
         }
         return answer;
