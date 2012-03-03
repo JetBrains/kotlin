@@ -1,4 +1,4 @@
-package std.util
+package kotlin.util
 
 import java.util.Map as JMap
 import java.util.HashMap

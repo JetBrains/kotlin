@@ -28,8 +28,8 @@ fun test() {
   val y = 1.`abs`abs
 }
 ~abs~val Int.abs : Int
-  get() = if (this`:std::Int` > 0) this else -this`:std::Int`;
+  get() = if (this`:kotlin::Int` > 0) this else -this`:kotlin::Int`;
 
 val <~TT~T> `TT`T.foo : `TT`T
 
-~foo~fun Int.foo() = this`:std::Int`
+~foo~fun Int.foo() = this`:kotlin::Int`

@@ -1,6 +1,6 @@
 namespace last.laugh
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
     print("H" + "a")

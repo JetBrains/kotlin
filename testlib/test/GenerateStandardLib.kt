@@ -1,8 +1,8 @@
-package kotlin.tools
+package org.jetbrains.kotlin.tools
 
-import std.*
-import std.io.*
-import std.util.*
+import kotlin.*
+import kotlin.io.*
+import kotlin.util.*
 import java.io.*
 import java.util.*
 
@@ -58,26 +58,26 @@ fun main(args: Array<String>) {
 
 
   // JavaIterables - Generic iterable stuff
-  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package std\n\nimport std.util.*", File(srcDir, "JavaIterables.kt")) {
+  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
       it.replaceAll("java.lang.Iterable<T>", "Array<T>")
   }
 
-  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package std\n\nimport std.util.*", File(srcDir, "JavaIterables.kt")) {
+  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
     it.replaceAll("java.lang.Iterable<T>", "Iterable<T>")
   }
 
 
   // JavaCollections - methods returning a collection of the same input size (if its a collection)
 
-  generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package std", File(srcDir, "JavaCollections.kt")) {
+  generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
     it.replaceAll("java.util.Collection<T>", "Array<T>")
   }
 
-  generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package std.util", File(srcDir, "JavaCollections.kt")) {
+  generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin.util", File(srcDir, "JavaCollections.kt")) {
     it.replaceAll("java.util.Collection<T>", "java.lang.Iterable<T>").replaceAll("(this.size)", "")
   }
 
-  generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package std", File(srcDir, "JavaCollections.kt")) {
+  generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
     it.replaceAll("java.util.Collection<T>", "Iterable<T>").replaceAll("(this.size)", "")
   }
 }

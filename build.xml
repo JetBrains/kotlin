@@ -153,7 +153,7 @@
     </target>
 
     <target name="generateStdlib" depends="compileTestlib" description="Generates the stdlib APIs for arrays and kotlin collections">
-        <java classname="kotlin.tools.namespace" failonerror="true" fork="true">
+        <java classname="org.jetbrains.kotlin.tools.namespace" failonerror="true" fork="true">
             <classpath>
                 <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-test.jar"/>

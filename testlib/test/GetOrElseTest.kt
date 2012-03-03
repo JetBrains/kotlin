@@ -1,9 +1,10 @@
 package test.standard
 
-import std.*
+import kotlin.*
 import kotlin.test.*
+import junit.framework.TestCase
 
-class GetOrElseTest() : TestSupport() {
+class GetOrElseTest() : TestCase() {
     val v1: String? = "hello"
     val v2: String? = null
     var counter = 0

@@ -3,7 +3,7 @@ import java.util.*
 
 fun f_plus(): Int {
   var x: Int = 1
-  x = x `std::Int.plus(Int)`+ 1
+  x = x `kotlin::Int.plus(Int)`+ 1
   return x
 }
 
@@ -20,11 +20,11 @@ fun f_plus(): Int {
 }
 
 ~t~fun <~t.T~T> t(~t.t~t : `t.T`T) : `t.T`T {
-  `t`t<Int>(1)`:std::Int`
+  `t`t<Int>(1)`:kotlin::Int`
   `t`t<`t.T`T>(`t.t`t)`:t.T`
   `X`X<`t.T`T>()
-  1 `std::Int.plus(Int)`+ 1
-  1 `std::Int.plus(Int)`+= 1
+  1 `kotlin::Int.plus(Int)`+ 1
+  1 `kotlin::Int.plus(Int)`+= 1
   X<String>() `plus`+ "1"
   X<String>() `plus`plus "sadfas"
   X<String>().`plus`plus("")
@@ -69,7 +69,7 @@ fun <T> tt(t : T) : T {
   (x`java::java.util.List.set()`[1]) = null
   x`java::java.util.List.set()`[null] = null
   (x`java::java.util.List.set()`[null, 2]) = null
-  (`not`!foo)[1]`:std::Char`
+  (`not`!foo)[1]`:kotlin::Char`
   val y = Bar()
   y`inc`++
   `inc`++y
@@ -78,10 +78,10 @@ fun <T> tt(t : T) : T {
   y `+=`+= 1
   `+`+y
   `-`-y
-  1 `std::Int.compareTo(Double)`> 2.0
-  1 `std::Int.compareTo(Double)`< 2.0
-  1 `std::Int.compareTo(Double)`>= 2.0
-  1 `std::Int.compareTo(Double)`<= 2.0
+  1 `kotlin::Int.compareTo(Double)`> 2.0
+  1 `kotlin::Int.compareTo(Double)`< 2.0
+  1 `kotlin::Int.compareTo(Double)`>= 2.0
+  1 `kotlin::Int.compareTo(Double)`<= 2.0
 }
 
 

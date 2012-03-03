@@ -1,12 +1,13 @@
 package test.collections
 
-import std.*
-import std.io.*
-import std.util.*
+import kotlin.*
+import kotlin.io.*
+import kotlin.util.*
 import kotlin.test.*
 import java.util.*
+import junit.framework.TestCase
 
-class SetTest() : TestSupport() {
+class SetTest() : TestCase() {
     val data = hashSet("foo", "bar")
 
     fun testAny() {

@@ -1,6 +1,6 @@
 package testString
 
-import std.io.*
+import kotlin.io.*
 import kotlin.test.*
 
 import junit.framework.*

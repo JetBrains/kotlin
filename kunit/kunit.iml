@@ -7,7 +7,16 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="KotlinRuntime" level="project" />
+    <orderEntry type="library" exported="" name="KotlinRuntime" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/junit-4.9.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

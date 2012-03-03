@@ -1,6 +1,6 @@
 package test.concurrent
 
-import std.concurrent.*
+import kotlin.concurrent.*
 import junit.framework.*
 
 class FListTest() : TestCase() {

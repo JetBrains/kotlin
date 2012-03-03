@@ -4,7 +4,7 @@ import java.util.Collection
 import java.util.ArrayList
 import java.util.regex.Pattern
 
-import std.util.*
+import kotlin.util.*
 
 class C{
     public fun foo(){

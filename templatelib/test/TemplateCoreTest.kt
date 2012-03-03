@@ -1,10 +1,10 @@
-package std.template
+package kotlin.template
 
-import std.*
-import std.template.io.*
-import std.io.*
-import std.util.*
-import std.test.*
+import kotlin.*
+import kotlin.template.io.*
+import kotlin.io.*
+import kotlin.util.*
+import kotlin.test.*
 import java.util.*
 
 class EmailTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {

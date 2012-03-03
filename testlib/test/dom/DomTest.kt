@@ -1,11 +1,12 @@
 package test.dom
 
-import std.*
-import std.dom.*
+import kotlin.*
+import kotlin.dom.*
 import kotlin.test.*
 import org.w3c.dom.*
+import junit.framework.TestCase
 
-class DomTest() : TestSupport() {
+class DomTest() : TestCase() {
 
     fun testCreateDocument() {
         var doc = createDocument()

@@ -1,6 +1,6 @@
 namespace the.reluctant.constructor
 
-import std.io.*
+import kotlin.io.*
 
 public class Reluctant() {
     val internalInstance = Reluctant() // Recursion is obvious

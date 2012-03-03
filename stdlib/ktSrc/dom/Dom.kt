@@ -1,7 +1,7 @@
-package std.dom
+package kotlin.dom
 
-import std.*
-import std.util.*
+import kotlin.*
+import kotlin.util.*
 import java.util.*
 import org.w3c.dom.*
 

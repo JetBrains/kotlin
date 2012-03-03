@@ -1,7 +1,7 @@
 namespace `null`.and.void
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 class Null() {
     class object {

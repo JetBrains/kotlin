@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.model
 
-import std.*
-import std.util.*
+import kotlin.*
+import kotlin.util.*
 
 import org.jetbrains.kotlin.doc.templates.*
 import org.jetbrains.kotlin.template.TextTemplate

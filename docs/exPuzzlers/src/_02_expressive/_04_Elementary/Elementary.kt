@@ -1,6 +1,6 @@
 namespace elementary
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
     // Problematic case does not compile

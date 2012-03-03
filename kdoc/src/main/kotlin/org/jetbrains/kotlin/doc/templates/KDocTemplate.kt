@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.doc.templates
 
-import std.*
-import std.util.*
+import kotlin.*
+import kotlin.util.*
 import org.jetbrains.kotlin.model.KClass
 import org.jetbrains.kotlin.model.KAnnotation
 import org.jetbrains.kotlin.model.KPackage

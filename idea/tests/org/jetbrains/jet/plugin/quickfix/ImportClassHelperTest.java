@@ -36,7 +36,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
     }
 
     public void testNoDefaultImport() {
-        testImportInFile("std.io.println");
+        testImportInFile("kotlin.io.println");
     }
 
     public void testImportBeforeObject() {

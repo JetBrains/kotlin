@@ -1,4 +1,4 @@
-package std.util
+package kotlin.util
 
 import java.util.*
 import java.util.Iterator

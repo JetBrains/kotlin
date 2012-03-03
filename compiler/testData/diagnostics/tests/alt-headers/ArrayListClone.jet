@@ -1,6 +1,6 @@
 // +JDK
 
-package std1
+package kotlin1
 
 import java.util.*
 

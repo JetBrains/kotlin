@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.doc.templates
 
-import std.*
+import kotlin.*
 import org.jetbrains.kotlin.template.*
-import std.io.*
-import std.util.*
+import kotlin.io.*
+import kotlin.util.*
 import java.util.*
 import org.jetbrains.kotlin.model.KModel
 

@@ -53,6 +53,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
  */
 public abstract class ExpectedResolveData {
 
+    protected static final String STANDARD_PREFIX = "kotlin::";
+
     private static class Position {
         private final PsiElement element;
 
@@ -212,7 +214,7 @@ public abstract class ExpectedResolveData {
             }
 
             JetReferenceExpression reference = getAncestorOfType(JetReferenceExpression.class, element);
-            if (expected == null && name.startsWith("std::")) {
+            if (expected == null && name.startsWith(STANDARD_PREFIX)) {
                 DeclarationDescriptor expectedDescriptor = nameToDescriptor.get(name);
                 JetTypeReference typeReference = getAncestorOfType(JetTypeReference.class, element);
                 if (expectedDescriptor != null) {
@@ -225,7 +227,7 @@ public abstract class ExpectedResolveData {
 
                 JetType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(name.substring(5));
+                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(name.substring(STANDARD_PREFIX.length()));
                 assertNotNull("Expected class not found: " + name);
                 assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
@@ -282,8 +284,9 @@ public abstract class ExpectedResolveData {
 
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             TypeConstructor expectedTypeConstructor;
-            if (typeName.startsWith("std::")) {
-                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(typeName.substring(5));
+            if (typeName.startsWith(STANDARD_PREFIX)) {
+                String name = typeName.substring(STANDARD_PREFIX.length());
+                ClassifierDescriptor expectedClass = lib.getLibraryScope().getClassifier(name);
 
                 assertNotNull("Expected class not found: " + typeName, expectedClass);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();

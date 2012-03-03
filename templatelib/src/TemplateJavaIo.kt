@@ -1,8 +1,8 @@
 // Server side Java IO code to avoid coupling
 // the core template code to java.* for easier JS porting
-package std.template.io
+package kotlin.template.io
 
-import std.template.*
+import kotlin.template.*
 import java.io.Writer
 import java.io.OutputStream
 import java.io.OutputStreamWriter

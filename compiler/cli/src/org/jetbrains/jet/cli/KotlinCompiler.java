@@ -56,6 +56,9 @@ public class KotlinCompiler {
         @Argument(value = "module", description = "module to compile")
         public String module;
 
+        @Argument(value = "classpath", description = "classpath to use when compiling")
+        public String classpath;
+
         @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
         public boolean includeRuntime;
 
@@ -138,6 +141,10 @@ public class KotlinCompiler {
 
             if (arguments.stdlib != null) {
                 environment.setStdlib(arguments.stdlib);
+            }
+
+            if (arguments.classpath != null) {
+                environment.addToClasspath(arguments.classpath);
             }
 
             boolean ok;

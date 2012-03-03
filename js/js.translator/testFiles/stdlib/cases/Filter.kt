@@ -1,4 +1,4 @@
-package std
+package kotlin
 
 import java.util.*
 import java.lang.Iterable

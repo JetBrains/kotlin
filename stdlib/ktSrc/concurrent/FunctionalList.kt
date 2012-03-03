@@ -1,4 +1,4 @@
-package std.concurrent
+package kotlin.concurrent
 
 abstract class FunctionalList<T>(public val size: Int) {
     public abstract val head: T

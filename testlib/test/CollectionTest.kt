@@ -4,12 +4,13 @@ import kotlin.test.*
 
 // TODO can we avoid importing all this stuff by default I wonder?
 // e.g. making println and the collection builder methods public by default?
-import std.*
-import std.io.*
-import std.util.*
+import kotlin.*
+import kotlin.io.*
+import kotlin.util.*
 import java.util.*
+import junit.framework.TestCase
 
-class CollectionTest() : TestSupport() {
+class CollectionTest() : TestCase() {
 
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
         private val collection = collection

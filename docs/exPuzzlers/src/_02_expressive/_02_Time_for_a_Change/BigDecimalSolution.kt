@@ -1,7 +1,7 @@
 namespace change
 
 import java.math.BigDecimal
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
   // Easy to make BigDecimals user-friendly

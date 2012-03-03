@@ -1,6 +1,6 @@
 namespace `in`.the.loop
 
-import std.io.*
+import kotlin.io.*
 
 val END = Integer.MAX_VALUE
 val START = END - 100

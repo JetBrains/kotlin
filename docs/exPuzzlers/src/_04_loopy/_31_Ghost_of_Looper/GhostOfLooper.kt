@@ -1,6 +1,6 @@
 namespace ghost.of.looper
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
     var i : Short = -1.toShort()

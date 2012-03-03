@@ -1,7 +1,7 @@
 namespace escape.rout
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 fun main(args : Array<String>) {
     // \u0022 is the Unicode escape for double quote (")

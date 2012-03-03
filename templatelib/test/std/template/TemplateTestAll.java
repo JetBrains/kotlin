@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package std.template;
+package kotlin.template;
 
-import std.template.html.*;
+import kotlin.template.html.*;
 
 import junit.framework.TestSuite;
 

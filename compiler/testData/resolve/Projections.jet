@@ -48,7 +48,7 @@ fun testInOut() {
   (return : Inv<*>).`!`inf(1)
 
   Inv<Int>().`Inv.outf`outf()
-  ((return : Inv<in Int>).`Inv.outf`outf())`:std::Any`
+  ((return : Inv<in Int>).`Inv.outf`outf())`:kotlin::Any`
   (return : Inv<out Int>).`Inv.outf`outf()
   (return : Inv<*>).`Inv.outf`outf()
 

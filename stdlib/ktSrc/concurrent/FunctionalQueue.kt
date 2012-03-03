@@ -1,4 +1,4 @@
-package std.concurrent
+package kotlin.concurrent
 
 import java.util.concurrent.Executor
 import jet.Iterator

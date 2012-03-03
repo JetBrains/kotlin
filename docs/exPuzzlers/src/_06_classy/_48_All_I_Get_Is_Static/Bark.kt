@@ -1,7 +1,7 @@
 namespace all.i.get.`is`.static
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 open class Dog() {
     class object {

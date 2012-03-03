@@ -2,12 +2,13 @@ package test.collections
 
 import kotlin.test.*
 
-import std.io.*
-import std.util.*
+import kotlin.io.*
+import kotlin.util.*
 import java.io.*
 import java.util.*
+import junit.framework.TestCase
 
-class IoTest() : TestSupport() {
+class IoTest() : TestCase() {
   fun testLineIteratorWithManualClose() {
     val reader = sample().buffered()
     try {

@@ -1,4 +1,4 @@
-import std.*
+import kotlin.*
 
 fun box() : String {
     val vector = java.util.Vector<Int>()

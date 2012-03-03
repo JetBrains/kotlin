@@ -16,9 +16,9 @@
 
 package lockperf_kotlin
 
-import std.io.*
-import std.util.*
-import std.concurrent.*
+import kotlin.io.*
+import kotlin.util.*
+import kotlin.concurrent.*
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CountDownLatch;

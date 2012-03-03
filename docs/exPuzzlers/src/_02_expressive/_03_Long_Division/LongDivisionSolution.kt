@@ -1,6 +1,6 @@
 namespace long.division.solution
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
     val MICROS_PER_DAY : Long = 24.toLong() * 60 * 60 * 1000 * 1000;

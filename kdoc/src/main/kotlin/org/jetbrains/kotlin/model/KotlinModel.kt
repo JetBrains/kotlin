@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.model
 
 import java.lang.String
-import std.*
-import std.util.*
+import kotlin.*
+import kotlin.util.*
 
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -120,7 +120,7 @@ abstract class KClassOrPackage : KAnnotated() {
 }
 
 class KModel(var context: BindingContext, var title: String = "Documentation", var version: String = "TODO") {
-    // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
 
@@ -414,7 +414,7 @@ class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
         return if (answer.length == 0) "" else answer + "/"
     }
 
-    // TODO generates java.lang.NoSuchMethodError: std.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val classes = sortedMap<String,KClass>()
     public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
 

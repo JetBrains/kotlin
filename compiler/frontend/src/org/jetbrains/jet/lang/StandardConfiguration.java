@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
  * @author svtk
  */
 public class StandardConfiguration implements Configuration {
-    public static final String[] DEFAULT_JET_IMPORTS = new String[] { "std.*", "std.io.*" };
+    public static final String[] DEFAULT_JET_IMPORTS = new String[] { "kotlin.*", "kotlin.io.*" };
 
     private Project project;
 

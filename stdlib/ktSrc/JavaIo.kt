@@ -1,4 +1,4 @@
-package std.io
+package kotlin.io
 
 import java.io.*
 import java.nio.charset.*

@@ -64,13 +64,13 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         Project project = getProject();
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
-        nameToDescriptor.put("std::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
+        nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(lib.getInt(), "plus", lib.getIntType()));
         FunctionDescriptor descriptorForGet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "get", lib.getIntType());
-        nameToDescriptor.put("std::Array.get(Int)", descriptorForGet.getOriginal());
-        nameToDescriptor.put("std::Int.compareTo(Double)", standardFunction(lib.getInt(), "compareTo", lib.getDoubleType()));
+        nameToDescriptor.put("kotlin::Array.get(Int)", descriptorForGet.getOriginal());
+        nameToDescriptor.put("kotlin::Int.compareTo(Double)", standardFunction(lib.getInt(), "compareTo", lib.getDoubleType()));
         @NotNull
         FunctionDescriptor descriptorForSet = standardFunction(lib.getArray(), Collections.singletonList(new TypeProjection(lib.getIntType())), "set", lib.getIntType(), lib.getIntType());
-        nameToDescriptor.put("std::Array.set(Int, Int)", descriptorForSet.getOriginal());
+        nameToDescriptor.put("kotlin::Array.set(Int, Int)", descriptorForSet.getOriginal());
 
         Map<String, PsiElement> nameToDeclaration = new HashMap<String, PsiElement>();
         PsiClass java_util_Collections = findClass("java.util.Collections");
@@ -147,7 +147,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
                 }
             }
         }
-        throw new IllegalArgumentException("Not found: std::" + classDescriptor.getName() + "." + name + "(" + parameterTypeList + ")");
+        throw new IllegalArgumentException("Not found: kotlin::" + classDescriptor.getName() + "." + name + "(" + parameterTypeList + ")");
     }
 
     @Override

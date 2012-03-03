@@ -1,7 +1,7 @@
 namespace whats.the.difference
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 import java.util.*
 
 fun iarray(vararg a : Int) = a // BUG

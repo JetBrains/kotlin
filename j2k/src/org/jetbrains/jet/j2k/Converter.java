@@ -124,7 +124,7 @@ public class Converter {
 
     @NotNull
     public File fileToFileWithCompatibilityImport(@NotNull PsiJavaFile javaFile) {
-        return fileToFile(javaFile, Collections.singletonList("std.compatibility.*"));
+        return fileToFile(javaFile, Collections.singletonList("kotlin.compatibility.*"));
     }
 
     @NotNull

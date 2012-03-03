@@ -1,13 +1,14 @@
 package test.collections
 
-import std.*
-import std.io.*
-import std.util.*
+import kotlin.*
+import kotlin.io.*
+import kotlin.util.*
 import kotlin.test.*
 import java.util.*
 import java.io.*
+import junit.framework.TestCase
 
-class OldStdlibTest() : TestSupport() {
+class OldStdlibTest() : TestCase() {
     fun testCollectionEmpty() {
         assertNot {
             Arrays.asList(0, 1, 2)?.empty ?: false

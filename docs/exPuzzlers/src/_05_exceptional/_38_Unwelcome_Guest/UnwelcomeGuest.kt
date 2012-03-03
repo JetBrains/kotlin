@@ -1,6 +1,6 @@
 namespace unwelcome.guest
 
-import std.io.*
+import kotlin.io.*
 
 val GUEST_USER_ID = -1
 val USER_ID =

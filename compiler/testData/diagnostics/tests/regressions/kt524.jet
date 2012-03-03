@@ -5,7 +5,7 @@ package StringBuilder
 
 import java.lang.StringBuilder
 
-//import std.io.*
+//import kotlin.io.*
 //import java.io.*
 
 fun main(args : Array<String>) {

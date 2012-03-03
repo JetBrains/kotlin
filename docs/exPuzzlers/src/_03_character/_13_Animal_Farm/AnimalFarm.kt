@@ -1,7 +1,7 @@
 namespace animal.farm
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 fun main(args : Array<String>) {
     val pig = "length: 10";

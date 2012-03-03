@@ -1,13 +1,14 @@
-package stdhack.test
+package kotlinhack.test
 
-import std.io.*
-import std.util.*
+import junit.framework.*
+
+import kotlin.io.*
+import kotlin.util.*
 import java.util.*
 
 import org.junit.*
 import org.junit.runner.*
 import org.junit.runner.notification.*
-import junit.framework.*
 
 protected class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test: TestBuilt<T>.() -> Unit) : TestCase(name) {
     private var myState: T? = null

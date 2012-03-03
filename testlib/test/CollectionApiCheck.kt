@@ -1,6 +1,6 @@
 package test.apicheck
 
-import std.util.*
+import kotlin.util.*
 import java.util.*
 
 trait Traversable<T> {

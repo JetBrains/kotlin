@@ -1,6 +1,6 @@
 namespace curse.of.loooper   // BUG!!!
 
-import std.io.*
+import kotlin.io.*
 
 class Curse<T : Comparable<T>>() {
     fun curse(i : T, j : T) {

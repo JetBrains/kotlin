@@ -1,8 +1,8 @@
 namespace whats.my.`class`
 
-import std.io.*
-import std.string.*
-import std.jutils.*
+import kotlin.io.*
+import kotlin.string.*
+import kotlin.jutils.*
 
 class Me() {
     fun main() {

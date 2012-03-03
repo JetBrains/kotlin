@@ -2,7 +2,7 @@ package org.jetbrains.jet.samples.vfs.utils;
 
 import java.util.concurrent.locks.Lock
 import java.util.List
-import std.util.*
+import kotlin.util.*
 
 /**
  * Executes task with given lock acquired.

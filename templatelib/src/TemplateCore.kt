@@ -1,6 +1,6 @@
-package std.template
+package kotlin.template
 
-import std.io.*
+import kotlin.io.*
 
 /**
  * Represents a generic API to templates which should be usable

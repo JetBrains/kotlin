@@ -1,11 +1,11 @@
-package std.template.html
+package kotlin.template.html
 
-import std.*
-import std.template.*
-import std.template.io.*
-import std.io.*
-import std.util.*
-import std.test.*
+import kotlin.*
+import kotlin.template.*
+import kotlin.template.io.*
+import kotlin.io.*
+import kotlin.util.*
+import kotlin.test.*
 import java.util.*
 
 val justBody = body {

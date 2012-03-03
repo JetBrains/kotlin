@@ -1,7 +1,7 @@
 package testDslExample
 
-import std.io.*
-import stdhack.test.*
+import kotlin.io.*
+import kotlinhack.test.*
 
 import junit.framework.*
 import junit.textui.TestRunner

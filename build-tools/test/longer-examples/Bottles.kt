@@ -74,7 +74,7 @@ fun bottlesOfBeer(count : Int) : String =
  */
 
 
-// From the std package
+// From the kotlin package
 // This is an extension property, i.e. a property that is defined for the
 // type Array<T>, but does not sit inside the class Array
 val <T> Array<T>.isEmpty : Boolean get() = size == 0

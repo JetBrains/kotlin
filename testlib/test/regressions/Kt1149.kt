@@ -1,7 +1,7 @@
 package test.regressions.kt1149
 
 import java.util.ArrayList
-import std.util.*
+import kotlin.util.*
 import junit.framework.*
 
 public trait SomeTrait {

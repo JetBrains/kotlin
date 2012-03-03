@@ -1,6 +1,6 @@
 namespace down.`for`.the.count
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
 // Problematic code does not compile

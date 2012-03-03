@@ -1,4 +1,4 @@
-import std.*
+import kotlin.*
 
 val test = "lala".javaClass
 

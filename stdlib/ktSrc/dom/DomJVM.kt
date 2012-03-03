@@ -1,7 +1,7 @@
 /**
  * JVM specific API implementations using JAXB and so forth which would not be used when compiling to JS
  */
-package std.dom
+package kotlin.dom
 
 import org.w3c.dom.*
 import javax.xml.parsers.DocumentBuilder

@@ -1,6 +1,6 @@
 namespace indecision
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
     println(decision())

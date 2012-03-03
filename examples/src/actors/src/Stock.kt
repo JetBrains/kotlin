@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.examples.actors
 
-import std.concurrent.*
+import kotlin.concurrent.*
 import java.util.concurrent.Executor
 import java.util.LinkedList
 import java.util.concurrent.Executors

@@ -1,7 +1,7 @@
 namespace creationism
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 class Creature() {
     class object {

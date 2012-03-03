@@ -1,4 +1,4 @@
-package std.util
+package kotlin.util
 // Number of extension function for java.lang.Iterable that shouldn't participate in auto generation
 
 import java.util.Collection
@@ -71,7 +71,7 @@ fun <T> java.lang.Iterable<T>.last() : T {
  * method will be used.
  */
 fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
-  std.io.println("!!!!!")
+  kotlin.io.println("!!!!!")
   if (this is java.util.AbstractCollection<T>) {
     return this.contains(item);
   }

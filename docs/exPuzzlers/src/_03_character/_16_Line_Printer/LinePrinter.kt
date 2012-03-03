@@ -1,7 +1,7 @@
 namespace line.printer
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 fun main(args : Array<String>) {
     // Note: \u000A is Unicode representation of linefeed (LF)

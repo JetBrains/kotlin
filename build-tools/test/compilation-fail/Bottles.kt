@@ -48,12 +48,12 @@ fun bottlesOfBeer(count : Int) : String =
  * An excerpt from the Standard Library
  */
 
-// From the std.io package
+// From the kotlin.io package
 // These are simple functions that wrap standard Java API calls
 fun print(message : String) { System.out?.print(message) }
 fun println(message : String) { System.out?.println(message) }
 
-// From the std package
+// From the kotlin package
 // This is an extension property, i.e. a property that is defined for the
 // type Array<T>, but does not sit inside the class Array
 val <T> Array<T>.isEmpty : Boolean get() = size == 0

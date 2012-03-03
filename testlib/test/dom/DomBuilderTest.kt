@@ -1,12 +1,13 @@
 package test.dom
 
-import std.*
-import std.dom.*
-import std.util.*
+import kotlin.*
+import kotlin.dom.*
+import kotlin.util.*
 import kotlin.test.*
 import org.w3c.dom.*
+import junit.framework.TestCase
 
-class DomBuilderTest() : TestSupport() {
+class DomBuilderTest() : TestCase() {
 
 
     fun testBuildDocument() {

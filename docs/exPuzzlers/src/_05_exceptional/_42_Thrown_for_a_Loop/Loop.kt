@@ -1,7 +1,7 @@
 namespace thrown.`for`.a.looop // BUG
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 fun iarr(vararg a : Int) = a // due to a BUG
 

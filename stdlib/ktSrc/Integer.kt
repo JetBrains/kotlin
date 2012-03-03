@@ -1,4 +1,4 @@
-package std
+package kotlin
 
 inline fun Int.times(body : () -> Unit) {
     var count = this;

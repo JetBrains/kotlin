@@ -2,5 +2,5 @@ import `java::java`java.*
 import java.`java::java.util`util.*
 
 fun typeTransform() {
-    Integer.getInteger("", 239)`:std::Int`
+    Integer.getInteger("", 239)`:kotlin::Int`
 }

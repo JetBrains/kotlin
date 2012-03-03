@@ -1,6 +1,6 @@
 package luhnybin
 
-import std.io.*
+import kotlin.io.*
 import java.io.*
 import java.util.ArrayDeque
 

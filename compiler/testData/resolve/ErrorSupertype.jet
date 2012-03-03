@@ -1,3 +1,3 @@
-class C(x : `std::Int`Int) : NotFound {
-    val xx : `std::Int`Int
+class C(x : `kotlin::Int`Int) : NotFound {
+    val xx : `kotlin::Int`Int
 }

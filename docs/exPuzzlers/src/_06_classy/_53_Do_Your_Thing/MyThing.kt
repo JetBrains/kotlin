@@ -1,7 +1,7 @@
 namespace `do`.your.thing
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 import _06_classy._53_Do_Your_Thing.Thing
 
 class MyThing(val arg : Int) : Thing(arg) {

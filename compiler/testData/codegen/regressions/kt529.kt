@@ -78,10 +78,10 @@ class Luhny() {
 
     private fun print(c : Char) {
         if (c.isDigit() && toBeMasked > 0) {
-            std.io.print('X')
+            kotlin.io.print('X')
             toBeMasked--
         } else {
-            std.io.print(c)
+            kotlin.io.print(c)
         }
     }
 }

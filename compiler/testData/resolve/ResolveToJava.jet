@@ -1,9 +1,9 @@
 import `java::java`java.*
 import java.`java::java.util`util.*
 
-fun foo(~a~a : `std::Array`Array<`std::Int`Int>) : `java::java.util.List`List {
-  `a`a.`std::Array.get(Int)`get(1)
-  `a`a.`std::Array.set(Int, Int)`set(1, 1)
+fun foo(~a~a : `kotlin::Array`Array<`kotlin::Int`Int>) : `java::java.util.List`List {
+  `a`a.`kotlin::Array.get(Int)`get(1)
+  `a`a.`kotlin::Array.set(Int, Int)`set(1, 1)
 }
 
 fun foo(o : `java::java.lang.Object`Object, l : `java::java.util`util.`java::java.util.List`List) : `java::java.util.List`List {}
@@ -27,7 +27,7 @@ class B : `java::java.lang.Object`Object {
     `java::java.util.Collections`Collections.`java::java.util.Collections.emptyList()`emptyList()
   }
 
-  fun barrr() : `std::Int`Int {
+  fun barrr() : `kotlin::Int`Int {
     `foo`foo(`A`A())
   }
 }

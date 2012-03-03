@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.template
 
-import std.io.*
+import kotlin.io.*
 import java.io.Writer
 import java.io.StringWriter
 import java.io.OutputStream

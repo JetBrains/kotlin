@@ -1,7 +1,7 @@
 // NOTE this file is auto-generated from stdlib/ktSrc/JavaIterables.kt
-package std
+package kotlin
 
-import std.util.*
+import kotlin.util.*
 
 import java.util.*
 

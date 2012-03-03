@@ -1,6 +1,6 @@
 package org.jetbrains.jet.samples.vfs;
 
-import std.concurrent.*
+import kotlin.concurrent.*
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.jetbrains.jet.samples.vfs.utils.*;
@@ -12,7 +12,7 @@ import java.util.HashMap
 import java.util.Arrays
 import java.util.Map
 
-import std.util.*
+import kotlin.util.*
 import java.util.TimerTask
 
 /**

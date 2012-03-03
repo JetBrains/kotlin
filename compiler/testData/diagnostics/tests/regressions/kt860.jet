@@ -1,7 +1,7 @@
 // KT-860 ConcurrentModificationException in frontend
 // +JDK
 
-package std.util
+package kotlin.util
 
 import java.util.*
 

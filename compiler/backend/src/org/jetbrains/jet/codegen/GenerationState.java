@@ -182,7 +182,7 @@ public class GenerationState {
         final ClassFileFactory factory = getFactory();
         List<String> files = factory.files();
         for (String file : files) {
-//            if (!file.startsWith("std/")) {
+//            if (!file.startsWith("kotlin/")) {
                 answer.append("@").append(file).append('\n');
                 answer.append(factory.asText(file));
 //            }

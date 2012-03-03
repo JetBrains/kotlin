@@ -1,6 +1,6 @@
 namespace no.pain.no.gain
 
-import std.io.*
+import kotlin.io.*
 
 val rnd = java.util.Random();
 

@@ -1,4 +1,4 @@
-package std.concurrent
+package kotlin.concurrent
 
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReadWriteLock

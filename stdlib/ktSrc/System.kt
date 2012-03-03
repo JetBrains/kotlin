@@ -1,4 +1,4 @@
-package std.util
+package kotlin.util
 
 /**
 Executes current block and returns elapsed time in milliseconds

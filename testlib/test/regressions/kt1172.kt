@@ -1,6 +1,6 @@
 package test.regressions.kt1172
 
-import std.concurrent.*
+import kotlin.concurrent.*
 import junit.framework.*
 import java.util.*
 

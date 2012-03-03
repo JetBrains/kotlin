@@ -1,4 +1,4 @@
-package std
+package kotlin
 
 import java.io.ByteArrayInputStream
 

@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.examples.actors
 
-import std.concurrent.*
-import std.util.*
+import kotlin.concurrent.*
+import kotlin.util.*
 
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater

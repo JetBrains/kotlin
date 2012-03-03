@@ -1,4 +1,4 @@
-package std.concurrent
+package kotlin.concurrent
 
 import java.lang.*
 import java.util.concurrent.Executor

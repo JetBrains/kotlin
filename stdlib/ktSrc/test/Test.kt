@@ -3,13 +3,32 @@
  */
 package kotlin.test
 
-import org.junit.Assert
-import junit.framework.TestCase
+import java.util.ServiceLoader
+
+private var _asserter: Asserter? = null
+
+fun asserter(): Asserter {
+    if (_asserter == null) {
+        /* TODO
+        val loader = ServiceLoader.load(javaClass<Asserter>)
+        for (a in loader) {
+            if (a != null) {
+                _asserter = a
+                break
+            }
+        }
+        */
+        if (_asserter == null) {
+            _asserter = DefaultAsserter()
+        }
+    }
+    return _asserter.sure()
+}
 
 /** Asserts that the given block returns true */
 inline fun assertTrue(message: String, block: ()-> Boolean) {
     val actual = block()
-    Assert.assertTrue(message, actual)
+    asserter().assertTrue(message, actual)
 }
 
 /** Asserts that the given block returns true */
@@ -35,22 +54,22 @@ inline fun assertFalse(actual: Boolean, message: String = "") {
 
 /** Asserts that the expected value is equal to the actual value, with an optional message */
 inline fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
-    Assert.assertEquals(message, expected, actual)
+    asserter().assertEquals(message, expected, actual)
 }
 
 /** Asserts that the expression is not null, with an optional message */
 inline fun assertNotNull(actual: Any?, message: String = "") {
-    Assert.assertNotNull(message, actual)
+    asserter().assertNotNull(message, actual)
 }
 
 /** Asserts that the expression is null, with an optional message */
 inline fun assertNull(actual: Any?, message: String = "") {
-    Assert.assertNull(message, actual)
+    asserter().assertNull(message, actual)
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional message */
 inline fun fail(message: String = "") {
-    Assert.fail(message)
+    asserter().fail(message)
 }
 
 /** Asserts that given function block returns the given expected value */
@@ -68,7 +87,7 @@ inline fun <T> expect(expected: T, message: String, block: ()-> T) {
 fun fails(block: ()-> Unit): Exception? {
     try {
         block()
-        Assert.fail("Expected an exception to be thrown")
+        asserter().fail("Expected an exception to be thrown")
         return null
     } catch (e: Exception) {
         println("Caught excepted exception: $e")
@@ -80,7 +99,7 @@ fun fails(block: ()-> Unit): Exception? {
 fun <T: Exception> failsWith(block: ()-> Unit) {
     try {
         block()
-        Assert.fail("Expected an exception to be thrown")
+        asserter().fail("Expected an exception to be thrown")
     } catch (e: T) {
         println("Caught excepted exception: $e")
         // OK
@@ -95,10 +114,50 @@ inline fun todo(block: ()-> Any) {
     println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
 }
 
+/**
+ * A plugin for performing assertions which can reuse JUnit or TestNG
+ */
+trait Asserter {
+    fun assertTrue(message: String, actual: Boolean): Unit
+
+    fun assertEquals(message: String, expected: Any?, actual: Any?): Unit
+
+    fun assertNotNull(message: String, actual: Any?): Unit
+
+    fun assertNull(message: String, actual: Any?): Unit
+
+    fun fail(message: String): Unit
+}
 
 /**
- * Useful base class for test cases using the old JUnit 3 naming convention of functions
- * starting with "test*" as being a test case
+ * Default implementation to avoid dependency on JUnit or TestNG
  */
-abstract class TestSupport() : TestCase() {
+class DefaultAsserter() : Asserter {
+
+    override fun assertTrue(message : String, actual : Boolean) {
+        if (!actual) {
+            fail(message)
+        }
+    }
+
+    override fun assertEquals(message : String, expected : Any?, actual : Any?) {
+        if (expected != actual) {
+            fail("$message. Expected <$expected> actual <$actual>")
+        }
+    }
+
+    override fun assertNotNull(message : String, actual : Any?) {
+        if (actual == null) {
+            fail(message)
+        }
+    }
+
+    override fun assertNull(message : String, actual : Any?) {
+        if (actual != null) {
+            fail(message)
+        }
+    }
+    override fun fail(message : String) {
+        throw AssertionError(message)
+    }
 }

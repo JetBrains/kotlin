@@ -1,9 +1,9 @@
-package std.template.html
+package kotlin.template.html
 
-import std.*
-import std.template.*
-import std.io.*
-import std.util.*
+import kotlin.*
+import kotlin.template.*
+import kotlin.io.*
+import kotlin.util.*
 import java.io.*
 import java.util.*
 

@@ -1,7 +1,7 @@
-package std.properties
+package kotlin.properties
 
-import std.*
-import std.util.*
+import kotlin.*
+import kotlin.util.*
 import java.util.List
 import java.util.Map
 import java.util.HashMap

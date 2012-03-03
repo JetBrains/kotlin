@@ -1,7 +1,7 @@
 namespace well.dog.my.cats
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 
 open class Counter {
     class object {

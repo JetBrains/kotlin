@@ -3,11 +3,11 @@
     ~B()~this(i: Int) {}
   }
 
-  ~foo~fun foo(~foo.a~a : `std::Char`Char) = `foo.a`a`:std::Char`
-  ~fooB~fun fooB() = `foo`foo('1')`:std::Char`
-  ~foo.1~fun foo() : Int = (1.`std::Int.plus(Int)`plus(1))`:std::Int`
+  ~foo~fun foo(~foo.a~a : `kotlin::Char`Char) = `foo.a`a`:kotlin::Char`
+  ~fooB~fun fooB() = `foo`foo('1')`:kotlin::Char`
+  ~foo.1~fun foo() : Int = (1.`kotlin::Int.plus(Int)`plus(1))`:kotlin::Int`
   ~foo1~fun foo1() : `B`B = `B`B()`:B`
-  ~A.a~val a : `std::Int`Int
+  ~A.a~val a : `kotlin::Int`Int
 }
 
 ~C~class C : `A`A {
@@ -20,16 +20,16 @@
 
 fun test() : Unit {
     for (~i~i in 1..2) {
-      `i`i`:std::Int`
+      `i`i`:kotlin::Int`
     }
     for (val ~j~j in 1..2) {
-      `j`j`:std::Int`
+      `j`j`:kotlin::Int`
     }
     for (val ~k~k : Int in 1..2) {
-      `k`k`:std::Int`
+      `k`k`:kotlin::Int`
     }
     for (~l~l : Int in 1..2) {
-      `l`l`:std::Int`
+      `l`l`:kotlin::Int`
       while (true) {
         `l`l
       }

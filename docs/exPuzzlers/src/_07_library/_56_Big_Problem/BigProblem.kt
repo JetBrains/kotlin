@@ -1,7 +1,7 @@
 namespace big.problem
 
-import std.io.*
-import std.*
+import kotlin.io.*
+import kotlin.*
 import java.math.BigInteger
 
 fun main(args : Array<String>) {

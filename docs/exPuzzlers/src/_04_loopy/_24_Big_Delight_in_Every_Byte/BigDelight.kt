@@ -1,6 +1,6 @@
 namespace big.delight.in.every.byte
 
-import std.io.*
+import kotlin.io.*
 
 fun main(args : Array<String>) {
 //    for (b : Byte in Byte.MIN_VALUE..Byte.MAX_VALUE) {

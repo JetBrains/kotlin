@@ -1,4 +1,4 @@
-package std.math
+package kotlin.math
 
 import java.math.BigInteger
 import java.math.BigDecimal

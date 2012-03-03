@@ -1,12 +1,13 @@
 package test.collections;
 
-import std.math.*
+import kotlin.math.*
 import java.math.BigInteger
 import java.math.BigDecimal
 
 import kotlin.test.*
+import junit.framework.TestCase
 
-class MathTest : TestSupport() {
+class MathTest : TestCase() {
     fun testBigInteger() {
         val a = BigInteger("2")
         val b = BigInteger("3")

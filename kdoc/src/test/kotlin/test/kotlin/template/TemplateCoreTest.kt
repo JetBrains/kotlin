@@ -1,9 +1,9 @@
 package test.kotlin.template
 
-import std.*
+import kotlin.*
 import org.jetbrains.kotlin.template.*
-import std.io.*
-import std.util.*
+import kotlin.io.*
+import kotlin.util.*
 import java.util.*
 
 import junit.framework.TestCase

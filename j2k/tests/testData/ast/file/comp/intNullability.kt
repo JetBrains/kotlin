@@ -1,5 +1,5 @@
 package demo
-import std.compatibility.*
+import kotlin.compatibility.*
 open class Test() {
 open fun test() : Unit {
 var i : Int? = 10

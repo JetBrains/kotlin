@@ -6,8 +6,8 @@ import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.ArrayList
 
-import std.util.*
-import std.concurrent.*
+import kotlin.util.*
+import kotlin.concurrent.*
 import java.util.Timer
 import java.util.TimerTask
 
