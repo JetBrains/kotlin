@@ -33,7 +33,9 @@
           <root url="jar://$MODULE_DIR$/../dist/kotlinc/lib/kotlin-compiler.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../compiler/cli/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -102,7 +104,25 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../dist/kotlinc/lib/asm-all-3.3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../lib/asm-util-3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/asm-tree-3.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../lib/asm-analysis-3.3.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
