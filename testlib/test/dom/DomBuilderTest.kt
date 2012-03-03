@@ -3,7 +3,7 @@ package test.dom
 import std.*
 import std.dom.*
 import std.util.*
-import kool.test.*
+import kotlin.test.*
 import org.w3c.dom.*
 
 class DomBuilderTest() : TestSupport() {

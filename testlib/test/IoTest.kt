@@ -1,6 +1,6 @@
 package test.collections
 
-import kool.test.*
+import kotlin.test.*
 
 import std.io.*
 import std.util.*

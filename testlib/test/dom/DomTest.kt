@@ -2,7 +2,7 @@ package test.dom
 
 import std.*
 import std.dom.*
-import kool.test.*
+import kotlin.test.*
 import org.w3c.dom.*
 
 class DomTest() : TestSupport() {

@@ -1,7 +1,7 @@
 package test.collections
 
 import std.*
-import kool.test.*
+import kotlin.test.*
 
 class StandardCollectionTest() : TestSupport() {
 

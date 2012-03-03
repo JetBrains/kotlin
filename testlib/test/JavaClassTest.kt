@@ -1,6 +1,6 @@
 package testjc
 
-import kool.test.*
+import kotlin.test.*
 
 class C()
 

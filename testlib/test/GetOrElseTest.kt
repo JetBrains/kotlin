@@ -1,7 +1,7 @@
 package test.standard
 
 import std.*
-import kool.test.*
+import kotlin.test.*
 
 class GetOrElseTest() : TestSupport() {
     val v1: String? = "hello"

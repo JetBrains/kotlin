@@ -1,7 +1,7 @@
 /**
  * A number of helper methods for writing Kool unit tests
  */
-package kool.test
+package kotlin.test
 
 import org.junit.Assert
 import junit.framework.TestCase

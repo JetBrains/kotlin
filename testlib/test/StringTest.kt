@@ -1,7 +1,7 @@
 package testString
 
 import std.io.*
-import kool.test.*
+import kotlin.test.*
 
 import junit.framework.*
 

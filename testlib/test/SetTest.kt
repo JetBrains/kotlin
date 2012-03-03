@@ -3,7 +3,7 @@ package test.collections
 import std.*
 import std.io.*
 import std.util.*
-import kool.test.*
+import kotlin.test.*
 import java.util.*
 
 class SetTest() : TestSupport() {
