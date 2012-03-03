@@ -74,19 +74,20 @@ abstract class KDocTemplate() : TextTemplate() {
         val arguments = t.arguments
         return if (c != null) {
             val prefix = if (c.isAnnotation()) "@" else ""
-            if (c.name.startsWith("jet.Function") && arguments.notEmpty()) {
+            val cname = c.name
+            if ((cname.startsWith("jet.Function") || cname.startsWith("jet.ExtensionFunction")) && arguments.notEmpty()) {
                 val rt = arguments.last()
                 // TODO use drop()
                 val rest = arguments.subList(0, arguments.size - 1).notNull()
                 "${typeArguments(rest, "(", ")", "()")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
-            } else if (c.name.startsWith("jet.Tuple")) {
+            } else if (cname.startsWith("jet.Tuple")) {
                 if (arguments.isEmpty()) {
                     "Unit"
                 } else {
                     "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">#</a>${typeArguments(arguments, "(", ")", "()")}"
                 }
             } else {
-                val name = if (fullName) c.name else c.simpleName
+                val name = if (fullName) cname else c.simpleName
                 "<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">$prefix$name</A>${typeArguments(arguments)}"
             }
         } else {
