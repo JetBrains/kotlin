@@ -267,6 +267,7 @@ inline fun NodeList?.toElementList(): List<Element> {
     }
 }
 
+/** Converts the node list to an XML String */
 fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
     return if (this == null)
         "" else {
@@ -353,7 +354,7 @@ fun Node.ownerDocument(doc: Document? = null): Document {
     }
 }
 
-/*
+/**
 Adds a newly created element which can be configured via a function
 */
 fun Document.addElement(name: String, init: Element.()-> Unit): Element {
@@ -362,7 +363,7 @@ fun Document.addElement(name: String, init: Element.()-> Unit): Element {
     return child
 }
 
-/*
+/**
 Adds a newly created element to an element which has an owner Document which can be configured via a function
 */
 fun Element.addElement(name: String, doc: Document? = null, init: Element.()-> Unit): Element {
@@ -371,7 +372,7 @@ fun Element.addElement(name: String, doc: Document? = null, init: Element.()-> U
     return child
 }
 
-/*
+/**
 Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
 */
 fun Element.addText(text: String?, doc: Document? = null): Element {

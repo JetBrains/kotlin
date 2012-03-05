@@ -3,14 +3,10 @@ package kotlin
 import java.util.*
 import java.lang.Iterable
 
-/*
-Filters given iterator
-*/
+/** Filters given iterator */
 inline fun <T> java.util.Iterator<T>.filter(f: (T)-> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, f)
 
-/*
-Create iterator filtering given java.lang.Iterable
-*/
+/** Create iterator filtering given java.lang.Iterable */
 /*
 inline fun <T> java.lang.Iterable<T>.filter(f: (T)->Boolean) : java.util.Iterator<T> = (iterator() as java.util.Iterator<T>).filter(f)
 */

@@ -99,7 +99,7 @@ inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(st
 /** Returns true if the string is not null and not empty */
 inline fun String?.notEmpty() : Boolean = this != null && this.length() > 0
 
-/*
+/**
 Iterator for characters of given CharSequence
 */
 inline fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {

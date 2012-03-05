@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock
 
-/*
+/**
 Executes given calculation under lock
 Returns result of the calculation
 */
@@ -19,7 +19,7 @@ inline fun <erased T> Lock.withLock(action: ()->T) : T {
     }
 }
 
-/*
+/**
 Executes given calculation under read lock
 Returns result of the calculation
 */
@@ -34,7 +34,7 @@ inline fun <erased T> ReentrantReadWriteLock.read(action: ()->T) : T {
     }
 }
 
-/*
+/**
 Executes given calculation under write lock.
 The method does upgrade from read to write lock if needed
 If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races

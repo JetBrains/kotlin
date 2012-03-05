@@ -150,23 +150,23 @@ inline fun <T> Array<T>.reverse() : List<T> {
   return answer
 }
 
-/* Copies the collection into the given collection */
+/** Copies the collection into the given collection */
 inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
   for (elem in this)
     result.add(elem)
   return result
 }
 
-/* Converts the collection into a LinkedList */
+/** Converts the collection into a LinkedList */
 inline fun <T> Array<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
-/* Converts the collection into a List */
+/** Converts the collection into a List */
 inline fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
 
-/* Converts the collection into a Set */
+/** Converts the collection into a Set */
 inline fun <T> Array<T>.toSet() : Set<T> = this.to(HashSet<T>())
 
-/* Converts the collection into a SortedSet */
+/** Converts the collection into a SortedSet */
 inline fun <T> Array<T>.toSortedSet() : SortedSet<T> = this.to(TreeSet<T>())
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

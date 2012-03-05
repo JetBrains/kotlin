@@ -18,14 +18,17 @@ import java.lang.Iterable
 import java.util.List
 import java.util.Collection
 
+/** Creates a new document with the given document builder*/
 fun createDocument(builder: DocumentBuilder): Document {
     return builder.newDocument().sure()
 }
 
+/** Creates a new document with an optional DocumentBuilderFactory */
 fun createDocument(builderFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().sure()): Document {
     return createDocument(builderFactory.newDocumentBuilder().sure())
 }
 
+/** Creates a new TrAX transformer */
 fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance().sure()): Transformer {
     val transformer = if (source != null) {
         factory.newTransformer(source)
@@ -35,10 +38,12 @@ fun createTransformer(source: Source? = null, factory: TransformerFactory = Tran
     return transformer.sure()
 }
 
+/** Converts the node to an XML String */
 fun Node.toXmlString(xmlDeclaration: Boolean = this is Document): String {
     return nodeToXmlString(this, xmlDeclaration)
 }
 
+/** Converts the collection of nodes to an XML String */
 fun java.lang.Iterable<Node>.toXmlString(xmlDeclaration: Boolean = false): String {
     // TODO this should work...
     // return this.map<Node,String>{it.toXmlString()}.join("")
@@ -56,6 +61,7 @@ fun Document.toXmlString(xmlDeclaration: Boolean = true): String {
 }
 */
 
+/** Converts the node to an XML String */
 fun nodeToXmlString(node: Node, xmlDeclaration: Boolean): String {
     val transformer = createTransformer()
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")
