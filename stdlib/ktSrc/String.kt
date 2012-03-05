@@ -26,19 +26,19 @@ inline fun String.trim(text: String) = trimLeading(text).trimTrailing(text)
 /** Returns the string with the prefix and postfix text trimmed */
 inline fun String.trim(prefix: String, postfix: String) = trimLeading(prefix).trimTrailing(postfix)
 
-/** Returns the string with all leading occurrences of the given string removed */
+/** Returns the string with the leading prefix of this string removed */
 inline fun String.trimLeading(prefix: String): String {
     var answer = this
-    while (answer.startsWith(prefix)) {
+    if (answer.startsWith(prefix)) {
         answer = answer.substring(prefix.length())
     }
     return answer
 }
 
-/** Returns the string with the all the trailing occurrences of the given string removed */
+/** Returns the string with the trailing postfix of this string removed */
 inline fun String.trimTrailing(postfix: String): String {
     var answer = this
-    while (answer.endsWith(postfix)) {
+    if (answer.endsWith(postfix)) {
         answer = answer.substring(0, length() - postfix.length())
     }
     return answer

@@ -296,10 +296,32 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
             if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
             var text = node?.getText() ?: ""
             // lets remove the comment tokens
-            //val lines = text.trim().split("\\n")
-            text = text.trim().trim("/").trim("*").trim()
-            // TODO convert any macros or wiki text!
-            return text
+            val lines = text.trim().split("\\n")
+            if (lines != null) {
+                // lets remove the /** ... * ... */ tokens
+                val buffer = StringBuilder()
+                val last = lines.size - 1
+                for (i in 0.upto(last)) {
+                    var text = lines[i] ?: ""
+                    text = text.trim()
+                    if (i == 0) {
+                       text = text.trimLeading("/**").trimLeading("/*")
+                    } else {
+                        buffer.append("\n")
+                    }
+                    if (i >= last) {
+                        text = text.trimTrailing("*/")
+                    } else if (i > 0) {
+                        text = text.trimLeading("* ")
+                        if (text == "*") text = ""
+                    }
+                    buffer.append(text)
+                }
+                // TODO convert any macros or wiki text!
+                return buffer.toString() ?: ""
+            } else {
+                return text
+            }
         }
         return ""
     }
