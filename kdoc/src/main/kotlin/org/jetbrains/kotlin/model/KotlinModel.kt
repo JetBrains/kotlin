@@ -227,7 +227,8 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     protected fun createFunction(owner: KClassOrPackage, descriptor: CallableDescriptor): KFunction? {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
-            val function = KFunction(owner, descriptor.getName() ?: "null", returnType)
+            val name = descriptor.getName() ?: "null"
+            val function = KFunction(descriptor, owner, name, returnType)
             addTypeParameters(function.typeParameters, descriptor.getTypeParameters())
             function.description = commentsFor(descriptor)
             val params = descriptor.getValueParameters()
@@ -352,9 +353,9 @@ abstract class KNamed(val name: String) : KAnnotated(), Comparable<KNamed> {
 
     override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
 
-    fun equals(other: KPackage) = name == other.name
+    open fun equals(other: KPackage) = name == other.name
 
-    fun toString() = name
+    open fun toString() = name
 }
 
 
@@ -464,6 +465,11 @@ class KType(val jetType: JetType, val model: KModel, val klass: KClass?, val arg
             }
         }
     }
+
+    override fun toString() = if (nullable) "$name?" else name
+
+    val nullable: Boolean
+        get() = jetType.isNullable()
 }
 
 class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
@@ -517,7 +523,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
     }
 }
 
-class KFunction(val owner: KClassOrPackage, val name: String,
+class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, val name: String,
         var returnType: KType,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
