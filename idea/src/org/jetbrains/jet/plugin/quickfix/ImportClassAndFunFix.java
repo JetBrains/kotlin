@@ -153,10 +153,13 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         if (project == null) {
             return false;
         }
-        
-        String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.get(0));
-        if (!ApplicationManager.getApplication().isUnitTestMode() &&
-                !HintManager.getInstance().hasShownHintsThatWillHideByOtherHint()) {
+
+        if (HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) {
+            return false;
+        }
+
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.get(0));
 
             HintManager.getInstance().showQuestionHint(
                     editor, hintText,
