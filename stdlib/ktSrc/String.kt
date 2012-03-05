@@ -110,3 +110,57 @@ inline fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {
    public override val hasNext: Boolean
    get() = index < length
 }
+
+inline fun String.replaceFirst(regex : String, replacement : String) = (this as java.lang.String).replaceFirst(regex, replacement).sure()
+
+inline fun String.charAt(index : Int) = (this as java.lang.String).charAt(index).sure()
+
+inline fun String.split(regex : String, limit : Int) = (this as java.lang.String).split(regex, limit).sure()
+
+inline fun String.codePointAt(index : Int) = (this as java.lang.String).codePointAt(index).sure()
+
+inline fun String.codePointBefore(index : Int) = (this as java.lang.String).codePointBefore(index).sure()
+
+inline fun String.codePointCount(beginIndex : Int, endIndex : Int) = (this as java.lang.String).codePointCount(beginIndex, endIndex)
+
+inline fun String.compareToIgnoreCase(str : String) = (this as java.lang.String).compareToIgnoreCase(str).sure()
+
+inline fun String.concat(str : String) = (this as java.lang.String).concat(str).sure()
+
+inline fun String.contentEquals(cs : CharSequence) = (this as java.lang.String).contentEquals(cs).sure()
+
+inline fun String.contentEquals(sb : StringBuffer) = (this as java.lang.String).contentEquals(sb).sure()
+
+inline fun String.getBytes(charset : java.nio.charset.Charset) = (this as java.lang.String).getBytes(charset).sure()
+
+inline fun String.getBytes(charsetName : String) = (this as java.lang.String).getBytes(charsetName).sure()
+
+inline fun String.getChars(srcBegin : Int, srcEnd : Int, dst : CharArray, dstBegin : Int) = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin).sure()
+
+inline fun String.indexOf(ch : Char) = (this as java.lang.String).indexOf(ch.toString()).sure()
+
+inline fun String.indexOf(ch : Char, fromIndex : Int) = (this as java.lang.String).indexOf(ch.toString(), fromIndex).sure()
+
+inline fun String.intern() = (this as java.lang.String).intern().sure()
+
+inline fun String.isEmpty() = (this as java.lang.String).isEmpty().sure()
+
+inline fun String.lastIndexOf(ch : Char, fromIndex : Int) = (this as java.lang.String).lastIndexOf(ch.toString(), fromIndex).sure()
+
+inline fun String.lastIndexOf(str : String, fromIndex : Int) = (this as java.lang.String).lastIndexOf(str, fromIndex).sure()
+
+inline fun String.matches(regex : String) = (this as java.lang.String).matches(regex).sure()
+
+inline fun String.offsetByCodePoints(index : Int, codePointOffset : Int) = (this as java.lang.String).offsetByCodePoints(index, codePointOffset).sure()
+
+inline fun String.regionMatches(ignoreCase : Boolean, toffset : Int, other : String, ooffset : Int, len : Int) = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len).sure()
+
+inline fun String.regionMatches(toffset : Int, other : String, ooffset : Int, len : Int) = (this as java.lang.String).regionMatches(toffset, other, ooffset, len).sure()
+
+inline fun String.replace(target : CharSequence, replacement : CharSequence) = (this as java.lang.String).replace(target, replacement).sure()
+
+inline fun String.subSequence(beginIndex : Int, endIndex : Int) = (this as java.lang.String).subSequence(beginIndex, endIndex).sure()
+
+inline fun String.toLowerCase(locale : java.util.Locale) = (this as java.lang.String).toLowerCase(locale).sure()
+
+inline fun String.toUpperCase(locale : java.util.Locale) = (this as java.lang.String).toUpperCase(locale).sure()
