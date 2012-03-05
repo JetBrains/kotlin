@@ -1,8 +1,12 @@
-kotlin.modules
-std
+kotlin
 kotlin.concurrent
 kotlin.dom
 kotlin.io
 kotlin.math
+kotlin.modules
 kotlin.properties
+kotlin.test
 kotlin.util
+org.jetbrains.kotlin.junit
+org.jetbrains.kotlin.support
+org.jetbrains.kotlin.test.junit
