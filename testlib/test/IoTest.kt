@@ -37,7 +37,7 @@ class IoTest() : TestCase() {
     val list = ArrayList<String>()
     val reader = sample().buffered()
 
-    reader.foreach{
+    reader.use{
       while (true) {
         val line = it.readLine()
         if (line != null)
