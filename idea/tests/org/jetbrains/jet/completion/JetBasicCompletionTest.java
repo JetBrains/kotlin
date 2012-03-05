@@ -77,6 +77,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInTypeAnnotation() {
+        doTest();
+    }
+
     public void testJavaClassNames() {
         doTest();
     }

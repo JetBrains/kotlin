@@ -18,15 +18,23 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.caches.JetCacheManager;
+import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
+
+import java.util.Collection;
 
 /**
  * @author Nikolay Krasko
@@ -67,9 +75,22 @@ public class JetClassCompletionContributor extends CompletionContributor {
             @NotNull final Consumer<LookupElement> consumer) {
 
         CompletionResultSet tempResult = result.withPrefixMatcher(CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
+
+        Project project = parameters.getPosition().getProject();
+
+        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+
+        // TODO: Make icon for standard types
+        Collection<DeclarationDescriptor> jetOnlyClasses = JetShortNamesCache.getJetOnlyTypes();
+        BindingContext bindingContext = namesCache.getResolutionContext(GlobalSearchScope.allScope(project));
+
+        for (DeclarationDescriptor jetOnlyClass : jetOnlyClasses) {
+            consumer.consume(DescriptorLookupConverter.createLookupElement(bindingContext, jetOnlyClass));
+        }
+
         JavaClassNameCompletionContributor.addAllClasses(
                 parameters,
-                parameters.getInvocationCount() <= 2,
+                false,
                 JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
                 new Consumer<LookupElement>() {
                     @Override

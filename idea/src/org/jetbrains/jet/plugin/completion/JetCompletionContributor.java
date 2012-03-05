@@ -62,10 +62,6 @@ public class JetCompletionContributor extends CompletionContributor {
 
                        Set<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
 
-                       if (result.getPrefixMatcher().getPrefix().isEmpty()) {
-                           return;
-                       }
-
                        PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
                            return;
@@ -73,12 +69,23 @@ public class JetCompletionContributor extends CompletionContributor {
 
                        JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
+
+                           if (shouldRunTypeCompletionOnly(position, jetReference)) {
+                               addClasses(parameters, result);
+                               result.stopHere();
+                               return;
+                           }
+
                            for (Object variant : jetReference.getVariants()) {
                                addReferenceVariant(result, variant, positions);
                            }
 
+                           if (result.getPrefixMatcher().getPrefix().isEmpty()) {
+                               return;
+                           }
+
                            if (shouldRunTopLevelCompletion(parameters)) {
-                               addClasses(parameters, result, positions);
+                               addClasses(parameters, result);
                                addJetTopLevelFunctions(result, position, positions);
                                addJetExtensionFunctions(jetReference.getExpression(), result, position);
                            }
@@ -94,7 +101,6 @@ public class JetCompletionContributor extends CompletionContributor {
 
         BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) position.getContainingFile());
         JetExpression receiverExpression = expression.getReceiverExpression();
-
 
         if (receiverExpression != null) {
             JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
@@ -185,15 +191,26 @@ public class JetCompletionContributor extends CompletionContributor {
      */
     private static void addClasses(
             @NotNull CompletionParameters parameters,
-            @NotNull final CompletionResultSet result,
-            @NotNull final Set<LookupPositionObject> positions) {
-
+            @NotNull final CompletionResultSet result
+    ) {
         JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
             @Override
             public void consume(@NotNull LookupElement element) {
-                addCompletionToResult(result, element, positions);
+                result.addElement(element);
             }
         });
+    }
+
+    private static boolean shouldRunTypeCompletionOnly(PsiElement position, JetSimpleNameReference jetReference) {
+        // Check that completion in the type annotation context and if there's a qualified
+        // expression we are at first of it
+        JetTypeReference typeReference = PsiTreeUtil.getParentOfType(position, JetTypeReference.class);
+        if (typeReference != null) {
+            JetSimpleNameExpression firstPartReference = PsiTreeUtil.findChildOfType(typeReference, JetSimpleNameExpression.class);
+            return firstPartReference == jetReference.getExpression();
+        }
+
+        return false;
     }
 
     private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters) {
@@ -260,11 +277,9 @@ public class JetCompletionContributor extends CompletionContributor {
     private static LookupPositionObject getLookupPosition(LookupElement element) {
         Object lookupObject = element.getObject();
         if (lookupObject instanceof PsiElement) {
-//            PsiElement psiElement = (PsiElement) lookupObject;
             return new LookupPositionObject((PsiElement) lookupObject);
         }
         else if (lookupObject instanceof JetLookupObject) {
-//            JetLookupObject jetLookupObject = (JetLookupObject) lookupObject;
             PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
             if (psiElement != null) {
                 return new LookupPositionObject(psiElement);

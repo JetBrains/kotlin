@@ -344,6 +344,4 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                     new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
         }
     }
-
-
 }
