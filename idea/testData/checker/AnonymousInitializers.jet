@@ -1,4 +1,4 @@
-class NoC {
+trait NoC {
   <error>{
 
   }</error>

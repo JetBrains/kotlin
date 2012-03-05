@@ -1,4 +1,4 @@
-class NoC {
+trait NoC {
   <!ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR!>{
 
   }<!>
