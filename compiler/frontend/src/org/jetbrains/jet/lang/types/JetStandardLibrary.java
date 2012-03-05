@@ -193,6 +193,22 @@ public class JetStandardLibrary {
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
     }
 
+    public Collection<ClassDescriptor> getStandardTypes() {
+        initStdClasses();
+
+        Collection<ClassDescriptor> classDescriptors = new ArrayList<ClassDescriptor>(primitiveTypeToClass.values());
+        classDescriptors.add(numberClass);
+        classDescriptors.add(stringClass);
+        classDescriptors.add(charSequenceClass);
+        classDescriptors.add(arrayClass);
+        classDescriptors.add(volatileClass);
+        classDescriptors.add(throwableClass);
+        classDescriptors.add(iterableClass);
+        classDescriptors.add(comparableClass);
+
+        return classDescriptors;
+    }
+
     @NotNull
     public ClassDescriptor getNumber() {
         initStdClasses();
@@ -258,7 +274,7 @@ public class JetStandardLibrary {
     }
 
     @NotNull
-    public ClassDescriptor  getArray() {
+    public ClassDescriptor getArray() {
         initStdClasses();
         return arrayClass;
     }

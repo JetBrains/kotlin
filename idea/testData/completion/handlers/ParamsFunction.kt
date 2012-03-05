@@ -1,3 +1,5 @@
+package somefortest
+
 fun test(a: Int) {
 }
 

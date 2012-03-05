@@ -425,4 +425,9 @@ public class JetStandardClasses {
         List<TypeProjection> arguments = type.getArguments();
         return arguments.get(arguments.size() - 1).getType();
     }
+
+    @NotNull
+    public static Collection<DeclarationDescriptor> getAllStandardClasses() {
+        return STANDARD_CLASSES.getAllDescriptors();
+    }
 }

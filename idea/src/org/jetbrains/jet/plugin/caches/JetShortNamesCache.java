@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.caches;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
@@ -32,9 +33,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetStandardClasses;
+import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
@@ -42,10 +47,7 @@ import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Will provide both java elements from jet context and some special declarations special to jet.
@@ -79,7 +81,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     @Override
     public PsiClass[] getClassesByName(@NotNull @NonNls String name, @NotNull GlobalSearchScope scope) {
-
         // Quick check for classes from getAllClassNames()
         Collection<String> classNames = JetShortClassNameIndex.getInstance().getAllKeys(project);
         if (!classNames.contains(name)) {
@@ -101,14 +102,29 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @Override
-    public void getAllClassNames(@NotNull HashSet<String> dest) {
-        // TODO: Implement it. Is it called somewhere?
+    public void getAllClassNames(@NotNull HashSet<String> destination) {
+        destination.addAll(Arrays.asList(getAllClassNames()));
     }
 
-//    public Collection<String> getALlJetClassFQNames() {
-//        final BindingContext context = getResolutionContext(GlobalSearchScope.allScope(project));
-//        return context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR);
-//    }
+    /**
+     * Types that should be visible in completion from kotlin but should be absent in java.
+     * @return
+     */
+    @NotNull
+    public static Collection<DeclarationDescriptor> getJetOnlyTypes() {
+        Collection<DeclarationDescriptor> standardTypes = JetStandardClasses.getAllStandardClasses();
+        standardTypes.addAll(
+                Collections2.transform(JetStandardLibrary.getInstance().getStandardTypes(),
+                                       new Function<ClassDescriptor, DeclarationDescriptor>() {
+                                           @Override
+                                           public DeclarationDescriptor apply(@Nullable ClassDescriptor classDescriptor) {
+                                               assert classDescriptor != null;
+                                               return classDescriptor;
+                                           }
+                                       }));
+
+        return standardTypes;
+    }
 
     @NotNull
     public Collection<String> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {

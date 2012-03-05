@@ -16,8 +16,11 @@
 
 package org.jetbrains.jet.completion.handlers;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.projectRoots.Sdk;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -26,6 +29,10 @@ import java.io.File;
  * @author Nikolay Krasko
  */
 public class CompletionHandlerTest extends LightCompletionTestCase {
+
+    public void testClassCompletionImport() {
+        doTest(CompletionType.CLASS_NAME, 1, "SortedSet");
+    }
 
     public void testNoParamsFunction() {
         doTest();
@@ -54,15 +61,25 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void doTest() {
+        doTest(CompletionType.BASIC, 2, null);
+    }
+
+    public void doTest(CompletionType type, int time, @Nullable String completeItem) {
         String fileName = getTestName(false);
         try {
             configureByFileNoComplete(fileName + ".kt");
-            complete(2);
+            setType(type);
+
+            complete(time);
+
+            if (completeItem != null) {
+                selectItem(LookupElementBuilder.create(completeItem), '\t');
+            }
+
             checkResultByFile(fileName + ".kt.after");
         } catch (Exception e) {
             throw new AssertionError(e);
         }
-        
     }
 
     @Override

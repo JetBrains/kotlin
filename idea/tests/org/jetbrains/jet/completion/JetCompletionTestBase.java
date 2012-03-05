@@ -45,12 +45,10 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
     protected void doTest() {
         try {
             final String testName = getTestName(false);
-
-            type = (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
-
             configureByFileNoComplete(testName + ".kt");
 
             final String fileText = getFile().getText();
+            type = getCompletionType(testName, fileText);
 
             boolean withKotlinRuntime = ExpectedCompletionUtils.getPrefixedInt(fileText, "// RUNTIME:") != null;
 
@@ -86,6 +84,10 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected CompletionType getCompletionType(String testName, String fileText) {
+        return (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
     }
 
     protected static void configureWithKotlinRuntime() {
