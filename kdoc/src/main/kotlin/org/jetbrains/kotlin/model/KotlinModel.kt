@@ -43,7 +43,6 @@ fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, S
     //fun inheritedExtensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, SortedSet<KFunction>> {
     val map = extensionFunctions(functions)
     // for each class, lets walk its base classes and add any other extension functions from base classes
-    val classes = map.keySet().toList()
     val answer = TreeMap<KClass, SortedSet<KFunction>>()
     for (c in map.keySet()) {
         val allFunctions = map.get(c).notNull().toSortedSet()
@@ -72,7 +71,6 @@ fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, S
 fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass, SortedSet<KProperty>> {
     val map = extensionProperties(properties)
     // for each class, lets walk its base classes and add any other extension properties from base classes
-    val classes = map.keySet().toList()
     val answer = TreeMap<KClass, SortedSet<KProperty>>()
     for (c in map.keySet()) {
         val allProperties = map.get(c).notNull().toSortedSet()
@@ -228,18 +226,19 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
             val name = descriptor.getName() ?: "null"
-            val function = KFunction(descriptor, owner, name, returnType)
-            addTypeParameters(function.typeParameters, descriptor.getTypeParameters())
-            function.description = commentsFor(descriptor)
+            val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
                 if (param != null) {
                     val p = createParameter(param)
                     if (p != null) {
-                        function.parameters.add(p)
+                        parameters.add(p)
                     }
                 }
             }
+            val function = KFunction(descriptor, owner, name, returnType, parameters)
+            addTypeParameters(function.typeParameters, descriptor.getTypeParameters())
+            function.description = commentsFor(descriptor)
             val receiver = descriptor.getReceiverParameter()
             if (receiver is ExtensionReceiver) {
                 function.extensionClass = getType(receiver.getType())?.klass
@@ -525,25 +524,33 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
 class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, val name: String,
         var returnType: KType,
+        var parameters: List<KParameter>,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
-        var parameters: List<KParameter> = arrayList<KParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var sourceLine: Int = 2) : KAnnotated(), Comparable<KFunction> {
+
+    public val parameterTypeText: String = parameters.map{ it.aType.name }.join(", ")
 
     override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
         if (answer == 0) {
             answer = parameterTypeText.compareTo(other.parameterTypeText)
+            if (answer == 0) {
+                val ec1 = extensionClass?.name ?: ""
+                val ec2 = other.extensionClass?.name ?: ""
+                answer = ec1.compareTo(ec2)
+            }
         }
         return answer
     }
 
-    fun equals(other: KFunction) = name == other.name
+    fun equals(other: KFunction) = name == other.name && this.parameterTypeText == other.parameterTypeText &&
+        this.extensionClass == other.extensionClass && this.owner == other.owner
 
-    fun toString() = "fun ($name)"
+    fun toString() = "fun $name($parameterTypeText): $returnType"
 
     public val link: String = "$name($parameterTypeText)"
 
@@ -552,14 +559,16 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
     get() = typeParameters.map{ it.name }.join(", ")
 
     /** Returns a list of parameter value types */
+    /*
     private var _parameterTypeText: String? = null
     public val parameterTypeText: String
     get() {
         if (_parameterTypeText == null) {
-            _parameterTypeText = typeParameters.map{ it.name }.join(", ")
+            _parameterTypeText = parameters.map{ it.aType.name }.join(", ")
         }
         return _parameterTypeText.sure()
     }
+    */
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
@@ -571,7 +580,7 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
 
     fun equals(other: KFunction) = name == other.name
 
-    fun toString() = "property $name}"
+    fun toString() = "property $name"
 }
 
 class KParameter(val name: String,
