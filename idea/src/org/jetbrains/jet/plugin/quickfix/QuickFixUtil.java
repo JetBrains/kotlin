@@ -40,16 +40,6 @@ public class QuickFixUtil {
     private QuickFixUtil() {
     }
 
-    public static <T extends PsiElement> JetIntentionActionFactory createFactoryRedirectingAdditionalInfoToAnotherFactory(final JetIntentionActionFactory factory, final Class<T> aClass) {
-        return new JetIntentionActionFactory() {
-            @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
-                T element = getParentElementOfType(diagnostic, aClass);
-                return factory.createAction(new FakeDiagnosticForQuickFixes(element));
-            }
-        };
-    }
-
     public static boolean removePossiblyWhiteSpace(ASTDelegatePsiElement element, PsiElement possiblyWhiteSpace) {
         if (possiblyWhiteSpace instanceof PsiWhiteSpace) {
             element.deleteChildInternal(possiblyWhiteSpace.getNode());

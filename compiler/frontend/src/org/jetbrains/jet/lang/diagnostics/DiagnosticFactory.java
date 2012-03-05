@@ -22,10 +22,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory<P extends PsiElement> extends DiagnosticFactoryWithPsiElement<P> {
+public class DiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
     protected final String message;
 
-    protected DiagnosticFactory(Severity severity, String message, PositioningStrategy<? super P> positioningStrategy) {
+    protected DiagnosticFactory(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
         this.message = message;
     }
@@ -39,7 +39,7 @@ public class DiagnosticFactory<P extends PsiElement> extends DiagnosticFactoryWi
     }
 
     @NotNull
-    public Diagnostic<P> on(@NotNull P element) {
-        return new DiagnosticWithPsiElement<P>(element, this, severity, message);
+    public ParametrizedDiagnostic<E> on(@NotNull E element) {
+        return new DiagnosticWithPsiElement<E>(element, this, severity, message);
     }
 }

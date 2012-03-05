@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory3<P extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<P> {
+public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<E> {
     private final Renderer<? super A> rendererForA;
     private final Renderer<? super B> rendererForB;
     private final Renderer<? super C> rendererForC;
     
-    protected DiagnosticFactory3(Severity severity, String messageStub, PositioningStrategy<? super P> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
+    protected DiagnosticFactory3(Severity severity, String messageStub, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
         super(severity, messageStub, positioningStrategy);
         this.rendererForA = rendererForA;
         this.rendererForB = rendererForB;
@@ -66,7 +66,7 @@ public class DiagnosticFactory3<P extends PsiElement, A, B, C> extends Diagnosti
         return rendererForC.render(c);
     }
     @NotNull
-    public DiagnosticWithPsiElement<P> on(@NotNull P element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithPsiElement<P>(element, this, severity, makeMessage(a, b, c));
+    public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
+        return new DiagnosticWithPsiElement<E>(element, this, severity, makeMessage(a, b, c));
     }
 }

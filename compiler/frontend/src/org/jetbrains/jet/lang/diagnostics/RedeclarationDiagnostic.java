@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface RedeclarationDiagnostic extends Diagnostic<PsiElement> {
+public interface RedeclarationDiagnostic extends Diagnostic {
     class SimpleRedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> implements RedeclarationDiagnostic {
 
         public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {

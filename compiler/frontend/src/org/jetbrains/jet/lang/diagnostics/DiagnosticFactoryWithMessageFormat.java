@@ -23,14 +23,14 @@ import java.text.MessageFormat;
 /**
 * @author abreslav
 */
-public abstract class DiagnosticFactoryWithMessageFormat<P extends PsiElement> extends DiagnosticFactoryWithPsiElement<P> {
+public abstract class DiagnosticFactoryWithMessageFormat<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
     protected final MessageFormat messageFormat;
 
     public DiagnosticFactoryWithMessageFormat(Severity severity, String message) {
         this(severity, message, PositioningStrategies.DEFAULT);
     }
     
-    public DiagnosticFactoryWithMessageFormat(Severity severity, String message, PositioningStrategy<? super P> positioningStrategy) {
+    public DiagnosticFactoryWithMessageFormat(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
         this.messageFormat = new MessageFormat(message);
     }

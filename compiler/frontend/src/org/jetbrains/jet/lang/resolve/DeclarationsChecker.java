@@ -155,11 +155,6 @@ public class DeclarationsChecker {
         }
         if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) &&
             hasDeferredType && nameIdentifier != null) {
-
-            JetType returnType = memberDescriptor.getReturnType();
-            if (returnType instanceof DeferredType) {
-                returnType = ((DeferredType) returnType).getActualType();
-            }
             context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(nameIdentifier));
         }
     }

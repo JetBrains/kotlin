@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface Diagnostic<E extends PsiElement> {//todo
+public interface Diagnostic {
 
     @NotNull
     AbstractDiagnosticFactory getFactory();
@@ -38,7 +38,7 @@ public interface Diagnostic<E extends PsiElement> {//todo
     Severity getSeverity();
 
     @NotNull
-    E getPsiElement();
+    PsiElement getPsiElement();
 
     @NotNull
     List<TextRange> getTextRanges();

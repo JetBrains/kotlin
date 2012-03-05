@@ -257,7 +257,7 @@ public class BodyResolver {
     private void resolveAnonymousInitializers(JetClassOrObject jetClassOrObject, MutableClassDescriptor classDescriptor) {
         if (!context.completeAnalysisNeeded(jetClassOrObject)) return;
         List<JetClassInitializer> anonymousInitializers = jetClassOrObject.getAnonymousInitializers();
-        if (jetClassOrObject.hasPrimaryConstructor()) {
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
