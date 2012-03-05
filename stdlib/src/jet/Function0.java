@@ -19,6 +19,7 @@
  */
 package jet;
 
+/** A function with no arguments */
 public abstract class Function0<R> extends DefaultJetObject {
     public abstract R invoke();
 
