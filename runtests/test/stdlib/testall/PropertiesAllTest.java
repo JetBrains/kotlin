@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlinlib.testall;
+package stdlib.testall;
 
 import junit.framework.TestSuite;
 import test.properties.*;
