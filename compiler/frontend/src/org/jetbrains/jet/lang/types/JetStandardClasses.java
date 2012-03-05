@@ -392,7 +392,11 @@ public class JetStandardClasses {
     }
 
     public static boolean isFunctionType(@NotNull JetType type) {
-        return FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) || RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor());
+        return FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) || isReceiverFunctionType(type);
+    }
+
+    public static boolean isReceiverFunctionType(@NotNull JetType type) {
+        return RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor());
     }
 
     @Nullable
