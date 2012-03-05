@@ -165,7 +165,7 @@ fun Document?.get(selector: String): List<Element> {
                 Collections.EMPTY_LIST.sure() as List<Element>
         } else {
             //  assume its a vanilla element name
-            this?.getElementsByTagName(selector).toElementList()
+            elements(selector)
         }
     } else {
         Collections.EMPTY_LIST as List<Element>
@@ -186,7 +186,7 @@ fun Element.get(selector: String): List<Element> {
             Collections.EMPTY_LIST.sure() as List<Element>
     } else {
         //  assume its a vanilla element name
-        this.getElementsByTagName(selector).toElementList()
+        elements(selector)
     }
 }
 
@@ -200,18 +200,32 @@ inline fun Element?.children(): List<Node> {
     return this?.getChildNodes().toList()
 }
 
+/** The child elements of this document */
 val Document?.elements : List<Element>
 get() = this?.getElementsByTagName("*").toElementList()
 
+/** The child elements of this elements */
 val Element?.elements : List<Element>
 get() = this?.getElementsByTagName("*").toElementList()
 
 
-inline fun Element?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
+/** Returns all the child elements given the local element name */
+inline fun Element?.elements(localName: String?): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the elements given the local element name */
+inline fun Document?.elements(localName: String?): List<Element> {
+    return this?.getElementsByTagName(localName).toElementList()
+}
+
+/** Returns all the child elements given the namespace URI and local element name */
+inline fun Element?.elements(namespaceUri: String?, localName: String?): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
-inline fun Document?.elementsByTagNameNS(namespaceUri: String?, localName: String?): List<Element> {
+/** Returns all the elements given the namespace URI and local element name */
+inline fun Document?.elements(namespaceUri: String?, localName: String?): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
@@ -308,27 +322,25 @@ inline fun Element.plusAssign(text: String?): Element = this.addText(text)
 
 // Builder
 
-/*
-Creates a new element which can be configured via a function
-*/
+/**
+ * Creates a new element which can be configured via a function
+ */
 fun Document.createElement(name: String, init: Element.()-> Unit): Element {
     val elem = this.createElement(name).sure()
     elem.init()
     return elem
 }
 
-/*
-Creates a new element to an element which has an owner Document which can be configured via a function
-*/
+/**
+ * Creates a new element to an element which has an owner Document which can be configured via a function
+ */
 fun Element.createElement(name: String, doc: Document? = null, init: Element.()-> Unit): Element {
     val elem = ownerDocument(doc).createElement(name).sure()
     elem.init()
     return elem
 }
 
-/*
-Returns the owner document of the element or uses the provided document
-*/
+/** Returns the owner document of the element or uses the provided document */
 fun Node.ownerDocument(doc: Document? = null): Document {
     val answer = if (this is Document) this as Document
     else if (doc == null) this.getOwnerDocument()
