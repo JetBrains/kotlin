@@ -1,4 +1,4 @@
-package testString
+package test.string
 
 import kotlin.io.*
 import kotlin.test.*
@@ -24,5 +24,13 @@ class StringTest() : TestCase() {
         for(c in sb)
             sum += (c.toInt() - '0'.toInt())
         assertTrue(sum == 14)
+    }
+
+    fun testOrEmpty() {
+        val s: String? = "hey"
+        val ns: String? = null
+
+        assertEquals("hey", s.orEmpty())
+        assertEquals("", ns.orEmpty())
     }
 }

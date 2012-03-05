@@ -18,11 +18,12 @@ package stdlib.testall;
 
 import junit.framework.TestSuite;
 import test.collections.*;
+import test.string.*;
 
 /**
  */
 public class CollectionTestAllTest {
   public static TestSuite suite() {
-    return new TestSuite(CollectionTest.class, MapTest.class);
+    return new TestSuite(StringTest.class, CollectionTest.class, MapTest.class);
   }
 }

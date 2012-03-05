@@ -162,3 +162,6 @@ inline fun String.subSequence(beginIndex : Int, endIndex : Int) = (this as java.
 inline fun String.toLowerCase(locale : java.util.Locale) = (this as java.lang.String).toLowerCase(locale).sure()
 
 inline fun String.toUpperCase(locale : java.util.Locale) = (this as java.lang.String).toUpperCase(locale).sure()
+
+/** Returns the string if it is not null or the empty string if its null */
+inline fun String?.orEmpty(): String = this ?: ""
