@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,14 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * @author svtk
  */
-public class DiagnosticWithPsiElement<E extends PsiElement> extends AbstractDiagnostic<E> {
-    public DiagnosticWithPsiElement(@NotNull E psiElement, @NotNull DiagnosticFactoryWithPsiElement<E> factory, @NotNull Severity severity, @NotNull String message) {
-        super(psiElement, factory, severity, message);
-    }
-
+public interface ParametrizedDiagnostic<E extends PsiElement> extends Diagnostic {
     @NotNull
     @Override
-    public DiagnosticFactoryWithPsiElement<E> getFactory() {
-        return (DiagnosticFactoryWithPsiElement<E>)super.getFactory();
-    }
-
-    @NotNull
-    public List<TextRange> getTextRanges() {
-        return getFactory().getTextRanges(this);
-    }
+    E getPsiElement();
 }

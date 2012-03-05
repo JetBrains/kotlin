@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author abreslav
  */
-public class DiagnosticFactory2<P extends PsiElement, A, B> extends DiagnosticFactoryWithMessageFormat<P> {
+public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFactoryWithMessageFormat<E> {
     private final Renderer<? super A> rendererForA;
     private final Renderer<? super B> rendererForB;
 
@@ -39,12 +39,12 @@ public class DiagnosticFactory2<P extends PsiElement, A, B> extends DiagnosticFa
     }
 
     @NotNull
-    public Diagnostic<P> on(@NotNull P element, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithPsiElement<P>(element, this, severity, makeMessage(a, b));
+    public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b) {
+        return new DiagnosticWithPsiElement<E>(element, this, severity, makeMessage(a, b));
     }
 
 
-    private DiagnosticFactory2(Severity severity, String message, PositioningStrategy<? super P> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB) {
+    private DiagnosticFactory2(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB) {
         super(severity, message, positioningStrategy);
         this.rendererForA = rendererForA;
         this.rendererForB = rendererForB;

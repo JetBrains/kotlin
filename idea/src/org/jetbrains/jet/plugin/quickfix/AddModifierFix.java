@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -23,15 +24,18 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetModifierList;
-import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.jetbrains.jet.lexer.JetTokens.*;
 
 /**
  * @author svtk
@@ -40,7 +44,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
     private final JetToken[] modifiersThanCanBeReplaced;
 
-    private AddModifierFix(@NotNull JetModifierListOwner element, JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced) {
+    private AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThanCanBeReplaced) {
         super(element);
         this.modifier = modifier;
         this.modifiersThanCanBeReplaced = modifiersThanCanBeReplaced;
@@ -67,7 +71,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     @NotNull
     @Override
     public String getText() {
-        if (modifier == JetTokens.ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
+        if (modifier == ABSTRACT_KEYWORD || modifier == JetTokens.OPEN_KEYWORD) {
             return JetBundle.message("make.element.modifier", getElementName(element), modifier.getValue());
         }
         return JetBundle.message("add.modifier", modifier.getValue());
@@ -85,7 +89,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     }
 
     @NotNull
-    private static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, JetToken[] modifiersThanCanBeReplaced, @NotNull Project project) {
+    private static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThanCanBeReplaced, @NotNull Project project) {
         JetModifierListOwner newElement = (JetModifierListOwner) (element.copy());
 
         JetModifierList modifierList = newElement.getModifierList();
@@ -98,12 +102,14 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         }
         else {
             boolean replaced = false;
-            for (JetToken modifierThanCanBeReplaced : modifiersThanCanBeReplaced) {
-                if (modifierList.hasModifier(modifierThanCanBeReplaced)) {
-                    PsiElement openModifierPsi = modifierList.getModifierNode(modifierThanCanBeReplaced).getPsi();
-                    assert openModifierPsi != null;
-                    openModifierPsi.replace(listWithModifier.getFirstChild());
-                    replaced = true;
+            if (modifiersThanCanBeReplaced != null) {
+                for (JetToken modifierThanCanBeReplaced : modifiersThanCanBeReplaced) {
+                    if (modifierList.hasModifier(modifierThanCanBeReplaced)) {
+                        PsiElement openModifierPsi = modifierList.getModifierNode(modifierThanCanBeReplaced).getPsi();
+                        assert openModifierPsi != null;
+                        openModifierPsi.replace(listWithModifier.getFirstChild());
+                        replaced = true;
+                    }
                 }
             }
             if (!replaced) {
@@ -120,14 +126,25 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         return true;
     }
 
-    public static JetIntentionActionFactory createFactory(final JetKeywordToken modifier, final JetToken[] modifiersThatCanBeReplaced) {
+    public static <T extends JetModifierListOwner> JetIntentionActionFactory createFactory(final JetKeywordToken modifier, final Class<T> modifierOwnerClass) {
         return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetModifierListOwner> createAction(Diagnostic diagnostic) {
-                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, JetModifierListOwner.class);
+            public IntentionAction createAction(Diagnostic diagnostic) {
+                JetModifierListOwner modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, modifierOwnerClass);
                 if (modifierListOwner == null) return null;
-                return new AddModifierFix(modifierListOwner, modifier, modifiersThatCanBeReplaced);
+                return new AddModifierFix(modifierListOwner, modifier, MODIFIERS_THAT_CAN_BE_REPLACED.get(modifier));
             }
         };
+    }
+
+    public static JetIntentionActionFactory createFactory(final JetKeywordToken modifier) {
+        return createFactory(modifier, JetModifierListOwner.class);
+    }
+
+    private static Map<JetToken, JetToken[]> MODIFIERS_THAT_CAN_BE_REPLACED = new HashMap<JetToken, JetToken[]>();
+    static {
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(ABSTRACT_KEYWORD, new JetToken[]{OPEN_KEYWORD, FINAL_KEYWORD});
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(OVERRIDE_KEYWORD, new JetToken[]{OPEN_KEYWORD});
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(OPEN_KEYWORD, new JetToken[]{FINAL_KEYWORD});
     }
 }

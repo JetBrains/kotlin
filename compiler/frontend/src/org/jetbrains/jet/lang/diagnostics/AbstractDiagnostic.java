@@ -23,13 +23,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public abstract class AbstractDiagnostic<P extends PsiElement> implements Diagnostic<P> {
-    private final P psiElement;
+public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
+    private final E psiElement;
     private final String message;
     private final AbstractDiagnosticFactory factory;
     private final Severity severity;
 
-    public AbstractDiagnostic(@NotNull P psiElement, @NotNull AbstractDiagnosticFactory factory, @NotNull Severity severity, @NotNull String message) {
+    public AbstractDiagnostic(@NotNull E psiElement, @NotNull AbstractDiagnosticFactory factory, @NotNull Severity severity, @NotNull String message) {
         this.psiElement = psiElement;
         this.factory = factory;
         this.severity = severity;
@@ -63,7 +63,7 @@ public abstract class AbstractDiagnostic<P extends PsiElement> implements Diagno
 
     @Override
     @NotNull
-    public P getPsiElement() {
+    public E getPsiElement() {
         return psiElement;
     }
 }

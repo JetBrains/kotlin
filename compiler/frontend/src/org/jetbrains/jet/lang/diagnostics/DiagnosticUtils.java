@@ -76,7 +76,7 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    public static LineAndColumn getLineAndColumn(@NotNull Diagnostic<? extends PsiElement> diagnostic) {
+    public static LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         Document document = file.getViewProvider().getDocument();
         TextRange firstRange = diagnostic.getTextRanges().iterator().next();

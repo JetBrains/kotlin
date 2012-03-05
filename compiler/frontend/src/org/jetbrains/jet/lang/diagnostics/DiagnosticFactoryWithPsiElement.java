@@ -24,16 +24,16 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public abstract class DiagnosticFactoryWithPsiElement<P extends PsiElement> extends AbstractDiagnosticFactory {
+public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement> extends AbstractDiagnosticFactory {
     protected final Severity severity;
-    protected final PositioningStrategy<? super P> positioningStrategy;
+    protected final PositioningStrategy<? super E> positioningStrategy;
 
-    public DiagnosticFactoryWithPsiElement(Severity severity, PositioningStrategy<? super P> positioningStrategy) {
+    public DiagnosticFactoryWithPsiElement(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         this.severity = severity;
         this.positioningStrategy = positioningStrategy;
     }
 
-    protected List<TextRange> getTextRanges(Diagnostic<P> diagnostic) {
+    protected List<TextRange> getTextRanges(ParametrizedDiagnostic<E> diagnostic) {
         return positioningStrategy.mark(diagnostic.getPsiElement());
     }
 }

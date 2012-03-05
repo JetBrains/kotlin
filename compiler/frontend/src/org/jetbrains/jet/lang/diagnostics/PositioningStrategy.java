@@ -27,9 +27,9 @@ import java.util.List;
 /**
 * @author svtk
 */
-public class PositioningStrategy<P extends PsiElement> {
+public class PositioningStrategy<E extends PsiElement> {
     @NotNull
-    public List<TextRange> mark(@NotNull P element) {
+    public List<TextRange> mark(@NotNull E element) {
         return markElement(element);
     }
 
