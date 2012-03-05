@@ -9,7 +9,7 @@ import java.util.Iterator
 /**
  * Count the number of elements in collection.
  *
- * If base collection implements Collection<T> interface method Collection<T>#size() will be used.
+ * If base collection implements [[Collection]] interface method [[Collection.size()]] will be used.
  * Otherwise, this method determines the count by iterating through the all items.
  */
 fun <T> java.lang.Iterable<T>.count() : Int {

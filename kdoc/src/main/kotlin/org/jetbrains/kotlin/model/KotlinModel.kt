@@ -21,6 +21,14 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.pegdown.PegDownProcessor
+import org.pegdown.LinkRenderer
+import org.pegdown.ast.WikiLinkNode
+import org.pegdown.LinkRenderer.Rendering
+import org.pegdown.ast.RefLinkNode
+import org.pegdown.ast.AutoLinkNode
+import org.pegdown.ast.ExpLinkNode
+import org.pegdown.Extensions
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.getContainingDeclaration())
 
@@ -131,6 +139,8 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
 
     public val classes: Collection<KClass>
     get() = packages.flatMap{ it.classes }
+
+    public var markdownProcessor: PegDownProcessor = PegDownProcessor(Extensions.ALL)
 
     /** Loads the model from the given set of source files */
     fun load(sources: List<JetFile?>): Unit {
@@ -317,8 +327,8 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
                     }
                     buffer.append(text)
                 }
-                // TODO convert any macros or wiki text!
-                return buffer.toString() ?: ""
+                val linkRenderer = CustomLinkRenderer(descriptor)
+                return wikiConvert(buffer.toString() ?: "", linkRenderer)
             } else {
                 return text
             }
@@ -326,6 +336,9 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
         return ""
     }
 
+    fun wikiConvert(text: String, linkRenderer: LinkRenderer): String {
+        return markdownProcessor.markdownToHtml(text, linkRenderer).sure()
+    }
 
     fun getType(aType: JetType?): KType? {
         if (aType != null) {
@@ -358,6 +371,30 @@ class KModel(var context: BindingContext, var title: String = "Documentation", v
     fun next(pkg: KPackage): KPackage? {
         // TODO
         return null
+    }
+}
+
+class CustomLinkRenderer(descriptor: DeclarationDescriptor) : LinkRenderer() {
+
+    override fun render(node : WikiLinkNode?) : Rendering? {
+        println("LinkRenderer.render(WikiLinkNode): $node")
+        // TODO translate the wiki link to a Class/function/property/extensionFunction etc
+        return super.render(node)
+    }
+
+    override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
+        // println("LinkRenderer.render(RefLinkNode): $node url: $url title: $title text: $text")
+        return super.render(node, url, title, text)
+    }
+
+    override fun render(node : AutoLinkNode?) : Rendering? {
+        // println("LinkRenderer.render(AutoLinkNode): $node")
+        return super.render(node)
+    }
+
+    override fun render(node : ExpLinkNode?, text : String?) : Rendering? {
+        // println("LinkRenderer.render(ExpLinkNode): $node text: $text")
+        return super.render(node, text)
     }
 }
 

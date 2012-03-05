@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="stdlib" exported="" />
     <orderEntry type="module" module-name="testlib" exported="" />
     <orderEntry type="module" module-name="kunit" exported="" />
+    <orderEntry type="module" module-name="kdoc" exported="" />
   </component>
 </module>
 

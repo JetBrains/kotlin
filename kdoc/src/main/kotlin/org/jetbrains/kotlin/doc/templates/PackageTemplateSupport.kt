@@ -63,9 +63,15 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         print("""<TD><CODE><B><A HREF="${href(function)}">${function.name}</A></B>""")
         printParameters(function)
         println("""</CODE>""")
-        println("""""")
-        println("""<BR>""")
-        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${function.detailedDescription}</TD>""")
+        println("")
+        if (true) {
+            val detail = function.detailedDescription
+            println("""${detail}""")
+        } else {
+            println("""<BR>""")
+            println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${function.detailedDescription}</TD>""")
+        }
+        println("""</TD>""")
         println("""</TR>""")
     }
 
