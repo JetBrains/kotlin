@@ -54,12 +54,12 @@ inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Co
   return this
 }
 
-/** Converts the nullable List into an empty List if its null */
-inline fun <T> java.util.List<T>?.notNull() : java.util.List<T>
+/** Returns the List if its not null otherwise returns the empty list */
+inline fun <T> java.util.List<T>?.orEmpty() : java.util.List<T>
     = if (this != null) this else Collections.EMPTY_LIST as java.util.List<T>
 
-/** Converts the nullable Set into an empty Set if its null */
-inline fun <T> java.util.Set<T>?.notNull() : java.util.Set<T>
+/** Returns the Set if its not null otherwise returns the empty set */
+inline fun <T> java.util.Set<T>?.orEmpty() : java.util.Set<T>
     = if (this != null) this else Collections.EMPTY_SET as java.util.Set<T>
 
 /**
@@ -99,7 +99,7 @@ val <T> List<T>.last : T?
 /** Returns true if the collection is not empty */
 inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
 
-/** Converts the nullable collection into an empty collection if its null */
-inline fun <T> java.util.Collection<T>?.notNull() : Collection<T>
+/** Returns the Collection if its not null otherwise it returns the empty list */
+inline fun <T> java.util.Collection<T>?.orEmpty() : Collection<T>
     = if (this != null) this else Collections.EMPTY_LIST as Collection<T>
 

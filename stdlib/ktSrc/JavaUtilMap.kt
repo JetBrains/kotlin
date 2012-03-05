@@ -20,8 +20,8 @@ val JMap<*,*>.empty : Boolean
 /** Provides [] access to maps */
 fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
-/** Converts the nullable Map into an empty Map if its null */
-inline fun <K,V> java.util.Map<K,V>?.notNull() : java.util.Map<K,V>
+/** Returns the Mao if its not null otherwise it returns the empty Map */
+inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
     = if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
 
 

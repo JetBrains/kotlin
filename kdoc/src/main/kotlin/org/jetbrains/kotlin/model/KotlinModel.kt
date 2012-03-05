@@ -45,7 +45,7 @@ fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, S
     // for each class, lets walk its base classes and add any other extension functions from base classes
     val answer = TreeMap<KClass, SortedSet<KFunction>>()
     for (c in map.keySet()) {
-        val allFunctions = map.get(c).notNull().toSortedSet()
+        val allFunctions = map.get(c).orEmpty().toSortedSet()
         answer.put(c, allFunctions)
         val des = c.descendants()
         for (b in des) {
@@ -73,7 +73,7 @@ fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass,
     // for each class, lets walk its base classes and add any other extension properties from base classes
     val answer = TreeMap<KClass, SortedSet<KProperty>>()
     for (c in map.keySet()) {
-        val allProperties = map.get(c).notNull().toSortedSet()
+        val allProperties = map.get(c).orEmpty().toSortedSet()
         answer.put(c, allProperties)
         val des = c.descendants()
         for (b in des) {

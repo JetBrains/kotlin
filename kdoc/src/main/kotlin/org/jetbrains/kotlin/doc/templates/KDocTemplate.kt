@@ -78,7 +78,7 @@ abstract class KDocTemplate() : TextTemplate() {
             if ((cname.startsWith("jet.Function") || cname.startsWith("jet.ExtensionFunction")) && arguments.notEmpty()) {
                 val rt = arguments.last()
                 // TODO use drop()
-                val rest = arguments.subList(0, arguments.size - 1).notNull()
+                val rest = arguments.subList(0, arguments.size - 1).orEmpty()
                 "${typeArguments(rest, "(", ")", "()")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
             } else if (cname.startsWith("jet.Tuple")) {
                 if (arguments.isEmpty()) {
