@@ -23,6 +23,6 @@ import test.language.*;
  */
 public class LanguageTestAllTest {
   public static TestSuite suite() {
-    return new TestSuite(NullableCollectionsTest.class);
+    return new TestSuite(JavaClassTest.class, NullableCollectionsTest.class);
   }
 }
