@@ -1,8 +1,8 @@
 kotlin.modules
 std
-std.concurrent
-std.dom
-std.io
-std.math
-std.properties
-std.util
+kotlin.concurrent
+kotlin.dom
+kotlin.io
+kotlin.math
+kotlin.properties
+kotlin.util
