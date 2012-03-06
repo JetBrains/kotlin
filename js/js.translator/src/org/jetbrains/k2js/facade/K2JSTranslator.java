@@ -95,7 +95,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-        /*package*/ String generateProgramCode(@NotNull JetFile psiFile) {
+    public String generateProgramCode(@NotNull JetFile psiFile) {
         JsProgram program = generateProgram(Arrays.asList(psiFile));
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
@@ -123,6 +123,7 @@ public final class K2JSTranslator {
         return GenerationUtils.generateCallToMain(namespaceName, arguments);
     }
 
+    //TODO: util
     @NotNull
     private static List<String> parseString(@NotNull String argumentString) {
         List<String> result = new ArrayList<String>();
