@@ -149,9 +149,13 @@ public final class Intrinsics {
     }
 
     private void declareStringIntrinsics() {
-        PropertyDescriptor lengthProperty =
+        //TODO: same intrinsic for 2 different methods
+        PropertyDescriptor stringLengthProperty =
+                getPropertyByName(library.getString().getDefaultType().getMemberScope(), "length");
+        functionIntrinsics.put(stringLengthProperty.getGetter(), lengthPropertyIntrinsic);
+        PropertyDescriptor charSequenceLengthProperty =
                 getPropertyByName(library.getCharSequence().getDefaultType().getMemberScope(), "length");
-        functionIntrinsics.put(lengthProperty.getGetter(), new BuiltInPropertyIntrinsic("length"));
+        functionIntrinsics.put(charSequenceLengthProperty.getGetter(), lengthPropertyIntrinsic);
         FunctionDescriptor getFunction =
                 getFunctionByName(library.getString().getDefaultType().getMemberScope(), "get");
         functionIntrinsics.put(getFunction, CharAtIntrinsic.INSTANCE);
