@@ -102,7 +102,7 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    private String generateProgramCode(@NotNull List<JetFile> files) {
+    public String generateProgramCode(@NotNull List<JetFile> files) {
         JsProgram program = generateProgram(files);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);

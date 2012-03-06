@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.convertToDotJsFile;
+import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 
 /**
  * @author Pavel Talanov
@@ -132,7 +132,7 @@ public abstract class BasicTest extends TestWithEnvironment {
 
     @NotNull
     protected String getOutputFilePath(@NotNull String filename) {
-        return getOutputPath() + convertToDotJsFile(filename);
+        return getOutputPath() + convertFileNameToDotJsFile(filename);
     }
 
     @NotNull

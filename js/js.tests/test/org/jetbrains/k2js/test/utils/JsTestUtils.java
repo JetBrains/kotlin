@@ -33,7 +33,7 @@ public final class JsTestUtils {
     private JsTestUtils() {
     }
 
-    public static String convertToDotJsFile(@NotNull String filename) {
+    public static String convertFileNameToDotJsFile(@NotNull String filename) {
         return filename.substring(0, filename.lastIndexOf('.')) + ".js";
     }
 
