@@ -181,6 +181,8 @@ public class CompileEnvironment {
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
             CompileEnvironment compileEnvironment = new CompileEnvironment(myFileNameTransformer, myMessageRenderer);
+            compileEnvironment.setIgnoreErrors(ignoreErrors);
+            compileEnvironment.setErrorStream(myErrorStream);
             // copy across any compiler plugins
             compileEnvironment.getMyEnvironment().getCompilerPlugins().addAll(myEnvironment.getCompilerPlugins());
             ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);

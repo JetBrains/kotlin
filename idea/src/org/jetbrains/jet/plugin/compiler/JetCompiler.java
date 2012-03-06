@@ -517,8 +517,10 @@ public class JetCompiler implements TranslatingCompiler {
             if (firstUnprocessedIndex < output.length()) {
                 handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
             }
-            if (event.getExitCode() != 0) {
-                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + event.getExitCode(), "", -1, -1);
+            int exitCode = event.getExitCode();
+            // 0 is normal, 1 is "errors found" — handled by the messages above
+            if (exitCode != 0 && exitCode != 1) {
+                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
             }
         }
 

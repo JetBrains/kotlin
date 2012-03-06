@@ -147,15 +147,15 @@ public class KotlinCompiler {
                 environment.addToClasspath(arguments.classpath);
             }
 
-            boolean ok;
+            boolean noErrors;
             if (arguments.module != null) {
-                ok = environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                noErrors = environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
             else {
-                ok = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
 
-            return ok ? 0 : 1;
+            return noErrors ? 0 : 1;
         }
         catch (Throwable t) {
             errStream.println(messageRenderer.renderException(t));
