@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-project</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <junit-version>4.8.1</junit-version>
+        <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
+        <kotlin-maven-plugin.version>0.2.3.8-beta-6</kotlin-maven-plugin.version>
+        <kotlin-sdk>${project.basedir}/../dist/kotlinc</kotlin-sdk>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>evgeny-goldin.org</id>
+            <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>evgeny-goldin.org</id>
+            <url>http://evgeny-goldin.org/artifactory/repo/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <dependencies>
+        <!-- TODO a dirty hack until we have the artifacts in a mvn repo -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-compiler</artifactId>
+            <version>${kotlin-compiler.version}</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/kotlin-compiler.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <modules>
+      <module>stdlib</module>
+      <module>kdoc</module>
+    </modules>
+      
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>ivy-maven-plugin</artifactId>
+                <version>${kotlin-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-ivy-dependencies</id>
+                        <goals>
+                            <goal>ivy</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <ivyconf>${project.basedir}/src/main/resources/ivyconf.xml</ivyconf>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>ivy.org</groupId>
+                                    <artifactId>bt343</artifactId>
+                                    <version>latest.lastSuccessful</version>
+                                    <classifier>core/intellij-core</classifier>
+                                </dependency>
+                                <dependency>
+                                    <groupId>ivy.org</groupId>
+                                    <artifactId>bt344</artifactId>
+                                    <version>latest.lastSuccessful</version>
+                                    <classifier>kotlin-runtime</classifier>
+                                </dependency>
+                            </dependencies>
+                            <scope>compile</scope>
+                            <verbose>true</verbose>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile-kotlin-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
