@@ -157,7 +157,7 @@ public class JetDecompiledData {
 
             if (nd != null) {
                 for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
-                    if (member instanceof ClassDescriptor && member.getName().equals("namespace") || member instanceof NamespaceDescriptor) {
+                    if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor) {
                         continue;
                     }
                     PsiElement clsElement = trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, member);
