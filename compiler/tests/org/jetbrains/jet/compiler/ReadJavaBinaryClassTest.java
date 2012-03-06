@@ -97,7 +97,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         try {
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(javaFile));
             List<String> options = Arrays.asList(
-                    "-classpath", "out/production/stdlib" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
+                    "-classpath", "out/production/runtime" + File.pathSeparator + JetTestUtils.getAnnotationsJar().getPath(),
                     "-d", tmpdir.getPath()
             );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
@@ -110,7 +110,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
-        jetCoreEnvironment.addToClasspath(new File("out/production/stdlib"));
+        jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
         JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());
         JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), jetSemanticServices, new BindingTraceContext());
