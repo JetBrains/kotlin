@@ -55,7 +55,7 @@
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
             <arg value="-src"/>
-            <arg value="${basedir}/libraries/stdlib/ktSrc"/>
+            <arg value="${basedir}/libraries/stdlib/src"/>
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
         </java>
