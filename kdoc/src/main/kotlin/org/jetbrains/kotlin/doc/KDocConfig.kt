@@ -31,8 +31,6 @@ class KDocConfig() {
     public var includeProtected: Boolean = true
 
     {
-        // TODO replace with hashMap(...) helper function?
-
         // add some common defaults
         addPackageLink("http://docs.oracle.com/javase/6/docs/api/", "java", "org.w3c.dom", "org.xml.sax", "org.omg", "org.ietf.jgss")
         addPackageLink("http://kentbeck.github.com/junit/javadoc/latest/", "org.junit", "junit")
