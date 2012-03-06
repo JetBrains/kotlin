@@ -102,7 +102,11 @@ inline val ByteArray.inputStream : ByteArrayInputStream
 inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
 
 /** Returns true if the array is not empty */
-inline fun <T> Array<T>.notEmpty() : Boolean = this.size > 0
+inline fun <T> Array<T>.notEmpty() : Boolean = !this.isEmpty()
 
 /** Returns true if the array is empty */
 inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
+
+/** Returns the array if its not null or else returns an empty array */
+inline fun <T> Array<T?>?.orEmpty() : Array<T?> = if (this != null) this else array<T?>()
+

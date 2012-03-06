@@ -1,6 +1,7 @@
 package kotlin.util
 
 import java.util.*
+import java.util.regex.Pattern
 
 /** Returns the size of the collection */
 val Collection<*>.size : Int
@@ -103,3 +104,15 @@ inline fun <T> java.util.Collection<T>.notEmpty() : Boolean = !this.isEmpty()
 inline fun <T> java.util.Collection<T>?.orEmpty() : Collection<T>
     = if (this != null) this else Collections.EMPTY_LIST as Collection<T>
 
+/** Converts the string into a regular expression [[Pattern]] so that strings can be split or matched on */
+inline fun String.toRegex(): Pattern {
+    return Pattern.compile(this).sure()
+}
+
+/**
+ * Converts the string into a regular expression [[Pattern]] with the given flags from [[Pattern]] or'd together
+ * so that strings can be split or matched on
+ */
+inline fun String.toRegex(flags: Int): Pattern {
+    return Pattern.compile(this, flags).sure()
+}

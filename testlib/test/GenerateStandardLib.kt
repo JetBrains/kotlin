@@ -59,25 +59,25 @@ fun main(args: Array<String>) {
 
   // JavaIterables - Generic iterable stuff
   generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
-      it.replaceAll("java.lang.Iterable<T>", "Array<T>")
+      it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
   }
 
   generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
-    it.replaceAll("java.lang.Iterable<T>", "Iterable<T>")
+    it.replaceAll("java.lang.Iterable<T", "Iterable<T")
   }
 
 
   // JavaCollections - methods returning a collection of the same input size (if its a collection)
 
   generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T>", "Array<T>")
+    it.replaceAll("java.util.Collection<T", "Array<T")
   }
 
   generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin.util", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T>", "java.lang.Iterable<T>").replaceAll("(this.size)", "")
+    it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
   }
 
   generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T>", "Iterable<T>").replaceAll("(this.size)", "")
+    it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
   }
 }

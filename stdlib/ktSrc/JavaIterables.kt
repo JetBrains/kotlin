@@ -53,6 +53,20 @@ inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterTo(result: C, pr
   return result
 }
 
+/** Returns a List containing all the non null elements in this collection */
+inline fun <T> java.lang.Iterable<T?>?.filterNulls() : Collection<T> = filterNullsTo(java.util.ArrayList<T>())
+
+/** Filters all the null elements in this collection winto the given result collection */
+inline fun <T, C: Collection<in T>> java.lang.Iterable<T?>?.filterNullsTo(result: C) : C {
+    if (this != null) {
+        for (elem in this) {
+            if (elem != null)
+                result.add(elem)
+        }
+    }
+    return result
+}
+
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
 inline fun <T> java.lang.Iterable<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
 

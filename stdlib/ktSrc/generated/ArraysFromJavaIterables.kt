@@ -56,6 +56,20 @@ inline fun <T, C: Collection<in T>> Array<T>.filterTo(result: C, predicate: (T)-
   return result
 }
 
+/** Returns a List containing all the non null elements in this collection */
+inline fun <T> Array<T?>?.filterNulls() : Collection<T> = filterNullsTo(java.util.ArrayList<T>())
+
+/** Filters all the null elements in this collection winto the given result collection */
+inline fun <T, C: Collection<in T>> Array<T?>?.filterNullsTo(result: C) : C {
+    if (this != null) {
+        for (elem in this) {
+            if (elem != null)
+                result.add(elem)
+        }
+    }
+    return result
+}
+
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
 inline fun <T> Array<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
 
@@ -160,7 +174,7 @@ inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
 /** Converts the collection into a LinkedList */
 inline fun <T> Array<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
-/** Converts the collection into a List */
+/**  Converts the collection into a List */
 inline fun <T> Array<T>.toList() : List<T> = this.to(ArrayList<T>())
 
 /** Converts the collection into a Set */

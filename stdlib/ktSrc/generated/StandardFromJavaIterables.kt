@@ -56,6 +56,8 @@ inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (
   return result
 }
 
+
+
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
 inline fun <T> Iterable<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
 
@@ -160,7 +162,7 @@ inline fun <T, C: Collection<T>> Iterable<T>.to(result: C) : C {
 /** Converts the collection into a LinkedList */
 inline fun <T> Iterable<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
-/** Converts the collection into a List */
+/**  Converts the collection into a List */
 inline fun <T> Iterable<T>.toList() : List<T> = this.to(ArrayList<T>())
 
 /** Converts the collection into a Set */
