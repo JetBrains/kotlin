@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.diagnostics.Renderer;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -91,26 +90,26 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         else if (JetStandardClasses.isTupleType(type)) {
             return escape(renderTupleType(type));
         }
-        else if (JetStandardClasses.isReceiverFunctionType(type)) {
-            return escape(renderReceiverFunctionType(type));
-        }
         else if (JetStandardClasses.isFunctionType(type)) {
-            return escape(renderFunctionType(type, false));
+            return escape(renderFunctionType(type));
         }
         else {
             return escape(type.toString());
         }
     }
 
-    protected String renderTupleType(JetType type) {
-        StringBuilder sb = new StringBuilder("#(");
-        for (Iterator<TypeProjection> iterator = type.getArguments().iterator(); iterator.hasNext(); ) {
-            TypeProjection argument = iterator.next();
-            sb.append(renderType(argument.getType()));
+    private void appendTypes(StringBuilder result, List<JetType> types) {
+        for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
+            result.append(renderType(iterator.next()));
             if (iterator.hasNext()) {
-                sb.append(", ");
+                result.append(", ");
             }
         }
+    }
+
+    protected String renderTupleType(JetType type) {
+        StringBuilder sb = new StringBuilder("#(");
+        appendTypes(sb, JetStandardClasses.getTupleElementTypes(type));
         sb.append(")");
 
         if (type.isNullable()) {
@@ -120,37 +119,24 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    protected String renderFunctionType(JetType type, boolean receiver) {
-        StringBuilder sb = new StringBuilder("(");
-        List<TypeProjection> arguments = type.getArguments();
-        for (int idx = receiver ? 1 : 0; idx < arguments.size(); idx++) {
-            if (idx + 1 == arguments.size()) {
-                sb.append(") -> ");
-            }
-            TypeProjection argument = arguments.get(idx);
-            sb.append(renderType(argument.getType()));
-            if (idx + 2 < arguments.size()) {
-                sb.append(", ");
-            }
-        }
-
-        return receiver ? sb.toString() : appendNullability(type, sb);
-    }
-
-    protected String renderReceiverFunctionType(JetType type) {
+    private String renderFunctionType(JetType type) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(renderType(type.getArguments().get(0).getType())).append(".").append(renderFunctionType(type, true));
-
-        return appendNullability(type, sb);
-    }
-
-    private String appendNullability(JetType type, StringBuilder sb) {
-        String rendered = sb.toString();
-        if (type.isNullable()) {
-            rendered = "(" + rendered + ")?";
+        JetType receiverType = JetStandardClasses.getReceiverType(type);
+        if (receiverType != null) {
+            sb.append(renderType(receiverType));
+            sb.append(".");
         }
-        return rendered;
+
+        sb.append("(");
+        appendTypes(sb, JetStandardClasses.getParameterTypesFromFunctionType(type));
+        sb.append(") -> ");
+        sb.append(renderType(JetStandardClasses.getReturnTypeFromFunctionType(type)));
+
+        if (type.isNullable()) {
+            return "(" + sb + ")?";
+        }
+        return sb.toString();
     }
 
     protected String escape(String s) {
@@ -278,7 +264,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
             renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
-            renderTypeParameters(descriptor.getTypeParameters(), builder);
+            if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
+                builder.append(" ");
+            }
 
             ReceiverDescriptor receiver = descriptor.getReceiverParameter();
             if (receiver.exists()) {
@@ -315,7 +303,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return null;
         }
 
-        private void renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
+        private boolean renderTypeParameters(List<TypeParameterDescriptor> typeParameters, StringBuilder builder) {
             if (!typeParameters.isEmpty()) {
                 builder.append(lt());
                 for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
@@ -326,7 +314,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     }
                 }
                 builder.append("> ");
+                return true;
             }
+            return false;
         }
 
         @Override

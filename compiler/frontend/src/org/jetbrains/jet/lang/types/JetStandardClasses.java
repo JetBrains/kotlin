@@ -346,6 +346,15 @@ public class JetStandardClasses {
         return TUPLE_CONSTRUCTORS.contains(type.getConstructor());
     }
 
+    public static List<JetType> getTupleElementTypes(@NotNull JetType type) {
+        assert isTupleType(type);
+        List<JetType> result = Lists.newArrayList();
+        for (TypeProjection typeProjection : type.getArguments()) {
+            result.add(typeProjection.getType());
+        }
+        return result;
+    }
+
     public static JetType getLabeledTupleType(List<AnnotationDescriptor> annotations, List<ValueParameterDescriptor> arguments) {
         // TODO
         return getTupleType(annotations, toTypes(arguments));
@@ -411,16 +420,30 @@ public class JetStandardClasses {
     @NotNull
     public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
         assert isFunctionType(type);
-        List<TypeProjection> arguments = type.getArguments();
-        int first = RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) ? 1 : 0;
-        int last = arguments.size() - 2;
+        int receiverOffset = getReceiverType(type) != null ? 1 : 0;
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-        for (int i = first; i <= last; i++) {
-            JetType parameterType =  arguments.get(i).getType();
-            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(functionDescriptor, i - first, Collections.<AnnotationDescriptor>emptyList(), "p" + i, false, parameterType, false, null);
+        List<JetType> parameterTypes = getParameterTypesFromFunctionType(type);
+        for (int i = 0; i < parameterTypes.size(); i++) {
+            JetType parameterType = parameterTypes.get(i);
+            ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
+                    functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(),
+                    "p" + (i + receiverOffset), false, parameterType, false, null);
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;
+    }
+
+    @NotNull
+    public static List<JetType> getParameterTypesFromFunctionType(@NotNull JetType type) {
+        assert isFunctionType(type);
+        List<TypeProjection> arguments = type.getArguments();
+        int first = RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.contains(type.getConstructor()) ? 1 : 0;
+        int last = arguments.size() - 2;
+        List<JetType> parameterTypes = Lists.newArrayList();
+        for (int i = first; i <= last; i++) {
+            parameterTypes.add(arguments.get(i).getType());
+        }
+        return parameterTypes;
     }
 
     @NotNull
