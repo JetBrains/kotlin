@@ -37,12 +37,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
-import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -204,9 +202,10 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         GenerationState state = new GenerationState(myProject, ClassBuilderFactories.TEXT);
         try {
             BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
-            AnalyzingUtils.throwExceptionOnErrors(binding);
+//            AnalyzingUtils.throwExceptionOnErrors(binding);
             state.compileCorrectFiles(binding, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             StringWriter out = new StringWriter(1024);
             e.printStackTrace(new PrintWriter(out));
             return out.toString().replaceAll("\r", "");
