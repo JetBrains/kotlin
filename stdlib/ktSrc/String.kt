@@ -165,3 +165,21 @@ inline fun String.toUpperCase(locale : java.util.Locale) = (this as java.lang.St
 
 /** Returns the string if it is not null or the empty string if its null */
 inline fun String?.orEmpty(): String = this ?: ""
+
+
+// "Extension functions" for CharSequence
+
+inline fun CharSequence.length() = (this as java.lang.CharSequence).length()
+
+inline val CharSequence.size : Int
+get() = length()
+
+inline fun CharSequence.charAt(index : Int) = (this as java.lang.CharSequence).charAt(index)
+
+inline fun CharSequence.get(index : Int) = charAt(index)
+
+inline fun CharSequence.subSequence(start : Int, end : Int) = (this as java.lang.CharSequence).subSequence(start, end)
+
+inline fun CharSequence.get(start : Int, end : Int) = subSequence(start, end)
+
+inline fun CharSequence.toString() = (this as java.lang.CharSequence).toString()
