@@ -120,7 +120,12 @@ public class JetCompiler implements TranslatingCompiler {
         ModuleChunk chunk = new ModuleChunk((CompileContextEx) compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
         String moduleName = moduleChunk.getNodes().iterator().next().getName();
 
-        CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, Sets.newHashSet(compileContext.getAllOutputDirectories()));
+        // Filter the output we are writing to
+        Set<VirtualFile> outputDirectoriesToFilter = Sets.newHashSet(compileContext.getModuleOutputDirectoryForTests(module));
+        if (!tests) {
+            outputDirectoriesToFilter.add(compileContext.getModuleOutputDirectory(module));
+        }
+        CharSequence script = generateModuleScript(moduleName, chunk, files, tests, mainOutput, outputDirectoriesToFilter);
 
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
@@ -137,10 +142,10 @@ public class JetCompiler implements TranslatingCompiler {
             runInProcess(compileContext, outputDir, kotlinHome, scriptFile);
         }
 
-        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
+//        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
     }
 
-    private static CharSequence generateModuleScript(String moduleName, ModuleChunk chunk, List<VirtualFile> files, boolean tests, VirtualFile mainOutput, Set<VirtualFile> allOutputDirectories) {
+    private static CharSequence generateModuleScript(String moduleName, ModuleChunk chunk, List<VirtualFile> files, boolean tests, VirtualFile mainOutput, Set<VirtualFile> directoriesToFilterOut) {
         StringBuilder script = new StringBuilder();
 
         if (tests) {
@@ -167,7 +172,7 @@ public class JetCompiler implements TranslatingCompiler {
         script.append("        // Compilation classpath\n");
         for (VirtualFile root : chunk.getCompilationClasspathFiles()) {
             String path = path(root);
-            if (allOutputDirectories.contains(root)) {
+            if (directoriesToFilterOut.contains(root)) {
                 // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                 // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
                 // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
