@@ -21,4 +21,16 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>ivy-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

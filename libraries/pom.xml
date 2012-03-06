@@ -14,7 +14,8 @@
         <junit-version>4.8.1</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
         <kotlin-maven-plugin.version>0.2.3.8-beta-6</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project.basedir}/../dist/kotlinc</kotlin-sdk>
+        <kotlin-sdk>${project.basedir}/../../dist/kotlinc</kotlin-sdk>
+        <project-root>${project.basedir}/..</project-root>
     </properties>
 
     <repositories>
@@ -50,64 +51,66 @@
     </dependencies>
 
     <modules>
-      <module>stdlib</module>
-      <module>kdoc</module>
+        <module>stdlib</module>
+        <module>kdoc</module>
     </modules>
-      
+
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
-        <plugins>
-            <plugin>
-                <groupId>com.goldin.plugins</groupId>
-                <artifactId>ivy-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>add-ivy-dependencies</id>
-                        <goals>
-                            <goal>ivy</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <ivyconf>${project.basedir}/src/main/resources/ivyconf.xml</ivyconf>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>ivy.org</groupId>
-                                    <artifactId>bt343</artifactId>
-                                    <version>latest.lastSuccessful</version>
-                                    <classifier>core/intellij-core</classifier>
-                                </dependency>
-                                <dependency>
-                                    <groupId>ivy.org</groupId>
-                                    <artifactId>bt344</artifactId>
-                                    <version>latest.lastSuccessful</version>
-                                    <classifier>kotlin-runtime</classifier>
-                                </dependency>
-                            </dependencies>
-                            <scope>compile</scope>
-                            <verbose>true</verbose>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.goldin.plugins</groupId>
+                    <artifactId>ivy-maven-plugin</artifactId>
+                    <version>${kotlin-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>add-ivy-dependencies</id>
+                            <goals>
+                                <goal>ivy</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <ivyconf>${project-root}/etc/ivyconf.xml</ivyconf>
+                                <dependencies>
+                                    <dependency>
+                                        <groupId>ivy.org</groupId>
+                                        <artifactId>bt343</artifactId>
+                                        <version>latest.lastSuccessful</version>
+                                        <classifier>core/intellij-core</classifier>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>ivy.org</groupId>
+                                        <artifactId>bt344</artifactId>
+                                        <version>latest.lastSuccessful</version>
+                                        <classifier>kotlin-runtime</classifier>
+                                    </dependency>
+                                </dependencies>
+                                <scope>compile</scope>
+                                <verbose>true</verbose>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
 
-            <plugin>
-                <groupId>com.goldin.plugins</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile-kotlin-sources</id>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+                <plugin>
+                    <groupId>com.goldin.plugins</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>compile-kotlin-sources</id>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>
