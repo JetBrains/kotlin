@@ -33,6 +33,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JetLightClass;
 import org.jetbrains.jet.lang.psi.*;
 
@@ -51,10 +52,20 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
     @Override
     protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
         PsiElement leaf = location.getPsiElement();
-        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class);
+
+        if (!(leaf.getContainingFile() instanceof JetFile)) {
+            return null;
+        }
+
+        JetFile jetFile = (JetFile) leaf.getContainingFile();
+
+        JetNamedFunction function = PsiTreeUtil.getParentOfType(leaf, JetNamedFunction.class, false);
         if (function != null) {
             myElement = function;
+
+            @SuppressWarnings("unchecked")
             JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
+
             if (owner instanceof JetClass) {
                 JetLightClass delegate = wrapDelegate((JetClass) owner);
                 for (PsiMethod method : delegate.getMethods()) {
@@ -62,12 +73,13 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
                         Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
                         if (JUnitUtil.isTestMethod(methodLocation, false)) {
                             RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
-                            final JUnitConfiguration configuration = (JUnitConfiguration)settings.getConfiguration();
+                            final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 
                             final Module originalModule = configuration.getConfigurationModule().getModule();
                             configuration.beMethodConfiguration(methodLocation);
                             configuration.restoreOriginalModule(originalModule);
                             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+
                             return settings;
                         }
                         break;
@@ -77,25 +89,51 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
             }
         }
 
-        JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class);
+        JetClass jetClass = PsiTreeUtil.getParentOfType(leaf, JetClass.class, false);
+
+        if (jetClass == null) {
+            jetClass = getClassDeclarationInFile(jetFile);
+        }
+
         if (jetClass != null) {
             myElement = jetClass;
             PsiClass delegate = wrapDelegate(jetClass);
 
             if (JUnitUtil.isTestClass(delegate)) {
                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
-                final JUnitConfiguration configuration = (JUnitConfiguration)settings.getConfiguration();
+                final JUnitConfiguration configuration = (JUnitConfiguration) settings.getConfiguration();
 
                 final Module originalModule = configuration.getConfigurationModule().getModule();
                 configuration.beClassConfiguration(delegate);
                 configuration.restoreOriginalModule(originalModule);
                 JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+
                 return settings;
             }
-
         }
 
         return null;
+    }
+
+    @Nullable
+    private static JetClass getClassDeclarationInFile(JetFile jetFile) {
+        JetClass tempSingleDeclaration = null;
+
+        for (JetDeclaration jetDeclaration : jetFile.getDeclarations()) {
+            if (jetDeclaration instanceof JetClass) {
+                JetClass declaration = (JetClass) jetDeclaration;
+
+                if (tempSingleDeclaration == null) {
+                    tempSingleDeclaration = declaration;
+                }
+                else {
+                    // There are several class declarations in file
+                    return null;
+                }
+            }
+        }
+
+        return tempSingleDeclaration;
     }
 
     private static JetLightClass wrapDelegate(JetClass jetClass) {
