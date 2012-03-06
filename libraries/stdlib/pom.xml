@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-project</artifactId>
-      <version>1.0-SNAPSHOT</version>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>stdlib</artifactId>
@@ -18,7 +18,17 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/../testlib/test</testSourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>ivy-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
-    
+
 </project>
