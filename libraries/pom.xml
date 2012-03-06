@@ -16,6 +16,7 @@
         <kotlin-maven-plugin.version>0.2.3.8-beta-6</kotlin-maven-plugin.version>
         <kotlin-sdk>${project.basedir}/../../dist/kotlinc</kotlin-sdk>
         <project-root>${project.basedir}/..</project-root>
+        <surefire-version>2.5</surefire-version>
     </properties>
 
     <repositories>
@@ -112,6 +113,24 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <failIfNoTests>false</failIfNoTests>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
+                    <excludes>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
