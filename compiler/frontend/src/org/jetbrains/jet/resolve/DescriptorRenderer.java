@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.diagnostics.Renderer;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -94,13 +96,40 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return escape(renderFunctionType(type));
         }
         else {
-            return escape(type.toString());
+            return escape(renderDefaultType(type));
         }
+    }
+
+    private String renderDefaultType(JetType type) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(type.getConstructor());
+        if (!type.getArguments().isEmpty()) {
+            sb.append("<");
+            appendTypeProjections(sb, type.getArguments());
+            sb.append(">");
+        }
+        if (type.isNullable()) {
+            sb.append("?");
+        }
+        return sb.toString();
     }
 
     private void appendTypes(StringBuilder result, List<JetType> types) {
         for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
             result.append(renderType(iterator.next()));
+            if (iterator.hasNext()) {
+                result.append(", ");
+            }
+        }
+    }
+
+    private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections) {
+        for (Iterator<TypeProjection> iterator = typeProjections.iterator(); iterator.hasNext(); ) {
+            TypeProjection typeProjection = iterator.next();
+            if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
+                result.append(typeProjection.getProjectionKind()).append(" ");
+            }
+            result.append(renderType(typeProjection.getType()));
             if (iterator.hasNext()) {
                 result.append(", ");
             }
@@ -129,7 +158,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         sb.append("(");
-        appendTypes(sb, JetStandardClasses.getParameterTypesFromFunctionType(type));
+        appendTypeProjections(sb, JetStandardClasses.getParameterTypeProjectionsFromFunctionType(type));
         sb.append(") -> ");
         sb.append(renderType(JetStandardClasses.getReturnTypeFromFunctionType(type)));
 
