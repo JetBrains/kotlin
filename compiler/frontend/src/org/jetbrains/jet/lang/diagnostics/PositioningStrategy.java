@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -31,6 +32,10 @@ public class PositioningStrategy<E extends PsiElement> {
     @NotNull
     public List<TextRange> mark(@NotNull E element) {
         return markElement(element);
+    }
+
+    protected boolean hasSyntaxError(@NotNull E element) {
+        return element.getLastChild() instanceof PsiErrorElement;
     }
 
     @NotNull

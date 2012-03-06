@@ -256,7 +256,9 @@ public class JetPsiChecker implements Annotator {
     @Nullable
     private Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations, @NotNull RedeclarationDiagnostic diagnostic, @NotNull AnnotationHolder holder) {
         if (!redeclarations.add(diagnostic.getPsiElement())) return null;
-        return holder.createErrorAnnotation(diagnostic.getTextRanges().get(0), getMessage(diagnostic));
+        List<TextRange> textRanges = diagnostic.getTextRanges();
+        if (textRanges.isEmpty()) return null;
+        return holder.createErrorAnnotation(textRanges.get(0), getMessage(diagnostic));
     }
 
 

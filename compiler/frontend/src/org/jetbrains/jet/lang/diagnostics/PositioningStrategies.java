@@ -20,6 +20,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
@@ -35,32 +36,7 @@ import java.util.List;
 public class PositioningStrategies {
 
     public static final PositioningStrategy<PsiElement> DEFAULT = new PositioningStrategy<PsiElement>();
-    
-    public static final PositioningStrategy<JetFunction> MARK_FUNCTION = new PositioningStrategy<JetFunction>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull JetFunction function) {
-            TextRange textRange;
-            PsiElement nameIdentifier = function.getNameIdentifier();
-            JetTypeReference returnTypeRef = function.getReturnTypeRef();
-            JetParameterList valueParameterList = function.getValueParameterList();
-            if (nameIdentifier == null) {
-                textRange = TextRange.from(function.getTextRange().getEndOffset(), 0);
-            }
-            else if (returnTypeRef != null) {
-                textRange = TextRange.from(returnTypeRef.getTextRange().getEndOffset(), 1);
-            }
-            else if (valueParameterList != null) {
-                textRange = TextRange.from(valueParameterList.getTextRange().getEndOffset(), 1);
-            }
-            else {
-                textRange = TextRange.from(nameIdentifier.getTextRange().getEndOffset(), 1);
-            }
-            return markRange(textRange);
 
-        }
-    };
-    
     public static final PositioningStrategy<JetDeclaration> POSITION_DECLARATION = new PositioningStrategy<JetDeclaration>() {
         @NotNull
         @Override
@@ -87,16 +63,20 @@ public class PositioningStrategies {
             return super.mark(declaration);
 
         }
+
         private ASTNode getNameNode(JetNamedDeclaration function) {
             PsiElement nameIdentifier = function.getNameIdentifier();
             return nameIdentifier == null ? null : nameIdentifier.getNode();
         }
     };
-    
+
     public static final PositioningStrategy<PsiNameIdentifierOwner> POSITION_NAME_IDENTIFIER = new PositioningStrategy<PsiNameIdentifierOwner>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
+            if (element.getLastChild() instanceof PsiErrorElement) {
+                return Collections.emptyList();
+            }
             PsiElement nameIdentifier = element.getNameIdentifier();
             if (nameIdentifier != null) {
                 return markElement(nameIdentifier);
@@ -114,7 +94,7 @@ public class PositioningStrategies {
             public List<TextRange> mark(@NotNull JetModifierListOwner modifierListOwner) {
                 if (modifierListOwner.hasModifier(token)) {
                     JetModifierList modifierList = modifierListOwner.getModifierList();
-                    assert  modifierList != null;
+                    assert modifierList != null;
                     ASTNode node = modifierList.getModifierNode(token);
                     assert node != null;
                     return Collections.singletonList(node.getTextRange());
@@ -123,4 +103,12 @@ public class PositioningStrategies {
             }
         };
     }
+
+    public static PositioningStrategy<JetArrayAccessExpression> POSITION_ARRAY_ACCESS = new PositioningStrategy<JetArrayAccessExpression>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
+            return markElement(element.getIndicesNode());
+        }
+    };
 }

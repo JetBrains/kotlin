@@ -93,7 +93,7 @@ public class DeclarationsChecker {
     }
 
     private void checkClass(JetClass aClass, MutableClassDescriptor classDescriptor) {
-        checkOpenMembers(aClass, classDescriptor);
+        checkOpenMembers(classDescriptor);
         checkTraitModifiers(aClass);
         checkEnum(aClass, classDescriptor);
     }
@@ -118,15 +118,12 @@ public class DeclarationsChecker {
         checkIllegalInThisContextModifiers(objectDeclaration.getModifierList(), Sets.newHashSet(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD, JetTokens.OVERRIDE_KEYWORD));
     }
 
-    private void checkOpenMembers(JetClass aClass, MutableClassDescriptor classDescriptor) {
+    private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
 
             JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
-                JetModifierList modifierList = member.getModifierList();
-                assert modifierList != null;
-                ASTNode openModifierNode = modifierList.getModifierNode(JetTokens.OPEN_KEYWORD);
-                context.getTrace().report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(openModifierNode.getPsi()));
+                context.getTrace().report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
         }
     }
@@ -143,7 +140,6 @@ public class DeclarationsChecker {
     }
 
     private void checkDeclaredTypeInPublicMember(JetNamedDeclaration member, CallableMemberDescriptor memberDescriptor) {
-        PsiElement nameIdentifier = member.getNameIdentifier();
         boolean hasDeferredType;
         if (member instanceof JetProperty) {
             hasDeferredType = ((JetProperty) member).getPropertyTypeRef() == null && DescriptorResolver.hasBody((JetProperty) member);
@@ -153,9 +149,8 @@ public class DeclarationsChecker {
             JetFunction function = (JetFunction) member;
             hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
         }
-        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) &&
-            hasDeferredType && nameIdentifier != null) {
-            context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(nameIdentifier));
+        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) && hasDeferredType) {
+            context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
         }
     }
 
@@ -212,27 +207,21 @@ public class DeclarationsChecker {
         JetExpression initializer = property.getInitializer();
         boolean backingFieldRequired = context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
 
-        PsiElement nameIdentifier = property.getNameIdentifier();
-
-        if (inTrait && backingFieldRequired && hasAccessorImplementation && nameIdentifier != null) {
-            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(nameIdentifier));
+        if (inTrait && backingFieldRequired && hasAccessorImplementation) {
+            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(property));
         }
         if (initializer == null) {
-            if (nameIdentifier != null && backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+            if (backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
-                    context.getTrace().report(MUST_BE_INITIALIZED.on(nameIdentifier));
+                    context.getTrace().report(MUST_BE_INITIALIZED.on(property));
                 }
                 else {
-                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(nameIdentifier));
+                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
             }
             return;
         }
         if (inTrait) {
-            JetType returnType = propertyDescriptor.getReturnType();
-            if (returnType instanceof DeferredType) {
-                returnType = ((DeferredType) returnType).getActualType();
-            }
             context.getTrace().report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
         }
         else if (!backingFieldRequired) {
@@ -242,10 +231,7 @@ public class DeclarationsChecker {
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
-        PsiElement nameIdentifier = function.getNameIdentifier();
-        JetModifierList modifierList = function.getModifierList();
-        ASTNode abstractNode = modifierList != null ? modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD) : null;
-        boolean hasAbstractModifier = abstractNode != null;
+        boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         checkDeclaredTypeInPublicMember(function, functionDescriptor);
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
@@ -261,9 +247,9 @@ public class DeclarationsChecker {
                 context.getTrace().report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
-                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(abstractNode.getPsi(), functionDescriptor));
+                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
-            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait && nameIdentifier != null) {
+            if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait) {
                 context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
             }
             return;
@@ -271,7 +257,7 @@ public class DeclarationsChecker {
         if (hasAbstractModifier) {
             context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(function, functionDescriptor));
         }
-        if (function.getBodyExpression() == null && !hasAbstractModifier && nameIdentifier != null) {
+        if (function.getBodyExpression() == null && !hasAbstractModifier) {
             context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
     }

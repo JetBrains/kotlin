@@ -44,8 +44,8 @@ public class CheckerTestUtil {
     public static final Comparator<Diagnostic> DIAGNOSTIC_COMPARATOR = new Comparator<Diagnostic>() {
         @Override
         public int compare(Diagnostic o1, Diagnostic o2) {
-            List<TextRange> ranges1 = getTextRanges(o1);
-            List<TextRange> ranges2 = getTextRanges(o2);
+            List<TextRange> ranges1 = o1.getTextRanges();
+            List<TextRange> ranges2 = o2.getTextRanges();
             if (ranges1.size() != ranges2.size()) return ranges1.size() - ranges2.size();
             for (int i = 0; i < ranges1.size(); i++) {
                 TextRange range1 = ranges1.get(i);
@@ -160,7 +160,7 @@ public class CheckerTestUtil {
     private static void unexpectedDiagnostics(List<Diagnostic> actual, DiagnosticDiffCallbacks callbacks) {
         for (Diagnostic diagnostic : actual) {
             if (!diagnostic.getPsiFile().equals(callbacks.getFile())) continue;
-            List<TextRange> textRanges = getTextRanges(diagnostic);
+            List<TextRange> textRanges = diagnostic.getTextRanges();
             for (TextRange textRange : textRanges) {
                 callbacks.unexpectedDiagnostic(diagnostic.getFactory().getName(), textRange.getStartOffset(), textRange.getEndOffset());
             }
@@ -358,7 +358,10 @@ public class CheckerTestUtil {
         List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
         DiagnosticDescriptor currentDiagnosticDescriptor = null;
         for (Diagnostic diagnostic : list) {
-            TextRange textRange = getTextRanges(diagnostic).get(0);
+            List<TextRange> textRanges = diagnostic.getTextRanges();
+            if (textRanges.isEmpty()) continue;
+
+            TextRange textRange = textRanges.get(0);
             if (currentDiagnosticDescriptor != null && currentDiagnosticDescriptor.equalRange(textRange)) {
                 currentDiagnosticDescriptor.diagnostics.add(diagnostic);
             }
@@ -368,10 +371,6 @@ public class CheckerTestUtil {
             }
         }
         return diagnosticDescriptors;
-    }
-
-    private static List<TextRange> getTextRanges(Diagnostic currentDiagnostic) {
-        return currentDiagnostic.getTextRanges();
     }
 
     private static class DiagnosticDescriptor {

@@ -124,10 +124,6 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (!expressionTypes.isEmpty()) {
             return DataFlowUtils.checkImplicitCast(CommonSupertypes.commonSupertype(expressionTypes), expression, contextWithExpectedType, isStatement);
         }
-        else if (expression.getEntries().isEmpty()) {
-//                context.trace.getErrorHandler().genericError(expression.getNode(), "Entries required for when-expression");
-            context.trace.report(NO_WHEN_ENTRIES.on(expression));
-        }
         return null;
     }
 

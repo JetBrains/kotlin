@@ -26,6 +26,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author abreslav
  */
@@ -75,11 +77,13 @@ public class DiagnosticUtils {
         return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
     }
 
-    @NotNull
+    @Nullable
     public static LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         Document document = file.getViewProvider().getDocument();
-        TextRange firstRange = diagnostic.getTextRanges().iterator().next();
+        List<TextRange> textRanges = diagnostic.getTextRanges();
+        if (textRanges.isEmpty()) return null;
+        TextRange firstRange = textRanges.iterator().next();
         return offsetToLineAndColumn(document, firstRange.getStartOffset());
     }
 

@@ -199,7 +199,6 @@ public class DescriptorResolver {
                 });
             }
             else {
-                trace.report(FUNCTION_WITH_NO_TYPE_NO_BODY.on(function.asElement()));
                 returnType = ErrorUtils.createErrorType("No type, no body");
             }
         }

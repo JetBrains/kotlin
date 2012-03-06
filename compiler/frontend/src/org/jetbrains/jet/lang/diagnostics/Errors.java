@@ -32,6 +32,7 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -116,7 +117,6 @@ public interface Errors {
     DiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = DiagnosticFactory.create(ERROR, "Only one function literal is allowed outside a parenthesized argument list");
     DiagnosticFactory<PsiElement> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory.create(ERROR, "This property must either have a type annotation or be initialized");
 
-    DiagnosticFactory<JetElement> FUNCTION_WITH_NO_TYPE_NO_BODY = DiagnosticFactory.create(ERROR, "This function must either declare a return type or have a body element");
     DiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = DiagnosticFactory.create(ERROR, "This property cannot be declared abstract", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory<JetProperty> ABSTRACT_PROPERTY_NOT_IN_CLASS = DiagnosticFactory.create(ERROR, "A property may be abstract only when defined in a class or trait", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory<JetExpression> ABSTRACT_PROPERTY_WITH_INITIALIZER = DiagnosticFactory.create(ERROR, "Property with initializer cannot be abstract");
@@ -124,21 +124,21 @@ public interface Errors {
     DiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticFactory.create(ERROR, "Property with setter implementation cannot be abstract");
 
     DiagnosticFactory<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory.create(ERROR, "Getter visibility must be the same as property visibility");
-    DiagnosticFactory BACKING_FIELD_IN_TRAIT = DiagnosticFactory.create(ERROR, "Property in a trait cannot have a backing field");
-    DiagnosticFactory MUST_BE_INITIALIZED = DiagnosticFactory.create(ERROR, "Property must be initialized");
-    DiagnosticFactory<PsiElement> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory.create(ERROR, "Property must be initialized or be abstract");
+    DiagnosticFactory<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory.create(ERROR, "Property in a trait cannot have a backing field", PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory<JetProperty> MUST_BE_INITIALIZED = DiagnosticFactory.create(ERROR, "Property must be initialized", PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory.create(ERROR, "Property must be initialized or be abstract", PositioningStrategies.POSITION_NAME_IDENTIFIER);
     DiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory.create(ERROR, "Property initializers are not allowed in traits");
-    DiagnosticFactory PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
+    DiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory.create(ERROR, "Initializer is not allowed here because this property has no backing field");
     DiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory3.create(ERROR, "Abstract property {0} in non-abstract class {1}", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory3<JetFunction, String, ClassDescriptor, JetClass> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = DiagnosticFactory3.create(ERROR, "Abstract function {0} in non-abstract class {1}", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory1<PsiElement, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract");
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, "A function {0} with body cannot be abstract", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, "Method {0} without a body must be abstract", PositioningStrategies.POSITION_NAME_IDENTIFIER);
     DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, "Function {0} is not a class or trait member and cannot be abstract", PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
 
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, "Function {0} must have a body", PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory<PsiElement> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory.create(ERROR, "Non final member in a final class");
+    DiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory.create(ERROR, "Non final member in a final class", PositioningStrategies.positionModifier(JetTokens.OPEN_KEYWORD));
 
-    DiagnosticFactory<PsiElement> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory.create(ERROR, "Public or protected member should specify a type");
+    DiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory.create(ERROR, "Public or protected member should specify a type", PositioningStrategies.POSITION_NAME_IDENTIFIER);
 
     DiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = DiagnosticFactory.create(ERROR, "Projections are not allowed on type arguments of functions and properties"); // TODO : better positioning
     DiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory.create(ERROR, "This type has a constructor, and thus must be initialized here");
@@ -189,20 +189,8 @@ public interface Errors {
     DiagnosticFactory<JetPropertyAccessor> LOCAL_VARIABLE_WITH_SETTER = DiagnosticFactory.create(ERROR, "Local variables are not allowed to have setters");
     DiagnosticFactory<JetPropertyAccessor> VAL_WITH_SETTER = DiagnosticFactory.create(ERROR, "A 'val'-property cannot have a setter");
 
-    DiagnosticFactory<JetArrayAccessExpression> NO_GET_METHOD = DiagnosticFactory.create(ERROR, "No get method providing array access", new PositioningStrategy<JetArrayAccessExpression>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
-            return markElement(element.getIndicesNode());
-        }
-    });
-    DiagnosticFactory<JetArrayAccessExpression> NO_SET_METHOD = DiagnosticFactory.create(ERROR, "No set method providing array access", new PositioningStrategy<JetArrayAccessExpression>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
-            return markElement(element.getIndicesNode());
-        }
-    });
+    DiagnosticFactory<JetArrayAccessExpression> NO_GET_METHOD = DiagnosticFactory.create(ERROR, "No get method providing array access", PositioningStrategies.POSITION_ARRAY_ACCESS);
+    DiagnosticFactory<JetArrayAccessExpression> NO_SET_METHOD = DiagnosticFactory.create(ERROR, "No set method providing array access", PositioningStrategies.POSITION_ARRAY_ACCESS);
 
     DiagnosticFactory<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = DiagnosticFactory.create(ERROR, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --");
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT =
@@ -218,10 +206,9 @@ public interface Errors {
     DiagnosticFactory<JetThisExpression> NO_THIS = DiagnosticFactory.create(ERROR, "'this' is not defined in this context");
     DiagnosticFactory<JetSuperExpression> SUPER_NOT_AVAILABLE = DiagnosticFactory.create(ERROR, "No supertypes are accessible in this context");
     DiagnosticFactory<JetSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory.create(ERROR, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
-    DiagnosticFactory<JetExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory.create(ERROR, "Abstarct member cannot be accessed directly");
+    DiagnosticFactory<JetExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory.create(ERROR, "Abstract member cannot be accessed directly");
     DiagnosticFactory<JetTypeReference> NOT_A_SUPERTYPE = DiagnosticFactory.create(ERROR, "Not a supertype");
     DiagnosticFactory<PsiElement> TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = DiagnosticFactory.create(WARNING, "Type arguments do not need to be specified in a 'super' qualifier");
-    DiagnosticFactory<JetWhenExpression> NO_WHEN_ENTRIES = DiagnosticFactory.create(ERROR, "Entries are required for when-expression"); // TODO : Scope, and maybe this should not be an error
     DiagnosticFactory<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory.create(WARNING, "No cast needed, use ':' instead");
     DiagnosticFactory<JetSimpleNameExpression> USELESS_CAST = DiagnosticFactory.create(WARNING, "No cast needed");
     DiagnosticFactory<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory.create(WARNING, "This cast can never succeed");
@@ -285,6 +272,7 @@ public interface Errors {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetWhenExpression element) {
+            if (hasSyntaxError(element)) return Collections.emptyList();
             return markElement(element.getWhenKeywordElement());
         }
     });
