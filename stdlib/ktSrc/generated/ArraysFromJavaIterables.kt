@@ -86,7 +86,15 @@ inline fun <T, C: Collection<in T>> Array<T>.filterNotTo(result: C, predicate: (
   * Returns the result of transforming each item in the collection to a one or more values which
   * are concatenated together into a single collection
   */
-inline fun <T, out R> Array<T>.flatMap(result: Collection<R> = ArrayList<R>(), transform: (T)-> Collection<R>) : Collection<R> {
+inline fun <T, R> Array<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> {
+    return flatMapTo(ArrayList<R>(), transform)
+}
+
+/**
+  * Returns the result of transforming each item in the collection to a one or more values which
+  * are concatenated together into a single collection
+  */
+inline fun <T, R> Array<T>.flatMapTo(result: Collection<R>, transform: (T)-> Collection<R>) : Collection<R> {
   for (elem in this) {
     val coll = transform(elem)
     if (coll != null) {
