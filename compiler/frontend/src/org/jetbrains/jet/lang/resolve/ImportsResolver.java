@@ -24,8 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -55,15 +54,20 @@ public class ImportsResolver {
     }
 
     private void processImports(boolean firstPhase) {
-        ImportResolver importResolver = new ImportResolver(context.getTrace(), firstPhase);
+        SingleImportResolver importResolver = new SingleImportResolver(context.getTrace(), firstPhase);
+        SingleImportResolver defaultImportResolver = new SingleImportResolver(TemporaryBindingTrace.create(context.getTrace()), firstPhase);//not to trace errors of default imports
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
             Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope, firstPhase);
             if (!firstPhase) {
                 namespaceScope.clearImports();
             }
-            context.getConfiguration().addDefaultImports(context.getTrace(), namespaceScope, delayedImporter);
             Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
+            Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
+            context.getConfiguration().addDefaultImports(namespaceScope, defaultImportDirectives);
+            for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
+                defaultImportResolver.processImportReference(defaultImportDirective, namespaceScope, delayedImporter);
+            }
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
@@ -133,13 +137,18 @@ public class ImportsResolver {
         }
     }
 
-    public static class ImportResolver {
+    public static Collection<? extends DeclarationDescriptor> analyseImportReference(@NotNull JetImportDirective importDirective, @NotNull JetScope scope, @NotNull BindingTrace trace) {
+        ImportsResolver.SingleImportResolver importResolver = new ImportsResolver.SingleImportResolver(trace, false);
+        return importResolver.processImportReference(importDirective, scope, Importer.DO_NOTHING);
+    }
+
+    private static class SingleImportResolver {
         private final BindingTrace trace;
         /* On first phase all classes and objects are imported,
         on second phase previous imports are thrown and everything (including functions and properties at namespace level) is imported */
         private final boolean firstPhase;
 
-        public ImportResolver(BindingTrace trace, boolean firstPhase) {
+        public SingleImportResolver(BindingTrace trace, boolean firstPhase) {
             this.trace = trace;
             this.firstPhase = firstPhase;
         }

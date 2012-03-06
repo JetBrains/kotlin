@@ -19,11 +19,12 @@ package org.jetbrains.jet.lang;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.Importer;
-import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+
+import java.util.Collection;
 
 /**
  * @author svtk
@@ -42,10 +43,9 @@ public class StandardConfiguration implements Configuration {
     }
 
     @Override
-    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
-        ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(trace, true);
+    public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
         for (String defaultJetImport : DEFAULT_JET_IMPORTS) {
-            importResolver.processImportReference(JetPsiFactory.createImportDirective(project, defaultJetImport), rootScope, importer);
+            directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
         }
     }
 

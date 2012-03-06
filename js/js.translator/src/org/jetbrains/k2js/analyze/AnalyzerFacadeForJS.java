@@ -27,12 +27,14 @@ import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -118,10 +120,9 @@ public final class AnalyzerFacadeForJS {
         }
 
         @Override
-        public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope,
-                                      @NotNull Importer importer) {
-            ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(trace, true);
-            importResolver.processImportReference(JetPsiFactory.createImportDirective(project, "js.*"), rootScope, importer);
+        public void addDefaultImports(@NotNull WritableScope rootScope,
+                                      @NotNull Collection<JetImportDirective> directives) {
+            directives.add(JetPsiFactory.createImportDirective(project, "js.*"));
         }
 
         @Override

@@ -182,15 +182,9 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull JetScope scope) {
 
-        WritableScopeWithImports writableScopeWithImports = new WritableScopeImpl(
-                scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
-
         JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN);
 
-        ImportsResolver.ImportResolver importResolver = new ImportsResolver.ImportResolver(new BindingTraceContext(), false);
-        Collection<? extends DeclarationDescriptor> declarationDescriptors = importResolver.processImportReference(
-                importDirective, scope,
-                new Importer.StandardImporter(writableScopeWithImports, false));
+        Collection<? extends DeclarationDescriptor> declarationDescriptors = ImportsResolver.analyseImportReference(importDirective, scope, new BindingTraceContext());
 
         List<CallableDescriptor> callableExtensionDescriptors = new ArrayList<CallableDescriptor>();
         ReceiverDescriptor receiverDescriptor = new ExpressionReceiver(receiverExpression, receiverType);

@@ -18,9 +18,11 @@ package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+
+import java.util.Collection;
 
 /**
  * @author abreslav
@@ -28,7 +30,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 public interface Configuration {
     Configuration EMPTY = new Configuration() {
         @Override
-        public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
+        public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
         }
 
         @Override
@@ -36,7 +38,7 @@ public interface Configuration {
         }
     };
 
-    void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer);
+    void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives);
 
     /**
      *

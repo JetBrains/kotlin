@@ -22,12 +22,13 @@ import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.Importer;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
+import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -35,30 +36,29 @@ import java.util.Collections;
  */
 public class JavaBridgeConfiguration implements Configuration {
 
-    public static final String[] DEFAULT_JAVA_IMPORTS = new String[] { "java.lang" };
+    public static final String[] DEFAULT_JAVA_IMPORTS = new String[] { "java.lang.*" };
 
     public static Configuration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, Configuration delegateConfiguration) {
         return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
     }
 
+    private final Project project;
     private final JavaSemanticServices javaSemanticServices;
     private final Configuration delegateConfiguration;
 
     private JavaBridgeConfiguration(Project project, BindingTrace trace, Configuration delegateConfiguration) {
+        this.project = project;
         this.javaSemanticServices = new JavaSemanticServices(project, JetSemanticServices.createSemanticServices(project), trace);
         this.delegateConfiguration = delegateConfiguration;
     }
 
     @Override
-    public void addDefaultImports(@NotNull BindingTrace trace, @NotNull WritableScope rootScope, @NotNull Importer importer) {
+    public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
         rootScope.importScope(new JavaPackageScope("", createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
         for (String importFQN : DEFAULT_JAVA_IMPORTS) {
-            NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(importFQN);
-            if (namespaceDescriptor != null) {
-                importer.addScopeImport(namespaceDescriptor.getMemberScope());
-            }
+            directives.add(JetPsiFactory.createImportDirective(project, importFQN));
         }
-        delegateConfiguration.addDefaultImports(trace, rootScope, importer);
+        delegateConfiguration.addDefaultImports(rootScope, directives);
     }
 
     public static JavaNamespaceDescriptor createNamespaceDescriptor(String name, String qualifiedName) {
