@@ -99,7 +99,7 @@ public class ForTestCompileStdlib {
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
         // lame
-        KotlinCompiler.exec(System.err, "-output", destdir.getPath(), "-src", "./stdlib/ktSrc", "-stdlib", destdir.getAbsolutePath());
+        KotlinCompiler.exec(System.err, "-output", destdir.getPath(), "-src", "./libraries/stdlib/src", "-stdlib", destdir.getAbsolutePath());
     }
     
     private static List<File> javaFilesInDir(File dir) {
@@ -122,7 +122,7 @@ public class ForTestCompileStdlib {
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFilesInDir(new File("stdlib/src")));
+            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(javaFilesInDir(new File("runtime/src")));
             List<String> options = Arrays.asList(
                     "-d", destdir.getPath()
             );

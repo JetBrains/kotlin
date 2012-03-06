@@ -73,7 +73,7 @@ public class TestlibTest extends CodegenTestCase {
 
             myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
 
-            File junitJar = new File("testlib/lib/junit-4.9.jar");
+            File junitJar = new File("libraries/testlib/lib/junit-4.9.jar");
 
             if (!junitJar.exists()) {
                 throw new AssertionError();
@@ -82,8 +82,8 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addToClasspath(junitJar);
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../testlib/test"));
-            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../kunit/src"));
+            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/testlib/test"));
+            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             if (!session.analyze(System.err, MessageRenderer.PLAIN)) {
                 throw new RuntimeException("There were compilation errors");
