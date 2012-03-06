@@ -5,13 +5,13 @@ import kotlin.io.*
 import kotlin.util.*
 import java.util.*
 import org.jetbrains.kotlin.template.*
-import org.jetbrains.kotlin.model.KModel
-import org.jetbrains.kotlin.model.KPackage
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KFunction
-import org.jetbrains.kotlin.model.KAnnotation
-import org.jetbrains.kotlin.model.KProperty
-import org.jetbrains.kotlin.model.KTypeParameter
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KProperty
+import org.jetbrains.kotlin.doc.model.KTypeParameter
 
 
 abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {

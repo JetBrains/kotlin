@@ -5,11 +5,11 @@ import org.jetbrains.kotlin.template.*
 import kotlin.io.*
 import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.model.KModel
-import org.jetbrains.kotlin.model.KPackage
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KFunction
-import org.jetbrains.kotlin.model.extensionFunctions
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.model.extensionFunctions
 
 class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupport(p) {
     override fun render() {

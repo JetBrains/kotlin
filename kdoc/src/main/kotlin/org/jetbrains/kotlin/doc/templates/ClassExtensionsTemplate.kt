@@ -5,12 +5,12 @@ import org.jetbrains.kotlin.template.*
 import kotlin.io.*
 import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.model.KModel
-import org.jetbrains.kotlin.model.KPackage
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KFunction
-import org.jetbrains.kotlin.model.KAnnotation
-import org.jetbrains.kotlin.model.KProperty
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KProperty
 
 class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass,
         val functions: Collection<KFunction>, val properties: Collection<KProperty>) : ClassTemplate(m, p, k) {
@@ -27,7 +27,7 @@ ${pkg.name}</FONT>
 Extensions on ${klass.name}</H2>
 <DL>
 <DT>
-extension functions on class <A HREF="${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"><B>${klass.name}</B></A><DT>
+extension functions on class <A HREF="${sourceHref(klass)}"><B>${klass.name}</B></A><DT>
 from package ${link(pkg)}
 </DL>
 </PRE>

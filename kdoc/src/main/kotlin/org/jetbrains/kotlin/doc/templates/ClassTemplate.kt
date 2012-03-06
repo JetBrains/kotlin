@@ -5,11 +5,11 @@ import org.jetbrains.kotlin.template.*
 import kotlin.io.*
 import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.model.KModel
-import org.jetbrains.kotlin.model.KPackage
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KFunction
-import org.jetbrains.kotlin.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KFunction
+import org.jetbrains.kotlin.doc.model.KAnnotation
 
 open class ClassTemplate(open val model: KModel, pkg: KPackage, open val klass: KClass) : PackageTemplateSupport(pkg) {
 
@@ -184,7 +184,7 @@ Class ${klass.simpleName}</H2>
 <DL>
 <DT><PRE><FONT SIZE="-1">""")
         printAnnotations(klass.annotations)
-        print("""</FONT>public class <A HREF="${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"><B>${klass.simpleName}</B></A><DT>""")
+        print("""</FONT>public class <A HREF="${sourceHref(klass)}"><B>${klass.simpleName}</B></A><DT>""")
         if (!klass.baseClasses.isEmpty()) {
             print("""extends """)
             for (bc in klass.baseClasses) {

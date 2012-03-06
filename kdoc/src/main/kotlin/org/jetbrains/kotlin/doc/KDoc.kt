@@ -5,7 +5,7 @@ import kotlin.util.*
 
 import org.jetbrains.kotlin.doc.templates.*
 import org.jetbrains.kotlin.template.TextTemplate
-import org.jetbrains.kotlin.model.*
+import org.jetbrains.kotlin.doc.model.*
 
 import java.io.File
 import java.util.List

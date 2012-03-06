@@ -5,11 +5,11 @@ import org.jetbrains.kotlin.template.*
 import kotlin.io.*
 import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.model.KModel
-import org.jetbrains.kotlin.model.KPackage
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.extensionFunctions
-import org.jetbrains.kotlin.model.inheritedExtensionFunctions
+import org.jetbrains.kotlin.doc.model.KModel
+import org.jetbrains.kotlin.doc.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.extensionFunctions
+import org.jetbrains.kotlin.doc.model.inheritedExtensionFunctions
 
 class PackageSummaryTemplate(val model: KModel, pkg: KPackage) : PackageTemplateSupport(pkg) {
     override fun render() {

@@ -1,8 +1,9 @@
-package org.jetbrains.kotlin.model
+package org.jetbrains.kotlin.doc.model
 
-import java.lang.String
 import kotlin.*
 import kotlin.util.*
+
+import org.jetbrains.kotlin.doc.KDocConfig
 
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -125,7 +126,7 @@ abstract class KClassOrPackage : KAnnotated() {
     public open val properties: SortedSet<KProperty> = TreeSet<KProperty>()
 }
 
-class KModel(var context: BindingContext, var title: String = "Documentation", var version: String = "TODO") {
+class KModel(var context: BindingContext, val config: KDocConfig, var title: String = "Documentation", var version: String = "TODO") {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -418,7 +419,7 @@ abstract class KNamed(val name: String) : KAnnotated(), Comparable<KNamed> {
 
 
 class KPackage(val model: KModel, val descriptor: NamespaceDescriptor,
-        val name: String, var external: Boolean = false,
+        val name: String,
         var local: Boolean = false) : KClassOrPackage(), Comparable<KPackage> {
 
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
@@ -616,18 +617,6 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
     /** Returns a list of generic type parameter names kinds like "A, I" */
     public val typeParametersText: String
     get() = typeParameters.map{ it.name }.join(", ")
-
-    /** Returns a list of parameter value types */
-    /*
-    private var _parameterTypeText: String? = null
-    public val parameterTypeText: String
-    get() {
-        if (_parameterTypeText == null) {
-            _parameterTypeText = parameters.map{ it.aType.name }.join(", ")
-        }
-        return _parameterTypeText.sure()
-    }
-    */
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,

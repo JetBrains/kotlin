@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.template.*
 import kotlin.io.*
 import kotlin.util.*
 import java.util.*
-import org.jetbrains.kotlin.model.KModel
+import org.jetbrains.kotlin.doc.model.KModel
 
 class AllClassesFrameTemplate(val model: KModel, val classAttributes: String = "") : KDocTemplate() {
     override fun render() {

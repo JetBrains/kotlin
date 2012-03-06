@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.doc
 
-import org.jetbrains.kotlin.model.KModel
+import org.jetbrains.kotlin.doc.model.KModel
 import java.io.File
 
 /**

@@ -2,29 +2,29 @@ package org.jetbrains.kotlin.doc.templates
 
 import kotlin.*
 import kotlin.util.*
-import org.jetbrains.kotlin.model.KClass
-import org.jetbrains.kotlin.model.KAnnotation
-import org.jetbrains.kotlin.model.KPackage
+import org.jetbrains.kotlin.doc.model.KClass
+import org.jetbrains.kotlin.doc.model.KAnnotation
+import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.template.TextTemplate
-import org.jetbrains.kotlin.model.KFunction
+import org.jetbrains.kotlin.doc.model.KFunction
 import java.util.Collection
-import org.jetbrains.kotlin.model.KProperty
-import org.jetbrains.kotlin.model.KType
+import org.jetbrains.kotlin.doc.model.KProperty
+import org.jetbrains.kotlin.doc.model.KType
 import java.util.List
 
 abstract class KDocTemplate() : TextTemplate() {
     open fun rootHref(pkg: KPackage): String {
-        return if (pkg.external) {
-            // TODO deal with external classes
-            ""
-        } else relativePrefix()
+        return if (pkg.local)
+            relativePrefix()
+        else
+            pkg.model.config.resolveLink(pkg.name)
     }
 
     open fun href(p: KPackage): String
-        = "${rootHref(p)}${p.nameAsPath}/package-summary.html"
+    = "${rootHref(p)}${p.nameAsPath}/package-summary.html"
 
     open fun href(c: KClass): String {
-        val postfix = if (c.pkg.external) "?is-external=true" else ""
+        val postfix = if (c.pkg.local) "" else "?is-external=true"
         return "${rootHref(c.pkg)}${c.nameAsPath}.html$postfix"
     }
 
@@ -53,13 +53,30 @@ abstract class KDocTemplate() : TextTemplate() {
         return "${extensionsHref(pkg, c)}#${f.link}"
     }
 
+    open fun sourceHref(klass: KClass): String {
+        val pkg = klass.pkg
+        return if (pkg.local) {
+            "${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"
+        } else {
+            href(klass)
+        }
+    }
     open fun sourceHref(f: KFunction): String {
         val owner = f.owner
         return if (owner is KClass) {
-            "${rootHref(owner.pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+            val pkg = owner.pkg
+            if (pkg.local) {
+                "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+            } else {
+                href(f)
+            }
         } else if (owner is KPackage) {
-            // TODO how to find the function in a package???
-            "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+            if (owner.local) {
+                // TODO how to find the function in a package???
+                "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+            } else {
+                href(owner)
+            }
         } else href(f)
     }
 

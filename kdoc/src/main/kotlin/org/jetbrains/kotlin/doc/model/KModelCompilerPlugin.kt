@@ -1,11 +1,11 @@
-package org.jetbrains.kotlin.model
+package org.jetbrains.kotlin.doc.model
 
 import kotlin.*
 import kotlin.util.*
 
+import org.jetbrains.kotlin.doc.KDocConfig
 import org.jetbrains.kotlin.doc.templates.*
 import org.jetbrains.kotlin.template.TextTemplate
-import org.jetbrains.kotlin.model.*
 
 import java.io.File
 import java.util.List
@@ -35,9 +35,11 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils
 /** Base class for any compiler plugin which needs to process a KModel */
 abstract class KModelCompilerPlugin : CompilerPlugin {
 
+    public open var config: KDocConfig = KDocConfig()
+
     override fun processFiles(context: BindingContext?, sources: List<JetFile?>?) {
         if (context != null && sources != null) {
-            val model = KModel(context)
+            val model = KModel(context, config)
             model.load(sources)
 
             processModel(model)
