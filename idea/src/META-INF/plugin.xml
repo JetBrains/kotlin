@@ -154,6 +154,7 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
 
       <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.JetContentBasedFileSubstitutor" />
+      <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.JetClsNavigationPolicy" />
 
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 
