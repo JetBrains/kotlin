@@ -21,8 +21,9 @@
  *  For details, see the Prototype web site: http://www.prototypejs.org/
  *
  *--------------------------------------------------------------------------*/
+var Kotlin;
 (function () {
-
+    "use strict";
     function $A(iterable) {
         if (!iterable) return [];
         if ('toArray' in Object(iterable)) return iterable.toArray();
@@ -82,8 +83,8 @@
 
         function argumentNames() {
             var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-                .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-                .replace(/\s+/g, '').split(',');
+                    .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+                    .replace(/\s+/g, '').split(',');
             return names.length == 1 && !names[0] ? [] : names;
         }
 
@@ -93,7 +94,7 @@
             return function () {
                 var a = merge(args, arguments);
                 return __method.apply(context, a);
-            }
+            };
         }
 
         function bindAsEventListener(context) {
@@ -101,7 +102,7 @@
             return function (event) {
                 var a = update([event || window.event], args);
                 return __method.apply(context, a);
-            }
+            };
         }
 
         function wrap(wrapper) {
@@ -109,7 +110,7 @@
             return function () {
                 var a = update([__method.bind(this)], arguments);
                 return wrapper.apply(this, a);
-            }
+            };
         }
 
         return {
@@ -117,11 +118,11 @@
             bind:bind,
             bindAsEventListener:bindAsEventListener,
             wrap:wrap
-        }
+        };
     })());
 
     var isType = function (object, klass) {
-        current = object.get_class();
+        var current = object.get_class();
         while (current !== klass) {
             if (current === null) {
                 return false;
@@ -138,7 +139,7 @@
 
         function subclass() {
         }
-        ;
+
         function create() {
             var parent = null, properties = $A(arguments);
             if (typeof (properties[0]) == "function") {
@@ -156,25 +157,25 @@
 
             if (parent) {
                 subclass.prototype = parent.prototype;
-                klass.prototype = new subclass;
+                klass.prototype = new subclass();
                 parent.subclasses.push(klass);
             }
 
             klass.addMethods(
-                {
-                    get_class:function () {
-                        return klass;
-                    }
-                });
-
-            if (parent != null) {
-                klass.addMethods(
                     {
-                        super_init:function () {
-                            this.initializing = this.initializing.superclass;
-                            this.initializing.prototype.initialize.apply(this, arguments)
+                        get_class:function () {
+                            return klass;
                         }
                     });
+
+            if (parent !== null) {
+                klass.addMethods(
+                        {
+                            super_init:function () {
+                                this.initializing = this.initializing.superclass;
+                                this.initializing.prototype.initialize.apply(this, arguments);
+                            }
+                        });
             }
 
             for (var i = 0, length = properties.length; i < length; i++)
@@ -190,7 +191,7 @@
 
         function addMethods(source) {
             var ancestor = this.superclass && this.superclass.prototype,
-                properties = Object.keys(source);
+                    properties = Object.keys(source);
 
 
             for (var i = 0, length = properties.length; i < length; i++) {
@@ -233,7 +234,7 @@
 
         function create() {
 
-            result = {}
+            var result = {};
             for (var i = 0, length = arguments.length; i < length; i++) {
                 add(result, arguments[i]);
             }
@@ -260,8 +261,9 @@
     var object = (function () {
         function create() {
             var singletonClass = Class.create.apply(Class, arguments);
-            return new singletonClass;
+            return new singletonClass();
         }
+
         return {
             create:create
         };
@@ -276,16 +278,16 @@
 
     Kotlin.equals = function (obj1, obj2) {
         if (typeof obj1 == "object") {
-            if (obj1.equals != undefined) {
+            if (obj1.equals !== undefined) {
                 return obj1.equals(obj2);
             }
         }
         return (obj1 === obj2);
     };
 
-    Kotlin.Exceptions = {}
+    Kotlin.Exceptions = {};
     Kotlin.Exception = Kotlin.Class.create();
-    Kotlin.Exceptions.IndexOutOfBounds = {}
+    Kotlin.Exceptions.IndexOutOfBounds = {};
 
 
     Kotlin.ArrayList = Class.create({
@@ -312,7 +314,7 @@
             return new Kotlin.ArrayIterator(this);
         },
         isEmpty:function () {
-            return (this.$size == 0);
+            return (this.$size === 0);
         },
         add:function (element) {
             this.array[this.$size++] = element;
@@ -345,9 +347,9 @@
 
 
     Kotlin.parseInt =
-        function (str) {
-            return parseInt(str);
-        }
+    function (str) {
+        return parseInt(str, 10);
+    }
     ;
 
     Kotlin.System = function () {
@@ -355,7 +357,7 @@
 
         var print = function (obj) {
             if (obj !== undefined) {
-                if (obj == null || typeof obj != "object") {
+                if (obj === null || typeof obj !== "object") {
                     output += obj;
                 }
                 else {
@@ -386,11 +388,11 @@
 
     Kotlin.println = function (s) {
         Kotlin.System.out().println(s);
-    }
+    };
 
     Kotlin.print = function (s) {
         Kotlin.System.out().print(s);
-    }
+    };
 
     Kotlin.AbstractFunctionInvokationError = Class.create();
 
@@ -481,18 +483,18 @@
     });
 
     Kotlin.Comparator = Kotlin.Class.create(
-        {
-            initialize:function () {
-            },
-            compare:function (el1, el2) {
-                throw new Kotlin.AbstractFunctionInvokationError();
+            {
+                initialize:function () {
+                },
+                compare:function (el1, el2) {
+                    throw new Kotlin.AbstractFunctionInvokationError();
+                }
             }
-        }
     );
 
-    Kotlin.comparator = function(f) {
-        var result = new Kotlin.Comparator;
-        result.compare = function(el1, el2) {
+    Kotlin.comparator = function (f) {
+        var result = new Kotlin.Comparator();
+        result.compare = function (el1, el2) {
             return f(el1, el2);
         };
         return result;
@@ -515,20 +517,20 @@
     };
 
     Kotlin.StringBuilder = Kotlin.Class.create(
-        {
-            initialize:function () {
-                this.string = "";
-            },
-            append:function (obj) {
-                this.string = this.string + obj.toString();
-            },
-            toString:function () {
-                return this.string;
+            {
+                initialize:function () {
+                    this.string = "";
+                },
+                append:function (obj) {
+                    this.string = this.string + obj.toString();
+                },
+                toString:function () {
+                    return this.string;
+                }
             }
-        }
     );
 
-    Kotlin.splitString = function(str, regex) {
+    Kotlin.splitString = function (str, regex) {
         return str.split(regex);
     };
 
@@ -555,23 +557,23 @@
     };
 
     var intrinsicArrayIterator = Kotlin.Class.create(
-        Kotlin.Iterator,
-        {
-            initialize:function (arr) {
-                this.arr = arr;
-                this.len = arr.length;
-                this.i = 0;
-            },
-            hasNext:function () {
-                return (this.i < this.len);
-            },
-            next:function () {
-                return this.arr[this.i++];
-            },
-            get_hasNext:function () {
-                return this.hasNext()
+            Kotlin.Iterator,
+            {
+                initialize:function (arr) {
+                    this.arr = arr;
+                    this.len = arr.length;
+                    this.i = 0;
+                },
+                hasNext:function () {
+                    return (this.i < this.len);
+                },
+                next:function () {
+                    return this.arr[this.i++];
+                },
+                get_hasNext:function () {
+                    return this.hasNext();
+                }
             }
-        }
     );
 
     Kotlin.arrayIterator = function (arr) {
@@ -601,7 +603,7 @@
     };
 
 
-    Kotlin.sure = function(obj) {
+    Kotlin.sure = function (obj) {
         return obj;
     };
 
@@ -609,23 +611,23 @@
         var FUNCTION = "function";
 
         var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
-            function (arr, idx) {
-                arr.splice(idx, 1);
-            } :
+                function (arr, idx) {
+                    arr.splice(idx, 1);
+                } :
 
-            function (arr, idx) {
-                var itemsAfterDeleted, i, len;
-                if (idx === arr.length - 1) {
-                    arr.length = idx;
-                }
-                else {
-                    itemsAfterDeleted = arr.slice(idx + 1);
-                    arr.length = idx;
-                    for (i = 0, len = itemsAfterDeleted.length; i < len; ++i) {
-                        arr[idx + i] = itemsAfterDeleted[i];
+                function (arr, idx) {
+                    var itemsAfterDeleted, i, len;
+                    if (idx === arr.length - 1) {
+                        arr.length = idx;
                     }
-                }
-            };
+                    else {
+                        itemsAfterDeleted = arr.slice(idx + 1);
+                        arr.length = idx;
+                        for (i = 0, len = itemsAfterDeleted.length; i < len; ++i) {
+                            arr[idx + i] = itemsAfterDeleted[i];
+                        }
+                    }
+                };
 
         function hashObject(obj) {
             var hashCode;
@@ -655,7 +657,7 @@
 
         function equals_fixedValueNoEquals(fixedValue, variableValue) {
             return (typeof variableValue.equals == FUNCTION) ?
-                variableValue.equals(fixedValue) : (fixedValue === variableValue);
+                    variableValue.equals(fixedValue) : (fixedValue === variableValue);
         }
 
         function createKeyValCheck(kvStr) {
@@ -957,21 +959,19 @@
                     res.add(keys[i]);
                 }
                 return res;
-            }
+            };
         };
 
         Kotlin.HashTable = Hashtable;
     })();
 
     Kotlin.HashMap = Kotlin.Class.create(
-        {
-            initialize:function () {
-                Kotlin.HashTable.call(this);
+            {
+                initialize:function () {
+                    Kotlin.HashTable.call(this);
+                }
             }
-        }
     );
-
-
 
 
     (function () {
@@ -1065,12 +1065,12 @@
         }
 
         Kotlin.HashSet = Kotlin.Class.create(
-            {
-                initialize:function () {
-                    HashSet.call(this);
+                {
+                    initialize:function () {
+                        HashSet.call(this);
+                    }
                 }
-            }
-        )
+        );
     }());
 
 })();

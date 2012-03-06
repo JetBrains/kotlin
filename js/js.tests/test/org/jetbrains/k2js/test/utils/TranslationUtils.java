@@ -22,8 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.test.config.TestConfig;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +52,13 @@ public final class TranslationUtils {
                                       @NotNull String outputFile) throws Exception {
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
         JsProgram program = getTranslator(project).generateProgram(psiFiles);
-        K2JSTranslator.saveProgramToFile(outputFile, program);
+        FileWriter writer = new FileWriter(new File(outputFile));
+        try {
+            writer.write("\"use strict\"\n;");
+            writer.write(CodeGenerator.toString(program));
+        } finally {
+            writer.close();
+        }
     }
 
     @NotNull

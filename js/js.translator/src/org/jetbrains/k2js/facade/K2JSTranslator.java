@@ -33,7 +33,6 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,18 +58,13 @@ public final class K2JSTranslator {
         if (fileWithMain == null) {
             throw new RuntimeException("No file with main detected.");
         }
-        String callToMain = translator.generateCallToMain(fileWithMain, "");
+        String callToMain = generateCallToMain(fileWithMain, "");
         FileWriter writer = new FileWriter(new File(outputPath));
         try {
             writer.write(programCode + callToMain);
         } finally {
             writer.close();
         }
-    }
-
-    public static void saveProgramToFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
-        CodeGenerator generator = new CodeGenerator();
-        generator.generateToFile(program, new File(outputFile));
     }
 
     @NotNull

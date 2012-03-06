@@ -37,6 +37,16 @@ public final class CodeGenerator {
     public CodeGenerator() {
     }
 
+    public static void toFile(@NotNull String outputFile, @NotNull JsProgram program) throws IOException {
+        CodeGenerator generator = new CodeGenerator();
+        generator.generateToFile(program, new File(outputFile));
+    }
+
+    @NotNull
+    public static String toString(@NotNull JsProgram program) {
+        return (new CodeGenerator()).generateToString(program);
+    }
+
     public void generateToFile(@NotNull JsProgram program, @NotNull File file) throws IOException {
         generateCode(program);
         FileWriter writer = new FileWriter(file);
