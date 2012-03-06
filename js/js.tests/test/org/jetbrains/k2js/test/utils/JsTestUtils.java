@@ -39,12 +39,9 @@ public final class JsTestUtils {
 
     @NotNull
     public static String readFile(@NotNull String path) throws IOException {
+        @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
         FileInputStream stream = new FileInputStream(new File(path));
-        try {
-            return FileUtil.loadTextAndClose(stream);
-        } finally {
-            stream.close();
-        }
+        return FileUtil.loadTextAndClose(stream);
     }
 
     @NotNull
