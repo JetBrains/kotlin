@@ -36,7 +36,7 @@ import java.util.Set;
  * @author Evgeny Gerashchenko
  * @since 3/2/12
  */
-public class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileViewProvider {
+class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileViewProvider {
     private String myText;
     private final PsiManager myManager;
     private JetFile myJetFile = null;
