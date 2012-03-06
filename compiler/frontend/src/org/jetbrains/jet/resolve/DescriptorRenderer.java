@@ -125,7 +125,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         List<TypeProjection> arguments = type.getArguments();
         for (int idx = receiver ? 1 : 0; idx < arguments.size(); idx++) {
             if (idx + 1 == arguments.size()) {
-                sb.append(")->");
+                sb.append(") -> ");
             }
             TypeProjection argument = arguments.get(idx);
             sb.append(renderType(argument.getType()));
