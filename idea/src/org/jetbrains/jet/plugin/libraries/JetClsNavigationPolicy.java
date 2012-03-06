@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 
 /**
  * @author Evgeny Gerashchenko

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;

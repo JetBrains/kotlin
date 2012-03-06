@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.ContentBasedClassFileProcessor;
@@ -24,6 +24,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetHighlighter;
+import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 
 /**
  * @author Evgeny Gerashchenko

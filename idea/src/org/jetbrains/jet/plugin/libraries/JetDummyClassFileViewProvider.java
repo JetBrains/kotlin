@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
@@ -26,6 +26,7 @@ import com.intellij.psi.impl.source.tree.LeafElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.Collections;
 import java.util.List;

@@ -153,8 +153,8 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
 
-      <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.JetContentBasedFileSubstitutor" />
-      <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.JetClsNavigationPolicy" />
+      <contentBasedClassFileProcessor implementation="org.jetbrains.jet.plugin.libraries.JetContentBasedFileSubstitutor" />
+      <psi.clsCustomNavigationPolicy implementation="org.jetbrains.jet.plugin.libraries.JetClsNavigationPolicy" />
 
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 
