@@ -16,17 +16,20 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.SuiteBuilder;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class ExamplesTest extends UsefulTestCase {
+public final class ExamplesTest extends SingleFileTranslationTest {
+
+    public ExamplesTest() {
+        super("examples/");
+    }
 
     public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForDirectory("examples/", new SuiteBuilder.Tester() {
+        return SuiteBuilder.suiteForTestClass(new ExamplesTest(), new SuiteBuilder.Tester() {
             @Override
             public void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception {
                 test.runFunctionOutputTest(filename, "Anonymous", "box", "OK");

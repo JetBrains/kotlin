@@ -16,7 +16,6 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
@@ -26,9 +25,14 @@ import org.jetbrains.k2js.test.utils.SuiteBuilder;
  * @author Pavel Talanov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class SimpleTest extends UsefulTestCase {
+public final class SimpleTest extends SingleFileTranslationTest {
+
+    public SimpleTest() {
+        super("simple/");
+    }
+
     public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForDirectory("simple/", new SuiteBuilder.Tester() {
+        return SuiteBuilder.suiteForTestClass(new SimpleTest(), new SuiteBuilder.Tester() {
             @Override
             public void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception {
                 test.checkFooBoxIsTrue(filename);

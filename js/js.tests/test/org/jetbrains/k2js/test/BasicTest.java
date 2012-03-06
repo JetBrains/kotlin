@@ -56,7 +56,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         if (!shouldCreateOut()) {
             return;
@@ -114,7 +114,7 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    private String getInputPath() {
+    public String getInputPath() {
         return pathToTestFiles() + casesDirectoryName();
     }
 

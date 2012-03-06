@@ -26,46 +26,47 @@ import org.jetbrains.k2js.test.semantics.TranslatorTestCaseBuilder;
  * @author Pavel Talanov
  */
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public abstract class SuiteBuilder extends SingleFileTranslationTest {
-
-    private SuiteBuilder(@NotNull String pathToMain) {
-        super(pathToMain);
-    }
+public abstract class SuiteBuilder {
 
     public interface Tester {
         void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception;
     }
 
     @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
-    private class SingleFileTest extends UsefulTestCase {
-
-        public SingleFileTest(@NotNull String name, @NotNull Tester tester) {
-            setName(name);
-            this.tester = tester;
-            this.name = name;
-        }
+    private static class SingleFileTest extends UsefulTestCase {
 
         @NotNull
         private final Tester tester;
+
         @NotNull
         private final String name;
 
+        @NotNull
+        private final SingleFileTranslationTest actualTest;
+
+        public SingleFileTest(@NotNull SingleFileTranslationTest actualTest, @NotNull String name, @NotNull Tester tester) {
+            setName(name);
+            this.tester = tester;
+            this.name = name;
+            this.actualTest = actualTest;
+        }
+
         public void runTest() throws Exception {
-            tester.performTest(SuiteBuilder.this, name);
+            tester.performTest(actualTest, name);
         }
     }
 
-    public static Test suiteForDirectory(@NotNull final String main, @NotNull final SuiteBuilder.Tester testMethod) throws Exception {
-        final SuiteBuilder singleFileTest = new SuiteBuilder(main) {
-        };
-        singleFileTest.setUp();
-        return TranslatorTestCaseBuilder.suiteForDirectory(pathToTestFilesRoot() + main + casesDirectoryName(),
+    public static Test suiteForTestClass(@NotNull final SingleFileTranslationTest actualTest,
+                                         @NotNull final SuiteBuilder.Tester testMethod) throws Exception {
+        //TODO: tearDown not called
+        actualTest.setUp();
+        return TranslatorTestCaseBuilder.suiteForDirectory(actualTest.getInputPath(),
                                                            true,
                                                            new TranslatorTestCaseBuilder.NamedTestFactory() {
                                                                @NotNull
                                                                @Override
                                                                public Test createTest(@NotNull String name) {
-                                                                   return singleFileTest.new SingleFileTest(name, testMethod);
+                                                                   return new SingleFileTest(actualTest, name, testMethod);
                                                                }
                                                            });
     }
