@@ -32,6 +32,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testEmptyLineAfterPackage() throws Exception {
+        doTest();
+    }
+
     public void testForNoBraces() throws Exception {
         doTest();
     }
