@@ -18,8 +18,8 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.SuiteBuilder;
 
 /**
  * @author Pavel Talanov
@@ -27,15 +27,28 @@ import org.jetbrains.k2js.test.utils.SuiteBuilder;
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class SimpleTest extends SingleFileTranslationTest {
 
-    public SimpleTest() {
+    @NotNull
+    private final String filename;
+
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
+    public SimpleTest(@NotNull String filename) {
         super("simple/");
+        this.filename = filename;
+    }
+
+    @Override
+    public void runTest() throws Exception {
+        checkFooBoxIsTrue(filename);
     }
 
     public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForTestClass(new SimpleTest(), new SuiteBuilder.Tester() {
+        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "simple/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+            @NotNull
             @Override
-            public void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception {
-                test.checkFooBoxIsTrue(filename);
+            public Test createTest(@NotNull String filename) {
+                SimpleTest examplesTest = new SimpleTest(filename);
+                examplesTest.setName(filename);
+                return examplesTest;
             }
         });
     }

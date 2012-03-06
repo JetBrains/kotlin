@@ -45,8 +45,8 @@ public abstract class TranslatorTestCaseBuilder {
 
     @NotNull
     public static TestSuite suiteForDirectory(@NotNull final String dataPath,
-                                              boolean recursive, @NotNull NamedTestFactory factory) {
-        return suiteForDirectory(dataPath, recursive, emptyFilter, factory);
+                                              @NotNull NamedTestFactory factory) {
+        return suiteForDirectory(dataPath, true, emptyFilter, factory);
     }
 
     @NotNull

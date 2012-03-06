@@ -18,21 +18,34 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
-import org.jetbrains.k2js.test.utils.SuiteBuilder;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class ExamplesTest extends SingleFileTranslationTest {
 
-    public ExamplesTest() {
+    @NotNull
+    private final String filename;
+
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
+    public ExamplesTest(@NotNull String filename) {
         super("examples/");
+        this.filename = filename;
+    }
+
+    @Override
+    public void runTest() throws Exception {
+        runFunctionOutputTest(filename, "Anonymous", "box", "OK");
     }
 
     public static Test suite() throws Exception {
-        return SuiteBuilder.suiteForTestClass(new ExamplesTest(), new SuiteBuilder.Tester() {
+        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+            @NotNull
             @Override
-            public void performTest(@NotNull SingleFileTranslationTest test, @NotNull String filename) throws Exception {
-                test.runFunctionOutputTest(filename, "Anonymous", "box", "OK");
+            public Test createTest(@NotNull String filename) {
+                ExamplesTest examplesTest = new ExamplesTest(filename);
+                examplesTest.setName(filename);
+                return examplesTest;
             }
         });
     }
