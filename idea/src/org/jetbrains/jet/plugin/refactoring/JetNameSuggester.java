@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -80,6 +81,7 @@ public class JetNameSuggester {
     private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+        if (ErrorUtils.containsErrorType(jetType)) return;
         if (typeChecker.equalTypes(standardLibrary.getBooleanType(), jetType)) {
             addName(result, "b", validator);
         } else if (typeChecker.equalTypes(standardLibrary.getIntType(), jetType)) {
