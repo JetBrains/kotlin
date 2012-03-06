@@ -10,7 +10,7 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="util" exported="" />
-    <orderEntry type="module" module-name="stdlib" />
+    <orderEntry type="module" module-name="runtime" />
   </component>
 </module>
 

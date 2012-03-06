@@ -8,7 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="stdlib" />
+    <orderEntry type="module" module-name="runtime" />
   </component>
 </module>
 

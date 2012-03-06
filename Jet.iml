@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="$MODULE_DIR$/libraries/out" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/config" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system" />
       <excludeFolder url="file://$MODULE_DIR$/ideaSDK/system-idea" />

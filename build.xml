@@ -42,7 +42,7 @@
     <target name="compileRT" depends="init">
         <mkdir dir="${output}/classes/runtime"/>
         <javac destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <src path="${basedir}/stdlib/src"/>
+            <src path="${basedir}/runtime/src"/>
             <classpath refid="classpath"/>
         </javac>
     </target>
@@ -55,12 +55,13 @@
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
             </classpath>
             <arg value="-src"/>
-            <arg value="${basedir}/stdlib/ktSrc"/>
+            <arg value="${basedir}/libraries/stdlib/ktSrc"/>
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
         </java>
     </target>
 
+    <!--
     <target name="compileKunit" depends="jarRT">
         <mkdir dir="${output}/classes/kunit"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
@@ -102,8 +103,9 @@
             <fileset dir="${output}/classes/kdoc"/>
         </jar>
     </target>
+    -->
 
-
+<!--
     <target name="docStdlib" depends="compileKdoc">
         <mkdir dir="${output}/classes/stdlib"/>
         <mkdir dir="${output}/apidoc/stdlib"/>
@@ -112,7 +114,8 @@
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement location="${output}/classes/kdoc"/>
-                <!-- TODO Dirty Hack until kdoc jar has stdlib inside it -->
+                <!- - TODO Dirty Hack until kdoc jar has stdlib inside it -->
+<!--
                 <pathelement location="${output}/classes/stdlib"/>
             </classpath>
             <arg value="-output"/>
@@ -157,8 +160,8 @@
             <classpath>
                 <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-test.jar"/>
-                <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
-                <fileset dir="${basedir}/testlib/lib">
+                <pathelement location="/libraries/testlib/lib/junit-4.9.jar"/>
+                <fileset dir="/libraries/testlib/lib">
                   <include name="**/*.jar"/>
                 </fileset>
               <pathelement path="${output}/classes/testlib"/>
@@ -173,8 +176,8 @@
           <classpath>
               <pathelement location="${kotlin-home}/lib/kotlin-runtime.jar"/>
               <pathelement location="${kotlin-home}/lib/kotlin-test.jar"/>
-              <pathelement location="${basedir}/testlib/lib/junit-4.9.jar"/>
-              <fileset dir="${basedir}/testlib/lib">
+              <pathelement location="/libraries/testlib/lib/junit-4.9.jar"/>
+              <fileset dir="/libraries/testlib/lib">
                 <include name="**/*.jar"/>
               </fileset>
             <pathelement path="${output}/classes/testlib"/>
@@ -182,12 +185,12 @@
 
           <formatter type="plain"/>
 
-<!--
+<!- -
           <test name="my.test.TestCase" haltonfailure="no" outfile="result">
             <formatter type="xml"/>
           </test>
 -->
-
+<!--
           <batchtest fork="yes" todir="${output}/test-reports" haltonerror="true">
             <fileset dir="${output}/classes/testlib">
               <include name="**/*Test.*"/>
@@ -195,6 +198,7 @@
           </batchtest>
         </junit>
     </target>
+    !-->
 
     <target name="compileJDKHeaders" depends="jar">
         <mkdir dir="${output}/classes/stdlib"/>
@@ -276,11 +280,13 @@
         <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
-    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jarLang,jar,buildToolsJar,compileKunit,compileKdoc"/>
+    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jarLang,jar,buildToolsJar"/>
 
-    <target name="doc" depends="dist,docStdlib"/>
+    <target name="doc" depends="dist"/>
 
-    <target name="test" depends="dist,testlib" description="Creates the distribution and runs all the tests"/>
+<!--
+    <target name="test" depends="dist" description="Creates the distribution and runs all the tests"/>
+-->
 
     <target name="zip" depends="dist">
         <echo file="${kotlin-home}/build.txt" message="${build.number}"/>
