@@ -14,12 +14,14 @@
     <artifactId>apidocs</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.pegdown</groupId>
+            <artifactId>pegdown</artifactId>
+            <version>${pegdown.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}/../stdlib/src</sourceDirectory>
-        <testSourceDirectory>test</testSourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>com.goldin.plugins</groupId>
@@ -28,23 +30,21 @@
             <plugin>
                 <groupId>com.goldin.plugins</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <!-- TODO use snapshot here! -->
-                <version>0.2.3.8-SNAPSHOT</version>
                 <executions>
-                        <execution>
-                            <id>compile-kotlin-sources</id>
-                            <goals>
-                                <goal>compile</goal>
-                            </goals>
-                            <configuration>
-                                <docOutput>${project.basedir}/target/apidocs</docOutput>
-                                <sources>
-                                    <src>${project.basedir}/../stdlib/src</src>
-                                    <src>${project.basedir}/../kunit/src</src>
-                                </sources>
-                            </configuration>
-                        </execution>
-                    </executions>
+                    <execution>
+                        <id>compile-kotlin-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <docOutput>${project.basedir}/target/site/apidocs</docOutput>
+                            <sources>
+                                <src>${project.basedir}/../stdlib/src</src>
+                                <src>${project.basedir}/../kunit/src</src>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
@@ -61,6 +61,41 @@
                 </dependencies>
             </plugin>
         </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-scm</artifactId>
+                <version>2.2</version>
+            </extension>
+            <extension>
+                <groupId>org.apache.maven.scm</groupId>
+                <artifactId>maven-scm-manager-plexus</artifactId>
+                <version>1.6</version>
+            </extension>
+            <extension>
+                <groupId>org.apache.maven.scm</groupId>
+                <artifactId>maven-scm-provider-gitexe</artifactId>
+                <version>1.6</version>
+            </extension>
+        </extensions>
     </build>
 
+    <distributionManagement>
+        <!--
+        To deploy this add this to your ~/.m2/settings.xml
+
+        <server>
+            <id>github-project-site</id>
+            <username>git</username>
+            <scmVersionType>branch</scmVersionType>
+            <scmVersion>gh-pages</scmVersion>
+        </server>
+        -->
+
+        <site>
+            <id>github-project-site</id>
+            <url>scm:git:ssh://git@github.com/JetBrains/kotlin.git</url>
+        </site>
+    </distributionManagement>
 </project>

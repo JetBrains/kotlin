@@ -13,7 +13,7 @@
     <properties>
         <junit-version>4.9</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
-        <kotlin-maven-plugin.version>0.2.3.8-beta-6</kotlin-maven-plugin.version>
+        <kotlin-maven-plugin.version>0.2.3.8-beta-7</kotlin-maven-plugin.version>
         <kotlin-sdk>${project.basedir}/../../dist/kotlinc</kotlin-sdk>
         <pegdown.version>1.1.0</pegdown.version>
         <project-root>${project.basedir}/..</project-root>
