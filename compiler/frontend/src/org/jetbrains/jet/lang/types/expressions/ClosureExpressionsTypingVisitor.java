@@ -99,16 +99,16 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
         if (returnTypeRef != null) {
-            returnType = context.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
+            returnType = context.getTypeResolver().resolveType(context.scope, returnTypeRef);
             context.getServices().checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
-                    replaceExpectedType(returnType).replaceExpectedReturnType(returnType).replaceDataFlowInfo(context.dataFlowInfo), context.trace);
+                    replaceExpectedType(returnType).replaceExpectedReturnType(returnType).replaceDataFlowInfo(context.dataFlowInfo));
         }
         else {
             if (functionTypeExpected) {
                 returnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             }
             returnType = context.getServices().getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
-                                                                    context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType), context.trace);
+                                                                    context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType));
         }
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);
@@ -143,7 +143,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            effectiveReceiverType = context.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
+            effectiveReceiverType = context.getTypeResolver().resolveType(context.scope, receiverTypeRef);
         }
         functionDescriptor.initialize(effectiveReceiverType, NO_RECEIVER, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, Modality.FINAL, Visibility.LOCAL);
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
@@ -174,7 +174,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
                 JetType type;
                 if (typeReference != null) {
-                    type = context.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
+                    type = context.getTypeResolver().resolveType(context.scope, typeReference);
                 }
                 else {
                     if (expectedValueParameters != null && i < expectedValueParameters.size()) {
@@ -185,7 +185,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
-                ValueParameterDescriptor valueParameterDescriptor = context.getDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type, context.trace);
+                ValueParameterDescriptor valueParameterDescriptor = context.getDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type);
                 valueParameterDescriptors.add(valueParameterDescriptor);
             }
         }

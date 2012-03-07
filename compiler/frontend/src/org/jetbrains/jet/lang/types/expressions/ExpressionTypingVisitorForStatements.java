@@ -83,7 +83,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ClassDescriptor classDescriptor = context.trace.getBindingContext().get(BindingContext.CLASS, declaration);
         if (classDescriptor != null) {
             VariableDescriptor variableDescriptor = context.getDescriptorResolver()
-                    .resolveObjectDeclaration(scope.getContainingDeclaration(), declaration, classDescriptor, context.trace);
+                    .resolveObjectDeclaration(scope.getContainingDeclaration(), declaration, classDescriptor);
             scope.addVariableDescriptor(variableDescriptor);
         }
         return DataFlowUtils.checkStatementType(declaration, context);
@@ -106,7 +106,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(LOCAL_VARIABLE_WITH_SETTER.on(setter));
         }
 
-        VariableDescriptor propertyDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo, context.trace);
+        VariableDescriptor propertyDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(scope.getContainingDeclaration(), scope, property, context.dataFlowInfo);
         JetExpression initializer = property.getInitializer();
         if (property.getPropertyTypeRef() != null && initializer != null) {
             JetType outType = propertyDescriptor.getType();
@@ -126,10 +126,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetType visitNamedFunction(JetNamedFunction function, ExpressionTypingContext context) {
-        SimpleFunctionDescriptor functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function, context.trace);
+        SimpleFunctionDescriptor functionDescriptor = context.getDescriptorResolver().resolveFunctionDescriptor(scope.getContainingDeclaration(), scope, function);
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        context.getServices().checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, context.trace);
+        context.getServices().checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo);
         return DataFlowUtils.checkStatementType(function, context);
     }
 

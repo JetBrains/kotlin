@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
@@ -40,7 +39,6 @@ import org.jetbrains.jet.util.Box;
 import org.jetbrains.jet.util.lazy.ReenteringLazyValueComputationException;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -51,25 +49,13 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 * @author abreslav
 */
 public class BodyResolver {
-    @NotNull
     private final TopDownAnalysisContext context;
-    @NotNull
-    private final JetSemanticServices semanticServices;
-    @NotNull
-    private final DescriptorResolver descriptorResolver;
-    @NotNull
-    private final ExpressionTypingServices expressionTypingServices;
-    @NotNull
-    private final CallResolver.Context callResolverContext;
 
-    @Inject
-    public BodyResolver(@NotNull TopDownAnalysisContext context,
-            @NotNull JetSemanticServices semanticServices, @NotNull DescriptorResolver descriptorResolver, @NotNull ExpressionTypingServices expressionTypingServices, CallResolver.Context callResolverContext) {
+    private final ObservableBindingTrace trace;
+
+    public BodyResolver(TopDownAnalysisContext context) {
         this.context = context;
-        this.semanticServices = semanticServices;
-        this.descriptorResolver = descriptorResolver;
-        this.expressionTypingServices = expressionTypingServices;
-        this.callResolverContext = callResolverContext;
+        this.trace = context.getTrace();
     }
 
     public void resolveBehaviorDeclarationBodies() {
@@ -88,7 +74,7 @@ public class BodyResolver {
             computeDeferredTypes();
         }
     }
-
+    
     private void resolveDelegationSpecifierLists() {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
@@ -104,8 +90,8 @@ public class BodyResolver {
         final ConstructorDescriptor primaryConstructor = descriptor.getUnsubstitutedPrimaryConstructor();
         final JetScope scopeForConstructor = primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, context.getTrace());
-        final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
+                : FunctionDescriptorUtil.getFunctionInnerScope(descriptor.getScopeForSupertypeResolution(), primaryConstructor, trace);
+        final ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace); // TODO : flow
 
         final Map<JetTypeReference, JetType> supertypes = Maps.newLinkedHashMap();
         JetVisitorVoid visitor = new JetVisitorVoid() {
@@ -135,8 +121,8 @@ public class BodyResolver {
                     JetScope scope = scopeForConstructor == null
                                      ? descriptor.getScopeForMemberResolution()
                                      : scopeForConstructor;
-                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE, context.getTrace());
-                    if (type != null && supertype != null && !semanticServices.getTypeChecker().isSubtypeOf(type, supertype)) {
+                    JetType type = typeInferrer.getType(scope, delegateExpression, NO_EXPECTED_TYPE);
+                    if (type != null && supertype != null && !context.getSemanticServices().getTypeChecker().isSubtypeOf(type, supertype)) {
                         context.getTrace().report(TYPE_MISMATCH.on(delegateExpression, supertype, type));
                     }
                 }
@@ -155,7 +141,7 @@ public class BodyResolver {
                     assert descriptor.getKind() == ClassKind.TRAIT;
                     return;
                 }
-                OverloadResolutionResults<FunctionDescriptor> results = new CallResolver(callResolverContext, DataFlowInfo.EMPTY).resolveCall(
+                OverloadResolutionResults<FunctionDescriptor> results = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY).resolveCall(
                         context.getTrace(), scopeForConstructor,
                         CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE);
                 if (results.isSuccess()) {
@@ -275,8 +261,9 @@ public class BodyResolver {
             ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             assert primaryConstructor != null;
             final JetScope scopeForInitializers = classDescriptor.getScopeForInitializers();
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
             for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, context.getTrace());
+                typeInferrer.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE);
             }
         }
         else {
@@ -311,12 +298,12 @@ public class BodyResolver {
     private void resolveSecondaryConstructorBody(JetSecondaryConstructor declaration, final ConstructorDescriptor descriptor) {
         if (!context.completeAnalysisNeeded(declaration)) return;
         MutableClassDescriptor classDescriptor = (MutableClassDescriptor) descriptor.getContainingDeclaration();
-        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, context.getTrace());
+        final JetScope scopeForSupertypeInitializers = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForSupertypeResolution(), descriptor, trace);
         //contains only constructor parameters
-        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, context.getTrace());
+        final JetScope scopeForConstructorBody = FunctionDescriptorUtil.getFunctionInnerScope(classDescriptor.getScopeForInitializers(), descriptor, trace);
         //contains members & backing fields
 
-        final CallResolver callResolver = new CallResolver(callResolverContext, DataFlowInfo.EMPTY); // TODO: dataFlowInfo
+        final CallResolver callResolver = new CallResolver(context.getSemanticServices(), DataFlowInfo.EMPTY); // TODO: dataFlowInfo
 
         PsiElement nameElement = declaration.getNameNode().getPsi();
         if (classDescriptor.getUnsubstitutedPrimaryConstructor() == null) {
@@ -376,8 +363,9 @@ public class BodyResolver {
         }
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
 
-            expressionTypingServices.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, JetStandardClasses.getUnitType(), context.getTrace());
+            typeInferrer.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, JetStandardClasses.getUnitType());
         }
 
         checkDefaultParameterValues(declaration.getValueParameters(), descriptor.getValueParameters(), scopeForConstructorBody);
@@ -436,8 +424,8 @@ public class BodyResolver {
     private JetScope makeScopeForPropertyAccessor(@NotNull JetPropertyAccessor accessor, PropertyDescriptor propertyDescriptor) {
         JetScope declaringScope = context.getDeclaringScopes().get(accessor);
 
-        JetScope propertyDeclarationInnerScope = descriptorResolver.getPropertyDeclarationInnerScope(
-                declaringScope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(), context.getTrace());
+        JetScope propertyDeclarationInnerScope = context.getDescriptorResolver().getPropertyDeclarationInnerScope(
+                declaringScope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter());
         WritableScope accessorScope = new WritableScopeImpl(propertyDeclarationInnerScope, declaringScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Accessor scope");
         accessorScope.changeLockLevel(WritableScope.LockLevel.READING);
 
@@ -463,7 +451,7 @@ public class BodyResolver {
     }
 
     private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new ObservableBindingTrace(context.getTrace()).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
+        return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<JetReferenceExpression, DeclarationDescriptor>() {
             @Override
             public void handleRecord(WritableSlice<JetReferenceExpression, DeclarationDescriptor> slice, JetReferenceExpression expression, DeclarationDescriptor descriptor) {
                 if (expression instanceof JetSimpleNameExpression) {
@@ -471,7 +459,7 @@ public class BodyResolver {
                     if (simpleNameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
                         // This check may be considered redundant as long as $x is only accessible from accessors to $x
                         if (descriptor == propertyDescriptor) { // TODO : original?
-                            context.getTrace().record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
+                            trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor); // TODO: this context.getTrace()?
                         }
                     }
                 }
@@ -481,8 +469,9 @@ public class BodyResolver {
 
     private void resolvePropertyInitializer(JetProperty property, PropertyDescriptor propertyDescriptor, JetExpression initializer, JetScope scope) {
         //JetFlowInformationProvider flowInformationProvider = context.getDescriptorResolver().computeFlowData(property, initializer); // TODO : flow JET-15
+        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         JetType expectedTypeForInitializer = property.getPropertyTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
-        JetType type = expressionTypingServices.getType(descriptorResolver.getPropertyDeclarationInnerScope(scope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter(), context.getTrace()), initializer, expectedTypeForInitializer, context.getTrace());
+        JetType type = typeInferrer.getType(context.getDescriptorResolver().getPropertyDeclarationInnerScope(scope, propertyDescriptor, propertyDescriptor.getTypeParameters(), propertyDescriptor.getReceiverParameter()), initializer, expectedTypeForInitializer);
 //
 //        JetType expectedType = propertyDescriptor.getInType();
 //        if (expectedType == null) {
@@ -504,7 +493,7 @@ public class BodyResolver {
             JetScope declaringScope = this.context.getDeclaringScopes().get(declaration);
             assert declaringScope != null;
 
-            resolveFunctionBody(context.getTrace(), declaration, descriptor, declaringScope);
+            resolveFunctionBody(trace, declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;
         }
@@ -520,7 +509,9 @@ public class BodyResolver {
         JetExpression bodyExpression = function.getBodyExpression();
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, functionDescriptor, trace);
         if (bodyExpression != null) {
-            expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, trace);
+            ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
+
+            typeInferrer.checkFunctionReturnType(functionInnerScope, function, functionDescriptor);
         }
 
         List<JetParameter> valueParameters = function.getValueParameters();
@@ -532,13 +523,14 @@ public class BodyResolver {
     }
 
     private void checkDefaultParameterValues(List<JetParameter> valueParameters, List<ValueParameterDescriptor> valueParameterDescriptors, JetScope declaringScope) {
+        ExpressionTypingServices typeInferrer = context.getSemanticServices().getTypeInferrerServices(trace);
         for (int i = 0; i < valueParameters.size(); i++) {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             if (valueParameterDescriptor.hasDefaultValue()) {
                 JetParameter jetParameter = valueParameters.get(i);
                 JetExpression defaultValue = jetParameter.getDefaultValue();
                 if (defaultValue != null) {
-                    expressionTypingServices.getType(declaringScope, defaultValue, valueParameterDescriptor.getType(), context.getTrace());
+                    typeInferrer.getType(declaringScope, defaultValue, valueParameterDescriptor.getType());
                 }
             }
         }

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
@@ -259,7 +260,7 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveMutableClassDescriptor(jetClass, descriptor, context.getTrace());
+            context.getDescriptorResolver().resolveMutableClassDescriptor(jetClass, descriptor);
             descriptor.createTypeConstructor();
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
@@ -276,13 +277,13 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters(), context.getTrace());
-            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor, context.getTrace());
+            context.getDescriptorResolver().resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters());
+            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor, context.getTrace());
+            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor);
         }
     }
 
@@ -477,7 +478,7 @@ public class TypeHierarchyResolver {
                 if (typeReference != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, typeReference);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(typeReference, type, context.getTrace());
+                        context.getDescriptorResolver().checkBounds(typeReference, type);
                     }
                 }
             }
@@ -487,7 +488,7 @@ public class TypeHierarchyResolver {
                 if (extendsBound != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(extendsBound, type, context.getTrace());
+                        context.getDescriptorResolver().checkBounds(extendsBound, type);
                     }
                 }
             }
@@ -497,7 +498,7 @@ public class TypeHierarchyResolver {
                 if (extendsBound != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(extendsBound, type, context.getTrace());
+                        context.getDescriptorResolver().checkBounds(extendsBound, type);
                     }
                 }
             }

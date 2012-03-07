@@ -34,14 +34,12 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -50,39 +48,28 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
  * @author abreslav
  */
 public class DescriptorResolver {
-    private JetSemanticServices semanticServices;
-    private TypeResolver typeResolver;
-    private AnnotationResolver annotationResolver;
-    private ExpressionTypingServices expressionTypingServices;
+    private final JetSemanticServices semanticServices;
+    private final TypeResolver typeResolver;
+    private final TypeResolver typeResolverNotCheckingBounds;
+    private final BindingTrace trace;
+    private final AnnotationResolver annotationResolver;
 
-    @Inject
-    public void setSemanticServices(JetSemanticServices semanticServices) {
+    public DescriptorResolver(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
+        this.typeResolver = new TypeResolver(semanticServices, trace, true);
+        this.typeResolverNotCheckingBounds = new TypeResolver(semanticServices, trace, false);
+        this.trace = trace;
+        this.annotationResolver = new AnnotationResolver(semanticServices, trace);
     }
 
-    @Inject
-    public void setTypeResolver(TypeResolver typeResolver) {
-        this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setAnnotationResolver(AnnotationResolver annotationResolver) {
-        this.annotationResolver = annotationResolver;
-    }
-
-    @Inject
-    public void setExpressionTypingServices(ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor, BindingTrace trace) {
+    public void resolveMutableClassDescriptor(@NotNull JetClass classElement, @NotNull MutableClassDescriptor descriptor) {
         // TODO : Where-clause
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                     descriptor,
-                    annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
+                    annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
                     !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
                     typeParameter.getVariance(),
                     JetPsiUtil.safeName(typeParameter.getName()),
@@ -100,16 +87,16 @@ public class DescriptorResolver {
         trace.record(BindingContext.CLASS, classElement, descriptor);
     }
 
-    public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor, BindingTrace trace) {
+    public void resolveSupertypes(@NotNull JetClassOrObject jetClass, @NotNull MutableClassDescriptor descriptor) {
         List<JetDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
         if (delegationSpecifiers.isEmpty()) {
-            descriptor.addSupertype(getDefaultSupertype(jetClass, trace));
+            descriptor.addSupertype(getDefaultSupertype(jetClass));
         }
         else {
             Collection<JetType> supertypes = resolveDelegationSpecifiers(
                     descriptor.getScopeForSupertypeResolution(),
                     delegationSpecifiers,
-                    typeResolver, trace, false);
+                    typeResolverNotCheckingBounds);
             for (JetType supertype : supertypes) {
                 descriptor.addSupertype(supertype);
             }
@@ -117,7 +104,7 @@ public class DescriptorResolver {
 
     }
 
-    private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
+    private JetType getDefaultSupertype(JetClassOrObject jetClass) {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
             JetClassOrObject parent = PsiTreeUtil.getParentOfType(jetClass, JetClassOrObject.class);
@@ -133,7 +120,7 @@ public class DescriptorResolver {
         return JetStandardClasses.getAnyType();
     }
 
-    public Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver, BindingTrace trace, boolean checkBounds) {
+    public Collection<JetType> resolveDelegationSpecifiers(JetScope extensibleScope, List<JetDelegationSpecifier> delegationSpecifiers, @NotNull TypeResolver resolver) {
         if (delegationSpecifiers.isEmpty()) {
             return Collections.emptyList();
         }
@@ -141,7 +128,7 @@ public class DescriptorResolver {
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
-                result.add(resolver.resolveType(extensibleScope, typeReference, trace, checkBounds));
+                result.add(resolver.resolveType(extensibleScope, typeReference));
                 JetTypeElement typeElement = typeReference.getTypeElement();
                 while (typeElement instanceof JetNullableType) {
                     JetNullableType nullableType = (JetNullableType) typeElement;
@@ -166,19 +153,19 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public SimpleFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function, final BindingTrace trace) {
+    public SimpleFunctionDescriptor resolveFunctionDescriptor(DeclarationDescriptor containingDescriptor, final JetScope scope, final JetNamedFunction function) {
         final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
                 containingDescriptor,
-                annotationResolver.resolveAnnotations(scope, function.getModifierList(), trace),
+                annotationResolver.resolveAnnotations(scope, function.getModifierList()),
                 JetPsiUtil.safeName(function.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
         WritableScope innerScope = new WritableScopeImpl(scope, functionDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Function descriptor header scope");
         innerScope.addLabeledDeclaration(functionDescriptor);
 
-        List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters(), trace);
+        List<TypeParameterDescriptor> typeParameterDescriptors = resolveTypeParameters(functionDescriptor, innerScope, function.getTypeParameters());
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        resolveGenericBounds(function, innerScope, typeParameterDescriptors, trace);
+        resolveGenericBounds(function, innerScope, typeParameterDescriptors);
 
         JetType receiverType = null;
         JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
@@ -187,17 +174,17 @@ public class DescriptorResolver {
                     function.hasTypeParameterListBeforeFunctionName()
                             ? innerScope
                             : scope;
-            receiverType = typeResolver.resolveType(scopeForReceiver, receiverTypeRef, trace, true);
+            receiverType = typeResolver.resolveType(scopeForReceiver, receiverTypeRef);
         }
 
-        List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters(), trace);
+        List<ValueParameterDescriptor> valueParameterDescriptors = resolveValueParameters(functionDescriptor, innerScope, function.getValueParameters());
 
         innerScope.changeLockLevel(WritableScope.LockLevel.READING);
 
         JetTypeReference returnTypeRef = function.getReturnTypeRef();
         JetType returnType;
         if (returnTypeRef != null) {
-            returnType = typeResolver.resolveType(innerScope, returnTypeRef, trace, true);
+            returnType = typeResolver.resolveType(innerScope, returnTypeRef);
         }
         else if (function.hasBlockBody()) {
             returnType = JetStandardClasses.getUnitType();
@@ -209,7 +196,7 @@ public class DescriptorResolver {
                     @Override
                     protected JetType compute() {
                         //JetFlowInformationProvider flowInformationProvider = computeFlowData(function, bodyExpression);
-                        return expressionTypingServices.inferFunctionReturnType(scope, function, functionDescriptor, trace);
+                        return semanticServices.getTypeInferrerServices(trace).inferFunctionReturnType(scope, function, functionDescriptor);
                     }
                 });
             }
@@ -249,7 +236,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private List<ValueParameterDescriptor> resolveValueParameters(FunctionDescriptor functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters, BindingTrace trace) {
+    private List<ValueParameterDescriptor> resolveValueParameters(FunctionDescriptor functionDescriptor, WritableScope parameterScope, List<JetParameter> valueParameters) {
         List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>();
         for (int i = 0, valueParametersSize = valueParameters.size(); i < valueParametersSize; i++) {
             JetParameter valueParameter = valueParameters.get(i);
@@ -260,10 +247,10 @@ public class DescriptorResolver {
                 trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter));
                 type = ErrorUtils.createErrorType("Type annotation was missing");
             } else {
-                type = typeResolver.resolveType(parameterScope, typeReference, trace, true);
+                type = typeResolver.resolveType(parameterScope, typeReference);
             }
 
-            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(functionDescriptor, valueParameter, i, type, trace);
+            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(functionDescriptor, valueParameter, i, type);
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
             result.add(valueParameterDescriptor);
         }
@@ -271,7 +258,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
+    public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type) {
         JetType varargElementType = null;
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
@@ -281,7 +268,7 @@ public class DescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
                 index,
-                annotationResolver.createAnnotationStubs(valueParameter.getModifierList(), trace),
+                annotationResolver.createAnnotationStubs(valueParameter.getModifierList()),
                 JetPsiUtil.safeName(valueParameter.getName()),
                 valueParameter.isMutable(),
                 variableType,
@@ -303,23 +290,23 @@ public class DescriptorResolver {
         }
     }
 
-    public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters, BindingTrace trace) {
+    public List<TypeParameterDescriptor> resolveTypeParameters(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, List<JetTypeParameter> typeParameters) {
         List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             JetTypeParameter typeParameter = typeParameters.get(i);
-            result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter, i, trace));
+            result.add(resolveTypeParameter(containingDescriptor, extensibleScope, typeParameter, i));
         }
         return result;
     }
 
-    private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index, BindingTrace trace) {
+    private TypeParameterDescriptor resolveTypeParameter(DeclarationDescriptor containingDescriptor, WritableScope extensibleScope, JetTypeParameter typeParameter, int index) {
 //        JetTypeReference extendsBound = typeParameter.getExtendsBound();
 //        JetType bound = extendsBound == null
 //                ? JetStandardClasses.getDefaultBound()
 //                : typeResolver.resolveType(extensibleScope, extendsBound);
         TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptor.createForFurtherModification(
                 containingDescriptor,
-                annotationResolver.createAnnotationStubs(typeParameter.getModifierList(), trace),
+                annotationResolver.createAnnotationStubs(typeParameter.getModifierList()),
                 !typeParameter.hasModifier(JetTokens.ERASED_KEYWORD),
                 typeParameter.getVariance(),
                 JetPsiUtil.safeName(typeParameter.getName()),
@@ -331,7 +318,7 @@ public class DescriptorResolver {
         return typeParameterDescriptor;
     }
 
-    public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters, BindingTrace trace) {
+    public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters) {
         List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
@@ -340,7 +327,7 @@ public class DescriptorResolver {
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(resolveAndCheckUpperBoundType(extendsBound, scope, false, trace));
+                typeParameterDescriptor.addUpperBound(resolveAndCheckUpperBoundType(extendsBound, scope, false));
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstaints()) {
@@ -354,7 +341,7 @@ public class DescriptorResolver {
             }
             TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
             JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-            JetType bound = boundTypeReference != null ? resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint(), trace) : null;
+            JetType bound = boundTypeReference != null ? resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint()) : null;
             if (typeParameterDescriptor == null) {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
@@ -401,8 +388,8 @@ public class DescriptorResolver {
         }
     }
 
-    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint, BindingTrace trace) {
-        JetType jetType = typeResolver.resolveType(scope, upperBound, trace, false);
+    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint) {
+        JetType jetType = typeResolverNotCheckingBounds.resolveType(scope, upperBound);
         if (!TypeUtils.canHaveSubtypes(semanticServices.getTypeChecker(), jetType)) {
             if (classObjectConstaint) {
                 trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
@@ -415,16 +402,16 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter, BindingTrace trace) {
-        JetType type = resolveParameterType(scope, parameter, trace);
-        return resolveLocalVariableDescriptor(containingDeclaration, parameter, type, trace);
+    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, @NotNull JetParameter parameter) {
+        JetType type = resolveParameterType(scope, parameter);
+        return resolveLocalVariableDescriptor(containingDeclaration, parameter, type);
     }
 
-    private JetType resolveParameterType(JetScope scope, JetParameter parameter, BindingTrace trace) {
+    private JetType resolveParameterType(JetScope scope, JetParameter parameter) {
         JetTypeReference typeReference = parameter.getTypeReference();
         JetType type;
         if (typeReference != null) {
-            type = typeResolver.resolveType(scope, typeReference, trace, true);
+            type = typeResolver.resolveType(scope, typeReference);
         }
         else {
             // Error is reported by the parser
@@ -433,10 +420,10 @@ public class DescriptorResolver {
         return type;
     }
 
-    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type, BindingTrace trace) {
+    public VariableDescriptor resolveLocalVariableDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetParameter parameter, @NotNull JetType type) {
         VariableDescriptor variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(parameter.getModifierList(), trace),
+                annotationResolver.createAnnotationStubs(parameter.getModifierList()),
                 JetPsiUtil.safeName(parameter.getName()),
                 type,
                 parameter.isMutable());
@@ -445,19 +432,19 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property, DataFlowInfo dataFlowInfo, BindingTrace trace) {
-        VariableDescriptorImpl variableDescriptor = resolveLocalVariableDescriptorWithType(containingDeclaration, property, null, trace);
+    public VariableDescriptor resolveLocalVariableDescriptor(DeclarationDescriptor containingDeclaration, JetScope scope, JetProperty property, DataFlowInfo dataFlowInfo) {
+        VariableDescriptorImpl variableDescriptor = resolveLocalVariableDescriptorWithType(containingDeclaration, property, null);
 
-        JetType type = getVariableType(scope, property, dataFlowInfo, false, trace); // For a local variable the type must not be deferred
+        JetType type = getVariableType(scope, property, dataFlowInfo, false); // For a local variable the type must not be deferred
         variableDescriptor.setOutType(type);
         return variableDescriptor;
     }
 
     @NotNull
-    public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type, BindingTrace trace) {
+    public VariableDescriptorImpl resolveLocalVariableDescriptorWithType(DeclarationDescriptor containingDeclaration, JetProperty property, JetType type) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(property.getModifierList(), trace),
+                annotationResolver.createAnnotationStubs(property.getModifierList()),
                 JetPsiUtil.safeName(property.getName()),
                 type,
                 property.isVar());
@@ -467,26 +454,26 @@ public class DescriptorResolver {
 
     @NotNull
     public VariableDescriptor resolveObjectDeclaration(@NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace) {
+                                                       @NotNull JetClassOrObject objectDeclaration,
+                                                       @NotNull ClassDescriptor classDescriptor) {
         boolean isProperty = (containingDeclaration instanceof NamespaceDescriptor)
                     || (containingDeclaration instanceof ClassDescriptor);
         if (isProperty) {
-            return resolveObjectDeclarationAsPropertyDescriptor(containingDeclaration, objectDeclaration, classDescriptor, trace);
+            return resolveObjectDeclarationAsPropertyDescriptor(containingDeclaration, objectDeclaration, classDescriptor);
         } else {
-            return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor, trace);
+            return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor);
         }
     }
 
     @NotNull
     public PropertyDescriptor resolveObjectDeclarationAsPropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace) {
+                                                                            @NotNull JetClassOrObject objectDeclaration,
+                                                                            @NotNull ClassDescriptor classDescriptor) {
         JetModifierList modifierList = objectDeclaration.getModifierList();
         Visibility visibility = resolveVisibilityFromModifiers(objectDeclaration.getModifierList());
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                annotationResolver.createAnnotationStubs(modifierList, trace),
+                annotationResolver.createAnnotationStubs(modifierList),
                 Modality.FINAL,
                 visibility,
                 false,
@@ -505,11 +492,11 @@ public class DescriptorResolver {
 
     @NotNull
     private VariableDescriptor resolveObjectDeclarationAsLocalVariable(@NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull JetClassOrObject objectDeclaration,
-            @NotNull ClassDescriptor classDescriptor, BindingTrace trace) {
+                                                                       @NotNull JetClassOrObject objectDeclaration,
+                                                                       @NotNull ClassDescriptor classDescriptor) {
         VariableDescriptorImpl variableDescriptor = new LocalVariableDescriptor(
                         containingDeclaration,
-                        annotationResolver.createAnnotationStubs(objectDeclaration.getModifierList(), trace),
+                        annotationResolver.createAnnotationStubs(objectDeclaration.getModifierList()),
                         JetPsiUtil.safeName(objectDeclaration.getName()),
                         classDescriptor.getDefaultType(),
                         /*isVar =*/ false);
@@ -521,8 +508,8 @@ public class DescriptorResolver {
     }
 
     public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope,
-            @NotNull PropertyDescriptor propertyDescriptor, List<TypeParameterDescriptor> typeParameters,
-            ReceiverDescriptor receiver, BindingTrace trace) {
+                                                     @NotNull PropertyDescriptor propertyDescriptor, List<TypeParameterDescriptor> typeParameters,
+                                                     ReceiverDescriptor receiver) {
         WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
@@ -535,7 +522,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property, BindingTrace trace) {
+    public PropertyDescriptor resolvePropertyDescriptor(@NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope scope, JetProperty property) {
 
         JetModifierList modifierList = property.getModifierList();
         boolean isVar = property.isVar();
@@ -544,7 +531,7 @@ public class DescriptorResolver {
         Modality defaultModality = getDefaultModality(containingDeclaration, hasBody);
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
-                annotationResolver.resolveAnnotations(scope, modifierList, trace),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 resolveModalityFromModifiers(property.getModifierList(), defaultModality),
                 resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
@@ -565,15 +552,15 @@ public class DescriptorResolver {
             }
             else {
                 WritableScope writableScope = new WritableScopeImpl(scope, containingDeclaration, new TraceBasedRedeclarationHandler(trace)).setDebugName("Scope with type parameters of a property");
-                typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters, trace);
+                typeParameterDescriptors = resolveTypeParameters(containingDeclaration, writableScope, typeParameters);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
-                resolveGenericBounds(property, writableScope, typeParameterDescriptors, trace);
+                resolveGenericBounds(property, writableScope, typeParameterDescriptors);
                 scopeWithTypeParameters = writableScope;
             }
 
             JetTypeReference receiverTypeRef = property.getReceiverTypeRef();
             if (receiverTypeRef != null) {
-                receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef, trace, true);
+                receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef);
             }
         }
 
@@ -581,14 +568,14 @@ public class DescriptorResolver {
                 ? ReceiverDescriptor.NO_RECEIVER
                 : new ExtensionReceiver(propertyDescriptor, receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor, trace);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor);
 
-        JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
+        JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true);
 
         propertyDescriptor.setType(type, typeParameterDescriptors, DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), receiverDescriptor);
 
-        PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
-        PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor, trace);
+        PropertyGetterDescriptor getter = resolvePropertyGetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
+        PropertySetterDescriptor setter = resolvePropertySetterDescriptor(scopeWithTypeParameters, property, propertyDescriptor);
 
         propertyDescriptor.initialize(getter, setter);
 
@@ -612,7 +599,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private JetType getVariableType(@NotNull final JetScope scope, @NotNull final JetProperty property, @NotNull final DataFlowInfo dataFlowInfo, boolean allowDeferred, final BindingTrace trace) {
+    private JetType getVariableType(@NotNull final JetScope scope, @NotNull final JetProperty property, @NotNull final DataFlowInfo dataFlowInfo, boolean allowDeferred) {
         // TODO : receiver?
         JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
 
@@ -629,7 +616,7 @@ public class DescriptorResolver {
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
                     protected JetType compute() {
-                        return expressionTypingServices.safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, trace);
+                        return semanticServices.getTypeInferrerServices(trace).safeGetType(scope, initializer, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo);
                     }
                 };
                 if (allowDeferred) {
@@ -640,7 +627,7 @@ public class DescriptorResolver {
                 }
             }
         } else {
-            return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
+            return typeResolver.resolveType(scope, propertyTypeRef);
         }
     }
 
@@ -689,11 +676,11 @@ public class DescriptorResolver {
     }
 
     @Nullable
-    private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor, BindingTrace trace) {
+    private PropertySetterDescriptor resolvePropertySetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         JetPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = null;
         if (setter != null) {
-            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList(), trace);
+            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, setter.getModifierList());
             JetParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptor(
@@ -714,7 +701,7 @@ public class DescriptorResolver {
                     type = propertyDescriptor.getType(); // TODO : this maybe unknown at this point
                 }
                 else {
-                    type = typeResolver.resolveType(scope, typeReference, trace, true);
+                    type = typeResolver.resolveType(scope, typeReference);
                     JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
@@ -726,7 +713,7 @@ public class DescriptorResolver {
                     }
                 }
 
-                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type, trace);
+                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
             else {
@@ -759,17 +746,17 @@ public class DescriptorResolver {
     }
 
     @Nullable
-    private PropertyGetterDescriptor resolvePropertyGetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor, BindingTrace trace) {
+    private PropertyGetterDescriptor resolvePropertyGetterDescriptor(@NotNull JetScope scope, @NotNull JetProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
         PropertyGetterDescriptor getterDescriptor;
         JetPropertyAccessor getter = property.getGetter();
         if (getter != null) {
-            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList(), trace);
+            List<AnnotationDescriptor> annotations = annotationResolver.resolveAnnotations(scope, getter.getModifierList());
 
             JetType outType = propertyDescriptor.getType();
             JetType returnType = outType;
             JetTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
-                returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+                returnType = typeResolver.resolveType(scope, returnTypeReference);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
                     trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
                 }
@@ -799,8 +786,8 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public ConstructorDescriptorImpl resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetSecondaryConstructor constructor, BindingTrace trace) {
-        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, classDescriptor.getTypeConstructor().getParameters(), constructor.getValueParameters(), trace);
+    public ConstructorDescriptorImpl resolveSecondaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetSecondaryConstructor constructor) {
+        return createConstructorDescriptor(scope, classDescriptor, false, constructor.getModifierList(), constructor, classDescriptor.getTypeConstructor().getParameters(), constructor.getValueParameters());
     }
 
     @NotNull
@@ -810,10 +797,10 @@ public class DescriptorResolver {
             boolean isPrimary,
             @Nullable JetModifierList modifierList,
             @NotNull JetDeclaration declarationToTrace,
-            List<TypeParameterDescriptor> typeParameters, @NotNull List<JetParameter> valueParameters, BindingTrace trace) {
+            List<TypeParameterDescriptor> typeParameters, @NotNull List<JetParameter> valueParameters) {
         ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
                 classDescriptor,
-                annotationResolver.resolveAnnotations(scope, modifierList, trace),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 isPrimary
         );
         trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor);
@@ -824,12 +811,12 @@ public class DescriptorResolver {
                 resolveValueParameters(
                         constructorDescriptor,
                         parameterScope,
-                        valueParameters, trace),
+                        valueParameters),
                 resolveVisibilityFromModifiers(modifierList));
     }
 
     @Nullable
-    public ConstructorDescriptorImpl resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement, BindingTrace trace) {
+    public ConstructorDescriptorImpl resolvePrimaryConstructorDescriptor(@NotNull JetScope scope, @NotNull ClassDescriptor classDescriptor, @NotNull JetClass classElement) {
         if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY && !classElement.hasPrimaryConstructor()) return null;
         return createConstructorDescriptor(
                 scope,
@@ -837,15 +824,15 @@ public class DescriptorResolver {
                 true,
                 classElement.getPrimaryConstructorModifierList(),
                 classElement,
-                classDescriptor.getTypeConstructor().getParameters(), classElement.getPrimaryConstructorParameters(), trace);
+                classDescriptor.getTypeConstructor().getParameters(), classElement.getPrimaryConstructorParameters());
     }
 
     @NotNull
     public PropertyDescriptor resolvePrimaryConstructorParameterToAProperty(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull JetScope scope,
-            @NotNull JetParameter parameter, BindingTrace trace) {
-        JetType type = resolveParameterType(scope, parameter, trace);
+            @NotNull JetParameter parameter) {
+        JetType type = resolveParameterType(scope, parameter);
         String name = parameter.getName();
         boolean isMutable = parameter.isMutable();
         JetModifierList modifierList = parameter.getModifierList();
@@ -859,7 +846,7 @@ public class DescriptorResolver {
 
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 classDescriptor,
-                annotationResolver.resolveAnnotations(scope, modifierList, trace),
+                annotationResolver.resolveAnnotations(scope, modifierList),
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
                 resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
@@ -879,7 +866,7 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    public void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
+    public void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type) {
         if (ErrorUtils.isErrorType(type)) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();
@@ -899,10 +886,10 @@ public class DescriptorResolver {
             if (argumentTypeReference == null) continue;
 
             JetType typeArgument = arguments.get(i).getType();
-            checkBounds(argumentTypeReference, typeArgument, trace);
+            checkBounds(argumentTypeReference, typeArgument);
 
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor, substitutor);
         }
     }
 
@@ -910,7 +897,7 @@ public class DescriptorResolver {
             @NotNull JetTypeReference argumentTypeReference,
             @NotNull JetType typeArgument,
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull TypeSubstitutor substitutor, BindingTrace trace) {
+            @NotNull TypeSubstitutor substitutor) {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!semanticServices.getTypeChecker().isSubtypeOf(typeArgument, substitutedBound)) {

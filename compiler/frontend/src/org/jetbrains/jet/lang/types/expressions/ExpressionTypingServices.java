@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -40,7 +39,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
@@ -53,28 +51,23 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 * @author abreslav
 */
 public class ExpressionTypingServices {
-    private JetSemanticServices semanticServices;
-    private CallResolver.Context expressionTypingContextContext;
+    private final JetSemanticServices semanticServices;
+    private final BindingTrace trace;
 
     private final ExpressionTypingFacade expressionTypingFacade = ExpressionTypingVisitorDispatcher.create();
 
-    @Inject
-    public void setSemanticServices(JetSemanticServices semanticServices) {
+    public ExpressionTypingServices(JetSemanticServices semanticServices, BindingTrace trace) {
         this.semanticServices = semanticServices;
-    }
-
-    @Inject
-    public void setExpressionTypingContextContext(CallResolver.Context expressionTypingContextContext) {
-        this.expressionTypingContextContext = expressionTypingContextContext;
+        this.trace = trace;
     }
 
     @NotNull
-    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, BindingTrace trace) {
-        return safeGetType(scope, expression, expectedType, DataFlowInfo.EMPTY, trace);
+    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType) {
+        return safeGetType(scope, expression, expectedType, DataFlowInfo.EMPTY);
     }
 
-    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, BindingTrace trace) {
-        JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
+    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
+        JetType type = getType(scope, expression, expectedType, dataFlowInfo);
         if (type != null) {
             return type;
         }
@@ -82,14 +75,13 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, BindingTrace trace) {
-        return getType(scope, expression, expectedType, DataFlowInfo.EMPTY, trace);
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType) {
+        return getType(scope, expression, expectedType, DataFlowInfo.EMPTY);
     }
 
     @Nullable
-    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, BindingTrace trace) {
+    public JetType getType(@NotNull final JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingContextContext,
                 expression.getProject(),
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
@@ -98,9 +90,8 @@ public class ExpressionTypingServices {
         return expressionTypingFacade.getType(expression, context);
     }
 
-    public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression, BindingTrace trace) {
+    public JetType getTypeWithNamespaces(@NotNull final JetScope scope, @NotNull JetExpression expression) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                expressionTypingContextContext,
                 expression.getProject(),
                 semanticServices,
                 new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
@@ -111,7 +102,7 @@ public class ExpressionTypingServices {
     }
 
     @NotNull
-    public JetType inferFunctionReturnType(@NotNull JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor, BindingTrace trace) {
+    public JetType inferFunctionReturnType(@NotNull JetScope outerScope, JetDeclarationWithBody function, FunctionDescriptor functionDescriptor) {
         Map<JetExpression, JetType> typeMap = collectReturnedExpressionsWithTypes(trace, outerScope, function, functionDescriptor);
         Collection<JetType> types = typeMap.values();
         return types.isEmpty()
@@ -120,20 +111,20 @@ public class ExpressionTypingServices {
     }
 
 
-    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, BindingTrace trace) {
-        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, null, trace);
+    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, null);
     }
 
-    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @Nullable JetType expectedReturnType, BindingTrace trace) {
-        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, expectedReturnType, trace);
+    public void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @Nullable JetType expectedReturnType) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, expectedReturnType);
     }
 /////////////////////////////////////////////////////////
 
-    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, BindingTrace trace) {
-        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, dataFlowInfo, null, trace);
+    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo) {
+        checkFunctionReturnType(functionInnerScope, function, functionDescriptor, dataFlowInfo, null);
     }
 
-    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedReturnType, BindingTrace trace) {
+    /*package*/ void checkFunctionReturnType(@NotNull JetScope functionInnerScope, @NotNull JetDeclarationWithBody function, @NotNull FunctionDescriptor functionDescriptor, @NotNull DataFlowInfo dataFlowInfo, @Nullable JetType expectedReturnType) {
         if (expectedReturnType == null) {
             expectedReturnType = functionDescriptor.getReturnType();
             if (!function.hasBlockBody() && !function.hasDeclaredReturnType()) {
@@ -141,14 +132,13 @@ public class ExpressionTypingServices {
             }
         }
         checkFunctionReturnType(function, ExpressionTypingContext.newContext(
-                expressionTypingContextContext,
                 function.getProject(),
                 semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, expectedReturnType, false
-        ), trace);
+        ));
     }
 
-    /*package*/ void checkFunctionReturnType(JetDeclarationWithBody function, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/ void checkFunctionReturnType(JetDeclarationWithBody function, ExpressionTypingContext context) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
 
@@ -162,7 +152,7 @@ public class ExpressionTypingServices {
             JetFunctionLiteralExpression functionLiteralExpression = (JetFunctionLiteralExpression) function;
             JetBlockExpression blockExpression = functionLiteralExpression.getBodyExpression();
             assert blockExpression != null;
-            getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context, trace);
+            getBlockReturnedType(newContext.scope, blockExpression, CoercionStrategy.COERCION_TO_UNIT, context);
         }
         else {
             expressionTypingFacade.getType(bodyExpression, newContext, !blockBody);
@@ -170,7 +160,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    /*package*/ JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/ JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context) {
         List<JetElement> block = expression.getStatements();
         if (block.isEmpty()) {
             return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);
@@ -179,7 +169,7 @@ public class ExpressionTypingServices {
         DeclarationDescriptor containingDescriptor = outerScope.getContainingDeclaration();
         WritableScope scope = new WritableScopeImpl(outerScope, containingDescriptor, new TraceBasedRedeclarationHandler(context.trace)).setDebugName("getBlockReturnedType");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context, trace);
+        return getBlockReturnedTypeWithWritableScope(scope, block, coercionStrategyForLastExpression, context);
     }
 
     private Map<JetExpression, JetType> collectReturnedExpressionsWithTypes(
@@ -190,10 +180,8 @@ public class ExpressionTypingServices {
         JetExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(outerScope, functionDescriptor, trace);
-        expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(
-                expressionTypingContextContext,
-                function.getProject(), semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
-                trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false), !function.hasBlockBody());
+        expressionTypingFacade.getType(bodyExpression, ExpressionTypingContext.newContext(function.getProject(), semanticServices, new HashMap<JetPattern, DataFlowInfo>(), new HashMap<JetPattern, List<VariableDescriptor>>(), new LabelResolver(),
+                                                                                          trace, functionInnerScope, DataFlowInfo.EMPTY, NO_EXPECTED_TYPE, FORBIDDEN, false), !function.hasBlockBody());
         //todo function literals
         final Collection<JetExpression> returnedExpressions = Lists.newArrayList();
         if (function.hasBlockBody()) {
@@ -237,7 +225,7 @@ public class ExpressionTypingServices {
         return typeMap;
     }
 
-    /*package*/ JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/ JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         }
@@ -321,8 +309,7 @@ public class ExpressionTypingServices {
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType, JetType expectedReturnType) {
-        return ExpressionTypingContext.newContext(
-                expressionTypingContextContext, oldContext.project, oldContext.semanticServices, oldContext.patternsToDataFlowInfo, oldContext.patternsToBoundVariableLists, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, oldContext.namespacesAllowed);
+        return ExpressionTypingContext.newContext(oldContext.project, oldContext.semanticServices, oldContext.patternsToDataFlowInfo, oldContext.patternsToBoundVariableLists, oldContext.labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, oldContext.namespacesAllowed);
     }
 
     private ObservableBindingTrace makeTraceInterceptingTypeMismatch(final BindingTrace trace, final JetExpression expressionToWatch, final boolean[] mismatchFound) {

@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.liveTemplates.macro;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -39,7 +38,7 @@ public class JetAnyVariableMacro extends BaseJetVariableMacro {
     }
 
     @Override
-    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, CallResolver.Context callResolverContext) {
+    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project) {
         return true;
     }
 }

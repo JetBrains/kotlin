@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.Inject;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -58,46 +56,14 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class CallResolver {
     private static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
 
-    private final JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
+    private final JetSemanticServices semanticServices;
     private final OverloadingConflictResolver overloadingConflictResolver;
     private final DataFlowInfo dataFlowInfo;
-    private final TypeResolver typeResolver;
 
-    public static class Context {
-        public OverloadingConflictResolver overloadingConflictResolver;
-        public DescriptorResolver descriptorResolver;
-        public TypeResolver typeResolver;
-        public ExpressionTypingServices expressionTypingServices;
-
-        @Inject
-        public void setOverloadingConflictResolver(OverloadingConflictResolver overloadingConflictResolver) {
-            this.overloadingConflictResolver = overloadingConflictResolver;
-        }
-
-        @Inject
-        public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
-            this.descriptorResolver = descriptorResolver;
-        }
-
-        @Inject
-        public void setTypeResolver(TypeResolver typeResolver) {
-            this.typeResolver = typeResolver;
-        }
-
-        @Inject
-        public void setExpressionTypingServices(ExpressionTypingServices expressionTypingServices) {
-            this.expressionTypingServices = expressionTypingServices;
-        }
-    }
-
-    private final Context context;
-
-    public CallResolver(Context context, DataFlowInfo dataFlowInfo) {
-        this.context = context;
+    public CallResolver(JetSemanticServices semanticServices, DataFlowInfo dataFlowInfo) {
+        this.semanticServices = semanticServices;
+        this.overloadingConflictResolver = new OverloadingConflictResolver(semanticServices);
         this.dataFlowInfo = dataFlowInfo;
-
-        this.overloadingConflictResolver = context.overloadingConflictResolver;
-        this.typeResolver = context.typeResolver;
     }
 
     @NotNull
@@ -199,7 +165,7 @@ public class CallResolver {
                 }
                 JetTypeReference typeReference = expression.getTypeReference();
                 assert typeReference != null;
-                JetType constructedType = typeResolver.resolveType(scope, typeReference, trace, true);
+                JetType constructedType = new TypeResolver(semanticServices, trace, true).resolveType(scope, typeReference);
                 DeclarationDescriptor declarationDescriptor = constructedType.getConstructor().getDeclarationDescriptor();
                 if (declarationDescriptor instanceof ClassDescriptor) {
                     ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
@@ -233,7 +199,8 @@ public class CallResolver {
             }
             else if (calleeExpression != null) {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-                JetType calleeType = context.expressionTypingServices.safeGetType(scope, calleeExpression, NO_EXPECTED_TYPE, trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
+                ExpressionTypingServices typingServices = new ExpressionTypingServices(semanticServices, trace);
+                JetType calleeType = typingServices.safeGetType(scope, calleeExpression, NO_EXPECTED_TYPE); // We are actually expecting a function, but there seems to be no easy way of expressing this
 
                 if (!JetStandardClasses.isFunctionType(calleeType)) {
 //                    checkTypesWithNoCallee(trace, scope, call);
@@ -577,7 +544,8 @@ public class CallResolver {
                             // and throw the results away
                             // We'll type check the arguments later, with the inferred types expected
                             TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(temporaryTrace);
-                            JetType type = context.expressionTypingServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT), traceForUnknown);
+                            ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, traceForUnknown);
+                            JetType type = temporaryServices.getType(scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT));
                             if (type != null && !ErrorUtils.isErrorType(type)) {
                                 constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                             }
@@ -636,7 +604,7 @@ public class CallResolver {
                     }
                     JetTypeReference typeReference = projection.getTypeReference();
                     if (typeReference != null) {
-                        typeArguments.add(typeResolver.resolveType(scope, typeReference, trace, true));
+                        typeArguments.add(new TypeResolver(semanticServices, temporaryTrace, true).resolveType(scope, typeReference));
                     }
                 }
                 int expectedTypeArgumentCount = candidate.getTypeParameters().size();
@@ -725,19 +693,20 @@ public class CallResolver {
     }
 
     private void checkTypesWithNoCallee(BindingTrace trace, JetScope scope, Call call) {
+        ExpressionTypingServices typeInferrerServices = new ExpressionTypingServices(semanticServices, trace);
         for (ValueArgument valueArgument : call.getValueArguments()) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
-                context.expressionTypingServices.getType(scope, argumentExpression, NO_EXPECTED_TYPE, trace);
+                typeInferrerServices.getType(scope, argumentExpression, NO_EXPECTED_TYPE);
             }
         }
 
         for (JetExpression expression : call.getFunctionLiteralArguments()) {
-            context.expressionTypingServices.getType(scope, expression, NO_EXPECTED_TYPE, trace);
+            typeInferrerServices.getType(scope, expression, NO_EXPECTED_TYPE);
         }
 
         for (JetTypeProjection typeProjection : call.getTypeArguments()) {
-            typeResolver.resolveType(scope, typeProjection.getTypeReference(), trace, true);
+            new TypeResolver(semanticServices, trace, true).resolveType(scope, typeProjection.getTypeReference());
         }
     }
 
@@ -783,7 +752,7 @@ public class CallResolver {
                 JetType effectiveReceiverArgumentType = safeAccess
                                                         ? TypeUtils.makeNotNullable(receiverArgumentType)
                                                         : receiverArgumentType;
-                if (!typeChecker.isSubtypeOf(effectiveReceiverArgumentType, receiverParameter.getType())) {
+                if (!semanticServices.getTypeChecker().isSubtypeOf(effectiveReceiverArgumentType, receiverParameter.getType())) {
                     tracing.wrongReceiverType(candidateCall.getTrace(), receiverParameter, receiverArgument);
                     result = OTHER_ERROR;
                 }
@@ -806,12 +775,12 @@ public class CallResolver {
 
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {
-                ExpressionTypingServices temporaryServices = context.expressionTypingServices;
-                JetType type = temporaryServices.getType(scope, argumentExpression, parameterType, dataFlowInfo, candidateCall.getTrace());
+                ExpressionTypingServices temporaryServices = new ExpressionTypingServices(semanticServices, candidateCall.getTrace());
+                JetType type = temporaryServices.getType(scope, argumentExpression, parameterType, dataFlowInfo);
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     candidateCall.argumentHasNoType();
                 }
-                else if (!typeChecker.isSubtypeOf(type, parameterType)) {
+                else if (!semanticServices.getTypeChecker().isSubtypeOf(type, parameterType)) {
 //                    VariableDescriptor variableDescriptor = AutoCastUtils.getVariableDescriptorFromSimpleName(temporaryTrace.getBindingContext(), argumentExpression);
 //                    if (variableDescriptor != null) {
 //                        JetType autoCastType = null;
@@ -966,7 +935,7 @@ public class CallResolver {
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
             assert typeReference != null;
-            this.context.descriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor);
         }
     }
 
@@ -1034,7 +1003,7 @@ public class CallResolver {
             ReceiverDescriptor functionReceiver = functionDescriptor.getReceiverParameter();
             if (!functionReceiver.exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
-            if (!typeChecker.isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;
+            if (!semanticServices.getTypeChecker().isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes))continue;
             result.add(resolvedCall);
             found = true;

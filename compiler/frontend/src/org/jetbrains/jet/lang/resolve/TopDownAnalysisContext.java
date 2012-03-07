@@ -19,9 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -29,15 +26,8 @@ import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.picocontainer.MutablePicoContainer;
-import org.picocontainer.defaults.DefaultPicoContainer;
-import org.picocontainer.defaults.SetterInjectionComponentAdapter;
-import org.picocontainer.defaults.SetterInjectionComponentAdapterFactory;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -46,28 +36,14 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-public class TopDownAnalysisContext {
-
-    //private final MutablePicoContainer picoContainer;
+/*package*/ class TopDownAnalysisContext {
 
     private final ObservableBindingTrace trace;
+    private final JetSemanticServices semanticServices;
     private final Configuration configuration;
 
-    @NotNull
     private final DescriptorResolver descriptorResolver;
-    @NotNull
     private final ImportsResolver importsResolver;
-    @NotNull
-    private final BodyResolver bodyResolver;
-    @NotNull
-    private final DeclarationResolver declarationResolver;
-    @NotNull
-    private final CallResolver.Context callResolverContext;
-    @NotNull
-    private final TypeResolver typeResolver;
-    @NotNull
-    private final ExpressionTypingServices expressionTypingServices;
-
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
@@ -85,26 +61,11 @@ public class TopDownAnalysisContext {
     private boolean analyzingBootstrapLibrary = false;
     private boolean declaredLocally;
 
-    public TopDownAnalysisContext(final JetSemanticServices semanticServices, final BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration, boolean declaredLocally) {
-        class TdacModule extends AbstractModule {
-            @Override
-            protected void configure() {
-                bind(JetSemanticServices.class).toInstance(semanticServices);
-                bind(TopDownAnalysisContext.class).toInstance(TopDownAnalysisContext.this);
-            }
-        }
-
-        Injector injector = Guice.createInjector(new TdacModule());
-        
-        this.importsResolver = injector.getInstance(ImportsResolver.class);
-        this.bodyResolver = injector.getInstance(BodyResolver.class);
-        this.declarationResolver = injector.getInstance(DeclarationResolver.class);
-        this.callResolverContext = injector.getInstance(CallResolver.Context.class);
-        this.typeResolver = injector.getInstance(TypeResolver.class);
-        this.expressionTypingServices = injector.getInstance(ExpressionTypingServices.class);
-        this.descriptorResolver = injector.getInstance(DescriptorResolver.class);
-
+    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration, boolean declaredLocally) {
         this.trace = new ObservableBindingTrace(trace);
+        this.semanticServices = semanticServices;
+        this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
+        this.importsResolver = new ImportsResolver(this);
         this.analyzeCompletely = analyzeCompletely;
         this.configuration = configuration;
         this.declaredLocally = declaredLocally;
@@ -145,9 +106,12 @@ public class TopDownAnalysisContext {
         return result;
     }
 
-    @NotNull
     public ObservableBindingTrace getTrace() {
         return trace;
+    }
+
+    public JetSemanticServices getSemanticServices() {
+        return semanticServices;
     }
 
     public DescriptorResolver getDescriptorResolver() {
@@ -156,11 +120,6 @@ public class TopDownAnalysisContext {
 
     public ImportsResolver getImportsResolver() {
         return importsResolver;
-    }
-
-    @NotNull
-    public BodyResolver getBodyResolver() {
-        return bodyResolver;
     }
 
     public Map<JetClass, MutableClassDescriptor> getClasses() {
@@ -206,25 +165,5 @@ public class TopDownAnalysisContext {
 
     public boolean isDeclaredLocally() {
         return declaredLocally;
-    }
-
-    @NotNull
-    public DeclarationResolver getDeclarationResolver() {
-        return declarationResolver;
-    }
-
-    @NotNull
-    public CallResolver.Context getCallResolverContext() {
-        return callResolverContext;
-    }
-
-    @NotNull
-    public TypeResolver getTypeResolver() {
-        return typeResolver;
-    }
-
-    @NotNull
-    public ExpressionTypingServices getExpressionTypingServices() {
-        return expressionTypingServices;
     }
 }

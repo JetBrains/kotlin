@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
-    <orderEntry type="library" name="guice-3.0" level="project" />
   </component>
 </module>
 

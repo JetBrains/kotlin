@@ -53,7 +53,6 @@ public class DataFlowInfo {
     public static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<DataFlowValue, Nullability>of(), Multimaps.newListMultimap(Collections.<DataFlowValue, Collection<JetType>>emptyMap(), CommonSuppliers.<JetType>getArrayListSupplier()));
 
     private final ImmutableMap<DataFlowValue, Nullability> nullabilityInfo;
-    /** Also immutable */
     private final ListMultimap<DataFlowValue, JetType> typeInfo;
 
     private DataFlowInfo(ImmutableMap<DataFlowValue, Nullability> nullabilityInfo, ListMultimap<DataFlowValue, JetType> typeInfo) {

@@ -11,7 +11,7 @@
 
     <path id="classpath">
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
-        <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+        <fileset dir="${basedir}/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
 

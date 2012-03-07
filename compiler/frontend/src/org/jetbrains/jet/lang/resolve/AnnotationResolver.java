@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -48,49 +47,46 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class AnnotationResolver {
 
-    private ExpressionTypingServices expressionTypingServices;
-    private CallResolver callResolver;
+    private final BindingTrace trace;
+    private final JetSemanticServices semanticServices;
+    private final CallResolver callResolver;
 
-    @Inject
-    public void setExpressionTypingServices(ExpressionTypingServices expressionTypingServices) {
-        this.expressionTypingServices = expressionTypingServices;
-    }
-
-    @Inject
-    public void setCallResolver(CallResolver.Context callResolverContext) {
-        this.callResolver = new CallResolver(callResolverContext, DataFlowInfo.EMPTY);
+    public AnnotationResolver(JetSemanticServices semanticServices, BindingTrace trace) {
+        this.trace = trace;
+        this.callResolver = new CallResolver(semanticServices, DataFlowInfo.EMPTY);
+        this.semanticServices = semanticServices;
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @Nullable JetModifierList modifierList, BindingTrace trace) {
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @Nullable JetModifierList modifierList) {
         if (modifierList == null) {
             return Collections.emptyList();
         }
-        return resolveAnnotations(scope, modifierList.getAnnotationEntries(), trace);
+        return resolveAnnotations(scope, modifierList.getAnnotationEntries());
     }
 
     @NotNull
-    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @NotNull List<JetAnnotationEntry> annotationEntryElements, BindingTrace trace) {
+    public List<AnnotationDescriptor> resolveAnnotations(@NotNull JetScope scope, @NotNull List<JetAnnotationEntry> annotationEntryElements) {
         if (annotationEntryElements.isEmpty()) return Collections.emptyList();
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = new AnnotationDescriptor();
-            resolveAnnotationStub(scope, entryElement, descriptor, trace);
+            resolveAnnotationStub(scope, entryElement, descriptor);
             result.add(descriptor);
         }
         return result;
     }
 
     public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
-        OverloadResolutionResults<FunctionDescriptor> results = resolveType(scope, entryElement, descriptor, trace);
-        resolveArguments(results, descriptor, trace);
+                                      @NotNull AnnotationDescriptor descriptor) {
+        OverloadResolutionResults<FunctionDescriptor> results = resolveType(scope, entryElement, descriptor);
+        resolveArguments(results, descriptor);
     }
 
     @NotNull
     private OverloadResolutionResults<FunctionDescriptor> resolveType(@NotNull JetScope scope,
-            @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
+                                                                      @NotNull JetAnnotationEntry entryElement,
+                                                                      @NotNull AnnotationDescriptor descriptor) {
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE);
         JetType annotationType = results.getResultingDescriptor().getReturnType();
         if (results.isSuccess()) {
@@ -102,7 +98,7 @@ public class AnnotationResolver {
     }
 
     private void resolveArguments(@NotNull OverloadResolutionResults<FunctionDescriptor> results,
-            @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
+                                  @NotNull AnnotationDescriptor descriptor) {
         List<CompileTimeConstant<?>> arguments = Lists.newArrayList();
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
                 results.getResultingCall().getValueArguments().entrySet()) {
@@ -110,18 +106,19 @@ public class AnnotationResolver {
             List<JetExpression> argumentExpressions = descriptorToArgument.getValue().getArgumentExpressions();
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             for (JetExpression argument : argumentExpressions) {
-                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getType(), trace));
+                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getType()));
             }
         }
         descriptor.setValueArguments(arguments);
     }
 
     @Nullable
-    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType, final BindingTrace trace) {
+    public CompileTimeConstant<?> resolveAnnotationArgument(@NotNull JetExpression expression, @NotNull final JetType expectedType) {
         JetVisitor<CompileTimeConstant<?>, Void> visitor = new JetVisitor<CompileTimeConstant<?>, Void>() {
             @Override
             public CompileTimeConstant<?> visitConstantExpression(JetConstantExpression expression, Void nothing) {
-                JetType type = expressionTypingServices.getType(JetScope.EMPTY, expression, expectedType, DataFlowInfo.EMPTY, trace);
+                ExpressionTypingServices typeInferrerServices = semanticServices.getTypeInferrerServices(trace);
+                JetType type = typeInferrerServices.getType(JetScope.EMPTY, expression, expectedType, DataFlowInfo.EMPTY);
                 if (type == null) {
                     // TODO:
                     //  trace.report(ANNOTATION_PARAMETER_SHOULD_BE_CONSTANT.on(expression));
@@ -164,15 +161,15 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public List<AnnotationDescriptor> createAnnotationStubs(@Nullable JetModifierList modifierList, BindingTrace trace) {
+    public List<AnnotationDescriptor> createAnnotationStubs(@Nullable JetModifierList modifierList) {
         if (modifierList == null) {
             return Collections.emptyList();
         }
-        return createAnnotationStubs(modifierList.getAnnotationEntries(), trace);
+        return createAnnotationStubs(modifierList.getAnnotationEntries());
     }
 
     @NotNull
-    public List<AnnotationDescriptor> createAnnotationStubs(List<JetAnnotationEntry> annotations, BindingTrace trace) {
+    public List<AnnotationDescriptor> createAnnotationStubs(List<JetAnnotationEntry> annotations) {
         List<AnnotationDescriptor> result = Lists.newArrayList();
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = new AnnotationDescriptor();
