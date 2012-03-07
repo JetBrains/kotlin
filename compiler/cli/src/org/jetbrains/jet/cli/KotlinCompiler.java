@@ -132,11 +132,7 @@ public class KotlinCompiler {
             environment.setStubs(arguments.stubs);
 
             if (arguments.docOutputDir != null) {
-                KDocLoader factory = new KDocLoader(arguments.docOutputDir);
-                CompilerPlugin processor = factory.createCompilerPlugin();
-                if (processor != null) {
-                    environment.getMyEnvironment().getCompilerPlugins().add(processor);
-                }
+                KDocLoader.install(arguments.docOutputDir, environment.getMyEnvironment());
             }
 
             if (arguments.stdlib != null) {

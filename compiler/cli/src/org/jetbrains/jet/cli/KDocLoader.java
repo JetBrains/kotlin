@@ -83,4 +83,18 @@ public class KDocLoader {
             }
         }
     }
+
+    /**
+     * Installs the KDoc compiler plugin if it can be created
+     */
+    public static boolean install(String docOutputDir, JetCoreEnvironment environment) {
+        KDocLoader loader = new KDocLoader(docOutputDir);
+        CompilerPlugin processor = loader.createCompilerPlugin();
+        if (processor != null) {
+            environment.getCompilerPlugins().add(processor);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -18,6 +18,10 @@ package org.jetbrains.jet.buildtools.core;
 
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.CompilerPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -25,6 +29,7 @@ import org.jetbrains.jet.compiler.CompileEnvironmentException;
  */
 public class BytecodeCompiler {
 
+    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
 
     public BytecodeCompiler () {
     }
@@ -48,6 +53,9 @@ public class BytecodeCompiler {
         if (( classpath != null ) && ( classpath.length > 0 )) {
             env.addToClasspath( classpath );
         }
+
+        // lets register any compiler plugins
+        env.getMyEnvironment().getCompilerPlugins().addAll(getCompilerPlugins());
 
         return env;
     }
@@ -107,5 +115,13 @@ public class BytecodeCompiler {
      */
     public void moduleToJar ( String module, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
         env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
+    }
+
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
+    }
+
+    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
     }
 }
