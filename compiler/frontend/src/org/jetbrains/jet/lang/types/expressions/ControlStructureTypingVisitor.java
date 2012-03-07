@@ -92,7 +92,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (elseBranch == null) {
             if (thenBranch != null) {
-                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo));
+                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(thenInfo), context.trace);
                 if (type != null && JetStandardClasses.isNothing(type)) {
                     facade.setResultingDataFlowInfo(elseInfo);
                 }
@@ -101,15 +101,15 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return null;
         }
         if (thenBranch == null) {
-            JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo));
+            JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(elseInfo), context.trace);
             if (type != null && JetStandardClasses.isNothing(type)) {
                 facade.setResultingDataFlowInfo(thenInfo);
             }
             return DataFlowUtils.checkImplicitCast(DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType), expression, contextWithExpectedType, isStatement);
         }
         CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-        JetType thenType = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo));
-        JetType elseType = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo));
+        JetType thenType = context.getServices().getBlockReturnedTypeWithWritableScope(thenScope, Collections.singletonList(thenBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(thenInfo), context.trace);
+        JetType elseType = context.getServices().getBlockReturnedTypeWithWritableScope(elseScope, Collections.singletonList(elseBranch), coercionStrategy, contextWithExpectedType.replaceDataFlowInfo(elseInfo), context.trace);
 
         JetType result;
         if (thenType == null) {
@@ -150,7 +150,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in while's condition");
             DataFlowInfo conditionInfo = condition == null ? context.dataFlowInfo : DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, scopeToExtend, context);
-            context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo));
+            context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
         if (!containsBreak(expression, context)) {
             facade.setResultingDataFlowInfo(DataFlowUtils.extractDataFlowInfoFromCondition(condition, false, null, context));
@@ -197,7 +197,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (!function.getFunctionLiteral().hasParameterSpecification()) {
                 WritableScope writableScope = newWritableScopeImpl(context).setDebugName("do..while body scope");
                 conditionScope = writableScope;
-                context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context);
+                context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
             } else {
                 facade.getType(body, context.replaceScope(context.scope));
@@ -213,7 +213,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 block = Collections.<JetElement>singletonList(body);
             }
-            context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context);
+            context.getServices().getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context, context.trace);
         }
         JetExpression condition = expression.getCondition();
         checkCondition(conditionScope, condition, context);
@@ -248,7 +248,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetTypeReference typeReference = loopParameter.getTypeReference();
             VariableDescriptor variableDescriptor;
             if (typeReference != null) {
-                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter);
+                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, loopParameter, context.trace);
                 JetType actualParameterType = variableDescriptor.getType();
                 if (expectedParameterType != null &&
                         actualParameterType != null &&
@@ -260,7 +260,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 if (expectedParameterType == null) {
                     expectedParameterType = ErrorUtils.createErrorType("Error");
                 }
-                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType);
+                variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), loopParameter, expectedParameterType, context.trace);
             }
 
             {
@@ -277,7 +277,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         JetExpression body = expression.getBody();
         if (body != null) {
-            context.getServices().getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context);
+            context.getServices().getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body), CoercionStrategy.NO_COERCION, context, context.trace);
         }
 
         return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, contextWithExpectedType);
@@ -401,7 +401,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
-                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter);
+                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
                 JetType throwableType = context.semanticServices.getStandardLibrary().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {

@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.plugin.liveTemplates.macro;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.Expression;
@@ -30,10 +33,14 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -51,7 +58,7 @@ public abstract class BaseJetVariableMacro extends Macro {
     private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
         if (params.length != 0) return null;
 
-        Project project = context.getProject();
+        final Project project = context.getProject();
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
@@ -66,11 +73,19 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
+        class TdacModule extends AbstractModule {
+            @Override
+            protected void configure() {
+                bind(JetSemanticServices.class).toInstance(JetSemanticServices.createSemanticServices(project));
+            }
+        }
+        CallResolver.Context callResolverContext = Guice.createInjector(new TdacModule()).getInstance(CallResolver.Context.class);
+
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
-                if (isSuitable(variableDescriptor, scope, project)) {
+                if (isSuitable(variableDescriptor, scope, project, callResolverContext)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
@@ -89,7 +104,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
     }
 
-    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project);
+    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, CallResolver.Context callResolverContext);
 
     @Nullable
     private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {

@@ -74,7 +74,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         // TODO :change scope according to the bound value in the when header
         final JetExpression subjectExpression = expression.getSubjectExpression();
 
-        final JetType subjectType = subjectExpression != null ? context.getServices().safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE) : ErrorUtils.createErrorType("Unknown type");
+        final JetType subjectType = subjectExpression != null ? context.getServices().safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE, context.trace) : ErrorUtils.createErrorType("Unknown type");
         final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
@@ -115,7 +115,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             if (bodyExpression != null) {
                 ExpressionTypingContext newContext = contextWithExpectedType.replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext);
+                JetType type = context.getServices().getBlockReturnedTypeWithWritableScope(scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
                 if (type != null) {
                     expressionTypes.add(type);
                 }
@@ -180,7 +180,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitTypePattern(JetTypePattern typePattern) {
                 JetTypeReference typeReference = typePattern.getTypeReference();
                 if (typeReference == null) return;
-                JetType type = context.getTypeResolver().resolveType(context.scope, typeReference);
+                JetType type = context.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
                 checkTypeCompatibility(type, subjectType, typePattern);
                 result.set(context.dataFlowInfo.establishSubtyping(subjectVariables, type));
             }
@@ -251,8 +251,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             public void visitBindingPattern(JetBindingPattern pattern) {
                 JetProperty variableDeclaration = pattern.getVariableDeclaration();
                 JetTypeReference propertyTypeRef = variableDeclaration.getPropertyTypeRef();
-                JetType type = propertyTypeRef == null ? subjectType : context.getTypeResolver().resolveType(context.scope, propertyTypeRef);
-                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptorWithType(context.scope.getContainingDeclaration(), variableDeclaration, type);
+                JetType type = propertyTypeRef == null ? subjectType : context.getTypeResolver().resolveType(context.scope, propertyTypeRef, context.trace, true);
+                VariableDescriptor variableDescriptor = context.getDescriptorResolver().resolveLocalVariableDescriptorWithType(context.scope.getContainingDeclaration(), variableDeclaration, type, context.trace);
                 scopeToExtend.addVariableDescriptor(variableDescriptor);
                 if (propertyTypeRef != null) {
                     if (!context.semanticServices.getTypeChecker().isSubtypeOf(subjectType, type)) {

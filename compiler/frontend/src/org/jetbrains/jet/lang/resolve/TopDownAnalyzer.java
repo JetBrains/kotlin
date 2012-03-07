@@ -80,13 +80,13 @@ public class TopDownAnalyzer {
         context.debug("Enter");
 
         new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
-        new DeclarationResolver(context).process();
+        context.getDeclarationResolver().process();
         new DelegationResolver(context).process();
         new OverrideResolver(context).process();
         lockScopes(context);
         new OverloadResolver(context).process();
         if (!context.analyzingBootstrapLibrary()) {
-            new BodyResolver(context).resolveBehaviorDeclarationBodies();
+            context.getBodyResolver().resolveBehaviorDeclarationBodies();
             new ControlFlowAnalyzer(context, flowDataTraceFactory).process();
             new DeclarationsChecker(context).process();
         }

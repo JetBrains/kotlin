@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.types;
 
+import com.google.common.base.Predicates;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -26,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -43,7 +47,8 @@ public class JetOverridingTest extends JetLiteFixture {
         super.setUp();
         library          = JetStandardLibrary.getInstance();
         semanticServices = JetSemanticServices.createSemanticServices(library);
-        descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
+        TopDownAnalysisContext analysisContext = new TopDownAnalysisContext(semanticServices, JetTestUtils.DUMMY_TRACE, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
+        descriptorResolver = analysisContext.getDescriptorResolver();
     }
 
     @Override
@@ -161,6 +166,6 @@ public class JetOverridingTest extends JetLiteFixture {
 
     private FunctionDescriptor makeFunction(String funDecl) {
         JetNamedFunction function = JetPsiFactory.createFunction(getProject(), funDecl);
-        return descriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function);
+        return descriptorResolver.resolveFunctionDescriptor(root, library.getLibraryScope(), function, JetTestUtils.DUMMY_TRACE);
     }
 }

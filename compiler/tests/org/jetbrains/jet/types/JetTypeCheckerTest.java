@@ -16,13 +16,16 @@
 
 package org.jetbrains.jet.types;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -53,6 +56,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private DescriptorResolver descriptorResolver;
     private JetScope scopeWithImports;
     private TypeResolver typeResolver;
+    private TopDownAnalysisContext analysisContext;
 
     public JetTypeCheckerTest() {
         super("");
@@ -64,9 +68,12 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         library          = JetStandardLibrary.getInstance();
         semanticServices = JetSemanticServices.createSemanticServices(library);
         classDefinitions = new ClassDefinitions();
-        descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_TRACE);
+
+        analysisContext = new TopDownAnalysisContext(semanticServices, JetTestUtils.DUMMY_TRACE, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
+
+        descriptorResolver = analysisContext.getDescriptorResolver();
         scopeWithImports = addImports(classDefinitions.BASIC_SCOPE);
-        typeResolver = new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true);
+        typeResolver = analysisContext.getTypeResolver();
     }
 
     @Override
@@ -540,14 +547,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(String expression, JetType expectedType) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE);
+        JetType type = analysisContext.getExpressionTypingServices().getType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
         assertTrue(type + " != " + expectedType, type.equals(expectedType));
     }
 
     private void assertErrorType(String expression) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE);
+        JetType type = analysisContext.getExpressionTypingServices().safeGetType(scopeWithImports, jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
         assertTrue("Error type expected but " + type + " returned", ErrorUtils.isErrorType(type));
     }
 
@@ -570,7 +577,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private void assertType(JetScope scope, String expression, String expectedTypeStr) {
         Project project = getProject();
         JetExpression jetExpression = JetPsiFactory.createExpression(project, expression);
-        JetType type = semanticServices.getTypeInferrerServices(JetTestUtils.DUMMY_TRACE).getType(addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE);
+        JetType type = analysisContext.getExpressionTypingServices().getType(addImports(scope), jetExpression, TypeUtils.NO_EXPECTED_TYPE, JetTestUtils.DUMMY_TRACE);
         JetType expectedType = expectedTypeStr == null ? null : makeType(expectedTypeStr);
         assertEquals(expectedType, type);
     }
@@ -590,7 +597,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     private JetType makeType(JetScope scope, String typeStr) {
-        return new TypeResolver(semanticServices, JetTestUtils.DUMMY_TRACE, true).resolveType(scope, JetPsiFactory.createType(getProject(), typeStr));
+        return analysisContext.getTypeResolver().resolveType(scope, JetPsiFactory.createType(getProject(), typeStr), JetTestUtils.DUMMY_TRACE, true);
     }
 
     private class ClassDefinitions {
@@ -657,7 +664,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
                 ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl));
+                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.add(functionDescriptor);
                     }
@@ -682,14 +689,14 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
             // This call has side-effects on the parameterScope (fills it in)
             List<TypeParameterDescriptor> typeParameters
-                    = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters());
-            descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters);
+                    = descriptorResolver.resolveTypeParameters(classDescriptor, parameterScope, classElement.getTypeParameters(), JetTestUtils.DUMMY_TRACE);
+            descriptorResolver.resolveGenericBounds(classElement, parameterScope, typeParameters, JetTestUtils.DUMMY_TRACE);
 
             List<JetDelegationSpecifier> delegationSpecifiers = classElement.getDelegationSpecifiers();
             // TODO : assuming that the hierarchy is acyclic
             Collection<JetType> supertypes = delegationSpecifiers.isEmpty()
                     ? Collections.singleton(JetStandardClasses.getAnyType())
-                    : descriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver);
+                    : descriptorResolver.resolveDelegationSpecifiers(parameterScope, delegationSpecifiers, typeResolver, JetTestUtils.DUMMY_TRACE, true);
     //        for (JetType supertype: supertypes) {
     //            if (supertype.getConstructor().isSealed()) {
     //                trace.getErrorHandler().genericError(classElement.getNameAsDeclaration().getNode(), "Class " + classElement.getName() + " can not extend final type " + supertype);
@@ -706,7 +713,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     @Override
                     public void visitProperty(JetProperty property) {
                         if (property.getPropertyTypeRef() != null) {
-                            memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property));
+                            memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property, JetTestUtils.DUMMY_TRACE));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
@@ -716,7 +723,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     @Override
                     public void visitNamedFunction(JetNamedFunction function) {
                         if (function.getReturnTypeRef() != null) {
-                            memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function));
+                            memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function, JetTestUtils.DUMMY_TRACE));
                         } else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
@@ -740,11 +747,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     null
             );
             for (JetSecondaryConstructor constructor : classElement.getSecondaryConstructors()) {
-                ConstructorDescriptorImpl functionDescriptor = descriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor);
+                ConstructorDescriptorImpl functionDescriptor = descriptorResolver.resolveSecondaryConstructorDescriptor(memberDeclarations, classDescriptor, constructor, JetTestUtils.DUMMY_TRACE);
                 functionDescriptor.setReturnType(classDescriptor.getDefaultType());
                 constructors.add(functionDescriptor);
             }
-            ConstructorDescriptorImpl primaryConstructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement);
+            ConstructorDescriptorImpl primaryConstructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(scope, classDescriptor, classElement, JetTestUtils.DUMMY_TRACE);
             if (primaryConstructorDescriptor != null) {
                 primaryConstructorDescriptor.setReturnType(classDescriptor.getDefaultType());
                 constructors.add(primaryConstructorDescriptor);

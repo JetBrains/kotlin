@@ -185,7 +185,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference right = expression.getRight();
         JetType result = null;
         if (right != null) {
-            JetType targetType = context.getTypeResolver().resolveType(context.scope, right);
+            JetType targetType = context.getTypeResolver().resolveType(context.scope, right, context.trace, true);
 
             if (isTypeFlexible(expression.getLeft())) {
                 TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
@@ -346,7 +346,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         List<JetExpression> entries = expression.getEntries();
         List<JetType> types = new ArrayList<JetType>();
         for (JetExpression entry : entries) {
-            types.add(context.getServices().safeGetType(context.scope, entry, NO_EXPECTED_TYPE)); // TODO
+            types.add(context.getServices().safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.trace)); // TODO
         }
         if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isTupleType(context.expectedType)) {
             List<JetType> enrichedTypes = checkArgumentTypes(types, entries, context.expectedType.getArguments(), context);
@@ -417,15 +417,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     JetUserType userType = (JetUserType) typeElement;
                     // This may be just a superclass name even if the superclass is generic
                     if (userType.getTypeArguments().isEmpty()) {
-                        classifierCandidate = context.getTypeResolver().resolveClass(context.scope, userType);
+                        classifierCandidate = context.getTypeResolver().resolveClass(context.scope, userType, context.trace);
                     }
                     else {
-                        supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                        supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
                         redundantTypeArguments = userType.getTypeArgumentList();
                     }
                 }
                 else {
-                    supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                    supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
                 }
 
                 if (supertype != null) {
@@ -505,7 +505,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetType visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        return context.getServices().getBlockReturnedType(context.scope, expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
+        return context.getServices().getBlockReturnedType(context.scope, expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context, context.trace);
     }
 
     @Override

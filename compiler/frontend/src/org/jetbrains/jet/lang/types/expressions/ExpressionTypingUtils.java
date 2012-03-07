@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -148,10 +149,12 @@ public class ExpressionTypingUtils {
         return expression;
     }
 
-    public static boolean isVariableIterable(@NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
+    public static boolean isVariableIterable(@NotNull CallResolver.Context expressionTypingContextContext,
+            @NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
         JetExpression expression = JetPsiFactory.createExpression(project, "fake");
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expressionTypingContextContext,
                 project,
                 JetSemanticServices.createSemanticServices(project),
                 new HashMap<JetPattern, DataFlowInfo>(),
