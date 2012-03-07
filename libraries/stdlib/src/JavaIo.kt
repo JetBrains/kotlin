@@ -277,7 +277,7 @@ fun File.isDescendant(file: File): Boolean {
 */
 fun File.loadText(): String {
     val buffer = StringWriter()
-    FileReader(this).use {
+    FileReader(this).use<FileReader,Unit> {
         it.copyTo(buffer)
     }
     return buffer.toString() ?: ""
