@@ -523,7 +523,7 @@ public class JetCompiler implements TranslatingCompiler {
                 handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
             }
             int exitCode = event.getExitCode();
-            // 0 is normal, 1 is "errors found" — handled by the messages above
+            // 0 is normal, 1 is "errors found" - handled by the messages above
             if (exitCode != 0 && exitCode != 1) {
                 compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
             }
