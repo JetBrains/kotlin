@@ -41,7 +41,7 @@ inline fun <T> java.lang.Iterable<T>.first() : T {
 /**
  * Get the last element in the collection.
  *
- * If base collection implements List<T> interface, the combination of size() and get()
+ * If base collection implements [[List]] interface, the combination of size() and get()
  * methods will be used for getting last element. Otherwise, this method determines the
  * last item by iterating through the all items.
  *
@@ -67,7 +67,7 @@ fun <T> java.lang.Iterable<T>.last() : T {
  * Checks if collection contains given item.
  *
  * Method checks equality of the objects with T.equals method.
- * If collection implements java.util.AbstractCollection an overridden implementation of the contains
+ * If collection implements [[java.util.AbstractCollection]] an overridden implementation of the contains
  * method will be used.
  */
 fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
