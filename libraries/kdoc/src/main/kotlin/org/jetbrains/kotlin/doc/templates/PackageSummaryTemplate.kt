@@ -105,7 +105,7 @@ function windowTitle()
         println("""</FONT><H2>
 Package ${pkg.name}
 </H2>
-${pkg.description}
+${pkg.description(this)}
 <P>
 <B>See:</B>
 <BR>
@@ -127,7 +127,7 @@ Package ${pkg.name} Description
 </H2>
 
 <P>
-${pkg.detailedDescription}
+${pkg.detailedDescription(this)}
 
 <h2>Contents</h2>
 
@@ -229,7 +229,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
             for (c in classes) {
                 println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="${pkg.nameAsRelativePath}${c.nameAsPath}.html" title="$kind in ${pkg.name}">${c.simpleName}</A></B></TD>
-<TD>${c.description}</TD>
+<TD>${c.description(this)}</TD>
 </TR>""")
             }
             println("""</TABLE>
@@ -252,7 +252,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
             for (f in functions) {
                 println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="${href(f)}" title="function in ${pkg.name}">${f.name}</A></B></TD>
-<TD>${f.description}</TD>
+<TD>${f.description(this)}</TD>
 </TR>""")
             }
             println("""</TABLE>

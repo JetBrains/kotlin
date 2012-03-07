@@ -195,7 +195,7 @@ Class ${klass.simpleName}</H2>
 </PRE>
 
 <P>""")
-        println(klass.detailedDescription)
+        println(klass.detailedDescription(this))
         if (klass.since.size > 0 || klass.authors.size > 0) {
             println("""<P>
 <DL>""")
@@ -229,7 +229,7 @@ Class ${klass.simpleName}</H2>
 <CODE>static&nbsp;class</CODE></FONT></TD>
 <TD><CODE><B><A HREF="${pkg.nameAsRelativePath}${nc.nameAsPath}.html" title="class in ${nc.packageName}">${klass.simpleName}.${nc.simpleName}</A></B></CODE>
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${nc.description}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${nc.description(this)}
 </TD>""")
             }
             println("""</TR>

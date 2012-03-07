@@ -105,7 +105,7 @@ ${model.title}
         for (p in model.packages) {
             println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="20%"><B><A HREF="${p.nameAsPath}/package-summary.html">${p.name}</A></B></TD>
-<TD>${p.description}</TD>
+<TD>${p.description(this)}</TD>
 </TR>""")
         }
 println("""</TABLE>

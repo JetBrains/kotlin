@@ -65,11 +65,11 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("""</CODE>""")
         println("")
         if (true) {
-            val detail = function.detailedDescription
-            println("""${detail}""")
+            println("""<BR>""")
+            println("""${function.description(this)}""")
         } else {
             println("""<BR>""")
-            println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${function.detailedDescription}</TD>""")
+            println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${function.detailedDescription(this)}</TD>""")
         }
         println("""</TD>""")
         println("""</TR>""")
@@ -120,7 +120,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         println("""</PRE>""")
 
-        println(function.detailedDescription)
+        println(function.detailedDescription(this))
         /* TODO
         println("""<DL>
 <DD><B>Deprecated.</B>&nbsp;TODO text
@@ -188,7 +188,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("""</CODE>""")
         println("""""")
         println("""<BR>""")
-        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription}</TD>""")
+        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription(this)}</TD>""")
         println("""</TR>""")
     }
 
