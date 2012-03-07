@@ -61,6 +61,7 @@
                     <antcall target = "zip"/>
                     <verify-exists file="${output}/${output.name}.zip" type="file"/>
 
+                    <!-- Sometimes deleting "dist/kotlinc/lib/alt/kotlin-jdk-headers.jar" fails -->
                     <delete dir  = "${kotlin-home}" failonerror="false"/>
                     <mkdir  dir  = "${kotlin-home}"/>
                     <unzip  src  = "${output}/${output.name}.zip" dest="${output}"/>
@@ -309,7 +310,7 @@
                 <then>
                     <!-- Batch tests -->
                     <if>
-                        <matches string="@{classpath}" pattern="\.jar$"/>
+                        <matches string="@{classpath}" pattern="/.jar$"/>
                         <then>
                             <!-- Batch tests from a jar -->
                             <echo>Running JUnit: classpath = "@{classpath}" (Jar)</echo>
@@ -422,6 +423,24 @@
                 <try>
                     <!-- Should fail -->
                     <kotlinc-jar src = "${basedir}/build-tools/test/compilation-fail"/>
+                </try>
+                <catch>
+                    <var name="failed" value="true"/>
+                    <echo>"ERROR:" was expected here</echo>
+                </catch>
+            </trycatch>
+            <if>
+                <isfalse value="${failed}"/>
+                <then>
+                    <fail message="kotlinc-jar: compilation should have failed!"/>
+                </then>
+            </if>
+
+            <var name="failed" value="false"/>
+            <trycatch property="error-message" reference="bar">
+                <try>
+                    <!-- Should fail -->
+                    <kotlinc-jar module = "${basedir}/build-tools/test/compilation-fail/Smoke.kts"/>
                 </try>
                 <catch>
                     <var name="failed" value="true"/>
