@@ -1,0 +1,5 @@
+namespace test
+
+abstract trait test.JavaBeanAbstractGetter : jet.Any {
+    abstract fun getRed(): jet.Int
+}
