@@ -120,7 +120,7 @@ fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KPr
     return map
 }
 
-abstract class KClassOrPackage(model: KModel) : KAnnotated(model) {
+abstract class KClassOrPackage(model: KModel, declarationDescriptor: DeclarationDescriptor) : KAnnotated(model, declarationDescriptor) {
 
     public open val functions: SortedSet<KFunction> = TreeSet<KFunction>()
 
@@ -381,9 +381,10 @@ class KModel(var context: BindingContext, val config: KDocConfig, var title: Str
     }
 }
 
-class TemplateLinkRenderer(template: KDocTemplate) : LinkRenderer() {
+class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate) : LinkRenderer() {
 
     override fun render(node : WikiLinkNode?) : Rendering? {
+        annotated.declarationDescriptor.getContainingDeclaration()
         println("LinkRenderer.render(WikiLinkNode): $node")
         // TODO translate the wiki link to a Class/function/property/extensionFunction etc
         return super.render(node)
@@ -405,7 +406,7 @@ class TemplateLinkRenderer(template: KDocTemplate) : LinkRenderer() {
     }
 }
 
-abstract class KAnnotated(val model: KModel) {
+abstract class KAnnotated(val model: KModel, val declarationDescriptor: DeclarationDescriptor) {
     public open var wikiDescription: String = ""
 
     public open var deprecated: Boolean = false
@@ -421,11 +422,11 @@ abstract class KAnnotated(val model: KModel) {
     }
 
     fun detailedDescription(template: KDocTemplate): String {
-        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(template))
+        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template))
     }
 }
 
-abstract class KNamed(val name: String, model: KModel) : KAnnotated(model), Comparable<KNamed> {
+abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor) : KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
 
     override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
 
@@ -437,7 +438,7 @@ abstract class KNamed(val name: String, model: KModel) : KAnnotated(model), Comp
 
 class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         val name: String,
-        var local: Boolean = false) : KClassOrPackage(model), Comparable<KPackage> {
+        var local: Boolean = false) : KClassOrPackage(model, descriptor), Comparable<KPackage> {
 
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
@@ -525,7 +526,8 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     fun packageFunctions() = functions.filter{ it.extensionClass == null }
 }
 
-class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>()) : KNamed(klass?.name ?: jetType.toString(), model) {
+class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>())
+    : KNamed(klass?.name ?: jetType.toString(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
     {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription
@@ -556,7 +558,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var authors: List<String> = arrayList<String>(),
         var baseClasses: List<KType> = arrayList<KType>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2) : KClassOrPackage(pkg.model), Comparable<KClass> {
+        var sourceLine: Int = 2) : KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -604,7 +606,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var sourceLine: Int = 2) : KAnnotated(owner.model), Comparable<KFunction> {
+        var sourceLine: Int = 2) : KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
     public val parameterTypeText: String = parameters.map{ it.aType.name }.join(", ")
 
@@ -634,7 +636,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
-        val returnType: KType, val extensionClass: KClass?) : KAnnotated(owner.model), Comparable<KProperty> {
+        val returnType: KType, val extensionClass: KClass?) : KAnnotated(owner.model, descriptor), Comparable<KProperty> {
 
     override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 
@@ -646,7 +648,7 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
 }
 
 class KParameter(val name: String,
-        var aType: KType) : KAnnotated(aType.model)  {
+        var aType: KType) : KAnnotated(aType.model, aType.declarationDescriptor)  {
 
     fun toString() = "$name: ${aType.name}"
 }
@@ -654,12 +656,12 @@ class KParameter(val name: String,
 class KTypeParameter(val name: String,
         val descriptor: TypeParameterDescriptor,
         model: KModel,
-        var extends: List<KClass> = arrayList<KClass>()) : KAnnotated(model) {
+        var extends: List<KClass> = arrayList<KClass>()) : KAnnotated(model, descriptor) {
 
     fun toString() = "$name"
 }
 
-class KAnnotation(var klass: KClass) : KAnnotated(klass.model)  {
+class KAnnotation(var klass: KClass) : KAnnotated(klass.model, klass.descriptor)  {
 
     // TODO add some parameter values?
 
