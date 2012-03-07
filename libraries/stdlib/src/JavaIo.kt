@@ -3,6 +3,9 @@ package kotlin.io
 import java.io.*
 import java.nio.charset.*
 import java.util.NoSuchElementException
+import java.net.URL
+
+protected val defaultBufferSize: Int = 64 * 1024
 
 inline fun print(message : Any?) {
     System.out?.print(message)
@@ -273,22 +276,92 @@ fun File.isDescendant(file: File): Boolean {
 }
 
 /**
-* Loads the text file as a String
-*/
-fun File.loadText(): String {
-    val buffer = StringWriter()
-    FileReader(this).use<FileReader,Unit> {
-        it.copyTo(buffer)
+ * Returns the relative path of the given descendant of this file if its a descendant
+ */
+fun File.relativePath(descendant: File): String {
+    val prefix = this.directory.canonicalPath
+    val answer = descendant.canonicalPath
+    return if (answer.startsWith(prefix)) {
+        answer.substring(prefix.size + 1)
+    } else {
+        answer
     }
+}
+
+/**
+ * Reads the entire content of the file as a String
+ *
+ * This method is not recommended on huge files.
+ */
+fun File.readText(): String {
+    return FileReader(this).use<FileReader,String>{ it.readText() }
+}
+
+/**
+ * Reads the entire content of the file as bytes
+ *
+ * This method is not recommended on huge files.
+ */
+fun File.readBytes(): ByteArray {
+    return FileInputStream(this).use<FileInputStream,ByteArray>{ it.readBytes() }
+}
+
+/**
+ * Writes the bytes as the contents of the file
+ */
+fun File.writeBytes(data: ByteArray): Unit {
+    return FileOutputStream(this).use<FileOutputStream,Unit>{ it.write(data) }
+}
+
+/**
+ * Writes the text as the contents of the file
+ */
+fun File.writeText(text: String): Unit {
+    return FileWriter(this).use<FileWriter,Unit>{ it.write(text) }
+}
+
+/**
+ * Copies this file to the given output file, returning the number of bytes copied
+ */
+fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
+    file.directory.mkdirs()
+    val input = FileInputStream(this)
+    return input.use<FileInputStream,Long>{
+        val output = FileOutputStream(file)
+        output.use<FileOutputStream,Long>{
+            input.copyTo(output, bufferSize)
+        }
+    }
+}
+
+/**
+ * Reads this stream completely into a byte array
+ *
+ * **Note** it is the callers responsibility to close this resource
+ */
+fun InputStream.readBytes(): ByteArray {
+    val buffer = ByteArrayOutputStream()
+    this.copyTo(buffer)
+    return buffer.toByteArray().sure()
+}
+
+/**
+ * Reads this reader completely as a String
+ *
+ * **Note** it is the callers responsibility to close this resource
+ */
+fun Reader.readText(): String {
+    val buffer = StringWriter()
+    this.copyTo(buffer)
     return buffer.toString() ?: ""
 }
 
 /**
-* Copies this stream to the given output stream, returning the number of bytes copied
-*
-* **Note** it is the callers responsibility to close both of these resources
-*/
-fun InputStream.copyTo(out: OutputStream, bufferSize: Int = 64 * 1024): Long {
+ * Copies this stream to the given output stream, returning the number of bytes copied
+ *
+ * **Note** it is the callers responsibility to close both of these resources
+ */
+fun InputStream.copyTo(out: OutputStream, bufferSize: Int = defaultBufferSize): Long {
     var bytesCopied: Long = 0
     val buffer = ByteArray(bufferSize)
     var bytes = read(buffer)
@@ -302,11 +375,11 @@ fun InputStream.copyTo(out: OutputStream, bufferSize: Int = 64 * 1024): Long {
 
 
 /**
-* Copies this reader to the given output writer, returning the number of bytes copied.
-*
-* **Note** it is the callers responsibility to close both of these resources
-*/
-fun Reader.copyTo(out: Writer, bufferSize: Int = 64 * 1024): Long {
+ * Copies this reader to the given output writer, returning the number of bytes copied.
+ *
+ * **Note** it is the callers responsibility to close both of these resources
+ */
+fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
     var charsCopied: Long = 0
     val buffer = CharArray(bufferSize)
     var chars = read(buffer)
@@ -317,3 +390,24 @@ fun Reader.copyTo(out: Writer, bufferSize: Int = 64 * 1024): Long {
     }
     return charsCopied
 }
+
+
+/**
+ * Reads the entire content of the URL as a String with an optional character set name
+ *
+ * This method is not recommended on huge files.
+ */
+fun URL.readText(encoding: String? = null): String {
+    val bytes = readBytes()
+    return if (encoding != null) String(bytes, encoding) else String(bytes)
+}
+
+/**
+ * Reads the entire content of the URL as bytes
+ *
+ * This method is not recommended on huge files.
+ */
+fun URL.readBytes(): ByteArray {
+    return this.openStream().sure().use<InputStream,ByteArray>{ it.readBytes() }
+}
+
