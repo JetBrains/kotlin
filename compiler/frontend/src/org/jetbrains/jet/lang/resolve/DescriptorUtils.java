@@ -180,7 +180,9 @@ public class DescriptorUtils {
 
     public static String getFQName(DeclarationDescriptor descriptor) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (container != null && !(container instanceof ModuleDescriptor)) {
+        if (container != null && !(container instanceof ModuleDescriptor)
+                                 && !("<java_root>".equals(container.getName()))) {
+            // TODO JavaNamespaceDescriptors should be refactored
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) return baseName + "." + descriptor.getName();
         }

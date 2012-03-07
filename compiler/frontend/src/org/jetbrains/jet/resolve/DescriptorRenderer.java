@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Renderer;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -109,7 +110,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     private String renderDefaultType(JetType type) {
         StringBuilder sb = new StringBuilder();
-        sb.append(type.getConstructor());
+        ClassifierDescriptor cd = type.getConstructor().getDeclarationDescriptor();
+        sb.append(cd == null || cd instanceof TypeParameterDescriptor
+                  ? type.getConstructor() : DescriptorUtils.getFQName(cd));
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
             appendTypeProjections(sb, type.getArguments());
