@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.ArrayList;
 import java.util.Arrays;

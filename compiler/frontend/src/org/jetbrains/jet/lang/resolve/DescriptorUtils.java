@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.List;
 import java.util.Map;

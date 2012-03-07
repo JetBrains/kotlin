@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.types.JetStandardLibrary;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
  * This project component initializes JetStandardLibrary so that throwing a ProcessCanceledException while

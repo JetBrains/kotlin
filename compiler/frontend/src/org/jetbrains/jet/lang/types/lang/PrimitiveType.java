@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.types;
+package org.jetbrains.jet.lang.types.lang;
 
 /**
  * @author Stepan Koltsov
