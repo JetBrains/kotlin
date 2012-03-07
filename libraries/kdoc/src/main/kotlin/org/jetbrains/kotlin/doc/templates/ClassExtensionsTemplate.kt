@@ -41,6 +41,6 @@ from package ${link(pkg)}
 """)
     }
 
-    override fun href(f: KFunction): String = "#${f.link}"
+    override fun href(f: KFunction): String = if (f.extensionClass == klass) "#${f.link}" else super.href(f)
 
 }

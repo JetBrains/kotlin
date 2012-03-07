@@ -31,6 +31,7 @@ import org.pegdown.ast.AutoLinkNode
 import org.pegdown.ast.ExpLinkNode
 import org.pegdown.Extensions
 import org.jetbrains.kotlin.doc.templates.KDocTemplate
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.getContainingDeclaration())
 
@@ -125,6 +126,18 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     public open val functions: SortedSet<KFunction> = TreeSet<KFunction>()
 
     public open val properties: SortedSet<KProperty> = TreeSet<KProperty>()
+
+    fun findProperty(name: String): KProperty? {
+        // TODO we should use a Map<String>?
+        return properties.find{ it.name == name }
+    }
+
+    fun findFunction(expression: String): KFunction? {
+        val idx = expression.indexOf('(')
+        val name = if (idx > 0) expression.substring(0, idx) else expression
+        val postfix = if (idx > 0) expression.substring(idx).trimTrailing("()") else ""
+        return functions.find{ it.name == name && it.parameterTypeText == postfix }
+    }
 }
 
 class KModel(var context: BindingContext, val config: KDocConfig, var title: String = "Documentation", var version: String = "TODO") {
@@ -358,6 +371,22 @@ class KModel(var context: BindingContext, val config: KDocConfig, var title: Str
         return null
     }
 
+    /**
+     * Returns the [[KClass]] for the fully qualified name or null if it could not be found
+     */
+    fun getClass(qualifiedName: String): KClass? {
+        // TODO warning this only works for top level classes
+        // a better algorithm is to walk down each dot path dealing with nested packages/classes
+        val idx = qualifiedName.lastIndexOf('.')
+        val pkgName = if (idx >= 0) qualifiedName.substring(0, idx) ?: "" else ""
+        val pkg = getPackage(pkgName)
+        if (pkg != null) {
+            val simpleName = if (idx >= 0) qualifiedName.substring(idx + 1) ?: "" else qualifiedName
+            return pkg.classMap.get(simpleName)
+        }
+        return null
+    }
+
     fun getClass(classElement: ClassDescriptor): KClass? {
         val name = classElement.getName()
         val container = classElement.getContainingDeclaration()
@@ -384,10 +413,107 @@ class KModel(var context: BindingContext, val config: KDocConfig, var title: Str
 class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate) : LinkRenderer() {
 
     override fun render(node : WikiLinkNode?) : Rendering? {
-        annotated.declarationDescriptor.getContainingDeclaration()
-        println("LinkRenderer.render(WikiLinkNode): $node")
-        // TODO translate the wiki link to a Class/function/property/extensionFunction etc
-        return super.render(node)
+        val answer = super.render(node)
+        if (answer != null) {
+            val text = answer.text
+            if (text != null) {
+                val qualified = resolveToQualifiedName(text)
+
+                var href = resolveClassNameLink(qualified)
+                if (href != null) {
+                    answer.href = href
+                } else {
+
+                    // TODO really dirty hack alert!!!
+                    // until the resolver is working, lets try adding a few prefixes :)
+                    for (prefix in arrayList("java.lang", "java.util", "java.util.regex", "java.io", "jet"))
+                        if (href == null) {
+                            href = resolveClassNameLink(prefix + "." + qualified)
+                        }
+                    /** TODO use break when KT-1523 is fixed
+                    if (href != null) {
+                        break
+                    }
+                    */
+                }
+                if (href != null) {
+                    answer.href = href
+                } else {
+                    println("Warning: could not resolve expression: $qualified into a wiki link")
+                }
+            }
+        }
+        return answer
+    }
+
+    /**
+     * Try to resolve a fully qualified class name as a link
+     */
+    protected fun resolveClassNameLink(qualifiedName: String): String? {
+        val model = annotated.model
+        val pkg = model.getPackage(qualifiedName)
+        if (pkg != null) {
+            return template.href(pkg)
+        }
+        val klass = model.getClass(qualifiedName)
+        if (klass != null) {
+            return template.href(klass)
+        } else {
+            // is it a method?
+            val idx = qualifiedName.lastIndexOf('.')
+            if (idx > 0) {
+                val className = qualifiedName.substring(0, idx)
+                val c =  model.getClass(className)
+                if (c != null) {
+                    // lets try find method...
+                    val remaining = qualifiedName.substring(idx + 1)
+                    // lets try find the function
+                    val fn = c.findFunction(remaining)
+                    if (fn != null) {
+                        return template.href(fn)
+                    }
+                    val p = c.findProperty(remaining)
+                    if (p != null) {
+                        return template.href(p)
+                    }
+                }
+            }
+            return null
+        }
+    }
+    /**
+     * Attempts to resolve the class, method or property expression using the
+     * current imports and declaraiton
+     */
+    protected fun resolveToQualifiedName(text: String): String {
+        // TODO use the CompletionContributors maybe to figure out what local names are imported???
+        return text
+/*
+        val scope = findWritableScope(annotated.declarationDescriptor)
+        if (scope != null) {
+            val classifierDescriptor = scope.getClassifier(text)
+            if (classifierDescriptor == null) {
+                val o = scope.getObjectDescriptor(text)
+                println("Attempt to resolve HREF: $text Found objectDescriptor $o")
+            } else {
+                println("Attempt to resolve HREF: $text Found classifierDescriptor $classifierDescriptor")
+            }
+        }
+    }
+
+    protected fun findWritableScope(declarationDescriptor: DeclarationDescriptor) : WritableScopeImpl? {
+        val container = declarationDescriptor.getContainingDeclaration()
+        if (container is NamespaceDescriptor) {
+            val scope = container.getMemberScope()
+            if (scope is WritableScopeImpl) {
+                return scope
+            }
+        } else if (container != null) {
+            return findWritableScope(container)
+        }
+        return null
+
+*/
     }
 
     override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
@@ -404,6 +530,8 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
         // println("LinkRenderer.render(ExpLinkNode): $node text: $text")
         return super.render(node, text)
     }
+
+
 }
 
 abstract class KAnnotated(val model: KModel, val declarationDescriptor: DeclarationDescriptor) {

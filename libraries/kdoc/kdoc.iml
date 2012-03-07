@@ -35,6 +35,8 @@
         <JAVADOC />
         <SOURCES>
           <root url="file://$MODULE_DIR$/../compiler/cli/src" />
+          <root url="file://$MODULE_DIR$/../../compiler/frontend/src" />
+          <root url="file://$MODULE_DIR$/../../compiler/frontend.java/src" />
         </SOURCES>
       </library>
     </orderEntry>
