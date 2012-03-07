@@ -56,7 +56,7 @@
         <module>stdlib</module>
         <module>kunit</module>
         <module>kdoc</module>
-        <module>apidocs</module>
+        <module>website</module>
     </modules>
 
     <build>

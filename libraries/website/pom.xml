@@ -11,9 +11,14 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>apidocs</artifactId>
+    <artifactId>website</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>
