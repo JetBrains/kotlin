@@ -8,6 +8,6 @@ fun firstFun() {
 }
 
 // RUNTIME: 1
-// TIME: 2
+// TIME: 1
 // EXIST: toLinkedList
 // NUMBER: 1

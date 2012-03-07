@@ -24,32 +24,31 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
 
     public void testDoNotCompleteWithConstraints() {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void testTopLevelFunction() throws Exception {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void todotestExtensionFunctionOnUnresolved() throws Exception {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void testExtensionOnNullable() throws Exception {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void todotestExtensionProperty() throws Exception {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void testNotImportedExtensionFunction() throws Exception {
-        doFileTest(2);
+        doFileTest();
     }
 
     public void testExtensionFunction() throws Exception {
-        // TODO: fix and uncomment
-        // doFileTest();
+        doFileTest(2);
     }
 
     @Override

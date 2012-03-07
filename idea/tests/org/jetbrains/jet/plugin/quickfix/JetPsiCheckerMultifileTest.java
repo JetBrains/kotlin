@@ -20,16 +20,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Pair;
-import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.util.ui.UIUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +37,7 @@ import java.util.*;
 /**
  * @author Nikolay Krasko
  */
-public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
+public class JetPsiCheckerMultifileTest extends JetQuickFixMultiFileTest {
 
     public final static String MAIN_SUBSTRING = ".Main";
     public final static String DATA_SUBSTRING = ".Data";
@@ -56,86 +49,25 @@ public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
         this.dataPath = dataPath;
         this.name = name;
 
-        setName("testRun");
+        setName("doTest");
     }
 
-    protected static boolean shouldBeAvailableAfterExecution() {
-        return false;
+    @Override
+    protected String getCheckFileName() {
+        return name.replace("before", "after").replace(MAIN_SUBSTRING, "") + ".kt";
     }
 
-    public void testRun() throws Exception {
-        configureByFiles(null, getFileNames(getTestFiles()).toArray(new String[1]));
-        doTest();
+    @Override
+    protected List<String> getTestFileNames() {
+        return getFileNames(getTestFiles());
     }
 
-    public void doTest() {
-        CommandProcessor.getInstance().executeCommand(getProject(), new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(getFile(), loadFile(getFile().getName()));
-                    final String text = pair.getFirst();
-                    
-                    final boolean actionShouldBeAvailable = pair.getSecond();
-    
-                    doAction(text, actionShouldBeAvailable, getTestDataPath());
-                }
-                catch (FileComparisonFailure e){
-                    throw e;
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                    fail(getTestName(true));
-                }
-            }
-        }, "", "");
-    }
-
-    @SuppressWarnings({"HardCodedStringLiteral"})
-    public void doAction(final String text, final boolean actionShouldBeAvailable, final String testFullPath)
-            throws Exception {
-        IntentionAction action = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
-        if (action == null) {
-            if (actionShouldBeAvailable) {
-                List<IntentionAction> actions = getAvailableActions();
-                List<String> texts = new ArrayList<String>();
-                for (IntentionAction intentionAction : actions) {
-                    texts.add(intentionAction.getText());
-                }
-                Collection<HighlightInfo> infos = doHighlighting();
-                fail("Action with text '" + text + "' is not available in test " + testFullPath + "\n" +
-                     "Available actions (" + texts.size() + "): " + texts + "\n" +
-                     actions + "\n" +
-                     "Infos:" + infos);
-            }
-        }
-        else {
-            if (!actionShouldBeAvailable) {
-                fail("Action '" + text + "' is available (but must not) in test " + testFullPath);
-            }
-
-            ShowIntentionActionsHandler.chooseActionAndInvoke(getFile(), getEditor(), action, action.getText());
-
-            UIUtil.dispatchAllInvocationEvents();
-
-            if (!shouldBeAvailableAfterExecution()) {
-                final IntentionAction afterAction = LightQuickFixTestCase.findActionWithText(getAvailableActions(), text);
-                
-                if (afterAction != null) {
-                    fail("Action '" + text + "' is still available after its invocation in test " + testFullPath);
-                }
-            }
-
-            checkResultByFile(name.replace("before", "after").replace(MAIN_SUBSTRING, "") + ".kt");
-        }
-    }
-    
     protected List<File> getTestFiles() {
         File dir = new File(getTestDataPath());
 
         assertTrue("Main file should contain .Main. substring", name.contains(MAIN_SUBSTRING));
         final String testPrefix = name.replace(MAIN_SUBSTRING, "");
-        
+
         // Files of single test
         FilenameFilter resultFilter = new FilenameFilter() {
             @Override
@@ -145,7 +77,7 @@ public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
         };
 
         List<File> allTestFiles = Arrays.asList(dir.listFiles(resultFilter));
-        
+
         final Collection<File> mainFiles = Collections2.filter(allTestFiles, new Predicate<File>() {
             @Override
             public boolean apply(@Nullable File file) {
@@ -168,7 +100,7 @@ public class JetPsiCheckerMultifileTest extends DaemonAnalyzerTestCase {
 
         return fileResult;
     }
-    
+
     protected static List<String> getFileNames(List<File> files) {
         return Lists.newArrayList(Collections2.transform(files, new Function<File, String>() {
             @Override

@@ -20,6 +20,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
@@ -33,11 +34,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
@@ -202,6 +207,72 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         functions.addAll(JetFromJavaDescriptorHelper.getTopExtensionFunctionByName(name, project, scope));
 
         return functions;
+    }
+
+    // TODO: Make it work for properties
+    public Collection<DeclarationDescriptor> getJetCallableExtensions(
+            @NotNull Condition<String> acceptedNameCondition,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull GlobalSearchScope searchScope
+    ) {
+        Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
+
+        if (!(expression.getContainingFile() instanceof JetFile)) {
+            return resultDescriptors;
+        }
+
+        JetFile jetFile = (JetFile) expression.getContainingFile();
+
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        JetExpression receiverExpression = expression.getReceiverExpression();
+
+        if (receiverExpression != null) {
+            JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            JetScope scope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+
+            if (expressionType != null && scope != null) {
+                Collection<String> extensionFunctionsNames = getAllJetExtensionFunctionsNames(searchScope);
+
+                Set<String> functionFQNs = new java.util.HashSet<String>();
+
+                // Collect all possible extension function qualified names
+                for (String name : extensionFunctionsNames) {
+                    if (acceptedNameCondition.value(name)) {
+                        Collection<PsiElement> extensionFunctions = getJetExtensionFunctionsByName(name, searchScope);
+
+                        for (PsiElement extensionFunction : extensionFunctions) {
+                            if (extensionFunction instanceof JetNamedFunction) {
+                                functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
+                            }
+                            else if (extensionFunction instanceof PsiMethod) {
+                                PsiMethod function = (PsiMethod) extensionFunction;
+                                PsiClass containingClass = function.getContainingClass();
+
+                                if (containingClass != null) {
+                                    String classFQN = containingClass.getQualifiedName();
+
+                                    if (classFQN != null) {
+                                        String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
+                                        functionFQNs.add(QualifiedNamesUtil.combine(classParentFQN, function.getName()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Iterate through the function with attempt to resolve found functions
+                for (String functionFQN : functionFQNs) {
+                    for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
+                            functionFQN, project, receiverExpression, expressionType, scope)) {
+
+                        resultDescriptors.add(functionDescriptor);
+                    }
+                }
+            }
+        }
+
+        return resultDescriptors;
     }
 
     public Collection<JetNamedFunction> getJetFunctionsByName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope) {

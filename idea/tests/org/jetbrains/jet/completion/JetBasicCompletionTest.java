@@ -109,8 +109,6 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
-
-
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic").getPath() +

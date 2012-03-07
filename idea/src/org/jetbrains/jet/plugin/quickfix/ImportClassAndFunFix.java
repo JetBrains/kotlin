@@ -29,6 +29,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
@@ -38,13 +40,16 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
+import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 
 import java.util.*;
 
@@ -69,20 +74,23 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             return Collections.emptyList();
         }
 
+        final String referenceName = element.getReferencedName();
+
+        if (!StringUtil.isNotEmpty(referenceName)) {
+            return Collections.emptyList();
+        }
+
+        assert referenceName != null;
+
         final ArrayList<String> result = new ArrayList<String>();
-        result.addAll(getClassNames(element, file.getProject()));
-        result.addAll(getJetTopLevelFunctions(element, file.getProject()));
+        result.addAll(getClassNames(referenceName, file.getProject()));
+        result.addAll(getJetTopLevelFunctions(referenceName, file.getProject()));
+        result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
 
         return result;
     }
     
-    private static Collection<String> getJetTopLevelFunctions(@NotNull JetSimpleNameExpression expression, @NotNull Project project) {
-        final String referenceName = expression.getReferencedName();
-
-        if (referenceName == null) {
-            return Collections.emptyList();
-        }
-
+    private static Collection<String> getJetTopLevelFunctions(@NotNull String referenceName, @NotNull Project project) {
         final Collection<JetNamedFunction> namedFunctions =
                 JetCacheManager.getInstance(project).getNamesCache().getTopLevelFunctionsByName(
                         referenceName, GlobalSearchScope.allScope(project));
@@ -104,16 +112,35 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         });
     }
 
+    private static Collection<String> getJetExtensionFunctions(
+            @NotNull final String referenceName,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull Project project
+    ) {
+        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
+                new Condition<String>() {
+                    @Override
+                    public boolean value(String callableExtensionName) {
+                        return callableExtensionName.equals(referenceName);
+                    }
+                },
+                expression,
+                GlobalSearchScope.allScope(project));
+
+        return Collections2.transform(jetCallableExtensions, new Function<DeclarationDescriptor, String>() {
+            @Override
+            public String apply(@Nullable DeclarationDescriptor declarationDescriptor) {
+                assert declarationDescriptor != null;
+                return DescriptorUtils.getFQName(declarationDescriptor);
+            }
+        });
+    }
+
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static List<String> getClassNames(@NotNull JetSimpleNameExpression expression, @NotNull Project project) {
-        final String referenceName = expression.getReferencedName();
-
-        if (referenceName == null) {
-            return Collections.emptyList();
-        }
-
+    public static List<String> getClassNames(@NotNull String referenceName, @NotNull Project project) {
         final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         Set<String> possibleResolveNames = Sets.newHashSet();
         possibleResolveNames.addAll(JetCacheManager.getInstance(project).getNamesCache().getFQNamesByName(referenceName, scope));
