@@ -6,6 +6,7 @@ import java.util.NoSuchElementException
 import java.net.URL
 
 protected val defaultBufferSize: Int = 64 * 1024
+protected val defaultCharset: String = "UTF-8"
 
 inline fun print(message : Any?) {
     System.out?.print(message)
@@ -293,8 +294,8 @@ fun File.relativePath(descendant: File): String {
  *
  * This method is not recommended on huge files.
  */
-fun File.readText(): String {
-    return FileReader(this).use<FileReader,String>{ it.readText() }
+fun File.readText(encoding: String = defaultCharset): String {
+    return readBytes().toString(encoding)
 }
 
 /**
@@ -397,9 +398,16 @@ fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
  *
  * This method is not recommended on huge files.
  */
-fun URL.readText(encoding: String? = null): String {
+fun URL.readText(encoding: String = defaultCharset): String {
     val bytes = readBytes()
-    return if (encoding != null) String(bytes, encoding) else String(bytes)
+    return bytes.toString(encoding)
+}
+
+/**
+ * Converts the bytes to a [[String]] using the given encoding or uses the [[defaultCharset]] (UTF-8)
+ */
+fun ByteArray.toString(encoding: String = defaultCharset): String {
+    return if (encoding != null) String(this, encoding) else String(this)
 }
 
 /**
