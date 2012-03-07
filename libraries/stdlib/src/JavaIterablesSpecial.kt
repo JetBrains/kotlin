@@ -86,7 +86,7 @@ fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
 }
 
 /**
- * Convert collection of arbitrary elements to collection of
+ * Convert collection of arbitrary elements to collection of tuples of the index and the element
  */
 fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
     return object : java.lang.Iterable<#(Int, T)> {
