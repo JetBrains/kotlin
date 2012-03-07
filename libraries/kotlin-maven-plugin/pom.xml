@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven-plugin-anno.version>1.4.1</maven-plugin-anno.version>
+        <maven.version>3.0.4</maven.version>
+    </properties>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>kotlin-maven-plugin</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jfrog.maven.annomojo</groupId>
+            <artifactId>maven-plugin-anno</artifactId>
+            <version>${maven-plugin-anno.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>ivy-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.goldin.plugins</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.6</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jfrog.maven.annomojo</groupId>
+                        <artifactId>maven-plugin-tools-anno</artifactId>
+                        <version>${maven-plugin-anno.version}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>download</id>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>jfrog-plugins</id>
+                    <name>jfrog-plugins-dist</name>
+                    <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+
+</project>
