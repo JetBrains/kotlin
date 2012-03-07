@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.jetbrains.jet.codegen.ForTestCompileStdlib;
 import org.jetbrains.jet.parsing.JetParsingTest;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,9 +55,10 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File stdlib = ForTestCompileStdlib.stdlibJarForTests();
             File resultJar = new File(tempDir, "result.jar");
-            KotlinCompiler.exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+            int rv = KotlinCompiler.exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                 "-jar", resultJar.getAbsolutePath(),
                                 "-stdlib", stdlib.getAbsolutePath());
+            Assert.assertEquals("compilation completed with non-zero code", 0, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
                 JarInputStream is = new JarInputStream(fileInputStream);
