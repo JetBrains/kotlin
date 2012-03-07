@@ -328,6 +328,7 @@ public class JavaDescriptorResolver {
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
+        boolean isStatic = psiClass.hasModifierProperty(PsiModifier.STATIC);
         if (psiConstructors.length == 0) {
             // We need to create default constructors for classes and abstract classes.
             // Example:
@@ -338,7 +339,7 @@ public class JavaDescriptorResolver {
                         classData.classDescriptor,
                         Collections.<AnnotationDescriptor>emptyList(),
                         false);
-                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), classData.classDescriptor.getVisibility());
+                constructorDescriptor.initialize(typeParameters, Collections.<ValueParameterDescriptor>emptyList(), classData.classDescriptor.getVisibility(), isStatic);
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
@@ -379,7 +380,7 @@ public class JavaDescriptorResolver {
                     }
                 }
 
-                constructorDescriptor.initialize(typeParameters, valueParameters, classData.classDescriptor.getVisibility());
+                constructorDescriptor.initialize(typeParameters, valueParameters, classData.classDescriptor.getVisibility(), isStatic);
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiClass, constructorDescriptor);
@@ -405,7 +406,7 @@ public class JavaDescriptorResolver {
                     throw new IllegalStateException();
                 }
                 constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors,
-                        resolveVisibilityFromPsiModifiers(psiConstructor));
+                        resolveVisibilityFromPsiModifiers(psiConstructor), isStatic);
                 constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
                 classData.classDescriptor.addConstructor(constructorDescriptor, null);
                 semanticServices.getTrace().record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
