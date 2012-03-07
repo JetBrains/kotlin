@@ -114,7 +114,10 @@ public class BytecodeCompiler {
      * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
     public void moduleToJar ( String module, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
-        env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
+        boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
+        if ( ! success ) {
+            throw new CompileEnvironmentException( compilationError( module ));
+        }
     }
 
     public List<CompilerPlugin> getCompilerPlugins() {
