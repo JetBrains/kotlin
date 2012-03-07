@@ -190,6 +190,8 @@ public class JetTypeMapper {
 
     /**
      * @return Internal name
+     *
+     * @see DescriptorUtils#getFQName(DeclarationDescriptor)
      */
     public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
