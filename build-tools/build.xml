@@ -2,7 +2,7 @@
 
     <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
     <property name="tests-jar"   location="${tests-dir}/out.jar"/>
-    <property name="junit-jar"   location="${basedir}/testlib/lib/junit-4.9.jar"/>
+    <property name="junit-jar"   location="${basedir}/libraries/testlib/lib/junit-4.9.jar"/>
     <property name="failonerror" value="true"/>  <!-- Whether invoking compiled classes should file on error -->
     <property name="use-ivy"     value="false"/> <!-- Whether Ivy should be used to define "kotlin.classpath" and <kotlinc> task -->
                                                  <!-- Override with "-Duse-ivy=true" -->
@@ -61,7 +61,7 @@
                     <antcall target = "zip"/>
                     <verify-exists file="${output}/${output.name}.zip" type="file"/>
 
-                    <delete dir  = "${kotlin-home}" failonerror="true"/>
+                    <delete dir  = "${kotlin-home}" failonerror="false"/>
                     <mkdir  dir  = "${kotlin-home}"/>
                     <unzip  src  = "${output}/${output.name}.zip" dest="${output}"/>
 
@@ -377,20 +377,20 @@
     <macrodef name="testlib-tests">
         <sequential>
             <!-- Dir => Dir -->
-            <kotlinc-dir         src       = "${basedir}/testlib/test"/>
+            <kotlinc-dir         src       = "${basedir}/libraries/testlib/test"/>
             <testlib-junit-tests classpath = "${tests-dir}"/>
 
             <!-- Dir => Jar -->
-            <kotlinc-jar         src       = "${basedir}/testlib/test"/>
+            <kotlinc-jar         src       = "${basedir}/libraries/testlib/test"/>
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Explicit Jar -->
-            <kotlinc-jar         module    = "${basedir}/testlib/module.kt"/>
+            <kotlinc-jar         module    = "${basedir}/libraries/testlib/module.kt"/>
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Default Jar -->
-            <kotlinc-jar         module    = "${basedir}/testlib/module.kt" jar=""/>
-            <move file="${basedir}/testlib/testlib.jar" todir="${tests-dir}"/>
+            <kotlinc-jar         module    = "${basedir}/libraries/testlib/module.kt" jar=""/>
+            <move file="${basedir}/libraries/testlib/testlib.jar" todir="${tests-dir}"/>
             <testlib-junit-tests classpath = "${tests-dir}/testlib.jar"/>
         </sequential>
     </macrodef>
@@ -469,7 +469,7 @@
         <hello-tests/>
         <longer-examples-tests/>
         <module-tests/>
-        <!--<testlib-tests/>-->
+        <testlib-tests/>
         <compilation-fail-test/>
     </target>
 </project>
