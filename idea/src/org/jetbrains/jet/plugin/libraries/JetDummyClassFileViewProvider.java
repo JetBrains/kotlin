@@ -88,7 +88,9 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     public JetFile getPsi(@NotNull Language target) {
-        assert JetLanguage.INSTANCE == target;
+        if (JetLanguage.INSTANCE != target) {
+            return null;
+        }
         return myJetFile;
     }
 
@@ -149,7 +151,9 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     public PsiElement findElementAt(int offset, @NotNull Class<? extends Language> lang) {
-        assert JetLanguage.class == lang;
+        if (JetLanguage.class != lang) {
+            return null;
+        }
         return findElementAt(offset);
     }
 
@@ -161,7 +165,9 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     public PsiReference findReferenceAt(final int offsetInElement, @NotNull final Language language) {
-        assert JetLanguage.INSTANCE == language;
+        if (JetLanguage.INSTANCE != language) {
+            return null;
+        }
         return findReferenceAt(offsetInElement);
     }
 
