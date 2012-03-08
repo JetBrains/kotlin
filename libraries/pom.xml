@@ -79,15 +79,21 @@
                                 <dependencies>
                                     <dependency>
                                         <groupId>ivy.org</groupId>
-                                        <artifactId>bt343</artifactId>
+                                        <artifactId>bt344</artifactId>
                                         <version>latest.lastSuccessful</version>
-                                        <classifier>core/intellij-core</classifier>
+                                        <classifier>kotlin-compiler</classifier>
                                     </dependency>
                                     <dependency>
                                         <groupId>ivy.org</groupId>
                                         <artifactId>bt344</artifactId>
                                         <version>latest.lastSuccessful</version>
                                         <classifier>kotlin-runtime</classifier>
+                                    </dependency>
+                                    <dependency>
+                                        <groupId>ivy.org</groupId>
+                                        <artifactId>bt343</artifactId>
+                                        <version>latest.lastSuccessful</version>
+                                        <classifier>core/intellij-core</classifier>
                                     </dependency>
                                 </dependencies>
                                 <scope>compile</scope>
