@@ -13,16 +13,11 @@
     <properties>
         <junit-version>4.9</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
-        <kotlin-maven-plugin.version>0.2.3.8-beta-8</kotlin-maven-plugin.version>
+        <kotlin-maven-plugin.version>0.2.3.8-beta-9</kotlin-maven-plugin.version>
         <project-root>${project.basedir}/..</project-root>
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
-
-        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <!-- Not to be used manually! Set to "true" by identically named profile, see below. -->
-        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-        <localKotlin>false</localKotlin>
     </properties>
 
     <repositories>
@@ -54,47 +49,6 @@
             <plugins>
                 <plugin>
                     <groupId>com.goldin.plugins</groupId>
-                    <artifactId>ivy-maven-plugin</artifactId>
-                    <version>${kotlin-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>add-ivy-dependencies</id>
-                            <goals>
-                                <goal>ivy</goal>
-                            </goals>
-                            <phase>initialize</phase>
-                            <configuration>
-                                <runIf>{{ ! Boolean.valueOf( localKotlin ) }}</runIf>
-                                <ivyconf>${project-root}/etc/ivyconf.xml</ivyconf>
-                                <dependencies>
-                                    <dependency>
-                                        <groupId>ivy.org</groupId>
-                                        <artifactId>bt344</artifactId>
-                                        <version>latest.lastSuccessful</version>
-                                        <classifier>kotlin-compiler</classifier>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>ivy.org</groupId>
-                                        <artifactId>bt344</artifactId>
-                                        <version>latest.lastSuccessful</version>
-                                        <classifier>kotlin-runtime</classifier>
-                                    </dependency>
-                                    <dependency>
-                                        <groupId>ivy.org</groupId>
-                                        <artifactId>bt343</artifactId>
-                                        <version>latest.lastSuccessful</version>
-                                        <classifier>core/intellij-core</classifier>
-                                    </dependency>
-                                </dependencies>
-                                <scope>compile</scope>
-                                <verbose>true</verbose>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.goldin.plugins</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin-maven-plugin.version}</version>
                     <executions>
@@ -106,6 +60,9 @@
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                      <verbose>false</verbose>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -129,14 +86,14 @@
         </plugins>
     </build>
 
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- Run "mvn clean install -PlocalKotlin" to use locally built Kotlin jars in ${kotlin-sdk}/lib -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
     <profiles>
       <profile>
         <id>localKotlin</id>
-
-        <properties>
-          <localKotlin>true</localKotlin>
-        </properties>
-
         <build>
           <pluginManagement>
             <plugins>
@@ -152,36 +109,15 @@
                       <jar>${kotlin-sdk}/lib/intellij-core.jar</jar>
                       <jar>${kotlin-sdk}/lib/picocontainer.jar</jar>
                       <jar>${kotlin-sdk}/lib/trove4j.jar</jar>
+                      <jar>${kotlin-sdk}/lib/guava-11.0.1.jar</jar>
+                      <jar>${kotlin-sdk}/lib/asm-commons.jar</jar>
+                      <jar>${kotlin-sdk}/lib/asm.jar</jar>
                     </kotlinJars>
                   </configuration>
               </plugin>
             </plugins>
           </pluginManagement>
         </build>
-
-        <dependencies>
-          <dependency>
-              <groupId>org.jetbrains.kotlin</groupId>
-              <artifactId>kotlin-compiler</artifactId>
-              <version>${kotlin-compiler.version}</version>
-              <scope>system</scope>
-              <systemPath>${kotlin-sdk}/lib/kotlin-compiler.jar</systemPath>
-          </dependency>
-          <dependency>
-              <groupId>org.jetbrains.kotlin</groupId>
-              <artifactId>kotlin-runtime</artifactId>
-              <version>${kotlin-compiler.version}</version>
-              <scope>system</scope>
-              <systemPath>${kotlin-sdk}/lib/kotlin-runtime.jar</systemPath>
-          </dependency>
-          <dependency>
-              <groupId>org.jetbrains.kotlin</groupId>
-              <artifactId>intellij-core</artifactId>
-              <version>${kotlin-compiler.version}</version>
-              <scope>system</scope>
-              <systemPath>${kotlin-sdk}/lib/intellij-core.jar</systemPath>
-          </dependency>
-        </dependencies>
       </profile>
     </profiles>
 
