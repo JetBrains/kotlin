@@ -1,0 +1,10 @@
+kotlin
+kotlin.concurrent
+kotlin.dom
+kotlin.io
+kotlin.math
+kotlin.modules
+kotlin.properties
+kotlin.test
+kotlin.util
+org.jetbrains.kotlin.support
