@@ -94,10 +94,19 @@ public class TaskPrioritizers {
             }
             if (variable != null) {
                 JetType outType = variable.getType();
-                if (outType != null && JetStandardClasses.isFunctionType(outType)) {
-                    VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
-                    if ((functionDescriptor.getReceiverParameter().exists()) == receiverNeeded) {
-                        functions.add(functionDescriptor);
+                if (outType != null ) {
+                    if ( JetStandardClasses.isFunctionType(outType)) {
+                        // It's a function literal.
+                        VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
+                        if ((functionDescriptor.getReceiverParameter().exists()) == receiverNeeded) {
+                            functions.add(functionDescriptor);
+                        }
+                    } else {
+                        // It's a object.. we can invoke it if it defines an 'invoke' method.
+                        for( FunctionDescriptor f : outType.getMemberScope().getFunctions("invoke") ) {
+                            VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable, f);
+                            functions.add(functionDescriptor);
+                        }
                     }
                 }
             }

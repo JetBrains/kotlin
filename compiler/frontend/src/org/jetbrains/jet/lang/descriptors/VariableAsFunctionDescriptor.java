@@ -34,15 +34,40 @@ public class VariableAsFunctionDescriptor extends FunctionDescriptorImpl {
         return result;
     }
 
+    public static VariableAsFunctionDescriptor create(@NotNull VariableDescriptor variableDescriptor, FunctionDescriptor actual) {
+        JetType outType = variableDescriptor.getType();
+        assert outType != null;
+        VariableAsFunctionDescriptor result = new VariableAsFunctionDescriptor(variableDescriptor, actual);
+        result.initialize(null,
+                          variableDescriptor.getExpectedThisObject(),
+                          actual.getTypeParameters(),
+                          actual.getValueParameters(),
+                          actual.getReturnType(),
+                          actual.getModality(),
+                          actual.getVisibility());
+        return result;
+    }
+
+
     private final VariableDescriptor variableDescriptor;
+    private final FunctionDescriptor functionDescriptor;
 
     private VariableAsFunctionDescriptor(VariableDescriptor variableDescriptor) {
+        this(variableDescriptor, null);
+    }
+
+    private VariableAsFunctionDescriptor(VariableDescriptor variableDescriptor, FunctionDescriptor functionDescriptor) {
         super(variableDescriptor.getContainingDeclaration(), Collections.<AnnotationDescriptor>emptyList(), variableDescriptor.getName(), Kind.DECLARATION);
         this.variableDescriptor = variableDescriptor;
+        this.functionDescriptor = functionDescriptor;
     }
 
     public VariableDescriptor getVariableDescriptor() {
         return variableDescriptor;
+    }
+
+    public FunctionDescriptor getFunctionDescriptor() {
+        return functionDescriptor;
     }
 
     @NotNull
