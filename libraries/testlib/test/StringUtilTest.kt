@@ -10,7 +10,7 @@ class StringUtilTest() : TestCase() {
 
     fun testToRegex() {
         val re = """foo""".toRegex()
-        val list = re.split("hellofoobar").filterNulls()
+        val list = re.split("hellofoobar").filterNotNull()
         assertEquals(arrayList("hello", "bar"), list)
     }
 }

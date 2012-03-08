@@ -55,7 +55,7 @@ class KDocConfig() {
      */
     fun resolveLink(packageName: String): String {
         // TODO should be able to do something like
-        // for (e in packageUrls.filterNulls()) {
+        // for (e in packageUrls.filterNotNull()) {
         val entrySet = packagePrefixToUrls.entrySet()
         if (entrySet != null) {
             for (e in entrySet) {
