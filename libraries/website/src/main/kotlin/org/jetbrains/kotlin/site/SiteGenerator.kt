@@ -18,15 +18,22 @@ class SiteGenerator(val sourceDir: File, val outputDir: File) : Runnable {
             if (it.isFile()) {
                 var relativePath = sourceDir.relativePath(it)
                 println("Processing ${relativePath}")
-                var text = it.readText()
+                var output: String? = null
                 if (it.extension == "md") {
-                    text = markdownProcessor.markdownToHtml(text, linkRendered) ?: ""
+                    val text = it.readText()
+                    output = markdownProcessor.markdownToHtml(text, linkRendered) ?: ""
                     relativePath = relativePath.trimTrailing(it.extension) + "html"
+                } else if (it.extension == "html") {
+                    output = it.readText()
                 }
-                text = layout(relativePath, it, text)
                 val outFile = File(outputDir, relativePath)
                 outFile.directory.mkdirs()
-                outFile.writeText(text)
+                if (output != null) {
+                    val text = layout(relativePath, it, output.sure())
+                    outFile.writeText(text)
+                } else {
+                    it.copyTo(outFile)
+                }
             }
         }
     }

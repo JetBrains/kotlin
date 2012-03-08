@@ -4,7 +4,7 @@ Welcome to [Kotlin](http://www.jetbrains.com/kotlin)!
 
 Some handy links
 
- * [API Docs](apidocs/index.html)
+ * [API Docs](versions/snapshot/apidocs/index.html)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [Web Demo](http://kotlin-demo.jetbrains.com/)
  * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)

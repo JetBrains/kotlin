@@ -24,6 +24,49 @@
             <artifactId>pegdown</artifactId>
             <version>${pegdown.version}</version>
         </dependency>
+
+        <!-- add the kdoc dependency for generating kdoc -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kdoc</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/picocontainer.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/trove4j.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>11.0.1</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/guava-11.0.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/asm-commons.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${kotlin-sdk}/lib/asm.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
@@ -35,35 +78,6 @@
             <plugin>
                 <groupId>com.goldin.plugins</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>compile-kotlin-sources</id>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <docOutput>${project.basedir}/target/site/apidocs</docOutput>
-                            <sources>
-                                <src>${project.basedir}/../stdlib/src</src>
-                                <src>${project.basedir}/../kunit/src</src>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <artifactId>kdoc</artifactId>
-                        <version>1.0-SNAPSHOT</version>
-                    </dependency>
-
-                    <!-- TODO not sure why I need to add the transitive dependencies too? -->
-                    <dependency>
-                        <groupId>org.pegdown</groupId>
-                        <artifactId>pegdown</artifactId>
-                        <version>${pegdown.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
 
