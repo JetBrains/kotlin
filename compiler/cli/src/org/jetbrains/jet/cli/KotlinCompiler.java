@@ -75,13 +75,16 @@ public class KotlinCompiler {
         public boolean transformNamesToJava;
     }
 
-    private static void usage(PrintStream target) {
-        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+    public static void main(String... args) {
+        doMain(new KotlinCompiler(), args);
     }
 
-    public static void main(String... args) {
+    /**
+     * Useful main for derived command line tools
+     */
+    public static void doMain(KotlinCompiler compiler, String[] args) {
         try {
-            int rc = new KotlinCompiler().exec(args);
+            int rc = compiler.exec(args);
             if (rc != 0) {
                 System.err.println("exec() finished with " + rc + " return code");
                 System.exit(rc);
@@ -97,25 +100,22 @@ public class KotlinCompiler {
     }
 
     public int exec(PrintStream errStream, String... args) {
-        System.setProperty("java.awt.headless", "true");
-        Arguments arguments = new Arguments();
-        try {
-            Args.parse(arguments, args);
-        }
-        catch (IllegalArgumentException e) {
-            usage(System.err);
+        Arguments arguments = createArguments();
+        if (!parseArguments(errStream, arguments, args)) {
             return 1;
         }
-        catch (Throwable t) {
-            // Always use tags
-            errStream.println(MessageRenderer.TAGS.renderException(t));
-            return 1;
-        }
+        return exec(errStream, arguments);
+    }
 
+    /**
+     * Executes the compiler on the parsed arguments
+     */
+    public int exec(PrintStream errStream, Arguments arguments) {
         if (arguments.help) {
             usage(errStream);
             return 0;
         }
+        System.setProperty("java.awt.headless", "true");
 
         FileNameTransformer fileNameTransformer = arguments.transformNamesToJava
                                                   ? ANY_EXTENSION_TO_JAVA
@@ -141,6 +141,35 @@ public class KotlinCompiler {
         finally {
             environment.dispose();
         }
+    }
+
+    /**
+     * Returns true if the arguments can be parsed correctly
+     */
+    protected boolean parseArguments(PrintStream errStream, Arguments arguments, String[] args) {
+        try {
+            Args.parse(arguments, args);
+            return true;
+        }
+        catch (IllegalArgumentException e) {
+            usage(System.err);
+        }
+        catch (Throwable t) {
+            // Always use tags
+            errStream.println(MessageRenderer.TAGS.renderException(t));
+        }
+        return false;
+    }
+
+    protected void usage(PrintStream target) {
+        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+    }
+
+    /**
+     * Allow derived classes to add additional command line arguments
+     */
+    protected Arguments createArguments() {
+        return new Arguments();
     }
 
     /**
