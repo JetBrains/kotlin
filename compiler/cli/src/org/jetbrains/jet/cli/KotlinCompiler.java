@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Args;
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.*;
 
@@ -36,44 +35,6 @@ public class KotlinCompiler {
             return fileName.replaceFirst("\\.\\w+$", ".java");
         }
     };
-
-    public static class Arguments {
-        @Argument(value = "output", description = "output directory")
-        public String outputDir;
-
-        @Argument(value = "docOutput", description = "KDoc output directory")
-        public String docOutputDir;
-
-        @Argument(value = "jar", description = "jar file name")
-        public String jar;
-
-        @Argument(value = "src", description = "source file or directory")
-        public String src;
-
-        @Argument(value = "module", description = "module to compile")
-        public String module;
-
-        @Argument(value = "classpath", description = "classpath to use when compiling")
-        public String classpath;
-
-        @Argument(value = "includeRuntime", description = "include Kotlin runtime in to resulting jar")
-        public boolean includeRuntime;
-
-        @Argument(value = "stdlib", description = "Path to the stdlib.jar")
-        public String stdlib;
-
-        @Argument(value = "help", alias = "h", description = "show help")
-        public boolean help;
-
-        @Argument(value = "stubs", description = "Compile stubs: ignore function bodies")
-        public boolean stubs;
-
-        @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
-        public boolean tags;
-
-        @Argument(value = "transformNamesToJava", description = "Transform Kotlin file names to *.java. This option is needed for compiling kotlinized Java library headers")
-        public boolean transformNamesToJava;
-    }
 
     public static void main(String... args) {
         doMain(new KotlinCompiler(), args);
@@ -100,7 +61,7 @@ public class KotlinCompiler {
     }
 
     public int exec(PrintStream errStream, String... args) {
-        Arguments arguments = createArguments();
+        CompilerArguments arguments = createArguments();
         if (!parseArguments(errStream, arguments, args)) {
             return 1;
         }
@@ -110,7 +71,7 @@ public class KotlinCompiler {
     /**
      * Executes the compiler on the parsed arguments
      */
-    public int exec(PrintStream errStream, Arguments arguments) {
+    public int exec(PrintStream errStream, CompilerArguments arguments) {
         if (arguments.help) {
             usage(errStream);
             return 0;
@@ -146,7 +107,7 @@ public class KotlinCompiler {
     /**
      * Returns true if the arguments can be parsed correctly
      */
-    protected boolean parseArguments(PrintStream errStream, Arguments arguments, String[] args) {
+    protected boolean parseArguments(PrintStream errStream, CompilerArguments arguments, String[] args) {
         try {
             Args.parse(arguments, args);
             return true;
@@ -168,15 +129,15 @@ public class KotlinCompiler {
     /**
      * Allow derived classes to add additional command line arguments
      */
-    protected Arguments createArguments() {
-        return new Arguments();
+    protected CompilerArguments createArguments() {
+        return new CompilerArguments();
     }
 
     /**
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    protected void configureEnvironment(CompileEnvironment environment, Arguments arguments, PrintStream errStream) {
+    protected void configureEnvironment(CompileEnvironment environment, CompilerArguments arguments, PrintStream errStream) {
         environment.setIgnoreErrors(false);
         environment.setErrorStream(errStream);
 
