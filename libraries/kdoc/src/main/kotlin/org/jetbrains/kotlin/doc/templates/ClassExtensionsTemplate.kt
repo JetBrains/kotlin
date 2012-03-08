@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.doc.model.KProperty
 class ClassExtensionsTemplate(m: KModel, p: KPackage, k: KClass,
         val functions: Collection<KFunction>, val properties: Collection<KProperty>) : ClassTemplate(m, p, k) {
 
+    protected override fun relativePrefix(): String = "${pkg.nameAsRelativePath}${klass.pkg.nameAsRelativePath}"
+
     override fun pageTitle(): String = "${klass.name} Extensions fom ${pkg.name} (${model.title})"
 
     override fun printBody(): Unit {
