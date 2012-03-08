@@ -17,17 +17,6 @@ private fun locked<T>(lock : Lock, body : () -> T) : T {
 }
 
 /**
- * Checks boolean value which should be true. If it is false, throws Assertion Error
- *
- * @param value value to be checked
- */
-public fun assert(value : Boolean) {
-    if (!value) {
-        throw AssertionError()
-    }
-}
-
-/**
  * Returns list containing all elements which first contains and second does not.
  */
 public fun listDifference<T>(first : List<T>, second : List<T>) : List<T> {
