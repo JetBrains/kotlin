@@ -310,7 +310,7 @@
                 <then>
                     <!-- Batch tests -->
                     <if>
-                        <matches string="@{classpath}" pattern="/.jar$"/>
+                        <matches string="@{classpath}" pattern="\.jar$"/>
                         <then>
                             <!-- Batch tests from a jar -->
                             <echo>Running JUnit: classpath = "@{classpath}" (Jar)</echo>
@@ -488,7 +488,7 @@
         <hello-tests/>
         <longer-examples-tests/>
         <module-tests/>
-        <testlib-tests/>
+        <!--<testlib-tests/>-->
         <compilation-fail-test/>
     </target>
 </project>
