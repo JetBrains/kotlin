@@ -37,9 +37,6 @@ public class KotlinCompiler {
         }
     };
 
-    private KotlinCompiler() {
-    }
-
     public static class Arguments {
         @Argument(value = "output", description = "output directory")
         public String outputDir;
@@ -84,7 +81,7 @@ public class KotlinCompiler {
 
     public static void main(String... args) {
         try {
-            int rc = exec(args);
+            int rc = new KotlinCompiler().exec(args);
             if (rc != 0) {
                 System.err.println("exec() finished with " + rc + " return code");
                 System.exit(rc);
@@ -95,11 +92,11 @@ public class KotlinCompiler {
         }
     }
 
-    public static int exec(String... args) {
+    public int exec(String... args) {
         return exec(System.out, args);
     }
 
-    public static int exec(PrintStream errStream, String... args) {
+    public int exec(PrintStream errStream, String... args) {
         System.setProperty("java.awt.headless", "true");
         Arguments arguments = new Arguments();
         try {
@@ -126,22 +123,7 @@ public class KotlinCompiler {
         MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
         CompileEnvironment environment = new CompileEnvironment(fileNameTransformer, messageRenderer);
         try {
-            environment.setIgnoreErrors(false);
-            environment.setErrorStream(errStream);
-
-            environment.setStubs(arguments.stubs);
-
-            if (arguments.docOutputDir != null) {
-                KDocLoader.install(arguments.docOutputDir, environment.getMyEnvironment());
-            }
-
-            if (arguments.stdlib != null) {
-                environment.setStdlib(arguments.stdlib);
-            }
-
-            if (arguments.classpath != null) {
-                environment.addToClasspath(arguments.classpath);
-            }
+            configureEnvironment(environment, arguments, errStream);
 
             boolean noErrors;
             if (arguments.module != null) {
@@ -150,7 +132,6 @@ public class KotlinCompiler {
             else {
                 noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
-
             return noErrors ? 0 : 1;
         }
         catch (Throwable t) {
@@ -159,6 +140,29 @@ public class KotlinCompiler {
         }
         finally {
             environment.dispose();
+        }
+    }
+
+    /**
+     * Strategy method to configure the environment, allowing compiler
+     * based tools to customise their own plugins
+     */
+    protected void configureEnvironment(CompileEnvironment environment, Arguments arguments, PrintStream errStream) {
+        environment.setIgnoreErrors(false);
+        environment.setErrorStream(errStream);
+
+        environment.setStubs(arguments.stubs);
+
+        if (arguments.docOutputDir != null) {
+            KDocLoader.install(arguments.docOutputDir, environment.getMyEnvironment());
+        }
+
+        if (arguments.stdlib != null) {
+            environment.setStdlib(arguments.stdlib);
+        }
+
+        if (arguments.classpath != null) {
+            environment.addToClasspath(arguments.classpath);
         }
     }
 }
