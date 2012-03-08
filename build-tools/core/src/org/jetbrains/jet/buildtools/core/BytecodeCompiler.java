@@ -22,6 +22,7 @@ import org.jetbrains.jet.compiler.CompilerPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
 
 
 /**
@@ -67,7 +68,8 @@ public class BytecodeCompiler {
      * @return compilation error message
      */
     private String compilationError ( String source ) {
-        return String.format( "[%s] compilation failed, see \"ERROR:\" messages above for more details.", source );
+        return String.format( "[%s] compilation failed, see \"ERROR:\" messages above for more details.",
+                              new File( source ).getAbsolutePath());
     }
 
 
