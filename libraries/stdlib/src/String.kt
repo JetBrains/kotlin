@@ -97,6 +97,22 @@ inline fun String(stringBuilder : java.lang.StringBuilder) = java.lang.String(st
 /** Returns true if the string is not null and not empty */
 inline fun String?.notEmpty() : Boolean = this != null && this.length() > 0
 
+inline fun String.toByteArray(encoding: String?=null):ByteArray {
+    if(encoding==null) {
+        return (this as java.lang.String).getBytes().sure()
+    } else {
+        return (this as java.lang.String).getBytes(encoding).sure()
+    }
+}
+inline fun String.toByteArray(encoding: java.nio.charset.Charset):ByteArray =  (this as java.lang.String).getBytes(encoding).sure()
+
+inline fun String.toBoolean() = java.lang.Boolean.parseBoolean(this).sure()
+inline fun String.toShort() = java.lang.Short.parseShort(this).sure()
+inline fun String.toInt() = java.lang.Integer.parseInt(this).sure()
+inline fun String.toLong() = java.lang.Long.parseLong(this).sure()
+inline fun String.toFloat() = java.lang.Float.parseFloat(this).sure()
+inline fun String.toDouble() = java.lang.Double.parseDouble(this).sure()
+
 /**
 Iterator for characters of given CharSequence
 */
