@@ -108,5 +108,5 @@ inline fun <T> Array<T>.notEmpty() : Boolean = !this.isEmpty()
 inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
 
 /** Returns the array if its not null or else returns an empty array */
-inline fun <T> Array<T?>?.orEmpty() : Array<T?> = if (this != null) this else array<T?>()
+inline fun <T> Array<T>?.orEmpty() : Array<T> = if (this != null) this else array<T>()
 
