@@ -13,11 +13,16 @@
     <properties>
         <junit-version>4.9</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
-        <kotlin-maven-plugin.version>0.2.3.8-beta-7</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project.basedir}/../../dist/kotlinc</kotlin-sdk>
-        <pegdown.version>1.1.0</pegdown.version>
+        <kotlin-maven-plugin.version>0.2.3.8-beta-8</kotlin-maven-plugin.version>
         <project-root>${project.basedir}/..</project-root>
+        <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
+        <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- Not to be used manually! Set to "true" by identically named profile, see below. -->
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <localKotlin>false</localKotlin>
     </properties>
 
     <repositories>
@@ -35,15 +40,6 @@
     </pluginRepositories>
 
     <dependencies>
-        <!-- TODO a dirty hack until we have the artifacts in a mvn repo -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-compiler</artifactId>
-            <version>${kotlin-compiler.version}</version>
-            <scope>system</scope>
-            <systemPath>${kotlin-sdk}/lib/kotlin-compiler.jar</systemPath>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -51,6 +47,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
     <modules>
         <module>stdlib</module>
@@ -77,6 +74,7 @@
                             </goals>
                             <phase>initialize</phase>
                             <configuration>
+                                <runIf>{{ ! Boolean.valueOf( localKotlin ) }}</runIf>
                                 <ivyconf>${project-root}/etc/ivyconf.xml</ivyconf>
                                 <dependencies>
                                     <dependency>
@@ -108,7 +106,7 @@
                             <id>compile-kotlin-sources</id>
                             <goals>
                                 <goal>compile</goal>
-                                <goal>testCompile</goal>
+                                <!--<goal>testCompile</goal>-->
                             </goals>
                         </execution>
                     </executions>
@@ -134,5 +132,61 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+      <profile>
+        <id>localKotlin</id>
+
+        <properties>
+          <localKotlin>true</localKotlin>
+        </properties>
+
+        <build>
+          <pluginManagement>
+            <plugins>
+              <plugin>
+                  <groupId>com.goldin.plugins</groupId>
+                  <artifactId>kotlin-maven-plugin</artifactId>
+                  <version>${kotlin-maven-plugin.version}</version>
+                  <configuration>
+                    <kotlinJars>
+                      <jar>${kotlin-sdk}/lib/kotlin-build-tools.jar</jar>
+                      <jar>${kotlin-sdk}/lib/kotlin-compiler.jar</jar>
+                      <jar>${kotlin-sdk}/lib/kotlin-runtime.jar</jar>
+                      <jar>${kotlin-sdk}/lib/intellij-core.jar</jar>
+                      <jar>${kotlin-sdk}/lib/picocontainer.jar</jar>
+                      <jar>${kotlin-sdk}/lib/trove4j.jar</jar>
+                    </kotlinJars>
+                  </configuration>
+              </plugin>
+            </plugins>
+          </pluginManagement>
+        </build>
+
+        <dependencies>
+          <dependency>
+              <groupId>org.jetbrains.kotlin</groupId>
+              <artifactId>kotlin-compiler</artifactId>
+              <version>${kotlin-compiler.version}</version>
+              <scope>system</scope>
+              <systemPath>${kotlin-sdk}/lib/kotlin-compiler.jar</systemPath>
+          </dependency>
+          <dependency>
+              <groupId>org.jetbrains.kotlin</groupId>
+              <artifactId>kotlin-runtime</artifactId>
+              <version>${kotlin-compiler.version}</version>
+              <scope>system</scope>
+              <systemPath>${kotlin-sdk}/lib/kotlin-runtime.jar</systemPath>
+          </dependency>
+          <dependency>
+              <groupId>org.jetbrains.kotlin</groupId>
+              <artifactId>intellij-core</artifactId>
+              <version>${kotlin-compiler.version}</version>
+              <scope>system</scope>
+              <systemPath>${kotlin-sdk}/lib/intellij-core.jar</systemPath>
+          </dependency>
+        </dependencies>
+      </profile>
+    </profiles>
 
 </project>
