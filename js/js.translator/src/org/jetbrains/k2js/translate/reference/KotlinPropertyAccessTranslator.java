@@ -53,7 +53,6 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        //TODO: check for duplication
         PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
         assert getter != null : "Getter for kotlin properties should bot be null.";
         return callBuilderForAccessor()
@@ -64,7 +63,6 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        //TODO: check for duplication
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         assert setter != null : "Getter for kotlin properties should bot be null.";
         return callBuilderForAccessor()
