@@ -102,8 +102,8 @@ inline val ByteArray.inputStream : ByteArrayInputStream
 
 inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
 
-inline fun ByteArray.toString(encoding: String?):String {
-    if(encoding==null) {
+inline fun ByteArray.toString(encoding: String?): String {
+    if (encoding != null) {
         return String(this, encoding)
     } else {
         return String(this)
