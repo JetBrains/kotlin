@@ -45,18 +45,17 @@ import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import javax.swing.*;
 import java.util.Collections;
-import java.util.List;
 
 public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMarker {
     private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.asJava.JetLightClass");
@@ -184,12 +183,14 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 }
             }
         };
-        
-        List<JetFile> files = Collections.singletonList(file);
-//todo:
-//        final BindingContext context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(files);
-        final BindingContext context = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
-        state.compileCorrectFiles(context, files, CompilationErrorHandler.THROW_EXCEPTION, true);
+
+
+        // The context must reflect _all files in the module_. not only the current file
+        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
+        // must be loaded from .class files
+        BindingContext context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(WholeProjectAnalyzerFacade.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file));
+
+        state.compileCorrectFiles(context, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
         state.getFactory().files();
 
         return answer;
