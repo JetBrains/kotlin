@@ -21,7 +21,7 @@ inline fun assert(value:Boolean):Unit {
 * Throws an [[AssertionError]] with specified `message` if the `value` is false
 * and runtime assertions have been enabled on the JVM using the `-ea` JVM option.
 */
-inline fun assert<T>(value:Boolean, message:T) {
+inline fun assert(value:Boolean, message:Any) {
     if(Assertions._ENABLED) {
         if(!value) {
             throw AssertionError(message);
@@ -39,10 +39,30 @@ inline fun require(value:Boolean):Unit {
 }
 
 /**
-* Throws an [[IllegalArgumentException]] with specified `message` if the `value` is false.
-*/
-inline fun require<T>(value:Boolean, message:T) {
+ * Throws an [[IllegalArgumentException]] with specified `message` if the `value` is false.
+ */
+inline fun require(value:Boolean, message:Any):Unit {
     if(!value) {
         throw IllegalArgumentException(message.toString());
     }
 }
+
+/**
+ * Throws an [[IllegalStateException]] if the `value` is false.
+ */
+inline fun check(value:Boolean):Unit {
+    if(!value) {
+        throw IllegalStateException();
+    }
+}
+
+/**
+ * Throws an [[IllegalStateException]] with specified `message` if the `value` is false.
+ */
+inline fun check(value:Boolean, message:Any):Unit {
+    if(!value) {
+        throw IllegalStateException(message.toString());
+    }
+}
+
+
