@@ -73,7 +73,7 @@
     </echoxml>
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
-    <echo message="##teamcity[buildStatus text='${plugin.filename} verified against ${idea.version}" />
+    <echo message="##teamcity[buildStatus text='${plugin.filename} has been verified against ${idea.version}']" />
     <echo message="##teamcity[publishArtifacts '${plugin.path}']" />
     <echo message="##teamcity[publishArtifacts '${updatePlugins.xml}']" />
   </target>
