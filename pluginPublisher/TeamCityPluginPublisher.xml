@@ -1,0 +1,80 @@
+<project name="Plugin Publisher" default="verifyAndPublish">
+  <property name="idea.download.page.url" value="http://confluence.jetbrains.com/display/IDEADEV/IDEA+11.1+EAP"/>
+  <property name="plugin.repository.url" value="http://www.jetbrains.com/kotlin/eap-plugin-repository"/>
+
+  <property name="updatePlugins.xml" value="updatePlugins.xml"/>
+  <property name="jdk16.home" value="${java.home}"/>
+
+  <target name="verifyAndPublish">
+    <!-- IDEA Download URL -> ${download.url} -->
+    <loadresource property="download.url">
+      <url url="${idea.download.page.url}"/>
+      <filterchain>
+        <tokenfilter>
+          <filetokenizer/>
+          <replaceregex pattern="^(.*)(http://download\.jetbrains\.com/idea/ideaIC\-\d+\.\d+\.tar\.gz)(.*)$"
+                        replace="\2" flags="s"/>
+        </tokenfilter>
+      </filterchain>
+    </loadresource>
+
+    <!-- Download and extract IDEA -->
+    <echo message="Downloading IDEA from ${download.url}"/>
+    <get src="${download.url}" dest="ideaIC.tar.gz" verbose="on" usetimestamp="true"/>
+    <untar src="ideaIC.tar.gz" dest="${basedir}" overwrite="on" compression="gzip"/>
+
+    <!-- Get extracted IDEA directory -->
+    <pathconvert property="idea.dir">
+      <dirset dir="${basedir}">
+        <include name="idea-IC-*"/>
+      </dirset>
+    </pathconvert>
+    <basename property="idea.version" file="${idea.dir}"/>
+
+    <echo message="IDEA version is ${idea.version} located ${idea.dir}"/>
+
+    <!-- Get kotlin plugin -->
+    <pathconvert property="plugin.path">
+      <fileset dir="${basedir}">
+        <include name="kotlin-plugin-*"/>
+      </fileset>
+    </pathconvert>
+    <basename property="plugin.filename" file="${plugin.path}"/>
+    <loadresource property="plugin.version">
+      <string value="${plugin.filename}"/>
+      <filterchain>
+        <tokenfilter>
+          <filetokenizer/>
+          <replaceregex pattern="^kotlin-plugin-(\d+\.\d+\.\d+).zip$" replace="\1" flags="s"/>
+        </tokenfilter>
+      </filterchain>
+    </loadresource>
+
+    <echo message="Kotlin Plugin version is ${plugin.version} located ${plugin.path}"/>
+
+    <!-- Get plugin verifier -->
+    <delete dir="PluginVerifier" failonerror="false" />
+    <mkdir dir="PluginVerifier" />
+    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier" />
+
+    <!-- Run plugin verifier -->
+    <java fork="true" failonerror="true" jar="PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar">
+        <arg value="-r" />
+        <arg value="${jdk16.home}" />
+        <arg value="${plugin.path}" />
+        <arg value="${idea.dir}" />
+    </java>
+
+    <!-- Make IDEA custom repository xml -->
+    <echoxml file="${updatePlugins.xml}">
+      <plugins>
+        <plugin id="Kotlin" url="${plugin.repository.url}/${plugin.filename}" version="${plugin.version}"/>
+      </plugins>
+    </echoxml>
+
+    <!-- Everything is ok, publish plugin and xml descriptor -->
+    <echo message="##teamcity[buildStatus text='${plugin.filename} verified against ${idea.version}" />
+    <echo message="##teamcity[publishArtifacts '${plugin.path}']" />
+    <echo message="##teamcity[publishArtifacts '${updatePlugins.xml}']" />
+  </target>
+</project>
