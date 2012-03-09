@@ -4,15 +4,15 @@ package kt456
 
 class A() {
     val i: Int
-    get() : Int <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{  //no error
-    }<!>
+    get() : Int {  //no error
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
 
 //more tests
 class B() {
     val i: Int
-    get() <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>{  //no error
-    }<!>
+    get() {  //no error
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
 
 class C() {
@@ -22,9 +22,9 @@ class C() {
             doSmth()
         }
         finally {
-            <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>doSmth()<!>
+            doSmth()
         }
-    }
+    <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
 
 fun doSmth() {}

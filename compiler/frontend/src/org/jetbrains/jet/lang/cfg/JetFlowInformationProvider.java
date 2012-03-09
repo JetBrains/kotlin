@@ -149,7 +149,7 @@ public class JetFlowInformationProvider {
         }
     }
     
-    public void checkDefiniteReturn(@NotNull JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
+    public void checkDefiniteReturn(@NotNull final JetDeclarationWithBody function, final @NotNull JetType expectedReturnType) {
         assert function instanceof JetDeclaration;
 
         JetExpression bodyExpression = function.getBodyExpression();
@@ -172,6 +172,7 @@ public class JetFlowInformationProvider {
             trace.report(UNREACHABLE_CODE.on(element));
         }
 
+        final boolean[] noReturnError = new boolean[] { false };
         for (JetElement returnedExpression : returnedExpressions) {
             returnedExpression.accept(new JetVisitorVoid() {
                 @Override
@@ -184,10 +185,13 @@ public class JetFlowInformationProvider {
                 @Override
                 public void visitExpression(JetExpression expression) {
                     if (blockBody && expectedReturnType != NO_EXPECTED_TYPE && !JetStandardClasses.isUnit(expectedReturnType) && !rootUnreachableElements.contains(expression)) {
-                        trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(expression));
+                        noReturnError[0] = true;
                     }
                 }
             });
+        }
+        if (noReturnError[0]) {
+            trace.report(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY.on(function));
         }
     }
 

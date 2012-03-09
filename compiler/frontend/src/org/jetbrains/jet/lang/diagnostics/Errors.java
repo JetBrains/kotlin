@@ -232,7 +232,18 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR, "Expecting a function type, but found {0}");
 
     DiagnosticFactory<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory.create(ERROR, "Returns are not allowed for functions with expression body. Use block body in '{...}'");
-    DiagnosticFactory<JetExpression> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')");
+    DiagnosticFactory<JetDeclarationWithBody> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')", new PositioningStrategy<JetDeclarationWithBody>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
+            JetExpression bodyExpression = element.getBodyExpression();
+            if (!(bodyExpression instanceof JetBlockExpression)) return Collections.emptyList();
+            JetBlockExpression blockExpression = (JetBlockExpression) bodyExpression;
+            TextRange lastBracketRange = blockExpression.getLastBracketRange();
+            if (lastBracketRange == null) return Collections.emptyList();
+            return markRange(lastBracketRange);
+        }
+    });
     DiagnosticFactory1<JetExpression, JetType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "This function must return a value of type {0}");
     DiagnosticFactory1<JetExpression, JetType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}");
     DiagnosticFactory1<JetBinaryExpression, JetType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value");

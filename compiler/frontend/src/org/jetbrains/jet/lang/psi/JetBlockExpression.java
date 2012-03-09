@@ -16,8 +16,13 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,5 +48,11 @@ public class JetBlockExpression extends JetExpression implements JetStatementExp
     @NotNull
     public List<JetElement> getStatements() {
         return Arrays.asList(findChildrenByClass(JetElement.class));
+    }
+
+    @Nullable
+    public TextRange getLastBracketRange() {
+        PsiElement rBrace = findChildByType(JetTokens.RBRACE);
+        return rBrace != null ? rBrace.getTextRange() : null;
     }
 }

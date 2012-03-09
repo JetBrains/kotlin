@@ -42,18 +42,18 @@ fun t3() : Int {
         doSmth(2)
     }
     finally {
-        <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>doSmth(3)<!>
+        doSmth(3)
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun t4() : Int {
     try {
         return 1
     }
     catch (e: UnsupportedOperationException) {
-        <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>doSmth(2)<!>
+        doSmth(2)
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun t5() : Int {
     try {
@@ -84,9 +84,9 @@ fun t7() : Int {
         return 2
     }
     finally {
-        <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>doSmth(3)<!>
+        doSmth(3)
     }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 fun doSmth(<!UNUSED_PARAMETER!>i<!>: Int) {
 }

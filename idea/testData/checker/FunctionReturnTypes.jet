@@ -26,12 +26,12 @@ fun unitShort() : Unit = #()
 fun unitShortConv() : Unit = <error>1</error>
 fun unitShortNull() : Unit = <error>null</error>
 
-fun intEmpty() : Int <error>{}</error>
+fun intEmpty() : Int {<error>}</error>
 fun intShortInfer() = 1
 fun intShort() : Int = 1
 //fun intBlockInfer()  {1}
 fun intBlock() : Int {return 1}
-fun intBlock1() : Int {<error>1</error>}
+fun intBlock1() : Int {<warning>1</warning><error>}</error>
 
 fun intString(): Int = <error>"s"</error>
 fun intFunctionLiteral(): Int = <error>{ 10 }</error>
@@ -42,8 +42,8 @@ fun blockReturnValueTypeMatch() : Int {return 1}
 fun blockReturnValueTypeMismatchUnit() : Int {return <error>#()</error>}
 
 fun blockAndAndMismatch() : Int {
-  <error>true && false</error>
-}
+  true && false
+<error>}</error>
 fun blockAndAndMismatch1() : Int {
   return <error>true && false</error>
 }
@@ -52,8 +52,8 @@ fun blockAndAndMismatch2() : Int {
 }
 
 fun blockAndAndMismatch3() : Int {
-  <error>true || false</error>
-}
+  true || false
+<error>}</error>
 fun blockAndAndMismatch4() : Int {
   return <error>true || false</error>
 }
@@ -86,9 +86,9 @@ fun blockReturnValueTypeMatch6() : Int {
 }
 fun blockReturnValueTypeMatch7() : Int {
   if (1 > 2)
-    <error>1.0</error>
-  else <error>2.0</error>
-}
+    1.0
+  else 2.0
+<error>}</error>
 fun blockReturnValueTypeMatch8() : Int {
   if (1 > 2)
     1.0
@@ -96,38 +96,38 @@ fun blockReturnValueTypeMatch8() : Int {
   return 1
 }
 fun blockReturnValueTypeMatch9() : Int {
-  <error>if (1 > 2)
-    <error>1.0</error></error>
-}
+  if (1 > 2)
+    1.0
+<error>}</error>
 fun blockReturnValueTypeMatch10() : Int {
   return <error>if (1 > 2)
     1</error>
 }
 fun blockReturnValueTypeMatch11() : Int {
-  <error>if (1 > 2)
-  else <error>1.0</error></error>
-}
+  if (1 > 2)
+  else 1.0
+<error>}</error>
 fun blockReturnValueTypeMatch12() : Int {
   if (1 > 2)
     return 1
   else return <error>1.0</error>
 }
 fun blockNoReturnIfValDeclaration(): Int {
-  <error>val x = 1</error>
-}
+  val <warning>x</warning> = 1
+<error>}</error>
 fun blockNoReturnIfEmptyIf(): Int {
-  if (1 < 2) <error>{}</error> else <error>{}</error>
-}
+  if (1 < 2) {} else {}
+<error>}</error>
 fun blockNoReturnIfUnitInOneBranch(): Int {
   if (1 < 2) {
     return 1
   } else {
-    if (3 < 4) <error>{
-    }</error> else {
+    if (3 < 4) {
+    } else {
       return 2
     }
   }
-}
+<error>}</error>
 fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <error>{}</error> else <error>{}</error>
 fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <error>{}</error> else 2
 
