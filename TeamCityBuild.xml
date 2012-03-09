@@ -3,7 +3,13 @@
 
     <property name="build.number" value="snapshot"/>
     <property name="jdk16.home" value="${java.home}"/>
-    <property name="fail.on.plugin.verifier.error" value="true"/>
+    <!--
+        TODO: enable verifier. Disabled because of guice that references non-existent
+        but unused classes like com.google.inject.internal.asm.util.$TraceClassVisitor
+        see
+        http://buildserver.labs.intellij.net/viewLog.html?buildId=1314890&buildTypeId=bt1416&tab=buildLog
+    -->
+    <property name="fail.on.plugin.verifier.error" value="false"/>
 
     <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
