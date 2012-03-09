@@ -25,13 +25,15 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 
 /**
@@ -331,5 +333,17 @@ public final class BindingUtils {
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, expression);
         assert type != null;
         return type;
+    }
+
+    @NotNull
+    public static ResolvedCall<FunctionDescriptor> getResolvedCallForArrayAccess(@NotNull BindingContext context,
+                                                                                 @NotNull JetArrayAccessExpression arrayAccessExpression,
+                                                                                 boolean isGet
+    ) {
+        ResolvedCall<FunctionDescriptor> resolvedCall = context.get(isGet
+                                                                    ? INDEXED_LVALUE_GET
+                                                                    : INDEXED_LVALUE_SET, arrayAccessExpression);
+        assert resolvedCall != null;
+        return resolvedCall;
     }
 }

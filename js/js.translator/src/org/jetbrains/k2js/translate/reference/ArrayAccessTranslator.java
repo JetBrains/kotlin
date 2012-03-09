@@ -19,23 +19,18 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
-
 /**
  * @author Pavel Talanov
  */
-
-//TODO: inspect not clear how the class handles set and get operations differently
 public class ArrayAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     /*package*/
@@ -46,16 +41,11 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
 
     @NotNull
     private final JetArrayAccessExpression expression;
-    @NotNull
-    private final FunctionDescriptor methodDescriptor;
 
     protected ArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
                                     @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        //TODO: that is strange
-        this.methodDescriptor = (FunctionDescriptor)
-                getDescriptorForReferenceExpression(context.bindingContext(), expression);
     }
 
     @NotNull
@@ -67,7 +57,7 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @NotNull
     protected JsExpression translateAsGet(@NotNull JsExpression arrayExpression,
                                           @NotNull List<JsExpression> indexExpression) {
-        return translateAsMethodCall(arrayExpression, indexExpression);
+        return translateAsMethodCall(arrayExpression, indexExpression, /*isGetter = */ true);
     }
 
     @NotNull
@@ -80,16 +70,17 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     protected JsExpression translateAsSet(@NotNull JsExpression arrayExpression, @NotNull List<JsExpression> indexExpressions, @NotNull JsExpression toSetTo) {
         List<JsExpression> arguments = Lists.newArrayList(indexExpressions);
         arguments.add(toSetTo);
-        return translateAsMethodCall(arrayExpression, arguments);
+        return translateAsMethodCall(arrayExpression, arguments, /*isGetter = */ false);
     }
 
     @NotNull
-    private JsExpression translateAsMethodCall(@NotNull JsExpression arrayExpression, @NotNull List<JsExpression> arguments) {
+    private JsExpression translateAsMethodCall(@NotNull JsExpression arrayExpression,
+                                               @NotNull List<JsExpression> arguments,
+                                               boolean isGetter) {
         return CallBuilder.build(context())
                 .receiver(arrayExpression)
                 .args(arguments)
-                .resolvedCall(getResolvedCall(bindingContext(), expression))
-                .descriptor(methodDescriptor)
+                .resolvedCall(BindingUtils.getResolvedCallForArrayAccess(bindingContext(), expression, isGetter))
                 .translate();
     }
 
@@ -106,6 +97,6 @@ public class ArrayAccessTranslator extends AbstractTranslator implements AccessT
     @NotNull
     @Override
     public CachedAccessTranslator getCached() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return new CachedArrayAccessTranslator(expression, context());
     }
 }

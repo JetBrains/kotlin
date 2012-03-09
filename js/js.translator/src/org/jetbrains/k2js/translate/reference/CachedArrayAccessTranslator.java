@@ -38,8 +38,8 @@ public final class CachedArrayAccessTranslator extends ArrayAccessTranslator imp
     @NotNull
     private final List<TemporaryVariable> indexExpressions;
 
-    private CachedArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
-                                        @NotNull TranslationContext context) {
+    /*package*/ CachedArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
+                                            @NotNull TranslationContext context) {
         super(expression, context);
         arrayExpression = context.declareTemporary(translateArrayExpression());
         indexExpressions = fromExpressionList(translateIndexExpressions(), context);

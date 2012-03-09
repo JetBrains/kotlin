@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Pavel Talanov
  *         <p/>
- *         Abstract entity for language constructs that you can get/set. Also dispatches to the real implemntation.
+ *         Abstract entity for language constructs that you can get/set.
  */
 public interface AccessTranslator {
 
@@ -32,6 +32,7 @@ public interface AccessTranslator {
     @NotNull
     JsExpression translateAsSet(@NotNull JsExpression setTo);
 
+    //TODO: remove that method
     @NotNull
     CachedAccessTranslator getCached();
 }
