@@ -94,6 +94,7 @@ class SiteGenerator(val sourceDir: File, val outputDir: File) : Runnable {
               <li><a href="http://blog.jetbrains.com/kotlin/">Blog</a></li>
               <li><a href="http://devnet.jetbrains.net/community/kotlin">Forum</a></li>
               <li><a href="http://youtrack.jetbrains.com/issues/KT">Issue Tracker</a></li>
+              <li><a href="https://github.com/JetBrains/kotlin">Source</a></li>
               <li><a href="http://twitter.com/#!/project_kotlin">@project_kotlin</a></li>
             </ul>
           </div><!--/.nav-collapse -->
