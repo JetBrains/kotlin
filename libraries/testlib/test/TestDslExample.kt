@@ -25,7 +25,7 @@ public val suite : TestSuite? = testSuite<Int>("test group") {
     }
 
     "test 2" - {
-        assert(state == 31, "message")
+        assertTrue(state == 31, "message")
         println("test '${getName()}': state: $state")
     }
 
