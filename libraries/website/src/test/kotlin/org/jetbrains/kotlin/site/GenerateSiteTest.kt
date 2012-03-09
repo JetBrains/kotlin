@@ -20,7 +20,7 @@ class GenerateSiteTest : TestCase() {
 
     fun testGenerateStdlibKDoc(): Unit {
         val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
-        println("Generating stdlib KDocs to $outDir")
+        println("Generating library KDocs to $outDir")
 
         copyDocResources(outDir)
         val args = KDocArguments()
@@ -35,17 +35,23 @@ class GenerateSiteTest : TestCase() {
         compiler.exec(System.out, args)
     }
 
-    /**
-    fun testGenerateJsKDoc(): Unit {
+    // TODO re-enable when KT-1522 fixed
+    fun DISABLED_testGenerateJsKDoc(): Unit {
+        val outDir = File(siteOutputDir, "versions/$versionDir/jsdocs")
+        println("Generating JS KDocs to $outDir")
+
+        copyDocResources(outDir)
         val args = KDocArguments()
-        args.docOutputDir = File(siteOutputDir, "versions/$version/apidocs").toString()
-        args.src = "../js/src"
-        args.outputDir = "target/classes-js"
+        args.setModule("../../js/js.libraries/module.kt")
+        args.setDocOutputDir(outDir.toString())
+        args.setOutputDir("target/classes-js")
+        val config = args.docConfig
+        config.title = "Kotlin JS API ($version)"
+        config.version = version
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
     }
-    */
 
     fun copyDocResources(outDir: File): Unit {
         val sourceDir = File(srcDir, "../apidocs")
