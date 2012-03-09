@@ -225,6 +225,8 @@ public class ClosureAnnotator {
         public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
             String name = recordAnonymousClass(expression.getFunctionLiteral());
             FunctionDescriptor declarationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
+            // working around a problem with shallow analysis
+            if (declarationDescriptor == null) return;
             ClassDescriptor classDescriptor = classDescriptorForFunctionDescriptor(declarationDescriptor, name);
             recordName(classDescriptor, name);
             recordEnclosing(classDescriptor);
