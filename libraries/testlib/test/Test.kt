@@ -61,22 +61,11 @@ private fun <T> testSuite(builder: TestBuilder<T>, description: TestBuilder<T>.(
 fun <T> testSuite(name: String,  description: TestBuilder<T>.() -> Unit) : TestSuite? =
     testSuite(TestBuilder<T>(name), description)
 
-fun assert(message: String, block: ()-> Boolean) {
-  val actual = block()
-  Assert.assertTrue(message, actual)
-}
-
-fun assert(block: ()-> Boolean) = assert(block.toString(), block)
-
 fun assertNot(message: String, block: ()-> Boolean) {
-  assert(message){ !block() }
+    Assert.assertTrue(message, block())
 }
 
 fun assertNot(block: ()-> Boolean) = assertNot(block.toString(), block)
-
-fun assert(actual: Boolean, message: String) {
-  println("Answer: ${actual} for ${message}")
-}
 
 fun assertTrue(actual: Boolean, message: String = "") {
   return assertEquals(true, actual, message)

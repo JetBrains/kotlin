@@ -3,6 +3,7 @@ package kotlin
 import java.io.ByteArrayInputStream
 
 import java.util.Arrays
+import java.nio.charset.Charset
 
 // Array "constructor"
 inline fun <T> array(vararg t : T) : Array<T> = t
@@ -100,6 +101,16 @@ inline val ByteArray.inputStream : ByteArrayInputStream
     get() = ByteArrayInputStream(this)
 
 inline fun ByteArray.inputStream(offset: Int, length: Int) = ByteArrayInputStream(this, offset, length)
+
+inline fun ByteArray.toString(encoding: String?):String {
+    if(encoding==null) {
+        return String(this, encoding)
+    } else {
+        return String(this)
+    }
+}
+
+inline fun ByteArray.toString(encoding: Charset) = String(this, encoding)
 
 /** Returns true if the array is not empty */
 inline fun <T> Array<T>.notEmpty() : Boolean = !this.isEmpty()

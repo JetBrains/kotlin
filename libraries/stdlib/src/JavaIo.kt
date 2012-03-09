@@ -155,11 +155,11 @@ get() = InputStreamReader(this)
 inline val InputStream.bufferedReader : BufferedReader
 get() = BufferedReader(reader)
 
-inline fun InputStream.reader(charset: Charset) : InputStreamReader = InputStreamReader(this, charset)
+inline fun InputStream.reader(encoding: Charset) : InputStreamReader = InputStreamReader(this, encoding)
 
-inline fun InputStream.reader(charsetName: String) = InputStreamReader(this, charsetName)
+inline fun InputStream.reader(encoding: String) = InputStreamReader(this, encoding)
 
-inline fun InputStream.reader(charsetDecoder: CharsetDecoder) = InputStreamReader(this, charsetDecoder)
+inline fun InputStream.reader(encoding: CharsetDecoder) = InputStreamReader(this, encoding)
 
 inline val InputStream.buffered : BufferedInputStream
 get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
@@ -290,21 +290,12 @@ fun File.relativePath(descendant: File): String {
 }
 
 /**
- * Reads the entire content of the file as a String
- *
- * This method is not recommended on huge files.
- */
-fun File.readText(encoding: String = defaultCharset): String {
-    return readBytes().toString(encoding)
-}
-
-/**
  * Reads the entire content of the file as bytes
  *
  * This method is not recommended on huge files.
  */
 fun File.readBytes(): ByteArray {
-    return FileInputStream(this).use<FileInputStream,ByteArray>{ it.readBytes() }
+    return FileInputStream(this).use<FileInputStream,ByteArray>{ it.readBytes(this.length().toInt()) }
 }
 
 /**
@@ -313,13 +304,36 @@ fun File.readBytes(): ByteArray {
 fun File.writeBytes(data: ByteArray): Unit {
     return FileOutputStream(this).use<FileOutputStream,Unit>{ it.write(data) }
 }
+/**
+ * Reads the entire content of the file as a String using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ *
+ * This method is not recommended on huge files.
+ */
+fun File.readText(encoding:String? = null) = readBytes().toString(encoding)
 
 /**
- * Writes the text as the contents of the file
+ * Reads the entire content of the file as a String using the
+ * character encoding.
+ *
+ * This method is not recommended on huge files.
  */
-fun File.writeText(text: String): Unit {
-    return FileWriter(this).use<FileWriter,Unit>{ it.write(text) }
-}
+fun File.readText(encoding:Charset) = readBytes().toString(encoding)
+
+/**
+ * Writes the text as the contents of the file using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ */
+fun File.writeText(text: String, encoding:String?=null): Unit { writeBytes(text.toByteArray(encoding)) }
+
+/**
+ * Writes the text as the contents of the file using the optional
+ * character encoding.  The default platform encoding is used if the character
+ * encoding is not specified or null.
+ */
+fun File.writeText(text: String, encoding:Charset): Unit { writeBytes(text.toByteArray(encoding)) }
 
 /**
  * Copies this file to the given output file, returning the number of bytes copied
@@ -340,8 +354,8 @@ fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
  *
  * **Note** it is the callers responsibility to close this resource
  */
-fun InputStream.readBytes(): ByteArray {
-    val buffer = ByteArrayOutputStream()
+fun InputStream.readBytes(estimatedSize: Int = defaultBufferSize): ByteArray {
+    val buffer = ByteArrayOutputStream(estimatedSize)
     this.copyTo(buffer)
     return buffer.toByteArray().sure()
 }
@@ -353,8 +367,8 @@ fun InputStream.readBytes(): ByteArray {
  */
 fun Reader.readText(): String {
     val buffer = StringWriter()
-    this.copyTo(buffer)
-    return buffer.toString() ?: ""
+    copyTo(buffer)
+    return buffer.toString().sure()
 }
 
 /**
@@ -374,7 +388,6 @@ fun InputStream.copyTo(out: OutputStream, bufferSize: Int = defaultBufferSize): 
     return bytesCopied
 }
 
-
 /**
  * Copies this reader to the given output writer, returning the number of bytes copied.
  *
@@ -392,30 +405,24 @@ fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
     return charsCopied
 }
 
-
 /**
  * Reads the entire content of the URL as a String with an optional character set name
  *
  * This method is not recommended on huge files.
  */
-fun URL.readText(encoding: String = defaultCharset): String {
-    val bytes = readBytes()
-    return bytes.toString(encoding)
-}
+fun URL.readText(encoding: String? = null): String = readBytes().toString(encoding)
 
 /**
- * Converts the bytes to a [[String]] using the given encoding or uses the [[defaultCharset]] (UTF-8)
+ * Reads the entire content of the URL as a String with the specified character encoding.
+ *
+ * This method is not recommended on huge files.
  */
-fun ByteArray.toString(encoding: String = defaultCharset): String {
-    return if (encoding != null) String(this, encoding) else String(this)
-}
+fun URL.readText(encoding: Charset): String = readBytes().toString(encoding)
 
 /**
  * Reads the entire content of the URL as bytes
  *
  * This method is not recommended on huge files.
  */
-fun URL.readBytes(): ByteArray {
-    return this.openStream().sure().use<InputStream,ByteArray>{ it.readBytes() }
-}
+fun URL.readBytes(): ByteArray = this.openStream().sure().use<InputStream,ByteArray>{ it.readBytes() }
 
