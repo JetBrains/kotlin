@@ -142,6 +142,7 @@ public class JetCompiler implements TranslatingCompiler {
             runInProcess(compileContext, outputDir, kotlinHome, scriptFile);
         }
 
+//        System.out.println("Generated module script:\n" + script.toString());
 //        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
     }
 
@@ -257,7 +258,7 @@ public class JetCompiler implements TranslatingCompiler {
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
             
-            Object rc = exec.invoke(null, out, arguments);
+            Object rc = exec.invoke(kompiler.newInstance(), out, arguments);
             if (rc instanceof Integer) {
                 return ((Integer) rc).intValue();
             }
