@@ -81,6 +81,9 @@
                     </includes>
                     <excludes>
                     </excludes>
+                    <systemProperties>
+                        <project.version>${project.version}</project.version>
+                    </systemProperties>
                 </configuration>
             </plugin>
         </plugins>

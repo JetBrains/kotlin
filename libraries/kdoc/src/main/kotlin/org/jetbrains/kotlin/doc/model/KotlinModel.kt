@@ -140,7 +140,7 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
     }
 }
 
-class KModel(var context: BindingContext, val config: KDocConfig, var title: String = "Documentation", var version: String = "TODO") {
+class KModel(var context: BindingContext, val config: KDocConfig) {
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val packages = sortedMap<String,KPackage>()
     public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
@@ -156,6 +156,12 @@ class KModel(var context: BindingContext, val config: KDocConfig, var title: Str
     get() = packages.flatMap{ it.classes }
 
     public var markdownProcessor: PegDownProcessor = PegDownProcessor(Extensions.ALL)
+
+    public val title: String
+    get() = config.title
+
+    public val version: String
+    get() = config.version
 
     /** Loads the model from the given set of source files */
     fun load(sources: List<JetFile?>): Unit {

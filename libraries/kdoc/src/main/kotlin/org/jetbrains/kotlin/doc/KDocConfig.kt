@@ -15,6 +15,11 @@ class KDocConfig() {
     public var title: String = "Documentation"
 
     /**
+     * Returns the version name of the documentation set
+     */
+    public var version: String = "SNAPSHOT"
+
+    /**
      * Returns a map of the package prefix to the URLs to use to link to it in the documentation
      */
     public val packagePrefixToUrls: Map<String, String> = TreeMap<String, String>(LongestFirstStringComparator())

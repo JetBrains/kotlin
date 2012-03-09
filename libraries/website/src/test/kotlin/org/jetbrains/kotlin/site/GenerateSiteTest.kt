@@ -10,8 +10,8 @@ class GenerateSiteTest : TestCase() {
     val srcDir = findTemplateDir()
     val siteOutputDir = File(srcDir, "../../../target/site")
 
-    // TODO find version from environment?
-    val versionDir = "snapshot"
+    val version = System.getProperty("project.version") ?: "SNAPSHOT"
+    val versionDir = if (version.contains("SNAPSHOT")) "snapshot" else version
 
     fun testGenerateSite(): Unit {
         val generator = SiteGenerator(srcDir, siteOutputDir)
@@ -28,7 +28,8 @@ class GenerateSiteTest : TestCase() {
         args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-stdlib")
         val config = args.docConfig
-        config.title = "Kotlin API"
+        config.title = "Kotlin API ($version)"
+        config.version = version
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
