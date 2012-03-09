@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.doc.model.KClass
 import org.jetbrains.kotlin.doc.model.KFunction
 import org.jetbrains.kotlin.doc.model.extensionFunctions
+import org.jetbrains.kotlin.doc.model.filterDuplicateNames
 
 class PackageFrameTemplate(val model: KModel, p: KPackage) : PackageTemplateSupport(p) {
     override fun render() {
@@ -65,16 +66,22 @@ ${pkg.name} (${model.title})
     }
 
     protected fun printFunctions(): Unit {
-        val functions = pkg.packageFunctions()
+        val functions = filterDuplicateNames(pkg.packageFunctions())
         if (! functions.isEmpty()) {
             println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
 <TR>
 <TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Functions</FONT>&nbsp;
 <FONT CLASS="FrameItemFont">
 <BR>""")
+
+            var lastName = ""
             for (c in functions) {
-                println("""<A HREF="${href(c)}" title="function in ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
-<BR>""")
+                // only show the first function with a given name
+                if (c.name != lastName) {
+                    println("""<A HREF="${href(c)}" title="function in ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
+    <BR>""")
+                }
+                lastName = c.name
             }
             println("""</TR>
 </TABLE>""")

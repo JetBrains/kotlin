@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.doc.model.KPackage
 import org.jetbrains.kotlin.doc.model.KClass
 import org.jetbrains.kotlin.doc.model.extensionFunctions
 import org.jetbrains.kotlin.doc.model.inheritedExtensionFunctions
+import org.jetbrains.kotlin.doc.model.filterDuplicateNames
 
 class PackageSummaryTemplate(val model: KModel, pkg: KPackage) : PackageTemplateSupport(pkg) {
     override fun render() {
@@ -119,7 +120,8 @@ ${pkg.description(this)}
         printClasses("annotation", "Annotations")
         printClasses("exception", "Exceptions")
 
-        printFunctions()
+        printFunctionSummary(pkg.packageFunctions())
+        //printFunctions()
         printExtensionFunctions()
 
         println("""<A NAME="package_description"><!-- --></A><H2>
@@ -240,6 +242,7 @@ Copyright &#169; 2010-2012. All Rights Reserved.
         }
     }
 
+    // TODO delete
     protected fun printFunctions(): Unit {
         val functions = pkg.functions.filter{ it.extensionClass == null }
         if (! functions.isEmpty()) {
@@ -280,7 +283,8 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <TD>""")
                     val list = e?.getValue()
                     if (list != null) {
-                        for (f in list) {
+                        val functions = filterDuplicateNames(list)
+                        for (f in functions) {
                             println("""<A HREF="${extensionsHref(pkg, c, f)}">${f.name}<A> """)
                         }
                     }

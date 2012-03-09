@@ -33,6 +33,21 @@ import org.pegdown.Extensions
 import org.jetbrains.kotlin.doc.templates.KDocTemplate
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 
+
+/**
+ * Returns the collection of functions with duplicate function names filtered out
+ * so only the first one is included
+ */
+fun filterDuplicateNames(functions: Collection<KFunction>): Collection<KFunction> {
+    var lastName = ""
+    return functions.filter{
+        val name = it.name
+        val answer = name != lastName
+        lastName = name
+        answer
+    }
+}
+
 fun containerName(descriptor: DeclarationDescriptor): String = qualifiedName(descriptor.getContainingDeclaration())
 
 fun qualifiedName(descriptor: DeclarationDescriptor?): String {
@@ -313,7 +328,6 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
 
-
     protected fun commentsFor(descriptor: DeclarationDescriptor): String {
         val psiElement = try {
             BindingContextUtils.descriptorToDeclaration(context, descriptor)
@@ -341,7 +355,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     var text = lines[i] ?: ""
                     text = text.trim()
                     if (i == 0) {
-                       text = text.trimLeading("/**").trimLeading("/*")
+                        text = text.trimLeading("/**").trimLeading("/*")
                     } else {
                         buffer.append("\n")
                     }
@@ -469,7 +483,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
             val idx = qualifiedName.lastIndexOf('.')
             if (idx > 0) {
                 val className = qualifiedName.substring(0, idx)
-                val c =  model.getClass(className)
+                val c = model.getClass(className)
                 if (c != null) {
                     // lets try find method...
                     val remaining = qualifiedName.substring(idx + 1)
@@ -494,32 +508,32 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
     protected fun resolveToQualifiedName(text: String): String {
         // TODO use the CompletionContributors maybe to figure out what local names are imported???
         return text
-/*
-        val scope = findWritableScope(annotated.declarationDescriptor)
-        if (scope != null) {
-            val classifierDescriptor = scope.getClassifier(text)
-            if (classifierDescriptor == null) {
-                val o = scope.getObjectDescriptor(text)
-                println("Attempt to resolve HREF: $text Found objectDescriptor $o")
-            } else {
-                println("Attempt to resolve HREF: $text Found classifierDescriptor $classifierDescriptor")
+        /*
+                val scope = findWritableScope(annotated.declarationDescriptor)
+                if (scope != null) {
+                    val classifierDescriptor = scope.getClassifier(text)
+                    if (classifierDescriptor == null) {
+                        val o = scope.getObjectDescriptor(text)
+                        println("Attempt to resolve HREF: $text Found objectDescriptor $o")
+                    } else {
+                        println("Attempt to resolve HREF: $text Found classifierDescriptor $classifierDescriptor")
+                    }
+                }
             }
-        }
-    }
 
-    protected fun findWritableScope(declarationDescriptor: DeclarationDescriptor) : WritableScopeImpl? {
-        val container = declarationDescriptor.getContainingDeclaration()
-        if (container is NamespaceDescriptor) {
-            val scope = container.getMemberScope()
-            if (scope is WritableScopeImpl) {
-                return scope
-            }
-        } else if (container != null) {
-            return findWritableScope(container)
-        }
-        return null
+            protected fun findWritableScope(declarationDescriptor: DeclarationDescriptor) : WritableScopeImpl? {
+                val container = declarationDescriptor.getContainingDeclaration()
+                if (container is NamespaceDescriptor) {
+                    val scope = container.getMemberScope()
+                    if (scope is WritableScopeImpl) {
+                        return scope
+                    }
+                } else if (container != null) {
+                    return findWritableScope(container)
+                }
+                return null
 
-*/
+        */
     }
 
     override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
@@ -661,7 +675,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
 }
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>())
-    : KNamed(klass?.name ?: jetType.toString(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
+: KNamed(klass?.name ?: jetType.toString(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
     {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription
