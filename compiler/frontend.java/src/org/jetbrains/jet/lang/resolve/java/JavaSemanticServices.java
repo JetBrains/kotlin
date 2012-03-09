@@ -19,11 +19,11 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
  * @author abreslav
@@ -32,13 +32,11 @@ public class JavaSemanticServices {
     private final JavaTypeTransformer typeTransformer;
     private final JavaDescriptorResolver descriptorResolver;
     private final BindingTrace trace;
-    private final JetSemanticServices jetSemanticServices;
 
-    public JavaSemanticServices(Project project, JetSemanticServices jetSemanticServices, BindingTrace trace) {
+    public JavaSemanticServices(Project project, BindingTrace trace) {
         this.trace = trace;
         this.descriptorResolver = new JavaDescriptorResolver(project, this);
-        this.typeTransformer = new JavaTypeTransformer(this, jetSemanticServices.getStandardLibrary(), descriptorResolver);
-        this.jetSemanticServices = jetSemanticServices;
+        this.typeTransformer = new JavaTypeTransformer(this, JetStandardLibrary.getInstance(), descriptorResolver);
     }
 
     @NotNull
@@ -56,14 +54,10 @@ public class JavaSemanticServices {
         return trace;
     }
 
-    public JetSemanticServices getJetSemanticServices() {
-        return jetSemanticServices;
-    }
-    
     @Nullable
     public ClassDescriptor getKotlinClassDescriptor(String qualifiedName) {
         if (qualifiedName.startsWith("jet.")) {
-            ClassDescriptor r = (ClassDescriptor) jetSemanticServices.getStandardLibrary().getLibraryScope().getClassifier(qualifiedName.substring("jet.".length()));
+            ClassDescriptor r = (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.substring("jet.".length()));
             if (r == null) {
                 // TODO: better error
                 //throw new IllegalStateException();

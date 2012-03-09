@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.inject.Inject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -28,11 +30,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
  * @author abreslav
  */
 public class DelegationResolver {
-    private final TopDownAnalysisContext context;
+    @NotNull
+    private TopDownAnalysisContext context;
 
-    public DelegationResolver(TopDownAnalysisContext context) {
+
+    @Inject
+    public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
 
     public void process() {
         addDelegatedMembers();

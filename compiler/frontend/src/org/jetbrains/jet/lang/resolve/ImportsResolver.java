@@ -20,11 +20,24 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -32,18 +45,34 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_BE_IMPORTED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_IMPORT_FROM_ELEMENT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CLASS_OBJECT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_HIDDEN_IMPORT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_SIMPLE_IMPORT;
 
 /**
  * @author abreslav
  * @author svtk
  */
 public class ImportsResolver {
-    private final TopDownAnalysisContext context;
+    @NotNull
+    private TopDownAnalysisContext context;
+    @NotNull
+    private Configuration configuration;
 
-    public ImportsResolver(@NotNull TopDownAnalysisContext context) {
+    @Inject
+    public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
+    @Inject
+    public void setConfiguration(@NotNull Configuration configuration) {
+        this.configuration = configuration;
+    }
+
 
     public void processTypeImports() {
         processImports(true);
@@ -64,7 +93,7 @@ public class ImportsResolver {
             }
             Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
             Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
-            context.getConfiguration().addDefaultImports(namespaceScope, defaultImportDirectives);
+            configuration.addDefaultImports(namespaceScope, defaultImportDirectives);
             for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
                 defaultImportResolver.processImportReference(defaultImportDirective, namespaceScope, delayedImporter);
             }

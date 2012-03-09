@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.constants;
 import com.google.common.base.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.psi.JetEscapeStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetLiteralStringTemplateEntry;
 import org.jetbrains.jet.lang.psi.JetStringTemplateEntry;
@@ -38,17 +37,16 @@ import java.util.List;
 public class CompileTimeConstantResolver {
     public static final ErrorValue OUT_OF_RANGE = new ErrorValue("The value is out of range");
 
-    private final JetSemanticServices semanticServices;
+    private final JetStandardLibrary standardLibrary;
     private final BindingTrace trace;
 
-    public CompileTimeConstantResolver(@NotNull JetSemanticServices semanticServices, @NotNull BindingTrace trace) {
-        this.semanticServices = semanticServices;
+    public CompileTimeConstantResolver(@NotNull BindingTrace trace) {
+        this.standardLibrary = JetStandardLibrary.getInstance();
         this.trace = trace;
     }
 
     @NotNull
     public CompileTimeConstant<?> getIntegerValue(@NotNull String text, @NotNull JetType expectedType) {
-        JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
         if (noExpectedType(expectedType)) {
             Long value = parseLongValue(text);
             if (value == null) {
@@ -85,7 +83,7 @@ public class CompileTimeConstantResolver {
             upperBound = Byte.MAX_VALUE;
         }
         else  {
-            JetTypeChecker typeChecker = semanticServices.getTypeChecker();
+            JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
             JetType intType = standardLibrary.getIntType();
             JetType longType = standardLibrary.getLongType();
             if (typeChecker.isSubtypeOf(intType, expectedType)) {
@@ -130,9 +128,8 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getFloatValue(@NotNull String text, @NotNull JetType expectedType) {
-        JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
         if (noExpectedType(expectedType)
-            || semanticServices.getTypeChecker().isSubtypeOf(standardLibrary.getDoubleType(), expectedType)) {
+            || JetTypeChecker.INSTANCE.isSubtypeOf(standardLibrary.getDoubleType(), expectedType)) {
             try {
                 return new DoubleValue(Double.parseDouble(text));
             }
@@ -140,7 +137,7 @@ public class CompileTimeConstantResolver {
                 return OUT_OF_RANGE;
             }
         }
-        else if (semanticServices.getTypeChecker().isSubtypeOf(standardLibrary.getFloatType(), expectedType)) {
+        else if (JetTypeChecker.INSTANCE.isSubtypeOf(standardLibrary.getFloatType(), expectedType)) {
             try {
                 return new DoubleValue(Float.parseFloat(text));
             }
@@ -156,7 +153,7 @@ public class CompileTimeConstantResolver {
     @Nullable
     private CompileTimeConstant<?> checkNativeType(String text, JetType expectedType, String title, JetType nativeType) {
         if (!noExpectedType(expectedType)
-            && !semanticServices.getTypeChecker().isSubtypeOf(nativeType, expectedType)) {
+            && !JetTypeChecker.INSTANCE.isSubtypeOf(nativeType, expectedType)) {
             return new ErrorValue("A " + title + " literal " + text + " does not conform to the expected type " + expectedType);
         }
         return null;
@@ -164,7 +161,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getBooleanValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "boolean", semanticServices.getStandardLibrary().getBooleanType());
+        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "boolean", standardLibrary.getBooleanType());
         if (error != null) {
             return error;
         }
@@ -179,7 +176,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getCharValue(@NotNull String text, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "character", semanticServices.getStandardLibrary().getCharType());
+        CompileTimeConstant<?> error = checkNativeType(text, expectedType, "character", standardLibrary.getCharType());
         if (error != null) {
             return error;
         }
@@ -265,7 +262,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getRawStringValue(@NotNull String unescapedText, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"\"\"...\"\"\"", expectedType, "string", semanticServices.getStandardLibrary().getStringType());
+        CompileTimeConstant<?> error = checkNativeType("\"\"\"...\"\"\"", expectedType, "string", standardLibrary.getStringType());
         if (error != null) {
             return error;
         }
@@ -275,7 +272,7 @@ public class CompileTimeConstantResolver {
 
     @NotNull
     public CompileTimeConstant<?> getEscapedStringValue(@NotNull List<JetStringTemplateEntry> entries, @NotNull JetType expectedType) {
-        CompileTimeConstant<?> error = checkNativeType("\"...\"", expectedType, "string", semanticServices.getStandardLibrary().getStringType());
+        CompileTimeConstant<?> error = checkNativeType("\"...\"", expectedType, "string", standardLibrary.getStringType());
         if (error != null) {
             return error;
         }

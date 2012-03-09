@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -28,6 +29,7 @@ import org.jetbrains.jet.plugin.JetBundle;
  * @since 2/7/12
  */
 public class JetIterableVariableMacro extends BaseJetVariableMacro {
+
     @Override
     public String getName() {
         return "kotlinIterableVariable";
@@ -39,7 +41,7 @@ public class JetIterableVariableMacro extends BaseJetVariableMacro {
     }
 
     @Override
-    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project) {
-        return ExpressionTypingUtils.isVariableIterable(project, variableDescriptor, scope);
+    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, ExpressionTypingServices callResolverContext) {
+        return ExpressionTypingUtils.isVariableIterable(callResolverContext, project, variableDescriptor, scope);
     }
 }

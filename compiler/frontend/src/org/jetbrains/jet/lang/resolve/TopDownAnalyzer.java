@@ -18,11 +18,12 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.inject.Inject;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -41,23 +42,59 @@ import java.util.List;
  */
 public class TopDownAnalyzer {
 
-    private TopDownAnalyzer() {}
+    @NotNull
+    private DeclarationResolver declarationResolver;
+    @NotNull
+    private TypeHierarchyResolver typeHierarchyResolver;
+    @NotNull
+    private DelegationResolver delegationResolver;
+    @NotNull
+    private OverrideResolver overrideResolver;
+    @NotNull
+    private OverloadResolver overloadResolver;
+
+
+    @Inject
+    public void setDeclarationResolver(@NotNull DeclarationResolver declarationResolver) {
+        this.declarationResolver = declarationResolver;
+    }
+
+    @Inject
+    public void setTypeHierarchyResolver(@NotNull TypeHierarchyResolver typeHierarchyResolver) {
+        this.typeHierarchyResolver = typeHierarchyResolver;
+    }
+
+    @Inject
+    public void setDelegationResolver(@NotNull DelegationResolver delegationResolver) {
+        this.delegationResolver = delegationResolver;
+    }
+
+    @Inject
+    public void setOverrideResolver(@NotNull OverrideResolver overrideResolver) {
+        this.overrideResolver = overrideResolver;
+    }
+
+    @Inject
+    public void setOverloadResolver(@NotNull OverloadResolver overloadResolver) {
+        this.overloadResolver = overloadResolver;
+    }
+
+
 
     public static void process(
-            @NotNull JetSemanticServices semanticServices,
-            @NotNull BindingTrace trace,
+            Project project, @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull NamespaceLike owner,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull Configuration configuration
-            ) {
-        process(semanticServices, trace, outerScope, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
+    ) {
+        process(project, trace, outerScope, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
     }
 
     private static void process(
-            @NotNull JetSemanticServices semanticServices,
+            @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull NamespaceLike owner,
@@ -66,29 +103,31 @@ public class TopDownAnalyzer {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull Configuration configuration,
             boolean declaredLocally) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, analyzeCompletely, configuration, declaredLocally);
-        doProcess(context, outerScope, owner, declarations, flowDataTraceFactory);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, declaredLocally, false, flowDataTraceFactory);
+        context.getInjector().getInstance(TopDownAnalyzer.class).doProcess(context, outerScope, owner, declarations);
 
     }
 
-    private static void doProcess(
+    private void doProcess(
             TopDownAnalysisContext context, JetScope outerScope,
             NamespaceLike owner,
-            Collection<? extends PsiElement> declarations,
-            JetControlFlowDataTraceFactory flowDataTraceFactory) {
+            Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
         context.debug("Enter");
 
-        new TypeHierarchyResolver(context).process(outerScope, owner, declarations);
-        new DeclarationResolver(context).process();
-        new DelegationResolver(context).process();
-        new OverrideResolver(context).process();
+        typeHierarchyResolver.process(outerScope, owner, declarations);
+        declarationResolver.process();
+        delegationResolver.process();
+        overrideResolver.process();
+
         lockScopes(context);
-        new OverloadResolver(context).process();
+
+        overloadResolver.process();
+
         if (!context.analyzingBootstrapLibrary()) {
-            new BodyResolver(context).resolveBehaviorDeclarationBodies();
-            new ControlFlowAnalyzer(context, flowDataTraceFactory).process();
-            new DeclarationsChecker(context).process();
+            context.getInjector().getInstance(BodyResolver.class).resolveBehaviorDeclarationBodies();
+            context.getInjector().getInstance(ControlFlowAnalyzer.class).process();
+            context.getInjector().getInstance(DeclarationsChecker.class).process();
         }
 
         context.debug("Exit");
@@ -109,12 +148,12 @@ public class TopDownAnalyzer {
     }
 
     public static void processStandardLibraryNamespace(
-            @NotNull JetSemanticServices semanticServices,
+            @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(semanticServices, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false, true, null);
         ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
             context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
@@ -122,18 +161,17 @@ public class TopDownAnalyzer {
             toAnalyze.addAll(file.getDeclarations());
         }
 //        context.getDeclaringScopes().put(file, outerScope);
-        context.setAnalyzingBootstrapLibrary(true);
 
-        doProcess(context, outerScope, standardLibraryNamespace, toAnalyze, JetControlFlowDataTraceFactory.EMPTY);
+        context.getInjector().getInstance(TopDownAnalyzer.class).doProcess(context, outerScope, standardLibraryNamespace, toAnalyze);
     }
 
     public static void processObject(
-            @NotNull JetSemanticServices semanticServices,
+            @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
-        process(semanticServices, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+        process(project, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {

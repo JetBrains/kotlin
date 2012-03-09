@@ -22,7 +22,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -34,10 +33,12 @@ import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,8 +79,8 @@ public class ExpressionTypingUtils {
         return scope;
     }
 
-    public static boolean isBoolean(@NotNull JetSemanticServices semanticServices, @NotNull JetType type) {
-        return semanticServices.getTypeChecker().isSubtypeOf(type, semanticServices.getStandardLibrary().getBooleanType());
+    public static boolean isBoolean(@NotNull JetType type) {
+        return JetTypeChecker.INSTANCE.isSubtypeOf(type, JetStandardLibrary.getInstance().getBooleanType());
     }
 
     public static boolean ensureBooleanResult(JetExpression operationSign, String name, JetType resultType, ExpressionTypingContext context) {
@@ -89,8 +90,8 @@ public class ExpressionTypingUtils {
     public static boolean ensureBooleanResultWithCustomSubject(JetExpression operationSign, JetType resultType, String subjectName, ExpressionTypingContext context) {
         if (resultType != null) {
             // TODO : Relax?
-            if (!isBoolean(context.semanticServices, resultType)) {
-                context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, context.semanticServices.getStandardLibrary().getBooleanType(), resultType));
+            if (!isBoolean(resultType)) {
+                context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, subjectName, JetStandardLibrary.getInstance().getBooleanType(), resultType));
                 return false;
             }
         }
@@ -98,18 +99,18 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static JetType getDefaultType(JetSemanticServices semanticServices, IElementType constantType) {
+    public static JetType getDefaultType(IElementType constantType) {
         if (constantType == JetNodeTypes.INTEGER_CONSTANT) {
-            return semanticServices.getStandardLibrary().getIntType();
+            return JetStandardLibrary.getInstance().getIntType();
         }
         else if (constantType == JetNodeTypes.FLOAT_CONSTANT) {
-            return semanticServices.getStandardLibrary().getDoubleType();
+            return JetStandardLibrary.getInstance().getDoubleType();
         }
         else if (constantType == JetNodeTypes.BOOLEAN_CONSTANT) {
-            return semanticServices.getStandardLibrary().getBooleanType();
+            return JetStandardLibrary.getInstance().getBooleanType();
         }
         else if (constantType == JetNodeTypes.CHARACTER_CONSTANT) {
-            return semanticServices.getStandardLibrary().getCharType();
+            return JetStandardLibrary.getInstance().getCharType();
         }
         else if (constantType == JetNodeTypes.NULL) {
             return JetStandardClasses.getNullableNothingType();
@@ -148,12 +149,12 @@ public class ExpressionTypingUtils {
         return expression;
     }
 
-    public static boolean isVariableIterable(@NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
+    public static boolean isVariableIterable(@NotNull ExpressionTypingServices expressionTypingServices,
+            @NotNull Project project, @NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope) {
         JetExpression expression = JetPsiFactory.createExpression(project, "fake");
         ExpressionReceiver expressionReceiver = new ExpressionReceiver(expression, variableDescriptor.getType());
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                project,
-                JetSemanticServices.createSemanticServices(project),
+                expressionTypingServices,
                 new HashMap<JetPattern, DataFlowInfo>(),
                 new HashMap<JetPattern, List<VariableDescriptor>>(),
                 new LabelResolver(),

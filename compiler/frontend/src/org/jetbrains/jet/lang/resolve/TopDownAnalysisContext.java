@@ -19,13 +19,27 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -36,14 +50,10 @@ import java.util.Set;
 /**
  * @author abreslav
  */
-/*package*/ class TopDownAnalysisContext {
+public class TopDownAnalysisContext {
 
     private final ObservableBindingTrace trace;
-    private final JetSemanticServices semanticServices;
-    private final Configuration configuration;
 
-    private final DescriptorResolver descriptorResolver;
-    private final ImportsResolver importsResolver;
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
@@ -58,17 +68,44 @@ import java.util.Set;
     private final Predicate<PsiFile> analyzeCompletely;
 
     private StringBuilder debugOutput;
-    private boolean analyzingBootstrapLibrary = false;
+    private final boolean analyzingBootstrapLibrary;
     private boolean declaredLocally;
 
-    public TopDownAnalysisContext(JetSemanticServices semanticServices, BindingTrace trace, Predicate<PsiFile> analyzeCompletely, @NotNull Configuration configuration, boolean declaredLocally) {
+    private final Injector injector;
+
+    public TopDownAnalysisContext(
+            final Project project,
+            final BindingTrace trace,
+            Predicate<PsiFile> analyzeCompletely,
+            @NotNull final Configuration configuration,
+            boolean declaredLocally,
+            boolean analyzingBootstrapLibrary,
+            @Nullable final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory) {
+
+        if (analyzingBootstrapLibrary == (jetControlFlowDataTraceFactory != null)) {
+            throw new IllegalStateException(
+                    "jetControlFlowDataTraceFactory must not be passed when analyzingBootstrapLibrary and vice versa");
+        }
+
+        injector = Guice.createInjector(new TopDownAnalysisModule(project, analyzingBootstrapLibrary) {
+            @Override
+            protected void configureAfter() {
+                bind(TopDownAnalysisContext.class).toInstance(TopDownAnalysisContext.this);
+                bind(Configuration.class).toInstance(configuration);
+                if (jetControlFlowDataTraceFactory != null) {
+                    bind(JetControlFlowDataTraceFactory.class).toInstance(jetControlFlowDataTraceFactory);
+                }
+            }
+        });
+
         this.trace = new ObservableBindingTrace(trace);
-        this.semanticServices = semanticServices;
-        this.descriptorResolver = semanticServices.getClassDescriptorResolver(trace);
-        this.importsResolver = new ImportsResolver(this);
         this.analyzeCompletely = analyzeCompletely;
-        this.configuration = configuration;
         this.declaredLocally = declaredLocally;
+        this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
+    }
+
+    public Injector getInjector() {
+        return injector;
     }
 
     public void debug(Object message) {
@@ -93,10 +130,6 @@ import java.util.Set;
         return analyzingBootstrapLibrary;
     }
 
-    public void setAnalyzingBootstrapLibrary(boolean analyzingBootstrapLibrary) {
-        this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
-    }
-
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         boolean result = containingFile != null && analyzeCompletely.apply(containingFile);
@@ -106,20 +139,9 @@ import java.util.Set;
         return result;
     }
 
+    @NotNull
     public ObservableBindingTrace getTrace() {
         return trace;
-    }
-
-    public JetSemanticServices getSemanticServices() {
-        return semanticServices;
-    }
-
-    public DescriptorResolver getDescriptorResolver() {
-        return descriptorResolver;
-    }
-
-    public ImportsResolver getImportsResolver() {
-        return importsResolver;
     }
 
     public Map<JetClass, MutableClassDescriptor> getClasses() {
@@ -158,12 +180,8 @@ import java.util.Set;
         return functions;
     }
 
-    @NotNull
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
     public boolean isDeclaredLocally() {
         return declaredLocally;
     }
+
 }

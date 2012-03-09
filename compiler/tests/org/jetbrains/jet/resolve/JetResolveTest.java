@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.resolve;
 
+import com.google.inject.Guice;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
@@ -25,17 +26,16 @@ import com.intellij.psi.PsiMethod;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -119,8 +119,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
-        JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(project);
-        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, jetSemanticServices, new BindingTraceContext());
+        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, new BindingTraceContext());
         return javaSemanticServices.getDescriptorResolver().findClass(qualifiedName);
     }
 
@@ -135,7 +134,12 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         List<JetType> parameterTypeList = Arrays.asList(parameterType);
 //        JetTypeInferrer.Services typeInferrerServices = JetSemanticServices.createSemanticServices(getProject()).getTypeInferrerServices(new BindingTraceContext());
 
-        CallResolver callResolver = new CallResolver(JetSemanticServices.createSemanticServices(getProject()), DataFlowInfo.EMPTY);
+        CallResolver callResolver = Guice.createInjector(new TopDownAnalysisModule(getProject(), false) {
+            @Override
+            protected void configureAfter() {
+            }
+        }).getInstance(CallResolver.class);
+
         OverloadResolutionResults<FunctionDescriptor> functions = callResolver.resolveExactSignature(
                 classDescriptor.getMemberScope(typeArguments), ReceiverDescriptor.NO_RECEIVER, name, parameterTypeList);
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {

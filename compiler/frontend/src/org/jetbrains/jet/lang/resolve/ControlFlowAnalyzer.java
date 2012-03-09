@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -35,12 +36,19 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  */
 public class ControlFlowAnalyzer {
     private TopDownAnalysisContext context;
-    private final JetControlFlowDataTraceFactory flowDataTraceFactory;
+    private JetControlFlowDataTraceFactory flowDataTraceFactory;
 
-    public ControlFlowAnalyzer(TopDownAnalysisContext context, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+
+    @Inject
+    public void setContext(TopDownAnalysisContext context) {
         this.context = context;
+    }
+
+    @Inject
+    public void setFlowDataTraceFactory(JetControlFlowDataTraceFactory flowDataTraceFactory) {
         this.flowDataTraceFactory = flowDataTraceFactory;
     }
+
 
     public void process() {
         for (JetClass aClass : context.getClasses().keySet()) {

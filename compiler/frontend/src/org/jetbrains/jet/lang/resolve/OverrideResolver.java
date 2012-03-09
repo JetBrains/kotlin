@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
@@ -43,11 +44,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
  */
 public class OverrideResolver {
 
-    private final TopDownAnalysisContext context;
+    private TopDownAnalysisContext context;
 
-    public OverrideResolver(@NotNull TopDownAnalysisContext context) {
+
+    @Inject
+    public void setContext(TopDownAnalysisContext context) {
         this.context = context;
     }
+
+
 
     public void process() {
         generateOverrides();

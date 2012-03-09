@@ -25,7 +25,6 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -35,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,8 +91,7 @@ public class AnalyzingUtils {
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
-        return analyzeFilesWithGivenTrace(project, configuration, files, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext, semanticServices);
+        return analyzeFilesWithGivenTrace(project, configuration, files, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext);
     }
 
     public static BindingContext analyzeFilesWithGivenTrace(
@@ -101,10 +100,9 @@ public class AnalyzingUtils {
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull BindingTraceContext bindingTraceContext,
-            @NotNull JetSemanticServices semanticServices) {
+            @NotNull BindingTraceContext bindingTraceContext) {
 
-        JetScope libraryScope = semanticServices.getStandardLibrary().getLibraryScope();
+        JetScope libraryScope = JetStandardLibrary.getInstance().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         final WritableScope scope = new WritableScopeImpl(
@@ -114,7 +112,7 @@ public class AnalyzingUtils {
         scope.importScope(libraryScope);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        TopDownAnalyzer.process(semanticServices, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
+        TopDownAnalyzer.process(project, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
 
             private Map<String, NamespaceDescriptorImpl> declaredNamespaces = Maps.newHashMap();
 

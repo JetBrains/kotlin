@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -48,7 +47,7 @@ public class JavaBridgeConfiguration implements Configuration {
 
     private JavaBridgeConfiguration(Project project, BindingTrace trace, Configuration delegateConfiguration) {
         this.project = project;
-        this.javaSemanticServices = new JavaSemanticServices(project, JetSemanticServices.createSemanticServices(project), trace);
+        this.javaSemanticServices = new JavaSemanticServices(project, trace);
         this.delegateConfiguration = delegateConfiguration;
     }
 

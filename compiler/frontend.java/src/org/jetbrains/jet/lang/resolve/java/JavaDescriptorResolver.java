@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
@@ -542,7 +543,7 @@ public class JavaDescriptorResolver {
         
         @Override
         public JetSignatureVisitor visitClassBound() {
-            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     if (isJavaLangObject(jetType)) {
@@ -555,7 +556,7 @@ public class JavaDescriptorResolver {
 
         @Override
         public JetSignatureVisitor visitInterfaceBound() {
-            return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+            return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
                 @Override
                 protected void done(@NotNull JetType jetType) {
                     upperBounds.add(jetType);
@@ -739,7 +740,7 @@ public class JavaDescriptorResolver {
 
                 @Override
                 public JetSignatureVisitor visitSuperclass() {
-                    return new JetTypeJetSignatureReader(semanticServices, semanticServices.getJetSemanticServices().getStandardLibrary(), typeVariableResolver) {
+                    return new JetTypeJetSignatureReader(semanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
                         @Override
                         protected void done(@NotNull JetType jetType) {
                             if (!jetType.equals(JetStandardClasses.getAnyType())) {
@@ -971,7 +972,7 @@ public class JavaDescriptorResolver {
 
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
-            varargElementType = semanticServices.getJetSemanticServices().getStandardLibrary().getArrayElementType(outType);
+            varargElementType = JetStandardLibrary.getInstance().getArrayElementType(outType);
         } else {
             varargElementType = null;
         }

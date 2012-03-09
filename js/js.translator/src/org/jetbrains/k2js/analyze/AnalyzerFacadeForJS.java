@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -95,15 +94,14 @@ public final class AnalyzerFacadeForJS {
     public static BindingContext analyzeNamespace(@NotNull JetFile file) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         Project project = file.getProject();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         return AnalyzingUtils.analyzeFilesWithGivenTrace(
                 project,
                 JsConfiguration.jsLibConfiguration(project),
                 Collections.singletonList(file),
                 Predicates.<PsiFile>alwaysTrue(),
                 JetControlFlowDataTraceFactory.EMPTY,
-                bindingTraceContext,
-                semanticServices);
+                bindingTraceContext
+        );
     }
 
     private static final class JsConfiguration implements Configuration {

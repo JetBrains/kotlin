@@ -25,7 +25,6 @@ import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -112,8 +111,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
-        JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());
-        JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), jetSemanticServices, new BindingTraceContext());
+        JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), new BindingTraceContext());
 
         JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
         return javaDescriptorResolver.resolveNamespace("test");

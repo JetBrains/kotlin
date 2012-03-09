@@ -18,24 +18,44 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetFunctionType;
+import org.jetbrains.jet.lang.psi.JetNullableType;
+import org.jetbrains.jet.lang.psi.JetParameter;
+import org.jetbrains.jet.lang.psi.JetProjectionKind;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.JetTupleType;
+import org.jetbrains.jet.lang.psi.JetTypeElement;
+import org.jetbrains.jet.lang.psi.JetTypeProjection;
+import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.JetUserType;
+import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.JetTypeImpl;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeProjection;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.lazy.LazyValue;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
@@ -43,27 +63,28 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
  */
 public class TypeResolver {
 
-    private final JetSemanticServices semanticServices;
-    private final BindingTrace trace;
-    private final boolean checkBounds;
-    private final AnnotationResolver annotationResolver;
+    private AnnotationResolver annotationResolver;
+    private DescriptorResolver descriptorResolver;
 
-    public TypeResolver(JetSemanticServices semanticServices, BindingTrace trace, boolean checkBounds) {
-        this.semanticServices = semanticServices;
-        this.trace = trace;
-        this.checkBounds = checkBounds;
-        this.annotationResolver = new AnnotationResolver(semanticServices, trace);
+    @Inject
+    public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setAnnotationResolver(AnnotationResolver annotationResolver) {
+        this.annotationResolver = annotationResolver;
     }
 
     @NotNull
-    public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference) {
+    public JetType resolveType(@NotNull final JetScope scope, @NotNull final JetTypeReference typeReference, BindingTrace trace, boolean checkBounds) {
         JetType cachedType = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
         if (cachedType != null) return cachedType;
 
-        final List<AnnotationDescriptor> annotations = annotationResolver.createAnnotationStubs(typeReference.getAnnotations());
+        final List<AnnotationDescriptor> annotations = annotationResolver.createAnnotationStubs(typeReference.getAnnotations(), trace);
 
         JetTypeElement typeElement = typeReference.getTypeElement();
-        JetType type = resolveTypeElement(scope, annotations, typeElement, false);
+        JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
 
         return type;
@@ -71,7 +92,7 @@ public class TypeResolver {
 
     @NotNull
     private JetType resolveTypeElement(final JetScope scope, final List<AnnotationDescriptor> annotations,
-                                       JetTypeElement typeElement, final boolean nullable) {
+            JetTypeElement typeElement, final boolean nullable, final BindingTrace trace, final boolean checkBounds) {
 
         final JetType[] result = new JetType[1];
         if (typeElement != null) {
@@ -84,9 +105,9 @@ public class TypeResolver {
                         return;
                     }
 
-                    ClassifierDescriptor classifierDescriptor = resolveClass(scope, type);
+                    ClassifierDescriptor classifierDescriptor = resolveClass(scope, type, trace);
                     if (classifierDescriptor == null) {
-                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
+                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments(), trace, checkBounds);
                         return;
                     }
 
@@ -95,7 +116,7 @@ public class TypeResolver {
 
                         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, typeParameterDescriptor);
 
-                        JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor);
+                        JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor, checkBounds);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
                             result[0] = ErrorUtils.createErrorType("?");
                         } else {
@@ -108,14 +129,14 @@ public class TypeResolver {
                             );
                         }
 
-                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments());
+                        resolveTypeProjections(scope, ErrorUtils.createErrorType("No type").getConstructor(), type.getTypeArguments(), trace, checkBounds);
                     }
                     else if (classifierDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
 
                         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifierDescriptor);
                         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
-                        List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments());
+                        List<TypeProjection> arguments = resolveTypeProjections(scope, typeConstructor, type.getTypeArguments(), trace, checkBounds);
                         List<TypeParameterDescriptor> parameters = typeConstructor.getParameters();
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
@@ -145,7 +166,7 @@ public class TypeResolver {
                                         JetTypeReference typeReference = type.getTypeArguments().get(i).getTypeReference();
 
                                         if (typeReference != null) {
-                                            semanticServices.getClassDescriptorResolver(trace).checkBounds(typeReference, argument, parameter, substitutor);
+                                            descriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, trace);
                                         }
                                     }
                                 }
@@ -156,29 +177,29 @@ public class TypeResolver {
 
                 @Override
                 public void visitNullableType(JetNullableType nullableType) {
-                    result[0] = resolveTypeElement(scope, annotations, nullableType.getInnerType(), true);
+                    result[0] = resolveTypeElement(scope, annotations, nullableType.getInnerType(), true, trace, checkBounds);
                 }
 
                 @Override
                 public void visitTupleType(JetTupleType type) {
                     // TODO labels
-                    result[0] = JetStandardClasses.getTupleType(resolveTypes(scope, type.getComponentTypeRefs()));
+                    result[0] = JetStandardClasses.getTupleType(resolveTypes(scope, type.getComponentTypeRefs(), trace, checkBounds));
                 }
 
                 @Override
                 public void visitFunctionType(JetFunctionType type) {
                     JetTypeReference receiverTypeRef = type.getReceiverTypeRef();
-                    JetType receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef);
+                    JetType receiverType = receiverTypeRef == null ? null : resolveType(scope, receiverTypeRef, trace, checkBounds);
 
                     List<JetType> parameterTypes = new ArrayList<JetType>();
                     for (JetParameter parameter : type.getParameters()) {
-                        parameterTypes.add(resolveType(scope, parameter.getTypeReference()));
+                        parameterTypes.add(resolveType(scope, parameter.getTypeReference(), trace, checkBounds));
                     }
 
                     JetTypeReference returnTypeRef = type.getReturnTypeRef();
                     JetType returnType;
                     if (returnTypeRef != null) {
-                        returnType = resolveType(scope, returnTypeRef);
+                        returnType = resolveType(scope, returnTypeRef, trace, checkBounds);
                     }
                     else {
                         returnType = JetStandardClasses.getUnitType();
@@ -202,7 +223,7 @@ public class TypeResolver {
         return result[0];
     }
 
-    private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor) {
+    private JetScope getScopeForTypeParameter(final TypeParameterDescriptor typeParameterDescriptor, boolean checkBounds) {
         if (checkBounds) {
             return typeParameterDescriptor.getUpperBoundsAsType().getMemberScope();
         }
@@ -216,16 +237,16 @@ public class TypeResolver {
         }
     }
 
-    private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements) {
+    private List<JetType> resolveTypes(JetScope scope, List<JetTypeReference> argumentElements, BindingTrace trace, boolean checkBounds) {
         final List<JetType> arguments = new ArrayList<JetType>();
         for (JetTypeReference argumentElement : argumentElements) {
-            arguments.add(resolveType(scope, argumentElement));
+            arguments.add(resolveType(scope, argumentElement, trace, checkBounds));
         }
         return arguments;
     }
 
     @NotNull
-    private List<TypeProjection> resolveTypeProjections(JetScope scope, TypeConstructor constructor, List<JetTypeProjection> argumentElements) {
+    private List<TypeProjection> resolveTypeProjections(JetScope scope, TypeConstructor constructor, List<JetTypeProjection> argumentElements, BindingTrace trace, boolean checkBounds) {
         final List<TypeProjection> arguments = new ArrayList<TypeProjection>();
         for (int i = 0, argumentElementsSize = argumentElements.size(); i < argumentElementsSize; i++) {
             JetTypeProjection argumentElement = argumentElements.get(i);
@@ -244,7 +265,7 @@ public class TypeResolver {
             }
             else {
                 // TODO : handle the Foo<in *> case
-                type = resolveType(scope, argumentElement.getTypeReference());
+                type = resolveType(scope, argumentElement.getTypeReference(), trace, checkBounds);
                 Variance kind = null;
                 switch (projectionKind) {
                     case IN:
@@ -265,8 +286,8 @@ public class TypeResolver {
     }
 
     @Nullable
-    public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType) {
-        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
+    public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType, BindingTrace trace) {
+        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType, trace);
 
         if (classifierDescriptor == null) {
             trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
@@ -279,7 +300,7 @@ public class TypeResolver {
     }
 
     @Nullable
-    private ClassifierDescriptor resolveClassWithoutErrorReporting(JetScope scope, JetUserType userType) {
+    private ClassifierDescriptor resolveClassWithoutErrorReporting(JetScope scope, JetUserType userType, BindingTrace trace) {
         JetSimpleNameExpression expression = userType.getReferenceExpression();
         if (expression == null) {
             return null;
@@ -292,12 +313,12 @@ public class TypeResolver {
         if (userType.isAbsoluteInRootNamespace()) {
             classifierDescriptor = JetModuleUtil.getRootNamespaceType(userType).getMemberScope().getClassifier(referencedName);
             trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(),
-                         JetModuleUtil.getRootNamespaceType(userType).getMemberScope());
+                    JetModuleUtil.getRootNamespaceType(userType).getMemberScope());
         }
         else {
             JetUserType qualifier = userType.getQualifier();
             if (qualifier != null) {
-                scope = resolveClassLookupScope(scope, qualifier);
+                scope = resolveClassLookupScope(scope, qualifier, trace);
             }
             if (scope == null) {
                 return ErrorUtils.getErrorClass();
@@ -310,8 +331,8 @@ public class TypeResolver {
     }
 
     @Nullable
-    private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType) {
-        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType);
+    private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType, BindingTrace trace) {
+        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType, trace);
         if (classifierDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
             JetType classObjectType = classDescriptor.getClassObjectType();
@@ -320,7 +341,7 @@ public class TypeResolver {
             }
         }
 
-        NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType);
+        NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType, trace);
         if (namespaceDescriptor == null) {
             trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
             return null;
@@ -329,15 +350,15 @@ public class TypeResolver {
     }
 
     @Nullable
-    private NamespaceDescriptor resolveNamespace(JetScope scope, JetUserType userType) {
+    private NamespaceDescriptor resolveNamespace(JetScope scope, JetUserType userType, BindingTrace trace) {
         if (userType.isAbsoluteInRootNamespace()) {
-            return resolveNamespace(JetModuleUtil.getRootNamespaceType(userType).getMemberScope(), userType);
+            return resolveNamespace(JetModuleUtil.getRootNamespaceType(userType).getMemberScope(), userType, trace);
         }
 
         JetUserType qualifier = userType.getQualifier();
         NamespaceDescriptor namespace;
         if (qualifier != null) {
-            NamespaceDescriptor domain = resolveNamespace(scope, qualifier);
+            NamespaceDescriptor domain = resolveNamespace(scope, qualifier, trace);
             if (domain == null) {
                 return null;
             }

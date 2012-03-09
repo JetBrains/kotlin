@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -44,11 +45,15 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
  * @author svtk
  */
 public class DeclarationsChecker {
+    @NotNull
     private TopDownAnalysisContext context;
 
-    public DeclarationsChecker(TopDownAnalysisContext context) {
+
+    @Inject
+    public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
 
     public void process() {
         Map<JetClass, MutableClassDescriptor> classes = context.getClasses();

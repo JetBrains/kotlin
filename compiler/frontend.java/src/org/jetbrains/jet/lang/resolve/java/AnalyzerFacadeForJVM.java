@@ -28,7 +28,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.StandardConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -141,15 +140,14 @@ public class AnalyzerFacadeForJVM {
     public static BindingContext analyzeFilesWithJavaIntegration(Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
                                                                  JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
         return AnalyzingUtils.analyzeFilesWithGivenTrace(
                 project,
                 JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, StandardConfiguration.createStandardConfiguration(project)),
                 files,
                 filesToAnalyzeCompletely,
                 flowDataTraceFactory,
-                bindingTraceContext,
-                semanticServices);
+                bindingTraceContext
+        );
     }
 
     public static BindingContext shallowAnalyzeFiles(Collection<JetFile> files) {

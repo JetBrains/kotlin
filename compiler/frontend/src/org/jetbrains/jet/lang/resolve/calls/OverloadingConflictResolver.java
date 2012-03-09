@@ -20,16 +20,17 @@ import gnu.trove.THashSet;
 import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 
@@ -37,12 +38,6 @@ import java.util.Set;
  * @author abreslav
  */
 public class OverloadingConflictResolver {
-
-    private final JetSemanticServices semanticServices;
-
-    public OverloadingConflictResolver(@NotNull JetSemanticServices semanticServices) {
-        this.semanticServices = semanticServices;
-    }
 
     @Nullable
     public <D extends CallableDescriptor> ResolvedCallImpl<D> findMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenericDescriptors) {
@@ -128,12 +123,12 @@ public class OverloadingConflictResolver {
     }
 
     private boolean typeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        return semanticServices.getTypeChecker().isSubtypeOf(specific, general) ||
+        return JetTypeChecker.INSTANCE.isSubtypeOf(specific, general) ||
                             numericTypeMoreSpecific(specific, general);
     }
 
     private boolean numericTypeMoreSpecific(@NotNull JetType specific, @NotNull JetType general) {
-        JetStandardLibrary standardLibrary = semanticServices.getStandardLibrary();
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         JetType _double = standardLibrary.getDoubleType();
         JetType _float = standardLibrary.getFloatType();
         JetType _long = standardLibrary.getLongType();

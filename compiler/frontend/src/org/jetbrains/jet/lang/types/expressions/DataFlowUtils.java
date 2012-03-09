@@ -154,7 +154,7 @@ public class DataFlowUtils {
     @Nullable
     public static JetType checkType(@Nullable JetType expressionType, @NotNull JetExpression expression, @NotNull ExpressionTypingContext context) {
         if (expressionType == null || context.expectedType == null || context.expectedType == TypeUtils.NO_EXPECTED_TYPE ||
-            context.semanticServices.getTypeChecker().isSubtypeOf(expressionType, context.expectedType)) {
+            JetTypeChecker.INSTANCE.isSubtypeOf(expressionType, context.expectedType)) {
             return expressionType;
         }
 

@@ -16,13 +16,15 @@
 
 package org.jetbrains.jet.types;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -50,9 +52,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private JetScope scope;
 
         public void setUp() throws Exception {
-            JetStandardLibrary library = JetStandardLibrary.getInstance();
-            JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(library);
-            descriptorResolver = semanticServices.getClassDescriptorResolver(JetTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE);
+            Injector injector = Guice.createInjector(new TopDownAnalysisModule(getProject(), false) {
+                @Override
+                protected void configureAfter() {
+                }
+            });
+            JetStandardLibrary library = injector.getInstance(JetStandardLibrary.class);
+            descriptorResolver = injector.getInstance(DescriptorResolver.class);
             scope = createScope(library.getLibraryScope());
         }
 
@@ -72,7 +78,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
         private MutableClassDescriptor createClassDescriptor(ClassKind kind, JetClass aClass) {
             MutableClassDescriptor classDescriptor = new MutableClassDescriptor(JetTestUtils.DUMMY_TRACE, root, scope, kind);
-            descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor);
+            descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
             return classDescriptor;
         }
 
@@ -90,7 +96,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetNamedFunction function = (JetNamedFunction) declarations.get(0);
-            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function);
+            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function, JetTestUtils.DUMMY_TRACE);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }
@@ -101,7 +107,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
+            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -113,7 +119,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
             JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property);
+            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

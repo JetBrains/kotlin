@@ -19,11 +19,12 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
+import com.google.inject.Inject;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.Configuration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -47,18 +48,45 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  * @author abreslav
  */
 public class TypeHierarchyResolver {
-    private final TopDownAnalysisContext context;
+    @NotNull
+    private TopDownAnalysisContext context;
+    @NotNull
+    private ImportsResolver importsResolver;
+    @NotNull
+    private DescriptorResolver descriptorResolver;
+    @NotNull
+    private Configuration configuration;
+
+
+    // state
     private LinkedList<MutableClassDescriptor> topologicalOrder;
 
 
-    public TypeHierarchyResolver(TopDownAnalysisContext context) {
+    @Inject
+    public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
+    @Inject
+    public void setImportsResolver(@NotNull ImportsResolver importsResolver) {
+        this.importsResolver = importsResolver;
+    }
+
+    @Inject
+    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setConfiguration(@NotNull Configuration configuration) {
+        this.configuration = configuration;
+    }
+
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends PsiElement> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
-        context.getImportsResolver().processTypeImports();
+        importsResolver.processTypeImports();
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
@@ -238,7 +266,7 @@ public class TypeHierarchyResolver {
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);
-            context.getConfiguration().extendNamespaceScope(context.getTrace(), namespaceDescriptor, scope);
+            configuration.extendNamespaceScope(context.getTrace(), namespaceDescriptor, scope);
             owner.addNamespace(namespaceDescriptor);
             if (file != null) {
                 context.getTrace().record(BindingContext.NAMESPACE, file, namespaceDescriptor);
@@ -260,7 +288,7 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveMutableClassDescriptor(jetClass, descriptor);
+            descriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor, context.getTrace());
             descriptor.createTypeConstructor();
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
@@ -277,13 +305,13 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters());
-            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor);
+            descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters(), context.getTrace());
+            descriptorResolver.resolveSupertypes(jetClass, descriptor, context.getTrace());
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            context.getDescriptorResolver().resolveSupertypes(jetClass, descriptor);
+            descriptorResolver.resolveSupertypes(jetClass, descriptor, context.getTrace());
         }
     }
 
@@ -478,7 +506,7 @@ public class TypeHierarchyResolver {
                 if (typeReference != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, typeReference);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(typeReference, type);
+                        descriptorResolver.checkBounds(typeReference, type, context.getTrace());
                     }
                 }
             }
@@ -488,7 +516,7 @@ public class TypeHierarchyResolver {
                 if (extendsBound != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(extendsBound, type);
+                        descriptorResolver.checkBounds(extendsBound, type, context.getTrace());
                     }
                 }
             }
@@ -498,7 +526,7 @@ public class TypeHierarchyResolver {
                 if (extendsBound != null) {
                     JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        context.getDescriptorResolver().checkBounds(extendsBound, type);
+                        descriptorResolver.checkBounds(extendsBound, type, context.getTrace());
                     }
                 }
             }

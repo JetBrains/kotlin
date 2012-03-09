@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.inject.Inject;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +36,14 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
  * @author Stepan Koltsov
  */
 public class OverloadResolver {
-    private final TopDownAnalysisContext context;
+    private TopDownAnalysisContext context;
 
-    public OverloadResolver(@NotNull TopDownAnalysisContext context) {
+
+    @Inject
+    public void setContext(TopDownAnalysisContext context) {
         this.context = context;
     }
+
 
     public void process() {
         checkOverloads();

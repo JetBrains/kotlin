@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.liveTemplates.macro;
 
+import com.google.inject.Guice;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.Expression;
@@ -34,7 +35,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
@@ -51,7 +55,7 @@ public abstract class BaseJetVariableMacro extends Macro {
     private JetNamedDeclaration[] getVariables(Expression[] params, ExpressionContext context) {
         if (params.length != 0) return null;
 
-        Project project = context.getProject();
+        final Project project = context.getProject();
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
@@ -66,11 +70,17 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
+        ExpressionTypingServices callResolverContext = Guice.createInjector(new TopDownAnalysisModule(project, false) {
+            @Override
+            protected void configureAfter() {
+            }
+        }).getInstance(ExpressionTypingServices.class);
+
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
-                if (isSuitable(variableDescriptor, scope, project)) {
+                if (isSuitable(variableDescriptor, scope, project, callResolverContext)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
@@ -89,7 +99,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
     }
 
-    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project);
+    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, ExpressionTypingServices callResolverContext);
 
     @Nullable
     private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {

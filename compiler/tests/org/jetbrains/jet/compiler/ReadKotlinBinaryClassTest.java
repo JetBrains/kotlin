@@ -29,7 +29,6 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
@@ -90,8 +89,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
-        JetSemanticServices jetSemanticServices = JetSemanticServices.createSemanticServices(jetCoreEnvironment.getProject());
-        JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), jetSemanticServices, new BindingTraceContext());
+        JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), new BindingTraceContext());
 
         JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
         NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace("test");

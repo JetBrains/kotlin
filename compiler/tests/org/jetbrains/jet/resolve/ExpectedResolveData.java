@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -135,8 +134,7 @@ public abstract class ExpectedResolveData {
         }
         final Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         Project project = files.iterator().next().getProject();
-        JetSemanticServices semanticServices = JetSemanticServices.createSemanticServices(project);
-        JetStandardLibrary lib = semanticServices.getStandardLibrary();
+        JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

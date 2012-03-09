@@ -22,7 +22,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.JetSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -54,11 +53,28 @@ public class JetStandardLibrary {
 
     private static JetStandardLibrary instance = null;
 
+    private static boolean initializing;
+    private static Throwable initializationFailed;
+
     // This method must be called at least once per application run, on any project
     // before any type checking is run
     public static synchronized void initialize(@NotNull Project project) {
         if (instance == null) {
-            instance = new JetStandardLibrary(project);
+            if (initializing) {
+                throw new IllegalStateException("builtin library initialization loop");
+            }
+            if (initializationFailed != null) {
+                throw new RuntimeException(
+                        "builtin library initialization failed previously: " + initializationFailed, initializationFailed);
+            }
+            initializing = true;
+            try {
+                instance = new JetStandardLibrary(project);
+            } catch (Throwable e) {
+                initializationFailed = e;
+                throw new RuntimeException("builtin library initialization failed: " + e, e);
+            }
+            initializing = false;
         }
     }
 
@@ -122,11 +138,10 @@ public class JetStandardLibrary {
                 files.add(file);
             }
 
-            JetSemanticServices bootstrappingSemanticServices = JetSemanticServices.createSemanticServices(this);
             BindingTraceContext bindingTraceContext = new BindingTraceContext();
             WritableScopeImpl writableScope = new WritableScopeImpl(JetStandardClasses.STANDARD_CLASSES, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Root bootstrap scope");
             writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            TopDownAnalyzer.processStandardLibraryNamespace(bootstrappingSemanticServices, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
+            TopDownAnalyzer.processStandardLibraryNamespace(project, bindingTraceContext, writableScope, JetStandardClasses.STANDARD_CLASSES_NAMESPACE, files);
 
             AnalyzingUtils.throwExceptionOnErrors(bindingTraceContext.getBindingContext());
             initStdClasses();

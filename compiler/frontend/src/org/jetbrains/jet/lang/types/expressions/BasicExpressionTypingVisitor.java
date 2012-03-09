@@ -147,7 +147,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ASTNode node = expression.getNode();
         IElementType elementType = node.getElementType();
         String text = node.getText();
-        JetStandardLibrary standardLibrary = context.semanticServices.getStandardLibrary();
+        JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         CompileTimeConstantResolver compileTimeConstantResolver = context.getCompileTimeConstantResolver();
 
         CompileTimeConstant<?> value;
@@ -172,7 +172,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (value instanceof ErrorValue) {
             ErrorValue errorValue = (ErrorValue) value;
             context.trace.report(ERROR_COMPILE_TIME_VALUE.on(node.getPsi(), errorValue.getMessage()));
-            return getDefaultType(context.semanticServices, elementType);
+            return getDefaultType(elementType);
         }
         else {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, value);
@@ -185,7 +185,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference right = expression.getRight();
         JetType result = null;
         if (right != null) {
-            JetType targetType = context.getTypeResolver().resolveType(context.scope, right);
+            JetType targetType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, right, context.trace, true);
 
             if (isTypeFlexible(expression.getLeft())) {
                 TemporaryBindingTrace temporaryTraceWithExpectedType = TemporaryBindingTrace.create(context.trace);
@@ -223,7 +223,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationSign();
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.COLON) {
-            if (targetType != NO_EXPECTED_TYPE && !context.semanticServices.getTypeChecker().isSubtypeOf(actualType, targetType)) {
+            if (targetType != NO_EXPECTED_TYPE && !JetTypeChecker.INSTANCE.isSubtypeOf(actualType, targetType)) {
                 context.trace.report(TYPE_MISMATCH.on(expression.getLeft(), targetType, actualType));
                 return false;
             }
@@ -242,7 +242,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private void checkForCastImpossibility(JetBinaryExpressionWithTypeRHS expression, JetType actualType, JetType targetType, ExpressionTypingContext context) {
         if (actualType == null || targetType == NO_EXPECTED_TYPE) return;
 
-        JetTypeChecker typeChecker = context.semanticServices.getTypeChecker();
+        JetTypeChecker typeChecker = JetTypeChecker.INSTANCE;
         if (!typeChecker.isSubtypeOf(targetType, actualType)) {
             if (typeChecker.isSubtypeOf(actualType, targetType)) {
                 context.trace.report(USELESS_CAST_STATIC_ASSERT_IS_FINE.on(expression.getOperationSign()));
@@ -346,7 +346,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         List<JetExpression> entries = expression.getEntries();
         List<JetType> types = new ArrayList<JetType>();
         for (JetExpression entry : entries) {
-            types.add(context.getServices().safeGetType(context.scope, entry, NO_EXPECTED_TYPE)); // TODO
+            types.add(context.expressionTypingServices.safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.trace)); // TODO
         }
         if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isTupleType(context.expectedType)) {
             List<JetType> enrichedTypes = checkArgumentTypes(types, entries, context.expectedType.getArguments(), context);
@@ -417,15 +417,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     JetUserType userType = (JetUserType) typeElement;
                     // This may be just a superclass name even if the superclass is generic
                     if (userType.getTypeArguments().isEmpty()) {
-                        classifierCandidate = context.getTypeResolver().resolveClass(context.scope, userType);
+                        classifierCandidate = context.expressionTypingServices.getTypeResolver().resolveClass(context.scope, userType, context.trace);
                     }
                     else {
-                        supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                        supertype = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
                         redundantTypeArguments = userType.getTypeArgumentList();
                     }
                 }
                 else {
-                    supertype = context.getTypeResolver().resolveType(context.scope, superTypeQualifier);
+                    supertype = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, superTypeQualifier, context.trace, true);
                 }
 
                 if (supertype != null) {
@@ -505,7 +505,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetType visitBlockExpression(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
-        return context.getServices().getBlockReturnedType(context.scope, expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
+        return context.expressionTypingServices.getBlockReturnedType(context.scope, expression, isStatement
+                                                                                                ? CoercionStrategy.COERCION_TO_UNIT
+                                                                                                : CoercionStrategy.NO_COERCION, context, context.trace);
     }
 
     @Override
@@ -544,9 +546,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         JetType result;
         if (expression.getOperationSign() == JetTokens.QUEST) {
-            if (selectorReturnType != null && !isBoolean(context.semanticServices, selectorReturnType)) {
+            if (selectorReturnType != null && !isBoolean(selectorReturnType)) {
                 // TODO : more comprehensible error message
-                context.trace.report(TYPE_MISMATCH.on(selectorExpression, context.semanticServices.getStandardLibrary().getBooleanType(), selectorReturnType));
+                context.trace.report(TYPE_MISMATCH.on(selectorExpression, JetStandardLibrary.getInstance().getBooleanType(), selectorReturnType));
             }
             result = TypeUtils.makeNullable(receiverType);
         }
@@ -566,7 +568,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         CompileTimeConstant<?> wholeExpressionValue = context.trace.getBindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         DeclarationDescriptor declarationDescriptor = context.trace.getBindingContext().get(BindingContext.REFERENCE_TARGET, selectorExpression);
         if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number
-            && context.semanticServices.getStandardLibrary().getNumber() == declarationDescriptor) {
+            && JetStandardLibrary.getInstance().getNumber() == declarationDescriptor) {
             Number value = (Number) receiverValue.getValue();
             String referencedName = selectorExpression.getReferencedName();
             if (OperatorConventions.NUMBER_CONVERSIONS.contains(referencedName)) {
@@ -707,13 +709,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType returnType = functionDescriptor.getResultingDescriptor().getReturnType();
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
-            if (context.semanticServices.getTypeChecker().isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
+            if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
                 result = JetStandardClasses.getUnitType();
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
                 JetType receiverType = receiver.getType();
-                if (!context.semanticServices.getTypeChecker().isSubtypeOf(returnType, receiverType)) {
+                if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, receiverType)) {
                     context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name, receiverType, returnType));
                 }
                 else {
@@ -785,7 +787,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType compareToReturnType = getTypeForBinaryCall(context.scope, "compareTo", context, expression);
             if (compareToReturnType != null) {
                 TypeConstructor constructor = compareToReturnType.getConstructor();
-                JetStandardLibrary standardLibrary = context.semanticServices.getStandardLibrary();
+                JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
                 TypeConstructor intTypeConstructor = standardLibrary.getInt().getTypeConstructor();
                 if (constructor.equals(intTypeConstructor)) {
                     result = standardLibrary.getBooleanType();
@@ -795,7 +797,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            JetType booleanType = context.semanticServices.getStandardLibrary().getBooleanType();
+            JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
             if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
                 String name = "equals";
                 if (right != null) {
@@ -841,10 +843,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 DataFlowInfo flowInfoLeft = DataFlowUtils.extractDataFlowInfoFromCondition(left, operationType == JetTokens.ANDAND, leftScope, context);  // TODO: This gets computed twice: here and in extractDataFlowInfoFromCondition() for the whole condition
                 WritableScopeImpl rightScope = operationType == JetTokens.ANDAND ? leftScope : newWritableScopeImpl(context).setDebugName("Right scope of && or ||");
                 JetType rightType = right == null ? null : facade.getType(right, context.replaceDataFlowInfo(flowInfoLeft).replaceScope(rightScope));
-                if (leftType != null && !isBoolean(context.semanticServices, leftType)) {
+                if (leftType != null && !isBoolean(leftType)) {
                     context.trace.report(TYPE_MISMATCH.on(left, booleanType, leftType));
                 }
-                if (rightType != null && !isBoolean(context.semanticServices, rightType)) {
+                if (rightType != null && !isBoolean(rightType)) {
                     context.trace.report(TYPE_MISMATCH.on(right, booleanType, rightType));
                 }
                 result = booleanType;
@@ -892,7 +894,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType rightType = facade.getType(right, context.replaceScope(context.scope));
 
             if (rightType != null) {
-                JetType intersect = TypeUtils.intersect(context.semanticServices.getTypeChecker(), new HashSet<JetType>(Arrays.asList(leftType, rightType)));
+                JetType intersect = TypeUtils.intersect(JetTypeChecker.INSTANCE, new HashSet<JetType>(Arrays.asList(leftType, rightType)));
                 if (intersect == null) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, operationSign, leftType, rightType));
                 }
@@ -993,7 +995,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (value[0] != CompileTimeConstantResolver.OUT_OF_RANGE) {
             context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new StringValue(builder.toString()));
         }
-        return DataFlowUtils.checkType(context.semanticServices.getStandardLibrary().getStringType(), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(JetStandardLibrary.getInstance().getStringType(), expression, contextWithExpectedType);
     }
 
     @Override
