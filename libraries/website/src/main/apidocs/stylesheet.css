@@ -21,7 +21,7 @@
 /* Page background color */
 body {
   background-color: #FFFFFF;
-  background-image:url(resources/gradient-sand-white.png);
+  background-image:url(resources/bkg_gradient.gif);
   background-repeat: repeat-x;
   margin:0 auto;
   font-family:'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
@@ -40,16 +40,16 @@ font {
   font-weight: inherit; }
 
 hr {
-  border-top: 1px solid #A9A89B;
+  border-top: 1px solid #E6E7E8;
   border-bottom: 0 none;
 }
 
 tt, tt *, pre, pre *, code, code * {
   font-family: "Liberation Mono", "DejaVu Sans Mono", Consolas, Monaco, "Vera Sans Mono", "Lucida Console", "Courier New", monospace !important;
 }
-a:link { color:#5d5c50; }
-a:visited { color:#5d5c50; }
-a:hover { color:#5d5c50; }
+a:link { color:#0066cc; }
+a:visited { color:#8b5caf; }
+a:hover { color:#6699cc; }
 
 
 /* Headings */
@@ -57,7 +57,7 @@ h1 {
   font-size: 145%;
   border-top:1px dotted #CCCCCC;
   line-height:1.2em;
-  color:#CC333A;
+  color:#182737;
   font-size:2em;
   padding:1.5em;
   margin-top: 0px;
@@ -67,12 +67,12 @@ h1 {
 
 /* Default Table elements and colors */
 
-th, table { border-collapse:collapse;border-color: #A9A89B; }
+th, table { border-collapse:collapse;border-color: #E6E7E8; }
 
 
 .TableHeadingColor {
-  background:#EBE7C4 url(resources/bkgheader.png) no-repeat right top; 
-  color:#CC333A;
+  background:#000000 url(resources/bkg_blkheader.png) repeat-x scroll left top;
+  color:#FFFFFF;
   font-size:12px;
   font-weight:bold;
   height:31px;
@@ -85,8 +85,8 @@ th, table { border-collapse:collapse;border-color: #A9A89B; }
 }
 
 
-.TableSubHeadingColor { background-color:#EBE7C4; } 
-.TableRowColor { background: white; border-color: #A9A89B;}
+.TableSubHeadingColor { background: #EEEEFF } /* Light mauve */
+.TableRowColor { background: #FFFFFF; border-color: #E6E7E8;}
 .TableRowColor td { line-height: 175%; padding-left: 10px;}
 
 /* Font used in left-hand frame lists */
@@ -96,22 +96,23 @@ th, table { border-collapse:collapse;border-color: #A9A89B; }
 
 /* Navigation bar fonts and colors */
 
-.NavBarCell1 { 
-  background:#EBE7C4;
+.NavBarCell1 { background-color: #ffffff;
+  background-image:url(resources/bkgheader.png);
+  background-repeat: repeat-x scroll left top;
   line-height:2em;
   padding-left:6px;
   padding-right:6px;
 }
 
 .NavBarFont1 {
-  color: #CC333A;
+  color: white;
 }
 .NavBarCell1 a {
-  color: #CC333A;
+  color: white;
 }
 
-.NavBarCell1Rev { background:#EBE7C4; padding-left:6px; padding-right:6px;}
-.NavBarFont1    { color:#CC333A;}
+.NavBarCell1Rev { background-color:#FFFFFF; padding-left:6px; padding-right:6px;}
+.NavBarFont1    { color:#FFFFFF;}
 .NavBarFont1Rev { color:#243446;}
 
 .NavBarCell2    { background-color:#FFFFFF;}
