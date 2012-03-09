@@ -11,7 +11,7 @@ class GenerateSiteTest : TestCase() {
     val siteOutputDir = File(srcDir, "../../../target/site")
 
     // TODO find version from environment?
-    val version = "snapshot"
+    val versionDir = "snapshot"
 
     fun testGenerateSite(): Unit {
         val generator = SiteGenerator(srcDir, siteOutputDir)
@@ -19,7 +19,7 @@ class GenerateSiteTest : TestCase() {
     }
 
     fun testGenerateStdlibKDoc(): Unit {
-        val outDir = File(siteOutputDir, "versions/$version/apidocs")
+        val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
         println("Generating stdlib KDocs to $outDir")
 
         copyDocResources(outDir)
@@ -27,6 +27,8 @@ class GenerateSiteTest : TestCase() {
         args.setSrc("../stdlib/src")
         args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-stdlib")
+        val config = args.docConfig
+        config.title = "Kotlin API"
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
