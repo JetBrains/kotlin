@@ -53,12 +53,11 @@
     <echo message="Kotlin Plugin version is ${plugin.version} located ${plugin.path}"/>
 
     <!-- Get plugin verifier -->
-    <delete dir="PluginVerifier" failonerror="false" />
-    <mkdir dir="PluginVerifier" />
-    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier" />
+    <delete file="plugin-verifier.jar" failonerror="false" />
+    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="plugin-verifier.jar" />
 
     <!-- Run plugin verifier -->
-    <java fork="true" failonerror="true" jar="PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar">
+    <java fork="true" failonerror="true" jar="plugin-verifier.jar">
         <arg value="-r" />
         <arg value="${jdk16.home}" />
         <arg value="${plugin.path}" />
