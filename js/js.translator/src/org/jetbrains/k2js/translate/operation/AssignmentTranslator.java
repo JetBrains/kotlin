@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.reference.AccessTranslationUtils;
 import org.jetbrains.k2js.translate.reference.AccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
@@ -63,7 +64,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         super(context);
         this.expression = expression;
         this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
-        this.accessTranslator = AccessTranslator.getAccessTranslator(expression.getLeft(), context());
+        this.accessTranslator = AccessTranslationUtils.getAccessTranslator(expression.getLeft(), context());
         this.right = translateRightExpression(context(), expression);
     }
 }

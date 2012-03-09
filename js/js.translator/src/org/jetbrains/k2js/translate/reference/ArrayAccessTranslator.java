@@ -16,25 +16,27 @@
 
 package org.jetbrains.k2js.translate.reference;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
 
 /**
  * @author Pavel Talanov
  */
 
 //TODO: inspect not clear how the class handles set and get operations differently
-public final class ArrayAccessTranslator extends AccessTranslator {
+public class ArrayAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     /*package*/
     static ArrayAccessTranslator newInstance(@NotNull JetArrayAccessExpression expression,
@@ -47,8 +49,8 @@ public final class ArrayAccessTranslator extends AccessTranslator {
     @NotNull
     private final FunctionDescriptor methodDescriptor;
 
-    private ArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
-                                  @NotNull TranslationContext context) {
+    protected ArrayAccessTranslator(@NotNull JetArrayAccessExpression expression,
+                                    @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         //TODO: that is strange
@@ -56,41 +58,54 @@ public final class ArrayAccessTranslator extends AccessTranslator {
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
     }
 
-    @Override
     @NotNull
+    @Override
     public JsExpression translateAsGet() {
-        List<JsExpression> arguments = translateIndexExpressions();
-        return translateAsMethodCall(arguments);
+        return translateAsGet(translateArrayExpression(), translateIndexExpressions());
     }
 
+    @NotNull
+    protected JsExpression translateAsGet(@NotNull JsExpression arrayExpression,
+                                          @NotNull List<JsExpression> indexExpression) {
+        return translateAsMethodCall(arrayExpression, indexExpression);
+    }
+
+    @NotNull
     @Override
-    @NotNull
-    public JsExpression translateAsSet(@NotNull JsExpression expression) {
-
-        List<JsExpression> arguments = translateIndexExpressions();
-        arguments.add(expression);
-        return translateAsMethodCall(arguments);
+    public JsExpression translateAsSet(@NotNull JsExpression setTo) {
+        return translateAsSet(translateArrayExpression(), translateIndexExpressions(), setTo);
     }
 
     @NotNull
-    private JsExpression translateAsMethodCall(@NotNull List<JsExpression> arguments) {
+    protected JsExpression translateAsSet(@NotNull JsExpression arrayExpression, @NotNull List<JsExpression> indexExpressions, @NotNull JsExpression toSetTo) {
+        List<JsExpression> arguments = Lists.newArrayList(indexExpressions);
+        arguments.add(toSetTo);
+        return translateAsMethodCall(arrayExpression, arguments);
+    }
+
+    @NotNull
+    private JsExpression translateAsMethodCall(@NotNull JsExpression arrayExpression, @NotNull List<JsExpression> arguments) {
         return CallBuilder.build(context())
-                .receiver(translateArrayExpression())
+                .receiver(arrayExpression)
                 .args(arguments)
-                .resolvedCall(BindingUtils.getResolvedCall(bindingContext(), expression))
+                .resolvedCall(getResolvedCall(bindingContext(), expression))
                 .descriptor(methodDescriptor)
                 .translate();
     }
 
     @NotNull
-    private List<JsExpression> translateIndexExpressions() {
+    protected List<JsExpression> translateIndexExpressions() {
         return TranslationUtils.translateExpressionList(context(), expression.getIndexExpressions());
     }
 
     @NotNull
-    private JsExpression translateArrayExpression() {
+    protected JsExpression translateArrayExpression() {
         return Translation.translateAsExpression(expression.getArrayExpression(), context());
     }
 
-
+    @NotNull
+    @Override
+    public CachedAccessTranslator getCached() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

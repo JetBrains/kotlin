@@ -36,29 +36,32 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
  */
 public final class NativePropertyAccessTranslator extends PropertyAccessTranslator {
 
-
     @Nullable
-    private final JsExpression qualifier;
+    private final JsExpression receiver;
     @NotNull
     private final PropertyDescriptor propertyDescriptor;
 
     /*package*/
     NativePropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,
-                                   @Nullable JsExpression qualifier,
+                                   @Nullable JsExpression receiver,
                                    @NotNull TranslationContext context) {
         super(context);
-        this.qualifier = qualifier;
+        this.receiver = receiver;
         this.propertyDescriptor = descriptor.getOriginal();
     }
-
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
+        return translateAsGet(getReceiver());
+    }
+
+    @NotNull
+    @Override
+    protected JsExpression translateAsGet(@Nullable JsExpression receiver) {
         JsName nativePropertyName = context().getNameForDescriptor(propertyDescriptor);
-        JsExpression realQualifier = getQualifier();
-        if (realQualifier != null) {
-            return qualified(nativePropertyName, realQualifier);
+        if (receiver != null) {
+            return qualified(nativePropertyName, receiver);
         }
         else {
             return nativePropertyName.makeRef();
@@ -67,14 +70,21 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
 
     @Override
     @NotNull
+    protected JsExpression translateAsSet(@Nullable JsExpression receiver, @NotNull JsExpression setTo) {
+        assert receiver != null;
+        return assignment(translateAsGet(getReceiver()), setTo);
+    }
+
+    @NotNull
+    @Override
     public JsExpression translateAsSet(@NotNull JsExpression setTo) {
-        return assignment(translateAsGet(), setTo);
+        return translateAsSet(getReceiver(), setTo);
     }
 
     @Nullable
-    public JsExpression getQualifier() {
-        if (qualifier != null) {
-            return qualifier;
+    public JsExpression getReceiver() {
+        if (receiver != null) {
+            return receiver;
         }
         assert !propertyDescriptor.getReceiverParameter().exists() : "Cant have native extension properties.";
         DeclarationDescriptor expectedThisDescriptor = getExpectedThisDescriptor(propertyDescriptor);
@@ -82,5 +92,11 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
             return null;
         }
         return TranslationUtils.getThisObject(context(), expectedThisDescriptor);
+    }
+
+    @NotNull
+    @Override
+    public CachedAccessTranslator getCached() {
+        return new CachedPropertyAccessTranslator(getReceiver(), this, context());
     }
 }

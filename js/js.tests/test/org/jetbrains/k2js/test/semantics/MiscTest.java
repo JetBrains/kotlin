@@ -53,11 +53,15 @@ public final class MiscTest extends AbstractExpressionTest {
             checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
             fail();
         } catch (JavaScriptException e) {
-
         }
     }
 
     public void testKt1052() throws Exception {
         checkFooBoxIsTrue("KT1052.kt");
+    }
+
+
+    public void testKt740() throws Exception {
+        checkFooBoxIsTrue("KT-740.kt");
     }
 }

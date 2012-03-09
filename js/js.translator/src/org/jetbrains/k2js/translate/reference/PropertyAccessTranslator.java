@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
@@ -36,7 +37,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReferenc
 /**
  * @author Pavel Talanov
  */
-public abstract class PropertyAccessTranslator extends AccessTranslator {
+public abstract class PropertyAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
     @NotNull
     private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
@@ -127,6 +128,7 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
     }
 
     //TODO: we use normal by default but may cause bugs
+    //TODO: inspect
     private /*var*/ CallType callType = CallType.NORMAL;
 
     protected PropertyAccessTranslator(@NotNull TranslationContext context) {
@@ -142,4 +144,10 @@ public abstract class PropertyAccessTranslator extends AccessTranslator {
         assert callType != null : "CallType not set";
         return callType;
     }
+
+    @NotNull
+    protected abstract JsExpression translateAsGet(@Nullable JsExpression receiver);
+
+    @NotNull
+    protected abstract JsExpression translateAsSet(@Nullable JsExpression receiver, @NotNull JsExpression setTo);
 }

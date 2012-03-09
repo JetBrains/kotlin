@@ -33,7 +33,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslator {
 
     @Nullable
-    private final JsExpression qualifier;
+    private final JsExpression receiver;
     @NotNull
     private final PropertyDescriptor propertyDescriptor;
     @NotNull
@@ -41,42 +41,60 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
 
     //TODO: too many params in constructor
     /*package*/ KotlinPropertyAccessTranslator(@NotNull PropertyDescriptor descriptor,
-                                               @Nullable JsExpression qualifier,
+                                               @Nullable JsExpression receiver,
                                                @NotNull ResolvedCall<?> resolvedCall,
                                                @NotNull TranslationContext context) {
         super(context);
-        this.qualifier = qualifier;
+        this.receiver = receiver;
         this.propertyDescriptor = descriptor.getOriginal();
         this.resolvedCall = resolvedCall;
     }
 
-    @Override
     @NotNull
+    @Override
     public JsExpression translateAsGet() {
-        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-        assert getter != null : "Getter for kotlin properties should bot be null.";
-        return callBuilderForAccessor()
-                .descriptor(getter)
-                .translate();
+        return translateAsGet(receiver);
     }
 
     @Override
     @NotNull
+    public JsExpression translateAsGet(@Nullable JsExpression receiver) {
+        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
+        assert getter != null : "Getter for kotlin properties should bot be null.";
+        return callBuilderForAccessor(receiver)
+                .descriptor(getter)
+                .translate();
+    }
+
+    @NotNull
+    @Override
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
+        return translateAsSet(receiver, toSetTo);
+    }
+
+    @Override
+    @NotNull
+    public JsExpression translateAsSet(@Nullable JsExpression receiver, @NotNull JsExpression toSetTo) {
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
         assert setter != null : "Getter for kotlin properties should bot be null.";
-        return callBuilderForAccessor()
+        return callBuilderForAccessor(receiver)
                 .args(toSetTo)
                 .descriptor(setter)
                 .translate();
     }
 
     @NotNull
-    private CallBuilder callBuilderForAccessor() {
+    private CallBuilder callBuilderForAccessor(@Nullable JsExpression qualifier) {
         return CallBuilder.build(context())
                 .receiver(qualifier)
                 .resolvedCall(resolvedCall)
                 .type(getCallType());
     }
 
+
+    @NotNull
+    @Override
+    public CachedAccessTranslator getCached() {
+        return new CachedPropertyAccessTranslator(receiver, this, context());
+    }
 }

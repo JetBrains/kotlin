@@ -18,50 +18,48 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
+
 /**
  * @author Pavel Talanov
  */
-public final class ReferenceAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public final class CachedPropertyAccessTranslator implements CachedAccessTranslator {
 
     @NotNull
-    /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-                                                             @NotNull TranslationContext context) {
-        return new ReferenceAccessTranslator(expression, context);
+    private final PropertyAccessTranslator baseTranslator;
+    @Nullable
+    private final TemporaryVariable cachedReceiver;
+
+    /*package*/ CachedPropertyAccessTranslator(@Nullable JsExpression receiverExpression,
+                                               @NotNull PropertyAccessTranslator baseTranslator,
+                                               @NotNull TranslationContext context) {
+        this.cachedReceiver = receiverExpression != null ? context.declareTemporary(receiverExpression) : null;
+        this.baseTranslator = baseTranslator;
     }
 
     @NotNull
-    private final JetSimpleNameExpression expression;
-
-    private ReferenceAccessTranslator(@NotNull JetSimpleNameExpression expression,
-                                      @NotNull TranslationContext context) {
-        super(context);
-        this.expression = expression;
-    }
-
     @Override
-    @NotNull
     public JsExpression translateAsGet() {
-        //TODO: consider evaluating only once
-        return ReferenceTranslator.translateSimpleName(expression, context());
+        return baseTranslator.translateAsGet(receiverOrNull());
     }
 
-    @Override
     @NotNull
+    @Override
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        //TODO: consider evaluating only once
-        JsExpression reference = ReferenceTranslator.translateSimpleName(expression, context());
-        assert reference instanceof JsNameRef;
-        return AstUtil.newAssignment((JsNameRef) reference, toSetTo);
+        return baseTranslator.translateAsSet(receiverOrNull(), toSetTo);
+    }
+
+    @Nullable
+    private JsNameRef receiverOrNull() {
+        return cachedReceiver != null ? cachedReceiver.reference() : null;
     }
 
     @NotNull
@@ -72,6 +70,6 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
 
     @Override
     public List<TemporaryVariable> declaredTemporaries() {
-        return Collections.emptyList();
+        return cachedReceiver != null ? singletonList(cachedReceiver) : Collections.<TemporaryVariable>emptyList();
     }
 }

@@ -16,22 +16,15 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
+
+import java.util.List;
 
 /**
  * @author Pavel Talanov
  *         <p/>
- *         Abstract entity for language constructs that you can get/set. Also dispatches to the real implemntation.
+ *         Represents a translator which guaranties that all expression will be computed only once.
  */
-public interface AccessTranslator {
-
-    @NotNull
-    JsExpression translateAsGet();
-
-    @NotNull
-    JsExpression translateAsSet(@NotNull JsExpression setTo);
-
-    @NotNull
-    CachedAccessTranslator getCached();
+public interface CachedAccessTranslator extends AccessTranslator {
+    List<TemporaryVariable> declaredTemporaries();
 }

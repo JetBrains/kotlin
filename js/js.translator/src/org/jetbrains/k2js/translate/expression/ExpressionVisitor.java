@@ -358,7 +358,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression,
                                              @NotNull TranslationContext context) {
-        return AccessTranslator.translateAsGet(expression, context);
+        return AccessTranslationUtils.translateAsGet(expression, context);
     }
 
     @Override

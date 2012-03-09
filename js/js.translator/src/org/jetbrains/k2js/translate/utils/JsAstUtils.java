@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -254,10 +253,14 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static List<JsStatement> temporariesInitialization(@NotNull TemporaryVariable... temporaries) {
-        List<JsStatement> result = Lists.newArrayList();
-        for (TemporaryVariable temporary : temporaries) {
-            result.add(temporary.assignmentExpression().makeStmt());
+    public static JsExpression newSequence(@NotNull List<JsExpression> expressions) {
+        assert !expressions.isEmpty();
+        if (expressions.size() == 1) {
+            return expressions.get(0);
+        }
+        JsExpression result = expressions.get(expressions.size() - 1);
+        for (int i = expressions.size() - 2; i >= 0; i--) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, expressions.get(i), result);
         }
         return result;
     }
