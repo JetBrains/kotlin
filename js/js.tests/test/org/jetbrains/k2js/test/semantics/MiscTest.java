@@ -56,4 +56,8 @@ public final class MiscTest extends AbstractExpressionTest {
 
         }
     }
+
+    public void testKt1052() throws Exception {
+        checkFooBoxIsTrue("KT1052.kt");
+    }
 }

@@ -17,15 +17,17 @@
 package org.jetbrains.k2js.translate.intrinsic;
 
 import com.google.common.collect.Lists;
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.intrinsic.array.ArrayGetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.array.ArraySetIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.primitive.*;
@@ -79,10 +81,25 @@ public final class Intrinsics {
         declareStringIntrinsics();
         declareTuplesIntrinsics();
         declareArrayIntrinsics();
+        declareBooleanIntrinsics();
         FunctionDescriptor intToDouble = getFunctionByName(library.getInt().getDefaultType().getMemberScope(), "toDouble");
         functionIntrinsics.put(intToDouble, ReturnReceiverIntrinsic.INSTANCE);
         FunctionDescriptor toStringFunction = getFunctionByName(library.getLibraryScope(), "toString");
         functionIntrinsics.put(toStringFunction, new BuiltInFunctionIntrinsic("toString"));
+    }
+
+    private void declareBooleanIntrinsics() {
+        FunctionDescriptor andFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "and");
+        functionIntrinsics.put(andFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JetTokens.ANDAND));
+
+        FunctionDescriptor orFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "or");
+        functionIntrinsics.put(orFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JetTokens.OROR));
+
+        FunctionDescriptor notFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "not");
+        functionIntrinsics.put(notFunction, PrimitiveUnaryOperationIntrinsic.newInstance(JetTokens.EXCL));
+
+        FunctionDescriptor xorFunction = getFunctionByName(library.getBoolean().getDefaultType().getMemberScope(), "xor");
+        functionIntrinsics.put(xorFunction, PrimitiveBinaryOperationIntrinsic.newInstance(JsBinaryOperator.BIT_XOR));
     }
 
     @NotNull

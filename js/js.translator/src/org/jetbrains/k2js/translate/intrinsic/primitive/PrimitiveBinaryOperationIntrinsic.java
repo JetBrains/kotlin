@@ -40,6 +40,12 @@ public final class PrimitiveBinaryOperationIntrinsic implements Intrinsic {
     }
 
     @NotNull
+    public static PrimitiveBinaryOperationIntrinsic newInstance(@NotNull JsBinaryOperator operator) {
+        return new PrimitiveBinaryOperationIntrinsic(operator);
+    }
+
+
+    @NotNull
     private final JsBinaryOperator operator;
 
     private PrimitiveBinaryOperationIntrinsic(@NotNull JsBinaryOperator operator) {
