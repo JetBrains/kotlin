@@ -8,67 +8,88 @@ import java.net.URL
 protected val defaultBufferSize: Int = 64 * 1024
 protected val defaultCharset: String = "UTF-8"
 
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Any?) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Int) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Long) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Byte) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Short) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Char) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Boolean) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Float) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : Double) {
     System.out?.print(message)
 }
+/** Prints the given message to [[System.out]] */
 inline fun print(message : CharArray) {
     System.out?.print(message)
 }
 
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Any?) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Int) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Long) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Byte) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Short) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Char) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Boolean) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Float) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : Double) {
     System.out?.println(message)
 }
+/** Prints the given message and newline to [[System.out]] */
 inline fun println(message : CharArray) {
     System.out?.println(message)
 }
+/** Prints a newline t[[System.out]] */
 inline fun println() {
     System.out?.println()
 }
@@ -111,6 +132,7 @@ private val stdin : BufferedReader = BufferedReader(InputStreamReader(object : I
     }
 }))
 
+/** Reads a line of input from [[System.in]] */
 inline fun readLine() : String? = stdin.readLine()
 
 /** Uses the given resource then closes it down correctly whether an exception is thrown or not */
@@ -139,6 +161,7 @@ inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
     }
 }
 
+/** Returns an [Iterator] of bytes over an input stream */
 fun InputStream.iterator() : ByteIterator =
 object: ByteIterator() {
     override val hasNext : Boolean
@@ -147,7 +170,12 @@ object: ByteIterator() {
     override fun nextByte() = read().toByte()
 }
 
-inline fun InputStream.buffered(bufferSize: Int) = BufferedInputStream(this, bufferSize)
+/** Creates a buffered input stream */
+inline fun InputStream.buffered(bufferSize: Int)
+    = if (this is BufferedInputStream)
+        this
+    else
+        BufferedInputStream(this, bufferSize)
 
 inline val InputStream.reader : InputStreamReader
 get() = InputStreamReader(this)
