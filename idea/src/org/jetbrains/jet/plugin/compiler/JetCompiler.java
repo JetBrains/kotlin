@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -199,6 +200,21 @@ public class JetCompiler implements TranslatingCompiler {
         return script;
     }
 
+    private static List<File> getJarsInDirectory(File dir) {
+        List<File> r = Lists.newArrayList();
+
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File jar : files) {
+                if (jar.isFile() && jar.getName().endsWith(".jar")) {
+                    r.add(jar);
+                }
+            }
+        }
+
+        return r;
+    }
+
     private static List<File> kompilerClasspath(File kotlinHome, CompileContext context) {
         File libs = new File(kotlinHome, "lib");
 
@@ -209,15 +225,8 @@ public class JetCompiler implements TranslatingCompiler {
 
 
         ArrayList<File> answer = new ArrayList<File>();
-        File[] jars = libs.listFiles();
-        if (jars != null) {
-            for (File jar : jars) {
-                if (jar.isFile() && jar.getName().endsWith(".jar")) {
-                    answer.add(jar);
-                }
-            }
-        }
-
+        answer.addAll(getJarsInDirectory(libs));
+        answer.addAll(getJarsInDirectory(new File(libs, "guice"))); // TODO: flatten at artifact build
         return answer;
     }
 

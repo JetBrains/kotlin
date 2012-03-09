@@ -20,6 +20,7 @@
           <element id="archive" name="kotlin-js-libraries.zip">
             <element id="dir-copy" path="$PROJECT_DIR$/js/js.libraries/src" />
           </element>
+          <element id="library" level="project" name="guice-3.0" />
         </element>
         <element id="directory" name="kotlinc">
           <element id="dir-copy" path="$PROJECT_DIR$/dist/kotlinc" />

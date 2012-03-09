@@ -272,7 +272,7 @@
     <target name="copyKotlinJars">
         <copy todir="${kotlin-home}/lib">
             <fileset dir="${idea.sdk}/core" includes="*.jar"/>
-            <fileset dir="${basedir}/lib" includes="*.jar"/>
+            <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         </copy>
         <copy todir="${kotlin-home}/bin">
             <fileset dir="${basedir}/compiler/cli/bin"/>
