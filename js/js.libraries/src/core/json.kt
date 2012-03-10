@@ -9,10 +9,10 @@ class Json() {
 }
 
 library("jsonSet")
-fun Json.set(paramName : String, value : Any?) : Unit {}
+fun Json.set(paramName : String, value : Any?) : Unit = js.noImpl
 
 library("jsonGet")
-fun Json.get(paramName : String) : Any? = null
+fun Json.get(paramName : String) : Any? = js.noImpl
 
 library("jsonFromTuples")
-fun json(vararg pairs : Tuple2<String, Any?>) = Json()
+fun json(vararg pairs : Tuple2<String, Any?>) : Json = js.noImpl

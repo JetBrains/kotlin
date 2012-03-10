@@ -594,6 +594,7 @@ var Kotlin;
         return res;
     };
 
+    //TODO: use intrinsic
     Kotlin.jsonSet = function (obj, attrName, value) {
         obj[attrName] = value;
     };
@@ -603,6 +604,16 @@ var Kotlin;
     };
 
 
+    Kotlin.jsonAddProperties = function (obj1, obj2) {
+        for (var p in obj2) {
+            if (obj2.hasOwnProperty(p)) {
+                obj1[p] = obj2[p];
+            }
+        }
+        return obj1;
+    };
+
+    //TODO: use intrinsic
     Kotlin.sure = function (obj) {
         return obj;
     };
