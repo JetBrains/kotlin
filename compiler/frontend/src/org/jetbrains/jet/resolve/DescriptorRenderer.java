@@ -387,7 +387,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
-            renderModality(descriptor.getModality(), builder);
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                renderModality(descriptor.getModality(), builder);
+            }
             builder.append(renderKeyword(keyword)).append(" ");
             renderName(descriptor, builder);
             renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
