@@ -176,8 +176,6 @@ public class JetDecompiledData {
     private void appendDescriptor(StringBuilder builder, DeclarationDescriptor descriptor, BindingContext bindingContext, String indent) {
         String decompiledComment = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
 
-        builder.append(indent);
-
         int startOffset = builder.length();
         builder.append(DescriptorRenderer.COMPACT.render(descriptor));
         int endOffset = builder.length();
@@ -189,15 +187,23 @@ public class JetDecompiledData {
             builder.append(" ").append(decompiledComment);
         } else if (descriptor instanceof ClassDescriptor) {
             builder.append(" {\n");
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             boolean firstPassed = false;
-            for (DeclarationDescriptor member : ((ClassDescriptor) descriptor).getDefaultType().getMemberScope().getAllDescriptors()) {
+            String subindent = indent + "    ";
+            if (classDescriptor.getClassObjectDescriptor() != null) {
+                firstPassed = true;
+                builder.append(subindent).append("class ");
+                appendDescriptor(builder, classDescriptor.getClassObjectDescriptor(), bindingContext, subindent);
+            }
+            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (member.getContainingDeclaration() == descriptor) {
                     if (firstPassed) {
                         builder.append("\n");
                     } else {
                         firstPassed = true;
                     }
-                    appendDescriptor(builder, member, bindingContext, indent + "    ");
+                    builder.append(subindent);
+                    appendDescriptor(builder, member, bindingContext, subindent);
                 }
             }
             builder.append(indent).append("}");
@@ -206,7 +212,9 @@ public class JetDecompiledData {
 
         builder.append("\n");
         PsiElement clsMember = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
-        myClsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
+        if (clsMember != null) {
+            myClsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
+        }
     }
 
     private static boolean hasAnnotation(PsiModifierListOwner modifierListOwner, String qualifiedName) {
