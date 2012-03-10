@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.actions;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
@@ -93,9 +94,9 @@ public final class TranslateToJsAction extends AnAction {
     @NotNull
     private static Set<VirtualFile> getAllProjectVirtualFiles(@NotNull Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
-        Set<VirtualFile> allVirtualFiles = allVirtualFiles(new VirtualFile[]{project.getBaseDir()});
+        Set<VirtualFile> allVirtualFiles = Sets.newHashSet();
         for (Module module : modules) {
-            VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
+            VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
             allVirtualFiles.addAll(allVirtualFiles(roots));
         }
         return allVirtualFiles;
