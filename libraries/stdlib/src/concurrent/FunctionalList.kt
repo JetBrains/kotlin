@@ -23,7 +23,7 @@ abstract class FunctionalList<T>(public val size: Int) {
         return new
     }
 
-    fun iterator() = object: Iterator<T> {
+    fun iterator() : Iterator<T> = object: Iterator<T> {
         var cur = this@FunctionalList
 
         override fun next(): T {
