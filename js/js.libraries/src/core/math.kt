@@ -22,9 +22,9 @@ class MathClass() {
     fun tan(value : Double) = 0.0
     fun log(value : Double) = 0.0
     fun pow(base : Double, exp : Double) = 0.0
-    fun round(value : Double) = 0.0
-    fun floor(value : Double) = 0.0
-    fun ceil(value : Double) = 0.0
+    fun round(value : Number) = 0
+    fun floor(value : Number) = 0
+    fun ceil(value : Number) = 0
 
 }
 

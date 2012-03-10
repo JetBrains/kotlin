@@ -15,6 +15,8 @@ fun JQuery.dialog(params : Json) : JQuery = js.noImpl
 native
 fun JQuery.dialog(mode : String, param : String) : Any? = js.noImpl
 native
+fun JQuery.dialog(mode : String) : JQuery = js.noImpl
+native
 fun JQuery.dialog(mode : String, param : String, value : Any?) : JQuery = js.noImpl
 native
 fun JQuery.button() : JQuery = js.noImpl;
