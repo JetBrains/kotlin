@@ -894,9 +894,19 @@ var Kotlin;
                 };
             };
 
-            this.keys = createBucketAggregator("keys");
-            this.values = createBucketAggregator("values");
-            this.entries = createBucketAggregator("getEntries");
+            this._keys = createBucketAggregator("keys");
+            this._values = createBucketAggregator("values");
+            this._entries = createBucketAggregator("getEntries");
+
+            this.values = function() {
+                var values = this._values();
+                var i = values.length
+                var result = new Kotlin.ArrayList();
+                while (--i) {
+                    result.add(values[i]);
+                }
+                return result;
+            };
 
             this.remove = function (key) {
                 checkKey(key);
@@ -964,7 +974,7 @@ var Kotlin;
 
             this.keySet = function () {
                 var res = new Kotlin.HashSet();
-                var keys = this.keys();
+                var keys = this._keys();
                 var i = keys.length;
                 while (i--) {
                     res.add(keys[i]);
@@ -1001,7 +1011,7 @@ var Kotlin;
             };
 
             this.values = function () {
-                return hashTable.keys();
+                return hashTable._keys();
             };
 
             this.iterator = function () {
