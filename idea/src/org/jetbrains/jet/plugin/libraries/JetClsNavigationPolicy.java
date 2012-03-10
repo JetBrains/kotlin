@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 
@@ -28,21 +30,29 @@ import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
  */
 public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
+    @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
         return getJetDeclarationByClsElement(clsClass);
     }
 
     @Override
+    @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
         return getJetDeclarationByClsElement(clsMethod);
     }
 
     @Override
+    @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
         return getJetDeclarationByClsElement(clsField);
     }
 
+    @Nullable
     private static JetDeclaration getJetDeclarationByClsElement(ClsElementImpl clsElement) {
+        VirtualFile virtualFile = clsElement.getContainingFile().getVirtualFile();
+        if (virtualFile == null || JetDecompiledData.getClsFileIfKotlin(clsElement.getProject(), virtualFile) == null) {
+            return null;
+        }
         JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData((ClsFileImpl) clsElement.getContainingFile());
         return decompiledData.getJetDeclarationByClsElement(clsElement);
     }
