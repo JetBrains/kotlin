@@ -27,6 +27,8 @@ import com.intellij.psi.impl.compiled.ClsAnnotationImpl;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.util.PsiTreeUtil;
+import jet.runtime.typeinfo.JetClass;
+import jet.runtime.typeinfo.JetMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.JetSemanticServices;
@@ -37,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Arrays;
@@ -49,6 +52,8 @@ import java.util.Map;
  */
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
+    private static final String JET_CLASS = JetClass.class.getName();
+    private static final String JET_METHOD = JetMethod.class.getName();
     private JetFile myJetFile;
     private String myText;
     private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
@@ -88,21 +93,7 @@ public class JetDecompiledData {
             throw new AssertionError("Multiple classes in file: " + Arrays.toString(clsFile.getClasses()));
         }
         PsiClass psiClass = clsFile.getClasses()[0];
-        // TODO add better check
-        if (psiClass.getName().equals("namespace")) {
-            return clsFile;
-        }
-        PsiModifierList modifierList = psiClass.getModifierList();
-        if (modifierList != null) {
-            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
-                if (annotation instanceof ClsAnnotationImpl) {
-                    if (((ClsAnnotationImpl) annotation).getStub().getText().startsWith("@jet.runtime.typeinfo.JetClass")) {
-                        return clsFile;
-                    }
-                }
-            }
-        }
-        return null;
+        return isKotlinNamespaceClass(psiClass) || isKotlinClass(psiClass) ? clsFile : null;
     }
 
     @NotNull
@@ -152,7 +143,7 @@ public class JetDecompiledData {
 
         Map<PsiElement, TextRange> clsMembersToRanges = new HashMap<PsiElement, TextRange>();
 
-        if (psiClass.getName().equals("namespace")) { // TODO better check for namespace
+        if (isKotlinNamespaceClass(psiClass)) {
             NamespaceDescriptor nd = jdr.resolveNamespace(packageName);
 
             if (nd != null) {
@@ -214,5 +205,34 @@ public class JetDecompiledData {
         }
         builder.append("\n\n");
         return new TextRange(startOffset, endOffset);
+    }
+
+    private static boolean hasAnnotation(PsiModifierListOwner modifierListOwner, String qualifiedName) {
+        PsiModifierList modifierList = modifierListOwner.getModifierList();
+        if (modifierList != null) {
+            for (PsiAnnotation annotation : modifierList.getAnnotations()) {
+                if (annotation instanceof ClsAnnotationImpl) {
+                    if (qualifiedName.equals(annotation.getQualifiedName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isKotlinClass(PsiClass psiClass) {
+        return hasAnnotation(psiClass, JET_CLASS);
+    }
+
+    private static boolean isKotlinNamespaceClass(PsiClass psiClass) {
+        if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName()) && !isKotlinClass(psiClass)) {
+            for (PsiMethod method : psiClass.getMethods()) {
+                if (hasAnnotation(method, JET_METHOD)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
