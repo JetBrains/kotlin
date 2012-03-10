@@ -42,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,9 +87,8 @@ public class JetDecompiledData {
             return null;
         }
         ClsFileImpl clsFile = (ClsFileImpl) psiFile;
-        // TODO multiple?
         if (clsFile.getClasses().length != 1) {
-            throw new AssertionError("Multiple classes in file: " + Arrays.toString(clsFile.getClasses()));
+            return null;
         }
         PsiClass psiClass = clsFile.getClasses()[0];
         return isKotlinNamespaceClass(psiClass) || isKotlinClass(psiClass) ? clsFile : null;
