@@ -411,7 +411,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             }
             if (!descriptor.equals(JetStandardClasses.getNothing())) {
                 Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-                if (!supertypes.isEmpty()) {
+                if (supertypes.isEmpty() || supertypes.size() == 1 && JetStandardClasses.isAny(supertypes.iterator().next())) {
+                } else {
                     builder.append(" : ");
                     for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                         JetType supertype = iterator.next();
