@@ -381,7 +381,20 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-            String keyword = descriptor.getKind() == ClassKind.TRAIT ? "trait" : "class";
+            String keyword;
+            switch (descriptor.getKind()) {
+                case TRAIT:
+                    keyword = "trait";
+                    break;
+                case ENUM_CLASS:
+                    keyword = "enum class";
+                    break;
+                case OBJECT:
+                    keyword = "object";
+                    break;
+                default:
+                    keyword = "class";
+            }
             renderClassDescriptor(descriptor, builder, keyword);
             return super.visitClassDescriptor(descriptor, builder);
         }
@@ -390,9 +403,12 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 renderModality(descriptor.getModality(), builder);
             }
-            builder.append(renderKeyword(keyword)).append(" ");
-            renderName(descriptor, builder);
-            renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+            builder.append(renderKeyword(keyword));
+            if (descriptor.getKind() != ClassKind.OBJECT) {
+                builder.append(" ");
+                renderName(descriptor, builder);
+                renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+            }
             if (!descriptor.equals(JetStandardClasses.getNothing())) {
                 Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
                 if (!supertypes.isEmpty()) {
