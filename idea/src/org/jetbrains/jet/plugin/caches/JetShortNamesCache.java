@@ -34,12 +34,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -157,15 +156,36 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @NotNull
-    public Collection<SimpleFunctionDescriptor> getTopLevelFunctionDescriptorsByName(@NotNull String name,
-                                                                                     @NotNull GlobalSearchScope scope) {
+    public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
+            @NotNull String name,
+            @NotNull JetSimpleNameExpression expression,
+            @NotNull GlobalSearchScope scope
+    ) {
+        HashSet<FunctionDescriptor> result = new HashSet<FunctionDescriptor>();
+
+        JetFile jetFile = (JetFile) expression.getContainingFile();
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
+
+        if (jetScope == null) {
+            return result;
+        }
+
+        Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(name, project, scope);
+        for (PsiMethod method : topLevelFunctionPrototypes) {
+            String functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
+            if (functionFQN != null) {
+                JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, functionFQN);
+                Collection<? extends DeclarationDescriptor> declarationDescriptors = ImportsResolver.analyseImportReference(importDirective, jetScope, new BindingTraceContext());
+                for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
+                    if (declarationDescriptor instanceof FunctionDescriptor) {
+                        result.add((FunctionDescriptor) declarationDescriptor);
+                    }
+                }
+            }
+        }
 
         Collection<JetNamedFunction> jetNamedFunctions = JetShortFunctionNameIndex.getInstance().get(name, project, scope);
-        
-        BindingContext context = getResolutionContext(scope);
-
-        HashSet<SimpleFunctionDescriptor> result = new HashSet<SimpleFunctionDescriptor>();
-
         for (JetNamedFunction jetNamedFunction : jetNamedFunctions) {
             SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, jetNamedFunction);
             if (functionDescriptor != null) {
@@ -204,7 +224,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     public Collection<PsiElement> getJetExtensionFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
         HashSet<PsiElement> functions = new HashSet<PsiElement>();
         functions.addAll(JetExtensionFunctionNameIndex.getInstance().get(name, project, scope));
-        functions.addAll(JetFromJavaDescriptorHelper.getTopExtensionFunctionByName(name, project, scope));
+        functions.addAll(JetFromJavaDescriptorHelper.getTopExtensionFunctionPrototypesByName(name, project, scope));
 
         return functions;
     }
@@ -216,10 +236,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull GlobalSearchScope searchScope
     ) {
         Collection<DeclarationDescriptor> resultDescriptors = new ArrayList<DeclarationDescriptor>();
-
-        if (!(expression.getContainingFile() instanceof JetFile)) {
-            return resultDescriptors;
-        }
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
 
@@ -245,16 +261,9 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                                 functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
                             }
                             else if (extensionFunction instanceof PsiMethod) {
-                                PsiMethod function = (PsiMethod) extensionFunction;
-                                PsiClass containingClass = function.getContainingClass();
-
-                                if (containingClass != null) {
-                                    String classFQN = containingClass.getQualifiedName();
-
-                                    if (classFQN != null) {
-                                        String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
-                                        functionFQNs.add(QualifiedNamesUtil.combine(classParentFQN, function.getName()));
-                                    }
+                                String functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN((PsiMethod) extensionFunction);
+                                if (functionFQN != null) {
+                                    functionFQNs.add(functionFQN);
                                 }
                             }
                         }
@@ -279,7 +288,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
     }
 
-    public Collection<String> getAllJetFunctionsNames() {
+    public Collection<String> getAllJetOnlyTopFunctionsNames() {
         return JetShortFunctionNameIndex.getInstance().getAllKeys(project);
     }
 

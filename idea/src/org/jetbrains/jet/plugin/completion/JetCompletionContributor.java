@@ -51,6 +51,7 @@ import java.util.Set;
  * @author Nikolay Krasko
  */
 public class JetCompletionContributor extends CompletionContributor {
+
     public JetCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
                new CompletionProvider<CompletionParameters>() {
@@ -86,7 +87,7 @@ public class JetCompletionContributor extends CompletionContributor {
 
                            if (shouldRunTopLevelCompletion(parameters, prefix)) {
                                addClasses(parameters, result);
-                               addJetTopLevelFunctions(result, position, positions);
+                               addJetTopLevelFunctions(jetReference.getExpression(), result, position, positions);
                            }
 
                            if (shouldRunExtensionsCompletion(parameters, prefix)) {
@@ -132,7 +133,7 @@ public class JetCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static void addJetTopLevelFunctions(@NotNull CompletionResultSet result, @NotNull PsiElement position,
+    private static void addJetTopLevelFunctions(JetSimpleNameExpression expression, @NotNull CompletionResultSet result, @NotNull PsiElement position,
                                                 @NotNull Set<LookupPositionObject> positions) {
 
         String actualPrefix = result.getPrefixMatcher().getPrefix();
@@ -147,7 +148,7 @@ public class JetCompletionContributor extends CompletionContributor {
 
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
-                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, scope)) {
+                for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, scope)) {
                     addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), positions);
                 }
             }

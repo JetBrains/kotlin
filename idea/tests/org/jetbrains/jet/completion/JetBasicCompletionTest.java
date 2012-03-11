@@ -105,6 +105,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testTopLevelFromStandardLibrary() {
+        doTest();
+    }
+
     public void testVariableClassName() {
         doTest();
     }

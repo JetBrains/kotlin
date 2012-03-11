@@ -24,18 +24,8 @@ import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.Configuration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -45,13 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_BE_IMPORTED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_IMPORT_FROM_ELEMENT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CLASS_OBJECT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
-import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
-import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_HIDDEN_IMPORT;
-import static org.jetbrains.jet.lang.diagnostics.Errors.USELESS_SIMPLE_IMPORT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 /**
  * @author abreslav
@@ -166,7 +150,10 @@ public class ImportsResolver {
         }
     }
 
-    public static Collection<? extends DeclarationDescriptor> analyseImportReference(@NotNull JetImportDirective importDirective, @NotNull JetScope scope, @NotNull BindingTrace trace) {
+    public static Collection<? extends DeclarationDescriptor> analyseImportReference(
+            @NotNull JetImportDirective importDirective,
+            @NotNull JetScope scope, @NotNull BindingTrace trace
+    ) {
         ImportsResolver.SingleImportResolver importResolver = new ImportsResolver.SingleImportResolver(trace, false);
         return importResolver.processImportReference(importDirective, scope, Importer.DO_NOTHING);
     }
