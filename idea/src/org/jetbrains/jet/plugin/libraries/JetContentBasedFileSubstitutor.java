@@ -34,14 +34,15 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
 
     @Override
     public boolean isApplicable(Project project, VirtualFile file) {
-        return JetDecompiledData.getClsFileIfKotlin(project, file) != null;
+        return JetDecompiledData.isKotlinFile(project, file);
     }
 
     @NotNull
     @Override
     public String obtainFileText(Project project, VirtualFile file) {
-        ClsFileImpl clsFile = JetDecompiledData.getClsFileIfKotlin(project, file);
-        if (clsFile != null) {
+        if (JetDecompiledData.isKotlinFile(project, file)) {
+            ClsFileImpl clsFile = JetDecompiledData.getClsFile(project, file);
+            assert clsFile != null;
             return JetDecompiledData.getDecompiledData(clsFile).getJetFile().getText();
         }
         return "";

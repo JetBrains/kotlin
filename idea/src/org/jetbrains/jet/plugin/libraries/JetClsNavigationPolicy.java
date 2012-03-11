@@ -22,7 +22,6 @@ import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 
 /**
  * @author Evgeny Gerashchenko
@@ -50,7 +49,7 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Nullable
     private static JetDeclaration getJetDeclarationByClsElement(ClsElementImpl clsElement) {
         VirtualFile virtualFile = clsElement.getContainingFile().getVirtualFile();
-        if (virtualFile == null || JetDecompiledData.getClsFileIfKotlin(clsElement.getProject(), virtualFile) == null) {
+        if (virtualFile == null || !JetDecompiledData.isKotlinFile(clsElement.getProject(), virtualFile)) {
             return null;
         }
         JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData((ClsFileImpl) clsElement.getContainingFile());

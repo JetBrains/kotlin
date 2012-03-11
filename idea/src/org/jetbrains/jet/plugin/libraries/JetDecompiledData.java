@@ -21,7 +21,9 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +60,8 @@ public class JetDecompiledData {
         return myClsElementsToJetElements.get(clsElement);
     }
 
-    @Deprecated
     @Nullable
-    public static ClsFileImpl getClsFileIfKotlin(@NotNull Project project, @NotNull VirtualFile vFile) {
+    public static ClsFileImpl getClsFile(@NotNull Project project, @NotNull VirtualFile vFile) {
         if (!FileTypeManager.getInstance().isFileOfType(vFile, JavaClassFileType.INSTANCE)) {
             return null;
         }
@@ -72,8 +73,16 @@ public class JetDecompiledData {
         if (clsFile.getClasses().length != 1) {
             return null;
         }
+        return clsFile;
+    }
+
+    public static boolean isKotlinFile(@NotNull Project project, @NotNull VirtualFile vFile) {
+        ClsFileImpl clsFile = getClsFile(project, vFile);
+        if (clsFile == null) {
+            return false;
+        }
         PsiClass psiClass = clsFile.getClasses()[0];
-        return DecompiledDataFactory.isKotlinNamespaceClass(psiClass) || DecompiledDataFactory.isKotlinClass(psiClass) ? clsFile : null;
+        return DecompiledDataFactory.isKotlinNamespaceClass(psiClass) || DecompiledDataFactory.isKotlinClass(psiClass);
     }
 
     @NotNull
