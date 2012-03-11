@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -36,6 +37,15 @@ public interface ModuleConfiguration {
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
+
+        @Override
+        public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
+            return null;
+        }
+
+        @Override
+        public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
+        }
     };
 
     void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives);
@@ -45,4 +55,10 @@ public interface ModuleConfiguration {
      * This method is called every time a namespace descriptor is created. Use it to add extra descriptors to the namespace, e.g. merge a Java package with a Kotlin one
      */
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
+
+    /** This method is called only if no namespace with the same short name is declared in the module itself, or to merge namespaces */
+    @Nullable
+    NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName);
+
+    void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces);
 }

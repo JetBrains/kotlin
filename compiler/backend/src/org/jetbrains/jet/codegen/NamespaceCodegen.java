@@ -52,7 +52,7 @@ public class NamespaceCodegen {
     }
 
     public void generate(JetFile file) {
-        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.NAMESPACE, file);
+        NamespaceDescriptor descriptor = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, file);
         final CodegenContext context = CodegenContext.STATIC.intoNamespace(descriptor);
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);

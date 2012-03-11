@@ -127,5 +127,14 @@ public final class AnalyzerFacadeForJS {
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
                                          @NotNull WritableScope namespaceMemberScope) {
         }
+
+        @Override
+        public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
+            return null;
+        }
+
+        @Override
+        public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
+        }
     }
 }

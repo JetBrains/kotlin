@@ -167,7 +167,7 @@ public class TopDownAnalyzer {
 
     public static void processObject(
             @NotNull Project project,
-            @NotNull BindingTrace trace,
+            @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
@@ -175,6 +175,9 @@ public class TopDownAnalyzer {
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {
+                if (name == "") {
+                    return (NamespaceDescriptorImpl) trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, "");
+                }
                 throw new UnsupportedOperationException();
             }
 

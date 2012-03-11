@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -53,7 +54,6 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
-        rootScope.importScope(new JavaPackageScope("", createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, ""), javaSemanticServices));
         for (String importFQN : DEFAULT_JAVA_IMPORTS) {
             directives.add(JetPsiFactory.createImportDirective(project, importFQN));
         }
@@ -68,5 +68,27 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         namespaceMemberScope.importScope(new JavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor), namespaceDescriptor, javaSemanticServices));
         delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+    }
+
+
+    @Override
+    public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
+        NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(shortName);
+        if (namespaceDescriptor != null) {
+            return namespaceDescriptor;
+        }
+        return delegateConfiguration.getTopLevelNamespace(shortName);
+    }
+
+    @Override
+    public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
+        NamespaceDescriptor defaultPackage = javaSemanticServices.getDescriptorResolver().resolveNamespace("");
+        assert defaultPackage != null : "Cannot resolve Java's default package";
+        for (DeclarationDescriptor declarationDescriptor : defaultPackage.getMemberScope().getAllDescriptors()) {
+            if (declarationDescriptor instanceof NamespaceDescriptor) {
+                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) declarationDescriptor;
+                topLevelNamespaces.add(namespaceDescriptor);
+            }
+        }
     }
 }

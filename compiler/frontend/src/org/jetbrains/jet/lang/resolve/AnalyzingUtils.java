@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -96,7 +98,7 @@ public class AnalyzingUtils {
 
     public static BindingContext analyzeFilesWithGivenTrace(
             @NotNull Project project,
-            @NotNull ModuleConfiguration configuration,
+            @NotNull final ModuleConfiguration configuration,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
@@ -112,46 +114,71 @@ public class AnalyzingUtils {
         scope.importScope(libraryScope);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        TopDownAnalyzer.process(project, bindingTraceContext, scope, new NamespaceLike.Adapter(owner) {
+        final Map<String, NamespaceDescriptorImpl> declaredNamespaces = Maps.newHashMap();
 
-            private Map<String, NamespaceDescriptorImpl> declaredNamespaces = Maps.newHashMap();
+        TopDownAnalyzer.process(project, bindingTraceContext,
+            new JetScopeAdapter(scope) {
+                @Override
+                public NamespaceDescriptor getNamespace(@NotNull String name) {
+                    NamespaceDescriptor topLevelNamespace = declaredNamespaces.get(name);
+                    if (topLevelNamespace != null) {
+                        return topLevelNamespace;
+                    }
+                    NamespaceDescriptor topLevelNamespaceFromConfiguration = configuration.getTopLevelNamespace(name);
+                    if (topLevelNamespaceFromConfiguration != null) {
+                        return topLevelNamespaceFromConfiguration;
+                    }
+                    return super.getNamespace(name);
+                }
 
-            @Override
-            public NamespaceDescriptorImpl getNamespace(String name) {
-                return declaredNamespaces.get(name);
-            }
+                @NotNull
+                @Override
+                public Collection<DeclarationDescriptor> getAllDescriptors() {
+                    List<DeclarationDescriptor> allDescriptors = Lists.newArrayList(super.getAllDescriptors());
+                    allDescriptors.addAll(declaredNamespaces.values());
+                    configuration.addAllTopLevelNamespacesTo(allDescriptors);
+                    return allDescriptors;
+                }
+            },
+            new NamespaceLike.Adapter(owner) {
 
-            @Override
-            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                scope.addNamespace(namespaceDescriptor);
-                declaredNamespaces.put(namespaceDescriptor.getName(), (NamespaceDescriptorImpl) namespaceDescriptor);
-            }
+                @Override
+                public NamespaceDescriptorImpl getNamespace(String name) {
+                    return declaredNamespaces.get(name);
+                }
 
-            @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                throw new IllegalStateException("A class shouldn't sit right under a module: " + classDescriptor);
-            }
+                @Override
+                public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+                    scope.addNamespace(namespaceDescriptor);
+                    declaredNamespaces.put(namespaceDescriptor.getName(), (NamespaceDescriptorImpl) namespaceDescriptor);
+                }
 
-            @Override
-            public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-                throw new IllegalStateException("An object shouldn't sit right under a module: " + objectDescriptor);
-            }
+                @Override
+                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                    throw new IllegalStateException("A class shouldn't sit right under a module: " + classDescriptor);
+                }
 
-            @Override
-            public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                throw new IllegalStateException("A function shouldn't sit right under a module: " + functionDescriptor);
-            }
+                @Override
+                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
+                    throw new IllegalStateException("An object shouldn't sit right under a module: " + objectDescriptor);
+                }
 
-            @Override
-            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                throw new IllegalStateException("A property shouldn't sit right under a module: " + propertyDescriptor);
-            }
+                @Override
+                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                    throw new IllegalStateException("A function shouldn't sit right under a module: " + functionDescriptor);
+                }
 
-            @Override
-            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                throw new IllegalStateException("Must be guaranteed not to happen by the parser");
-            }
-        }, files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
+                @Override
+                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                    throw new IllegalStateException("A property shouldn't sit right under a module: " + propertyDescriptor);
+                }
+
+                @Override
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                    throw new IllegalStateException("Must be guaranteed not to happen by the parser");
+                }
+            },
+            files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
 
         return bindingTraceContext.getBindingContext();
     }
