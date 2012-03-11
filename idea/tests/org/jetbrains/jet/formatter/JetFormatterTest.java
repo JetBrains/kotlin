@@ -16,6 +16,10 @@
 
 package org.jetbrains.jet.formatter;
 
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
+import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
+
 /**
  * Based on com.intellij.psi.formatter.java.JavaFormatterTest
  */
@@ -45,6 +49,14 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
     }
 
     public void testParameters() throws Exception {
+        getJetSettings().SPACE_AFTER_TYPE_COLON = true;
+        getJetSettings().SPACE_BEFORE_TYPE_COLON = false;
+        doTest();
+    }
+
+    public void testSpaceAroundTypeColon() throws Exception {
+        getJetSettings().SPACE_AFTER_TYPE_COLON = false;
+        getJetSettings().SPACE_BEFORE_TYPE_COLON = true;
         doTest();
     }
 
@@ -54,5 +66,13 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
 
     public void testWhenEntryExpr() throws Exception {
         doTest();
+    }
+
+    public static JetCodeStyleSettings getJetSettings() {
+        return getSettings().getCustomSettings(JetCodeStyleSettings.class);
+    }
+
+    public static CodeStyleSettings getSettings() {
+        return CodeStyleSettingsManager.getSettings(getProject());
     }
 }

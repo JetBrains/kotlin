@@ -43,7 +43,11 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     }
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
+        JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
+
         return new SpacingBuilder(settings)
+
+                // ============ Line breaks ==============
                 .after(NAMESPACE_HEADER).blankLines(1)
 
                 .before(IMPORT_DIRECTIVE).lineBreakInCode()
@@ -57,13 +61,27 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .between(FUN, FUN).blankLines(1)
                 .between(FUN, PROPERTY).blankLines(1)
 
+                .afterInside(LBRACE, BLOCK).lineBreakInCode()
+                .beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
+                .beforeInside(RBRACE, BLOCK).lineBreakInCode()
+
+                        // =============== Spacing ================
                 .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
                 .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
                 .around(EQ).spaceIf(settings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
                 .beforeInside(BLOCK, FUN).spaceIf(settings.SPACE_BEFORE_METHOD_LBRACE)
-                .afterInside(LBRACE, BLOCK).lineBreakInCode()
-                .beforeInside(RBRACE, CLASS_BODY).lineBreakInCode()
-                .beforeInside(RBRACE, BLOCK).lineBreakInCode();
+
+                // TODO: Ask for better API
+                .beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
+                .afterInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+                .beforeInside(COLON, CLASS).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
+                .afterInside(COLON, CLASS).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+                .beforeInside(COLON, FUN).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
+                .afterInside(COLON, FUN).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+                .beforeInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
+                .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
+                .beforeInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
+                .afterInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON);
     }
 
     @Override

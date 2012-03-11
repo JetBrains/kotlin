@@ -38,11 +38,12 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
     @Override
     public String getCodeSample(@NotNull SettingsType settingsType) {
         return
-            "class Some {\n" +
-            "fun foo() : Int {\n" +
-            "return 0\n" +
-            "}\n" +
-            "}";
+                "class Some {\n" +
+                "  fun foo() : Int {\n" +
+                "    val test : Int = 12\n" +
+                "    return test\n" +
+                "  }\n" +
+                "}";
     }
 
     @Override
@@ -52,7 +53,83 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
 
     @Override
     public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType) {
-        consumer.showAllStandardOptions();
+        if (settingsType == SettingsType.SPACING_SETTINGS) {
+            consumer.showStandardOptions(
+                    "SPACE_AROUND_ASSIGNMENT_OPERATORS",
+                    "SPACE_AROUND_LOGICAL_OPERATORS",
+                    "SPACE_AROUND_EQUALITY_OPERATORS",
+                    "SPACE_AROUND_RELATIONAL_OPERATORS",
+                    "SPACE_AROUND_BITWISE_OPERATORS",
+                    "SPACE_AROUND_ADDITIVE_OPERATORS",
+                    "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
+                    "SPACE_AROUND_SHIFT_OPERATORS",
+                    "SPACE_AROUND_UNARY_OPERATOR",
+                    "SPACE_AFTER_COMMA",
+                    "SPACE_AFTER_COMMA_IN_TYPE_ARGUMENTS",
+                    "SPACE_BEFORE_COMMA",
+                    "SPACE_AFTER_SEMICOLON",
+                    "SPACE_BEFORE_SEMICOLON",
+                    "SPACE_WITHIN_PARENTHESES",
+                    "SPACE_WITHIN_METHOD_CALL_PARENTHESES",
+                    "SPACE_WITHIN_EMPTY_METHOD_CALL_PARENTHESES",
+                    "SPACE_WITHIN_METHOD_PARENTHESES",
+                    "SPACE_WITHIN_EMPTY_METHOD_PARENTHESES",
+                    "SPACE_WITHIN_IF_PARENTHESES",
+                    "SPACE_WITHIN_WHILE_PARENTHESES",
+                    "SPACE_WITHIN_FOR_PARENTHESES",
+                    "SPACE_WITHIN_TRY_PARENTHESES",
+                    "SPACE_WITHIN_CATCH_PARENTHESES",
+                    "SPACE_WITHIN_SWITCH_PARENTHESES",
+                    // "SPACE_WITHIN_SYNCHRONIZED_PARENTHESES",
+                    "SPACE_WITHIN_CAST_PARENTHESES",
+                    "SPACE_WITHIN_BRACKETS",
+                    "SPACE_WITHIN_BRACES",
+                    // "SPACE_WITHIN_ARRAY_INITIALIZER_BRACES",
+                    "SPACE_AFTER_TYPE_CAST",
+                    "SPACE_BEFORE_METHOD_CALL_PARENTHESES",
+                    "SPACE_BEFORE_METHOD_PARENTHESES",
+                    "SPACE_BEFORE_IF_PARENTHESES",
+                    "SPACE_BEFORE_WHILE_PARENTHESES",
+                    "SPACE_BEFORE_FOR_PARENTHESES",
+                    "SPACE_BEFORE_TRY_PARENTHESES",
+                    "SPACE_BEFORE_CATCH_PARENTHESES",
+                    "SPACE_BEFORE_SWITCH_PARENTHESES",
+                    "SPACE_BEFORE_SYNCHRONIZED_PARENTHESES",
+                    "SPACE_BEFORE_CLASS_LBRACE",
+                    "SPACE_BEFORE_METHOD_LBRACE",
+                    "SPACE_BEFORE_IF_LBRACE",
+                    "SPACE_BEFORE_ELSE_LBRACE",
+                    "SPACE_BEFORE_WHILE_LBRACE",
+                    "SPACE_BEFORE_FOR_LBRACE",
+                    "SPACE_BEFORE_DO_LBRACE",
+                    "SPACE_BEFORE_SWITCH_LBRACE",
+                    "SPACE_BEFORE_TRY_LBRACE",
+                    "SPACE_BEFORE_CATCH_LBRACE",
+                    "SPACE_BEFORE_FINALLY_LBRACE",
+                    "SPACE_BEFORE_SYNCHRONIZED_LBRACE",
+                    "SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE",
+                    "SPACE_BEFORE_ANNOTATION_ARRAY_INITIALIZER_LBRACE",
+                    "SPACE_BEFORE_ELSE_KEYWORD",
+                    "SPACE_BEFORE_WHILE_KEYWORD",
+                    "SPACE_BEFORE_CATCH_KEYWORD",
+                    "SPACE_BEFORE_FINALLY_KEYWORD",
+                    "SPACE_BEFORE_QUEST",
+                    "SPACE_AFTER_QUEST",
+                    "SPACE_BEFORE_COLON",
+                    "SPACE_AFTER_COLON",
+                    "SPACE_BEFORE_TYPE_PARAMETER_LIST"
+            );
+
+            consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON", "Space after colon, before declarations' type",
+                                      CodeStyleSettingsCustomizable.SPACES_OTHER);
+
+            consumer.showCustomOption(JetCodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON", "Space before colon, after declarations' name",
+                                      CodeStyleSettingsCustomizable.SPACES_OTHER);
+        } else {
+            consumer.showAllStandardOptions();
+        }
+
+
     }
 
     @Override

@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
 
@@ -92,7 +92,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append("val ");
         }
-        bodyBuilder.append(descriptor.getName()).append(" : ").append(descriptor.getType());
+        bodyBuilder.append(descriptor.getName()).append(":").append(descriptor.getType());
         ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
@@ -115,7 +115,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             }
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
-            bodyBuilder.append(" : ");
+            bodyBuilder.append(":");
             bodyBuilder.append(parameterDescriptor.getType().toString());
 
             ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
@@ -124,7 +124,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
         if (!returnType.equals(stdlib.getTuple0Type())) {
-            bodyBuilder.append(" : ").append(returnType.toString());
+            bodyBuilder.append(":").append(returnType.toString());
             ImportClassHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 

@@ -1,6 +1,6 @@
 // "Make variable mutable" "true"
 class A() {
-    var a: Int = 0
-    set(v: Int) {
+    var a : Int = 0
+    set(v : Int) {
     }
 }

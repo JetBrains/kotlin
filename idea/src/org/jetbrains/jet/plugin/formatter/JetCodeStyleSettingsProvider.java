@@ -44,6 +44,8 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         return new JetCodeStyleSettings(settings);
     }
 
+
+
     @NotNull
     @Override
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings originalSettings) {
@@ -55,6 +57,7 @@ public class JetCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
                     protected void initTabs(CodeStyleSettings settings) {
                         // TODO: activate all parent tabs
                         addIndentOptionsTab(settings);
+                        addSpacesTab(settings);
                     }
                 };
             }
