@@ -68,20 +68,12 @@
     </target>
 
     <target name="verifyPlugin">
-        <!--
-            TODO: enable verifier. Disabled because of guice that references non-existent
-            but unused classes like com.google.inject.internal.asm.util.$TraceClassVisitor
-            see
-            http://buildserver.labs.intellij.net/viewLog.html?buildId=1314890&buildTypeId=bt1416&tab=buildLog
-        -->
-        <!--
         <java fork="true" failonerror="${fail.on.plugin.verifier.error}" jar="${plugin.verifier}">
             <arg value="-r" />
             <arg value="${jdk16.home}" />
             <arg value="${plugin.zip}" />
             <arg value="${basedir}/ideaSDK" />
         </java>
-        -->
     </target>
 
     <target name="post_build" depends="cleanupPluginXml, zipArtifact, verifyPlugin"/>
