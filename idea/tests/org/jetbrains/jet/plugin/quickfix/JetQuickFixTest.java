@@ -18,12 +18,15 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase;
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -35,16 +38,19 @@ import java.util.List;
 /**
  * @author svtk
  */
+@SuppressWarnings("JUnitTestCaseWithNoTests")
 public class JetQuickFixTest extends LightQuickFixTestCase {
     private final String dataPath;
     private final String name;
     private static FilenameFilter quickFixTestsFilter;
 
+    @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
     public JetQuickFixTest(String dataPath, String name) {
         this.dataPath = dataPath;
         this.name = name;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     private static void setFilter() {
         final ArrayList<String> appropriateDirs = Lists.newArrayList("classImport", "expressions");
         quickFixTestsFilter = new FilenameFilter() {
@@ -97,7 +103,19 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
 
     @Override
     protected void runTest() throws Throwable {
-        doSingleTest(name.substring("before".length()) + ".kt");
+        boolean isWithRuntime = name.endsWith("Runtime");
+
+        if (isWithRuntime) {
+            ConfigRuntimeUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+        }
+
+        try {
+            doSingleTest(name.substring("before".length()) + ".kt");
+        } finally {
+            if (isWithRuntime) {
+                ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+            }
+        }
     }
 
     @Override
@@ -113,5 +131,9 @@ public class JetQuickFixTest extends LightQuickFixTestCase {
     @Override
     protected Sdk getProjectJDK() {
         return PluginTestCaseBase.jdkFromIdeaHome();
+    }
+
+    protected static Sdk getFullJavaJDK() {
+        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
     }
 }

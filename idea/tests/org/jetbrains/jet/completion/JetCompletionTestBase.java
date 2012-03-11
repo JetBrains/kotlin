@@ -24,11 +24,9 @@ import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
 import org.apache.commons.lang.SystemUtils;
-import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.ConfigRuntimeUtil;
 
 /**
  * @author Nikolay.Krasko
@@ -54,7 +52,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
             try {
                 if (withKotlinRuntime) {
-                    configureWithKotlinRuntime();
+                    ConfigRuntimeUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
                 }
 
                 Integer completionTime = completionUtils.getExecutionTime(fileText);
@@ -76,7 +74,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
             }
             finally {
                 if (withKotlinRuntime) {
-                    unConfigureKotlinRuntime();
+                    ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
                 }
             }
 
@@ -88,26 +86,6 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
     protected CompletionType getCompletionType(String testName, String fileText) {
         return (testName.startsWith("Smart")) ? CompletionType.SMART : CompletionType.BASIC;
-    }
-
-    protected static void configureWithKotlinRuntime() {
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(getModule());
-        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-
-        rootModel.setSdk(getFullJavaJDK());
-        JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE.configureModule(getModule(), rootModel, null);
-
-        rootModel.commit();
-    }
-
-    protected void unConfigureKotlinRuntime() {
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(getModule());
-        final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-
-        rootModel.setSdk(getProjectJDK());
-        JetWithJdkAndRuntimeLightProjectDescriptor.unConfigureModule(rootModel);
-
-        rootModel.commit();
     }
 
     @Override

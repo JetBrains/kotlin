@@ -155,6 +155,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         return functionNames;
     }
 
+    // TODO: Make it work for properties
     @NotNull
     public Collection<FunctionDescriptor> getTopLevelFunctionDescriptorsByName(
             @NotNull String name,
@@ -199,10 +200,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     @NotNull
     public BindingContext getResolutionContext(@NotNull GlobalSearchScope scope) {
         return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
-    }
-
-    public Collection<JetNamedFunction> getTopLevelFunctionsByName(@NotNull String name, @NotNull GlobalSearchScope scope) {
-        return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
     }
 
     /**

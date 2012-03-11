@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -41,9 +40,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -84,30 +83,24 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
         final ArrayList<String> result = new ArrayList<String>();
         result.addAll(getClassNames(referenceName, file.getProject()));
-        result.addAll(getJetTopLevelFunctions(referenceName, file.getProject()));
+        result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
         result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
 
         return result;
     }
     
-    private static Collection<String> getJetTopLevelFunctions(@NotNull String referenceName, @NotNull Project project) {
-        final Collection<JetNamedFunction> namedFunctions =
-                JetCacheManager.getInstance(project).getNamesCache().getTopLevelFunctionsByName(
-                        referenceName, GlobalSearchScope.allScope(project));
+    private static Collection<String> getJetTopLevelFunctions(@NotNull String referenceName, JetSimpleNameExpression expression, @NotNull Project project) {
+        JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
+        Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
+                referenceName,
+                expression,
+                GlobalSearchScope.allScope(project));
 
-        final Collection<String> nullableNames =
-                Collections2.transform(Lists.newArrayList(namedFunctions), new Function<JetNamedFunction, String>() {
-                    @Nullable
-                    @Override
-                    public String apply(@Nullable JetNamedFunction jetFunction) {
-                        return jetFunction != null ? jetFunction.getQualifiedName() : null;
-                    }
-                });
-
-        return Collections2.filter(nullableNames, new Predicate<String>() {
+        return Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, String>() {
             @Override
-            public boolean apply(@Nullable String fqn) {
-                return fqn != null && !fqn.isEmpty();
+            public String apply(@Nullable DeclarationDescriptor declarationDescriptor) {
+                assert declarationDescriptor != null;
+                return DescriptorUtils.getFQName(declarationDescriptor);
             }
         });
     }
