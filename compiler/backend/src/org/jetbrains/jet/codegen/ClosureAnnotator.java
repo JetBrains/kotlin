@@ -252,6 +252,8 @@ public class ClosureAnnotator {
         @Override
         public void visitNamedFunction(JetNamedFunction function) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
+            // working around a problem with shallow analysis
+            if (functionDescriptor == null) return;
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (containingDeclaration instanceof ClassDescriptor) {
                 nameStack.push(nameStack.peek() + '$' + function.getName());
