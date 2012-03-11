@@ -64,7 +64,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
 
     @Override
     @NotNull
-    public CharSequence getContents() {
+    public String getContents() {
         return myText;
     }
 

@@ -25,7 +25,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetHighlighter;
-import org.jetbrains.jet.plugin.libraries.JetDecompiledData;
 
 /**
  * @author Evgeny Gerashchenko
@@ -43,7 +42,7 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
     public String obtainFileText(Project project, VirtualFile file) {
         ClsFileImpl clsFile = JetDecompiledData.getClsFileIfKotlin(project, file);
         if (clsFile != null) {
-            return JetDecompiledData.getDecompiledData(clsFile).getText();
+            return JetDecompiledData.getDecompiledData(clsFile).getJetFile().getText();
         }
         return "";
     }
