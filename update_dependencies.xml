@@ -14,7 +14,10 @@
         <attribute name="teamcity.build" default="bt343"/>
         <sequential>
             <delete dir="PluginVerifier" failonerror="false" />
-            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier" />
+            <delete file="PluginVerifier" failonerror="false" />
+            <mkdir dir="PluginVerifier" />
+
+            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier"/>
 
             <property name="core" value="ideaSDK/core"/>
             <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
@@ -32,8 +35,8 @@
             <get src="${tc}/core/guava-11.0.1.jar" dest="${core}"/>
             <get src="${tc}/core/picocontainer.jar" dest="${core}"/>
             <get src="${tc}/core/trove4j.jar" dest="${core}"/>
-    
-            <get src="${tc}/${build.zip}" dest="ideaSDK" />
+
+            <get src="${tc}/${build.zip}" dest="ideaSDK"/>
             <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/${build.zip}"/>
 
