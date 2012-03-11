@@ -14,6 +14,8 @@
         <attribute name="teamcity.build" default="bt343"/>
         <sequential>
             <delete dir="PluginVerifier" failonerror="false" />
+	    <delete file="PluginVerifier" failonerror="false" />
+	    <mkdir dir="PluginVerifier" />
             <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="PluginVerifier" />
 
             <property name="core" value="ideaSDK/core"/>
