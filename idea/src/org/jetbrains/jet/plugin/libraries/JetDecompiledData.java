@@ -53,6 +53,7 @@ import java.util.Map;
 public class JetDecompiledData {
     private static final String JET_CLASS = JetClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();
+    private static final String DECOMPILED_COMMENT = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
     private JetFile myJetFile;
     private String myText;
     private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
@@ -174,8 +175,6 @@ public class JetDecompiledData {
     }
 
     private void appendDescriptor(StringBuilder builder, DeclarationDescriptor descriptor, BindingContext bindingContext, String indent) {
-        String decompiledComment = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
-
         int startOffset = builder.length();
         builder.append(DescriptorRenderer.COMPACT.render(descriptor));
         int endOffset = builder.length();
@@ -183,11 +182,11 @@ public class JetDecompiledData {
         if (descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
             if (((CallableMemberDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
                 if (descriptor instanceof FunctionDescriptor) {
-                    builder.append(" { ").append(decompiledComment).append(" }");
+                    builder.append(" { ").append(DECOMPILED_COMMENT).append(" }");
                     endOffset = builder.length();
                 } else { // descriptor instanceof PropertyDescriptor
                     if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
-                        builder.append(" ").append(decompiledComment);
+                        builder.append(" ").append(DECOMPILED_COMMENT);
                     }
                 }
             }
