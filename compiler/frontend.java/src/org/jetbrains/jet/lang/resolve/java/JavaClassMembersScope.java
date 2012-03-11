@@ -80,6 +80,9 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         return Collections.emptySet();
     }
 
+    /**
+     * @see JavaPackageScope#getAllDescriptors()
+     */
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {

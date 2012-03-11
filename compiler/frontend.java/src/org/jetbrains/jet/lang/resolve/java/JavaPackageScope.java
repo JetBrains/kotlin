@@ -87,11 +87,20 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
         return true;
     }
 
+    /**
+     * @see JavaClassMembersScope#getAllDescriptors()
+     */
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
+
+            if (psiClass != null) {
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
+
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
+            }
 
             final PsiPackage javaPackage = semanticServices.getDescriptorResolver().findPackage(packageFQN);
 
@@ -118,20 +127,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
                     // TODO: Temp hack for collection function descriptors from java
                     if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        HashSet<String> methodNames = new HashSet<String>();
-                        for (PsiMethod psiMethod : psiClass.getMethods()) {
-                            methodNames.add(psiMethod.getName());
-                        }
-
-                        for (String methodName : methodNames) {
-                            try {
-                                allDescriptors.addAll(getFunctions(methodName));
-                            } catch (ProcessCanceledException cancelException) {
-                                throw cancelException;
-                            } catch (RuntimeException ex) {
-                                LOG.error(ex);
-                            }
-                        }
+                        continue;
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {

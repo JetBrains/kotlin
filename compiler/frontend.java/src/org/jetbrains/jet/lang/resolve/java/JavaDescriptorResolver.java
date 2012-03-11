@@ -1530,7 +1530,7 @@ public class JavaDescriptorResolver {
         return annotation;
     }
 
-    public List<FunctionDescriptor> resolveMethods(PsiClass psiClass, ClassOrNamespaceDescriptor containingDeclaration) {
+    public List<FunctionDescriptor> resolveMethods(@NotNull PsiClass psiClass, @NotNull ClassOrNamespaceDescriptor containingDeclaration) {
         ResolverScopeData scopeData = getResolverScopeData(containingDeclaration, new PsiClassWrapper(psiClass));
 
         TypeSubstitutor substitutorForGenericSupertypes = typeSubstitutorForGenericSupertypes(scopeData);
