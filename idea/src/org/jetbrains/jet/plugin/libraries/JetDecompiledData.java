@@ -180,11 +180,17 @@ public class JetDecompiledData {
         builder.append(DescriptorRenderer.COMPACT.render(descriptor));
         int endOffset = builder.length();
 
-        if (descriptor instanceof FunctionDescriptor) {
-            builder.append(" { ").append(decompiledComment).append(" }");
-            endOffset = builder.length();
-        } else if (descriptor instanceof PropertyDescriptor) {
-            builder.append(" ").append(decompiledComment);
+        if (descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
+            if (((CallableMemberDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
+                if (descriptor instanceof FunctionDescriptor) {
+                    builder.append(" { ").append(decompiledComment).append(" }");
+                    endOffset = builder.length();
+                } else { // descriptor instanceof PropertyDescriptor
+                    if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
+                        builder.append(" ").append(decompiledComment);
+                    }
+                }
+            }
         } else if (descriptor instanceof ClassDescriptor) {
             builder.append(" {\n");
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
