@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -33,19 +33,19 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class JavaBridgeConfiguration implements Configuration {
+public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final String[] DEFAULT_JAVA_IMPORTS = new String[] { "java.lang.*" };
 
-    public static Configuration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, Configuration delegateConfiguration) {
+    public static ModuleConfiguration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, ModuleConfiguration delegateConfiguration) {
         return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
     }
 
     private final Project project;
     private final JavaSemanticServices javaSemanticServices;
-    private final Configuration delegateConfiguration;
+    private final ModuleConfiguration delegateConfiguration;
 
-    private JavaBridgeConfiguration(Project project, BindingTrace trace, Configuration delegateConfiguration) {
+    private JavaBridgeConfiguration(Project project, BindingTrace trace, ModuleConfiguration delegateConfiguration) {
         this.project = project;
         this.javaSemanticServices = new JavaSemanticServices(project, trace);
         this.delegateConfiguration = delegateConfiguration;

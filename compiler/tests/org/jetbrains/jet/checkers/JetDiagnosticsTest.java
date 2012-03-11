@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -152,7 +152,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         });
 
         boolean importJdk = expectedText.contains("+JDK");
-//        Configuration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : Configuration.EMPTY;
+//        ModuleConfiguration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : ModuleConfiguration.EMPTY;
         if (hasJavaFiles) {
             // According to yole@ the only way to import java files is to write them on disk
             // -- stepan.koltsov@ 2012-02-29
@@ -171,7 +171,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
         else {
-            bindingContext = AnalyzingUtils.analyzeFiles(getProject(), Configuration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+            bindingContext = AnalyzingUtils.analyzeFiles(getProject(), ModuleConfiguration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
         }
 
         boolean ok = true;

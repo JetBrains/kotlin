@@ -27,8 +27,8 @@ import java.util.Collection;
 /**
  * @author abreslav
  */
-public interface Configuration {
-    Configuration EMPTY = new Configuration() {
+public interface ModuleConfiguration {
+    ModuleConfiguration EMPTY = new ModuleConfiguration() {
         @Override
         public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
         }

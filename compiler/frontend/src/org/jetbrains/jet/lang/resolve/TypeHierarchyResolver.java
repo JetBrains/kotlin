@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -55,7 +55,7 @@ public class TypeHierarchyResolver {
     @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
-    private Configuration configuration;
+    private ModuleConfiguration configuration;
 
 
     // state
@@ -78,7 +78,7 @@ public class TypeHierarchyResolver {
     }
 
     @Inject
-    public void setConfiguration(@NotNull Configuration configuration) {
+    public void setConfiguration(@NotNull ModuleConfiguration configuration) {
         this.configuration = configuration;
     }
 

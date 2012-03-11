@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -88,7 +88,7 @@ public class TopDownAnalyzer {
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull Configuration configuration
+            @NotNull ModuleConfiguration configuration
     ) {
         process(project, trace, outerScope, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
     }
@@ -101,7 +101,7 @@ public class TopDownAnalyzer {
             @NotNull Collection<? extends PsiElement> declarations,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull Configuration configuration,
+            @NotNull ModuleConfiguration configuration,
             boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, declaredLocally, false, flowDataTraceFactory);
         context.getInjector().getInstance(TopDownAnalyzer.class).doProcess(context, outerScope, owner, declarations);
@@ -153,7 +153,7 @@ public class TopDownAnalyzer {
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysTrue(), Configuration.EMPTY, false, true, null);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysTrue(), ModuleConfiguration.EMPTY, false, true, null);
         ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
             context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
@@ -207,7 +207,7 @@ public class TopDownAnalyzer {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                 return ClassObjectStatus.NOT_ALLOWED;
             }
-        }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, Configuration.EMPTY, true);
+        }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, ModuleConfiguration.EMPTY, true);
     }
 
 }

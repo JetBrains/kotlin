@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -86,7 +86,7 @@ public class AnalyzingUtils {
 
     public static BindingContext analyzeFiles(
             @NotNull Project project,
-            @NotNull Configuration configuration,
+            @NotNull ModuleConfiguration configuration,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
@@ -96,7 +96,7 @@ public class AnalyzingUtils {
 
     public static BindingContext analyzeFilesWithGivenTrace(
             @NotNull Project project,
-            @NotNull Configuration configuration,
+            @NotNull ModuleConfiguration configuration,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,

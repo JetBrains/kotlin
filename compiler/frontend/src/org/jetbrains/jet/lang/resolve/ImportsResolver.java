@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -45,7 +45,7 @@ public class ImportsResolver {
     @NotNull
     private TopDownAnalysisContext context;
     @NotNull
-    private Configuration configuration;
+    private ModuleConfiguration configuration;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -53,7 +53,7 @@ public class ImportsResolver {
     }
 
     @Inject
-    public void setConfiguration(@NotNull Configuration configuration) {
+    public void setConfiguration(@NotNull ModuleConfiguration configuration) {
         this.configuration = configuration;
     }
 

@@ -29,7 +29,7 @@ import java.util.Collection;
 /**
  * @author svtk
  */
-public class StandardConfiguration implements Configuration {
+public class StandardConfiguration implements ModuleConfiguration {
     public static final String[] DEFAULT_JET_IMPORTS = new String[] { "kotlin.*", "kotlin.io.*" };
 
     private Project project;

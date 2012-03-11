@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.Configuration;
+import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
@@ -77,7 +77,7 @@ public class TopDownAnalysisContext {
             final Project project,
             final BindingTrace trace,
             Predicate<PsiFile> analyzeCompletely,
-            @NotNull final Configuration configuration,
+            @NotNull final ModuleConfiguration configuration,
             boolean declaredLocally,
             boolean analyzingBootstrapLibrary,
             @Nullable final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory) {
@@ -91,7 +91,7 @@ public class TopDownAnalysisContext {
             @Override
             protected void configureAfter() {
                 bind(TopDownAnalysisContext.class).toInstance(TopDownAnalysisContext.this);
-                bind(Configuration.class).toInstance(configuration);
+                bind(ModuleConfiguration.class).toInstance(configuration);
                 if (jetControlFlowDataTraceFactory != null) {
                     bind(JetControlFlowDataTraceFactory.class).toInstance(jetControlFlowDataTraceFactory);
                 }
