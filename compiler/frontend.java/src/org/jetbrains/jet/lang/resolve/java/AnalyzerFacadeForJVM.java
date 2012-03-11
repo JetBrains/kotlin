@@ -28,7 +28,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.StandardConfiguration;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -142,7 +142,7 @@ public class AnalyzerFacadeForJVM {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         return AnalyzingUtils.analyzeFilesWithGivenTrace(
                 project,
-                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, StandardConfiguration.createStandardConfiguration(project)),
+                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, DefaultModuleConfiguration.createStandardConfiguration(project)),
                 files,
                 filesToAnalyzeCompletely,
                 flowDataTraceFactory,

@@ -18,7 +18,7 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.StandardConfiguration;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -108,7 +108,7 @@ public class ImportClassHelper {
             return true;
         }
 
-        for (String defaultJetImport : StandardConfiguration.DEFAULT_JET_IMPORTS) {
+        for (String defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
             if (QualifiedNamesUtil.isImported(defaultJetImport, importString)) {
                 return true;
             }

@@ -29,16 +29,16 @@ import java.util.Collection;
 /**
  * @author svtk
  */
-public class StandardConfiguration implements ModuleConfiguration {
+public class DefaultModuleConfiguration implements ModuleConfiguration {
     public static final String[] DEFAULT_JET_IMPORTS = new String[] { "kotlin.*", "kotlin.io.*" };
 
     private Project project;
 
-    public static StandardConfiguration createStandardConfiguration(Project project) {
-        return new StandardConfiguration(project);
+    public static DefaultModuleConfiguration createStandardConfiguration(Project project) {
+        return new DefaultModuleConfiguration(project);
     }
 
-    private StandardConfiguration(Project project) {
+    private DefaultModuleConfiguration(Project project) {
         this.project = project;
     }
 
