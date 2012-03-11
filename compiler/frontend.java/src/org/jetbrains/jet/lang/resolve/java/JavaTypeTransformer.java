@@ -207,7 +207,7 @@ public class JavaTypeTransformer {
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
             classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
             classTypesMap.put("java.lang.CharSequence", standardLibrary.getNullableCharSequenceType());
-            classTypesMap.put("java.lang.Throwable", standardLibrary.getThrowableType());
+            classTypesMap.put("java.lang.Throwable", standardLibrary.getNullableThrowableType());
         }
         return classTypesMap;
     }
