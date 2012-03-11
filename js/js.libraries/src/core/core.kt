@@ -16,8 +16,9 @@ library("println")
 fun println(s : Any?) {}
 library("print")
 fun print(s : Any?) {}
+//TODO: consistent parseInt
 library("parseInt")
-fun parseInt(s : String) : Int = 0
+fun parseInt(s : String) : Int = js.noImpl
 library
 open class Exception() : Throwable() {}
 library

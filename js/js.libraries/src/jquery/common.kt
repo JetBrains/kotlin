@@ -41,6 +41,7 @@ class JQuery() {
     fun hover(handlerIn : DomElement.() -> Unit, handlerOut : DomElement.() -> Unit) = this;
     fun next() : JQuery = js.noImpl
     fun parent() : JQuery = js.noImpl
+    fun `val`() : String? = js.noImpl
 }
 
 native

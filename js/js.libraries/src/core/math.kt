@@ -2,6 +2,7 @@ package js;
 
 import js.native
 
+//TODO: declare using number
 native
 class MathClass() {
     val PI : Double = 1.0;
@@ -25,7 +26,6 @@ class MathClass() {
     fun round(value : Number) = 0
     fun floor(value : Number) = 0
     fun ceil(value : Number) = 0
-
 }
 
 native
