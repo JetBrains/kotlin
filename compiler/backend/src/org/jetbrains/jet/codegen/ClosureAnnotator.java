@@ -111,7 +111,7 @@ public class ClosureAnnotator {
     private class MyJetVisitorVoid extends JetVisitorVoid {
         private LinkedList<ClassDescriptor> classStack = new LinkedList<ClassDescriptor>();
         private LinkedList<String> nameStack = new LinkedList<String>();
-        
+
         private void recordEnclosing(ClassDescriptor classDescriptor) {
             if(classStack.size() > 0) {
                 ClassDescriptor put = enclosing.put(classDescriptor, classStack.peek());
@@ -178,6 +178,8 @@ public class ClosureAnnotator {
             }
             else {
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
+                // working around a problem with shallow analysis
+                if (classDescriptor == null) return;
                 recordEnclosing(classDescriptor);
                 classStack.push(classDescriptor);
                 String base = nameStack.peek();
@@ -195,6 +197,8 @@ public class ClosureAnnotator {
         @Override
         public void visitClass(JetClass klass) {
             ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, klass);
+            // working around a problem with shallow analysis
+            if (classDescriptor == null) return;
             recordEnclosing(classDescriptor);
             classStack.push(classDescriptor);
             String base = nameStack.peek();
