@@ -4,6 +4,9 @@ examples/.idea/workspace.xml
 libraries/.idea/workspace.xml
 confluence/target
 confluence/target
+pluginPublisher/plugin-verifier.jar
+pluginPublisher/idea*
+patches-master
 out
 dist
 ideaSDK
