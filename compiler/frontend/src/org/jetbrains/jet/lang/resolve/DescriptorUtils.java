@@ -260,4 +260,15 @@ public class DescriptorUtils {
         }
         return expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE;
     }
+
+    public static boolean isObject(@NotNull ClassifierDescriptor classifier) {
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor clazz = (ClassDescriptor) classifier;
+            return clazz.getKind() == ClassKind.OBJECT || clazz.getKind() == ClassKind.ENUM_ENTRY;
+        } else if (classifier instanceof TypeParameterDescriptor) {
+            return false;
+        } else {
+            throw new IllegalStateException("unknown classifier: " + classifier);
+        }
+    }
 }

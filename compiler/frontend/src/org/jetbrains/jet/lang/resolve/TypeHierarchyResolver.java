@@ -164,7 +164,7 @@ public class TypeHierarchyResolver {
                             (Map) context.getClasses(),
                             mutableClassDescriptor
                     );
-                    classObjectDescriptor.addClassifierDescriptor(mutableClassDescriptor);
+                    classObjectDescriptor.addObjectDescriptor(mutableClassDescriptor);
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {

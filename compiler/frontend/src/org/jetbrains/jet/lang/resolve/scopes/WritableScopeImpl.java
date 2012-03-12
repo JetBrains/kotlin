@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.util.CommonSuppliers;
@@ -308,12 +309,20 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addClassifierDescriptor(@NotNull ClassifierDescriptor classDescriptor) {
         checkMayWrite();
 
+        if (DescriptorUtils.isObject(classDescriptor)) {
+            throw new IllegalStateException("must not be object: " + classDescriptor);
+        }
+
         addClassifierAlias(classDescriptor.getName(), classDescriptor);
     }
 
     @Override
     public void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor) {
         checkMayWrite();
+
+        if (!DescriptorUtils.isObject(objectDescriptor)) {
+            throw new IllegalStateException("must be object: " + objectDescriptor);
+        }
         
         getObjectDescriptorsMap().put(objectDescriptor.getName(), objectDescriptor);
     }
