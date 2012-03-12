@@ -91,7 +91,9 @@ public class ImportsResolver {
             }
             delayedImporter.processImports();
 
-            if (firstPhase) continue;
+            if (firstPhase) {
+                continue;
+            }
             for (JetImportDirective importDirective : importDirectives) {
                 reportUselessImport(importDirective, namespaceScope, resolvedDirectives);
             }
@@ -114,7 +116,9 @@ public class ImportsResolver {
     private static String getAliasName(@NotNull JetImportDirective importDirective) {
         String aliasName = importDirective.getAliasName();
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null) return null;
+        if (importedReference == null) {
+            return null;
+        }
         JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
         if (aliasName == null) {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
@@ -127,9 +131,13 @@ public class ImportsResolver {
                                      @NotNull Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) return;
+        if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {
+            return;
+        }
         String aliasName = getAliasName(importDirective);
-        if (aliasName == null) return;
+        if (aliasName == null) {
+            return;
+        }
 
         DeclarationDescriptor wasResolved = resolvedDirectives.get(importDirective);
         DeclarationDescriptor isResolved = null;
@@ -176,7 +184,9 @@ public class ImportsResolver {
                 return Collections.emptyList();
             }
             JetExpression importedReference = importDirective.getImportedReference();
-            if (importedReference == null) return Collections.emptyList();
+            if (importedReference == null) {
+                return Collections.emptyList();
+            }
 
             Collection<? extends DeclarationDescriptor> descriptors;
             if (importedReference instanceof JetQualifiedExpression) {
@@ -200,7 +210,9 @@ public class ImportsResolver {
             }
 
             String aliasName = getAliasName(importDirective);
-            if (aliasName == null) return Collections.emptyList();
+            if (aliasName == null) {
+                return Collections.emptyList();
+            }
 
             for (DeclarationDescriptor descriptor : descriptors) {
                 importer.addAliasImport(descriptor, aliasName);
@@ -236,15 +248,21 @@ public class ImportsResolver {
                 for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                     if (declarationDescriptor instanceof NamespaceDescriptor) {
                         result = lookupDescriptorsForSimpleNameReference(selector, ((NamespaceDescriptor) declarationDescriptor).getMemberScope(), true);
-                        if (!result.isEmpty()) return result;
+                        if (!result.isEmpty()) {
+                            return result;
+                        }
                     }
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         result = lookupObjectMembers((ClassDescriptor) declarationDescriptor, selector);
-                        if (!result.isEmpty()) return result;
+                        if (!result.isEmpty()) {
+                            return result;
+                        }
                     }
                     if (declarationDescriptor instanceof VariableDescriptor) {
                         result = lookupVariableMembers((VariableDescriptor) declarationDescriptor, selector);
-                        if (!result.isEmpty()) return result;
+                        if (!result.isEmpty()) {
+                            return result;
+                        }
                     }
                 }
             }
@@ -253,7 +271,9 @@ public class ImportsResolver {
         }
 
         private boolean canImportMembersFrom(@NotNull Collection<? extends DeclarationDescriptor> descriptors, @NotNull JetSimpleNameExpression reference) {
-            if (firstPhase) return true;
+            if (firstPhase) {
+                return true;
+            }
             if (descriptors.size() == 1) {
                 return canImportMembersFrom(descriptors.iterator().next(), reference, trace);
             }
@@ -295,12 +315,16 @@ public class ImportsResolver {
         private Collection<? extends DeclarationDescriptor> lookupObjectMembers(@NotNull ClassDescriptor classDescriptor, @NotNull JetSimpleNameExpression memberReference) {
             if (firstPhase) {
                 ClassDescriptor objectDescriptor = DescriptorUtils.getObjectIfObjectOrClassObjectDescriptor(classDescriptor);
-                if (objectDescriptor == null) return Collections.emptyList();
+                if (objectDescriptor == null) {
+                    return Collections.emptyList();
+                }
                 return getInnerClassesAndObjectsByName(objectDescriptor, memberReference);
             }
             //on second phase class descriptor is only a descriptor for class object
             JetType classObjectType = classDescriptor.getClassObjectType();
-            if (classObjectType == null) return Collections.emptyList();
+            if (classObjectType == null) {
+                return Collections.emptyList();
+            }
             return lookupDescriptorsForSimpleNameReference(memberReference, classObjectType.getMemberScope(), false);
         }
 
@@ -309,16 +333,22 @@ public class ImportsResolver {
             assert classDescriptor.getKind() == ClassKind.OBJECT;
             Collection<? extends DeclarationDescriptor> descriptors;
             ClassDescriptor innerClass = classDescriptor.getInnerClassOrObject(memberReference.getReferencedName());
-            if (innerClass == null) return Collections.emptyList();
+            if (innerClass == null) {
+                return Collections.emptyList();
+            }
             descriptors = Collections.<DeclarationDescriptor>singletonList(innerClass);
             return filterResolutionResult(descriptors, memberReference, JetScope.EMPTY, false);
         }
 
         private Collection<? extends DeclarationDescriptor> lookupVariableMembers(@NotNull VariableDescriptor variableDescriptor, @NotNull JetSimpleNameExpression memberReference) {
-            if (firstPhase) return Collections.emptyList();
+            if (firstPhase) {
+                return Collections.emptyList();
+            }
 
             JetType variableType = variableDescriptor.getReturnType();
-            if (variableType == null) return Collections.emptyList();
+            if (variableType == null) {
+                return Collections.emptyList();
+            }
             return lookupDescriptorsForSimpleNameReference(memberReference, variableType.getMemberScope(), false);
         }
 
@@ -329,14 +359,20 @@ public class ImportsResolver {
                 boolean namespaceLevel) {
 
             String referencedName = referenceExpression.getReferencedName();
-            if (referencedName == null) return Collections.emptyList();
+            if (referencedName == null) {
+                return Collections.emptyList();
+            }
 
             List<DeclarationDescriptor> descriptors = Lists.newArrayList();
             NamespaceDescriptor namespaceDescriptor = outerScope.getNamespace(referencedName);
-            if (namespaceDescriptor != null) descriptors.add(namespaceDescriptor);
+            if (namespaceDescriptor != null) {
+                descriptors.add(namespaceDescriptor);
+            }
 
             ClassifierDescriptor classifierDescriptor = outerScope.getClassifier(referencedName);
-            if (classifierDescriptor != null) descriptors.add(classifierDescriptor);
+            if (classifierDescriptor != null) {
+                descriptors.add(classifierDescriptor);
+            }
 
             if (firstPhase) {
                 descriptors.add(outerScope.getObjectDescriptor(referencedName));
@@ -346,7 +382,9 @@ public class ImportsResolver {
                 descriptors.addAll(outerScope.getProperties(referencedName));
 
                 VariableDescriptor localVariable = outerScope.getLocalVariable(referencedName);
-                if (localVariable != null) descriptors.add(localVariable);
+                if (localVariable != null) {
+                    descriptors.add(localVariable);
+                }
             }
             return filterResolutionResult(descriptors, referenceExpression, outerScope, namespaceLevel);
         }
