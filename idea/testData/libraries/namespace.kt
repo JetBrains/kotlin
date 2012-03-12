@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }
+[fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
 

@@ -23,12 +23,20 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.compiled.ClsElementImpl;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+
+import java.util.Map;
 
 /**
  * @author Evgeny Gerashchenko
@@ -39,6 +47,7 @@ public class LibrariesTest extends PlatformTestCase {
     private static final String PACKAGE = "testData.libraries";
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
     private VirtualFile myLibraryDir;
+    private VirtualFile myClassFile;
 
     public void testAbstractClass() {
         doTest();
@@ -77,15 +86,64 @@ public class LibrariesTest extends PlatformTestCase {
     }
 
     private void doTest() {
-        String testName = getTestName(false);
+        myClassFile = getClassFile();
+
+        Map<ClsElementImpl, JetDeclaration> map = getDecompiledData(myClassFile).getClsElementsToJetElements();
+        checkNavigationElements(map);
+        String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
+
+        assertSameLinesWithFile(TEST_DATA_PATH + "/" + getTestName(false) + ".kt", decompiledTextWithMarks);
+    }
+
+    private String getDecompiledTextWithMarks(Map<ClsElementImpl, JetDeclaration> map) {
+        String decompiledText = getDecompiledText();
+
+        int[] openings = new int[decompiledText.length() + 1];
+        int[] closings = new int[decompiledText.length() + 1];
+        for (JetDeclaration jetDeclaration : map.values()) {
+            TextRange textRange = jetDeclaration.getTextRange();
+            openings[textRange.getStartOffset()]++;
+            closings[textRange.getEndOffset()]++;
+        }
+
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i <= decompiledText.length(); i++) {
+            result.append(StringUtil.repeat("]", closings[i]));
+            result.append(StringUtil.repeat("[", openings[i]));
+            if (i < decompiledText.length()) {
+                result.append(decompiledText.charAt(i));
+            }
+        }
+        return result.toString();
+    }
+
+    private String getDecompiledText() {
+        Document document = FileDocumentManager.getInstance().getDocument(myClassFile);
+        assertNotNull(document);
+        return document.getText();
+    }
+
+    private JetDecompiledData getDecompiledData(VirtualFile classFile) {
+        PsiFile classPsiFile = getPsiManager().findFile(classFile);
+        assertInstanceOf(classPsiFile, ClsFileImpl.class);
+        ClsFileImpl clsFile = (ClsFileImpl) classPsiFile;
+        return JetDecompiledData.getDecompiledData(clsFile);
+    }
+
+    private void checkNavigationElements(Map<ClsElementImpl, JetDeclaration> map) {
+        PsiFile classPsiFile = getPsiManager().findFile(myClassFile);
+        for (Map.Entry<ClsElementImpl, JetDeclaration> clsToJet : map.entrySet()) {
+            assertSame(classPsiFile, clsToJet.getKey().getContainingFile());
+            assertSame(clsToJet.getValue(), clsToJet.getKey().getNavigationElement());
+        }
+    }
+
+    private VirtualFile getClassFile() {
         VirtualFile packageDir = myLibraryDir.findFileByRelativePath(PACKAGE.replace(".", "/"));
         assertNotNull(packageDir);
-        VirtualFile classFile = packageDir.findChild(testName + ".class");
+        VirtualFile classFile = packageDir.findChild(getTestName(false) + ".class");
         assertNotNull(classFile);
-        Document document = FileDocumentManager.getInstance().getDocument(classFile);
-        assert document != null;
-        String decompiledText = document.getText();
-        assertSameLinesWithFile(TEST_DATA_PATH + "/" + testName + ".kt", decompiledText);
+        return classFile;
     }
 
     @Override

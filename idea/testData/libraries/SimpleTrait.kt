@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-trait SimpleTrait {
-}
+[trait SimpleTrait {
+}]

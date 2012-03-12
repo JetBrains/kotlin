@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-abstract class AbstractClass {
-}
+[abstract class AbstractClass {
+}]

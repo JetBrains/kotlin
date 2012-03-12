@@ -28,6 +28,7 @@ import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 
@@ -41,6 +42,7 @@ import java.util.Map;
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
     private JetFile myJetFile;
+
     private Map<ClsElementImpl, JetDeclaration> myClsElementsToJetElements = new HashMap<ClsElementImpl, JetDeclaration>();
 
     private static final Object LOCK = new String("decompiled data lock");
@@ -95,5 +97,10 @@ public class JetDecompiledData {
             assert decompiledData != null;
             return decompiledData;
         }
+    }
+
+    @TestOnly
+    Map<ClsElementImpl, JetDeclaration> getClsElementsToJetElements() {
+        return myClsElementsToJetElements;
     }
 }
