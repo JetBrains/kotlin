@@ -38,6 +38,7 @@
         <module>stdlib</module>
         <module>kunit</module>
         <module>kdoc</module>
+        <module>kotlin-jdbc</module>
         <module>website</module>
     </modules>
 

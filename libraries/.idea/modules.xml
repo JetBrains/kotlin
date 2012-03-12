@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/kdoc/kdoc.iml" filepath="$PROJECT_DIR$/kdoc/kdoc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-jdbc/kotlin-jdbc.iml" filepath="$PROJECT_DIR$/kotlin-jdbc/kotlin-jdbc.iml" />
       <module fileurl="file://$PROJECT_DIR$/kunit/kunit.iml" filepath="$PROJECT_DIR$/kunit/kunit.iml" />
       <module fileurl="file://$PROJECT_DIR$/runtests/runtests.iml" filepath="$PROJECT_DIR$/runtests/runtests.iml" />
       <module fileurl="file://$PROJECT_DIR$/stdlib/stdlib.iml" filepath="$PROJECT_DIR$/stdlib/stdlib.iml" />
