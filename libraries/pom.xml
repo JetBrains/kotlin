@@ -115,6 +115,8 @@
                       <jar>${kotlin-sdk}/lib/guava-11.0.1.jar</jar>
                       <jar>${kotlin-sdk}/lib/asm-commons.jar</jar>
                       <jar>${kotlin-sdk}/lib/asm.jar</jar>
+                      <jar>${kotlin-sdk}/lib/guice-3.0-no_aop.jar</jar>
+                      <jar>${kotlin-sdk}/lib/guice-javax.inject.jar</jar>
                     </kotlinJars>
                   </configuration>
               </plugin>
