@@ -22,6 +22,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
@@ -132,17 +133,19 @@ public class GenerationState {
         compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION, annotate);
     }
 
-    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, CompilationErrorHandler errorHandler, boolean annotate) {
+    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
         ClosureAnnotator closureAnnotator = !annotate ? null : new ClosureAnnotator(bindingContext, files);
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
         bindingContexts.push(bindingContext);
         try {
             for (JetFile namespace : files) {
+                if (namespace == null) throw new IllegalArgumentException("A null file given for compilation");
                 try {
                     generateNamespace(namespace);
                 }
                 catch (Throwable e) {
-                    errorHandler.reportException(e, namespace.getContainingFile().getVirtualFile().getUrl());
+                    VirtualFile virtualFile = namespace.getContainingFile().getVirtualFile();
+                    errorHandler.reportException(e, virtualFile == null ? "no file" : virtualFile.getUrl());
                     DiagnosticUtils.throwIfRunningOnServer(e);
                     if (ApplicationManager.getApplication().isInternal()) {
                         e.printStackTrace();
