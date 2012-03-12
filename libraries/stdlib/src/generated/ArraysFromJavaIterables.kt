@@ -107,7 +107,7 @@ inline fun <T, R> Array<T>.flatMapTo(result: Collection<R>, transform: (T)-> Col
 }
 
 /** Performs the given operation on each element inside the collection */
-inline fun <T> Array<T>.foreach(operation: (element: T) -> Unit) {
+inline fun <T> Array<T>.forEach(operation: (element: T) -> Unit) {
   for (elem in this)
     operation(elem)
 }

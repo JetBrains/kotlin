@@ -17,7 +17,7 @@ class Kt1149Test() : TestCase() {
                 res.add("anonymous.foo()")
             }
         })
-        list.foreach{ it.foo() }
+        list.forEach{ it.foo() }
         Assert.assertEquals("anonymous.foo()", res[0])
     }
 }

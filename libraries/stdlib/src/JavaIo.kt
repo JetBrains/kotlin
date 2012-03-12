@@ -199,7 +199,7 @@ inline fun Reader.buffered(): BufferedReader = if(this is BufferedReader) this e
 
 inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
-inline fun Reader.foreachLine(block: (String) -> Unit): Unit {
+inline fun Reader.forEachLine(block: (String) -> Unit): Unit {
     this.use{
         val iter = buffered().lineIterator()
         while (iter.hasNext) {

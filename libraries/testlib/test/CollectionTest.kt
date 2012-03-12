@@ -125,7 +125,7 @@ class CollectionTest() : TestCase() {
 
     fun testForeach() {
         var count = 0
-        data.foreach{ count += it.length }
+        data.forEach{ count += it.length }
         assertEquals(6, count)
     }
 

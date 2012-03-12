@@ -104,7 +104,7 @@ inline fun <T, R> java.lang.Iterable<T>.flatMapTo(result: Collection<R>, transfo
 }
 
 /** Performs the given operation on each element inside the collection */
-inline fun <T> java.lang.Iterable<T>.foreach(operation: (element: T) -> Unit) {
+inline fun <T> java.lang.Iterable<T>.forEach(operation: (element: T) -> Unit) {
   for (elem in this)
     operation(elem)
 }

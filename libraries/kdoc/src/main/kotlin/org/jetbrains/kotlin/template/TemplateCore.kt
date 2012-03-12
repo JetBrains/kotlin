@@ -81,7 +81,7 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
 
     fun renderTo(os: OutputStream): Unit {
         // TODO compiler error
-        //OutputStreamWriter(os).foreach{ renderTo(it) }
+        //OutputStreamWriter(os).forEach{ renderTo(it) }
         val s = OutputStreamWriter(os)
         renderTo(s)
         s.close()
@@ -89,7 +89,7 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
 
     fun renderTo(file: File): Unit {
         // TODO compiler error
-        //FileWriter(file).foreach{ s -> renderTo(s) }
+        //FileWriter(file).forEach{ s -> renderTo(s) }
         val s = FileWriter(file)
         renderTo(s)
         s.close()

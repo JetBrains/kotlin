@@ -55,17 +55,17 @@ class IoTest() : TestCase() {
     val reader = sample()
 
     /* TODO would be nicer maybe to write this as
-        reader.lines.foreach { ... }
+        reader.lines.forEach { ... }
 
       as we could one day maybe one day write that as
         for (line in reader.lines)
 
       if the for(elem in thing) {...} statement could act as syntax sugar for
-        thing.foreach{ elem -> ... }
+        thing.forEach{ elem -> ... }
 
-      if thing is not an Iterable/array/Iterator but has a suitable foreach method
+      if thing is not an Iterable/array/Iterator but has a suitable forEach method
     */
-    reader.foreachLine{
+    reader.forEachLine{
       list.add(it)
     }
 
