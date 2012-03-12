@@ -5,6 +5,7 @@ kotlin.io
 kotlin.math
 kotlin.modules
 kotlin.properties
+kotlin.template
 kotlin.test
 kotlin.util
 org.jetbrains.kotlin.support
