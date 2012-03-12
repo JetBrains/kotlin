@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -41,7 +40,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author abreslav
@@ -104,53 +102,50 @@ public class AnalyzingUtils {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull BindingTraceContext bindingTraceContext) {
 
-        JetScope libraryScope = JetStandardLibrary.getInstance().getLibraryScope();
         ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, owner,
                 new TraceBasedRedeclarationHandler(bindingTraceContext)).setDebugName("Root scope in analyzeNamespace");
-
-        scope.importScope(libraryScope);
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        final Map<String, NamespaceDescriptorImpl> declaredNamespaces = Maps.newHashMap();
+        // Import the lang package
+        scope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
 
-        TopDownAnalyzer.process(project, bindingTraceContext,
-            new JetScopeAdapter(scope) {
-                @Override
-                public NamespaceDescriptor getNamespace(@NotNull String name) {
-                    NamespaceDescriptor topLevelNamespace = declaredNamespaces.get(name);
-                    if (topLevelNamespace != null) {
-                        return topLevelNamespace;
-                    }
-                    NamespaceDescriptor topLevelNamespaceFromConfiguration = configuration.getTopLevelNamespace(name);
-                    if (topLevelNamespaceFromConfiguration != null) {
-                        return topLevelNamespaceFromConfiguration;
-                    }
-                    return super.getNamespace(name);
+        // Import a scope that contains all top-level namespaces that come from dependencies
+        // This makes the namespaces visible at all, does not import themselves
+        scope.importScope(new JetScopeAdapter(JetScope.EMPTY) {
+            @Override
+            public NamespaceDescriptor getNamespace(@NotNull String name) {
+                // Is it a top-level namespace coming from the dependencies?
+                NamespaceDescriptor topLevelNamespaceFromConfiguration = configuration.getTopLevelNamespace(name);
+                if (topLevelNamespaceFromConfiguration != null) {
+                    return topLevelNamespaceFromConfiguration;
                 }
+                // Should be null, we are delegating to EMPTY
+                return super.getNamespace(name);
+            }
 
-                @NotNull
-                @Override
-                public Collection<DeclarationDescriptor> getAllDescriptors() {
-                    List<DeclarationDescriptor> allDescriptors = Lists.newArrayList(super.getAllDescriptors());
-                    allDescriptors.addAll(declaredNamespaces.values());
-                    configuration.addAllTopLevelNamespacesTo(allDescriptors);
-                    return allDescriptors;
-                }
-            },
+            @NotNull
+            @Override
+            public Collection<DeclarationDescriptor> getAllDescriptors() {
+                List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
+                configuration.addAllTopLevelNamespacesTo(allDescriptors);
+                return allDescriptors;
+            }
+        });
+
+        TopDownAnalyzer.process(project, bindingTraceContext, scope,
             new NamespaceLike.Adapter(owner) {
 
                 @Override
                 public NamespaceDescriptorImpl getNamespace(String name) {
-                    return declaredNamespaces.get(name);
+                    return (NamespaceDescriptorImpl) scope.getDeclaredNamespace(name);
                 }
 
                 @Override
                 public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
                     scope.addNamespace(namespaceDescriptor);
-                    declaredNamespaces.put(namespaceDescriptor.getName(), (NamespaceDescriptorImpl) namespaceDescriptor);
                 }
 
                 @Override
