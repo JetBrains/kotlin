@@ -40,7 +40,8 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     @Nullable
     protected final PsiClass psiClass;
 
-    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices, @Nullable PsiClass psiClass) {
+    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices,
+                                      @Nullable PsiClass psiClass) {
         this.descriptor = descriptor;
         this.semanticServices = semanticServices;
         this.psiClass = psiClass;

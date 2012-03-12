@@ -79,6 +79,9 @@ public class JetCompletionContributor extends CompletionContributor {
                                addReferenceVariant(result, variant, positions);
                            }
 
+                           // Prevent from adding reference variants from standard reference contributor
+                           result.stopHere();
+
                            String prefix = result.getPrefixMatcher().getPrefix();
 
                            if (prefix.isEmpty() && parameters.getInvocationCount() < 2) {
@@ -93,8 +96,6 @@ public class JetCompletionContributor extends CompletionContributor {
                            if (shouldRunExtensionsCompletion(parameters, prefix)) {
                                addJetExtensions(jetReference.getExpression(), result, position);
                            }
-
-                           result.stopHere();
                        }
                    }
                });
@@ -233,18 +234,18 @@ public class JetCompletionContributor extends CompletionContributor {
             @NotNull LookupElement element,
             @NotNull Set<LookupPositionObject> positions) {
 
-        LookupPositionObject lookupPosition = getLookupPosition(element);
-        if (lookupPosition != null) {
-            if (!positions.contains(lookupPosition)) {
-                positions.add(lookupPosition);
-                result.addElement(element);
-            }
-
-            // There is already an element with same position - ignore duplicate
-        }
-        else {
+//        LookupPositionObject lookupPosition = getLookupPosition(element);
+//        if (lookupPosition != null) {
+//            if (!positions.contains(lookupPosition)) {
+//                positions.add(lookupPosition);
+//                result.addElement(element);
+//            }
+//
+//            // There is already an element with same position - ignore duplicate
+//        }
+//        else {
             result.addElement(element);
-        }
+//         }
     }
 
     private static LookupPositionObject getLookupPosition(LookupElement element) {
