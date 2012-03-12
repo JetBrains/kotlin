@@ -1,0 +1,5 @@
+package a
+
+import A as ER
+
+class A()

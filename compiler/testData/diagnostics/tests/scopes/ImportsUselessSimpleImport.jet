@@ -1,0 +1,5 @@
+package a
+
+import <!USELESS_SIMPLE_IMPORT!>B<!>
+
+object B {}

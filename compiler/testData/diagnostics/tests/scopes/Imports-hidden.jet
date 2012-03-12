@@ -1,45 +1,15 @@
 //FILE:a.kt
 package a
 
-import <!USELESS_HIDDEN_IMPORT!>b.a<!>
-import c.a
-import <!USELESS_SIMPLE_IMPORT!>b<!>
-
-import b.bar
-import c.foo
-import b.foo
-
-import A as ER
-import <!USELESS_SIMPLE_IMPORT!>B<!>
-
-class A() {}
-object B {}
+import <!USELESS_HIDDEN_IMPORT!>b.O<!>
+import c.O
 
 //FILE:b.kt
 package b
 
-object a {}
-
-class B() {
-    class object {
-        object O {}
-    }
-}
-
-fun foo() {}
-fun bar() {}
+object O {}
 
 //FILE:c.kt
 package c
 
-fun a() {}
-
-object a {}
-
-class C() {
-    class object {
-        object O {}
-    }
-}
-
-fun foo() {}
+object O {}
