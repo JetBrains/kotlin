@@ -68,12 +68,14 @@
     </target>
 
     <target name="verifyPlugin">
+        <!--
         <java fork="true" failonerror="${fail.on.plugin.verifier.error}" jar="${plugin.verifier}">
             <arg value="-r" />
             <arg value="${jdk16.home}" />
             <arg value="${plugin.zip}" />
             <arg value="${basedir}/ideaSDK" />
         </java>
+        -->
     </target>
 
     <target name="post_build" depends="cleanupPluginXml, zipArtifact, verifyPlugin"/>
