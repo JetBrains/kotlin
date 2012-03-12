@@ -60,5 +60,6 @@ public interface ModuleConfiguration {
     @Nullable
     NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName);
 
+    /** Add all the top-level namespaces from the dependencies of this module into the given collection */
     void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces);
 }
