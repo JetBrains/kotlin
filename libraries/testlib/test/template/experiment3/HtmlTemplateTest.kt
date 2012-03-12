@@ -1,8 +1,9 @@
 package test.template
 
-import junit.framework.TestCase
-import kotlin.template.*
+import kotlin.template.experiment3.*
 import kotlin.test.assertEquals
+
+import junit.framework.TestCase
 
 class HtmlTemplateTest : TestCase() {
     fun testTemplate(): Unit {

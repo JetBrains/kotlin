@@ -8,11 +8,7 @@ import java.sql.*
 fun <T> Connection.statement(block: (Statement) -> T): T {
     val statement = createStatement()
     if (statement != null) {
-        try {
-            return block(statement)
-        } finally {
-            statement.close()
-        }
+        return statement.use(block)
     } else {
         throw IllegalStateException("No Statement returned from $this")
     }

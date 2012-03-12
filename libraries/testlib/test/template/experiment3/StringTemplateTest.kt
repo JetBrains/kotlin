@@ -1,8 +1,9 @@
 package test.template
 
-import junit.framework.TestCase
-import kotlin.template.StringTemplate
+import kotlin.template.experiment3.*
 import kotlin.test.assertEquals
+
+import junit.framework.TestCase
 
 class StringTemplateTest : TestCase() {
     fun testTemplate(): Unit {

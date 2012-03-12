@@ -1,4 +1,4 @@
-package kotlin.template
+package kotlin.template.experiment3
 
 /**
  * Creates a string template from a string with $ expressions inside.
