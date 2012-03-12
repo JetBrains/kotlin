@@ -1,5 +1,4 @@
 // KT-258 Support equality constraints in type inference
-// +JDK
 
 import java.util.*
 

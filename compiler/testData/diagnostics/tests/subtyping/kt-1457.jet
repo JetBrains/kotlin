@@ -1,4 +1,3 @@
-// +JDK
 import java.util.ArrayList
 
 class MyListOfPairs<T> : ArrayList<#(T, T)>() { }

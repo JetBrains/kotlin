@@ -219,6 +219,7 @@ public class JavaDescriptorResolver {
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
         if (kotlinClassDescriptor != null) {
+            // TODO: return null, no loops here
             return new ResolverSrcClassData(kotlinClassDescriptor);
         }
 
@@ -258,6 +259,7 @@ public class JavaDescriptorResolver {
         // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
         ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
         if (kotlinClassDescriptor != null) {
+            // TODO: return null, no loops here
             return kotlinClassDescriptor;
         }
 

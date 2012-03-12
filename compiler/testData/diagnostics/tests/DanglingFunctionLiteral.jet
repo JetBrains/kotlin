@@ -1,4 +1,3 @@
-//+JDK
 
 class Foo() {
     private val builder = StringBuilder("sdfsd");

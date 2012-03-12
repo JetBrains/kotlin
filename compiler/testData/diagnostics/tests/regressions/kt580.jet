@@ -1,5 +1,4 @@
 //KT-580 Type inference failed
-// +JDK
 
 package whats.the.difference
 

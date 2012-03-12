@@ -1,5 +1,4 @@
 //KT-597 Type inference failed
-// +JDK
 
 fun <T> Array<T>?.get(i: Int) : T {
     if (this != null)

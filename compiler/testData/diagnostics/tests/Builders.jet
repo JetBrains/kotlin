@@ -1,5 +1,4 @@
 // FILE: a.kt
-// +JDK
 
 /**
  * This is an example of a Type-Safe Groovy-style Builder

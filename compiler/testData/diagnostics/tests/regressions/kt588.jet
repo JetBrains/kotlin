@@ -1,5 +1,4 @@
 // KT-588 Unresolved static method
-// +JDK
 
 class Test() : Thread("Test") {
     class object {

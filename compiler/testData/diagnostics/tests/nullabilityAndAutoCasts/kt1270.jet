@@ -1,5 +1,4 @@
 //KT-1270 Poor highlighting when trying to dereference a nullable reference
-//+JDK
 
 package kt1270
 

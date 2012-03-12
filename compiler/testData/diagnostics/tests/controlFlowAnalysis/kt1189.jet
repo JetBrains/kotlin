@@ -1,6 +1,5 @@
 //KT-1189 StackOverflow in ide
 package kt1189
-//+JDK
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {

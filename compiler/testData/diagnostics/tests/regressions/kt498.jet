@@ -1,5 +1,4 @@
 // KT-498 Very strange error in the type checker
-// +JDK
 
 class IdUnavailableException() : Exception() {}
 

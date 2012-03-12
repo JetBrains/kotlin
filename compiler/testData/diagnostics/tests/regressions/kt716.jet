@@ -1,5 +1,4 @@
 // KT-716 Type inference failed
-// +JDK
 
 class TypeInfo<T>
 

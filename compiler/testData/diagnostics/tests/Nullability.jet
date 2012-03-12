@@ -1,4 +1,3 @@
-// +JDK
 
 fun test() {
   val a : Int? = 0

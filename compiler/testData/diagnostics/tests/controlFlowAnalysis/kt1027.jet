@@ -1,5 +1,4 @@
 //KT-1027 Strange selection of unreachable code
-//+JDK
 
 package kt1027
 

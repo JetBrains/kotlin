@@ -1,4 +1,3 @@
-// +JDK
 
 class Foo1() : java.util.ArrayList<Int>()
 

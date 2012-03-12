@@ -1,6 +1,5 @@
 package kt939
 
-//+JDK
 
 //KT-939 CommonSupertypes erases scopes associated to types
 

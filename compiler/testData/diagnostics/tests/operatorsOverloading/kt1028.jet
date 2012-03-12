@@ -1,5 +1,4 @@
 //KT-1028 Wrong type checking for plusAssign
-//+JDK
 package kt1028
 
 import java.util.*

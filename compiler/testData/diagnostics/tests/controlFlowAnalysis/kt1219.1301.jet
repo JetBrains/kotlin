@@ -1,5 +1,4 @@
 //KT-1219 Incorrect 'unused value' error in closures
-//+JDK
 
 package kt1219
 

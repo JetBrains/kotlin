@@ -1,5 +1,4 @@
 // KT-702 Type inference failed
-// +JDK
 fun getJavaClass<T>() : java.lang.Class<T> { return "" <!CAST_NEVER_SUCCEEDS!>as<!> Class<T> }
 
 public class Throwables() {

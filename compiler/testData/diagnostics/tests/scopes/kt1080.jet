@@ -1,5 +1,4 @@
 //FILE:a.kt
-//+JDK
 //KT-1080 Don't use previously imported packages while resolving import references
 
 package kt1080

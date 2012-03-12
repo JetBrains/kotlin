@@ -1,5 +1,4 @@
 // KT-459 Type argument inference fails when class names are fully qualified
-// +JDK
 
 fun test() {
   val attributes : java.util.HashMap<String, String> = java.util.HashMap() // failure!

@@ -1,7 +1,6 @@
-//+JDK
 
 package toplevelObjectDeclarations
 
 object CObj {}
 
-object DOjb : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT, FINAL_SUPERTYPE!>CObj<!> {}
+object DOjb : <!UNRESOLVED_REFERENCE!>CObj<!> {}

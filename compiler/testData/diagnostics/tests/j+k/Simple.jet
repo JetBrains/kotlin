@@ -1,5 +1,4 @@
 // FILE: aa/A.java
-// +JDK
 package aa;
 
 public class A {

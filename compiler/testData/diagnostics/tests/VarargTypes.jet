@@ -1,5 +1,4 @@
 // KT-389 Wrong type inference for varargs etc.
-// +JDK
 
 import java.util.*
 

@@ -1,5 +1,4 @@
 // KT-287 Infer constructor type arguments
-// +JDK
 
 import java.util.*
 

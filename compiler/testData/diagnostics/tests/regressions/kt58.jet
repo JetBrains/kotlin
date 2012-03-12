@@ -1,5 +1,4 @@
 //KT-58 Allow finally around definite returns
-// +JDK
 
 package kt58
 

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -68,7 +69,14 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name));
+        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name));
+        if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
+            // TODO: this is a big hack against several things that I barely understand myself and cannot explain
+            // 1. We should not return objects from this method, and maybe JDR.resolveClass should not return too
+            // 2. JDR should not return classes being analyzed
+            return null;
+        }
+        return classDescriptor;
     }
 
     @Override

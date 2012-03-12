@@ -1,4 +1,3 @@
-// +JDK
 //KT-750 Type inference failed: Constraint violation
 fun main(args : Array<String>) {
   var i : Int? = Integer.valueOf(100)

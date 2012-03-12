@@ -1,5 +1,4 @@
 // KT-524 sure() returns T
-// +JDK
 
 package StringBuilder
 

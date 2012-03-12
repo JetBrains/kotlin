@@ -1,5 +1,4 @@
 //KT-1066 false 'Variable cannot be initialized before declaration'
-//+JDK
 
 package kt1066
 

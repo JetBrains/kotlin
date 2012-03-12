@@ -1,4 +1,3 @@
-// +JDK
 
 fun t1() : Int{
   return 0

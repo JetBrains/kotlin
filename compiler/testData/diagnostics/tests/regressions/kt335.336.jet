@@ -1,6 +1,5 @@
 // KT-336 Can't infer type parameter for ArrayList in a generic function (Exception in type inference)
 // KT-335 Type inference fails on Collections.sort
-// +JDK
 
 import java.util.*
 import java.lang.Comparable as Comparable

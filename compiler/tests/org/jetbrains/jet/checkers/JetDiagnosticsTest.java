@@ -151,8 +151,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             }
         });
 
-        boolean importJdk = expectedText.contains("+JDK");
-//        ModuleConfiguration configuration = importJdk ? JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject()) : ModuleConfiguration.EMPTY;
+//        ModuleConfiguration configuration = JavaBridgeConfiguration.createJavaBridgeConfiguration(getProject());
         if (hasJavaFiles) {
             // According to yole@ the only way to import java files is to write them on disk
             // -- stepan.koltsov@ 2012-02-29
@@ -166,13 +165,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             }
         }
 
-        BindingContext bindingContext;
-        if (importJdk) {
-            bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
-        }
-        else {
-            bindingContext = AnalyzingUtils.analyzeFiles(getProject(), ModuleConfiguration.EMPTY, jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
-        }
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
 
         boolean ok = true;
 

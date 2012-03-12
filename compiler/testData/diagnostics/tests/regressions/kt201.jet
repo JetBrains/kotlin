@@ -1,5 +1,4 @@
 // KT-201 Allow to call extension with nullable receiver with a '.'
-// +JDK
 
 fun <T : Any> T?.npe() : T = if (this == null) throw NullPointerException() else this
 

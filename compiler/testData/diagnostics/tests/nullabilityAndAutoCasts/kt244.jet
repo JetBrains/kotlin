@@ -1,6 +1,5 @@
 package kt244
 
-//+JDK
 
 // KT-244 Use dataflow info while resolving variable initializers
 

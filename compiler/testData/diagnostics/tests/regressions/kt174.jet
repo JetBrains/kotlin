@@ -1,5 +1,4 @@
 // KT-174 Nullability info for extension function receivers
-// +JDK
 trait Tree {}
 
 fun Any?.TreeValue() : Tree {

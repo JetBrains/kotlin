@@ -1,27 +1,23 @@
 //FILE:a.kt
 //KT-955 Unable to import a Kotlin package into a Kotlin file with no package header
-//+JDK
 
 package foo
 
 fun f() {}
 
 //FILE:b.kt
-//+JDK
 
 import foo.*
 
 val m = f() // unresolved
 
 //FILE:c.kt
-//+JDK
 
 package java.util
 
 fun bar() {}
 
 //FILE:d.kt
-//+JDK
 
 import java.util.*
 

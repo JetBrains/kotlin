@@ -1,5 +1,4 @@
 //KT-549 type inference failed
-// +JDK
 
 package demo
 

@@ -1,7 +1,6 @@
 //KT-1001 Argument 2 for @NotNull parameter of JetFlowInformationProvider.checkIsInitialized must not be null
 
 package kt1001
-//+JDK
 
 fun foo(<!UNUSED_PARAMETER!>c<!>: Array<Int>) {
     return

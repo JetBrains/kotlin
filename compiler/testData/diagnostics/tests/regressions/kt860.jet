@@ -1,5 +1,4 @@
 // KT-860 ConcurrentModificationException in frontend
-// +JDK
 
 package kotlin.util
 

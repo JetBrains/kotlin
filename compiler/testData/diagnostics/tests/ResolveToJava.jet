@@ -1,5 +1,4 @@
 // FILE: f.kt
-// +JDK
 
 import java.*
 import java.util.*

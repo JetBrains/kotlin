@@ -1,5 +1,4 @@
 // FILE: b.kt
-// +JDK
 package outer
 
 fun Int?.optint() : Unit {}

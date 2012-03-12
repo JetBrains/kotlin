@@ -1,5 +1,4 @@
 //KT-235 Illegal assignment return type
-// +JDK
 
 package kt235
 
