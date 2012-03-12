@@ -22,8 +22,10 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLanguage;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -45,6 +47,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
 
     private static SpacingBuilder createSpacingBuilder(CodeStyleSettings settings) {
         JetCodeStyleSettings jetSettings = settings.getCustomSettings(JetCodeStyleSettings.class);
+        CommonCodeStyleSettings jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE);
 
         return new SpacingBuilder(settings)
                 // ============ Line breaks ==============
@@ -66,19 +69,19 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .beforeInside(RBRACE, BLOCK).lineBreakInCode()
 
                 // =============== Spacing ================
-                .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
-                .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
+                .before(COMMA).spaceIf(jetCommonSettings.SPACE_BEFORE_COMMA)
+                .after(COMMA).spaceIf(jetCommonSettings.SPACE_AFTER_COMMA)
 
-                .around(TokenSet.create(EQ, MULTEQ, DIVEQ, PLUSEQ, MINUSEQ, PERCEQ)).spaceIf(settings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
-                .around(TokenSet.create(ANDAND, OROR)).spaceIf(settings.SPACE_AROUND_LOGICAL_OPERATORS)
-                .around(TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)).spaceIf(settings.SPACE_AROUND_EQUALITY_OPERATORS)
-                .aroundInside(TokenSet.create(LT, GT, LTEQ, GTEQ), BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_RELATIONAL_OPERATORS)
-                .around(TokenSet.create(PLUS, MINUS)).spaceIf(settings.SPACE_AROUND_ADDITIVE_OPERATORS)
-                .around(TokenSet.create(MUL, DIV, PERC)).spaceIf(settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
-                .around(TokenSet.create(PLUSPLUS, MINUSMINUS, MINUS, PLUS, EXCL)).spaceIf(settings.SPACE_AROUND_UNARY_OPERATOR)
+                .around(TokenSet.create(EQ, MULTEQ, DIVEQ, PLUSEQ, MINUSEQ, PERCEQ)).spaceIf(jetCommonSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS)
+                .around(TokenSet.create(ANDAND, OROR)).spaceIf(jetCommonSettings.SPACE_AROUND_LOGICAL_OPERATORS)
+                .around(TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)).spaceIf(jetCommonSettings.SPACE_AROUND_EQUALITY_OPERATORS)
+                .aroundInside(TokenSet.create(LT, GT, LTEQ, GTEQ), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
+                .around(TokenSet.create(PLUS, MINUS)).spaceIf(jetCommonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
+                .around(TokenSet.create(MUL, DIV, PERC)).spaceIf(jetCommonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+                .around(TokenSet.create(PLUSPLUS, MINUSMINUS, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
                 .around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
 
-                .beforeInside(BLOCK, FUN).spaceIf(settings.SPACE_BEFORE_METHOD_LBRACE)
+                .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)
 
                 // TODO: Ask for better API
                 .beforeInside(COLON, PROPERTY).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
@@ -91,7 +94,6 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .afterInside(COLON, TYPE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
                 .beforeInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON)
                 .afterInside(COLON, VALUE_PARAMETER).spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON)
-
                 ;
     }
 
