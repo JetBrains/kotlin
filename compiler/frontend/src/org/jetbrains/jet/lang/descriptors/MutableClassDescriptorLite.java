@@ -330,7 +330,11 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     @Override
     public String toString() {
-        return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        try {
+            return DescriptorRenderer.TEXT.render(this) + "[" + getClass().getCanonicalName() + "@" + System.identityHashCode(this) + "]";
+        } catch (Throwable e) {
+            return super.toString();
+        }
     }
 
     @Override
