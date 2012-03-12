@@ -84,9 +84,6 @@ public abstract class CodegenContext {
         while(true) {
             DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
             if(!(contextDescriptor instanceof ClassDescriptor) && !(contextDescriptor instanceof NamespaceDescriptor)) {
-                if (c.getParentContext() == null) {
-                    System.out.println();
-                }
                 c = c.getParentContext();
             }
             else {
