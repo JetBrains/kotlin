@@ -138,7 +138,7 @@ class JavaDescriptorResolverHelper {
 
                         if (i != method.getParameters().size()) {
                             // TODO: report error properly
-                            throw new IllegalStateException();
+                            throw new IllegalStateException("something is wrong with method " + method0);
                         }
 
                         // TODO: what if returnType == null?
