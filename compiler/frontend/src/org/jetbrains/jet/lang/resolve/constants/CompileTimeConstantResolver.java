@@ -182,11 +182,11 @@ public class CompileTimeConstantResolver {
         }
 
         // Strip the quotes
-        if (text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
+        if (text.length() < 2 || text.charAt(0) != '\'' || text.charAt(text.length() - 1) != '\'') {
             return new ErrorValue("Incorrect character literal");
         }
         text = text.substring(1, text.length() - 1); // now there're no quotes
-        
+
         if (text.length() == 0) {
             return new ErrorValue("Empty character literal");            
         }
