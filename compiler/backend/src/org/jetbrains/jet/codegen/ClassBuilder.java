@@ -21,10 +21,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.*;
 
 public abstract class ClassBuilder {
     public static class Concrete extends ClassBuilder {
@@ -77,7 +74,7 @@ public abstract class ClassBuilder {
     public abstract ClassVisitor getVisitor();
 
     public void defineClass(PsiElement origin, int version, int access, String name, @Nullable String signature, String superName, String[] interfaces) {
-        getVisitor().visit(version, access, name, signature, superName, interfaces);
+        getVisitor().visit(version, access & ~Opcodes.ACC_STATIC, name, signature, superName, interfaces);
     }
 
     public void visitSource(String name, @Nullable String debug) {
