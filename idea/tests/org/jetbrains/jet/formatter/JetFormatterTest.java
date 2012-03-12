@@ -24,6 +24,21 @@ import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
  * Based on com.intellij.psi.formatter.java.JavaFormatterTest
  */
 public class JetFormatterTest extends AbstractJetFormatterTest {
+    public void testAddSpacesAroundOperations() throws Exception {
+        getSettings().SPACE_AROUND_ASSIGNMENT_OPERATORS = true;
+        getSettings().SPACE_AROUND_LOGICAL_OPERATORS = true;
+        getSettings().SPACE_AROUND_EQUALITY_OPERATORS = true;
+        getSettings().SPACE_AROUND_RELATIONAL_OPERATORS = true;
+        getSettings().SPACE_AROUND_ADDITIVE_OPERATORS = true;
+        getSettings().SPACE_AROUND_MULTIPLICATIVE_OPERATORS = true;
+        getSettings().SPACE_AROUND_UNARY_OPERATOR = true;
+        getJetSettings().SPACE_AROUND_RANGE = true;
+
+        doTest();
+
+        getSettings().clearCodeStyleSettings();
+    }
+
     public void testBlockFor() throws Exception {
         doTest();
     }
@@ -52,6 +67,21 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         getJetSettings().SPACE_AFTER_TYPE_COLON = true;
         getJetSettings().SPACE_BEFORE_TYPE_COLON = false;
         doTest();
+    }
+
+    public void testRemoveSpacesAroundOperations() throws Exception {
+        getSettings().SPACE_AROUND_ASSIGNMENT_OPERATORS = false;
+        getSettings().SPACE_AROUND_LOGICAL_OPERATORS = false;
+        getSettings().SPACE_AROUND_EQUALITY_OPERATORS = false;
+        getSettings().SPACE_AROUND_RELATIONAL_OPERATORS = false;
+        getSettings().SPACE_AROUND_ADDITIVE_OPERATORS = false;
+        getSettings().SPACE_AROUND_MULTIPLICATIVE_OPERATORS = false;
+        getSettings().SPACE_AROUND_UNARY_OPERATOR = false;
+        getJetSettings().SPACE_AROUND_RANGE = false;
+
+        doTest();
+
+        getSettings().clearCodeStyleSettings();
     }
 
     public void testSpaceAroundTypeColon() throws Exception {

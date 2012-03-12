@@ -23,6 +23,8 @@ import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
 
 public class JetCodeStyleSettings extends CustomCodeStyleSettings {
 
+    public boolean SPACE_AROUND_RANGE = false;
+
     public boolean SPACE_BEFORE_TYPE_COLON = true;
     public boolean SPACE_AFTER_TYPE_COLON = true;
 

@@ -101,6 +101,13 @@ public class JetBlock extends AbstractBlock {
         Indent childIndent = Indent.getNoneIndent();
         Alignment childAlignment = null;
 
+        if (child.getElementType() == JetNodeTypes.OPERATION_REFERENCE) {
+            ASTNode operationNode = child.getFirstChildNode();
+            if (operationNode != null) {
+                return new JetBlock(operationNode, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
+            }
+        }
+
         ASTNode childParent = child.getTreeParent();
 
         if (CODE_BLOCKS.contains(myNode.getElementType())) {
