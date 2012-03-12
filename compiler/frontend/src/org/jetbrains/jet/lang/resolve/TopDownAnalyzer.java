@@ -175,9 +175,6 @@ public class TopDownAnalyzer {
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {
-                if (name == "") {
-                    return (NamespaceDescriptorImpl) trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, "");
-                }
                 throw new UnsupportedOperationException();
             }
 

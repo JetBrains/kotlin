@@ -84,9 +84,6 @@ public class TypeHierarchyResolver {
 
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends PsiElement> declarations) {
-        // Create the default package
-        createNamespaceDescriptorIfNeeded(null, owner, "");
-
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         importsResolver.processTypeImports();
@@ -231,9 +228,11 @@ public class TypeHierarchyResolver {
     }
 
     private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner, JetScope outerScope) {
+        JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
+
         NamespaceLike currentOwner = owner;
 
-        for (JetSimpleNameExpression nameExpression : file.getNamespaceHeader().getParentNamespaceNames()) {
+        for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName);
@@ -246,8 +245,8 @@ public class TypeHierarchyResolver {
             outerScope = namespaceDescriptor.getMemberScope();
         }
 
-        String name = JetPsiUtil.safeName(file.getNamespaceHeader().getName());
-        context.getTrace().record(RESOLUTION_SCOPE, file.getNamespaceHeader(), outerScope);
+        String name = JetPsiUtil.safeName(namespaceHeader.getName());
+        context.getTrace().record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
 
         return createNamespaceDescriptorIfNeeded(file, currentOwner, name);
     }
