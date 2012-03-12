@@ -44,6 +44,38 @@ public class LibrariesTest extends PlatformTestCase {
         doTest();
     }
 
+    public void testClassWithAbstractAndOpenMembers() {
+        doTest();
+    }
+
+    public void testColor() {
+        doTest();
+    }
+
+    public void testnamespace() {
+        doTest();
+    }
+
+    public void testSimpleClass() {
+        doTest();
+    }
+
+    public void testSimpleTrait() {
+        doTest();
+    }
+
+    public void testSimpleTraitImpl() {
+        doTest();
+    }
+
+    public void testWithInnerAndObject() {
+        doTest();
+    }
+
+    public void testWithTraitClassObject() {
+        doTest();
+    }
+
     private void doTest() {
         String testName = getTestName(false);
         VirtualFile packageDir = myLibraryDir.findFileByRelativePath(PACKAGE.replace(".", "/"));
