@@ -69,6 +69,10 @@
 
     <target name="verifyPlugin">
         <!--
+            disabled plugin-verifier for now, waiting
+            for better plugin dependencies handling in it
+        -->
+        <!--
         <java fork="true" failonerror="${fail.on.plugin.verifier.error}" jar="${plugin.verifier}">
             <arg value="-r" />
             <arg value="${jdk16.home}" />
