@@ -50,6 +50,7 @@ public class JetModifierList extends JetElement {
         return findChildrenByType(JetNodeTypes.ANNOTATION);
     }
 
+    @NotNull
     public List<JetAnnotationEntry> getAnnotationEntries() {
         List<JetAnnotationEntry> entries = findChildrenByType(JetNodeTypes.ANNOTATION_ENTRY);
         List<JetAnnotationEntry> answer = entries.isEmpty() ? null : Lists.newArrayList(entries);

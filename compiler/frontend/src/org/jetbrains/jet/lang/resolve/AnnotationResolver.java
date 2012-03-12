@@ -75,6 +75,7 @@ public class AnnotationResolver {
         for (JetAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = new AnnotationDescriptor();
             resolveAnnotationStub(scope, entryElement, descriptor, trace);
+            trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
             result.add(descriptor);
         }
         return result;

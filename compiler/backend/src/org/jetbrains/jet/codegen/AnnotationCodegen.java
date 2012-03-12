@@ -16,9 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.AnnotationVisitor;
@@ -28,6 +33,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author alex.tkachman
@@ -36,13 +42,32 @@ public abstract class AnnotationCodegen {
     public void genAnnotations(Annotated annotated, JetTypeMapper typeMapper) {
         if(annotated == null)
             return;
-
-        List<AnnotationDescriptor> annotations = annotated.getAnnotations();
-        if(annotations == null)
+        
+        if(!(annotated instanceof DeclarationDescriptor))
             return;
 
-        for (AnnotationDescriptor annotationDescriptor : annotations) {
-            List<CompileTimeConstant<?>> valueArguments = annotationDescriptor.getValueArguments();
+        BindingContext bindingContext = typeMapper.bindingContext;
+        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, (DeclarationDescriptor) annotated);
+
+        JetModifierList modifierList = null;
+        if(annotated instanceof ConstructorDescriptor && psiElement instanceof JetClass) {
+            modifierList = ((JetClass)psiElement).getPrimaryConstructorModifierList();
+        }
+        else if (psiElement instanceof JetModifierListOwner) {
+            modifierList = ((JetModifierListOwner) psiElement).getModifierList();
+        }
+
+        if(modifierList == null)
+            return;
+
+        List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
+        for (JetAnnotationEntry annotationEntry : annotationEntries) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
+            assert resolvedCall != null;
+
+            AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
+            assert annotationDescriptor != null;
+
             JetType type = annotationDescriptor.getType();
             ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
             RetentionPolicy rp = getRetentionPolicy(classifierDescriptor, typeMapper);
@@ -50,13 +75,13 @@ public abstract class AnnotationCodegen {
                 String internalName = typeMapper.mapType(type).getDescriptor();
                 AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
 
-                if(!valueArguments.isEmpty()) {
-                    // todo: temporary hack for intrinsics in stdlib
-                    if(valueArguments.size()==1 && "Intrinsic".equals(annotationDescriptor.getType().getConstructor().getDeclarationDescriptor().getName())) {
-                        annotationVisitor.visit("value", valueArguments.get(0).getValue());
-                    }
-                    else
-                    throw new UnsupportedOperationException("Only annotations without values are supported by backend so far");
+                for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
+                    List<JetExpression> valueArguments = entry.getValue().getArgumentExpressions();
+                    assert  valueArguments.size() == 1; // todo
+                    CompileTimeConstant<?> compileTimeConstant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, valueArguments.get(0));
+                    assert compileTimeConstant != null;
+
+                    annotationVisitor.visit(entry.getKey().getName(), compileTimeConstant.getValue());
                 }
 
                 annotationVisitor.visitEnd();
@@ -100,11 +125,11 @@ public abstract class AnnotationCodegen {
         };
     }
 
-    public static AnnotationCodegen forField(final FieldVisitor mv) {
+    public static AnnotationCodegen forField(final FieldVisitor fv) {
         return new AnnotationCodegen() {
             @Override
             AnnotationVisitor visitAnnotation(String descr, boolean visible) {
-                return mv.visitAnnotation(descr, visible);
+                return fv.visitAnnotation(descr, visible);
             }
         };
     }
