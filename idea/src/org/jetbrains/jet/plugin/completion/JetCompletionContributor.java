@@ -32,10 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
@@ -84,8 +81,15 @@ public class JetCompletionContributor extends CompletionContributor {
 
                            String prefix = result.getPrefixMatcher().getPrefix();
 
-                           if (prefix.isEmpty() && parameters.getInvocationCount() < 2) {
-                               return;
+                           // Try to avoid computing not-imported descriptors for empty prefix
+                           if (prefix.isEmpty()) {
+                               if (parameters.getInvocationCount() < 2) {
+                                   return;
+                               }
+
+                               if (PsiTreeUtil.getParentOfType(jetReference.getElement(), JetDotQualifiedExpression.class) == null) {
+                                   return;
+                               }
                            }
 
                            if (shouldRunTopLevelCompletion(parameters, prefix)) {
