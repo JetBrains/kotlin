@@ -185,8 +185,8 @@ public final class BindingUtils {
     }
 
     @Nullable
-    private static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
-                                                                                     @NotNull JetReferenceExpression reference) {
+    public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
+                                                                                    @NotNull JetReferenceExpression reference) {
         DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
         if (isVariableAsFunction(referencedDescriptor)) {
             assert referencedDescriptor != null;

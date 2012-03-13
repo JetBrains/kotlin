@@ -22,16 +22,20 @@ import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.closure.ClosureContext;
+import org.jetbrains.k2js.translate.utils.closure.ClosureUtils;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
 import java.util.ArrayList;
@@ -83,43 +87,69 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public JsFunction translateAsLocalFunction() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        JsFunction function = generateFunctionObject();
-        function.setName(functionName);
-        return function;
+        generateFunctionObject();
+        functionObject.setName(functionName);
+        return functionObject;
     }
 
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        JsFunction function = generateFunctionObject();
-        return new JsPropertyInitializer(functionName.makeRef(), function);
+        generateFunctionObject();
+        return new JsPropertyInitializer(functionName.makeRef(), functionObject);
     }
 
     @NotNull
     public JsExpression translateAsLiteral() {
+        return mayBeWrapInClosureCaptureExpression(doTranslateAsLiteral());
+    }
+
+    @NotNull
+    private JsExpression doTranslateAsLiteral() {
         assert getExpectedThisDescriptor(descriptor) == null;
         ClassDescriptor containingClass = getContainingClass(descriptor);
         if (containingClass == null) {
-            return generateFunctionObject();
+            generateFunctionObject();
+            return functionObject;
         }
         return generateFunctionObjectWithAliasedThisReference(containingClass);
     }
 
     @NotNull
-    private JsExpression generateFunctionObjectWithAliasedThisReference(@NotNull ClassDescriptor containingClass) {
-        TemporaryVariable aliasForThis = newAliasForThis(context(), containingClass);
-        JsFunction function = generateFunctionObject();
-        removeAliasForThis(context(), containingClass);
-        return AstUtil.newSequence(aliasForThis.assignmentExpression(), function);
+    private JsExpression mayBeWrapInClosureCaptureExpression(@NotNull JsExpression wrappedExpression) {
+        ClosureContext closureContext = ClosureUtils.captureClosure(context(), (JetElement) functionDeclaration);
+        if (closureContext.getDescriptors().isEmpty()) {
+            return wrappedExpression;
+        }
+        return wrapInClosureCaptureExpression(wrappedExpression, closureContext);
     }
 
     @NotNull
-    private JsFunction generateFunctionObject() {
+    private JsExpression wrapInClosureCaptureExpression(@NotNull JsExpression wrappedExpression,
+                                                        @NotNull ClosureContext closureContext) {
+        JsFunction dummyFunction = new JsFunction(context().jsScope());
+        JsInvocation dummyFunctionInvocation = AstUtil.newInvocation(dummyFunction);
+        for (VariableDescriptor variableDescriptor : closureContext.getDescriptors()) {
+            dummyFunction.getParameters().add(new JsParameter(context().getNameForDescriptor(variableDescriptor)));
+            dummyFunctionInvocation.getArguments().add(ReferenceTranslator.translateAsLocalNameReference(variableDescriptor, context()));
+        }
+        dummyFunction.setBody(AstUtil.newBlock(new JsReturn(wrappedExpression)));
+        return dummyFunctionInvocation;
+    }
+
+    @NotNull
+    private JsExpression generateFunctionObjectWithAliasedThisReference(@NotNull ClassDescriptor containingClass) {
+        TemporaryVariable aliasForThis = newAliasForThis(context(), containingClass);
+        generateFunctionObject();
+        removeAliasForThis(context(), containingClass);
+        return AstUtil.newSequence(aliasForThis.assignmentExpression(), functionObject);
+    }
+
+    private void generateFunctionObject() {
         setParameters(functionObject, translateParameters());
         translateBody();
         functionObject.setBody(functionBody);
         restoreContext();
-        return functionObject;
     }
 
     private void restoreContext() {
