@@ -10,9 +10,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:stdlib:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-compiler:0.2.3.8" level="project" />
     <orderEntry type="module" module-name="stdlib" />
+    <orderEntry type="module" module-name="kdoc" scope="TEST" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:stdlib:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.pegdown:pegdown:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: org.parboiled:parboiled-core:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.parboiled:parboiled-java:1.0.2" level="project" />
@@ -20,7 +21,7 @@
     <orderEntry type="library" name="Maven: asm:asm-util:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-tree:3.3.1" level="project" />
     <orderEntry type="library" name="Maven: asm:asm-analysis:3.3.1" level="project" />
-    <orderEntry type="module" module-name="kdoc" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jetbrains.kotlin:kdoc:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
   </component>

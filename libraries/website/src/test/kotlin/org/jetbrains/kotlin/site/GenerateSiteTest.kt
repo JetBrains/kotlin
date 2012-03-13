@@ -38,8 +38,9 @@ class GenerateSiteTest : TestCase() {
         compiler.exec(System.out, args)
     }
 
-    // TODO re-enable when KT-1522 fixed
-    fun DISABLED_testGenerateJsKDoc(): Unit {
+    // TODO seems to generate exception here - maybe native ctor/function related?
+    // https://github.com/JetBrains/kotlin/blob/master/compiler/backend/src/org/jetbrains/jet/codegen/AnnotationCodegen.java#L80
+    fun TODO_testGenerateJsKDoc(): Unit {
         val outDir = File(siteOutputDir, "versions/$versionDir/jsdocs")
         println("Generating JS KDocs to $outDir")
 
@@ -48,9 +49,11 @@ class GenerateSiteTest : TestCase() {
         args.setModule("../../js/js.libraries/module.kt")
         args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-js")
+
         val config = args.docConfig
         config.title = "Kotlin JS API ($version)"
         config.version = version
+        config.ignorePackages.add("java")
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
