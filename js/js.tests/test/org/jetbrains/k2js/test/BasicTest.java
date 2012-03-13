@@ -19,6 +19,7 @@ package org.jetbrains.k2js.test;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 
 import java.io.File;
 import java.util.Collections;
@@ -62,11 +63,8 @@ public abstract class BasicTest extends TestWithEnvironment {
             return;
         }
         File outDir = new File(getOutputPath());
-        assert (!outDir.exists() || outDir.isDirectory()) : "If out already exists it should be a directory.";
-        if (!outDir.exists()) {
-            boolean success = outDir.mkdir();
-            assert success;
-        }
+
+        JetTestUtils.mkdirs(outDir);
     }
 
     @Override
