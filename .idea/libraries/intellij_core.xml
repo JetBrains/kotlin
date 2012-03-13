@@ -41,7 +41,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/jsp-base-openapi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/testFramework/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/java-runtime/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/java-impl/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/java-impl/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/java-tests/testSrc" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/execution/impl/src" />
@@ -58,7 +57,6 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/compiler/openapi/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/idea-ui/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/openapi/src" />
-      <root url="jar://$PROJECT_DIR$/lib/asm-3.3.1.zip!/asm-3.3.1/src" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/core" recursive="false" />
   </library>
