@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.AbstractNamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.List;
@@ -29,12 +30,12 @@ import java.util.List;
  */
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
-    private final String qualifiedName;
+    private final FqName qualifiedName;
     /** Namespace of class with static methods */
     private final boolean namespace;
     
     public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations,
-            @NotNull String name, @NotNull String qualifiedName, boolean namespace) {
+            @NotNull String name, @NotNull FqName qualifiedName, boolean namespace) {
         super(containingDeclaration, annotations, name);
         this.qualifiedName = qualifiedName;
         this.namespace = namespace;
@@ -50,7 +51,7 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
         return memberScope;
     }
 
-    public String getQualifiedName() {
+    public FqName getQualifiedName() {
         return qualifiedName;
     }
 

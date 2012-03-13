@@ -23,6 +23,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,7 +55,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     @Override
     protected void resetEditorFrom(JetRunConfiguration configuration) {
         myCommonProgramParameters.reset(configuration);
-        myMainClassField.setText(configuration.MAIN_CLASS_NAME);
+        myMainClassField.setText(configuration.MAIN_CLASS_NAME.getFqName());
         myModuleSelector.reset(configuration);
     }
 
@@ -62,7 +63,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     protected void applyEditorTo(JetRunConfiguration configuration) throws ConfigurationException {
         myModuleSelector.applyTo(configuration);
         myCommonProgramParameters.applyTo(configuration);
-        configuration.MAIN_CLASS_NAME = myMainClassField.getText();
+        configuration.MAIN_CLASS_NAME = new FqName(myMainClassField.getText());
     }
 
     @NotNull

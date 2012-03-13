@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 import java.io.IOException;
 
@@ -60,7 +61,8 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
-        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, JetPsiUtil.getFQName(psi), psi.getName());
+        FqName fqName = JetPsiUtil.getFQName(psi);
+        return new PsiJetClassStubImpl(JetStubElementTypes.CLASS, parentStub, fqName != null ? fqName.getFqName() : null, psi.getName());
     }
 
     @Override

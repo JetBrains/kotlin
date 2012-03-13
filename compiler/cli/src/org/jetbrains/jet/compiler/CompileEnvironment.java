@@ -33,6 +33,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -274,14 +275,14 @@ public class CompileEnvironment {
         return moduleCompileSession.generate(false);
     }
 
-    public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable String mainClass, boolean includeRuntime) {
+    public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
         try {
             Manifest manifest = new Manifest();
             final Attributes mainAttributes = manifest.getMainAttributes();
             mainAttributes.putValue("Manifest-Version", "1.0");
             mainAttributes.putValue("Created-By", "JetBrains Kotlin");
             if (mainClass != null) {
-                mainAttributes.putValue("Main-Class", mainClass);
+                mainAttributes.putValue("Main-Class", mainClass.getFqName());
             }
             JarOutputStream stream = new JarOutputStream(fos, manifest);
             try {
@@ -369,11 +370,11 @@ public class CompileEnvironment {
 
         session.addSources(sourceFileOrDir);
 
-        String mainClass = null;
+        FqName mainClass = null;
         for (JetFile file : session.getSourceFileNamespaces()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
-                String fqName = JetPsiUtil.getFQName(file);
-                mainClass = fqName.length() > 0 ? fqName + "." + JvmAbi.PACKAGE_CLASS : JvmAbi.PACKAGE_CLASS;
+                FqName fqName = JetPsiUtil.getFQName(file);
+                mainClass = fqName.child(JvmAbi.PACKAGE_CLASS);
                 break;
             }
         }

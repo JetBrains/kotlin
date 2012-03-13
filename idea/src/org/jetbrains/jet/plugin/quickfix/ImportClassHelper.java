@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -101,9 +102,9 @@ public class ImportClassHelper {
     }
 
     // Check that import is useless
-    private static boolean isImportedByDefault(@NotNull String importString, @NotNull String filePackageFqn) {
+    private static boolean isImportedByDefault(@NotNull String importString, @NotNull FqName filePackageFqn) {
         if (QualifiedNamesUtil.isOneSegmentFQN(importString) ||
-            filePackageFqn.equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
+            filePackageFqn.getFqName().equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
 
             return true;
         }

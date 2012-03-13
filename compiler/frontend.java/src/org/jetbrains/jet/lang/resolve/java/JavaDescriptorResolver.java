@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
@@ -54,7 +55,7 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
     
-    public static String JAVA_ROOT = "<java_root>";
+    public static final String JAVA_ROOT = "<java_root>";
 
     /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_generic_method>") {
 
@@ -186,8 +187,8 @@ public class JavaDescriptorResolver {
         }
     }
 
-    protected final Map<String, ResolverBinaryClassData> classDescriptorCache = Maps.newHashMap();
-    protected final Map<String, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
+    protected final Map<FqName, ResolverBinaryClassData> classDescriptorCache = Maps.newHashMap();
+    protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
     protected final JavaPsiFacade javaFacade;
@@ -209,9 +210,9 @@ public class JavaDescriptorResolver {
     
     @Nullable
     ResolverClassData resolveClassData(@NotNull PsiClass psiClass) {
-        String qualifiedName = psiClass.getQualifiedName();
+        FqName qualifiedName = new FqName(psiClass.getQualifiedName());
 
-        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+        if (qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
             // TODO: only if -$$TImpl class is created by Kotlin
             return null;
         }
@@ -249,9 +250,9 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public ClassDescriptor resolveClass(@NotNull String qualifiedName) {
+    public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
 
-        if (qualifiedName.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
+        if (qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
             // TODO: only if -$$TImpl class is created by Kotlin
             return null;
         }
@@ -276,7 +277,7 @@ public class JavaDescriptorResolver {
     }
 
     private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
-        if (classDescriptorCache.containsKey(psiClass.getQualifiedName())) {
+        if (classDescriptorCache.containsKey(new FqName(psiClass.getQualifiedName()))) {
             throw new IllegalStateException(psiClass.getQualifiedName());
         }
 
@@ -284,7 +285,7 @@ public class JavaDescriptorResolver {
 
         String name = psiClass.getName();
         ResolverBinaryClassData classData = new ResolverBinaryClassData();
-        classDescriptorCache.put(psiClass.getQualifiedName(), classData);
+        classDescriptorCache.put(new FqName(psiClass.getQualifiedName()), classData);
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
         classData.classDescriptor = new MutableClassDescriptorLite(containingDeclaration, kind);
@@ -459,7 +460,7 @@ public class JavaDescriptorResolver {
         classData.kotlin = true;
         classData.classDescriptor = new MutableClassDescriptorLite(containing, ClassKind.OBJECT);
 
-        classDescriptorCache.put(classObjectPsiClass.getQualifiedName(), classData);
+        classDescriptorCache.put(new FqName(classObjectPsiClass.getQualifiedName()), classData);
 
         classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
         classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
@@ -506,7 +507,7 @@ public class JavaDescriptorResolver {
     @NotNull
     private ClassDescriptor getJavaLangObject() {
         if (javaLangObject == null) {
-            javaLangObject = resolveClass("java.lang.Object");
+            javaLangObject = resolveClass(new FqName("java.lang.Object"));
         }
         return javaLangObject;
     }
@@ -653,16 +654,7 @@ public class JavaDescriptorResolver {
             return resolveClass(containingClass);
         }
 
-        return resolveNamespace(packageNameOfClass(psiClass.getQualifiedName()));
-    }
-
-    private static String packageNameOfClass(@NotNull String qualifiedName) {
-        int lastDot = qualifiedName.lastIndexOf('.');
-        if (lastDot < 0) {
-            return "";
-        } else {
-            return qualifiedName.substring(0, lastDot);
-        }
+        return resolveNamespace(new FqName(psiClass.getQualifiedName()).parent());
     }
 
     private List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {
@@ -792,7 +784,7 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public NamespaceDescriptor resolveNamespace(@NotNull String qualifiedName) {
+    public NamespaceDescriptor resolveNamespace(@NotNull FqName qualifiedName) {
         // First, let's check that there is no Kotlin package:
         NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(qualifiedName);
         if (kotlinNamespaceDescriptor != null) {
@@ -809,8 +801,8 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    public PsiClass findClass(@NotNull String qualifiedName) {
-        PsiClass original = javaFacade.findClass(qualifiedName, javaSearchScope);
+    public PsiClass findClass(@NotNull FqName qualifiedName) {
+        PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
         PsiClass result = original;
         if (altClass != null) {
@@ -822,7 +814,7 @@ public class JavaDescriptorResolver {
         }
 
         if (result != null) {
-            String actualQualifiedName = result.getQualifiedName();
+            FqName actualQualifiedName = new FqName(result.getQualifiedName());
             if (!actualQualifiedName.equals(qualifiedName)) {
 //                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
             }
@@ -831,8 +823,8 @@ public class JavaDescriptorResolver {
         return result;
     }
 
-    /*package*/ PsiPackage findPackage(String qualifiedName) {
-        return javaFacade.findPackage(qualifiedName);
+    /*package*/ PsiPackage findPackage(@NotNull FqName qualifiedName) {
+        return javaFacade.findPackage(qualifiedName.getFqName());
     }
 
     private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {
@@ -840,7 +832,7 @@ public class JavaDescriptorResolver {
         if (namespaceData == null) {
             namespaceData = createJavaNamespaceDescriptor(psiPackage);
             namespaceDescriptorCache.put(psiPackage, namespaceData);
-            namespaceDescriptorCacheByFqn.put(psiPackage.getQualifiedName(), namespaceData);
+            namespaceDescriptorCacheByFqn.put(new FqName(psiPackage.getQualifiedName()), namespaceData);
         }
         return namespaceData.namespaceDescriptor;
     }
@@ -850,7 +842,7 @@ public class JavaDescriptorResolver {
         if (namespaceData == null) {
             namespaceData = createJavaNamespaceDescriptor(psiClass);
             namespaceDescriptorCache.put(psiClass, namespaceData);
-            namespaceDescriptorCacheByFqn.put(psiClass.getQualifiedName(), namespaceData);
+            namespaceDescriptorCacheByFqn.put(new FqName(psiClass.getQualifiedName()), namespaceData);
         }
         return namespaceData.namespaceDescriptor;
     }
@@ -862,11 +854,11 @@ public class JavaDescriptorResolver {
                 resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 name == null ? JAVA_ROOT : name,
-                name == null ? JAVA_ROOT : psiPackage.getQualifiedName(),
+                name == null ? FqName.ROOT : new FqName(psiPackage.getQualifiedName()),
                 true
         );
 
-        namespaceData.namespaceDescriptor.setMemberScope(new JavaPackageScope(psiPackage.getQualifiedName(), namespaceData.namespaceDescriptor, semanticServices));
+        namespaceData.namespaceDescriptor.setMemberScope(new JavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor, semanticServices));
         semanticServices.getTrace().record(BindingContext.NAMESPACE, psiPackage, namespaceData.namespaceDescriptor);
         // TODO: hack
         namespaceData.kotlin = true;
@@ -894,7 +886,7 @@ public class JavaDescriptorResolver {
                 resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
-                psiClass.getQualifiedName(),
+                new FqName(psiClass.getQualifiedName()),
                 false
         );
         namespaceData.namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
@@ -1340,7 +1332,7 @@ public class JavaDescriptorResolver {
             scopeData = namespaceDescriptorCacheByFqn.get(((JavaNamespaceDescriptor) owner).getQualifiedName());
             staticMembers = true;
         } else if (owner instanceof ClassDescriptor) {
-            scopeData = classDescriptorCache.get(psiClass.getQualifiedName());
+            scopeData = classDescriptorCache.get(new FqName(psiClass.getQualifiedName()));
             staticMembers = false;
         } else {
             throw new IllegalStateException("unknown owner: " + owner.getClass().getName());
@@ -1428,7 +1420,7 @@ public class JavaDescriptorResolver {
             }
             kotlin = namespaceData.kotlin;
         } else {
-            ResolverBinaryClassData classData = classDescriptorCache.get(psiClass.getQualifiedName());
+            ResolverBinaryClassData classData = classDescriptorCache.get(new FqName(psiClass.getQualifiedName()));
             if (classData == null) {
                 throw new IllegalStateException("classData not found by name " + psiClass.getQualifiedName());
             }
@@ -1516,7 +1508,7 @@ public class JavaDescriptorResolver {
             return null;
         }
 
-        ClassDescriptor clazz = resolveClass(psiAnnotation.getQualifiedName());
+        ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()));
         if (clazz == null) {
             return null;
         }

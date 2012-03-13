@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -55,9 +56,9 @@ public class JavaSemanticServices {
     }
 
     @Nullable
-    public ClassDescriptor getKotlinClassDescriptor(String qualifiedName) {
-        if (qualifiedName.startsWith("jet.")) {
-            ClassDescriptor r = (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.substring("jet.".length()));
+    public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
+        if (qualifiedName.getFqName().startsWith("jet.")) {
+            ClassDescriptor r = (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.getFqName().substring("jet.".length()));
             if (r == null) {
                 // TODO: better error
                 //throw new IllegalStateException();
@@ -68,7 +69,7 @@ public class JavaSemanticServices {
     }
 
     @Nullable
-    public NamespaceDescriptor getKotlinNamespaceDescriptor(String qualifiedName) {
+    public NamespaceDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
         return getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -37,7 +38,7 @@ public class ClosureAnnotator {
     private final Map<FunctionDescriptor, ClassDescriptorImpl> classesForFunctions = new HashMap<FunctionDescriptor, ClassDescriptorImpl>();
     private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
-    private final MultiMap<String,JetFile> namespaceName2Files = MultiMap.create();
+    private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
     private final BindingContext bindingContext;
 
     public ClosureAnnotator(BindingContext bindingContext, Collection<JetFile> files) {
@@ -66,14 +67,14 @@ public class ClosureAnnotator {
 
     private void mapFilesToNamespaces(Collection<JetFile> files) {
         for (JetFile file : files) {
-            String fqName = JetPsiUtil.getFQName(file);
+            FqName fqName = JetPsiUtil.getFQName(file);
             namespaceName2Files.putValue(fqName, file);
         }
     }
 
     private void prepareAnonymousClasses() {
         MyJetVisitorVoid visitor = new MyJetVisitorVoid();
-        for (Map.Entry<String,Collection<JetFile>> entry : namespaceName2Files.entrySet()) {
+        for (Map.Entry<FqName, Collection<JetFile>> entry : namespaceName2Files.entrySet()) {
             for (JetFile jetFile : entry.getValue()) {
                 jetFile.accept(visitor);
             }
@@ -153,7 +154,7 @@ public class ClosureAnnotator {
 
         @Override
         public void visitJetFile(JetFile file) {
-            nameStack.push(JetPsiUtil.getFQName(file).replace('.', '/'));
+            nameStack.push(JetPsiUtil.getFQName(file).getFqName().replace('.', '/'));
             file.acceptChildren(this);
             nameStack.pop();
         }

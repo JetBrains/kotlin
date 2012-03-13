@@ -31,6 +31,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,7 +42,7 @@ import java.util.Map;
  * @author yole
  */
 public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonJavaRunConfigurationParameters {
-    public String MAIN_CLASS_NAME;
+    public FqName MAIN_CLASS_NAME;
     public String VM_PARAMETERS;
     public String PROGRAM_PARAMETERS;
     public String WORKING_DIRECTORY;
@@ -132,7 +133,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     @Override
     public String getRunClass() {
-        return MAIN_CLASS_NAME;
+        return MAIN_CLASS_NAME.getFqName();
     }
 
     @Override
@@ -178,14 +179,14 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             final RunConfigurationModule module = myConfiguration.getConfigurationModule();
 
             final int classPathType = JavaParametersUtil.getClasspathType(module,
-                                                                          myConfiguration.MAIN_CLASS_NAME,
+                                                                          myConfiguration.MAIN_CLASS_NAME.getFqName(),
                                                                           false);
             final String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
                                                                                 : null;
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
             JavaParametersUtil.configureConfiguration(params, myConfiguration);
 
-            params.setMainClass(myConfiguration.MAIN_CLASS_NAME);
+            params.setMainClass(myConfiguration.MAIN_CLASS_NAME.getFqName());
 
             return params;
         }

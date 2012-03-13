@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.kt.JetValueParameterAnnotation;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -127,15 +128,15 @@ class JetFromJavaDescriptorHelper {
     }
 
     @Nullable
-    static String getJetTopLevelDeclarationFQN(@NotNull PsiMethod method) {
+    static FqName getJetTopLevelDeclarationFQN(@NotNull PsiMethod method) {
         PsiClass containingClass = method.getContainingClass();
 
         if (containingClass != null) {
-            String classFQN = containingClass.getQualifiedName();
+            FqName classFQN = new FqName(containingClass.getQualifiedName());
 
             if (classFQN != null) {
                 if (QualifiedNamesUtil.fqnToShortName(classFQN).equals(JvmAbi.PACKAGE_CLASS)) {
-                    String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
+                    FqName classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
                     return QualifiedNamesUtil.combine(classParentFQN, method.getName());
                 }
             }

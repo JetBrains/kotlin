@@ -28,6 +28,7 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -54,10 +55,10 @@ public class RenameInKotlinTest extends MultiFileTestCase {
     }
 
     public void testRenameKotlinClass() throws Exception {
-        doTestWithRenameClass("testing.rename.First", "Third");
+        doTestWithRenameClass(new FqName("testing.rename.First"), "Third");
     }
 
-    private void doTestWithRenameClass(@NonNls final String qClassName, @NonNls final String newName) throws Exception {
+    private void doTestWithRenameClass(@NonNls final FqName qClassName, @NonNls final String newName) throws Exception {
         doTest(new PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {

@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.plugin.compiler.PathUtil;
 
 import java.util.List;
@@ -39,9 +40,9 @@ public class AltClassFinder {
         this.roots = PathUtil.getAltHeadersRoots();
     }
 
-    public PsiClass findClass(@NotNull String qualifiedName) {
+    public PsiClass findClass(@NotNull FqName qualifiedName) {
         for (final VirtualFile classRoot : roots) {
-            PsiClass answer = CoreJavaFileManager.findClassInClasspathRoot(qualifiedName, classRoot, psiManager);
+            PsiClass answer = CoreJavaFileManager.findClassInClasspathRoot(qualifiedName.getFqName(), classRoot, psiManager);
             if (answer != null) return answer;
         }
 

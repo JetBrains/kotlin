@@ -48,6 +48,7 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -62,10 +63,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     private final static Key<CachedValue<PsiJavaFileStub>> JAVA_API_STUB = Key.create("JAVA_API_STUB");
 
     private final JetFile file;
-    private final String qualifiedName;
+    private final FqName qualifiedName;
     private PsiClass delegate;
 
-    public JetLightClass(PsiManager manager, JetFile file, String qualifiedName) {
+    public JetLightClass(PsiManager manager, JetFile file, FqName qualifiedName) {
         super(manager, JetLanguage.INSTANCE);
         this.file = file;
         this.qualifiedName = qualifiedName;
@@ -98,8 +99,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return delegate;
     }
 
-    private static PsiClass findClass(String fqn, StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn, ((PsiClassStub) stub).getQualifiedName())) {
+    private static PsiClass findClass(FqName fqn, StubElement<?> stub) {
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
             return (PsiClass) stub.getPsi();
         }
 
@@ -113,7 +114,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public String getQualifiedName() {
-        return qualifiedName;
+        return qualifiedName.getFqName();
     }
 
     private PsiJavaFileStub getStub() {
@@ -132,7 +133,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
     
     private PsiJavaFileStub calcStub() {
-        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file), true);
+        final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file).getFqName(), true);
         final Project project = getProject();
         
         final Stack<StubElement> stubStack = new Stack<StubElement>();

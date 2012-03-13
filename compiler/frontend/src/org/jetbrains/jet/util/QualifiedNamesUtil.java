@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.util;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 /**
  * Common methods for working with qualified names strings.
@@ -27,14 +27,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class QualifiedNamesUtil {
 
-    public static boolean isSubpackageOf(@NotNull final String subpackageName, @NotNull String packageName) {
+    public static boolean isSubpackageOf(@NotNull final FqName subpackageName, @NotNull FqName packageName) {
         return subpackageName.equals(packageName) ||
-               (subpackageName.startsWith(packageName) && subpackageName.charAt(packageName.length()) == '.');
+               (subpackageName.getFqName().startsWith(packageName.getFqName()) && subpackageName.getFqName().charAt(packageName.getFqName().length()) == '.');
     }
 
-    public static boolean isShortNameForFQN(@NotNull final String name, @NotNull final String fqn) {
-        return fqn.equals(name) ||
-               (fqn.endsWith(name) && fqn.charAt(fqn.length() - name.length() - 1) == '.');
+    public static boolean isShortNameForFQN(@NotNull final String name, @NotNull final FqName fqn) {
+        return fqn.getFqName().equals(name) ||
+               (fqn.getFqName().endsWith(name) && fqn.getFqName().charAt(fqn.getFqName().length() - name.length() - 1) == '.');
     }
 
     public static boolean isOneSegmentFQN(@NotNull final String fqn) {
@@ -46,14 +46,13 @@ public final class QualifiedNamesUtil {
     }
 
     @NotNull
-    public static String fqnToShortName(@NotNull String fqn) {
+    public static String fqnToShortName(@NotNull FqName fqn) {
         return getLastSegment(fqn);
     }
 
     @NotNull
-    public static String getLastSegment(@NotNull String fqn) {
-        int lastDotIndex = fqn.lastIndexOf('.');
-        return (lastDotIndex != -1) ? fqn.substring(lastDotIndex + 1, fqn.length()) : fqn;
+    public static String getLastSegment(@NotNull FqName fqn) {
+        return fqn.shortName();
     }
 
     @NotNull
@@ -72,9 +71,14 @@ public final class QualifiedNamesUtil {
         return "";
     }
 
-    public static String combine(@Nullable String first, @NotNull String second) {
-        if (StringUtil.isEmpty(first)) return second;
-        return first + "." + second;
+    @NotNull
+    public static FqName withoutLastSegment(@NotNull FqName fqName) {
+        return fqName.parent();
+    }
+
+    @NotNull
+    public static FqName combine(@NotNull FqName first, @NotNull String second) {
+        return first.child(second);
     }
 
     /**
@@ -85,14 +89,14 @@ public final class QualifiedNamesUtil {
      * @return tail fqn. If first part is not a begging of the full fqn, fullFQN will be returned.
      */
     @NotNull
-    public static String tail(@NotNull String headFQN, @NotNull String fullFQN) {
+    public static String tail(@NotNull FqName headFQN, @NotNull FqName fullFQN) {
         if (!isSubpackageOf(fullFQN, headFQN)) {
-            return fullFQN;
+            return fullFQN.getFqName();
         }
 
         return fullFQN.equals(headFQN) ?
                "" :
-               fullFQN.substring(headFQN.length() + 1); // (headFQN + '.').length
+               fullFQN.getFqName().substring(headFQN.getFqName().length() + 1); // (headFQN + '.').length
     }
 
     /**
@@ -103,7 +107,7 @@ public final class QualifiedNamesUtil {
      * @return qualified name with one more segment or null if fqn is not head part of fullFQN or there's no additional segment.
      */
     @Nullable
-    public static String plusOneSegment(String fqn, String fullFQN) {
+    public static FqName plusOneSegment(@NotNull FqName fqn, @NotNull FqName fullFQN) {
         if (!isSubpackageOf(fullFQN, fqn)) {
             return null;
         }
@@ -121,11 +125,11 @@ public final class QualifiedNamesUtil {
      * Check that given fqn could be imported with import.
      *
      * @param importPath path from the import. Could contain .* part
-     * @param fqn
-     * @return
+     * @param fqn or another import directive
      */
     public static boolean isImported(@NotNull String importPath, @NotNull String fqn) {
         if (importPath.endsWith("*")) {
+            // TODO: import path is not valid FQN
             return withoutLastSegment(importPath).equals(withoutLastSegment(fqn));
         }
 

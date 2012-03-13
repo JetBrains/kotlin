@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
@@ -43,7 +44,11 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -119,7 +124,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, new BindingTraceContext());
-        return javaSemanticServices.getDescriptorResolver().findClass(qualifiedName);
+        return javaSemanticServices.getDescriptorResolver().findClass(new FqName(qualifiedName));
     }
 
     @NotNull

@@ -69,7 +69,7 @@ public class OverloadResolver {
         }
         
         Key(NamespaceDescriptor namespaceDescriptor, String name) {
-            this(DescriptorUtils.getFQName(namespaceDescriptor), name);
+            this(DescriptorUtils.getFQName(namespaceDescriptor).getFqName(), name);
         }
 
         public String getNamespace() {

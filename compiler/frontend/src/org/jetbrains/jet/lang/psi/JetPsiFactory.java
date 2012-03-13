@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -144,9 +145,13 @@ public class JetPsiFactory {
 //        return file.getRootNamespace();
 //    }
 
-    public static JetImportDirective createImportDirective(Project project, String classPath) {
+    public static JetImportDirective createImportDirective(Project project, @NotNull String classPath) {
         JetFile namespace = createFile(project, "import " + classPath);
         return namespace.getImportDirectives().iterator().next();
+    }
+
+    public static JetImportDirective createImportDirective(Project project, @NotNull FqName fqName) {
+        return createImportDirective(project, fqName.getFqName());
     }
 
     public static PsiElement createPrimaryConstructor(Project project) {

@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -92,7 +93,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), new BindingTraceContext());
 
         JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
-        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace("test");
+        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"));
         
         NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false, txtFile);
     }

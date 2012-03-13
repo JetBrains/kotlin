@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -94,7 +95,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         List<PsiClass> result = new ArrayList<PsiClass>();
 
         for (String fqName : JetFullClassNameIndex.getInstance().getAllKeys(project)) {
-            if (QualifiedNamesUtil.fqnToShortName(fqName).equals(name)) {
+            if (QualifiedNamesUtil.fqnToShortName(new FqName(fqName)).equals(name)) {
                 PsiClass psiClass = javaElementFinder.findClass(fqName, scope);
                 if (psiClass != null) {
                     result.add(psiClass);
@@ -131,11 +132,11 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @NotNull
-    public Collection<String> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
+    public Collection<FqName> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
         BindingContext context = getResolutionContext(scope);
-        return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<String>() {
+        return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
             @Override
-            public boolean apply(@Nullable String fqName) {
+            public boolean apply(@Nullable FqName fqName) {
                 return fqName != null && QualifiedNamesUtil.isShortNameForFQN(name, fqName);
             }
         });
@@ -174,7 +175,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         Collection<PsiMethod> topLevelFunctionPrototypes = JetFromJavaDescriptorHelper.getTopLevelFunctionPrototypesByName(name, project, scope);
         for (PsiMethod method : topLevelFunctionPrototypes) {
-            String functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
+            FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
             if (functionFQN != null) {
                 JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, functionFQN);
                 Collection<? extends DeclarationDescriptor> declarationDescriptors = ImportsResolver.analyseImportReference(importDirective, jetScope, new BindingTraceContext());
@@ -246,7 +247,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             if (expressionType != null && scope != null) {
                 Collection<String> extensionFunctionsNames = getAllJetExtensionFunctionsNames(searchScope);
 
-                Set<String> functionFQNs = new java.util.HashSet<String>();
+                Set<FqName> functionFQNs = new java.util.HashSet<FqName>();
 
                 // Collect all possible extension function qualified names
                 for (String name : extensionFunctionsNames) {
@@ -258,7 +259,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                                 functionFQNs.add(JetPsiUtil.getFQName((JetNamedFunction) extensionFunction));
                             }
                             else if (extensionFunction instanceof PsiMethod) {
-                                String functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN((PsiMethod) extensionFunction);
+                                FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN((PsiMethod) extensionFunction);
                                 if (functionFQN != null) {
                                     functionFQNs.add(functionFQN);
                                 }
@@ -268,7 +269,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
                 }
 
                 // Iterate through the function with attempt to resolve found functions
-                for (String functionFQN : functionFQNs) {
+                for (FqName functionFQN : functionFQNs) {
                     for (CallableDescriptor functionDescriptor : ExpressionTypingUtils.canFindSuitableCall(
                             functionFQN, project, receiverExpression, expressionType, scope)) {
 

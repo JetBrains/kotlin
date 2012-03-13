@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
@@ -60,7 +61,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         delegateConfiguration.addDefaultImports(rootScope, directives);
     }
 
-    public static JavaNamespaceDescriptor createNamespaceDescriptor(String name, String qualifiedName) {
+    public static JavaNamespaceDescriptor createNamespaceDescriptor(String name, FqName qualifiedName) {
         return new JavaNamespaceDescriptor(null, Collections.<AnnotationDescriptor>emptyList(), name, qualifiedName, true);
     }
 
@@ -73,7 +74,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
-        NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(shortName);
+        NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.topLevel(shortName));
         if (namespaceDescriptor != null) {
             return namespaceDescriptor;
         }
@@ -82,7 +83,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
-        NamespaceDescriptor defaultPackage = javaSemanticServices.getDescriptorResolver().resolveNamespace("");
+        NamespaceDescriptor defaultPackage = javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.ROOT);
         assert defaultPackage != null : "Cannot resolve Java's default package";
         for (DeclarationDescriptor declarationDescriptor : defaultPackage.getMemberScope().getAllDescriptors()) {
             if (declarationDescriptor instanceof NamespaceDescriptor) {

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -85,30 +86,30 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
     @Override
     public void visitClassType(String name, boolean nullable, boolean forceReal) {
-        String ourName = name
+        FqName ourName = new FqName(name
                 .replace('/', '.')
                 .replace('$', '.') // TODO: not sure
-                ;
+            );
         
         this.classDescriptor = null;
         if (this.classDescriptor == null && !forceReal) {
-            this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName);
+            this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName.getFqName());
         }
 
-        if (this.classDescriptor == null && ourName.equals("java.lang.Object") && !forceReal) {
+        if (this.classDescriptor == null && ourName.equals(new FqName("java.lang.Object")) && !forceReal) {
             this.classDescriptor = JetStandardClasses.getAny();
         }
 
         if (classDescriptor == null) {
             // TODO: this is the worst code in Kotlin project
-            Matcher matcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName);
+            Matcher matcher = Pattern.compile("jet\\.Function(\\d+)").matcher(ourName.getFqName());
             if (matcher.matches()) {
                 classDescriptor = JetStandardClasses.getFunction(Integer.parseInt(matcher.group(1)));
             }
         }
         
         if (classDescriptor == null) {
-            Matcher matcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName);
+            Matcher matcher = Pattern.compile("jet\\.Tuple(\\d+)").matcher(ourName.getFqName());
             if (matcher.matches()) {
                 classDescriptor = JetStandardClasses.getTuple(Integer.parseInt(matcher.group(1)));
             }

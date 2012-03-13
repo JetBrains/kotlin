@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -86,7 +87,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, "test");
+        return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
     }
 
     private NamespaceDescriptor compileJava() throws Exception {
@@ -114,7 +115,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         JavaSemanticServices semanticServices = new JavaSemanticServices(jetCoreEnvironment.getProject(), new BindingTraceContext());
 
         JavaDescriptorResolver javaDescriptorResolver = semanticServices.getDescriptorResolver();
-        return javaDescriptorResolver.resolveNamespace("test");
+        return javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"));
     }
 
     public static Test suite() {

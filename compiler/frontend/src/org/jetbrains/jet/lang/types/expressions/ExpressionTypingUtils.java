@@ -177,13 +177,13 @@ public class ExpressionTypingUtils {
      * @return
      */
     public static List<CallableDescriptor> canFindSuitableCall(
-            @NotNull String callableFQN,
+            @NotNull FqName callableFQN,
             @NotNull Project project,
             @NotNull JetExpression receiverExpression,
             @NotNull JetType receiverType,
             @NotNull JetScope scope) {
 
-        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN);
+        JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, callableFQN.getFqName());
 
         Collection<? extends DeclarationDescriptor> declarationDescriptors = ImportsResolver.analyseImportReference(importDirective, scope, new BindingTraceContext());
 

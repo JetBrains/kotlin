@@ -246,7 +246,7 @@ public class IntrinsicMethods {
             if (annotations != null) {
                 for (AnnotationDescriptor annotation : annotations) {
                     if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
-                        Object value = annotation.getValueArguments().get(0).getValue();
+                        String value = (String) annotation.getValueArguments().get(0).getValue();
                         intrinsicMethod = namedMethods.get(value);
                         if(intrinsicMethod != null)
                             break;

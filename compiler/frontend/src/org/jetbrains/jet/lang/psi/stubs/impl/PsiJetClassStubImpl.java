@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
@@ -34,7 +35,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     public PsiJetClassStubImpl(
             JetClassElementType type,
             final StubElement parent,
-            final String qualifiedName,
+            @Nullable final String qualifiedName,
             final String name) {
 
         this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name));

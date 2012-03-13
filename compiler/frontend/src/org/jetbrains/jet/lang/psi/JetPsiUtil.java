@@ -22,6 +22,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -129,21 +130,26 @@ public class JetPsiUtil {
         }
     }
 
-    private static String getFQName(JetNamespaceHeader header) {
+    private static FqName getFQName(JetNamespaceHeader header) {
         StringBuilder builder = new StringBuilder();
         for (JetSimpleNameExpression nameExpression : header.getParentNamespaceNames()) {
             builder.append(nameExpression.getReferencedName());
             builder.append(".");
         }
         builder.append(header.getName());
-        return builder.toString();
+        return new FqName(builder.toString());
     }
 
-    public static String getFQName(JetFile file) {
+    public static FqName getFQName(JetFile file) {
         return getFQName(file.getNamespaceHeader());
     }
 
-    public static String getFQName(JetClassOrObject jetClass) {
+    @Nullable
+    public static FqName getFQName(@NotNull JetClassOrObject jetClass) {
+        if (jetClass.getName() == null) {
+            return null;
+        }
+
         PsiElement parent = jetClass.getParent();
         if (parent instanceof JetFile) {
             return makeFQName(getFQName((JetFile) parent), jetClass);
@@ -157,14 +163,15 @@ public class JetPsiUtil {
         if (parent instanceof JetClassOrObject) {
             return makeFQName(getFQName(((JetClassOrObject) parent)), jetClass);
         }
-        return jetClass.getName();
+        return new FqName(jetClass.getName());
     }
 
-    public static String getFQName(JetNamedFunction jetNamedFunction) {
+    @Nullable
+    public static FqName getFQName(@NotNull JetNamedFunction jetNamedFunction) {
 
         String functionName = jetNamedFunction.getName();
         if (functionName == null) {
-            return functionName;
+            return null;
         }
 
         @SuppressWarnings("unchecked")
@@ -172,7 +179,7 @@ public class JetPsiUtil {
                 jetNamedFunction,
                 JetFile.class, JetClassOrObject.class, JetNamedFunction.class);
 
-        String firstPart = "";
+        FqName firstPart = FqName.ROOT;
         if (qualifiedElement instanceof JetFile) {
             firstPart = getFQName((JetFile) qualifiedElement);
         }
@@ -183,7 +190,7 @@ public class JetPsiUtil {
             firstPart = getFQName((JetNamedFunction) qualifiedElement);
         }
 
-        return QualifiedNamesUtil.combine(firstPart, functionName);
+        return firstPart.child(functionName);
     }
 
     @Nullable @JetElement.IfNotParsed
@@ -197,8 +204,9 @@ public class JetPsiUtil {
         return text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : "");
     }
 
-    private static String makeFQName(String prefix, JetClassOrObject jetClass) {
-        return ((prefix == null || prefix.length() == 0) ? "" : prefix + ".") + jetClass.getName();
+    @NotNull
+    private static FqName makeFQName(@NotNull FqName prefix, @NotNull JetClassOrObject jetClass) {
+        return prefix.child(jetClass.getName());
     }
 
     public static boolean isIrrefutable(JetWhenEntry entry) {

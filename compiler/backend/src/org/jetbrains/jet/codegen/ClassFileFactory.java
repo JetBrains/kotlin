@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ import java.util.*;
  */
 public class ClassFileFactory {
     private final ClassBuilderFactory builderFactory;
-    private final Map<String, NamespaceCodegen> ns2codegen = new HashMap<String, NamespaceCodegen>();
+    private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
     private final Map<String, ClassBuilder> generators = new LinkedHashMap<String, ClassBuilder>();
     private boolean isDone = false;
     public final GenerationState state;
@@ -48,7 +49,7 @@ public class ClassFileFactory {
 
     NamespaceCodegen forNamespace(JetFile file) {
         assert !isDone : "Already done!";
-        String fqName = JetPsiUtil.getFQName(file);
+        FqName fqName = JetPsiUtil.getFQName(file);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
             final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassName(fqName, true) + ".class");

@@ -19,6 +19,7 @@ package org.jetbrains.jet.asJava;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
+import org.jetbrains.jet.lang.resolve.FqName;
 
 /**
  * TODO: make more accurate wrapper
@@ -28,15 +29,17 @@ import com.intellij.psi.impl.file.PsiPackageImpl;
 public class JetLightPackage extends PsiPackageImpl {
 
     private final PsiElement namespaceElement;
+    private final FqName fqName;
 
-    public JetLightPackage(PsiManager manager, String qualifiedName, PsiElement namespaceElement) {
-        super(manager, qualifiedName);
+    public JetLightPackage(PsiManager manager, FqName qualifiedName, PsiElement namespaceElement) {
+        super(manager, qualifiedName.getFqName());
+        this.fqName = qualifiedName;
         this.namespaceElement = namespaceElement;
     }
 
     @Override
     public PsiElement copy() {
-        return new JetLightPackage(getManager(), getQualifiedName(), namespaceElement);
+        return new JetLightPackage(getManager(), fqName, namespaceElement);
     }
 
     @Override

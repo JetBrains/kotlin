@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 
 /**
@@ -96,7 +97,7 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
      * @return
      */
     @Nullable
-    public String getQualifiedName() {
+    public FqName getQualifiedName() {
         final PsiJetFunctionStub stub = getStub();
         if (stub != null) {
             // TODO (stubs): return stub.getQualifiedName();
@@ -105,12 +106,8 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
         PsiElement parent = getParent();
         if (parent instanceof JetFile) {
             JetFile jetFile = (JetFile) parent;
-            final String fileFQN = JetPsiUtil.getFQName(jetFile);
-            if (!fileFQN.isEmpty()) {
-                return fileFQN + "." + getName();
-            }
-
-            return getName();
+            final FqName fileFQN = JetPsiUtil.getFQName(jetFile);
+            return fileFQN.child(getName());
         }
 
         return null;

@@ -17,10 +17,12 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -35,7 +37,7 @@ public class NamespaceCodegen {
     private final ClassBuilder v;
     private final GenerationState state;
 
-    public NamespaceCodegen(ClassBuilder v, String fqName, GenerationState state, PsiFile sourceFile) {
+    public NamespaceCodegen(ClassBuilder v, @NotNull FqName fqName, GenerationState state, PsiFile sourceFile) {
         this.v = v;
         this.state = state;
 
@@ -136,12 +138,12 @@ public class NamespaceCodegen {
     /**
      * @param namespace true for "namespace" suffix 
      */
-    public static String getJVMClassName(String fqName, boolean namespace) {
-        if (fqName.length() == 0) {
+    public static String getJVMClassName(@NotNull FqName fqName, boolean namespace) {
+        if (fqName.isRoot()) {
             return JvmAbi.PACKAGE_CLASS;
         }
 
-        String name = fqName.replace('.', '/');
+        String name = fqName.getFqName().replace('.', '/');
         if(name.startsWith("<java_root>")) {
             name = name.substring("<java_root>".length() + 1, name.length());
         }
