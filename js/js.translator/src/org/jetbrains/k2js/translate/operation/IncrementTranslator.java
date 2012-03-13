@@ -31,8 +31,6 @@ import org.jetbrains.k2js.translate.reference.CachedAccessTranslator;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.AccessTranslationUtils.getCachedAccessTranslator;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.isVariableReassignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newSequence;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
@@ -54,58 +52,49 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         if (isIntrinsicOperation(context, expression)) {
             return IntrinsicIncrementTranslator.doTranslate(expression, context);
         }
-        return OverloadedIncrementTranslator.doTranslate(expression, context);
+        return (new OverloadedIncrementTranslator(expression, context)).translateIncrementExpression();
     }
 
     @NotNull
     protected final JetUnaryExpression expression;
     @NotNull
     protected final CachedAccessTranslator accessTranslator;
-    private final boolean isVariableReassignment;
 
     protected IncrementTranslator(@NotNull JetUnaryExpression expression,
                                   @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        this.isVariableReassignment = isVariableReassignment(context.bindingContext(), expression);
         JetExpression baseExpression = getBaseExpression(expression);
         this.accessTranslator = getCachedAccessTranslator(baseExpression, context());
     }
 
     @NotNull
-    protected JsExpression translateAsMethodCall() {
-        return withTemporariesInitialized(doTranslateAsMethodCall());
+    protected JsExpression translateIncrementExpression() {
+        return withTemporariesInitialized(doTranslateIncrementExpression());
     }
 
     @NotNull
-    private JsExpression doTranslateAsMethodCall() {
-        if (returnValueIgnored() || isPrefix(expression)) {
+    private JsExpression doTranslateIncrementExpression() {
+        if (isPrefix(expression)) {
             return asPrefix();
         }
-        if (isVariableReassignment) {
-            return asPostfixWithReassignment();
-        }
-        else {
-            return asPostfixWithNoReassignment();
-        }
-    }
-
-    private boolean returnValueIgnored() {
-        return isStatement(bindingContext(), expression);
-    }
-
-    @NotNull
-    private JsExpression asPrefix() {
-        JsExpression getExpression = accessTranslator.translateAsGet();
-        if (isVariableReassignment) {
-            return variableReassignment(getExpression);
-        }
-        return operationExpression(getExpression);
+        return asPostfix();
     }
 
     //TODO: decide if this expression can be optimised in case of direct access (not property)
     @NotNull
-    private JsExpression asPostfixWithReassignment() {
+    private JsExpression asPrefix() {
+        // code fragment: expr(a++)
+        // generate: expr(a = a.inc(), a)
+        JsExpression getExpression = accessTranslator.translateAsGet();
+        JsExpression reassignment = variableReassignment(getExpression);
+        JsExpression getNewValue = accessTranslator.translateAsGet();
+        return AstUtil.newSequence(reassignment, getNewValue);
+    }
+
+    //TODO: decide if this expression can be optimised in case of direct access (not property)
+    @NotNull
+    private JsExpression asPostfix() {
         // code fragment: expr(a++)
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
@@ -113,18 +102,6 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         JsExpression variableReassignment = variableReassignment(t1.reference());
         return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(),
                                    variableReassignment, t2.reference());
-    }
-
-    //TODO: TEST
-    @NotNull
-    private JsExpression asPostfixWithNoReassignment() {
-        // code fragment: expr(a++)
-        // generate: expr( (t1 = a, t2 = t1, t2.inc(), t1) )
-        TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
-        TemporaryVariable t2 = context().declareTemporary(t1.reference());
-        JsExpression methodCall = operationExpression(t2.reference());
-        JsExpression returnedValue = t1.reference();
-        return AstUtil.newSequence(t1.assignmentExpression(), t2.assignmentExpression(), methodCall, returnedValue);
     }
 
     @NotNull

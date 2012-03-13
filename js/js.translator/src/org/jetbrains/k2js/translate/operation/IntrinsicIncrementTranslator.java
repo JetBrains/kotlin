@@ -33,7 +33,6 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isPrefix;
  */
 public final class IntrinsicIncrementTranslator extends IncrementTranslator {
 
-
     @NotNull
     public static JsExpression doTranslate(@NotNull JetUnaryExpression expression,
                                            @NotNull TranslationContext context) {
@@ -49,9 +48,9 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     @NotNull
     private JsExpression translate() {
         if (isPrimitiveExpressionIncrement()) {
-            return jsUnaryExpression();
+            return primitiveExpressionIncrement();
         }
-        return translateAsMethodCall();
+        return translateIncrementExpression();
     }
 
     private boolean isPrimitiveExpressionIncrement() {
@@ -59,7 +58,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     }
 
     @NotNull
-    private JsExpression jsUnaryExpression() {
+    private JsExpression primitiveExpressionIncrement() {
         JsUnaryOperator operator = OperatorTable.getUnaryOperator(getOperationToken(expression));
         JsExpression getExpression = accessTranslator.translateAsGet();
         if (isPrefix(expression)) {
@@ -76,7 +75,8 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
         return unaryAsBinary(receiver);
     }
 
-    public JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
+    @NotNull
+    private JsBinaryOperation unaryAsBinary(@NotNull JsExpression leftExpression) {
         JsNumberLiteral oneLiteral = program().getNumberLiteral(1);
         JetToken token = getOperationToken(expression);
         if (token.equals(JetTokens.PLUSPLUS)) {

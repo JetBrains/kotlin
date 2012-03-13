@@ -36,7 +36,7 @@ fun box() : String {
     if (c0 != 2) {
         return "3"
     }
-    if (c1 != 2) {
+    if (c1 != 3) {
     return "4"
     }
     if (c2 != 1) {
@@ -46,14 +46,11 @@ fun box() : String {
     if (c0 != 3) {
         return "6"
     }
-  if (c1 != 3) {
+  if (c1 != 5) {
     return "7"
   }
   if (c2 != 2) {
     return "8"
   }
-   
-
   return "OK"
-
 }
