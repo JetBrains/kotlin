@@ -57,4 +57,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testUndefined() throws Exception {
         checkFooBoxIsTrue("undefined.kt");
     }
+
+    public void testKt1519() throws Exception {
+        checkFooBoxIsTrue("KT-1519.kt");
+    }
 }

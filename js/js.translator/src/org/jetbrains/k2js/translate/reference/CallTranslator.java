@@ -44,6 +44,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getThisObject;
  * @author Pavel Talanov
  */
 //TODO: write tests on calling backing fields as functions
+//TODO: refactor call parameters to be used across the class
 public final class CallTranslator extends AbstractTranslator {
 
     private static class CallParameters {
@@ -95,15 +96,15 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
-        //NOTE: treat native extension function calls as usual calls
         if (isIntrinsic()) {
             return intrinsicInvocation();
         }
         if (isConstructor()) {
             return constructorCall();
         }
-        if (isNative()) {
-            return methodCall();
+        //NOTE: treat native extension function calls as usual calls
+        if (isNativeExtensionFunctionCall()) {
+            return nativeExtensionCall();
         }
         if (isExtensionFunctionLiteral()) {
             return extensionFunctionLiteralCall();
@@ -111,6 +112,12 @@ public final class CallTranslator extends AbstractTranslator {
         if (isExtensionFunction()) {
             return extensionFunctionCall();
         }
+        return methodCall();
+    }
+
+    @NotNull
+    private JsExpression nativeExtensionCall() {
+        receiver = getExtensionFunctionCallReceiver();
         return methodCall();
     }
 
@@ -144,8 +151,8 @@ public final class CallTranslator extends AbstractTranslator {
         return ReferenceTranslator.translateAsFQReference(descriptor, context());
     }
 
-    private boolean isNative() {
-        return AnnotationsUtils.isNativeObject(descriptor);
+    private boolean isNativeExtensionFunctionCall() {
+        return AnnotationsUtils.isNativeObject(descriptor) && isExtensionFunction();
     }
 
     private boolean isExtensionFunctionLiteral() {
@@ -251,6 +258,7 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private CallParameters callParameters() {
+        // TODO: this check corresponds to expression as function, make it clearer
         if (callee != null) {
             return new CallParameters(null, callee);
         }

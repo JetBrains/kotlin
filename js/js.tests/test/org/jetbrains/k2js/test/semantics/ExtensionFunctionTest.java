@@ -62,4 +62,8 @@ public final class ExtensionFunctionTest extends SingleFileTranslationTest {
     public void testGenericExtension() throws Exception {
         checkFooBoxIsOk("generic.kt");
     }
+
+    public void testExtensionFunctionCalledFromExtensionFunction() throws Exception {
+        checkFooBoxIsTrue("extensionFunctionCalledFromExtensionFunction.kt");
+    }
 }
