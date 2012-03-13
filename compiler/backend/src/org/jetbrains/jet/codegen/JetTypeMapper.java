@@ -53,6 +53,7 @@ public class JetTypeMapper {
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
+    public static final Type JL_CLASS_TYPE = Type.getObjectType("java/lang/Class");
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
 

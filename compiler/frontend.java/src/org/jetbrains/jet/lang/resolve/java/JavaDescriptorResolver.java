@@ -1204,7 +1204,7 @@ public class JavaDescriptorResolver {
 
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                     owner,
-                    Collections.<AnnotationDescriptor>emptyList(),
+                    resolveAnnotations(anyMember.getMember().psiMember),
                     modality,
                     resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
                     isVar,
@@ -1215,10 +1215,10 @@ public class JavaDescriptorResolver {
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;
             if (members.getter != null) {
-                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
+                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, resolveAnnotations(members.getter.getMember().psiMember), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
             if (members.setter != null) {
-                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, Collections.<AnnotationDescriptor>emptyList(), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
+                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, resolveAnnotations(members.setter.getMember().psiMember), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
 
             propertyDescriptor.initialize(getterDescriptor, setterDescriptor);

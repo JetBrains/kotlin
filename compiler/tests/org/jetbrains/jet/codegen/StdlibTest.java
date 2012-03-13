@@ -120,4 +120,8 @@ public class StdlibTest extends CodegenTestCase {
     public void testKt1406() throws Exception {
         blackBoxFile("regressions/kt1406.kt");
     }
+
+    public void testKt1568() throws Exception {
+        blackBoxFile("regressions/kt1568.kt");
+    }
 }

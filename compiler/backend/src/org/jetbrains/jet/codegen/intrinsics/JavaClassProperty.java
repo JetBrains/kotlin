@@ -19,8 +19,13 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -32,6 +37,35 @@ import java.util.List;
 public class JavaClassProperty implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, @Nullable PsiElement element, @Nullable List<JetExpression> arguments, StackValue receiver) {
-        return null;
+        receiver.put(receiver.type, v);
+        switch (receiver.type.getSort()) {
+            case Type.BOOLEAN:
+                v.getstatic("java/lang/Boolean", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.BYTE:
+                v.getstatic("java/lang/Byte", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.SHORT:
+                v.getstatic("java/lang/Short", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.CHAR:
+                v.getstatic("java/lang/Character", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.INT:
+                v.getstatic("java/lang/Integer", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.LONG:
+                v.getstatic("java/lang/Long", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.FLOAT:
+                v.getstatic("java/lang/Float", "TYPE", "Ljava/lang/Class;");
+                break;
+            case Type.DOUBLE:
+                v.getstatic("java/lang/Double", "TYPE", "Ljava/lang/Class;");
+                break;
+            default:
+                v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;");
+        }
+        return StackValue.onStack(JetTypeMapper.JL_CLASS_TYPE);
     }
 }
