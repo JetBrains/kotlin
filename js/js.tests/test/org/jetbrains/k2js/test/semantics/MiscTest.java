@@ -73,6 +73,14 @@ public final class MiscTest extends AbstractExpressionTest {
         checkFooBoxIsOk("KT-740-2.kt");
     }
 
+    public void testKt1361_1() throws Exception {
+        checkFooBoxIsTrue("KT-1361-1.kt");
+    }
+
+    public void testKt1361_2() throws Exception {
+        checkFooBoxIsTrue("KT-1361-2.kt");
+    }
+
     //TODO: depends on KT-1198
     //TODO: look into BindingContext.VARIABLE_REASSIGNMENT
 //    public void testKt740_3() throws Exception {

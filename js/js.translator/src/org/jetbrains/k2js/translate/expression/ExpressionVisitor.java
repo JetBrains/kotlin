@@ -399,7 +399,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsNode visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression,
                                                @NotNull TranslationContext context) {
-        return ClassTranslator.generateClassCreationExpression(expression.getObjectDeclaration(), context);
+        return ClassTranslator.generateObjectLiteralExpression(expression, context);
     }
 
     @Override
