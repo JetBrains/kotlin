@@ -57,7 +57,7 @@
         <delete file="${plugin.xml.bk}" quiet="true"/>
     </target>
 
-    <target name="pre_build" depends="cleanupArtifacts, unzipDependencies, dist, writeVersionToPluginXml">
+    <target name="pre_build" depends="cleanupArtifacts, unzipDependencies, dist, writeVersionToPluginXml, generateInjectors">
     </target>
 
     <target name="zipArtifact">

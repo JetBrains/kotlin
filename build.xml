@@ -111,7 +111,23 @@
         </jar>
     </target>
 
-    <target name="compile" depends="compileRT">
+    <target name="compileInjectorsGenerator">
+        <mkdir dir="${output}/classes/injectorsGenerator"/>
+        <javac destdir="${output}/classes/injectorsGenerator" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <src path="injector-generator/src"/>
+            <src refid="sourcepath"/>
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="generateInjectors" depends="compileInjectorsGenerator">
+        <java classname="org.jetbrains.jet.di.AllInjectorsGenerator">
+            <classpath refid="classpath"/>
+            <classpath path="${output}/classes/injectorsGenerator"/>
+        </java>
+    </target>
+
+    <target name="compile" depends="compileRT,generateInjectors">
         <mkdir dir="${output}/classes/compiler"/>
         <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src refid="sourcepath"/>
