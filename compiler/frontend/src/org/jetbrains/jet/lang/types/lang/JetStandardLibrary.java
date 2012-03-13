@@ -70,7 +70,8 @@ public class JetStandardLibrary {
             initializing = true;
             try {
                 instance = new JetStandardLibrary(project);
-            } catch (Throwable e) {
+            }
+            catch (Throwable e) {
                 initializationFailed = e;
                 throw new RuntimeException("builtin library initialization failed: " + e, e);
             }

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.inject.Inject;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -104,7 +104,7 @@ public class TopDownAnalyzer {
             @NotNull ModuleConfiguration configuration,
             boolean declaredLocally) {
         TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, declaredLocally, false, flowDataTraceFactory);
-        context.getInjector().getInstance(TopDownAnalyzer.class).doProcess(context, outerScope, owner, declarations);
+        context.getInjector().getTopDownAnalyzer().doProcess(context, outerScope, owner, declarations);
 
     }
 
@@ -125,9 +125,9 @@ public class TopDownAnalyzer {
         overloadResolver.process();
 
         if (!context.analyzingBootstrapLibrary()) {
-            context.getInjector().getInstance(BodyResolver.class).resolveBehaviorDeclarationBodies();
-            context.getInjector().getInstance(ControlFlowAnalyzer.class).process();
-            context.getInjector().getInstance(DeclarationsChecker.class).process();
+            context.getInjector().getBodyResolver().resolveBehaviorDeclarationBodies();
+            context.getInjector().getControlFlowAnalyzer().process();
+            context.getInjector().getDeclarationsChecker().process();
         }
 
         context.debug("Exit");
@@ -153,7 +153,7 @@ public class TopDownAnalyzer {
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysTrue(), ModuleConfiguration.EMPTY, false, true, null);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysFalse(), ModuleConfiguration.EMPTY, false, true, null);
         ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
             context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
@@ -162,7 +162,7 @@ public class TopDownAnalyzer {
         }
 //        context.getDeclaringScopes().put(file, outerScope);
 
-        context.getInjector().getInstance(TopDownAnalyzer.class).doProcess(context, outerScope, standardLibraryNamespace, toAnalyze);
+        context.getInjector().getTopDownAnalyzer().doProcess(context, outerScope, standardLibraryNamespace, toAnalyze);
     }
 
     public static void processObject(

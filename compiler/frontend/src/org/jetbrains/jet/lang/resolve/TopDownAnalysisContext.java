@@ -19,27 +19,16 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetSecondaryConstructor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -71,7 +60,7 @@ public class TopDownAnalysisContext {
     private final boolean analyzingBootstrapLibrary;
     private boolean declaredLocally;
 
-    private final Injector injector;
+    private final InjectorForTopDownAnalyzer injector;
 
     public TopDownAnalysisContext(
             final Project project,
@@ -87,16 +76,7 @@ public class TopDownAnalysisContext {
                     "jetControlFlowDataTraceFactory must not be passed when analyzingBootstrapLibrary and vice versa");
         }
 
-        injector = Guice.createInjector(new TopDownAnalysisModule(project, analyzingBootstrapLibrary) {
-            @Override
-            protected void configureAfter() {
-                bind(TopDownAnalysisContext.class).toInstance(TopDownAnalysisContext.this);
-                bind(ModuleConfiguration.class).toInstance(configuration);
-                if (jetControlFlowDataTraceFactory != null) {
-                    bind(JetControlFlowDataTraceFactory.class).toInstance(jetControlFlowDataTraceFactory);
-                }
-            }
-        });
+        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, jetControlFlowDataTraceFactory, analyzingBootstrapLibrary);
 
         this.trace = new ObservableBindingTrace(trace);
         this.analyzeCompletely = analyzeCompletely;
@@ -104,7 +84,7 @@ public class TopDownAnalysisContext {
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
     }
 
-    public Injector getInjector() {
+    public InjectorForTopDownAnalyzer getInjector() {
         return injector;
     }
 

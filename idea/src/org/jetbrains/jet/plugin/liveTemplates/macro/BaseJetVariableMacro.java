@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.liveTemplates.macro;
 
-import com.google.inject.Guice;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.Expression;
@@ -31,13 +30,12 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -70,11 +68,7 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        ExpressionTypingServices callResolverContext = Guice.createInjector(new TopDownAnalysisModule(project, false) {
-            @Override
-            protected void configureAfter() {
-            }
-        }).getInstance(ExpressionTypingServices.class);
+        ExpressionTypingServices callResolverContext = new InjectorForMacros(project).getExpressionTypingServices();
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {

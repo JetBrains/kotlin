@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.types;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -52,13 +50,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private JetScope scope;
 
         public void setUp() throws Exception {
-            Injector injector = Guice.createInjector(new TopDownAnalysisModule(getProject(), false) {
-                @Override
-                protected void configureAfter() {
-                }
-            });
-            JetStandardLibrary library = injector.getInstance(JetStandardLibrary.class);
-            descriptorResolver = injector.getInstance(DescriptorResolver.class);
+            InjectorForTests injector = new InjectorForTests(getProject());
+            JetStandardLibrary library = injector.getJetStandardLibrary();
+            descriptorResolver = injector.getDescriptorResolver();
             scope = createScope(library.getLibraryScope());
         }
 

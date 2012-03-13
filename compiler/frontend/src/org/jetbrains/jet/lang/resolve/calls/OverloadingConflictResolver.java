@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 

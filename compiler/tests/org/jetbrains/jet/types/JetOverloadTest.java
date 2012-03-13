@@ -16,18 +16,16 @@
 
 package org.jetbrains.jet.types;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisModule;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -42,13 +40,9 @@ public class JetOverloadTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        Injector injector = Guice.createInjector(new TopDownAnalysisModule(getProject(), false) {
-            @Override
-            protected void configureAfter() {
-            }
-        });
-        library = injector.getInstance(JetStandardLibrary.class);
-        descriptorResolver = injector.getInstance(DescriptorResolver.class);
+        InjectorForTests injector = new InjectorForTests(getProject());
+        library = injector.getJetStandardLibrary();
+        descriptorResolver = injector.getDescriptorResolver();
     }
 
     @Override

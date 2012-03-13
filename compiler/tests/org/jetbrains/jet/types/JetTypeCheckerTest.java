@@ -17,14 +17,13 @@
 package org.jetbrains.jet.types;
 
 import com.google.common.collect.Sets;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -36,7 +35,10 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.CommonSupertypes;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -68,15 +70,10 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();
 
-        Injector injector = Guice.createInjector(new TopDownAnalysisModule(getProject(), false) {
-            @Override
-            protected void configureAfter() {
-            }
-        });
-        descriptorResolver = injector.getInstance(DescriptorResolver.class);
-        descriptorResolver = injector.getInstance(DescriptorResolver.class);
-        typeResolver = injector.getInstance(TypeResolver.class);
-        expressionTypingServices = injector.getInstance(ExpressionTypingServices.class);
+        InjectorForTests injector = new InjectorForTests(getProject());
+        descriptorResolver = injector.getDescriptorResolver();
+        typeResolver = injector.getTypeResolver();
+        expressionTypingServices = injector.getExpressionTypingServices();
 
         scopeWithImports = addImports(classDefinitions.BASIC_SCOPE);
     }
