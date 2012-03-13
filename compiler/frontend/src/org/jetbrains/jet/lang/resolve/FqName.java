@@ -49,7 +49,13 @@ public class FqName {
 
 
     private void validateFqName() {
-        if (fqName.indexOf('/') >= 0 || fqName.indexOf('<') >= 0) {
+        if (fqName.length() == 0) {
+            return;
+        }
+
+        // '<' are allowed, but shouldn't be
+
+        if (fqName.indexOf('/') >= 0) {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
     }
