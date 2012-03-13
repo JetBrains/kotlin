@@ -95,7 +95,7 @@ fun fails(block: ()-> Unit): Throwable? {
         asserter.fail("Expected an exception to be thrown")
         return null
     } catch (e: Throwable) {
-        println("Caught excepted exception: $e")
+        //println("Caught expected exception: $e")
         return e
     }
 }
@@ -106,7 +106,7 @@ fun <T: Throwable> failsWith(block: ()-> Unit) {
         block()
         asserter.fail("Expected an exception to be thrown")
     } catch (e: T) {
-        println("Caught excepted exception: $e")
+        //println("Caught expected exception: $e")
         // OK
     }
 }
