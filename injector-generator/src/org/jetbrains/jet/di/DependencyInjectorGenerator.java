@@ -32,9 +32,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
 * @author abreslav
@@ -279,7 +277,15 @@ public class DependencyInjectorGenerator {
             initializeByConstructorCall(field, neededFor);
         }
 
-        for (Method method : field.getType().getDeclaredMethods()) {
+        // Sort setters in order to get deterministic behavior
+        List<Method> declaredMethods = Lists.newArrayList(field.getType().getDeclaredMethods());
+        Collections.sort(declaredMethods, new Comparator<Method>() {
+            @Override
+            public int compare(Method o1, Method o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        for (Method method : declaredMethods) {
             if (method.getAnnotation(javax.inject.Inject.class) == null
                 || !method.getName().startsWith("set")
                 || method.getParameterTypes().length != 1) continue;
