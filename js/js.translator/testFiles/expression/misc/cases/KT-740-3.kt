@@ -9,12 +9,13 @@ class A() {
     fun divAssign(a : Int) {
         c1++;
     }
-    fun times(a : Int) {
+    fun times(a : Int) : A {
         c2++;
+        return this;
     }
 }
 
-val a : A = A()
+var a : A = A()
 get() {
   c0++
   return $a
@@ -30,12 +31,11 @@ fun box() : String {
         return "2"
     }
     a *= 3
-    if (c0 != 1) {
+    if (c0 != 2) {
         return "3"
     }
-  if (c2 != 1) {
-    return "4"
-  }
-  return "OK"
-
+    if (c2 != 1) {
+      return "4"
+    }
+    return "OK"
 }
