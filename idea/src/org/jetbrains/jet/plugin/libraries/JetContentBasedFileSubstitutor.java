@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetHighlighter;
 
 /**
@@ -59,7 +60,7 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
         return new JetHighlighter();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public PsiFile getDecompiledPsiFile(PsiFile psiFile) {
         return JetDecompiledData.getDecompiledData((ClsFileImpl) psiFile).getJetFile();
