@@ -1,6 +1,9 @@
 package kotlin.jdbc
 
 import java.sql. *
+import java.util.List
+import kotlin.util.arrayList
+import java.util.Collection
 
 /**
  * Creates an iterator through a [[ResultSet]]
@@ -25,3 +28,22 @@ fun ResultSet.get(columnId: Int): Any? = this.getObject(columnId)
  */
 fun ResultSet.get(columnName: String): Any? = this.getObject(columnName)
 
+/**
+ * Maps the collection of rows to some value
+ */
+fun <T> ResultSet.map(fn: (ResultSet) -> T) : List<T> {
+    val answer = arrayList<T>()
+    mapTo(answer, fn)
+    return answer
+}
+
+/**
+ * Maps the collection of rows to some value and adds it to the result collection
+ */
+fun <T> ResultSet.mapTo(result: Collection<T>, fn: (ResultSet) -> T) : Collection<T> {
+    for (row in this) {
+        val element = fn(row)
+        result.add(element)
+    }
+    return result
+}

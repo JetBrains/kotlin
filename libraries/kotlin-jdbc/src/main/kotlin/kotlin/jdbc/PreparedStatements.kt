@@ -13,6 +13,7 @@ fun PreparedStatement.update(): Int {
         close()
     }
 }
+
 fun <T> PreparedStatement.query(block: (ResultSet) -> T): T {
     try {
         val resultSet = this.executeQuery()

@@ -3,12 +3,13 @@ package test.kotlin.jdbc.experiment1
 import kotlin.template.experiment1.*
 import kotlin.jdbc.*
 import kotlin.test.*
-import kotlin.util.arrayList
+import kotlin.util.*
+
+import test.kotlin.jdbc.*
 
 import junit.framework.TestCase
 import javax.sql.DataSource
 
-import test.kotlin.jdbc.createDataSource
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -60,6 +61,15 @@ class PreparedStatementBuilder(val connection: Connection) {
         })
     }
 
+    fun expression(value: Int): Unit {
+        sql.append("?")
+        tasks.add(object: Binding {
+            override fun bind(statement : PreparedStatement) {
+                statement.setInt(nextParameterIndex(), value)
+            }
+        })
+    }
+
     // TODO bind other kinds!
 
     fun statement(): PreparedStatement {
@@ -82,14 +92,32 @@ class JdbcTemplateTest : TestCase() {
     //val dataSource = createDataSource()
 
     fun testTemplateInsert() {
-        val id = 1
+        val id = 3
+        val name = "Stepan"
 
-/*
+        // Mimicks the following code
+        // dataSource.update("insert into foo (id, name) values ($id, $name)")
+
         dataSource.update {
+            it.text("insert into foo (id, name) values (")
+            it.expression(id)
+            it.text(", ")
+            it.expression(name)
+            it.text(")")
+        }
+
+        // Mimicks
+        // datasource.query("select * from foo where id = $id") { it["name"] }
+
+        val names = dataSource.query({
             it.text("select * from foo where id = ")
             it.expression(id)
+        }) {
+            it.map{ it["name"] }
         }
-*/
 
+        println("Found names $names")
+        val actual = names.first()
+        assertEquals(name, actual)
     }
 }

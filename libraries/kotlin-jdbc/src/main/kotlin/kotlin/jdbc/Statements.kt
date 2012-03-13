@@ -8,7 +8,7 @@ import java.sql.Statement
 /**
  * Uses the statement with the given block then closes the statement
  */
-fun <T> Statement.use(block : (Statement) -> T) : T {
+fun <T, S : Statement> S.use(block : (S) -> T) : T {
     try {
         return block(this)
     } finally {

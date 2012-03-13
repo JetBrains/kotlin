@@ -8,7 +8,7 @@ import org.h2.jdbcx.JdbcDataSource
 import javax.sql.DataSource
 import org.h2.jdbcx.JdbcConnectionPool
 
-val dataSource = createDataSource()
+public val dataSource : DataSource = createDataSource()
 
 fun createDataSource() : DataSource {
     val dataSource = JdbcConnectionPool.create("jdbc:h2:mem:KotlinJdbcTest;DB_CLOSE_DELAY=-1", "user", "password")
