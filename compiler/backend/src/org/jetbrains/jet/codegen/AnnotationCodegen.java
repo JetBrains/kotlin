@@ -77,7 +77,7 @@ public abstract class AnnotationCodegen {
 
                 for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
                     List<JetExpression> valueArguments = entry.getValue().getArgumentExpressions();
-                    assert  valueArguments.size() == 1; // todo
+                    assert  valueArguments.size() == 1 : "Number of assertions on " + resolvedCall.getResultingDescriptor() + " = " + valueArguments.size(); // todo
                     CompileTimeConstant<?> compileTimeConstant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, valueArguments.get(0));
                     assert compileTimeConstant != null;
 
