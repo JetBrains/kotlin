@@ -21,13 +21,15 @@ suitability, code size, complexity and efficiency.
 
 Here we convert a string template into a function on some kind of builder object where we invoke the text() method for static text and expression() for dynamic expressions
 
+* [example](https://github.com/JetBrains/kotlin/blob/master/libraries/testlib/test/template/experiment1/HtmlTemplateTest.kt#L17)
+
 Pro:
 
 * simple and efficient code is generated - no arrays
 * no arrays are created for static and expression arguments
 * static dispatch of encoding functions; no runtime instanceof checks on each argument
 
-* Cons:
+Cons:
 
 * function may create an inner object/class (though the compiler may get smart enough to inline some of those - or maybe generate a custom function for the whole thing with parameters?)
 * we can only use this strategy if the template expression is passed to a function and we can detect the function parameter takes a fn: (T) -> Unit; and T has suitable text() and expression() methods.
@@ -37,6 +39,8 @@ Pro:
 
 Here we create a single StringTemplate object containing the constant text array and the values array. Then we use functions or extension functions as ways to do other things.
 
+* [example](https://github.com/JetBrains/kotlin/blob/master/libraries/testlib/test/template/experiment2/HtmlTemplateTest.kt#L13)
+
 Pros:
 
 * really simple
@@ -44,8 +48,9 @@ Pros:
 
 Cons:
 
-* requires runtime instanceof checks on each expression value
+* requires runtime [instanceof checks](https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/template/experiment2/Templates.kt#L66) on each expression value
 * fair bit of object construction per call (2 arrays, a template object, then the string builder and lots of index lookup of arrays
+
 
 #### experiment 3
 
