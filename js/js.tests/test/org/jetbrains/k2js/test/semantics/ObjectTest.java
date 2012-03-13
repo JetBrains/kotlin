@@ -40,4 +40,10 @@ public final class ObjectTest extends SingleFileTranslationTest {
     public void testObjectInMethod() throws Exception {
         checkFooBoxIsTrue("objectInMethod.kt");
     }
+
+
+    public void testObjectInheritingFromATrait() throws Exception {
+        checkFooBoxIsTrue("objectInheritingFromATrait.kt");
+    }
+
 }

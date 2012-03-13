@@ -40,6 +40,7 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getQualifiedReference;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getThisObject;
 
 /**
@@ -175,7 +176,7 @@ public final class ClassTranslator extends AbstractTranslator {
         if (aliaser().hasAliasForDeclaration(superClassDescriptor)) {
             return aliaser().getAliasForDeclaration(superClassDescriptor).makeRef();
         }
-        return context().getNameForDescriptor(superClassDescriptor).makeRef();
+        return getQualifiedReference(context(), superClassDescriptor);
     }
 
     @Nullable
