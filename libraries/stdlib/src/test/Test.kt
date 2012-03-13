@@ -7,28 +7,33 @@ import java.util.ServiceLoader
 
 private var _asserter: Asserter? = null
 
-fun asserter(): Asserter {
-    if (_asserter == null) {
-        /* TODO
-        val loader = ServiceLoader.load(javaClass<Asserter>)
-        for (a in loader) {
-            if (a != null) {
-                _asserter = a
-                break
-            }
-        }
-        */
+public var asserter: Asserter
+    get() {
         if (_asserter == null) {
-            _asserter = DefaultAsserter()
+            val klass = javaClass<Asserter>()
+            val loader = ServiceLoader.load(klass)
+            for (a in loader) {
+                if (a != null) {
+                    _asserter = a
+                    break
+                }
+            }
+            if (_asserter == null) {
+                _asserter = DefaultAsserter()
+            }
+            //debug("using asserter $_asserter")
         }
+        return _asserter.sure()
     }
-    return _asserter.sure()
-}
+
+    set(value) {
+        _asserter = value
+    }
 
 /** Asserts that the given block returns true */
 inline fun assertTrue(message: String, block: ()-> Boolean) {
     val actual = block()
-    asserter().assertTrue(message, actual)
+    asserter.assertTrue(message, actual)
 }
 
 /** Asserts that the given block returns true */
@@ -54,22 +59,22 @@ inline fun assertFalse(actual: Boolean, message: String = "") {
 
 /** Asserts that the expected value is equal to the actual value, with an optional message */
 inline fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
-    asserter().assertEquals(message, expected, actual)
+    asserter.assertEquals(message, expected, actual)
 }
 
 /** Asserts that the expression is not null, with an optional message */
 inline fun assertNotNull(actual: Any?, message: String = "") {
-    asserter().assertNotNull(message, actual)
+    asserter.assertNotNull(message, actual)
 }
 
 /** Asserts that the expression is null, with an optional message */
 inline fun assertNull(actual: Any?, message: String = "") {
-    asserter().assertNull(message, actual)
+    asserter.assertNull(message, actual)
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional message */
 inline fun fail(message: String = "") {
-    asserter().fail(message)
+    asserter.fail(message)
 }
 
 /** Asserts that given function block returns the given expected value */
@@ -87,7 +92,7 @@ inline fun <T> expect(expected: T, message: String, block: ()-> T) {
 fun fails(block: ()-> Unit): Throwable? {
     try {
         block()
-        asserter().fail("Expected an exception to be thrown")
+        asserter.fail("Expected an exception to be thrown")
         return null
     } catch (e: Throwable) {
         println("Caught excepted exception: $e")
@@ -99,7 +104,7 @@ fun fails(block: ()-> Unit): Throwable? {
 fun <T: Throwable> failsWith(block: ()-> Unit) {
     try {
         block()
-        asserter().fail("Expected an exception to be thrown")
+        asserter.fail("Expected an exception to be thrown")
     } catch (e: T) {
         println("Caught excepted exception: $e")
         // OK
