@@ -36,5 +36,9 @@ public class MultiNamespaceTest extends MultipleFilesTranslationTest {
         checkFooBoxIsTrue("classesInheritedFromOtherNamespace");
     }
 
+    public void testNamespaceVariableVisibleFromOtherNamespace() throws Exception {
+        checkFooBoxIsTrue("namespaceVariableVisibleFromOtherNamespace");
+    }
+
 }
 

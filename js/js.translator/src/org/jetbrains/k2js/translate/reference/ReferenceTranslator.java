@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
+import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
 
 /**
  * @author Pavel Talanov
@@ -37,12 +37,7 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
                                                    @NotNull TranslationContext context) {
-        if (PropertyAccessTranslator.canBePropertyGetterCall(expression, context)) {
-            return PropertyAccessTranslator.translateAsPropertyGetterCall(expression, null, CallType.NORMAL, context);
-        }
-        DeclarationDescriptor referencedDescriptor =
-                getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        return translateAsLocalNameReference(referencedDescriptor, context);
+        return getAccessTranslator(expression, context).translateAsGet();
     }
 
     @NotNull
@@ -61,5 +56,16 @@ public final class ReferenceTranslator {
                                                              @NotNull TranslationContext context) {
         JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
         return referencedName.makeRef();
+    }
+
+    public static AccessTranslator getAccessTranslator(JetSimpleNameExpression referenceExpression, TranslationContext context) {
+        if (isBackingFieldReference(referenceExpression)) {
+            return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
+        }
+        if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
+            return PropertyAccessTranslator.newInstance(referenceExpression,
+                                                        null, CallType.NORMAL, context);
+        }
+        return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }
 }

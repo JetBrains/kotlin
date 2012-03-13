@@ -28,24 +28,19 @@ public final class AccessTranslationUtils {
     private AccessTranslationUtils() {
     }
 
-    //TODO: this piece of code represents dangerously convoluted logic, think of the ways it can be improved
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetExpression referenceExpression,
                                                        @NotNull TranslationContext context) {
         assert ((referenceExpression instanceof JetReferenceExpression) ||
                 (referenceExpression instanceof JetQualifiedExpression));
-        if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
-            if (referenceExpression instanceof JetQualifiedExpression) {
-                return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);
-            }
-            assert referenceExpression instanceof JetSimpleNameExpression;
-            return PropertyAccessTranslator.newInstance((JetSimpleNameExpression) referenceExpression,
-                                                        null, CallType.NORMAL, context);
+        if (referenceExpression instanceof JetQualifiedExpression) {
+            return QualifiedExpressionTranslator.getAccessTranslator((JetQualifiedExpression) referenceExpression, context);
         }
-        if (referenceExpression instanceof JetArrayAccessExpression) {
-            return ArrayAccessTranslator.newInstance((JetArrayAccessExpression) referenceExpression, context);
+        if (referenceExpression instanceof JetSimpleNameExpression) {
+            return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression) referenceExpression, context);
         }
-        return ReferenceAccessTranslator.newInstance((JetSimpleNameExpression) referenceExpression, context);
+        assert referenceExpression instanceof JetArrayAccessExpression;
+        return ArrayAccessTranslator.newInstance((JetArrayAccessExpression) referenceExpression, context);
     }
 
     @NotNull

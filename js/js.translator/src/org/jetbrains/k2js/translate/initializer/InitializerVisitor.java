@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.initializer;
 
+import com.google.dart.compiler.backend.js.ast.JsExprStmt;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
@@ -33,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
@@ -62,7 +62,7 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     private static JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
                                                     @NotNull JetExpression initializer) {
         JsExpression initExpression = Translation.translateAsExpression(initializer, context);
-        return assignmentToBackingField(context, property, initExpression);
+        return assignmentToBackingField(context, property, initExpression).makeStmt();
     }
 
     @Override
@@ -87,7 +87,9 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
                 = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
         JetObjectDeclaration objectDeclaration = getObjectDeclarationForName(objectName);
         JsInvocation objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
-        return singletonList(assignmentToBackingField(context, propertyDescriptorForObjectDeclaration, objectValue));
+        JsExprStmt assignment = assignmentToBackingField(context, propertyDescriptorForObjectDeclaration, objectValue)
+                .makeStmt();
+        return Collections.<JsStatement>singletonList(assignment);
     }
 
     @NotNull

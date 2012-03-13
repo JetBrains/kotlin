@@ -140,7 +140,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
                 getPropertyDescriptorForConstructorParameter(bindingContext(), jetParameter);
         if (propertyDescriptor != null) {
             JsStatement assignmentToBackingFieldExpression = assignmentToBackingField
-                    (context(), propertyDescriptor, jsParameter.getName().makeRef());
+                    (context(), propertyDescriptor, jsParameter.getName().makeRef()).makeStmt();
             initializerStatements.add(assignmentToBackingFieldExpression);
         }
     }

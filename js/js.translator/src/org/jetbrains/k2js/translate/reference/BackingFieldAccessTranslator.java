@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,52 +17,54 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsNameRef;
-import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsLocalNameReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
 /**
  * @author Pavel Talanov
  */
-public final class ReferenceAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
+public final class BackingFieldAccessTranslator extends AbstractTranslator implements CachedAccessTranslator {
 
     @NotNull
-    /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-                                                             @NotNull TranslationContext context) {
-        DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
-        return new ReferenceAccessTranslator(referenceDescriptor, context);
+    private final PropertyDescriptor descriptor;
+
+    /*package*/
+    static BackingFieldAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
+                                                    @NotNull TranslationContext context) {
+        assert PsiUtils.isBackingFieldReference(expression);
+        DeclarationDescriptor referencedProperty = getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        assert referencedProperty instanceof PropertyDescriptor;
+        return new BackingFieldAccessTranslator((PropertyDescriptor) referencedProperty, context);
     }
 
-    @NotNull
-    private final JsExpression reference;
-
-    private ReferenceAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+    private BackingFieldAccessTranslator(@NotNull PropertyDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        this.reference = translateAsLocalNameReference(descriptor, context());
+        this.descriptor = descriptor;
     }
 
-    @Override
     @NotNull
+    @Override
     public JsExpression translateAsGet() {
-        return reference;
+        return backingFieldReference(context(), descriptor);
     }
 
-    @Override
     @NotNull
-    public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        assert reference instanceof JsNameRef;
-        return AstUtil.newAssignment((JsNameRef) reference, toSetTo);
+    @Override
+    public JsExpression translateAsSet(@NotNull JsExpression setTo) {
+        return assignmentToBackingField(context(), descriptor, setTo);
     }
 
     @NotNull
