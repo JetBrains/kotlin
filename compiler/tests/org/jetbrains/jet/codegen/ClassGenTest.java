@@ -307,4 +307,9 @@ public class ClassGenTest extends CodegenTestCase {
     public void testKt1345() throws Exception {
         blackBoxFile("regressions/kt1345.kt");
     }
+
+    public void testKt1538() throws Exception {
+        blackBoxFile("regressions/kt1538.kt");
+        System.out.println(generateToText());
+    }
 }

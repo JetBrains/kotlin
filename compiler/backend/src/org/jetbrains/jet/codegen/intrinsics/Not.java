@@ -38,6 +38,7 @@ public class Not implements IntrinsicMethod {
         else {
             stackValue = receiver;
         }
-        return StackValue.not(stackValue);
+        stackValue.put(Type.BOOLEAN_TYPE, v);
+        return StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE));
     }
 }

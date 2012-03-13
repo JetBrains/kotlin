@@ -468,8 +468,10 @@ public abstract class StackValue {
         private StackValue myOperand;
 
         private Invert(StackValue operand) {
-            super(operand.type);
+            super(Type.BOOLEAN_TYPE);
             myOperand = operand;
+            if(myOperand.type != Type.BOOLEAN_TYPE)
+                throw new UnsupportedOperationException("operand of ! must be boolean");
         }
 
         @Override
