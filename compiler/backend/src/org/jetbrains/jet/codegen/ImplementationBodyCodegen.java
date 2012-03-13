@@ -76,8 +76,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isAbstract = false;
         boolean isInterface = false;
         boolean isFinal = false;
-        boolean isStatic = false;
-        
+
         if(myClass instanceof JetClass) {
             JetClass jetClass = (JetClass) myClass;
             if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))
@@ -90,9 +89,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isFinal = true;
             }
         }
-        else if (myClass.getParent() instanceof JetClassObject) {
-            isStatic = true;
-        }
 
         int access = 0;
         access |= ACC_PUBLIC;
@@ -104,9 +100,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (isFinal) {
             access |= ACC_FINAL;
-        }
-        if (isStatic) {
-            access |= ACC_STATIC;
         }
         v.defineClass(myClass, V1_6,
                 access,
