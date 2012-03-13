@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.doc
 import kotlin.*
 import kotlin.util.*
 import java.util.*
+import org.jetbrains.kotlin.doc.model.KPackage
 
 /**
  * The configuration used with KDoc
@@ -23,6 +24,11 @@ class KDocConfig() {
      * Returns a map of the package prefix to the URLs to use to link to it in the documentation
      */
     public val packagePrefixToUrls: Map<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
+
+    /**
+     * Returns a Set of the package name prefixes to ignore from the KDoc report
+     */
+    public val ignorePackages: Set<String> = HashSet<String>()
 
     /**
     * Returns true if a warning should be generated if there are no comments
@@ -77,6 +83,13 @@ class KDocConfig() {
             println("Warning: could not find external link to package: $packageName")
         }
         return ""
+    }
+
+    /**
+     * Returns true if the package should be included in the report
+     */
+    fun includePackage(pkg: KPackage): Boolean {
+        return !ignorePackages.any{ pkg.name.startsWith(it) }
     }
 }
 

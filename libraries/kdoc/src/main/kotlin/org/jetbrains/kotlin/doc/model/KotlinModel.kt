@@ -165,7 +165,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     /** Returns the local packages */
     public val packages: Collection<KPackage>
-    get() = allPackages.filter{ it.local }
+    get() = allPackages.filter{ it.local && config.includePackage(it) }
 
     public val classes: Collection<KClass>
     get() = packages.flatMap{ it.classes }

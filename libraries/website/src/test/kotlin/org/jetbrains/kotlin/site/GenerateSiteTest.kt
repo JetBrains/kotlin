@@ -24,12 +24,15 @@ class GenerateSiteTest : TestCase() {
 
         copyDocResources(outDir)
         val args = KDocArguments()
-        args.setSrc("../stdlib/src")
+        args.setModule("../kdoc/ApiDocsModule.kt")
         args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-stdlib")
+
         val config = args.docConfig
         config.title = "Kotlin API ($version)"
         config.version = version
+        config.ignorePackages.add("org.jetbrains.kotlin")
+        config.ignorePackages.add("kotlin.template.experiment")
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
