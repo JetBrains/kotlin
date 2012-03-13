@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -30,8 +29,9 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.DelegationResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
@@ -50,28 +50,26 @@ public class InjectorForTopDownAnalyzer {
     private ControlFlowAnalyzer controlFlowAnalyzer;
     private DeclarationsChecker declarationsChecker;
     private DescriptorResolver descriptorResolver;
-    private ExpressionTypingServices expressionTypingServices;
     private final Project project;
 
     public InjectorForTopDownAnalyzer(
         Project project,
         TopDownAnalysisContext topDownAnalysisContext,
         ModuleConfiguration moduleConfiguration,
-        JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory,
-        boolean analyzingBootstrapLibrary
+        JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory
     ) {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.bodyResolver = new BodyResolver();
         this.controlFlowAnalyzer = new ControlFlowAnalyzer();
         this.declarationsChecker = new DeclarationsChecker();
         this.descriptorResolver = new DescriptorResolver();
-        this.expressionTypingServices = new ExpressionTypingServices();
         this.project = project;
         DeclarationResolver declarationResolver = new DeclarationResolver();
         AnnotationResolver annotationResolver = new AnnotationResolver();
         CallResolver callResolver = new CallResolver();
-        OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
+        ExpressionTypingServices expressionTypingServices = new ExpressionTypingServices();
         TypeResolver typeResolver = new TypeResolver();
+        OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
         ImportsResolver importsResolver = new ImportsResolver();
         DelegationResolver delegationResolver = new DelegationResolver();
         OverloadResolver overloadResolver = new OverloadResolver();
@@ -98,11 +96,6 @@ public class InjectorForTopDownAnalyzer {
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
         this.descriptorResolver.setTypeResolver(typeResolver);
 
-        this.expressionTypingServices.setCallResolver(callResolver);
-        this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
-        this.expressionTypingServices.setProject(project);
-        this.expressionTypingServices.setTypeResolver(typeResolver);
-
         declarationResolver.setAnnotationResolver(annotationResolver);
         declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
@@ -115,6 +108,11 @@ public class InjectorForTopDownAnalyzer {
         callResolver.setExpressionTypingServices(expressionTypingServices);
         callResolver.setOverloadingConflictResolver(overloadingConflictResolver);
         callResolver.setTypeResolver(typeResolver);
+
+        expressionTypingServices.setCallResolver(callResolver);
+        expressionTypingServices.setDescriptorResolver(descriptorResolver);
+        expressionTypingServices.setProject(project);
+        expressionTypingServices.setTypeResolver(typeResolver);
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
@@ -153,10 +151,6 @@ public class InjectorForTopDownAnalyzer {
 
     public DescriptorResolver getDescriptorResolver() {
         return this.descriptorResolver;
-    }
-
-    public ExpressionTypingServices getExpressionTypingServices() {
-        return this.expressionTypingServices;
     }
 
     public Project getProject() {

@@ -27,8 +27,10 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import java.io.IOException;
 
 /**
-* @author abreslav
-*/
+ * @author abreslav
+ */
+// NOTE: After making changes, you need to re-generate the injectors.
+//       To do that, you can run either this class, or /build.xml/generateInjectors task
 public class AllInjectorsGenerator {
 
     public static void main(String[] args) throws IOException {
@@ -46,14 +48,12 @@ public class AllInjectorsGenerator {
         generator.addPublicField(ControlFlowAnalyzer.class);
         generator.addPublicField(DeclarationsChecker.class);
         generator.addPublicField(DescriptorResolver.class);
-        generator.addPublicField(ExpressionTypingServices.class);
 
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addParameter(TopDownAnalysisContext.class);
         generator.addParameter(ModuleConfiguration.class);
         generator.addParameter(JetControlFlowDataTraceFactory.class);
-        generator.addParameter(false, boolean.class, "analyzingBootstrapLibrary");
 
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzer");
     }

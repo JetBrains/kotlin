@@ -76,7 +76,7 @@ public class TopDownAnalysisContext {
                     "jetControlFlowDataTraceFactory must not be passed when analyzingBootstrapLibrary and vice versa");
         }
 
-        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, jetControlFlowDataTraceFactory, analyzingBootstrapLibrary);
+        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, jetControlFlowDataTraceFactory);
 
         this.trace = new ObservableBindingTrace(trace);
         this.analyzeCompletely = analyzeCompletely;
