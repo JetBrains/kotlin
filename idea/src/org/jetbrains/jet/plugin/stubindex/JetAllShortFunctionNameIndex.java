@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2000-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,32 @@
 
 package org.jetbrains.jet.plugin.stubindex;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 
+import java.util.Collection;
+
 /**
  * @author Nikolay Krasko
  */
-public class JetExtensionFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
-    private static final JetExtensionFunctionNameIndex instance = new JetExtensionFunctionNameIndex();
-
-    public static JetExtensionFunctionNameIndex getInstance() {
-        return instance;
+public class JetAllShortFunctionNameIndex extends StringStubIndexExtension<JetNamedFunction> {
+    private static final JetShortClassNameIndex ourInstance = new JetShortClassNameIndex();
+    public static JetShortClassNameIndex getInstance() {
+        return ourInstance;
     }
 
     @NotNull
     @Override
     public StubIndexKey<String, JetNamedFunction> getKey() {
-        return JetIndexKeys.EXTENSION_FUNCTION_SHORT_NAME_KEY;
+        return JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY;
+    }
+
+    @Override
+    public Collection<JetNamedFunction> get(final String s, final Project project, @NotNull final GlobalSearchScope scope) {
+        return super.get(s, project, new JetSourceFilterScope(scope));
     }
 }

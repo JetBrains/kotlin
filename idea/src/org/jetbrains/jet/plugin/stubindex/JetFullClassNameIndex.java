@@ -35,6 +35,7 @@ public class JetFullClassNameIndex extends StringStubIndexExtension<JetClassOrOb
         return ourInstance;
     }
 
+    @NotNull
     @Override
     public StubIndexKey<String, JetClassOrObject> getKey() {
         return JetIndexKeys.FQN_KEY;

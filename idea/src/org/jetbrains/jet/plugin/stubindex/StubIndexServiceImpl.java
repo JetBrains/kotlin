@@ -53,6 +53,8 @@ public class StubIndexServiceImpl implements StubIndexService {
                     // sink.occurrence(JetIndexKeys.EXTENSION_FUNCTION_FQNAME_KEY, name);
                 }
             }
+
+            sink.occurrence(JetIndexKeys.FUNCTIONS_SHORT_NAME_KEY, name);
         }
     }
 }

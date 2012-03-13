@@ -64,9 +64,7 @@
       <internalFileTemplate name="Kotlin Enum"/>
       <internalFileTemplate name="Kotlin Trait"/>
 
-      <!--
       <gotoSymbolContributor implementation="org.jetbrains.jet.plugin.caches.GotoSymbolContributor"/>
-      -->
 
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
@@ -139,6 +137,7 @@
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer"/>
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
       <iconProvider implementation="org.jetbrains.jet.plugin.JetIconProvider"/>
+      <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetFunctionPresenter" forClass="org.jetbrains.jet.lang.psi.JetNamedFunction"/>
       <elementDescriptionProvider implementation="org.jetbrains.jet.plugin.findUsages.JetElementDescriptionProvider"/>
       <debugger.positionManagerFactory implementation="org.jetbrains.jet.plugin.debugger.JetPositionManagerFactory"/>
       <codeInsight.implementMethod language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler"/>
@@ -152,6 +151,7 @@
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetShortFunctionNameIndex"/>
       <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex"/>
+      <stubIndex implementation="org.jetbrains.jet.plugin.stubindex.JetAllShortFunctionNameIndex"/>
 
       <editorNotificationProvider implementation="org.jetbrains.jet.plugin.quickfix.ConfigureKotlinLibraryNotificationProvider"/>
 

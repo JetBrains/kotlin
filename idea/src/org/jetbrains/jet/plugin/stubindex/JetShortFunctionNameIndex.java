@@ -35,6 +35,7 @@ public class JetShortFunctionNameIndex extends StringStubIndexExtension<JetNamed
         return ourInstance;
     }
 
+    @NotNull
     @Override
     public StubIndexKey<String, JetNamedFunction> getKey() {
         return JetIndexKeys.TOP_LEVEL_FUNCTION_SHORT_NAME_KEY;

@@ -37,6 +37,8 @@ public class JetIconProvider extends IconProvider {
     public static final Icon ICON_FOR_OBJECT = PlatformIcons.ANONYMOUS_CLASS_ICON;
     public static final Icon KOTLIN_ICON = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
 
+    public static JetIconProvider INSTANCE = new JetIconProvider();
+
     @Override
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {

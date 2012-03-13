@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
@@ -123,5 +125,10 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
     public PsiJetFunctionStub<?> getStub() {
         // TODO (stubs)
         return null;
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 }
