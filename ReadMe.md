@@ -33,7 +33,7 @@ which will build the binaries of the comppiler and put them into the 'dist' dire
 
 The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IDEA project, you can just open it in IDEA.
 
-**Note** though that you need a recent IDEA build (e.g. 11 EAP) which should **not** contain the Kotlin plugin!
+**Note** though that you need a recent IDEA build (e.g. [11 EAP](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)) which should **not** contain the Kotlin plugin!
 
 From this root project there are Run/Debug Configurations for running IDEA or the Compiler Tests for example; so if you want to try out the latest greatest IDEA plugin
 
@@ -44,7 +44,7 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 
 ### Using a pre-built Kotlin IDEA plugin
 
-In a recent IDEA EAP build install the Kotlin plugin:
+In a recent [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP) install the Kotlin plugin:
 
 Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
 
@@ -52,6 +52,34 @@ Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to 
 
 You can now open any Kotlin based projects. Its advisable you don't open the [root kotlin project](https://github.com/JetBrains/kotlin) as thats intended to be used to
 build the kotlin compiler and plugin itself; instead open the [kotlin libraries project](https://github.com/JetBrains/kotlin/libraries)
+
+
+## If you want to work on the compiler
+
+The Kotlin compiler is currently all written in Java (we plan to port it to Kotlin later). So the easiest way to work on the compiler or IDEA plugin is
+
+* download a clean [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)
+* don't install the Kotlin plugin
+* open the [root kotlin project](https://github.com/JetBrains/kotlin) in IDEA (opening the kotlin directory)
+
+You can now run the various Run/Debug Configurations such as
+
+* IDEA
+* All Compiler Tests
+* All IDEA Plugin Tests
+
+
+## If you want to work on the Kotiln libraries
+
+* download a clean [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)
+* Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
+* [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
+* open the [kotlin libraries project](https://github.com/JetBrains/kotlin/libraries)
+
+When building the current maven plugin downloads the latest distro of Kotlin. If you want to use your own local build (done via **ant dist**) then try
+
+    cd libraries
+    mvn -PlocalKotlin
 
 
 ## Kommitter links
