@@ -66,6 +66,7 @@
       <internalFileTemplate name="Kotlin Trait"/>
 
       <gotoSymbolContributor implementation="org.jetbrains.jet.plugin.caches.GotoSymbolContributor"/>
+      <lang.importOptimizer language="jet" implementationClass="org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer"/>
 
       <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
@@ -166,5 +167,7 @@
                   anchor="right"
                   icon="/org/jetbrains/jet/plugin/icons/kotlin16x16.png"
               />
+
+
   </extensions>
 </idea-plugin>
