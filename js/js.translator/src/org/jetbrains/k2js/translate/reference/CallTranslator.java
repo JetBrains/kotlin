@@ -44,7 +44,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getThisObject;
  * @author Pavel Talanov
  */
 //TODO: write tests on calling backing fields as functions
-//TODO: refactor call parameters to be used across the class
+//TODO: think of the refactoring the class
 public final class CallTranslator extends AbstractTranslator {
 
     private static class CallParameters {
@@ -96,13 +96,15 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
+        if (isExpressionAsFunction()) {
+            return expressionAsFunctionCall();
+        }
         if (isIntrinsic()) {
             return intrinsicInvocation();
         }
         if (isConstructor()) {
             return constructorCall();
         }
-        //NOTE: treat native extension function calls as usual calls
         if (isNativeExtensionFunctionCall()) {
             return nativeExtensionCall();
         }
@@ -112,13 +114,17 @@ public final class CallTranslator extends AbstractTranslator {
         if (isExtensionFunction()) {
             return extensionFunctionCall();
         }
-        return methodCall();
+        return methodCall(callParameters(resolveThisObject(/*just get qualifier if null*/ true)));
     }
 
-    @NotNull
-    private JsExpression nativeExtensionCall() {
-        receiver = getExtensionFunctionCallReceiver();
-        return methodCall();
+    private boolean isExpressionAsFunction() {
+        return callee != null;
+    }
+
+    private JsExpression expressionAsFunctionCall() {
+        assert callee != null;
+        CallParameters expressionAsFunctionParameters = new CallParameters(null, callee);
+        return methodCall(expressionAsFunctionParameters);
     }
 
     private boolean isIntrinsic() {
@@ -155,6 +161,12 @@ public final class CallTranslator extends AbstractTranslator {
         return AnnotationsUtils.isNativeObject(descriptor) && isExtensionFunction();
     }
 
+    @NotNull
+    private JsExpression nativeExtensionCall() {
+        receiver = getExtensionFunctionCallReceiver();
+        return methodCall(callParameters(resolveThisObject(/*just get qualifier if null = */ true)));
+    }
+
     private boolean isExtensionFunctionLiteral() {
         boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
                             || descriptor instanceof ExpressionAsFunctionDescriptor;
@@ -187,7 +199,7 @@ public final class CallTranslator extends AbstractTranslator {
         JsNameRef callMethodNameRef = AstUtil.newQualifiedNameRef("call");
         JsInvocation callMethodInvocation = new JsInvocation();
         callMethodInvocation.setQualifier(callMethodNameRef);
-        setQualifier(callMethodInvocation, callParameters().functionReference);
+        setQualifier(callMethodInvocation, callParameters(resolveThisObject(/*just get qualifier if null*/ true)).functionReference);
         return callMethodInvocation;
     }
 
@@ -226,8 +238,9 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression constructExtensionFunctionCall(@NotNull JsExpression receiver) {
         List<JsExpression> argumentList = generateExtensionCallArgumentList(receiver);
-        JsExpression functionReference = callParameters().functionReference;
-        setQualifier(functionReference, callParameters().receiver);
+        CallParameters callParameters = callParameters(resolveThisObject(/*just get qualifier if null*/ true));
+        JsExpression functionReference = callParameters.functionReference;
+        setQualifier(functionReference, callParameters.receiver);
         return newInvocation(functionReference, argumentList);
     }
 
@@ -241,8 +254,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression methodCall() {
-        final CallParameters callParameters = callParameters();
+    private JsExpression methodCall(@NotNull final CallParameters callParameters) {
         return callType.constructCall(callParameters.receiver, new CallType.CallConstructor() {
             @NotNull
             @Override
@@ -257,14 +269,9 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private CallParameters callParameters() {
-        // TODO: this check corresponds to expression as function, make it clearer
-        if (callee != null) {
-            return new CallParameters(null, callee);
-        }
-        JsExpression thisObject = resolveThisObject(/*just get qualifier if null*/ true);
+    private CallParameters callParameters(@Nullable JsExpression receiver) {
         JsExpression functionReference = functionReference();
-        return new CallParameters(thisObject, functionReference);
+        return new CallParameters(receiver, functionReference);
     }
 
     @NotNull
