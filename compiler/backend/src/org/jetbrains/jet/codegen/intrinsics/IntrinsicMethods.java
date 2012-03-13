@@ -72,8 +72,8 @@ public class IntrinsicMethods {
         myProject = project;
         myStdLib = stdlib;
 
-        namedMethods.put("\"kotlin.javaClass.function\"", new JavaClassFunction());
-        namedMethods.put("\"kotlin.javaClass.property\"", new JavaClassProperty());
+        namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
+        namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
@@ -246,7 +246,10 @@ public class IntrinsicMethods {
             if (annotations != null) {
                 for (AnnotationDescriptor annotation : annotations) {
                     if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
-                        intrinsicMethod = namedMethods.get(annotation.getValueArguments().get(0).getValue());
+                        Object value = annotation.getValueArguments().get(0).getValue();
+                        intrinsicMethod = namedMethods.get(value);
+                        if(intrinsicMethod != null)
+                            break;
                     }
                 }
             }

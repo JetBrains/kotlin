@@ -27,6 +27,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PsiAnnotationUtils {
 
+    private PsiAnnotationUtils() {
+    }
+
     @NotNull
     public static String getStringAttribute(@Nullable PsiAnnotation annotation, @NotNull String field, @NotNull String defaultValue) {
         return getAttribute(annotation, field, defaultValue);

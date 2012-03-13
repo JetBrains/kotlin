@@ -81,7 +81,8 @@ public abstract class AnnotationCodegen {
                     CompileTimeConstant<?> compileTimeConstant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, valueArguments.get(0));
                     assert compileTimeConstant != null;
 
-                    annotationVisitor.visit(entry.getKey().getName(), compileTimeConstant.getValue());
+                    Object value = compileTimeConstant.getValue();
+                    annotationVisitor.visit(entry.getKey().getName(), value);
                 }
 
                 annotationVisitor.visitEnd();

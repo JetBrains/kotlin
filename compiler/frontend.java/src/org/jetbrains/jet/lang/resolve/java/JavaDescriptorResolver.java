@@ -1522,13 +1522,34 @@ public class JavaDescriptorResolver {
         }
         annotation.setAnnotationType(clazz.getDefaultType());
         ArrayList<CompileTimeConstant<?>> valueArguments = new ArrayList<CompileTimeConstant<?>>();
-        if("jet.runtime.Intrinsic".equals(psiAnnotation.getQualifiedName())) {
-            // temporary hack
-            valueArguments.add(new StringValue(psiAnnotation.findAttributeValue("value").getText()));
-            annotation.setValueArguments(valueArguments); // TODO
+
+        PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
+        for (PsiNameValuePair psiNameValuePair : parameterList.getAttributes()) {
+            PsiAnnotationMemberValue value = psiNameValuePair.getValue();
+            // todo
+            assert value instanceof PsiLiteralExpression;
+            Object literalValue = ((PsiLiteralExpression) value).getValue();
+            if(literalValue instanceof String)
+                valueArguments.add(new StringValue((String) literalValue));
+            else if(literalValue instanceof Byte)
+                valueArguments.add(new ByteValue((Byte) literalValue));
+            else if(literalValue instanceof Short)
+                valueArguments.add(new ShortValue((Short) literalValue));
+            else if(literalValue instanceof Character)
+                valueArguments.add(new CharValue((Character) literalValue));
+            else if(literalValue instanceof Integer)
+                valueArguments.add(new IntValue((Integer) literalValue));
+            else if(literalValue instanceof Long)
+                valueArguments.add(new LongValue((Long) literalValue));
+            else if(literalValue instanceof Float)
+                valueArguments.add(new FloatValue((Float) literalValue));
+            else if(literalValue instanceof Double)
+                valueArguments.add(new DoubleValue((Double) literalValue));
+            else if(literalValue == null)
+                valueArguments.add(NullValue.NULL);
         }
-        else
-            annotation.setValueArguments(valueArguments); // TODO
+
+        annotation.setValueArguments(valueArguments); // TODO
         return annotation;
     }
 

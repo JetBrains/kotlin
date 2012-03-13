@@ -17,7 +17,7 @@ class JavaClassTest : TestCase() {
 
         // TODO this function fails!
         // see KT-1515
-        // loadAsserter()
+        loadAsserter()
     }
 }
 
