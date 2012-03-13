@@ -114,6 +114,15 @@ inline fun String.toFloat() = java.lang.Float.parseFloat(this).sure()
 inline fun String.toDouble() = java.lang.Double.parseDouble(this).sure()
 
 /**
+ * Converts the string into a regular expression [[Pattern]] optionally
+ * with the specified flags from [[Pattern]] or'd together
+ * so that strings can be split or matched on.
+ */
+inline fun String.toRegex(flags: Int=0): java.util.regex.Pattern {
+    return java.util.regex.Pattern.compile(this, flags).sure()
+}
+
+/**
 Iterator for characters of given CharSequence
 */
 inline fun CharSequence.iterator() : CharIterator = object: jet.CharIterator() {

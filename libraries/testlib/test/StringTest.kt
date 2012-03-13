@@ -33,4 +33,17 @@ class StringTest() : TestCase() {
         assertEquals("hey", s.orEmpty())
         assertEquals("", ns.orEmpty())
     }
+
+    fun testToShort() {
+        assertEquals(77.toShort(), "77".toShort())
+    }
+
+    fun testToInt() {
+        assertEquals(77, "77".toInt())
+    }
+
+    fun testToLong() {
+        assertEquals(77.toLong(), "77".toLong())
+    }
+
 }
