@@ -205,7 +205,25 @@ public class JetSourceNavigationHelper {
         return getSourcePropertyOrFunction(decompiledFunction, decompiledFunction.getReceiverTypeRef(), new Matcher<JetFunction, FunctionDescriptor>() {
             @Override
             public boolean areSame(JetFunction declaration, FunctionDescriptor descriptor) {
-                // TODO check parameters
+                List<JetParameter> declarationParameters = declaration.getValueParameters();
+                List<ValueParameterDescriptor> descriptorParameters = descriptor.getValueParameters();
+                if (descriptorParameters.size() != declarationParameters.size()) {
+                    return false;
+                }
+
+                for (int i = 0; i < descriptorParameters.size(); i++) {
+                    ValueParameterDescriptor descriptorParameter = descriptorParameters.get(i);
+                    JetParameter declarationParameter = declarationParameters.get(i);
+                    JetTypeReference typeReference = declarationParameter.getTypeReference();
+                    if (typeReference == null) {
+                        return false;
+                    }
+                    String declarationTypeText = typeReference.getText();
+                    String descriptorParameterText = DescriptorRenderer.TEXT.renderType(descriptorParameter.getType());
+                    if (!declarationTypeText.equals(descriptorParameterText)) {
+                        return false;
+                    }
+                }
                 return true;
             }
 
