@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
-import org.jetbrains.jet.plugin.compiler.PathUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -63,12 +63,14 @@ public class CompileEnvironment {
 
     private boolean ignoreErrors = false;
     private boolean stubs = false;
+    private final boolean verbose;
 
     public CompileEnvironment() {
-        this(MessageRenderer.PLAIN);
+        this(MessageRenderer.PLAIN, false);
     }
 
-    public CompileEnvironment(MessageRenderer messageRenderer) {
+    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose) {
+        this.verbose = verbose;
         myRootDisposable = new Disposable() {
             @Override
             public void dispose() {
@@ -179,7 +181,7 @@ public class CompileEnvironment {
 
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
-            CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer);
+            CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer, verbose);
             compileEnvironment.setIgnoreErrors(ignoreErrors);
             compileEnvironment.setErrorStream(myErrorStream);
             // copy across any compiler plugins
@@ -204,11 +206,11 @@ public class CompileEnvironment {
     }
 
     public List<Module> loadModuleScript(String moduleFile) {
-        CompileSession scriptCompileSession = new CompileSession(myEnvironment);
+        CompileSession scriptCompileSession = newCompileSession();
         scriptCompileSession.addSources(moduleFile);
         ensureRuntime();
 
-        if (!scriptCompileSession.analyze(myErrorStream, myMessageRenderer)) {
+        if (!scriptCompileSession.analyze()) {
             return null;
         }
         final ClassFileFactory factory = scriptCompileSession.generate(true);
@@ -242,7 +244,7 @@ public class CompileEnvironment {
     }
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
-        CompileSession moduleCompileSession = new CompileSession(myEnvironment);
+        CompileSession moduleCompileSession = newCompileSession();
         moduleCompileSession.setStubs(stubs);
 
         if (moduleBuilder.getSourceFiles().isEmpty()) {
@@ -267,7 +269,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!moduleCompileSession.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
+        if (!moduleCompileSession.analyze() && !ignoreErrors) {
             return null;
         }
         return moduleCompileSession.generate(false);
@@ -351,10 +353,10 @@ public class CompileEnvironment {
     }
 
     public ClassLoader compileText(String code) {
-        CompileSession session = new CompileSession(myEnvironment);
+        CompileSession session = newCompileSession();
         session.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
 
-        if (!session.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
+        if (!session.analyze() && !ignoreErrors) {
             return null;
         }
 
@@ -363,7 +365,7 @@ public class CompileEnvironment {
     }
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
-        CompileSession session = new CompileSession(myEnvironment);
+        CompileSession session = newCompileSession();
         session.setStubs(stubs);
 
         session.addSources(sourceFileOrDir);
@@ -379,7 +381,7 @@ public class CompileEnvironment {
 
         ensureRuntime();
 
-        if (!session.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
+        if (!session.analyze() && !ignoreErrors) {
             return false;
         }
 
@@ -398,6 +400,10 @@ public class CompileEnvironment {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
         }
         return true;
+    }
+
+    private CompileSession newCompileSession() {
+        return new CompileSession(myEnvironment, myMessageRenderer, myErrorStream, verbose);
     }
 
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
-
-/**
- * @author abreslav
+/*
+ * @author max
  */
-public enum Severity {
-    LOGGING,
-    INFO,
-    ERROR,
-    WARNING
+package org.jetbrains.jet.utils;
+
+public interface Progress {
+    Progress DEAF = new Progress() {
+        @Override
+        public void log(String message) {
+        }
+    };
+    void log(String message);
 }

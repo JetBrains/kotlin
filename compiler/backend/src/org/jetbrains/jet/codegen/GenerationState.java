@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.utils.Progress;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,9 +52,15 @@ public class GenerationState {
     private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
     private final JetStandardLibrary standardLibrary;
     private final IntrinsicMethods intrinsics;
+    private final Progress progress;
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
+        this(project, builderFactory, Progress.DEAF);
+    }
+
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress) {
         this.project = project;
+        this.progress = progress;
         this.standardLibrary = JetStandardLibrary.getInstance();
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
@@ -62,6 +69,10 @@ public class GenerationState {
     @NotNull
     public ClassFileFactory getFactory() {
         return factory;
+    }
+
+    public Progress getProgress() {
+        return progress;
     }
 
     public Project getProject() {
@@ -133,14 +144,15 @@ public class GenerationState {
         typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
         bindingContexts.push(bindingContext);
         try {
-            for (JetFile namespace : files) {
-                if (namespace == null) throw new IllegalArgumentException("A null file given for compilation");
+            for (JetFile file : files) {
+                if (file == null) throw new IllegalArgumentException("A null file given for compilation");
+                VirtualFile vFile = file.getVirtualFile();
+                progress.log("For source: " + vFile.getPath());
                 try {
-                    generateNamespace(namespace);
+                    generateNamespace(file);
                 }
                 catch (Throwable e) {
-                    VirtualFile virtualFile = namespace.getContainingFile().getVirtualFile();
-                    errorHandler.reportException(e, virtualFile == null ? "no file" : virtualFile.getUrl());
+                    errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
                     DiagnosticUtils.throwIfRunningOnServer(e);
                     if (ApplicationManager.getApplication().isInternal()) {
                         e.printStackTrace();
@@ -187,10 +199,5 @@ public class GenerationState {
         }
 
         return answer.toString();
-    }
-
-    @NotNull
-    public String transformFileName(@NotNull String fileName) {
-        return fileName;
     }
 }

@@ -69,7 +69,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            CompileSession session = new CompileSession(myEnvironment);
+            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false);
 
             myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
 
@@ -85,7 +85,7 @@ public class TestlibTest extends CodegenTestCase {
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
-            if (!session.analyze(System.err, MessageRenderer.PLAIN)) {
+            if (!session.analyze()) {
                 throw new RuntimeException("There were compilation errors");
             }
 

@@ -21,12 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
-import org.jetbrains.jet.codegen.signature.JvmClassSignature;
-import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
-import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
-import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
+import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -115,7 +110,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                       signature.getSuperclassName(),
                       signature.getInterfaces().toArray(new String[0])
         );
-        v.visitSource(state.transformFileName(myClass.getContainingFile().getName()), null);
+        v.visitSource(myClass.getContainingFile().getName(), null);
 
         ClassDescriptor container = getContainingClassDescriptor(descriptor);
         if(container != null) {

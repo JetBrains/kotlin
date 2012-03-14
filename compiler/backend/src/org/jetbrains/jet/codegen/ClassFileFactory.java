@@ -38,6 +38,7 @@ public class ClassFileFactory {
     }
 
     ClassBuilder newVisitor(String filePath) {
+        state.getProgress().log("Emitting: " + filePath);
         final ClassBuilder answer = builderFactory.newClassBuilder();
         generators.put(filePath, answer);
         return answer;

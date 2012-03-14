@@ -73,7 +73,7 @@ public class KotlinCompiler {
         System.setProperty("java.awt.headless", "true");
 
         MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
-        CompileEnvironment environment = new CompileEnvironment(messageRenderer);
+        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose);
         try {
             configureEnvironment(environment, arguments, errStream);
 

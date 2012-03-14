@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.objectweb.asm.Opcodes;
 
 import java.util.List;
@@ -70,7 +70,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
                       "java/lang/Object",
                       new String[0]
         );
-        v.visitSource(state.transformFileName(myClass.getContainingFile().getName()), null);
+        v.visitSource(myClass.getContainingFile().getName(), null);
     }
 
     private String jvmName() {

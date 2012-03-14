@@ -17,7 +17,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.plugin.compiler;
+package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.vfs.VirtualFile;
