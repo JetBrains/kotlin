@@ -1,46 +1,56 @@
-package kotlin.template.experiment2
+package kotlin.template
 
 import kotlin.dom.*
 import org.w3c.dom.Node
+import com.sun.org.apache.xalan.internal.xsltc.dom.UnionIterator
 
+// TODO this class should move into the runtime
+// in jet.StringTemplate
+class StringTemplate(val values: Array<Any?>) {
 
-/**
- * Creates a string template from some constant string expressions and some dynamic expressions.
- */
-class StringTemplate(val constantText : Array<String>, val expressions : Array<Any?>) {
-
-    /**
-     * Converts the given string template to a String
-     */
-    fun toString(): String = toString(ToStringFormatter)
-
-    fun toString(formatter : ValueFormatter): String {
-        val buffer = StringBuilder()
-        append(buffer, formatter)
-        return buffer.toString() ?: ""
+    fun toString(): String {
+        val out = StringBuilder()
+        forEach{ out.append(it) }
+        return out.toString() ?: ""
     }
 
-    fun append(buffer: Appendable, formatter: ValueFormatter): Unit {
-        val expressionSize = expressions.size
-        for (i in 0.upto(constantText.size - 1)) {
-            buffer.append(constantText[i])
-            if (i < expressionSize) {
-                val value = expressions[i]
-                formatter.format(buffer, value)
-            }
+    /**
+     * Performs the given function on each value in the collection
+     */
+    fun forEach(fn: (Any?) -> Unit): Unit {
+        for (v in values) {
+            fn(v)
         }
     }
-
-    /**
-     * Converts the given template to HTML with an optional formatter
-     */
-    fun toHtml(formatter: HtmlFormatter = HtmlFormatter()): String = toString(formatter)
-
-    /**
-     * Appends the HTML representation of this template to the given appendable
-     */
-    fun appendHtml(buffer: Appendable, formatter: HtmlFormatter = HtmlFormatter()): String = toString(formatter)
 }
+
+fun StringTemplate.toString(formatter : ValueFormatter): String {
+    val buffer = StringBuilder()
+    append(buffer, formatter)
+    return buffer.toString() ?: ""
+}
+
+fun StringTemplate.append(out: Appendable, formatter: ValueFormatter): Unit {
+    var constantText = true
+    this.forEach {
+        if (constantText) {
+            if (it == null) {
+                throw IllegalStateException("No constant checks should be null");
+            } else {
+                val text = it.toString()
+                if (text != null) {
+                    out.append(text)
+                }
+            }
+        } else {
+            formatter.format(out, it)
+        }
+        constantText = !constantText
+    }
+}
+
+
+fun StringTemplate.toHtml(formatter : HtmlFormatter = HtmlFormatter()): String = toString(formatter)
 
 /**
  * Represents a formatter of values in a [[StringTemplate]] which understands how to escape

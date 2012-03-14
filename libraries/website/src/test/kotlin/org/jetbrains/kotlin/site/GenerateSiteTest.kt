@@ -32,7 +32,6 @@ class GenerateSiteTest : TestCase() {
         config.title = "Kotlin API ($version)"
         config.version = version
         config.ignorePackages.add("org.jetbrains.kotlin")
-        config.ignorePackages.add("kotlin.template.experiment")
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
