@@ -81,7 +81,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testFilterIntoSortedSet() {
+    fun testFilterIntoSet() {
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
@@ -93,6 +93,24 @@ class CollectionTest() : TestCase() {
 
         assertTrue {
             foo is HashSet<String>
+        }
+    }
+
+    fun testFilterIntoSortedSet() {
+        // TODO would be nice to avoid the <String>
+        val d = arrayList("foo", "bar", "fuzz")
+        val foo = d.filterTo(sortedSet<String>()){it.startsWith("f")}
+
+        assertTrue {
+            foo.all{it.startsWith("f")}
+        }
+
+        assertEquals(2, foo.size)
+        assertEquals(sortedSet("foo", "fuzz"), foo)
+
+        assertTrue {
+            // is a bit heavy-handed to reveal the backing impl, but for now so be it. 
+            foo is TreeSet<String>
         }
     }
 
