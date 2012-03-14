@@ -82,7 +82,7 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addToClasspath(junitJar);
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/testlib/test"));
+            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             if (!session.analyze(System.err, MessageRenderer.PLAIN)) {
