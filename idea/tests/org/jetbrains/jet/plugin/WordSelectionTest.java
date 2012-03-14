@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet;
+package org.jetbrains.jet.plugin;
 
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;

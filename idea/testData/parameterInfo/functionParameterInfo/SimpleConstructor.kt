@@ -6,4 +6,4 @@ class B(): A(5) {
         A(<caret>3)
     }
 }
-//Text: (x: Int), Disabled: false, Strikeout: false, Green: true
+//Text: (x: jet.Int), Disabled: false, Strikeout: false, Green: true

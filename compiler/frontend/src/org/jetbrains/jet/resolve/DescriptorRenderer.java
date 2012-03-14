@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Renderer;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -36,6 +37,13 @@ import java.util.List;
  * @author abreslav
  */
 public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
+
+    public static final DescriptorRenderer COMPACT = new DescriptorRenderer() {
+        @Override
+        protected boolean shouldRenderDefinedIn() {
+            return false;
+        }
+    };
 
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
 
@@ -102,7 +110,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     private String renderDefaultType(JetType type) {
         StringBuilder sb = new StringBuilder();
-        sb.append(type.getConstructor());
+        ClassifierDescriptor cd = type.getConstructor().getDeclarationDescriptor();
+        sb.append(cd == null || cd instanceof TypeParameterDescriptor
+                  ? type.getConstructor() : DescriptorUtils.getFQName(cd));
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
             appendTypeProjections(sb, type.getArguments());
@@ -182,8 +192,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         if (declarationDescriptor == null) return lt() + "null>";
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
-        appendDefinedIn(declarationDescriptor, stringBuilder);
+        if (shouldRenderDefinedIn()) {
+            appendDefinedIn(declarationDescriptor, stringBuilder);
+        }
         return stringBuilder.toString();
+    }
+
+    protected boolean shouldRenderDefinedIn() {
+        return true;
     }
 
     private void appendDefinedIn(DeclarationDescriptor declarationDescriptor, StringBuilder stringBuilder) {
@@ -198,7 +214,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     public String renderAsObject(@NotNull ClassDescriptor classDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         rootVisitor.renderClassDescriptor(classDescriptor, stringBuilder, "object");
-        appendDefinedIn(classDescriptor, stringBuilder);
+        if (shouldRenderDefinedIn()) {
+            appendDefinedIn(classDescriptor, stringBuilder);
+        }
         return stringBuilder.toString();
     }
 
@@ -277,16 +295,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         private void renderModality(Modality modality, StringBuilder builder) {
             switch (modality) {
                 case FINAL:
-                    builder.append("final");
+                    // do not need: final by default
                     break;
                 case OPEN:
-                    builder.append("open");
+                    builder.append("open ");
                     break;
                 case ABSTRACT:
-                    builder.append("abstract");
+                    builder.append("abstract ");
                     break;
             }
-            builder.append(" ");
         }
 
         @Override
@@ -342,8 +359,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                         builder.append(", ");
                     }
                 }
-                builder.append("> ");
-                return true;
+                builder.append(">");
             }
             return false;
         }
@@ -365,19 +381,38 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitClassDescriptor(ClassDescriptor descriptor, StringBuilder builder) {
-            String keyword = descriptor.getKind() == ClassKind.TRAIT ? "trait" : "class";
+            String keyword;
+            switch (descriptor.getKind()) {
+                case TRAIT:
+                    keyword = "trait";
+                    break;
+                case ENUM_CLASS:
+                    keyword = "enum class";
+                    break;
+                case OBJECT:
+                    keyword = "object";
+                    break;
+                default:
+                    keyword = "class";
+            }
             renderClassDescriptor(descriptor, builder, keyword);
             return super.visitClassDescriptor(descriptor, builder);
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
-            renderModality(descriptor.getModality(), builder);
-            builder.append(renderKeyword(keyword)).append(" ");
-            renderName(descriptor, builder);
-            renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                renderModality(descriptor.getModality(), builder);
+            }
+            builder.append(renderKeyword(keyword));
+            if (descriptor.getKind() != ClassKind.OBJECT) {
+                builder.append(" ");
+                renderName(descriptor, builder);
+                renderTypeParameters(descriptor.getTypeConstructor().getParameters(), builder);
+            }
             if (!descriptor.equals(JetStandardClasses.getNothing())) {
                 Collection<? extends JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
-                if (!supertypes.isEmpty()) {
+                if (supertypes.isEmpty() || supertypes.size() == 1 && JetStandardClasses.isAny(supertypes.iterator().next())) {
+                } else {
                     builder.append(" : ");
                     for (Iterator<? extends JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                         JetType supertype = iterator.next();
