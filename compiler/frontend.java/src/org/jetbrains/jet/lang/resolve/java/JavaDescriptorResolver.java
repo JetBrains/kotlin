@@ -57,6 +57,8 @@ public class JavaDescriptorResolver {
     
     public static final String JAVA_ROOT = "<java_root>";
 
+    public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
+
     /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_generic_method>") {
 
         @Override
@@ -851,7 +853,7 @@ public class JavaDescriptorResolver {
         ResolverNamespaceData namespaceData = new ResolverNamespaceData();
         String name = psiPackage.getName();
         namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
-                resolveParentDescriptor(psiPackage),
+                (NamespaceDescriptorParent) resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 name == null ? JAVA_ROOT : name,
                 name == null ? FqName.ROOT : new FqName(psiPackage.getQualifiedName()),
@@ -865,10 +867,11 @@ public class JavaDescriptorResolver {
         return namespaceData;
     }
 
+    @NotNull
     private DeclarationDescriptor resolveParentDescriptor(@NotNull PsiPackage psiPackage) {
         PsiPackage parentPackage = psiPackage.getParentPackage();
         if (parentPackage == null) {
-            return null;
+            return FAKE_ROOT_MODULE;
         }
         return resolveNamespace(parentPackage);
     }
@@ -883,7 +886,7 @@ public class JavaDescriptorResolver {
 
         ResolverNamespaceData namespaceData = new ResolverNamespaceData();
         namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
-                resolveParentDescriptor(psiClass),
+                (NamespaceDescriptorParent) resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
                 new FqName(psiClass.getQualifiedName()),

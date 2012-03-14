@@ -19,6 +19,7 @@ package org.jetbrains.jet.di;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
@@ -53,6 +54,7 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
         generator.addParameter(TopDownAnalysisContext.class);
         generator.addParameter(ModuleConfiguration.class);
+        generator.addParameter(ModuleDescriptor.class);
         generator.addParameter(JetControlFlowDataTraceFactory.class);
 
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzer");

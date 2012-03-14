@@ -85,8 +85,8 @@ public class JetPsiCheckerMultifileTest extends JetQuickFixMultiFileTest {
             }
         });
 
-        assertTrue("No main file for test", mainFiles.size() > 0);
-        assertTrue("Too many main files for the test", mainFiles.size() <= 1);
+        assertTrue("No main file for test in " + dir, mainFiles.size() > 0);
+        assertTrue("Too many main files for the test in " + dir, mainFiles.size() <= 1);
 
         final Collection<File> dataFiles = Collections2.filter(allTestFiles, new Predicate<File>() {
             @Override

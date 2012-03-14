@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -82,35 +83,38 @@ public class TopDownAnalyzer {
 
 
     public static void process(
-            Project project, @NotNull BindingTrace trace,
+            @NotNull Project project,
+            @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLike owner,
+            @NotNull NamespaceLikeBuilder owner,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull ModuleConfiguration configuration
     ) {
-        process(project, trace, outerScope, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
+        process(project, trace, outerScope, moduleDescriptor, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
     }
 
     private static void process(
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLike owner,
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull NamespaceLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull ModuleConfiguration configuration,
             boolean declaredLocally) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, declaredLocally, false, flowDataTraceFactory);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, moduleDescriptor, declaredLocally, false, flowDataTraceFactory);
         context.getInjector().getTopDownAnalyzer().doProcess(context, outerScope, owner, declarations);
 
     }
 
     private void doProcess(
             TopDownAnalysisContext context, JetScope outerScope,
-            NamespaceLike owner,
+            NamespaceLikeBuilder owner,
             Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
         context.debug("Enter");
@@ -153,7 +157,7 @@ public class TopDownAnalyzer {
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysFalse(), ModuleConfiguration.EMPTY, false, true, null);
+        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysFalse(), ModuleConfiguration.EMPTY, JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, false, true, null);
         ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
             context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
@@ -169,9 +173,18 @@ public class TopDownAnalyzer {
             @NotNull Project project,
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
-        process(project, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+
+        ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for objec>");
+
+        process(project, trace, outerScope, moduleDescriptor, new NamespaceLikeBuilder() {
+
+            @NotNull
+            @Override
+            public DeclarationDescriptor getOwnerForChildren() {
+                return containingDeclaration;
+            }
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {

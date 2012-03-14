@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaNamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -413,23 +414,12 @@ class NamespaceComparator {
             sb.append(s);
         }
 
-        public void serialize(ModuleDescriptor module) {
-            // nop
-        }
-
         public void serialize(ClassDescriptor clazz) {
-            new NamespacePrefixSerializer(sb).serialize(clazz.getContainingDeclaration());
-            sb.append(clazz.getName());
+            sb.append(DescriptorUtils.getFQName(clazz));
         }
 
         public void serialize(NamespaceDescriptor ns) {
-            if (isRootNs(ns)) {
-                return;
-            }
-            if (ns.getContainingDeclaration() != null) {
-                new NamespacePrefixSerializer(sb).serialize(ns.getContainingDeclaration());
-            }
-            sb.append(ns.getName());
+            sb.append(DescriptorUtils.getFQName(ns));
         }
 
         public void serialize(TypeParameterDescriptor param) {

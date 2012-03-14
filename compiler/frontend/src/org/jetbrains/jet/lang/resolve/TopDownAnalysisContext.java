@@ -67,6 +67,7 @@ public class TopDownAnalysisContext {
             final BindingTrace trace,
             Predicate<PsiFile> analyzeCompletely,
             @NotNull final ModuleConfiguration configuration,
+            @NotNull final ModuleDescriptor moduleDescriptor,
             boolean declaredLocally,
             boolean analyzingBootstrapLibrary,
             @Nullable final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory) {
@@ -76,7 +77,7 @@ public class TopDownAnalysisContext {
                     "jetControlFlowDataTraceFactory must not be passed when analyzingBootstrapLibrary and vice versa");
         }
 
-        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, jetControlFlowDataTraceFactory);
+        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, moduleDescriptor, jetControlFlowDataTraceFactory);
 
         this.trace = new ObservableBindingTrace(trace);
         this.analyzeCompletely = analyzeCompletely;

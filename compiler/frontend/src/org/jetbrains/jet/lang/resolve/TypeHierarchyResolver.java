@@ -56,6 +56,8 @@ public class TypeHierarchyResolver {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private ModuleConfiguration configuration;
+    @NotNull
+    private ModuleDescriptor moduleDescriptor;
 
     // state
     private LinkedList<MutableClassDescriptor> topologicalOrder;
@@ -80,8 +82,12 @@ public class TypeHierarchyResolver {
         this.configuration = configuration;
     }
 
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
+    }
 
-    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends PsiElement> declarations) {
+    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner, @NotNull Collection<? extends PsiElement> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         importsResolver.processTypeImports();
@@ -105,13 +111,13 @@ public class TypeHierarchyResolver {
     private void collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
             @NotNull final JetScope outerScopeForStatic,
-            @NotNull final NamespaceLike owner,
+            @NotNull final NamespaceLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations) {
         for (PsiElement declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitJetFile(JetFile file) {
-                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(file, owner, outerScope);
+                    NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorPathIfNeeded(file, outerScope);
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
                     WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
@@ -123,7 +129,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, outerScope, getClassKind(klass));
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), outerScope, getClassKind(klass));
                     context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
@@ -165,8 +171,8 @@ public class TypeHierarchyResolver {
                     classObjectDescriptor.addObjectDescriptor(mutableClassDescriptor);
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, classKind) {
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLikeBuilder owner, JetScope scope, ClassKind classKind) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), scope, classKind) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
@@ -210,7 +216,7 @@ public class TypeHierarchyResolver {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
-                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
+                        NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
                         switch (status) {
                             case DUPLICATE:
                                 context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));
@@ -225,19 +231,26 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner, JetScope outerScope) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, JetScope outerScope) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
-        NamespaceLike currentOwner = owner;
+        if (moduleDescriptor.getRootNs() == null) {
+            createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true);
+        }
+
+        NamespaceLikeBuilder currentOwner = moduleDescriptor.getRootNs();
+        if (currentOwner == null) {
+            throw new IllegalStateException("must be initialized 5 lines above");
+        }
 
         for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
-            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName);
+            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName, false);
 
             currentOwner = namespaceDescriptor;
 
-            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
+            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner.getOwnerForChildren());
             context.getTrace().record(RESOLUTION_SCOPE, nameExpression, outerScope);
 
             outerScope = namespaceDescriptor.getMemberScope();
@@ -246,19 +259,34 @@ public class TypeHierarchyResolver {
         String name = JetPsiUtil.safeName(namespaceHeader.getName());
         context.getTrace().record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
 
-        return createNamespaceDescriptorIfNeeded(file, currentOwner, name);
+        return createNamespaceDescriptorIfNeeded(file, currentOwner, name, false);
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLike owner, String name) {
-        NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLikeBuilder owner, @NotNull String name, boolean root) {
+        FqName ownerFqName = DescriptorUtils.getFQName(owner.getOwnerForChildren());
+
+        FqName fqName;
+        NamespaceDescriptorImpl namespaceDescriptor;
+        if (root) {
+            if (!ownerFqName.equals(FqName.ROOT) || !(owner instanceof ModuleDescriptor)) {
+                throw new IllegalStateException();
+            }
+            fqName = FqName.ROOT;
+            namespaceDescriptor = ((ModuleDescriptor) owner).getRootNs();
+        }
+        else {
+            fqName = ownerFqName.child(name);
+            namespaceDescriptor = owner.getNamespace(name);
+        }
+
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(
-                    owner.getOriginal(),
+                    (NamespaceDescriptorParent) owner.getOwnerForChildren(),
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );
-            context.getTrace().record(FQNAME_TO_NAMESPACE_DESCRIPTOR, DescriptorUtils.getFQName(namespaceDescriptor), namespaceDescriptor);
+            context.getTrace().record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);

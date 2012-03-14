@@ -102,7 +102,7 @@ public class AnalyzingUtils {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull BindingTraceContext bindingTraceContext) {
 
-        ModuleDescriptor owner = new ModuleDescriptor("<module>");
+        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, owner,
@@ -136,7 +136,13 @@ public class AnalyzingUtils {
         });
 
         TopDownAnalyzer.process(project, bindingTraceContext, scope,
-            new NamespaceLike.Adapter(owner) {
+            new NamespaceLikeBuilder() {
+
+                @NotNull
+                @Override
+                public DeclarationDescriptor getOwnerForChildren() {
+                    return owner;
+                }
 
                 @Override
                 public NamespaceDescriptorImpl getNamespace(String name) {
@@ -172,7 +178,7 @@ public class AnalyzingUtils {
                 public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                     throw new IllegalStateException("Must be guaranteed not to happen by the parser");
                 }
-            },
+            }, owner,
             files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
 
         return bindingTraceContext.getBindingContext();
