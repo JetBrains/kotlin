@@ -23,11 +23,13 @@ class Parameter {
     private final Class<?> type;
     private final String name;
     private final Field field;
+    private final boolean required;
 
-    Parameter(Class<?> type, String name, Field field) {
+    Parameter(Class<?> type, String name, Field field, boolean required) {
         this.type = type;
         this.name = name;
         this.field = field;
+        this.required = required;
     }
 
     public Class<?> getType() {
@@ -40,6 +42,10 @@ class Parameter {
 
     public Field getField() {
         return field;
+    }
+
+    public boolean isRequired() {
+        return required;
     }
 
     @Override

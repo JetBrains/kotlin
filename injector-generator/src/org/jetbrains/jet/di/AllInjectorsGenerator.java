@@ -55,7 +55,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(TopDownAnalysisContext.class);
         generator.addParameter(ModuleConfiguration.class);
         generator.addParameter(ModuleDescriptor.class);
-        generator.addParameter(JetControlFlowDataTraceFactory.class);
+        generator.addParameter(JetControlFlowDataTraceFactory.class, false);
 
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzer");
     }
