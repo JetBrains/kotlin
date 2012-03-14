@@ -20,10 +20,10 @@ package jet;
  *
  * It is represented as an object that contains a Tuple
  */
-public class StringTemplate<T extends Tuple> {
-    private final T tuple;
+public class StringTemplate {
+    private final Tuple tuple;
 
-    public StringTemplate(T tuple) {
+    public StringTemplate(Tuple tuple) {
         this.tuple = tuple;
     }
 
@@ -50,11 +50,11 @@ public class StringTemplate<T extends Tuple> {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        tuple.forEach(new Function1<Object,Void>(){
+        tuple.forEach(new Function1<Object,Tuple0>(){
             @Override
-            public Void invoke(Object o) {
+            public Tuple0 invoke(Object o) {
                 builder.append(o);
-                return null;
+                return Tuple0.INSTANCE;
             }
         });
         return builder.toString();
@@ -62,9 +62,20 @@ public class StringTemplate<T extends Tuple> {
     }
 
     /**
-     * Returns the values in the string template
+     * Returns the tuple of values in the string template
      */
-    public T getValues() {
+    public Tuple getValues() {
         return tuple;
     }
+
+
+    /**
+     * Performs the given function on each value in the string template
+     */
+    public void forEach(Function1<Object, Tuple0> fn) {
+        if (tuple != null) {
+            tuple.forEach(fn);
+        }
+    }
+
 }

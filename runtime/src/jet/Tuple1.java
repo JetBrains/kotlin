@@ -46,7 +46,7 @@ public class Tuple1<T1> extends Tuple {
     }
 
     @Override
-    public void forEach(Function1<Object, Void> fn) {
+    public void forEach(Function1<Object, Tuple0> fn) {
         fn.invoke(_1);
     }
 
