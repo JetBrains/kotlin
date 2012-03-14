@@ -7,6 +7,6 @@ open class A(x: Int) {
     }
 }
 /*
-Text: ([x: Int]), Disabled: false, Strikeout: false, Green: false
-Text: ([y: Boolean = true], [x: Int], [z: Long = 1234567...]), Disabled: false, Strikeout: false, Green: true
+Text: ([x: jet.Int]), Disabled: false, Strikeout: false, Green: false
+Text: ([y: jet.Boolean = true], [x: jet.Int], [z: jet.Long = 1234567...]), Disabled: false, Strikeout: false, Green: true
 */

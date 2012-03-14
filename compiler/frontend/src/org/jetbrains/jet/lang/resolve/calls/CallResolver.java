@@ -22,8 +22,8 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -632,6 +633,9 @@ public class CallResolver {
                     if (typeReference != null) {
                         typeArguments.add(typeResolver.resolveType(scope, typeReference, temporaryTrace, true));
                     }
+                    else {
+                        typeArguments.add(ErrorUtils.createErrorType("Star projection in a call"));
+                    }
                 }
                 int expectedTypeArgumentCount = candidate.getTypeParameters().size();
                 if (expectedTypeArgumentCount == jetTypeArguments.size()) {
@@ -731,7 +735,13 @@ public class CallResolver {
         }
 
         for (JetTypeProjection typeProjection : call.getTypeArguments()) {
-            typeResolver.resolveType(scope, typeProjection.getTypeReference(), trace, true);
+            JetTypeReference typeReference = typeProjection.getTypeReference();
+            if (typeReference == null) {
+                trace.report(Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(typeProjection));
+            }
+            else {
+                typeResolver.resolveType(scope, typeReference, trace, true);
+            }
         }
     }
 
@@ -958,8 +968,9 @@ public class CallResolver {
             TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
             JetType typeArgument = typeArguments.get(i);
             JetTypeReference typeReference = jetTypeArguments.get(i).getTypeReference();
-            assert typeReference != null;
-            descriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            if (typeReference != null) {
+                descriptorResolver.checkBounds(typeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            }
         }
     }
 

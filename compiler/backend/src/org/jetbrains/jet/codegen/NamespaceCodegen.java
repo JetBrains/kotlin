@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -144,8 +145,8 @@ public class NamespaceCodegen {
         }
 
         String name = fqName.getFqName().replace('.', '/');
-        if(name.startsWith("<java_root>")) {
-            name = name.substring("<java_root>".length() + 1, name.length());
+        if (name.startsWith(JavaDescriptorResolver.JAVA_ROOT)) {
+            name = name.substring(JavaDescriptorResolver.JAVA_ROOT.length() + 1, name.length());
         }
         if (namespace) {
             name += "/" + JvmAbi.PACKAGE_CLASS;

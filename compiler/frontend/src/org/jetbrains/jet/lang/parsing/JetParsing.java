@@ -396,7 +396,7 @@ public class JetParsing extends AbstractJetParsing {
         typeReference.done(TYPE_REFERENCE);
         reference.done(CONSTRUCTOR_CALLEE);
 
-        parseTypeArgumentList(-1);
+        parseTypeArgumentList();
 
         if (at(LPAR)) {
             myExpressionParsing.parseValueArgumentList();
@@ -1295,11 +1295,17 @@ public class JetParsing extends AbstractJetParsing {
      *   : typeDescriptor "?"
      */
     public void parseTypeRef() {
-        PsiBuilder.Marker typeRefMarker = parseTypeRefContents();
+        parseTypeRef(TokenSet.EMPTY);
+    }
+
+    public void parseTypeRef(TokenSet extraRecoverySet) {
+        PsiBuilder.Marker typeRefMarker = parseTypeRefContents(extraRecoverySet);
         typeRefMarker.done(TYPE_REFERENCE);
     }
 
-    private PsiBuilder.Marker parseTypeRefContents() {
+    // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
+    // on expression-indicating symbols or not
+    private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
         // Disabling token merge is required for cases like
         //    Int?.(Foo) -> Bar
         // we don't support this case now
@@ -1318,7 +1324,7 @@ public class JetParsing extends AbstractJetParsing {
 
             // This may be a function parameter list or just a prenthesized type
             advance(); // LPAR
-            parseTypeRefContents().drop(); // parenthesized types, no reference element around it is needed
+            parseTypeRefContents(TokenSet.EMPTY).drop(); // parenthesized types, no reference element around it is needed
 
             if (at(RPAR)) {
                 advance(); // RPAR
@@ -1350,7 +1356,7 @@ public class JetParsing extends AbstractJetParsing {
         else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOPLEVEL_OBJECT_FIRST,
-                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON)));
+                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON), extraRecoverySet));
         }
 
         while (at(QUEST)) {
@@ -1409,7 +1415,7 @@ public class JetParsing extends AbstractJetParsing {
                 break;
             }
 
-            parseTypeArgumentList(-1);
+            parseTypeArgumentList();
             if (!at(DOT)) {
                 break;
             }
@@ -1446,11 +1452,18 @@ public class JetParsing extends AbstractJetParsing {
     /*
      *  (optionalProjection type){","}
      */
-    public PsiBuilder.Marker parseTypeArgumentList(int expectedGtOffset) {
+    public PsiBuilder.Marker parseTypeArgumentList() {
         if (!at(LT)) return null;
 
         PsiBuilder.Marker list = mark();
 
+        tryParseTypeArgumentList(TokenSet.EMPTY);
+
+        list.done(TYPE_ARGUMENT_LIST);
+        return list;
+    }
+
+    public boolean tryParseTypeArgumentList(TokenSet extraRecoverySet) {
         myBuilder.disableNewlines();
         advance(); // LT
 
@@ -1465,27 +1478,24 @@ public class JetParsing extends AbstractJetParsing {
 
             if (at(MUL)) {
                 advance(); // MUL
-            } else {
-                parseTypeRef();
+            }
+            else {
+                parseTypeRef(extraRecoverySet);
             }
             projection.done(TYPE_PROJECTION);
             if (!at(COMMA)) break;
             advance(); // COMMA
         }
 
-        if (expectedGtOffset >= 0 && myBuilder.getCurrentOffset() < expectedGtOffset) {
-            final PsiBuilder.Marker error = mark();
-            while (myBuilder.getCurrentOffset() < expectedGtOffset) {
-                advance();
-            }
-            error.error("Expecting a '>'");
+        boolean atGT = at(GT);
+        if (!atGT) {
+            error("Expecting a '>'");
         }
-
-        expect(GT, "Expecting a '>'");
+        else {
+            advance(); // GT
+        }
         myBuilder.restoreNewlinesState();
-
-        list.done(TYPE_ARGUMENT_LIST);
-        return list;
+        return atGT;
     }
 
     private void parseModifierListWithShortAnnotations(JetNodeType modifierList, TokenSet lookFor, TokenSet stopAt) {

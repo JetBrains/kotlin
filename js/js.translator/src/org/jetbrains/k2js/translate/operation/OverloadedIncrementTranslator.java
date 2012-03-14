@@ -32,25 +32,14 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMethodRefer
 public final class OverloadedIncrementTranslator extends IncrementTranslator {
 
     @NotNull
-    public static JsExpression doTranslate(@NotNull JetUnaryExpression expression,
-                                           @NotNull TranslationContext context) {
-        return (new OverloadedIncrementTranslator(expression, context))
-                .translate();
-    }
-
-    @NotNull
     private final JsNameRef operationReference;
 
-    private OverloadedIncrementTranslator(@NotNull JetUnaryExpression expression,
-                                          @NotNull TranslationContext context) {
+    /*package*/ OverloadedIncrementTranslator(@NotNull JetUnaryExpression expression,
+                                              @NotNull TranslationContext context) {
         super(expression, context);
         this.operationReference = getMethodReferenceForOverloadedOperation(context, expression);
     }
 
-    @NotNull
-    private JsExpression translate() {
-        return translateAsMethodCall();
-    }
 
     @Override
     @NotNull

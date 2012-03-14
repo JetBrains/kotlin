@@ -1611,25 +1611,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     @Override
-    public StackValue visitPredicateExpression(JetPredicateExpression expression, StackValue receiver) {
-        JetExpression expr = expression.getReceiverExpression();
-        StackValue value = gen(expr);
-        Type receiverType = expressionType(expr);
-        value.put(receiverType, v);
-        Label ifFalse = new Label();
-        Label end = new Label();
-        v.dup();
-        StackValue result = genQualified(StackValue.onStack(receiverType), expression.getSelectorExpression());
-        result.condJump(ifFalse, true, v);
-        v.goTo(end);
-        v.mark(ifFalse);
-        v.pop();
-        v.aconst(null);
-        v.mark(end);
-        return StackValue.onStack(expressionType(expression));
-    }
-
-    @Override
     public StackValue visitBinaryExpression(JetBinaryExpression expression, StackValue receiver) {
         final IElementType opToken = expression.getOperationReference().getReferencedNameElementType();
         if (opToken == JetTokens.EQ) {

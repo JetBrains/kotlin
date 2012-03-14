@@ -20,6 +20,7 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -27,6 +28,9 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsLocalNameReference;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 
 /**
  * @author Pavel Talanov
@@ -36,30 +40,27 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
     @NotNull
     /*package*/ static ReferenceAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
                                                              @NotNull TranslationContext context) {
-        return new ReferenceAccessTranslator(expression, context);
+        DeclarationDescriptor referenceDescriptor = getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        return new ReferenceAccessTranslator(referenceDescriptor, context);
     }
 
     @NotNull
-    private final JetSimpleNameExpression expression;
+    private final JsExpression reference;
 
-    private ReferenceAccessTranslator(@NotNull JetSimpleNameExpression expression,
-                                      @NotNull TranslationContext context) {
+    private ReferenceAccessTranslator(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
         super(context);
-        this.expression = expression;
+        this.reference = translateAsLocalNameReference(descriptor, context());
     }
 
     @Override
     @NotNull
     public JsExpression translateAsGet() {
-        //TODO: consider evaluating only once
-        return ReferenceTranslator.translateSimpleName(expression, context());
+        return reference;
     }
 
     @Override
     @NotNull
     public JsExpression translateAsSet(@NotNull JsExpression toSetTo) {
-        //TODO: consider evaluating only once
-        JsExpression reference = ReferenceTranslator.translateSimpleName(expression, context());
         assert reference instanceof JsNameRef;
         return AstUtil.newAssignment((JsNameRef) reference, toSetTo);
     }
@@ -70,6 +71,7 @@ public final class ReferenceAccessTranslator extends AbstractTranslator implemen
         return this;
     }
 
+    @NotNull
     @Override
     public List<TemporaryVariable> declaredTemporaries() {
         return Collections.emptyList();

@@ -30,7 +30,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
+import static com.google.dart.compiler.util.AstUtil.newAssignment;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
@@ -77,21 +79,15 @@ public final class TranslationUtils {
     public static JsNameRef backingFieldReference(@NotNull TranslationContext context,
                                                   @NotNull PropertyDescriptor descriptor) {
         JsName backingFieldName = context.getNameForDescriptor(descriptor);
-        if (isOwnedByClass(descriptor)) {
-            return qualified(backingFieldName, new JsThisRef());
-        }
-        assert isOwnedByNamespace(descriptor)
-                : "Only classes and namespaces may own backing fields.";
-        JsNameRef qualifier = context.getQualifierForDescriptor(descriptor);
-        return qualified(backingFieldName, qualifier);
+        return qualified(backingFieldName, new JsThisRef());
     }
 
     @NotNull
-    public static JsStatement assignmentToBackingField(@NotNull TranslationContext context,
-                                                       @NotNull PropertyDescriptor descriptor,
-                                                       @NotNull JsExpression assignTo) {
+    public static JsExpression assignmentToBackingField(@NotNull TranslationContext context,
+                                                        @NotNull PropertyDescriptor descriptor,
+                                                        @NotNull JsExpression assignTo) {
         JsNameRef backingFieldReference = backingFieldReference(context, descriptor);
-        return newAssignmentStatement(backingFieldReference, assignTo);
+        return newAssignment(backingFieldReference, assignTo);
     }
 
     @Nullable
@@ -223,9 +219,8 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static JsStatement assignmentToBackingField(@NotNull TranslationContext context, @NotNull JetProperty property,
-                                                       @NotNull JsExpression initExpression) {
-
+    public static JsExpression assignmentToBackingField(@NotNull TranslationContext context, @NotNull JetProperty property,
+                                                        @NotNull JsExpression initExpression) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
         return assignmentToBackingField(context, propertyDescriptor, initExpression);
     }

@@ -82,6 +82,14 @@ When building the current maven plugin downloads the latest distro of Kotlin. If
     mvn -PlocalKotlin
 
 
+## Contributing
+
+We love contributions! There's [lots to do](http://youtrack.jetbrains.com/issues/KT) so why not chat
+with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
+
+The best way to contribute is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
+[pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
+
 ## Kommitter links
 
 * [TeamCity CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)

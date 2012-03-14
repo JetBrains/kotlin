@@ -14,6 +14,6 @@ fun f() {
     }
 }
 /*
-Text: (x: Int), Disabled: false, Strikeout: false, Green: false
-Text: (x: Int, y: Int), Disabled: false, Strikeout: false, Green: false
+Text: (x: jet.Int), Disabled: false, Strikeout: false, Green: false
+Text: (x: jet.Int, y: jet.Int), Disabled: false, Strikeout: false, Green: false
 */

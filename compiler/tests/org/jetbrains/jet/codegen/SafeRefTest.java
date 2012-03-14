@@ -28,4 +28,8 @@ public class SafeRefTest extends CodegenTestCase {
     public void test232 () throws Exception {
         blackBoxFile("regressions/kt232.jet");
     }
+
+    public void test1572 () throws Exception {
+        blackBoxFile("regressions/kt1572.jet");
+    }
 }

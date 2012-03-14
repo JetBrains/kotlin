@@ -9,6 +9,6 @@ open class A(x: Int) {
 }
 /*
 Text: (<no parameters>), Disabled: false, Strikeout: false, Green: true
-Text: (x: Boolean), Disabled: false, Strikeout: false, Green: false
-Text: (x: String), Disabled: false, Strikeout: false, Green: false
+Text: (x: jet.Boolean), Disabled: false, Strikeout: false, Green: false
+Text: (x: jet.String), Disabled: false, Strikeout: false, Green: false
 */

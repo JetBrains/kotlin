@@ -53,7 +53,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, MUL, PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
+            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS,
+//            MUL,
+            PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
             EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR, SAFE_ACCESS, ELVIS,
             SEMICOLON, RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ, NOT_IN, NOT_IS, //HASH,
@@ -126,7 +128,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS,
 //                HASH,
-                DOT, SAFE_ACCESS, QUEST), // typeArguments? valueArguments : typeArguments : arrayAccess
+                DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
 
@@ -385,13 +387,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 expression.done(SAFE_ACCESS_EXPRESSION);
             }
-//            else if (at(QUEST)) {
-//                advance(); // QUEST
-//
-//                parseCallExpression();
-//
-//                expression.done(PREDICATE_EXPRESSION);
-//            }
 //            else if (at(HASH)) {
 //                advance(); // HASH
 //
@@ -426,31 +421,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
             parseCallWithClosure();
         }
         else if (at(LT)) {
-            // TODO: be (even) more clever
-            int gtPos = matchTokenStreamPredicate(new FirstBefore(
-                    new At(GT),
-                    new AtSet(TYPE_ARGUMENT_LIST_STOPPERS, TokenSet.create(RPAR, RBRACE, RBRACKET))
-                        .or(new AtFirstTokenOfTokens(IDENTIFIER, LPAR)
-//                        .or(new AtFirstTokenOfTokens(QUEST, IDENTIFIER))
-                        )
-            ) {
-                @Override
-                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-                    return openAngleBrackets == 1 && openBrackets == 0 && openBraces == 0 && openParentheses == 0;
-                }
-
-                @Override
-                public boolean handleUnmatchedClosing(IElementType token) {
-                    fail();
-                    return true;
-                }
-            });
-            if (gtPos >= 0) {
-                myJetParsing.parseTypeArgumentList(gtPos);
+            PsiBuilder.Marker typeArgumentList = mark();
+            if (myJetParsing.tryParseTypeArgumentList(TYPE_ARGUMENT_LIST_STOPPERS)) {
+                typeArgumentList.done(TYPE_ARGUMENT_LIST);
                 if (!myBuilder.newlineBeforeCurrentToken() && at(LPAR)) parseValueArgumentList();
                 parseCallWithClosure();
             }
-            else return false;
+            else {
+                typeArgumentList.rollbackTo();
+                return false;
+            }
         }
         else {
             return false;

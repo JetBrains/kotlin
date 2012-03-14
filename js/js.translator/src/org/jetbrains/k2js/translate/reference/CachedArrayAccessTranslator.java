@@ -57,6 +57,7 @@ public final class CachedArrayAccessTranslator extends ArrayAccessTranslator imp
         return translateAsSet(arrayExpression.reference(), toExpressionList(indexExpressions), setTo);
     }
 
+    @NotNull
     @Override
     public List<TemporaryVariable> declaredTemporaries() {
         List<TemporaryVariable> result = Lists.newArrayList();

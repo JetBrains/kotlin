@@ -76,7 +76,7 @@ public final class KotlinPropertyAccessTranslator extends PropertyAccessTranslat
     @NotNull
     public JsExpression translateAsSet(@Nullable JsExpression receiver, @NotNull JsExpression toSetTo) {
         PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        assert setter != null : "Setter for kotlin properties should bot be null.";
+        assert setter != null : "Setter for kotlin properties should not be null.";
         return callBuilderForAccessor(receiver)
                 .args(toSetTo)
                 .descriptor(setter)

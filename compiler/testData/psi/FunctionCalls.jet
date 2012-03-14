@@ -27,4 +27,9 @@ fun foo() {
   f(foo<a, b>(a))
   f(foo<a, 1, b>(a))
   f(foo<a, (1 + 2), b>(a))
+  f(foo<a, 1 + 2, b>(a))
+  f(foo<a, 1 * 2, b>(a))
+  f(foo<a, *, b>(a))
+  f(foo<a, "", b>(a))
+  foo<*>()
 }

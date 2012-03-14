@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-version>4.9</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
         <kotlin-maven-plugin.version>0.2.3.8-beta-10</kotlin-maven-plugin.version>
@@ -117,8 +118,6 @@
                       <jar>${kotlin-sdk}/lib/guava-11.0.1.jar</jar>
                       <jar>${kotlin-sdk}/lib/asm-commons.jar</jar>
                       <jar>${kotlin-sdk}/lib/asm.jar</jar>
-                      <jar>${kotlin-sdk}/lib/guice-3.0-no_aop.jar</jar>
-                      <jar>${kotlin-sdk}/lib/guice-javax.inject.jar</jar>
                     </kotlinJars>
                   </configuration>
               </plugin>

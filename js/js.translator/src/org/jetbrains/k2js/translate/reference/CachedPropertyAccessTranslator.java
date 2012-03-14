@@ -68,6 +68,7 @@ public final class CachedPropertyAccessTranslator implements CachedAccessTransla
         return this;
     }
 
+    @NotNull
     @Override
     public List<TemporaryVariable> declaredTemporaries() {
         return cachedReceiver != null ? singletonList(cachedReceiver) : Collections.<TemporaryVariable>emptyList();

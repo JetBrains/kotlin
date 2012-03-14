@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.reference;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 
 import java.util.List;
@@ -26,5 +27,6 @@ import java.util.List;
  *         Represents a translator which guaranties that all expression will be computed only once.
  */
 public interface CachedAccessTranslator extends AccessTranslator {
+    @NotNull
     List<TemporaryVariable> declaredTemporaries();
 }

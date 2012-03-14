@@ -142,7 +142,7 @@ public final class PropertyTranslator extends AbstractTranslator {
         JsFunction result = context().getFunctionObject(propertySetterDescriptor);
         JsParameter defaultParameter =
                 new JsParameter(propertyAccessContext(propertySetterDescriptor).jsScope().declareTemporary());
-        JsStatement assignment = assignmentToBackingField(context(), property, defaultParameter.getName().makeRef());
+        JsStatement assignment = assignmentToBackingField(context(), property, defaultParameter.getName().makeRef()).makeStmt();
         setParameters(result, defaultParameter);
         result.setBody(convertToBlock(assignment));
         return result;
