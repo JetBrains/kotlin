@@ -339,6 +339,10 @@ public class DependencyInjectorGenerator {
     private void initializeByConstructorCall(Field field, Field neededFor) {
         Class<?> type = field.getType();
 
+        if (type.isInterface()) {
+            throw new IllegalArgumentException("cannot instantiate interface: " + type.getName() + " needed for " + neededFor);
+        }
+
         // Look for constructor
         Constructor<?>[] constructors = type.getConstructors();
         if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
