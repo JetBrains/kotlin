@@ -19,9 +19,12 @@ package org.jetbrains.jet.plugin;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -35,17 +38,9 @@ import java.util.LinkedList;
  */
 public class JetPluginUtil {
     @NotNull
-    public static String computeTypeFullName(JetType type) {
-        LinkedList<String> fullName = computeTypeFullNameList(type);
-        String last = fullName.getLast();
-        StringBuilder sb = new StringBuilder();
-        for (String s : fullName) {
-            sb.append(s);
-            if (s != last) {
-                sb.append('.');
-            }
-        }
-        return sb.toString();
+    public static FqName computeTypeFullName(@NotNull JetType type) {
+        ClassDescriptor clazz = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
+        return DescriptorUtils.getFQName(clazz);
     }
 
     @NotNull

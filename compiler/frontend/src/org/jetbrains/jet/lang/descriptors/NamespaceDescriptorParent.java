@@ -16,21 +16,8 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.NamespaceType;
-
 /**
- * @author abreslav
+ * @author Stepan Koltsov
  */
-public interface NamespaceDescriptor extends Annotated, Named, ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
-    @NotNull
-    JetScope getMemberScope();
-
-    @NotNull
-    NamespaceType getNamespaceType();
-
-    @Override
-    NamespaceDescriptorParent getContainingDeclaration();
+public interface NamespaceDescriptorParent extends DeclarationDescriptor {
 }

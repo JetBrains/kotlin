@@ -146,6 +146,9 @@ public class JetPsiFactory {
 //    }
 
     public static JetImportDirective createImportDirective(Project project, @NotNull String classPath) {
+        if (classPath.isEmpty()) {
+            throw new IllegalArgumentException("import path must not be empty");
+        }
         JetFile namespace = createFile(project, "import " + classPath);
         return namespace.getImportDirectives().iterator().next();
     }

@@ -179,7 +179,7 @@ public class DescriptorUtils {
     }
 
     public static FqName getFQName(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ModuleDescriptor) {
+        if (descriptor instanceof ModuleDescriptor || descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
             return FqName.ROOT;
         }
 

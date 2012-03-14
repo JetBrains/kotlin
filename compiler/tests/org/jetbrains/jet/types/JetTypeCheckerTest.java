@@ -588,8 +588,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
         JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), JetTestUtils.DUMMY_TRACE);
-        writableScope.importScope(new JavaPackageScope(FqName.ROOT, JavaBridgeConfiguration.createNamespaceDescriptor(JavaDescriptorResolver.JAVA_ROOT, FqName.ROOT), javaSemanticServices));
-        writableScope.importScope(new JavaPackageScope(new FqName("java.lang"), JavaBridgeConfiguration.createNamespaceDescriptor("lang", new FqName("java.lang")), javaSemanticServices));
+        writableScope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.ROOT).getMemberScope());
+        writableScope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace(new FqName("java.lang")).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return writableScope;
     }
