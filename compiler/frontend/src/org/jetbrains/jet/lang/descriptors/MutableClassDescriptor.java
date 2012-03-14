@@ -48,15 +48,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration, kind);
 
-        if (containingDeclaration instanceof ClassDescriptor
-                || containingDeclaration instanceof NamespaceLike
-                || containingDeclaration instanceof ModuleDescriptor
-                || containingDeclaration instanceof FunctionDescriptor)
-        {
-        } else {
-            throw new IllegalStateException();
-        }
-
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
         setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH));

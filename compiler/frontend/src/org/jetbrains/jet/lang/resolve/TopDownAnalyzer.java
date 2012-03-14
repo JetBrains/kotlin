@@ -169,9 +169,15 @@ public class TopDownAnalyzer {
             @NotNull Project project,
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
-        process(project, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+        process(project, trace, outerScope, new NamespaceLike() {
+
+            @NotNull
+            @Override
+            public DeclarationDescriptor getOwnerForChildren() {
+                return containingDeclaration;
+            }
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {

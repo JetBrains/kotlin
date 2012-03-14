@@ -38,6 +38,12 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
         this.memberScope = memberScope;
     }
 
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOwnerForChildren() {
+        return this;
+    }
+
     @Override
     @NotNull
     public WritableScope getMemberScope() {

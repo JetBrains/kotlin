@@ -79,6 +79,11 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
 
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOwnerForChildren() {
+        return this;
+    }
 
     @Override
     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {

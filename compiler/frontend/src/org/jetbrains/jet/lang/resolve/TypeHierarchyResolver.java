@@ -123,7 +123,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, outerScope, getClassKind(klass));
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), outerScope, getClassKind(klass));
                     context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
@@ -166,7 +166,7 @@ public class TypeHierarchyResolver {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner, scope, classKind) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), scope, classKind) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
@@ -237,7 +237,7 @@ public class TypeHierarchyResolver {
 
             currentOwner = namespaceDescriptor;
 
-            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
+            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner.getOwnerForChildren());
             context.getTrace().record(RESOLUTION_SCOPE, nameExpression, outerScope);
 
             outerScope = namespaceDescriptor.getMemberScope();
@@ -254,7 +254,7 @@ public class TypeHierarchyResolver {
         NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(
-                    owner.getOriginal(),
+                    owner.getOwnerForChildren(),
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );

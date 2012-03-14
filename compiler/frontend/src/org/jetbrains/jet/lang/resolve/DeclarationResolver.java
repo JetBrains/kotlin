@@ -144,7 +144,7 @@ public class DeclarationResolver {
             declaration.accept(new JetVisitorVoid() {
                 @Override
                 public void visitNamedFunction(JetNamedFunction function) {
-                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(namespaceLike, scopeForFunctions, function, context.getTrace());
+                    SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(namespaceLike.getOwnerForChildren(), scopeForFunctions, function, context.getTrace());
                     namespaceLike.addFunctionDescriptor(functionDescriptor);
                     context.getFunctions().put(function, functionDescriptor);
                     context.getDeclaringScopes().put(function, scopeForFunctions);
@@ -152,7 +152,7 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitProperty(JetProperty property) {
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(namespaceLike, scopeForPropertyInitializers, property, context.getTrace());
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(namespaceLike.getOwnerForChildren(), scopeForPropertyInitializers, property, context.getTrace());
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                     context.getProperties().put(property, propertyDescriptor);
                     context.getDeclaringScopes().put(property, scopeForPropertyInitializers);
@@ -166,7 +166,7 @@ public class DeclarationResolver {
 
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
-                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike, declaration, context.getObjects().get(declaration), context.getTrace());
+                    PropertyDescriptor propertyDescriptor = descriptorResolver.resolveObjectDeclarationAsPropertyDescriptor(namespaceLike.getOwnerForChildren(), declaration, context.getObjects().get(declaration), context.getTrace());
                     namespaceLike.addPropertyDescriptor(propertyDescriptor);
                 }
 
