@@ -32,14 +32,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -130,47 +128,53 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
-        String propertyName = decompiledProperty.getName();
-        if (propertyName == null) {
+    private static <Decl extends JetDeclaration, Descr extends CallableDescriptor> JetDeclaration
+            getSourcePropertyOrFunction(final @NotNull Decl decompiledDeclaration,
+                                        JetTypeReference receiverType,
+                                        Matcher<Decl, Descr> matcher) {
+        String entityName = decompiledDeclaration.getName();
+        if (entityName == null) {
             return null;
         }
 
-        PsiElement propertyContainer = decompiledProperty.getParent();
-        if (propertyContainer instanceof JetFile) {
-            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor((JetFile) propertyContainer);
+        PsiElement declarationContainer = decompiledDeclaration.getParent();
+        if (declarationContainer instanceof JetFile) {
+            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor((JetFile) declarationContainer);
             if (bindingContextAndNamespaceDescriptor == null) return null;
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor._1;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
-            JetTypeReference receiverType = decompiledProperty.getReceiverTypeRef();
             if (receiverType == null) {
                 // non-extension property
-                Set<VariableDescriptor> properties = namespaceDescriptor.getMemberScope().getProperties(propertyName);
-                assert properties.size() <= 1;
-                if (properties.size() > 0) {
-                    return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, properties.iterator().next());
+                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {
+                    if (candidate.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
+                        if (matcher.areSame(decompiledDeclaration, candidate)) {
+                            return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
+                        }
+                    }
                 }
             } else {
                 // extension property
                 String expectedTypeString = receiverType.getText();
-                for (VariableDescriptor vd : namespaceDescriptor.getMemberScope().getProperties(propertyName)) {
-                    if (vd.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
-                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(vd.getReceiverParameter().getType());
+                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {
+                    if (candidate.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(candidate.getReceiverParameter().getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
-                            return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+                            if (matcher.areSame(decompiledDeclaration, candidate)) {
+                                return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
+                            }
                         }
                     }
                 }
             }
         }
-        else if (propertyContainer instanceof JetClassBody) {
-            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass) propertyContainer.getParent());
+        else if (declarationContainer instanceof JetClassBody) {
+            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass) declarationContainer.getParent());
             if (bindingContextAndClassDescriptor != null) {
                 BindingContext bindingContext = bindingContextAndClassDescriptor._1;
                 ClassDescriptor classDescriptor = bindingContextAndClassDescriptor._2;
-                for (VariableDescriptor vd : classDescriptor.getDefaultType().getMemberScope().getProperties(propertyName)) {
-                    if (vd.getContainingDeclaration() == classDescriptor) {
-                        JetDeclaration property = (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+                for (Descr candidate : matcher.getCandidatesFromScope(classDescriptor.getDefaultType().getMemberScope(), entityName)) {
+                    if (candidate.getContainingDeclaration() == classDescriptor) {
+                        JetDeclaration property = (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
                         if (property != null) {
                             return property;
                         }
@@ -179,5 +183,26 @@ public class JetSourceNavigationHelper {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
+        return getSourcePropertyOrFunction(decompiledProperty, decompiledProperty.getReceiverTypeRef(), new Matcher<JetProperty, VariableDescriptor>() {
+            @Override
+            public boolean areSame(JetProperty declaration, VariableDescriptor descriptor) {
+                return true;
+            }
+
+            @Override
+            public Set<VariableDescriptor> getCandidatesFromScope(JetScope scope, String name) {
+                return scope.getProperties(name);
+            }
+        });
+    }
+
+    private interface Matcher<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
+        boolean areSame(Decl declaration, Descr descriptor);
+
+        Set<Descr> getCandidatesFromScope(JetScope scope, String name);
     }
 }
