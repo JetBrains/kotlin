@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 
 /**
@@ -51,6 +52,12 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
             JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
             if (sourceProperty != null) {
                 return sourceProperty;
+            }
+        }
+        else if (jetDeclaration instanceof JetFunction) {
+            JetDeclaration sourceFunction = JetSourceNavigationHelper.getSourceFunction((JetFunction) jetDeclaration);
+            if (sourceFunction != null) {
+                return sourceFunction;
             }
         }
         return jetDeclaration;

@@ -200,6 +200,22 @@ public class JetSourceNavigationHelper {
         });
     }
 
+    @Nullable
+    public static JetDeclaration getSourceFunction(final @NotNull JetFunction decompiledFunction) {
+        return getSourcePropertyOrFunction(decompiledFunction, decompiledFunction.getReceiverTypeRef(), new Matcher<JetFunction, FunctionDescriptor>() {
+            @Override
+            public boolean areSame(JetFunction declaration, FunctionDescriptor descriptor) {
+                // TODO check parameters
+                return true;
+            }
+
+            @Override
+            public Set<FunctionDescriptor> getCandidatesFromScope(JetScope scope, String name) {
+                return scope.getFunctions(name);
+            }
+        });
+    }
+
     private interface Matcher<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
         boolean areSame(Decl declaration, Descr descriptor);
 
