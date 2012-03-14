@@ -4,6 +4,7 @@
   <version>@snapshot@</version>
   <vendor>JetBrains</vendor>
 
+
   <depends optional="true">JUnit</depends>
 
   <project-components>
