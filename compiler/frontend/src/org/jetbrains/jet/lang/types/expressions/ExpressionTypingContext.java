@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -153,9 +154,13 @@ public class ExpressionTypingContext {
 
 ////////// Call resolution utilities
 
+    private BasicResolutionContext makeResolutionContext(@NotNull Call call) {
+        return BasicResolutionContext.create(trace, scope, call, expectedType, dataFlowInfo);
+    }
+
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(@NotNull Call call, @NotNull JetReferenceExpression functionReference, @NotNull String name) {
-        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(trace, scope, call, functionReference, name, expectedType, dataFlowInfo);
+        return expressionTypingServices.getCallResolver().resolveCallWithGivenName(makeResolutionContext(call), functionReference, name);
     }
 
     @NotNull
@@ -166,14 +171,14 @@ public class ExpressionTypingContext {
 
     @Nullable
     public FunctionDescriptor resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
-        OverloadResolutionResults<FunctionDescriptor> results = expressionTypingServices.getCallResolver().resolveCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType, dataFlowInfo);
+        OverloadResolutionResults<FunctionDescriptor> results = expressionTypingServices.getCallResolver().resolveFunctionCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType, dataFlowInfo);
         return results.singleResult() ? results.getResultingDescriptor() : null;
     }
 
     @NotNull
     public OverloadResolutionResults<VariableDescriptor> resolveSimpleProperty(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         Call call = CallMaker.makePropertyCall(receiver, callOperationNode, nameExpression);
-        return expressionTypingServices.getCallResolver().resolveSimpleProperty(trace, scope, call, expectedType, dataFlowInfo);
+        return expressionTypingServices.getCallResolver().resolveSimpleProperty(makeResolutionContext(call));
     }
 
     @NotNull

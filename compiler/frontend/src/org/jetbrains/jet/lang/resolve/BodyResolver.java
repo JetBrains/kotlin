@@ -23,6 +23,7 @@ import com.intellij.util.containers.Queue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.BasicResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
@@ -167,7 +168,7 @@ public class BodyResolver {
                     assert descriptor.getKind() == ClassKind.TRAIT;
                     return;
                 }
-                OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCall(
+                OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                         context.getTrace(), scopeForConstructor,
                         CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY);
                 if (results.isSuccess()) {
@@ -345,7 +346,7 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            callResolver.resolveCall(context.getTrace(), scopeForSupertypeInitializers, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
+                            callResolver.resolveFunctionCall(context.getTrace(), scopeForSupertypeInitializers, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
                         }
                     }
 
@@ -355,9 +356,9 @@ public class BodyResolver {
                         // TODO : check: if a this() call is present, no other initializers are allowed
                         ClassDescriptor classDescriptor = descriptor.getContainingDeclaration();
 
-                        callResolver.resolveCall(context.getTrace(),
-                                scopeForSupertypeInitializers,
-                                CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
+                        callResolver.resolveFunctionCall(context.getTrace(),
+                                                         scopeForSupertypeInitializers,
+                                                         CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
 //                                call.getThisReference(),
 //                                classDescriptor,
 //                                classDescriptor.getDefaultType(),

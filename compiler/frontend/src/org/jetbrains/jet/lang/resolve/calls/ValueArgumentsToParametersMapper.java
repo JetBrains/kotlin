@@ -38,7 +38,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
  */
 /*package*/ class ValueArgumentsToParametersMapper {
     public static <D extends CallableDescriptor> boolean mapValueArgumentsToParameters(
-            @NotNull ResolutionTask<D> task,
+            @NotNull Call call,
             @NotNull TracingStrategy tracing,
             @NotNull ResolvedCallImpl<D> candidateCall
     ) {
@@ -58,7 +58,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             parameterByName.put(valueParameter.getName(), valueParameter);
         }
 
-        List<? extends ValueArgument> valueArguments = task.getCall().getValueArguments();
+        List<? extends ValueArgument> valueArguments = call.getValueArguments();
 
         boolean error = false;
         boolean someNamed = false;
@@ -117,7 +117,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             }
         }
 
-        List<JetExpression> functionLiteralArguments = task.getCall().getFunctionLiteralArguments();
+        List<JetExpression> functionLiteralArguments = call.getFunctionLiteralArguments();
         if (!functionLiteralArguments.isEmpty()) {
             JetExpression possiblyLabeledFunctionLiteral = functionLiteralArguments.get(0);
 

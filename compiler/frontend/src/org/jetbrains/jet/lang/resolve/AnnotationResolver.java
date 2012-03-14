@@ -91,7 +91,7 @@ public class AnnotationResolver {
     private OverloadResolutionResults<FunctionDescriptor> resolveType(@NotNull JetScope scope,
             @NotNull JetAnnotationEntry entryElement,
             @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY);
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY);
         JetType annotationType = results.getResultingDescriptor().getReturnType();
         if (results.isSuccess()) {
             descriptor.setAnnotationType(annotationType);
