@@ -25,9 +25,22 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor {
+public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent, NamespaceLikeBuilder {
+    private NamespaceDescriptor rootNs;
+
     public ModuleDescriptor(String name) {
         super(null, Collections.<AnnotationDescriptor>emptyList(), name);
+    }
+
+    public void setRootNs(@NotNull NamespaceDescriptor rootNs) {
+        if (this.rootNs != null) {
+            throw new IllegalStateException();
+        }
+        this.rootNs = rootNs;
+    }
+
+    public NamespaceDescriptorImpl getRootNs() {
+        return (NamespaceDescriptorImpl) rootNs;
     }
 
     @NotNull
@@ -39,5 +52,50 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
     @Override
     public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
         return visitor.visitModuleDeclaration(this, data);
+    }
+
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOwnerForChildren() {
+        return this;
+    }
+
+    @Override
+    public NamespaceDescriptorImpl getNamespace(String name) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        if (namespaceDescriptor.getContainingDeclaration() != this) {
+            throw new IllegalStateException();
+        }
+        setRootNs(namespaceDescriptor);
+    }
+
+    @Override
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+        throw new IllegalStateException();
     }
 }

@@ -25,12 +25,23 @@ import java.util.List;
 
 /**
  * @author abreslav
- */
+ */                                                                                              J
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
-    public AbstractNamespaceDescriptorImpl(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
+    public AbstractNamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
         super(containingDeclaration, annotations, name);
+
+        boolean rootAccordingToContainer = containingDeclaration instanceof ModuleDescriptor;
+        boolean rootAccordingToName = name.startsWith("<");
+        if (rootAccordingToContainer != rootAccordingToName) {
+            throw new IllegalStateException("something is wrong, name: " + name + ", container: " + containingDeclaration);
+        }
+    }
+
+    @Override
+    public NamespaceDescriptorParent getContainingDeclaration() {
+        return (NamespaceDescriptorParent) super.getContainingDeclaration();
     }
 
     @Override

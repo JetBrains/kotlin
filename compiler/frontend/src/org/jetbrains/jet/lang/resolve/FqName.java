@@ -16,7 +16,11 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -53,9 +57,8 @@ public class FqName {
             return;
         }
 
-        // '<' are allowed, but shouldn't be
-
-        if (fqName.indexOf('/') >= 0) {
+        // TODO: prohibit < everywhere
+        if (fqName.indexOf('/') >= 0 || fqName.charAt(0) == '<') {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
     }

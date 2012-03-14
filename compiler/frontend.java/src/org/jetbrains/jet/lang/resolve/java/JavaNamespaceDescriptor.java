@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.AbstractNamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -34,7 +35,7 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     /** Namespace of class with static methods */
     private final boolean namespace;
     
-    public JavaNamespaceDescriptor(DeclarationDescriptor containingDeclaration, List<AnnotationDescriptor> annotations,
+    public JavaNamespaceDescriptor(NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations,
             @NotNull String name, @NotNull FqName qualifiedName, boolean namespace) {
         super(containingDeclaration, annotations, name);
         this.qualifiedName = qualifiedName;

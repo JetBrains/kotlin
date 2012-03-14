@@ -178,7 +178,7 @@ public class AnalyzingUtils {
                 public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                     throw new IllegalStateException("Must be guaranteed not to happen by the parser");
                 }
-            },
+            }, owner,
             files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
 
         return bindingTraceContext.getBindingContext();

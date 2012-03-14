@@ -51,7 +51,7 @@ public class ImportClassHelper {
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
         }
-        addImportDirective(JetPluginUtil.computeTypeFullName(type), file);
+        addImportDirective(JetPluginUtil.computeTypeFullName(type).getFqName(), file);
     }
 
     /**

@@ -212,8 +212,11 @@ public class JetTypeMapper {
         if(name.contains("/"))
             return name;
         if (container != null) {
-            if (container instanceof ModuleDescriptor) {
+            if (container.getContainingDeclaration() instanceof ModuleDescriptor) {
                 return name;
+            }
+            if (container instanceof ModuleDescriptor) {
+                throw new IllegalStateException("missed something");
             }
             if(container instanceof JavaNamespaceDescriptor && JavaDescriptorResolver.JAVA_ROOT.equals(container.getName())) {
                 return name;

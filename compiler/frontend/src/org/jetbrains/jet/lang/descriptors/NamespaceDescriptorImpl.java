@@ -30,7 +30,7 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
 
     private WritableScope memberScope;
 
-    public NamespaceDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
+    public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
         super(containingDeclaration, annotations, name);
     }
 
