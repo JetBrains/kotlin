@@ -13,39 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package jet;
 
 /**
- * @author alex.tkachman
+ * Represents the common interface of a tuple
  */
-public class Tuple0 extends Tuple {
-    public static final Tuple0 INSTANCE = new Tuple0();
+public abstract class Tuple extends DefaultJetObject {
 
-    private Tuple0() {
-    }
+    /**
+     * Performs the given function on each item in the tuple
+     */
+    public abstract void forEach(Function1<Object, Void> fn);
 
-    @Override
-    public String toString() {
-        return "()";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o == INSTANCE;
-    }
-
-    @Override
-    public int hashCode() {
-        return 239;
-    }
-
-    @Override
-    public void forEach(Function1<Object, Void> fn) {
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
+    /**
+     * Returns the size of the tuple
+     */
+    public abstract int size();
 }

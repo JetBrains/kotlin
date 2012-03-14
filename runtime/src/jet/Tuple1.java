@@ -16,7 +16,7 @@
 
 package jet;
 
-public class Tuple1<T1> extends DefaultJetObject {
+public class Tuple1<T1> extends Tuple {
     public final T1 _1;
 
     public Tuple1(T1 t1) {
@@ -43,5 +43,15 @@ public class Tuple1<T1> extends DefaultJetObject {
     public int hashCode() {
         int result = _1 != null ? _1.hashCode() : 0;
         return result;
+    }
+
+    @Override
+    public void forEach(Function1<Object, Void> fn) {
+        fn.invoke(_1);
+    }
+
+    @Override
+    public int size() {
+        return 1;
     }
 }

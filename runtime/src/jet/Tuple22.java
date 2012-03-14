@@ -16,7 +16,7 @@
 
 package jet;
 
-public class Tuple22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> extends DefaultJetObject {
+public class Tuple22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> extends Tuple {
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
@@ -190,5 +190,36 @@ public class Tuple22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14
         result = 31 * result + (_21 != null ? _21.hashCode() : 0);
         result = 31 * result + (_22 != null ? _22.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public void forEach(Function1<Object, Void> fn) {
+        fn.invoke(_1);
+        fn.invoke(_2);
+        fn.invoke(_3);
+        fn.invoke(_4);
+        fn.invoke(_5);
+        fn.invoke(_6);
+        fn.invoke(_7);
+        fn.invoke(_8);
+        fn.invoke(_9);
+        fn.invoke(_10);
+        fn.invoke(_11);
+        fn.invoke(_12);
+        fn.invoke(_13);
+        fn.invoke(_13);
+        fn.invoke(_14);
+        fn.invoke(_15);
+        fn.invoke(_16);
+        fn.invoke(_17);
+        fn.invoke(_18);
+        fn.invoke(_19);
+        fn.invoke(_20);
+        fn.invoke(_22);
+    }
+
+    @Override
+    public int size() {
+        return 22;
     }
 }

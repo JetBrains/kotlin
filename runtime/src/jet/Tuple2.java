@@ -16,7 +16,7 @@
 
 package jet;
 
-public class Tuple2<T1, T2> extends DefaultJetObject {
+public class Tuple2<T1, T2> extends Tuple {
     public final T1 _1;
     public final T2 _2;
 
@@ -50,5 +50,16 @@ public class Tuple2<T1, T2> extends DefaultJetObject {
         int result = _1 != null ? _1.hashCode() : 0;
         result = 31 * result + (_2 != null ? _2.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public void forEach(Function1<Object, Void> fn) {
+        fn.invoke(_1);
+        fn.invoke(_2);
+    }
+
+    @Override
+    public int size() {
+        return 2;
     }
 }
