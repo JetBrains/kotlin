@@ -48,7 +48,7 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
         JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
         if (jetDeclaration instanceof JetProperty) {
-            JetProperty sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
+            JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
             if (sourceProperty != null) {
                 return sourceProperty;
             }

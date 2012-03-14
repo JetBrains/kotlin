@@ -27,13 +27,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Processor;
-import jet.Tuple0;
-import jet.Tuple1;
+import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -52,17 +52,24 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetClass getSourceClass(final @NotNull JetClass decompiledClass) {
+    private static Tuple2<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
         for (VirtualFile sourceDir : getAllSourceDirs(decompiledClass)) {
             BindingContext bindingContext = analyzeLibrary(sourceDir, decompiledClass.getProject());
             ClassDescriptor cd = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(decompiledClass));
             if (cd != null) {
-                PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, cd);
-                assert declaration instanceof JetClass;
-                return (JetClass) declaration;
+                return new Tuple2<BindingContext, ClassDescriptor>(bindingContext, cd);
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static JetClass getSourceClass(@NotNull JetClass decompiledClass) {
+        Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
+        if (bindingContextAndClassDescriptor == null) return null;
+        PsiElement declaration = bindingContextAndClassDescriptor._1.get(BindingContext.DESCRIPTOR_TO_DECLARATION, bindingContextAndClassDescriptor._2);
+        assert declaration instanceof JetClass;
+        return (JetClass) declaration;
     }
 
     private static BindingContext analyzeLibrary(VirtualFile sourceDir, final Project project) {
@@ -100,7 +107,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetProperty getSourceProperty(final @NotNull JetProperty decompiledProperty) {
+    public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
         String propertyName = decompiledProperty.getName();
         if (propertyName == null) {
             return null;
@@ -108,19 +115,21 @@ public class JetSourceNavigationHelper {
 
         PsiElement propertyContainer = decompiledProperty.getParent();
         if (propertyContainer instanceof JetFile) {
-            // TODO global property
+            // TODO global property, may be extension
             return null;
-        } else if (propertyContainer instanceof JetClassBody) {
-            JetClass sourceClass = getSourceClass((JetClass) propertyContainer.getParent());
-            if (sourceClass != null) {
-                JetClassBody sourceClassBody = sourceClass.getBody();
-                if (sourceClassBody != null) {
-                    for (JetProperty p : sourceClassBody.getProperties()) {
-                        if (propertyName.equals(p.getName())) {
-                            return p;
+        }
+        else if (propertyContainer instanceof JetClassBody) {
+            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass) propertyContainer.getParent());
+            if (bindingContextAndClassDescriptor != null) {
+                BindingContext bindingContext = bindingContextAndClassDescriptor._1;
+                ClassDescriptor classDescriptor = bindingContextAndClassDescriptor._2;
+                for (VariableDescriptor vd : classDescriptor.getDefaultType().getMemberScope().getProperties(propertyName)) {
+                    if (vd.getContainingDeclaration() == classDescriptor) {
+                        JetDeclaration property = (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+                        if (property != null) {
+                            return property;
                         }
                     }
-
                 }
             }
         }
