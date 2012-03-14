@@ -98,7 +98,7 @@ class CollectionTest() : TestCase() {
 
     fun testFilterIntoSortedSet() {
         // TODO would be nice to avoid the <String>
-        val d = arrayList("foo", "bar", "fuzz")
+        val d = arrayList("fuzz", "bar", "foo")
         val foo = d.filterTo(sortedSet<String>()){it.startsWith("f")}
 
         assertTrue {
