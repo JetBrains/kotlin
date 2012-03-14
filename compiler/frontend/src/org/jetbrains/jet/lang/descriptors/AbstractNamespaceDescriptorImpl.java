@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * @author abreslav
- */                                                                                              J
+ */
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
