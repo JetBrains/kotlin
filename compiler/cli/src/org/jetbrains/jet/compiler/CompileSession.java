@@ -42,7 +42,8 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.io.*;
+import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +56,6 @@ import java.util.List;
 public class CompileSession {
     private final JetCoreEnvironment myEnvironment;
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
-    private final FileNameTransformer myFileNameTransformer;
     private List<String> myErrors = new ArrayList<String>();
     private boolean stubs = false;
 
@@ -66,12 +66,7 @@ public class CompileSession {
     private BindingContext myBindingContext;
 
     public CompileSession(JetCoreEnvironment environment) {
-        this(environment, FileNameTransformer.IDENTITY);
-    }
-
-    public CompileSession(JetCoreEnvironment environment, FileNameTransformer fileNameTransformer) {
         myEnvironment = environment;
-        myFileNameTransformer = fileNameTransformer;
     }
 
     public void setStubs(boolean stubs) {
@@ -211,7 +206,7 @@ public class CompileSession {
     @NotNull
     public ClassFileFactory generate(boolean module) {
         Project project = myEnvironment.getProject();
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), myFileNameTransformer);
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs));
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 

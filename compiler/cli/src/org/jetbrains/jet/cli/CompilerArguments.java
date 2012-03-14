@@ -56,9 +56,6 @@ public class CompilerArguments {
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
 
-    @Argument(value = "transformNamesToJava", description = "Transform Kotlin file names to *.java. This option is needed for compiling kotlinized Java library headers")
-    public boolean transformNamesToJava;
-
 
     public String getClasspath() {
         return classpath;
@@ -146,13 +143,5 @@ public class CompilerArguments {
 
     public void setTags(boolean tags) {
         this.tags = tags;
-    }
-
-    public boolean isTransformNamesToJava() {
-        return transformNamesToJava;
-    }
-
-    public void setTransformNamesToJava(boolean transformNamesToJava) {
-        this.transformNamesToJava = transformNamesToJava;
     }
 }

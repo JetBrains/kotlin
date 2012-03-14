@@ -17,8 +17,9 @@
 package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Args;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.*;
+import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.MessageRenderer;
 
 import java.io.PrintStream;
 
@@ -28,13 +29,6 @@ import java.io.PrintStream;
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KotlinCompiler {
-    private static final FileNameTransformer ANY_EXTENSION_TO_JAVA = new FileNameTransformer() {
-        @NotNull
-        @Override
-        public String transformFileName(@NotNull String fileName) {
-            return fileName.replaceFirst("\\.\\w+$", ".java");
-        }
-    };
 
     public static void main(String... args) {
         doMain(new KotlinCompiler(), args);
@@ -78,11 +72,8 @@ public class KotlinCompiler {
         }
         System.setProperty("java.awt.headless", "true");
 
-        FileNameTransformer fileNameTransformer = arguments.transformNamesToJava
-                                                  ? ANY_EXTENSION_TO_JAVA
-                                                  : FileNameTransformer.IDENTITY;
         MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
-        CompileEnvironment environment = new CompileEnvironment(fileNameTransformer, messageRenderer);
+        CompileEnvironment environment = new CompileEnvironment(messageRenderer);
         try {
             configureEnvironment(environment, arguments, errStream);
 
