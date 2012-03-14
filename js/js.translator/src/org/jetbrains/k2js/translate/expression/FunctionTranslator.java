@@ -46,7 +46,6 @@ import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.newAliasForThis;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.removeAliasForThis;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 
@@ -141,7 +140,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     private JsExpression generateFunctionObjectWithAliasedThisReference(@NotNull ClassDescriptor containingClass) {
         TemporaryVariable aliasForThis = newAliasForThis(context(), containingClass);
         generateFunctionObject();
-        removeAliasForThis(context(), containingClass);
+        aliaser().removeAliasForThis(containingClass);
         return AstUtil.newSequence(aliasForThis.assignmentExpression(), functionObject);
     }
 

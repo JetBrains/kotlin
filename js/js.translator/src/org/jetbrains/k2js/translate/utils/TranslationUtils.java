@@ -204,11 +204,6 @@ public final class TranslationUtils {
         return aliasForThis;
     }
 
-    public static void removeAliasForThis(@NotNull TranslationContext context,
-                                          @NotNull DeclarationDescriptor descriptor) {
-        context.aliaser().removeAliasForThis(descriptor);
-    }
-
     @NotNull
     public static JsExpression applyIntrinsicToBinaryExpression(@NotNull TranslationContext context,
                                                                 @NotNull Intrinsic intrinsic,
