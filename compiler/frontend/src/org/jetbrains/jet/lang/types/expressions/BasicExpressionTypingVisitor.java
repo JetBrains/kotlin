@@ -544,17 +544,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             }
         }
 
-        JetType result;
-        if (expression.getOperationSign() == JetTokens.QUEST) {
-            if (selectorReturnType != null && !isBoolean(selectorReturnType)) {
-                // TODO : more comprehensible error message
-                context.trace.report(TYPE_MISMATCH.on(selectorExpression, JetStandardLibrary.getInstance().getBooleanType(), selectorReturnType));
-            }
-            result = TypeUtils.makeNullable(receiverType);
-        }
-        else {
-            result = selectorReturnType;
-        }
+        JetType result = selectorReturnType;
         // TODO : this is suspicious: remove this code?
         if (result != null) {
             context.trace.record(BindingContext.EXPRESSION_TYPE, selectorExpression, result);

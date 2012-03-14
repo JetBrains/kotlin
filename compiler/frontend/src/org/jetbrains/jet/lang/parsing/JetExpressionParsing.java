@@ -126,7 +126,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private enum Precedence {
         POSTFIX(PLUSPLUS, MINUSMINUS,
 //                HASH,
-                DOT, SAFE_ACCESS, QUEST), // typeArguments? valueArguments : typeArguments : arrayAccess
+                DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
         PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
 
