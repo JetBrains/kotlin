@@ -94,7 +94,7 @@ public final class AnalyzerFacadeForJS {
     public static BindingContext analyzeNamespace(@NotNull JetFile file) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         Project project = file.getProject();
-        return AnalyzingUtils.analyzeFilesWithGivenTrace(
+        AnalyzingUtils.analyzeFilesWithGivenTrace(
                 project,
                 JsConfiguration.jsLibConfiguration(project),
                 Collections.singletonList(file),
@@ -102,6 +102,7 @@ public final class AnalyzerFacadeForJS {
                 JetControlFlowDataTraceFactory.EMPTY,
                 bindingTraceContext
         );
+        return bindingTraceContext.getBindingContext();
     }
 
     private static final class JsConfiguration implements ModuleConfiguration {

@@ -45,6 +45,7 @@ public class AllInjectorsGenerator {
 
         // Fields
         generator.addPublicField(TopDownAnalyzer.class);
+        generator.addPublicField(TopDownAnalysisContext.class);
         generator.addPublicField(BodyResolver.class);
         generator.addPublicField(ControlFlowAnalyzer.class);
         generator.addPublicField(DeclarationsChecker.class);
@@ -52,7 +53,7 @@ public class AllInjectorsGenerator {
 
         // Parameters
         generator.addPublicParameter(Project.class);
-        generator.addParameter(TopDownAnalysisContext.class);
+        generator.addPublicParameter(TopDownAnalysisParameters.class);
         generator.addParameter(ModuleConfiguration.class);
         generator.addParameter(ModuleDescriptor.class);
         generator.addParameter(JetControlFlowDataTraceFactory.class, false);

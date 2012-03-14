@@ -18,10 +18,12 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,8 +31,11 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -53,7 +58,18 @@ public class TopDownAnalyzer {
     private OverrideResolver overrideResolver;
     @NotNull
     private OverloadResolver overloadResolver;
+    @NotNull
+    private TopDownAnalysisParameters topDownAnalysisParameters;
+    @NotNull
+    private TopDownAnalysisContext context;
+    @NotNull
+    private ModuleConfiguration configuration;
+    @NotNull
+    private ModuleDescriptor moduleDescriptor;
 
+    private BodyResolver bodyResolver;
+    private ControlFlowAnalyzer controlFlowAnalyzer;
+    private DeclarationsChecker declarationsChecker;
 
     @Inject
     public void setDeclarationResolver(@NotNull DeclarationResolver declarationResolver) {
@@ -80,23 +96,45 @@ public class TopDownAnalyzer {
         this.overloadResolver = overloadResolver;
     }
 
+    @Inject
+    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
+    }
+
+    @Inject
+    public void setContext(@NotNull TopDownAnalysisContext context) {
+        this.context = context;
+    }
+
+    @Inject
+    public void setConfiguration(@NotNull ModuleConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
+    }
+
+    @Inject
+    public void setBodyResolver(BodyResolver bodyResolver) {
+        this.bodyResolver = bodyResolver;
+    }
+
+    @Inject
+    public void setControlFlowAnalyzer(ControlFlowAnalyzer controlFlowAnalyzer) {
+        this.controlFlowAnalyzer = controlFlowAnalyzer;
+    }
+
+    @Inject
+    public void setDeclarationsChecker(DeclarationsChecker declarationsChecker) {
+        this.declarationsChecker = declarationsChecker;
+    }
+
+
 
 
     public static void process(
-            @NotNull Project project,
-            @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope,
-            @NotNull NamespaceLikeBuilder owner,
-            @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> analyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull ModuleConfiguration configuration
-    ) {
-        process(project, trace, outerScope, moduleDescriptor, owner, files, analyzeCompletely, flowDataTraceFactory, configuration, false);
-    }
-
-    private static void process(
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
@@ -107,13 +145,17 @@ public class TopDownAnalyzer {
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
             @NotNull ModuleConfiguration configuration,
             boolean declaredLocally) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, analyzeCompletely, configuration, moduleDescriptor, declaredLocally, false, flowDataTraceFactory);
-        context.getInjector().getTopDownAnalyzer().doProcess(context, outerScope, owner, declarations);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(analyzeCompletely, false, declaredLocally, trace);
+
+        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(project, topDownAnalysisParameters, configuration, moduleDescriptor, flowDataTraceFactory);
+
+        injector.getTopDownAnalyzer().doProcess(outerScope, owner, declarations);
 
     }
 
-    private void doProcess(
-            TopDownAnalysisContext context, JetScope outerScope,
+    public void doProcess(
+            JetScope outerScope,
             NamespaceLikeBuilder owner,
             Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
@@ -124,14 +166,14 @@ public class TopDownAnalyzer {
         delegationResolver.process();
         overrideResolver.process();
 
-        lockScopes(context);
+        lockScopes();
 
         overloadResolver.process();
 
-        if (!context.analyzingBootstrapLibrary()) {
-            context.getInjector().getBodyResolver().resolveBehaviorDeclarationBodies();
-            context.getInjector().getControlFlowAnalyzer().process();
-            context.getInjector().getDeclarationsChecker().process();
+        if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
+            bodyResolver.resolveBehaviorDeclarationBodies();
+            controlFlowAnalyzer.process();
+            declarationsChecker.process();
         }
 
         context.debug("Exit");
@@ -139,7 +181,7 @@ public class TopDownAnalyzer {
     }
 
 
-    private static void lockScopes(TopDownAnalysisContext context) {
+    private void lockScopes() {
         for (MutableClassDescriptor mutableClassDescriptor : context.getClasses().values()) {
             mutableClassDescriptor.lockScopes();
         }
@@ -157,7 +199,17 @@ public class TopDownAnalyzer {
             @NotNull WritableScope outerScope,
             @NotNull NamespaceDescriptorImpl standardLibraryNamespace,
             @NotNull List<JetFile> files) {
-        TopDownAnalysisContext context = new TopDownAnalysisContext(project, trace, Predicates.<PsiFile>alwaysFalse(), ModuleConfiguration.EMPTY, JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, false, true, null);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), true, false, trace);
+        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(
+                project, topDownAnalysisParameters, ModuleConfiguration.EMPTY,
+                JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, null);
+
+        injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
+    }
+
+    private void doProcessStandardLibraryNamespace(
+            WritableScope outerScope, NamespaceDescriptorImpl standardLibraryNamespace, List<JetFile> files) {
         ArrayList<JetDeclaration> toAnalyze = new ArrayList<JetDeclaration>();
         for(JetFile file : files) {
             context.getNamespaceDescriptors().put(file, standardLibraryNamespace);
@@ -166,7 +218,7 @@ public class TopDownAnalyzer {
         }
 //        context.getDeclaringScopes().put(file, outerScope);
 
-        context.getInjector().getTopDownAnalyzer().doProcess(context, outerScope, standardLibraryNamespace, toAnalyze);
+        doProcess(outerScope, standardLibraryNamespace, toAnalyze);
     }
 
     public static void processObject(
@@ -212,6 +264,58 @@ public class TopDownAnalyzer {
             }
         }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, ModuleConfiguration.EMPTY, true);
     }
+
+
+    public static void doAnalyzeFilesWithGivenTrace(Project project, final ModuleConfiguration configuration, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely, JetControlFlowDataTraceFactory flowDataTraceFactory, BindingTraceContext bindingTraceContext) {
+        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                filesToAnalyzeCompletely, false, false, bindingTraceContext);
+
+        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(
+                project, topDownAnalysisParameters, configuration, owner, flowDataTraceFactory);
+
+
+        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);
+    }
+
+    private void doAnalyzeFilesWithGivenTrance2(Collection<JetFile> files) {
+        final WritableScope scope = new WritableScopeImpl(
+                JetScope.EMPTY, moduleDescriptor,
+                new TraceBasedRedeclarationHandler(topDownAnalysisParameters.getTrace())).setDebugName("Root scope in analyzeNamespace");
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+        // Import the lang package
+        scope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+
+        // Import a scope that contains all top-level namespaces that come from dependencies
+        // This makes the namespaces visible at all, does not import themselves
+        scope.importScope(new JetScopeAdapter(JetScope.EMPTY) {
+            @Override
+            public NamespaceDescriptor getNamespace(@NotNull String name) {
+                // Is it a top-level namespace coming from the dependencies?
+                NamespaceDescriptor topLevelNamespaceFromConfiguration = configuration.getTopLevelNamespace(name);
+                if (topLevelNamespaceFromConfiguration != null) {
+                    return topLevelNamespaceFromConfiguration;
+                }
+                // Should be null, we are delegating to EMPTY
+                return super.getNamespace(name);
+            }
+
+            @NotNull
+            @Override
+            public Collection<DeclarationDescriptor> getAllDescriptors() {
+                List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
+                configuration.addAllTopLevelNamespacesTo(allDescriptors);
+                return allDescriptors;
+            }
+        });
+
+        // dummy builder is used because "root" is module descriptor,
+        // namespaces added to module explicitly in
+        doProcess(scope, new NamespaceLikeBuilderDummy(), files);
+    }
+
 
 }
 

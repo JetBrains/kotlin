@@ -55,6 +55,8 @@ public class BodyResolver {
     @NotNull
     private TopDownAnalysisContext context;
     @NotNull
+    private TopDownAnalysisParameters topDownAnalysisParameters;
+    @NotNull
     private DescriptorResolver descriptorResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
@@ -65,6 +67,11 @@ public class BodyResolver {
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
+    }
+
+    @Inject
+    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
     @Inject
@@ -97,7 +104,7 @@ public class BodyResolver {
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
 
-        if (!context.isDeclaredLocally()) {
+        if (!topDownAnalysisParameters.isDeclaredLocally()) {
             computeDeferredTypes();
         }
     }

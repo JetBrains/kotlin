@@ -145,7 +145,7 @@ public class AnalyzerFacadeForJVM {
     public static BindingContext analyzeFilesWithJavaIntegration(Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
                                                                  JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        return AnalyzingUtils.analyzeFilesWithGivenTrace(
+        AnalyzingUtils.analyzeFilesWithGivenTrace(
                 project,
                 JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, DefaultModuleConfiguration.createStandardConfiguration(project)),
                 files,
@@ -153,6 +153,7 @@ public class AnalyzerFacadeForJVM {
                 flowDataTraceFactory,
                 bindingTraceContext
         );
+        return bindingTraceContext.getBindingContext();
     }
 
     public static BindingContext shallowAnalyzeFiles(Collection<JetFile> files) {
