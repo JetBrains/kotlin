@@ -129,11 +129,9 @@ public class ExpressionTypingUtils {
         ).contains(expression.getNode().getElementType());
     }
 
-    public static void checkWrappingInRef(JetExpression expression, ExpressionTypingContext context) {
-        if (!(expression instanceof JetSimpleNameExpression)) return;
-        JetSimpleNameExpression simpleName = (JetSimpleNameExpression) expression;
-        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), simpleName, true);
-        if (variable != null) {
+    public static void checkWrappingInRef(JetSimpleNameExpression expression, ExpressionTypingContext context) {
+        VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), expression, true);
+        if (variable != null && variable.isVar()) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
             if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
                 context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);

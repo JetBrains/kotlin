@@ -235,8 +235,8 @@ fun mergeAutocasts(a: Any?) {
 
 //mutability
 fun f(): String {
-    var a: Any = 11
-    if (a is String) {
+    var <info>a</info>: Any = 11
+    if (<info>a</info> is String) {
         val <warning>i</warning>: String = <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error>
         <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error>.compareTo("f")
         val <warning>f</warning>: Function0<String> = { <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error> }

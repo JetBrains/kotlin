@@ -216,7 +216,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         } else {
             binaryOperationTrace.commit();
             context.trace.record(VARIABLE_REASSIGNMENT, expression);
-            ExpressionTypingUtils.checkWrappingInRef(expression.getLeft(), context);
             if (left instanceof JetArrayAccessExpression) {
                 ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(contextWithExpectedType.trace));
                 basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, expression.getRight(), contextForResolve, context.trace);
@@ -243,9 +242,6 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         if (leftType != null) { //if leftType == null, some another error has been generated
             basic.checkLValue(context.trace, expression.getLeft());
-        }
-        if (left instanceof JetSimpleNameExpression) {
-            ExpressionTypingUtils.checkWrappingInRef(left, context);
         }
         return DataFlowUtils.checkStatementType(expression, contextWithExpectedType);
     }

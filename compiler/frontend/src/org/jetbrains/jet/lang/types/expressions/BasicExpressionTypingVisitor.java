@@ -68,7 +68,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitSimpleNameExpression(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         // TODO : other members
         // TODO : type substitutions???
-        return DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context); // TODO : Extensions to this
+        JetType type = DataFlowUtils.checkType(getSelectorReturnType(NO_RECEIVER, null, expression, context), expression, context);
+        ExpressionTypingUtils.checkWrappingInRef(expression, context);
+        return type; // TODO : Extensions to this
     }
 
     private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, String referencedName, ExpressionTypingContext context) {
@@ -715,7 +717,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
                 else {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
-                    ExpressionTypingUtils.checkWrappingInRef(baseExpression, context);
 
                     checkLValue(context.trace, baseExpression);
                 }
