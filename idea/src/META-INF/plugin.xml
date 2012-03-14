@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Kotlin</name>
   <description>Kotlin language support</description>
-  <version>snapshot</version>
+  <version>@snapshot@</version>
   <vendor>JetBrains</vendor>
 
   <depends optional="true">JUnit</depends>
