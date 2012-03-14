@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-version>4.9</junit-version>
         <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
         <kotlin-maven-plugin.version>0.2.3.8-beta-10</kotlin-maven-plugin.version>
