@@ -18,6 +18,7 @@
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
