@@ -187,16 +187,6 @@ public class TopDownAnalyzer {
             }
 
             @Override
-            public NamespaceDescriptorImpl getNamespace(String name) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
             public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
 
             }

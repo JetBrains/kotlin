@@ -238,7 +238,7 @@ public class TypeHierarchyResolver {
             createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true);
         }
 
-        NamespaceLikeBuilder currentOwner = moduleDescriptor.getRootNs();
+        NamespaceDescriptorParent currentOwner = moduleDescriptor.getRootNs();
         if (currentOwner == null) {
             throw new IllegalStateException("must be initialized 5 lines above");
         }
@@ -250,7 +250,7 @@ public class TypeHierarchyResolver {
 
             currentOwner = namespaceDescriptor;
 
-            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner.getOwnerForChildren());
+            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
             context.getTrace().record(RESOLUTION_SCOPE, nameExpression, outerScope);
 
             outerScope = namespaceDescriptor.getMemberScope();
@@ -263,26 +263,26 @@ public class TypeHierarchyResolver {
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLikeBuilder owner, @NotNull String name, boolean root) {
-        FqName ownerFqName = DescriptorUtils.getFQName(owner.getOwnerForChildren());
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceDescriptorParent owner, @NotNull String name, boolean root) {
 
         FqName fqName;
         NamespaceDescriptorImpl namespaceDescriptor;
         if (root) {
-            if (!ownerFqName.equals(FqName.ROOT) || !(owner instanceof ModuleDescriptor)) {
+            if (!(owner instanceof ModuleDescriptor)) {
                 throw new IllegalStateException();
             }
             fqName = FqName.ROOT;
             namespaceDescriptor = ((ModuleDescriptor) owner).getRootNs();
         }
         else {
+            FqName ownerFqName = DescriptorUtils.getFQName(owner);
             fqName = ownerFqName.child(name);
-            namespaceDescriptor = owner.getNamespace(name);
+            namespaceDescriptor = ((NamespaceDescriptorImpl) owner).getNamespace(name);
         }
 
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(
-                    (NamespaceDescriptorParent) owner.getOwnerForChildren(),
+                    owner,
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );

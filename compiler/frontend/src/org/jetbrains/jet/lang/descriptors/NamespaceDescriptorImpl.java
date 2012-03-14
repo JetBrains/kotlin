@@ -50,7 +50,6 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
         return memberScope;
     }
 
-    @Override
     public NamespaceDescriptorImpl getNamespace(String name) {
         return (NamespaceDescriptorImpl) memberScope.getDeclaredNamespace(name);
     }

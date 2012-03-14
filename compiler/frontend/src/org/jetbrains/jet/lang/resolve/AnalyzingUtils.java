@@ -135,51 +135,10 @@ public class AnalyzingUtils {
             }
         });
 
+        // dummy builder is used because "root" is module descriptor,
+        // namespaces added to module explicitly in
         TopDownAnalyzer.process(project, bindingTraceContext, scope,
-            new NamespaceLikeBuilder() {
-
-                @NotNull
-                @Override
-                public DeclarationDescriptor getOwnerForChildren() {
-                    return owner;
-                }
-
-                @Override
-                public NamespaceDescriptorImpl getNamespace(String name) {
-                    return (NamespaceDescriptorImpl) scope.getDeclaredNamespace(name);
-                }
-
-                @Override
-                public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-                    scope.addNamespace(namespaceDescriptor);
-                }
-
-                @Override
-                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                    throw new IllegalStateException("A class shouldn't sit right under a module: " + classDescriptor);
-                }
-
-                @Override
-                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-                    throw new IllegalStateException("An object shouldn't sit right under a module: " + objectDescriptor);
-                }
-
-                @Override
-                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                    throw new IllegalStateException("A function shouldn't sit right under a module: " + functionDescriptor);
-                }
-
-                @Override
-                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-                    throw new IllegalStateException("A property shouldn't sit right under a module: " + propertyDescriptor);
-                }
-
-                @Override
-                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                    throw new IllegalStateException("Must be guaranteed not to happen by the parser");
-                }
-            }, owner,
-            files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
+            new NamespaceLikeBuilderDummy(), owner, files, filesToAnalyzeCompletely, flowDataTraceFactory, configuration);
 
         return bindingTraceContext.getBindingContext();
     }

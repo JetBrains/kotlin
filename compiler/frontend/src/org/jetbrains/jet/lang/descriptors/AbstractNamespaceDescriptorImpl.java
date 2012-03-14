@@ -45,6 +45,11 @@ public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescrip
     }
 
     @Override
+    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        throw new IllegalStateException("immutable");
+    }
+
+    @Override
     @NotNull
     public NamespaceType getNamespaceType() {
         if (namespaceType == null) {

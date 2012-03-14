@@ -262,16 +262,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
     @Override
-    public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        throw new UnsupportedOperationException("Classes do not define namespaces");
-    }
-
-    @Override
-    public NamespaceDescriptorImpl getNamespace(String name) {
-        throw new UnsupportedOperationException("Classes do not define namespaces");
-    }
-
-    @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
         getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
         innerClassesAndObjects.put(classDescriptor.getName(), classDescriptor);
