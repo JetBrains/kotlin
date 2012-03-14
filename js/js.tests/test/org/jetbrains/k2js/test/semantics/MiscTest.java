@@ -85,9 +85,15 @@ public final class MiscTest extends AbstractExpressionTest {
         checkFooBoxIsTrue("KT-817.kt");
     }
 
-    //TODO: depends on KT-1198
-    //TODO: look into BindingContext.VARIABLE_REASSIGNMENT
     public void testKt740_3() throws Exception {
         checkFooBoxIsOk("KT-740-3.kt");
+    }
+
+    public void testFunInConstructor() throws Exception {
+        checkFooBoxIsTrue("funInConstructor.kt");
+    }
+
+    public void testPropertyAsFunCalledOnConstructor() throws Exception {
+        checkFooBoxIsTrue("propertyAsFunCalledOnConstructor.kt");
     }
 }

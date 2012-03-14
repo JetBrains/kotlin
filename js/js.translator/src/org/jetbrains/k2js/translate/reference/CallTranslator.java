@@ -96,9 +96,6 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
         /*package*/ JsExpression translate() {
-        if (isExpressionAsFunction()) {
-            return expressionAsFunctionCall();
-        }
         if (isIntrinsic()) {
             return intrinsicInvocation();
         }
@@ -113,6 +110,9 @@ public final class CallTranslator extends AbstractTranslator {
         }
         if (isExtensionFunction()) {
             return extensionFunctionCall();
+        }
+        if (isExpressionAsFunction()) {
+            return expressionAsFunctionCall();
         }
         return methodCall(callParameters(resolveThisObject(/*just get qualifier if null*/ true)));
     }
@@ -274,6 +274,7 @@ public final class CallTranslator extends AbstractTranslator {
         return new CallParameters(receiver, functionReference);
     }
 
+    //TODO: inspect
     @NotNull
     private JsExpression functionReference() {
         if (!isVariableAsFunction(descriptor)) {

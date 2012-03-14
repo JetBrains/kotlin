@@ -21,9 +21,12 @@ import com.google.dart.compiler.backend.js.ast.JsArrayLiteral;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -48,7 +51,7 @@ public final class CallExpressionTranslator extends AbstractTranslator {
                                          @Nullable JsExpression receiver,
                                          @NotNull CallType callType,
                                          @NotNull TranslationContext context) {
-        return (new CallExpressionTranslator(expression, context)).translate(receiver, callType);
+        return (new CallExpressionTranslator(expression, receiver, context)).translate(callType);
     }
 
     @NotNull
@@ -56,18 +59,21 @@ public final class CallExpressionTranslator extends AbstractTranslator {
     @NotNull
     private final ResolvedCall<?> resolvedCall;
     private final boolean isNativeFunctionCall;
+    @Nullable
+    private final JsExpression receiver;
 
     private CallExpressionTranslator(@NotNull JetCallExpression expression,
+                                     @Nullable JsExpression receiver,
                                      @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         this.resolvedCall = getResolvedCallForCallExpression(bindingContext(), expression);
+        this.receiver = receiver;
         this.isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor());
     }
 
     @NotNull
-    private JsExpression translate(@Nullable JsExpression receiver,
-                                   @NotNull CallType callType) {
+    private JsExpression translate(@NotNull CallType callType) {
         return CallBuilder.build(context())
                 .receiver(receiver)
                 .callee(getCalleeExpression())
@@ -79,10 +85,26 @@ public final class CallExpressionTranslator extends AbstractTranslator {
 
     @Nullable
     private JsExpression getCalleeExpression() {
-        if (resolvedCall.getCandidateDescriptor() instanceof ExpressionAsFunctionDescriptor) {
-            return Translation.translateAsExpression(getCallee(expression), context());
+        CallableDescriptor candidateDescriptor = resolvedCall.getCandidateDescriptor();
+        if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) {
+            return translateExpressionAsFunction();
+        }
+        if (candidateDescriptor instanceof VariableAsFunctionDescriptor) {
+            return translateVariableAsFunction();
         }
         return null;
+    }
+
+    @NotNull
+    private JsExpression translateVariableAsFunction() {
+        JetExpression callee = getCallee(expression);
+        assert callee instanceof JetSimpleNameExpression;
+        return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression) callee, receiver, context()).translateAsGet();
+    }
+
+    @NotNull
+    private JsExpression translateExpressionAsFunction() {
+        return Translation.translateAsExpression(getCallee(expression), context());
     }
 
     @NotNull

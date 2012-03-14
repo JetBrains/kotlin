@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -58,13 +59,21 @@ public final class ReferenceTranslator {
         return referencedName.makeRef();
     }
 
-    public static AccessTranslator getAccessTranslator(JetSimpleNameExpression referenceExpression, TranslationContext context) {
+    @NotNull
+    public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
+                                                       @NotNull TranslationContext context) {
+        return getAccessTranslator(referenceExpression, null, context);
+    }
+
+    @NotNull
+    public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
+                                                       @Nullable JsExpression receiver,
+                                                       @NotNull TranslationContext context) {
         if (isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }
         if (PropertyAccessTranslator.canBePropertyAccess(referenceExpression, context)) {
-            return PropertyAccessTranslator.newInstance(referenceExpression,
-                                                        null, CallType.NORMAL, context);
+            return PropertyAccessTranslator.newInstance(referenceExpression, receiver, CallType.NORMAL, context);
         }
         return ReferenceAccessTranslator.newInstance(referenceExpression, context);
     }

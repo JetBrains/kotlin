@@ -50,7 +50,7 @@ public final class AccessTranslationUtils {
     }
 
     @NotNull
-    public static JsExpression translateAsGet(@NotNull JetReferenceExpression expression,
+    public static JsExpression translateAsGet(@NotNull JetExpression expression,
                                               @NotNull TranslationContext context) {
         return (getAccessTranslator(expression, context)).translateAsGet();
     }
