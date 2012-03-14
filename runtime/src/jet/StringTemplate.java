@@ -18,7 +18,11 @@ package jet;
 /**
  * Represents a string template object; that is a string with $ expressions such as "Hello $user".
  *
- * It is represented as an object that contains a Tuple
+ * It is represented as an object that contains a Tuple such that all the even items in the tuple are constant
+ * strings and the odd items are dynamic expressions which may need to be escaped.
+ *
+ * So the expression "Hello $foo$bar how are you?" would be represented as a tuple #("Hello ", foo, "", bar, " how are you?).
+ * i.e. we insert an empty string to ensure that the tuple starts with a constant string and every other value is a dynamic expression.
  */
 public class StringTemplate {
     private final Tuple tuple;
