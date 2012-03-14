@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -45,6 +46,8 @@ import java.util.Collections;
  */
 public class AnalyzerFacadeForJVM {
 
+    private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM");
+
     public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
         @Override
         public Collection<JetFile> fun(JetFile file) {
@@ -54,6 +57,9 @@ public class AnalyzerFacadeForJVM {
 
     private final static Key<CachedValue<BindingContext>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
     private static final Object lock = new Object();
+
+    private AnalyzerFacadeForJVM() {
+    }
 
     /**
      * Analyze project with string cache for given file. Given file will be fully analyzed.
@@ -82,8 +88,7 @@ public class AnalyzerFacadeForJVM {
                         }
                         catch (Throwable e) {
                             DiagnosticUtils.throwIfRunningOnServer(e);
-
-                            e.printStackTrace();
+                            LOG.error(e);
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
                             return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
@@ -121,7 +126,7 @@ public class AnalyzerFacadeForJVM {
                         }
                         catch (Throwable e) {
                             DiagnosticUtils.throwIfRunningOnServer(e);
-                            e.printStackTrace();
+                            LOG.error(e);
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             return new Result<BindingContext>(bindingTraceContext.getBindingContext(), PsiModificationTracker.MODIFICATION_COUNT);
                         }
