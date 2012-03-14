@@ -33,15 +33,22 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
+import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Evgeny Gerashchenko
@@ -52,15 +59,31 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static Tuple2<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
-        for (VirtualFile sourceDir : getAllSourceDirs(decompiledClass)) {
-            BindingContext bindingContext = analyzeLibrary(sourceDir, decompiledClass.getProject());
-            ClassDescriptor cd = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(decompiledClass));
-            if (cd != null) {
-                return new Tuple2<BindingContext, ClassDescriptor>(bindingContext, cd);
+    private static<D extends ClassOrNamespaceDescriptor> Tuple2<BindingContext, D>
+            getBindingContextAndClassOrNamespaceDescriptor(@NotNull WritableSlice<FqName, D> slice,
+                                                           @NotNull PsiElement psiElement,
+                                                           @Nullable FqName fqName) {
+        if (fqName == null) {
+            return null;
+        }
+        for (VirtualFile sourceDir : getAllSourceDirs(psiElement)) {
+            BindingContext bindingContext = analyzeLibrary(sourceDir, psiElement.getProject());
+            D descriptor = bindingContext.get(slice, fqName);
+            if (descriptor != null) {
+                return new Tuple2<BindingContext, D>(bindingContext, descriptor);
             }
         }
         return null;
+    }
+
+    @Nullable
+    private static Tuple2<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClass, JetPsiUtil.getFQName(decompiledClass));
+    }
+
+    @Nullable
+    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(@NotNull JetFile decompiledNamespaceFile) {
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, decompiledNamespaceFile, JetPsiUtil.getFQName(decompiledNamespaceFile));
     }
 
     @Nullable
@@ -91,12 +114,12 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static List<VirtualFile> getAllSourceDirs(@NotNull JetClass decompiledClass) {
+    private static List<VirtualFile> getAllSourceDirs(@NotNull PsiElement psiElement) {
         List<VirtualFile> allSourceDirs = new ArrayList<VirtualFile>();
 
-        VirtualFile decompiledFile = decompiledClass.getContainingFile().getVirtualFile();
+        VirtualFile decompiledFile = psiElement.getContainingFile().getVirtualFile();
         if (decompiledFile != null) {
-            ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(decompiledClass.getProject());
+            ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(psiElement.getProject());
             List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(decompiledFile);
             for (OrderEntry orderEntry : orderEntries) {
                 Collections.addAll(allSourceDirs, orderEntry.getFiles(OrderRootType.SOURCES));
@@ -115,8 +138,30 @@ public class JetSourceNavigationHelper {
 
         PsiElement propertyContainer = decompiledProperty.getParent();
         if (propertyContainer instanceof JetFile) {
-            // TODO global property, may be extension
-            return null;
+            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor((JetFile) propertyContainer);
+            if (bindingContextAndNamespaceDescriptor == null) return null;
+            BindingContext bindingContext = bindingContextAndNamespaceDescriptor._1;
+            NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
+            JetTypeReference receiverType = decompiledProperty.getReceiverTypeRef();
+            if (receiverType == null) {
+                // non-extension property
+                Set<VariableDescriptor> properties = namespaceDescriptor.getMemberScope().getProperties(propertyName);
+                assert properties.size() <= 1;
+                if (properties.size() > 0) {
+                    return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, properties.iterator().next());
+                }
+            } else {
+                // extension property
+                String expectedTypeString = receiverType.getText();
+                for (VariableDescriptor vd : namespaceDescriptor.getMemberScope().getProperties(propertyName)) {
+                    if (vd.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                        String thisReceiverType = DescriptorRenderer.TEXT.renderType(vd.getReceiverParameter().getType());
+                        if (expectedTypeString.equals(thisReceiverType)) {
+                            return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+                        }
+                    }
+                }
+            }
         }
         else if (propertyContainer instanceof JetClassBody) {
             Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass) propertyContainer.getParent());
