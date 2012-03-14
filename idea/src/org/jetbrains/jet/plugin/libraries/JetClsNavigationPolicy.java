@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
 
 /**
  * @author Evgeny Gerashchenko
@@ -45,7 +46,14 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
-        return getJetDeclarationByClsElement(clsMethod);
+        JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
+        if (jetDeclaration instanceof JetProperty) {
+            JetProperty sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
+            if (sourceProperty != null) {
+                return sourceProperty;
+            }
+        }
+        return jetDeclaration;
     }
 
     @Override

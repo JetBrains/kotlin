@@ -25,13 +25,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Processor;
+import jet.Tuple0;
+import jet.Tuple1;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -48,7 +49,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetClass getSourceClass(final JetClass decompiledClass) {
+    public static JetClass getSourceClass(final @NotNull JetClass decompiledClass) {
         VirtualFile decompiledFile = decompiledClass.getContainingFile().getVirtualFile();
         if (decompiledFile == null) {
             return null;
@@ -79,6 +80,34 @@ public class JetSourceNavigationHelper {
                     PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, cd);
                     assert declaration instanceof JetClass;
                     return (JetClass) declaration;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetProperty getSourceProperty(final @NotNull JetProperty decompiledProperty) {
+        String propertyName = decompiledProperty.getName();
+        if (propertyName == null) {
+            return null;
+        }
+
+        PsiElement propertyContainer = decompiledProperty.getParent();
+        if (propertyContainer instanceof JetFile) {
+            // TODO global property
+            return null;
+        } else if (propertyContainer instanceof JetClassBody) {
+            JetClass sourceClass = getSourceClass((JetClass) propertyContainer.getParent());
+            if (sourceClass != null) {
+                JetClassBody sourceClassBody = sourceClass.getBody();
+                if (sourceClassBody != null) {
+                    for (JetProperty p : sourceClassBody.getProperties()) {
+                        if (propertyName.equals(p.getName())) {
+                            return p;
+                        }
+                    }
+
                 }
             }
         }
