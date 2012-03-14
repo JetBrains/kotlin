@@ -288,28 +288,11 @@ public class TopDownAnalyzer {
         // Import the lang package
         scope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
 
+        NamespaceDescriptorImpl rootNs = typeHierarchyResolver.createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true);
+
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves
-        scope.importScope(new JetScopeAdapter(JetScope.EMPTY) {
-            @Override
-            public NamespaceDescriptor getNamespace(@NotNull String name) {
-                // Is it a top-level namespace coming from the dependencies?
-                NamespaceDescriptor topLevelNamespaceFromConfiguration = configuration.getTopLevelNamespace(name);
-                if (topLevelNamespaceFromConfiguration != null) {
-                    return topLevelNamespaceFromConfiguration;
-                }
-                // Should be null, we are delegating to EMPTY
-                return super.getNamespace(name);
-            }
-
-            @NotNull
-            @Override
-            public Collection<DeclarationDescriptor> getAllDescriptors() {
-                List<DeclarationDescriptor> allDescriptors = Lists.newArrayList();
-                configuration.addAllTopLevelNamespacesTo(allDescriptors);
-                return allDescriptors;
-            }
-        });
+        scope.importScope(rootNs.getMemberScope());
 
         // dummy builder is used because "root" is module descriptor,
         // namespaces added to module explicitly in

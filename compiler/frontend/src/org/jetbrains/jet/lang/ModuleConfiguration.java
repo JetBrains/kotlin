@@ -17,8 +17,6 @@
 package org.jetbrains.jet.lang;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -39,14 +37,6 @@ public interface ModuleConfiguration {
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         }
 
-        @Override
-        public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
-            return null;
-        }
-
-        @Override
-        public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
-        }
     };
 
     void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives);
@@ -57,10 +47,4 @@ public interface ModuleConfiguration {
      */
     void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope);
 
-    /** This method is called only if no namespace with the same short name is declared in the module itself, or to merge namespaces */
-    @Nullable
-    NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName);
-
-    /** Add all the top-level namespaces from the dependencies of this module into the given collection */
-    void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces);
 }
