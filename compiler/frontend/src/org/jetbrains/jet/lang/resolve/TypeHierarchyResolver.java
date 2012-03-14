@@ -81,7 +81,7 @@ public class TypeHierarchyResolver {
     }
 
 
-    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLike owner, @NotNull Collection<? extends PsiElement> declarations) {
+    public void process(@NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner, @NotNull Collection<? extends PsiElement> declarations) {
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         importsResolver.processTypeImports();
@@ -105,7 +105,7 @@ public class TypeHierarchyResolver {
     private void collectNamespacesAndClassifiers(
             @NotNull final JetScope outerScope,
             @NotNull final JetScope outerScopeForStatic,
-            @NotNull final NamespaceLike owner,
+            @NotNull final NamespaceLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations) {
         for (PsiElement declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {
@@ -165,7 +165,7 @@ public class TypeHierarchyResolver {
                     classObjectDescriptor.addObjectDescriptor(mutableClassDescriptor);
                 }
 
-                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLike owner, JetScope scope, ClassKind classKind) {
+                private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLikeBuilder owner, JetScope scope, ClassKind classKind) {
                     MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), scope, classKind) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
@@ -210,7 +210,7 @@ public class TypeHierarchyResolver {
                 public void visitClassObject(JetClassObject classObject) {
                     JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
                     if (objectDeclaration != null) {
-                        NamespaceLike.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
+                        NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
                         switch (status) {
                             case DUPLICATE:
                                 context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));
@@ -225,10 +225,10 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLike owner, JetScope outerScope) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, NamespaceLikeBuilder owner, JetScope outerScope) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
-        NamespaceLike currentOwner = owner;
+        NamespaceLikeBuilder currentOwner = owner;
 
         for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
@@ -250,7 +250,7 @@ public class TypeHierarchyResolver {
     }
 
     @NotNull
-    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLike owner, String name) {
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceLikeBuilder owner, String name) {
         NamespaceDescriptorImpl namespaceDescriptor = owner.getNamespace(name);
         if (namespaceDescriptor == null) {
             namespaceDescriptor = new NamespaceDescriptorImpl(

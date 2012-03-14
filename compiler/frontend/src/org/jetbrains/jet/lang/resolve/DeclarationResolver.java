@@ -107,7 +107,7 @@ public class DeclarationResolver {
         for (Map.Entry<JetFile, WritableScope> entry : context.getNamespaceScopes().entrySet()) {
             JetFile namespace = entry.getKey();
             WritableScope namespaceScope = entry.getValue();
-            NamespaceLike namespaceDescriptor = context.getNamespaceDescriptors().get(namespace);
+            NamespaceLikeBuilder namespaceDescriptor = context.getNamespaceDescriptors().get(namespace);
 
             resolveFunctionAndPropertyHeaders(namespace.getDeclarations(), namespaceScope, namespaceScope, namespaceScope, namespaceDescriptor);
         }
@@ -138,7 +138,7 @@ public class DeclarationResolver {
     private void resolveFunctionAndPropertyHeaders(@NotNull List<JetDeclaration> declarations,
             final @NotNull JetScope scopeForFunctions,
             final @NotNull JetScope scopeForPropertyInitializers, final @NotNull JetScope scopeForPropertyAccessors,
-            final @NotNull NamespaceLike namespaceLike)
+            final @NotNull NamespaceLikeBuilder namespaceLike)
     {
         for (JetDeclaration declaration : declarations) {
             declaration.accept(new JetVisitorVoid() {

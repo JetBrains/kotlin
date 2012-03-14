@@ -136,7 +136,7 @@ public class AnalyzingUtils {
         });
 
         TopDownAnalyzer.process(project, bindingTraceContext, scope,
-            new NamespaceLike() {
+            new NamespaceLikeBuilder() {
 
                 @NotNull
                 @Override

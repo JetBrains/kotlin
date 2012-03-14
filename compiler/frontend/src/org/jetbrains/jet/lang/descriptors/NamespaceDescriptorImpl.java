@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl implements NamespaceLike {
+public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl implements NamespaceLikeBuilder {
 
     private WritableScope memberScope;
 

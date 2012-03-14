@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface NamespaceLike {
+public interface NamespaceLikeBuilder {
 
     @NotNull
     DeclarationDescriptor getOwnerForChildren();
