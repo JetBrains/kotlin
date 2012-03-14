@@ -36,7 +36,7 @@ import java.util.*;
 /**
  * @author Stepan Koltsov
  */
-public class MutableClassDescriptorLite extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLike {
+public class MutableClassDescriptorLite extends MutableDeclarationDescriptor implements ClassDescriptor, NamespaceLikeBuilder {
     private ConstructorDescriptor primaryConstructor;
     private final Set<ConstructorDescriptor> constructors = Sets.newLinkedHashSet();
 
@@ -79,6 +79,11 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     }
 
 
+    @NotNull
+    @Override
+    public DeclarationDescriptor getOwnerForChildren() {
+        return this;
+    }
 
     @Override
     public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {

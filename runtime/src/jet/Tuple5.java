@@ -16,7 +16,7 @@
 
 package jet;
 
-public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject {
+public class Tuple5<T1, T2, T3, T4, T5> extends Tuple {
     public final T1 _1;
     public final T2 _2;
     public final T3 _3;
@@ -71,5 +71,19 @@ public class Tuple5<T1, T2, T3, T4, T5> extends DefaultJetObject {
         result = 31 * result + (_4 != null ? _4.hashCode() : 0);
         result = 31 * result + (_5 != null ? _5.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public void forEach(Function1<Object, Void> fn) {
+        fn.invoke(_1);
+        fn.invoke(_2);
+        fn.invoke(_3);
+        fn.invoke(_4);
+        fn.invoke(_5);
+    }
+
+    @Override
+    public int size() {
+        return 5;
     }
 }

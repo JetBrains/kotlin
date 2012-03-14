@@ -73,7 +73,6 @@
             <arg value="-output"/>
             <arg value="${output}/classes/jdk-headers"/>
             <arg value="-stubs"/>
-            <arg value="-transformNamesToJava"/>
         </java>
     </target>
 

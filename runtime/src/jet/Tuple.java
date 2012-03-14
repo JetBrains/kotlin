@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.jetbrains.jet.compiler;
-
-import org.jetbrains.annotations.NotNull;
+package jet;
 
 /**
- * @author abreslav
+ * Represents the common interface of a tuple
  */
-public interface FileNameTransformer {
-    FileNameTransformer IDENTITY = new FileNameTransformer() {
-        @NotNull
-        @Override
-        public String transformFileName(@NotNull String fileName) {
-            return fileName;
-        }
-    };
+public abstract class Tuple extends DefaultJetObject {
 
-    @NotNull
-    String transformFileName(@NotNull String fileName);
+    /**
+     * Performs the given function on each item in the tuple
+     */
+    public abstract void forEach(Function1<Object, Void> fn);
+
+    /**
+     * Returns the size of the tuple
+     */
+    public abstract int size();
 }

@@ -19,7 +19,7 @@ package jet;
 /**
  * @author alex.tkachman
  */
-public class Tuple0 {
+public class Tuple0 extends Tuple {
     public static final Tuple0 INSTANCE = new Tuple0();
 
     private Tuple0() {
@@ -38,5 +38,14 @@ public class Tuple0 {
     @Override
     public int hashCode() {
         return 239;
+    }
+
+    @Override
+    public void forEach(Function1<Object, Void> fn) {
+    }
+
+    @Override
+    public int size() {
+        return 0;
     }
 }

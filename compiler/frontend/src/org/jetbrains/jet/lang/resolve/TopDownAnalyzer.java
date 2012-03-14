@@ -84,7 +84,7 @@ public class TopDownAnalyzer {
     public static void process(
             Project project, @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLike owner,
+            @NotNull NamespaceLikeBuilder owner,
             @NotNull Collection<JetFile> files,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
@@ -97,7 +97,7 @@ public class TopDownAnalyzer {
             @NotNull Project project,
             @NotNull BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull NamespaceLike owner,
+            @NotNull NamespaceLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
@@ -110,7 +110,7 @@ public class TopDownAnalyzer {
 
     private void doProcess(
             TopDownAnalysisContext context, JetScope outerScope,
-            NamespaceLike owner,
+            NamespaceLikeBuilder owner,
             Collection<? extends PsiElement> declarations) {
 //        context.enableDebugOutput();
         context.debug("Enter");
@@ -169,9 +169,15 @@ public class TopDownAnalyzer {
             @NotNull Project project,
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
-            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
-        process(project, trace, outerScope, new NamespaceLike.Adapter(containingDeclaration) {
+        process(project, trace, outerScope, new NamespaceLikeBuilder() {
+
+            @NotNull
+            @Override
+            public DeclarationDescriptor getOwnerForChildren() {
+                return containingDeclaration;
+            }
 
             @Override
             public NamespaceDescriptorImpl getNamespace(String name) {

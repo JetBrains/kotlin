@@ -26,12 +26,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.compiler.FileNameTransformer;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
+import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -50,18 +52,11 @@ public class GenerationState {
     private final JetStandardLibrary standardLibrary;
     private final IntrinsicMethods intrinsics;
 
-    private final FileNameTransformer fileNameTransformer;
-
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
-        this(project, builderFactory, FileNameTransformer.IDENTITY);
-    }
-
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, FileNameTransformer fileNameTransformer) {
         this.project = project;
         this.standardLibrary = JetStandardLibrary.getInstance();
         this.factory = new ClassFileFactory(builderFactory, this);
         this.intrinsics = new IntrinsicMethods(project, standardLibrary);
-        this.fileNameTransformer = fileNameTransformer;
     }
 
     @NotNull
@@ -196,6 +191,6 @@ public class GenerationState {
 
     @NotNull
     public String transformFileName(@NotNull String fileName) {
-        return fileNameTransformer.transformFileName(fileName);
+        return fileName;
     }
 }

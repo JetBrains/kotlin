@@ -59,24 +59,22 @@ public class CompileEnvironment {
     private final MessageRenderer myMessageRenderer;
     private PrintStream myErrorStream = System.err;
 
-    private final FileNameTransformer myFileNameTransformer;
     private URL myStdlib;
 
     private boolean ignoreErrors = false;
     private boolean stubs = false;
 
     public CompileEnvironment() {
-        this(FileNameTransformer.IDENTITY, MessageRenderer.PLAIN);
+        this(MessageRenderer.PLAIN);
     }
 
-    public CompileEnvironment(FileNameTransformer fileNameTransformer, MessageRenderer messageRenderer) {
+    public CompileEnvironment(MessageRenderer messageRenderer) {
         myRootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
         myEnvironment = new JetCoreEnvironment(myRootDisposable);
-        myFileNameTransformer = fileNameTransformer;
         myMessageRenderer = messageRenderer;
     }
 
@@ -181,7 +179,7 @@ public class CompileEnvironment {
 
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
-            CompileEnvironment compileEnvironment = new CompileEnvironment(myFileNameTransformer, myMessageRenderer);
+            CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer);
             compileEnvironment.setIgnoreErrors(ignoreErrors);
             compileEnvironment.setErrorStream(myErrorStream);
             // copy across any compiler plugins
@@ -206,7 +204,7 @@ public class CompileEnvironment {
     }
 
     public List<Module> loadModuleScript(String moduleFile) {
-        CompileSession scriptCompileSession = new CompileSession(myEnvironment, myFileNameTransformer);
+        CompileSession scriptCompileSession = new CompileSession(myEnvironment);
         scriptCompileSession.addSources(moduleFile);
         ensureRuntime();
 
@@ -353,7 +351,7 @@ public class CompileEnvironment {
     }
 
     public ClassLoader compileText(String code) {
-        CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
+        CompileSession session = new CompileSession(myEnvironment);
         session.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
 
         if (!session.analyze(myErrorStream, myMessageRenderer) && !ignoreErrors) {
@@ -365,7 +363,7 @@ public class CompileEnvironment {
     }
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
-        CompileSession session = new CompileSession(myEnvironment, myFileNameTransformer);
+        CompileSession session = new CompileSession(myEnvironment);
         session.setStubs(stubs);
 
         session.addSources(sourceFileOrDir);
