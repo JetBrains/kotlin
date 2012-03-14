@@ -346,4 +346,12 @@ public final class BindingUtils {
         assert resolvedCall != null;
         return resolvedCall;
     }
+
+    public static ConstructorDescriptor getConstructor(BindingContext bindingContext,
+                                                       @NotNull JetClassOrObject declaration) {
+        ConstructorDescriptor primaryConstructor =
+                getClassDescriptor(bindingContext, declaration).getUnsubstitutedPrimaryConstructor();
+        assert primaryConstructor != null : "Traits do not have initialize methods.";
+        return primaryConstructor;
+    }
 }

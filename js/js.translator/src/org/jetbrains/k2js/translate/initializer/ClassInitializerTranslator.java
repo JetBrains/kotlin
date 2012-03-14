@@ -59,21 +59,14 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     @NotNull
     protected JsFunction generateInitializerFunction() {
         //TODO: it's inconsistent that we scope for class and function for constructor, currently have problems implementing better way
-        ConstructorDescriptor primaryConstructor = getConstructor();
+        ConstructorDescriptor primaryConstructor = getConstructor(bindingContext(), classDeclaration);
         JsFunction result = context().getFunctionObject(primaryConstructor);
-        //NOTE: while we doTranslate constructor parameters we also add property initializer statements
+        //NOTE: while we translate constructor parameters we also add property initializer statements
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
         result.setBody(generateInitializerMethodBody());
         return result;
-    }
-
-    private ConstructorDescriptor getConstructor() {
-        ConstructorDescriptor primaryConstructor =
-                getClassDescriptor(context().bindingContext(), classDeclaration).getUnsubstitutedPrimaryConstructor();
-        assert primaryConstructor != null : "Traits do not have initialize methods.";
-        return primaryConstructor;
     }
 
     @NotNull
