@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 
 /**
@@ -31,7 +32,14 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
-        return getJetDeclarationByClsElement(clsClass);
+        JetClass jetClass = (JetClass) getJetDeclarationByClsElement(clsClass);
+        if (jetClass != null) {
+            JetClass sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
+            if (sourceClass != null) {
+                return sourceClass;
+            }
+        }
+        return jetClass;
     }
 
     @Override
