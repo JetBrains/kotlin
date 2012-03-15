@@ -102,6 +102,8 @@
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
+            <fileset dir="${basedir}/runtime" includes="src/**/*" />
+            <fileset dir="${basedir}/libraries/stdlib" includes="src/**/*" />
         </jar>
     </target>
 

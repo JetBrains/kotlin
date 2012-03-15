@@ -139,6 +139,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             public void run() {
                 Library.ModifiableModel model = finalKotlinRuntime.getModifiableModel();
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar), OrderRootType.CLASSES);
+                model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar) + "src", OrderRootType.SOURCES);
                 model.commit();
             }
         });
