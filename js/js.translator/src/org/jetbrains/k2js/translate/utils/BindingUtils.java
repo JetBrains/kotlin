@@ -97,11 +97,7 @@ public final class BindingUtils {
     public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
                                                                    @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
-        for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
-            if (AnnotationsUtils.isPredefinedObject(descriptor)) {
-                continue;
-            }
-            //TODO:
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespace)) {
             if (descriptor instanceof NamespaceDescriptor) {
                 continue;
             }
@@ -197,27 +193,6 @@ public final class BindingUtils {
 
     public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
         return !superClassDescriptor.equals(JetStandardClasses.getAny());
-    }
-
-
-    //TODO: refactor duplication
-    //TODO: check where we use these, suspicious
-    public static boolean isOwnedByNamespace(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
-            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
-            assert classDescriptor != null;
-            return isOwnedByNamespace(classDescriptor);
-        }
-        return (descriptor.getContainingDeclaration() instanceof NamespaceDescriptor);
-    }
-
-    public static boolean isOwnedByClass(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ConstructorDescriptor) {
-            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
-            assert classDescriptor != null;
-            return isOwnedByClass(classDescriptor);
-        }
-        return (descriptor.getContainingDeclaration() instanceof ClassDescriptor);
     }
 
     @NotNull
@@ -321,7 +296,7 @@ public final class BindingUtils {
         for (JetFile file : files) {
             NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptor(context, file);
             if (!AnnotationsUtils.isPredefinedObject(namespaceDescriptor)) {
-                descriptorSet.add(namespaceDescriptor);
+                descriptorSet.addAll(getNamespaceDescriptorHierarchy(namespaceDescriptor));
             }
         }
         return descriptorSet;
@@ -338,8 +313,7 @@ public final class BindingUtils {
     @NotNull
     public static ResolvedCall<FunctionDescriptor> getResolvedCallForArrayAccess(@NotNull BindingContext context,
                                                                                  @NotNull JetArrayAccessExpression arrayAccessExpression,
-                                                                                 boolean isGet
-    ) {
+                                                                                 boolean isGet) {
         ResolvedCall<FunctionDescriptor> resolvedCall = context.get(isGet
                                                                     ? INDEXED_LVALUE_GET
                                                                     : INDEXED_LVALUE_SET, arrayAccessExpression);

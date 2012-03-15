@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -150,10 +151,10 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsObjectLiteral classDeclarationsForNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        JsObjectLiteral result = new JsObjectLiteral();
+    public List<JsPropertyInitializer> classDeclarationsForNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        List<JsPropertyInitializer> result = Lists.newArrayList();
         for (ClassDescriptor classDescriptor : getAllClassesDefinedInNamespace(namespaceDescriptor)) {
-            result.getPropertyInitializers().add(getClassNameToClassObject(classDescriptor));
+            result.add(getClassNameToClassObject(classDescriptor));
         }
         return result;
     }

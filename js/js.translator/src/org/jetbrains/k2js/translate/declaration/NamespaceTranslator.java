@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +25,7 @@ import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,12 +55,6 @@ public final class NamespaceTranslator extends AbstractTranslator {
         this.classDeclarationTranslator = classDeclarationTranslator;
     }
 
-    //TODO: at the moment this check is very ineffective, possible solution is to cash the result of getDFN
-    // other solution is to determine it's not affecting performance :D
-    public boolean isNamespaceEmpty() {
-        return BindingUtils.getDeclarationsForNamespace(bindingContext(), descriptor).isEmpty();
-    }
-
 
     @NotNull
     public JsStatement getInitializeStatement() {
@@ -76,18 +71,35 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     public JsStatement getDeclarationStatement() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
-        addMemberDeclarations(namespaceDeclaration);
-        addClassesDeclarations(namespaceDeclaration);
+        namespaceDeclaration.getArguments().add(translateNamespaceMemberDeclarations());
+        namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
         return newVar(namespaceName, namespaceDeclaration);
     }
 
-    private void addClassesDeclarations(@NotNull JsInvocation namespaceDeclaration) {
-        namespaceDeclaration.getArguments().add(classDeclarationTranslator.classDeclarationsForNamespace(descriptor));
+    @NotNull
+    private JsObjectLiteral getClassesAndNestedNamespaces() {
+        JsObjectLiteral classesAndNestedNamespaces = new JsObjectLiteral();
+        classesAndNestedNamespaces.getPropertyInitializers()
+                .addAll(getClassesDefined());
+        classesAndNestedNamespaces.getPropertyInitializers()
+                .addAll(getNestedNamespaceDeclarations());
+        return classesAndNestedNamespaces;
     }
 
-    private void addMemberDeclarations(@NotNull JsInvocation jsNamespace) {
-        JsObjectLiteral jsClassDescription = translateNamespaceMemberDeclarations();
-        jsNamespace.getArguments().add(jsClassDescription);
+    @NotNull
+    private List<JsPropertyInitializer> getClassesDefined() {
+        return classDeclarationTranslator.classDeclarationsForNamespace(descriptor);
+    }
+
+    @NotNull
+    private List<JsPropertyInitializer> getNestedNamespaceDeclarations() {
+        List<JsPropertyInitializer> result = Lists.newArrayList();
+        List<NamespaceDescriptor> nestedNamespaces = DescriptorUtils.getNestedNamespaces(descriptor);
+        for (NamespaceDescriptor nestedNamespace : nestedNamespaces) {
+            JsName nameForDescriptor = context().getNameForDescriptor(nestedNamespace);
+            result.add(new JsPropertyInitializer(nameForDescriptor.makeRef(), nameForDescriptor.makeRef()));
+        }
+        return result;
     }
 
     @NotNull

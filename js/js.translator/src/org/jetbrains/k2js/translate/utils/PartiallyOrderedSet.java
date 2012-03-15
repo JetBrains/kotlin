@@ -45,7 +45,7 @@ public final class PartiallyOrderedSet<Element> {
     }
 
     public interface Order<Element> {
-        boolean firstDependsOnSecond(@NotNull Element first, @NotNull Element Second);
+        boolean firstDependsOnSecond(@NotNull Element first, @NotNull Element second);
     }
 
     @NotNull

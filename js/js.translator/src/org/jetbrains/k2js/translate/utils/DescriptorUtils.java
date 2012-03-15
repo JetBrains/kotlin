@@ -81,13 +81,9 @@ public final class DescriptorUtils {
     @NotNull
     public static PropertyDescriptor getPropertyByName(@NotNull JetScope scope,
                                                        @NotNull String name) {
-        VariableDescriptor variable = scope.getLocalVariable(name);
-        if (variable == null) {
-            variable = scope.getPropertyByFieldReference("$" + name);
-        }
         Set<VariableDescriptor> variables = scope.getProperties(name);
         assert variables.size() == 1 : "Actual size: " + variables.size();
-        variable = variables.iterator().next();
+        VariableDescriptor variable = variables.iterator().next();
         PropertyDescriptor descriptor = (PropertyDescriptor) variable;
         assert descriptor != null : "Must have a descriptor.";
         return descriptor;
@@ -208,15 +204,23 @@ public final class DescriptorUtils {
     @NotNull
     public static List<ClassDescriptor> getAllClassesDefinedInNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         List<ClassDescriptor> classDescriptors = Lists.newArrayList();
-        for (DeclarationDescriptor descriptor : namespaceDescriptor.getMemberScope().getAllDescriptors()) {
-            if (AnnotationsUtils.isPredefinedObject(descriptor)) {
-                continue;
-            }
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
             if (descriptor instanceof ClassDescriptor) {
                 classDescriptors.add((ClassDescriptor) descriptor);
             }
         }
         return classDescriptors;
+    }
+
+    @NotNull
+    public static List<NamespaceDescriptor> getNestedNamespaces(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        List<NamespaceDescriptor> result = Lists.newArrayList();
+        for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
+            if (descriptor instanceof NamespaceDescriptor) {
+                result.add((NamespaceDescriptor) descriptor);
+            }
+        }
+        return result;
     }
 
     @Nullable
@@ -242,4 +246,49 @@ public final class DescriptorUtils {
 //            return functionDescriptor;
 //        }
 //    }
+
+    @NotNull
+    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined
+            (@NotNull NamespaceDescriptor namespace) {
+        List<DeclarationDescriptor> result = Lists.newArrayList();
+        for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
+            if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
+                result.add(descriptor);
+            }
+        }
+        return result;
+    }
+
+    //TODO: at the moment this check is very ineffective
+    public static boolean isNamespaceEmpty(@NotNull NamespaceDescriptor namespace) {
+        List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace);
+        for (DeclarationDescriptor descriptor : containedDescriptors) {
+            if (descriptor instanceof NamespaceDescriptor) {
+                if (!isNamespaceEmpty((NamespaceDescriptor) descriptor)) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @NotNull
+    public static List<NamespaceDescriptor> getNamespaceDescriptorHierarchy(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        List<NamespaceDescriptor> result = Lists.newArrayList(namespaceDescriptor);
+        NamespaceDescriptor current = namespaceDescriptor;
+        while (!current.getName().equals("<root>")) {
+            result.add(current);
+            if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
+                current = (NamespaceDescriptor) current.getContainingDeclaration();
+                assert current != null;
+            }
+            else {
+                break;
+            }
+        }
+        return result;
+    }
 }

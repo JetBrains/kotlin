@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -90,10 +91,8 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private List<NamespaceTranslator> getTranslatorsForNonEmptyNamespaces() {
         List<NamespaceTranslator> namespaceTranslators = Lists.newArrayList();
         for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            NamespaceTranslator namespaceTranslator =
-                    new NamespaceTranslator(descriptor, classDeclarationTranslator, context());
-            if (!namespaceTranslator.isNamespaceEmpty()) {
-                namespaceTranslators.add(namespaceTranslator);
+            if (!DescriptorUtils.isNamespaceEmpty(descriptor)) {
+                namespaceTranslators.add(new NamespaceTranslator(descriptor, classDeclarationTranslator, context()));
             }
         }
         return namespaceTranslators;
