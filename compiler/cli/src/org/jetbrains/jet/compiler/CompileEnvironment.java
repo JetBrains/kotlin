@@ -169,7 +169,10 @@ public class CompileEnvironment {
     }
 
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        List<Module> modules = copyEnvironment(false).loadModuleScript(moduleScriptFile);
+        CompileEnvironment moduleCompilationEnvironment = copyEnvironment(false);
+        moduleCompilationEnvironment.myStdlib = myStdlib;
+
+        List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
 
         if (modules == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
