@@ -28,7 +28,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
-import org.jetbrains.k2js.translate.utils.ClassSorter;
+import org.jetbrains.k2js.translate.utils.ClassSortingUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,7 +128,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         for (ClassDescriptor classDescriptor : descriptors) {
             classes.add(BindingUtils.getClassForDescriptor(bindingContext(), classDescriptor));
         }
-        return ClassSorter.sortUsingInheritanceOrder(classes, bindingContext());
+        return ClassSortingUtils.sortUsingInheritanceOrder(classes, bindingContext());
     }
 
     @NotNull
