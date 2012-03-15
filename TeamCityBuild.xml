@@ -42,18 +42,21 @@
     </target>
 
     <target name="writeVersionToPluginXml">
-        <copy file="${plugin.xml}" tofile="${plugin.xml.bk}"/>
-        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true">
+        <!-- Check that version has correct pattern for substitution -->
+        <copy todir="">
+            <fileset file="${plugin.xml}">
+                <contains text="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+            </fileset>
             <filterchain>
                 <replacetokens>
                     <token key="snapshot" value="${build.number}"/>
                 </replacetokens>
             </filterchain>
+            <mergemapper to="${plugin.xml.bk}"/>
         </copy>
-    </target>
 
-    <target name="cleanupPluginXml">
         <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+
         <delete file="${plugin.xml.bk}" quiet="true"/>
     </target>
 
@@ -82,7 +85,7 @@
         -->
     </target>
 
-    <target name="post_build" depends="cleanupPluginXml, zipArtifact, verifyPlugin"/>
+    <target name="post_build" depends="zipArtifact, verifyPlugin"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
