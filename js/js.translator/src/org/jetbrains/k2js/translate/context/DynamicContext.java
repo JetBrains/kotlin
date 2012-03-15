@@ -26,52 +26,46 @@ public class DynamicContext {
 
     @NotNull
     public static DynamicContext rootContext(@NotNull NamingScope rootScope, @NotNull JsBlock globalBlock) {
-        return new DynamicContext(rootScope, rootScope, globalBlock);
+        return new DynamicContext(rootScope, globalBlock);
     }
 
     @NotNull
-    public static DynamicContext contextWithScope(@NotNull NamingScope scope) {
-        return new DynamicContext(scope, scope, new JsBlock());
+    public static DynamicContext newContext(@NotNull NamingScope scope, @NotNull JsBlock block) {
+        return new DynamicContext(scope, block);
     }
 
-    //TODO: current/block scope logic unclear. is it necessary?
     @NotNull
     private final NamingScope currentScope;
 
     @NotNull
-    private final NamingScope blockScope;
-
-    @NotNull
     private final JsBlock currentBlock;
 
-    private DynamicContext(@NotNull NamingScope scope, @NotNull NamingScope blockScope, @NotNull JsBlock block) {
+    private DynamicContext(@NotNull NamingScope scope, @NotNull JsBlock block) {
         this.currentScope = scope;
         this.currentBlock = block;
-        this.blockScope = blockScope;
-    }
-
-    @NotNull
-    public DynamicContext innerScope(@NotNull JsScope scope) {
-        return new DynamicContext(currentScope.innerScope(scope), blockScope, currentBlock);
     }
 
     @NotNull
     public DynamicContext innerBlock(@NotNull JsBlock block) {
-        return new DynamicContext(currentScope, currentScope, block);
+        return new DynamicContext(currentScope, block);
     }
 
     @NotNull
     public TemporaryVariable declareTemporary(@NotNull JsExpression initExpression) {
-        JsName temporaryName = blockScope.declareTemporary();
+        JsName temporaryName = currentScope.declareTemporary();
         JsVars temporaryDeclaration = newVar(temporaryName, /*no init expression in var statement*/ null);
         addVarDeclaration(jsBlock(), temporaryDeclaration);
         return new TemporaryVariable(temporaryName, initExpression);
     }
 
-
     @NotNull
     public JsScope jsScope() {
         return currentScope.jsScope();
+    }
+
+    @NotNull
+    public NamingScope getScope() {
+        return currentScope;
     }
 
     @NotNull

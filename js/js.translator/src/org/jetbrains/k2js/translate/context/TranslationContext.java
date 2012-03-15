@@ -53,14 +53,8 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext contextWithScope(@NotNull NamingScope newScope) {
-        return new TranslationContext(staticContext, DynamicContext.contextWithScope(newScope));
-    }
-
-    // Note: Should be used ONLY if scope has no corresponding descriptor
-    @NotNull
-    public TranslationContext innerJsScope(@NotNull JsScope enclosingScope) {
-        return new TranslationContext(staticContext, dynamicContext.innerScope(enclosingScope));
+    public TranslationContext contextWithScope(@NotNull NamingScope newScope, @NotNull JsBlock block) {
+        return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block));
     }
 
     @NotNull
@@ -70,7 +64,23 @@ public final class TranslationContext {
 
     @NotNull
     public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor) {
-        return contextWithScope(getScopeForDescriptor(descriptor));
+        return contextWithScope(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor));
+    }
+
+    //TODO: consider passing a function here
+    @NotNull
+    public TranslationContext innerContextWithGivenScopeAndBlock(@NotNull JsScope scope, @NotNull JsBlock block) {
+        return contextWithScope(dynamicContext.getScope().innerScope(scope), block);
+    }
+
+    @NotNull
+    public JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableDescriptor) {
+            return getFunctionObject((CallableDescriptor) descriptor).getBody();
+        }
+        else {
+            return new JsBlock();
+        }
     }
 
     @NotNull

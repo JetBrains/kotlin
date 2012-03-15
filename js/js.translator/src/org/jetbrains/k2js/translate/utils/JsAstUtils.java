@@ -264,4 +264,11 @@ public final class JsAstUtils {
         }
         return result;
     }
+
+    @NotNull
+    public static JsFunction createFunctionWithEmptyBody(@NotNull JsScope parent) {
+        JsFunction correspondingFunction = new JsFunction(parent);
+        correspondingFunction.setBody(new JsBlock());
+        return correspondingFunction;
+    }
 }

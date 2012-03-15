@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgum
 /**
  * @author Pavel Talanov
  */
-public final class ClassInitializerTranslator extends AbstractInitializerTranslator {
+public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     private final JetClassOrObject classDeclaration;
@@ -51,13 +52,12 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
     public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
         // Note: it's important we use scope for class descriptor because anonymous function used in property initializers
         // belong to the properties themselves
-        super(context.getScopeForDescriptor(getClassDescriptor(context.bindingContext(), classDeclaration)), context);
+        super(context.newDeclaration(getConstructor(context.bindingContext(), classDeclaration)));
         this.classDeclaration = classDeclaration;
     }
 
-    @Override
     @NotNull
-    protected JsFunction generateInitializerFunction() {
+    public JsPropertyInitializer generateInitializeMethod() {
         //TODO: it's inconsistent that we scope for class and function for constructor, currently have problems implementing better way
         ConstructorDescriptor primaryConstructor = getConstructor(bindingContext(), classDeclaration);
         JsFunction result = context().getFunctionObject(primaryConstructor);
@@ -65,14 +65,9 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
-        result.setBody(generateInitializerMethodBody());
-        return result;
-    }
-
-    @NotNull
-    private JsBlock generateInitializerMethodBody() {
-        initializerStatements.addAll(translateClassInitializers(classDeclaration));
-        return newBlock(initializerStatements);
+        initializerStatements.addAll((new InitializerVisitor()).traverseClass(classDeclaration, context()));
+        result.getBody().getStatements().addAll(initializerStatements);
+        return InitializerUtils.generateInitializeMethod(result);
     }
 
     private void mayBeAddCallToSuperMethod() {
@@ -85,7 +80,7 @@ public final class ClassInitializerTranslator extends AbstractInitializerTransla
 
     private void addCallToSuperMethod(@NotNull JetDelegatorToSuperCall superCall) {
         //TODO: can be problematic to maintain
-        JsName superMethodName = initializerMethodScope.jsScope().declareName(Namer.superMethodName());
+        JsName superMethodName = context().jsScope().declareName(Namer.superMethodName());
         superMethodName.setObfuscatable(false);
         List<JsExpression> arguments = translateArguments(superCall);
         initializerStatements.add(convertToStatement(newInvocation(thisQualifiedReference(superMethodName), arguments)));

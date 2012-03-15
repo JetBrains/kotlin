@@ -347,7 +347,7 @@ public final class BindingUtils {
         return resolvedCall;
     }
 
-    public static ConstructorDescriptor getConstructor(BindingContext bindingContext,
+    public static ConstructorDescriptor getConstructor(@NotNull BindingContext bindingContext,
                                                        @NotNull JetClassOrObject declaration) {
         ConstructorDescriptor primaryConstructor =
                 getClassDescriptor(bindingContext, declaration).getUnsubstitutedPrimaryConstructor();

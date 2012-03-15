@@ -17,33 +17,39 @@
 package org.jetbrains.k2js.translate.initializer;
 
 import com.google.dart.compiler.backend.js.ast.JsFunction;
+import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.newBlock;
+import java.util.List;
 
 /**
  * @author Pavel Talanov
  */
-public final class NamespaceInitializerTranslator extends AbstractInitializerTranslator {
+public final class NamespaceInitializerTranslator {
 
     @NotNull
     private final NamespaceDescriptor namespace;
+    @NotNull
+    private final TranslationContext namespaceContext;
 
     public NamespaceInitializerTranslator(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
-        //NOTE:
-        super(context.getScopeForDescriptor(namespace), context);
         this.namespace = namespace;
+        this.namespaceContext = context;
     }
 
-    @Override
     @NotNull
-    protected JsFunction generateInitializerFunction() {
-        //NOTE: namespace has no constructor
-        JsFunction result = new JsFunction(initializerMethodScope.jsScope());
-        result.setBody(newBlock(translateNamespaceInitializers(namespace)));
-        return result;
+    public JsPropertyInitializer generateInitializeMethod() {
+        JsFunction result = JsAstUtils.createFunctionWithEmptyBody(namespaceContext.jsScope());
+        TranslationContext namespaceInitializerContext
+                = namespaceContext.innerContextWithGivenScopeAndBlock(result.getScope(), result.getBody());
+        List<JsStatement> initializerStatements =
+                (new InitializerVisitor()).traverseNamespace(namespace, namespaceInitializerContext);
+        result.getBody().getStatements().addAll(initializerStatements);
+        return InitializerUtils.generateInitializeMethod(result);
     }
 
 

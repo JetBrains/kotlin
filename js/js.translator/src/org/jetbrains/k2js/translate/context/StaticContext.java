@@ -27,6 +27,7 @@ import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
@@ -84,7 +85,6 @@ public final class StaticContext {
     private final Generator<JsNameRef> qualifiers = new QualifierGenerator();
     @NotNull
     private final Generator<Boolean> qualifierIsNull = new QualifierIsNullGenerator();
-
     @NotNull
     private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
@@ -135,7 +135,7 @@ public final class StaticContext {
 
     @NotNull
     public NamingScope getScopeForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        NamingScope namingScope = scopes.get(descriptor);
+        NamingScope namingScope = scopes.get(descriptor.getOriginal());
         assert namingScope != null : "Must have a scope for descriptor";
         return namingScope;
     }
@@ -337,8 +337,9 @@ public final class StaticContext {
                         return null;
                     }
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    JsFunction correspondingFunction = new JsFunction(enclosingScope.jsScope());
+                    JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(enclosingScope.jsScope());
                     NamingScope newScope = enclosingScope.innerScope(correspondingFunction.getScope());
+                    assert (!scopeToFunction.containsKey(newScope)) : "Scope to function value overriden for " + descriptor;
                     scopeToFunction.put(newScope, correspondingFunction);
                     return newScope;
                 }

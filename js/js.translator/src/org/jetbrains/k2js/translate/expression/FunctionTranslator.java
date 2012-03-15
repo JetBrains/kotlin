@@ -52,6 +52,8 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
 /**
  * @author Pavel Talanov
  */
+
+//TODO: class has convoluted code. REFACTOR before changing
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
@@ -75,10 +77,10 @@ public final class FunctionTranslator extends AbstractTranslator {
     private FunctionTranslator(@NotNull JetDeclarationWithBody functionDeclaration,
                                @NotNull TranslationContext context) {
         super(context);
-        this.functionBody = new JsBlock();
         this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
         this.functionDeclaration = functionDeclaration;
-        this.functionObject = createFunctionObject();
+        this.functionObject = context().getFunctionObject(descriptor);
+        this.functionBody = functionObject.getBody();
         this.functionBodyContext = functionBodyContext().innerBlock(functionBody);
     }
 
@@ -147,7 +149,6 @@ public final class FunctionTranslator extends AbstractTranslator {
     private void generateFunctionObject() {
         setParameters(functionObject, translateParameters());
         translateBody();
-        functionObject.setBody(functionBody);
         restoreContext();
     }
 
@@ -157,11 +158,6 @@ public final class FunctionTranslator extends AbstractTranslator {
             assert expectedReceiverDescriptor != null : "Extension functions should always have receiver descriptors.";
             functionBodyContext.aliaser().removeAliasForThis(expectedReceiverDescriptor);
         }
-    }
-
-    @NotNull
-    private JsFunction createFunctionObject() {
-        return context().getFunctionObject(descriptor);
     }
 
     private void translateBody() {
@@ -203,12 +199,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private TranslationContext functionBodyContext() {
-        if (isLiteral()) {
-            return context().innerJsScope(functionObject.getScope());
-        }
-        else {
-            return context().newDeclaration(functionDeclaration);
-        }
+        return context().newDeclaration(functionDeclaration);
     }
 
     @NotNull

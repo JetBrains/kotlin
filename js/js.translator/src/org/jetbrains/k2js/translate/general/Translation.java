@@ -100,13 +100,15 @@ public final class Translation {
     @NotNull
     public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
                                                                        @NotNull TranslationContext context) {
-        return (new ClassInitializerTranslator(classDeclaration, context)).generateInitializeMethod();
+        final ClassInitializerTranslator classInitializerTranslator = new ClassInitializerTranslator(classDeclaration, context);
+        return classInitializerTranslator.generateInitializeMethod();
     }
 
     @NotNull
     public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
                                                                            @NotNull TranslationContext context) {
-        return (new NamespaceInitializerTranslator(namespace, context)).generateInitializeMethod();
+        final NamespaceInitializerTranslator namespaceInitializerTranslator = new NamespaceInitializerTranslator(namespace, context);
+        return namespaceInitializerTranslator.generateInitializeMethod();
     }
 
     @NotNull

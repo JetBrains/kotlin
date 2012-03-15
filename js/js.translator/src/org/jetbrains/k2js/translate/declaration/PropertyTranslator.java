@@ -125,7 +125,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsFunction generateDefaultGetterFunction(@NotNull PropertyGetterDescriptor descriptor) {
         JsReturn returnExpression = new JsReturn(backingFieldReference(context(), property));
         JsFunction getterFunction = context().getFunctionObject(descriptor);
-        getterFunction.setBody(convertToBlock(returnExpression));
+        getterFunction.getBody().getStatements().add(returnExpression);
         return getterFunction;
     }
 
@@ -144,7 +144,7 @@ public final class PropertyTranslator extends AbstractTranslator {
                 new JsParameter(propertyAccessContext(propertySetterDescriptor).jsScope().declareTemporary());
         JsStatement assignment = assignmentToBackingField(context(), property, defaultParameter.getName().makeRef()).makeStmt();
         setParameters(result, defaultParameter);
-        result.setBody(convertToBlock(assignment));
+        result.getBody().getStatements().add(assignment);
         return result;
     }
 
