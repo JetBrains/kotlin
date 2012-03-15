@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.google.common.base.Predicates;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
@@ -31,13 +31,11 @@ import com.intellij.psi.search.UsageSearchContext;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -64,16 +62,14 @@ public class JetSourceNavigationHelper {
         if (fqName == null) {
             return null;
         }
-        final Project project = declaration.getProject();
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
-        BindingContext bindingContext = AnalyzingUtils.analyzeFiles(project,
-                                                                    ModuleConfiguration.EMPTY,
-                                                                    libraryFiles,
-                                                                    Predicates.<PsiFile>alwaysTrue(),
-                                                                    JetControlFlowDataTraceFactory.EMPTY);
-        D descriptor = bindingContext.get(slice, fqName);
-        if (descriptor != null) {
-            return new Tuple2<BindingContext, D>(bindingContext, descriptor);
+        for (JetFile libraryFile : libraryFiles) {
+            BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(libraryFile,
+                                                                                      AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+            D descriptor = bindingContext.get(slice, fqName);
+            if (descriptor != null) {
+                return new Tuple2<BindingContext, D>(bindingContext, descriptor);
+            }
         }
         return null;
     }
