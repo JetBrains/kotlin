@@ -44,7 +44,9 @@ From this root project there are Run/Debug Configurations for running IDEA or th
 
 ### Using a pre-built Kotlin IDEA plugin
 
-In a recent [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP) install the Kotlin plugin:
+You can download the latest Kotlin IDEA Plugin from the [IDEA Plugin and Tests CI build](http://teamcity.jetbrains.com/project.html?projectId=project67&tab=projectOverview)
+
+Or in a recent [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP) install the Kotlin plugin:
 
 Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
 
@@ -89,6 +91,10 @@ with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discuss
 
 The best way to contribute is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
 [pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
+
+If you create your own fork, it might help to [enable rebase by default when you pull](http://d.strelau.net/post/47338904/git-pull-rebase-by-default)
+which will avoid your local repo having too many merge commits which will help keep your pull request simple and easy to apply.
+
 
 ## Kommitter links
 
