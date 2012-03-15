@@ -169,7 +169,7 @@ public class CompileEnvironment {
     }
 
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        List<Module> modules = loadModuleScript(moduleScriptFile);
+        List<Module> modules = copyEnvironment(false).loadModuleScript(moduleScriptFile);
 
         if (modules == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
@@ -181,11 +181,7 @@ public class CompileEnvironment {
 
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
-            CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer, verbose);
-            compileEnvironment.setIgnoreErrors(ignoreErrors);
-            compileEnvironment.setErrorStream(myErrorStream);
-            // copy across any compiler plugins
-            compileEnvironment.getMyEnvironment().getCompilerPlugins().addAll(myEnvironment.getCompilerPlugins());
+            CompileEnvironment compileEnvironment = copyEnvironment(verbose);
             ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
@@ -203,6 +199,15 @@ public class CompileEnvironment {
             }
         }
         return true;
+    }
+
+    private CompileEnvironment copyEnvironment(boolean verbose) {
+        CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer, verbose);
+        compileEnvironment.setIgnoreErrors(ignoreErrors);
+        compileEnvironment.setErrorStream(myErrorStream);
+        // copy across any compiler plugins
+        compileEnvironment.getMyEnvironment().getCompilerPlugins().addAll(myEnvironment.getCompilerPlugins());
+        return compileEnvironment;
     }
 
     public List<Module> loadModuleScript(String moduleFile) {

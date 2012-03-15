@@ -22,9 +22,9 @@ import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
 
 
 /**
@@ -133,7 +133,7 @@ public class BytecodeCompiler {
      */
     public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
+            boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( module, false ));
             }

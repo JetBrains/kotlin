@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.compiler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
+import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.execution.process.*;
@@ -35,6 +36,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
@@ -99,11 +101,11 @@ public class JetCompiler implements TranslatingCompiler {
 
         final Module module = compileContext.getModuleByFile(virtualFiles[0]);
 
-        doCompile(compileContext, moduleChunk, productionFiles, module, false);
-        doCompile(compileContext, moduleChunk, testFiles, module, true);
+        doCompile(compileContext, moduleChunk, productionFiles, module, outputSink, false);
+        doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);
     }
 
-    private void doCompile(CompileContext compileContext, Chunk<Module> moduleChunk, List<VirtualFile> files, Module module, boolean tests) {
+    private void doCompile(CompileContext compileContext, Chunk<Module> moduleChunk, List<VirtualFile> files, Module module, OutputSink outputSink, boolean tests) {
         if (files.isEmpty()) return;
 
         VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
@@ -137,13 +139,16 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
+        OutputItemsCollector collector = new OutputItemsCollector(outputDir.getPath());
+
         if (RUN_OUT_OF_PROCESS) {
-            runOutOfProcess(compileContext, outputDir, kotlinHome, scriptFile);
+            runOutOfProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
         }
         else {
-            runInProcess(compileContext, outputDir, kotlinHome, scriptFile);
+            runInProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
         }
 
+        outputSink.add(outputDir.getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
 //        System.out.println("Generated module script:\n" + script.toString());
 //        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
     }
@@ -231,13 +236,13 @@ public class JetCompiler implements TranslatingCompiler {
         return answer;
     }
 
-    private void runInProcess(CompileContext compileContext, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private void runInProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(outputStream);
 
         int rc = execInProcess(kotlinHome, outputDir, scriptFile, out, compileContext);
 
-        ProcessAdapter listener = createProcessListener(compileContext);
+        ProcessAdapter listener = createProcessListener(compileContext, collector);
 
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
         while (true) {
@@ -306,7 +311,7 @@ public class JetCompiler implements TranslatingCompiler {
         return new URLClassLoader(urls, null);
     }
 
-    private static void runOutOfProcess(CompileContext compileContext, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private static void runOutOfProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
@@ -337,7 +342,7 @@ public class JetCompiler implements TranslatingCompiler {
               }
             };
 
-            ProcessAdapter processListener = createProcessListener(compileContext);
+            ProcessAdapter processListener = createProcessListener(compileContext, collector);
             processHandler.addProcessListener(processListener);
 
             processHandler.startNotify();
@@ -348,8 +353,44 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static ProcessAdapter createProcessListener(final CompileContext compileContext) {
-        return new CompilerProcessListener(compileContext);
+    private static class OutputItemsCollector {
+        private static final String FOR_SOURCE_PREFIX = "For source: ";
+        private static final String EMITTING_PREFIX = "Emitting: ";
+        private final String outputPath;
+        private VirtualFile currentSource;
+        private List<OutputItem> answer = new ArrayList<OutputItem>();
+        private List<VirtualFile> sources = new ArrayList<VirtualFile>();
+
+        private OutputItemsCollector(String outputPath) {
+            this.outputPath = outputPath;
+        }
+
+        public void learn(String message) {
+            message = message.trim();
+            if (message.startsWith(FOR_SOURCE_PREFIX)) {
+                currentSource = LocalFileSystem.getInstance().findFileByPath(message.substring(FOR_SOURCE_PREFIX.length()));
+                if (currentSource != null) {
+                    sources.add(currentSource);
+                }
+            }
+            else if (message.startsWith(EMITTING_PREFIX)) {
+                if (currentSource != null) {
+                    answer.add(new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource));
+                }
+            }
+        }
+
+        public List<OutputItem> getOutputs() {
+            return answer;
+        }
+
+        public List<VirtualFile> getSources() {
+            return sources;
+        }
+    }
+
+    private static ProcessAdapter createProcessListener(final CompileContext compileContext, OutputItemsCollector collector) {
+        return new CompilerProcessListener(compileContext, collector);
     }
 
     private static String path(VirtualFile root) {
@@ -462,13 +503,15 @@ public class JetCompiler implements TranslatingCompiler {
         }
 
         private final CompileContext compileContext;
+        private final OutputItemsCollector collector;
         private final StringBuilder output = new StringBuilder();
         private int firstUnprocessedIndex = 0;
         private State state = State.WAITING;
         private CompilerMessage currentCompilerMessage;
 
-        public CompilerProcessListener(CompileContext compileContext) {
+        public CompilerProcessListener(CompileContext compileContext, OutputItemsCollector collector) {
             this.compileContext = compileContext;
+            this.collector = collector;
         }
 
         @Override
@@ -511,8 +554,14 @@ public class JetCompiler implements TranslatingCompiler {
                         case MESSAGE: {
                             Matcher matcher = matcher(MESSAGE_PATTERN);
                             if (find(matcher)) {
-                                currentCompilerMessage.setMessage(matcher.group(1));
+                                String message = matcher.group(1);
+                                currentCompilerMessage.setMessage(message);
                                 currentCompilerMessage.reportTo(compileContext);
+
+                                if (currentCompilerMessage.messageCategory == STATISTICS) {
+                                    collector.learn(message);
+                                }
+
                                 state = State.WAITING;
                             }
                             break;
