@@ -88,4 +88,9 @@ public class StringsTest extends CodegenTestCase {
     public void testKt889() throws Exception {
         blackBoxFile("regressions/kt889.jet");
     }
+
+    public void testHeredocs() throws Exception {
+        blackBoxFile("heredocs.jet");
+    }
+
 }

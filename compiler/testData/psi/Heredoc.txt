@@ -1,0 +1,120 @@
+JetFile: Heredoc.jet
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('wrap')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('demo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('<<<EOS\n')
+        PsiElement(CLOSING_QUOTE)('EOS')
+      PsiWhiteSpace('\n  ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('<<<EOS\n')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('line1\n')
+        PsiElement(CLOSING_QUOTE)('EOS')
+      PsiWhiteSpace('\n  ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('<<<EOS\n')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('line1\n')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('line2\n')
+        PsiElement(CLOSING_QUOTE)('EOS')
+      PsiWhiteSpace('\n  ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('<<<EOS\n')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('${hello}\n')
+        PsiElement(CLOSING_QUOTE)('EOS')
+      PsiWhiteSpace('\n  ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('wrap')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('<<<EOS\n')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('Hello World\n')
+              PsiElement(CLOSING_QUOTE)('EOS')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('name')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          LITERAL_STRING_TEMPLATE_ENTRY
+            PsiElement(REGULAR_STRING_PART)('Hiram')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n  ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('<<<$EOS\n')
+        LONG_STRING_TEMPLATE_ENTRY
+          PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('name')
+          PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('\n')
+        PsiElement(CLOSING_QUOTE)('EOS')
+      PsiWhiteSpace('\n  ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('wrap')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('<<<$EOS\n')
+              LONG_STRING_TEMPLATE_ENTRY
+                PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('name')
+                PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+              LITERAL_STRING_TEMPLATE_ENTRY
+                PsiElement(REGULAR_STRING_PART)('\n')
+              PsiElement(CLOSING_QUOTE)('EOS')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n')
+      PsiElement(RBRACE)('}')

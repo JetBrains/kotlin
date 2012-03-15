@@ -26,6 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
+    private String heredoc;
 
     private void pushState(int state) {
         states.push(new State(yystate(), lBraceCount));
@@ -45,7 +46,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 %eof{  return;
 %eof}
 
-%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY
+%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY HEREDOC HEREDOC_TEMPLATE
 %state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
@@ -107,6 +108,58 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 LONG_TEMPLATE_ENTRY_END=\}
 
 %%
+
+// HEREDOCS
+
+(\<\<\<){IDENTIFIER}[\ \t\f\r]*\n
+            {
+                this.heredoc = yytext().toString().substring(3).trim();
+                yybegin(HEREDOC);
+                return JetTokens.OPEN_QUOTE;
+            }
+
+<HEREDOC>[^\n]*\n
+            {
+                String text = yytext().toString();
+                if (text.startsWith(this.heredoc)) {
+                    // Don't consume any of the trailing tokens.
+                    yypushback(text.length() - this.heredoc.length());
+                    yybegin(YYINITIAL);
+                    this.heredoc = null;
+                    return JetTokens.CLOSING_QUOTE;
+                } else {
+                    return JetTokens.REGULAR_STRING_PART;
+                }
+            }
+
+(\<\<\<\$){IDENTIFIER}[\ \t\f\r]*\n
+            {
+                this.heredoc = yytext().toString().substring(4).trim();
+                pushState(HEREDOC_TEMPLATE);
+                return JetTokens.OPEN_QUOTE;
+            }
+
+<HEREDOC_TEMPLATE>[^\n]*\n
+            {
+                String text = yytext().toString();
+                if (text.startsWith(this.heredoc)) {
+                    // Don't consume any of the trailing tokens.
+                    yypushback(text.length() - this.heredoc.length());
+                    popState();
+                    this.heredoc = null;
+                    return JetTokens.CLOSING_QUOTE;
+                } else {
+                    int pos = text.indexOf("${");
+                    if( pos == 0 ) {
+                        yypushback(text.length() - 2);
+                        pushState(LONG_TEMPLATE_ENTRY);
+                        return JetTokens.LONG_TEMPLATE_ENTRY_START;
+                    } else if( pos > 0 ) {
+                        yypushback(text.length() - pos);
+                    }
+                    return JetTokens.REGULAR_STRING_PART;
+                }
+            }
 
 // String templates
 

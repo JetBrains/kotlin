@@ -1,0 +1,30 @@
+fun wrap(x:String) {
+    return x
+}
+
+fun demo() {
+  <<<EOS
+EOS
+  <<<EOS
+line1
+EOS
+  <<<EOS
+line1
+line2
+EOS
+  <<<EOS
+${hello}
+EOS
+  wrap(<<<EOS
+Hello World
+EOS)
+
+  val name = "Hiram"
+  <<<$EOS
+${name}
+EOS
+  wrap(<<<$EOS
+${name}
+EOS)
+
+}
