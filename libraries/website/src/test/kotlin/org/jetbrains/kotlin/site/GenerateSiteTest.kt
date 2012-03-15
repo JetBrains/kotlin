@@ -36,6 +36,7 @@ class GenerateSiteTest : TestCase() {
         config.ignorePackages.add("jet")
         config.ignorePackages.add("junit")
         config.ignorePackages.add("sun")
+        config.ignorePackages.add("org")
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
