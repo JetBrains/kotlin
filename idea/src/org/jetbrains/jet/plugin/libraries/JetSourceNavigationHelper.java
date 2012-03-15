@@ -21,12 +21,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.util.Processor;
+import com.intellij.psi.impl.cache.CacheManager;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.UsageSearchContext;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -59,17 +59,21 @@ public class JetSourceNavigationHelper {
     @Nullable
     private static<D extends ClassOrNamespaceDescriptor> Tuple2<BindingContext, D>
             getBindingContextAndClassOrNamespaceDescriptor(@NotNull WritableSlice<FqName, D> slice,
-                                                           @NotNull PsiElement psiElement,
+                                                           @NotNull JetDeclaration declaration,
                                                            @Nullable FqName fqName) {
         if (fqName == null) {
             return null;
         }
-        for (VirtualFile sourceDir : getAllSourceDirs(psiElement)) {
-            BindingContext bindingContext = analyzeLibrary(sourceDir, psiElement.getProject());
-            D descriptor = bindingContext.get(slice, fqName);
-            if (descriptor != null) {
-                return new Tuple2<BindingContext, D>(bindingContext, descriptor);
-            }
+        final Project project = declaration.getProject();
+        final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
+        BindingContext bindingContext = AnalyzingUtils.analyzeFiles(project,
+                                                                    ModuleConfiguration.EMPTY,
+                                                                    libraryFiles,
+                                                                    Predicates.<PsiFile>alwaysTrue(),
+                                                                    JetControlFlowDataTraceFactory.EMPTY);
+        D descriptor = bindingContext.get(slice, fqName);
+        if (descriptor != null) {
+            return new Tuple2<BindingContext, D>(bindingContext, descriptor);
         }
         return null;
     }
@@ -80,8 +84,9 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(@NotNull JetFile decompiledNamespaceFile) {
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, decompiledNamespaceFile, JetPsiUtil.getFQName(decompiledNamespaceFile));
+    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(@NotNull JetDeclaration declaration) {
+        JetFile file = (JetFile) declaration.getContainingFile();
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration, JetPsiUtil.getFQName(file));
     }
 
     @Nullable
@@ -93,38 +98,37 @@ public class JetSourceNavigationHelper {
         return (JetClass) declaration;
     }
 
-    private static BindingContext analyzeLibrary(VirtualFile sourceDir, final Project project) {
-        final List<JetFile> libraryFiles = new ArrayList<JetFile>();
-        VfsUtil.processFilesRecursively(sourceDir, new Processor<VirtualFile>() {
-            @Override
-            public boolean process(VirtualFile virtualFile) {
-                if (virtualFile.getFileType() == JetFileType.INSTANCE) {
-                    libraryFiles.add((JetFile) PsiManager.getInstance(project).findFile(virtualFile));
-                }
-                return true;
-            }
-        });
-        return AnalyzingUtils.analyzeFiles(project,
-                                           ModuleConfiguration.EMPTY,
-                                           libraryFiles,
-                                           Predicates.<PsiFile>alwaysTrue(),
-                                           JetControlFlowDataTraceFactory.EMPTY);
-    }
-
     @NotNull
-    private static List<VirtualFile> getAllSourceDirs(@NotNull PsiElement psiElement) {
-        List<VirtualFile> allSourceDirs = new ArrayList<VirtualFile>();
+    private static GlobalSearchScope createLibrarySourcesScopeForFile(@NotNull VirtualFile libraryFile, @NotNull Project project) {
+        ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
-        VirtualFile decompiledFile = psiElement.getContainingFile().getVirtualFile();
-        if (decompiledFile != null) {
-            ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(psiElement.getProject());
-            List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(decompiledFile);
-            for (OrderEntry orderEntry : orderEntries) {
-                Collections.addAll(allSourceDirs, orderEntry.getFiles(OrderRootType.SOURCES));
+        GlobalSearchScope resultScope = GlobalSearchScope.EMPTY_SCOPE;
+        for (OrderEntry orderEntry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
+            for (VirtualFile sourceDir : orderEntry.getFiles(OrderRootType.SOURCES)) {
+                resultScope = resultScope.uniteWith(GlobalSearchScopes.directoryScope(project, sourceDir, true));
             }
         }
+        return resultScope;
+    }
 
-        return allSourceDirs;
+    private static List<JetFile> findAllSourceFilesWhichContainIdentifier(@NotNull JetDeclaration jetDeclaration) {
+        VirtualFile libraryFile = jetDeclaration.getContainingFile().getVirtualFile();
+        String name = jetDeclaration.getName();
+        if (libraryFile == null || name == null) {
+            return Collections.emptyList();
+        }
+        Project project = jetDeclaration.getProject();
+        CacheManager cacheManager = CacheManager.SERVICE.getInstance(project);
+        PsiFile[] filesWithWord = cacheManager.getFilesWithWord(name,
+                                                                UsageSearchContext.IN_CODE, createLibrarySourcesScopeForFile(libraryFile, project),
+                                                                true);
+        List<JetFile> jetFiles = new ArrayList<JetFile>();
+        for (PsiFile psiFile : filesWithWord) {
+            if (psiFile instanceof JetFile) {
+                jetFiles.add((JetFile) psiFile);
+            }
+        }
+        return jetFiles;
     }
 
     @Nullable
@@ -139,7 +143,7 @@ public class JetSourceNavigationHelper {
 
         PsiElement declarationContainer = decompiledDeclaration.getParent();
         if (declarationContainer instanceof JetFile) {
-            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor((JetFile) declarationContainer);
+            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
             if (bindingContextAndNamespaceDescriptor == null) return null;
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor._1;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
