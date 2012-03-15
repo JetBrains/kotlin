@@ -147,7 +147,8 @@ public class GenerationState {
             for (JetFile file : files) {
                 if (file == null) throw new IllegalArgumentException("A null file given for compilation");
                 VirtualFile vFile = file.getVirtualFile();
-                progress.log("For source: " + vFile.getPath());
+                String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
+                progress.log("For source: " + path);
                 try {
                     generateNamespace(file);
                 }
