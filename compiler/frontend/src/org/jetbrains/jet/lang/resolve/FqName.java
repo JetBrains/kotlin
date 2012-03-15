@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +125,81 @@ public class FqName {
 
         return shortName;
     }
+
+    private interface WalkCallback {
+        void segment(@NotNull String shortName, @NotNull FqName fqName);
+    }
+
+    @NotNull
+    public List<FqName> path() {
+        final List<FqName> path = Lists.newArrayList();
+        path.add(ROOT);
+        walk(new WalkCallback() {
+            @Override
+            public void segment(@NotNull String shortName, @NotNull FqName fqName) {
+                path.add(fqName);
+            }
+        });
+        return path;
+    }
+
+    @NotNull
+    public List<String> pathSegments() {
+        final List<String> path = Lists.newArrayList();
+        walk(new WalkCallback() {
+            @Override
+            public void segment(@NotNull String shortName, @NotNull FqName fqName) {
+                path.add(shortName);
+            }
+        });
+        return path;
+    }
+
+
+    private void walk(@NotNull WalkCallback callback) {
+        if (isRoot()) {
+            return;
+        }
+
+        int pos = fqName.indexOf('.');
+
+        if (pos < 0) {
+            if (this.parent == null) {
+                this.parent = ROOT;
+            }
+            if (this.shortName == null) {
+                this.shortName = fqName;
+            }
+            callback.segment(fqName, this);
+            return;
+        }
+
+        String firstSegment = fqName.substring(0, pos);
+        FqName last = new FqName(firstSegment, ROOT, firstSegment);
+        callback.segment(firstSegment, last);
+
+        for (;;) {
+            int next = fqName.indexOf('.', pos + 1);
+            if (next < 0) {
+                if (this.parent == null) {
+                    this.parent = last;
+                }
+                String shortName = fqName.substring(pos + 1);
+                if (this.shortName == null) {
+                    this.shortName = shortName;
+                }
+                callback.segment(shortName, this);
+                return;
+            }
+
+            String shortName = fqName.substring(pos + 1, next);
+            last = new FqName(fqName.substring(0, next), last, shortName);
+            callback.segment(shortName, last);
+
+            pos = next;
+        }
+    }
+
 
 
     @NotNull

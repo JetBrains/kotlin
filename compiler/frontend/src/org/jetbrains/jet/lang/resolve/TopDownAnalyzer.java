@@ -66,6 +66,8 @@ public class TopDownAnalyzer {
     private ModuleConfiguration configuration;
     @NotNull
     private ModuleDescriptor moduleDescriptor;
+    @NotNull
+    private NamespaceFactoryImpl namespaceFactory;
 
     private BodyResolver bodyResolver;
     private ControlFlowAnalyzer controlFlowAnalyzer;
@@ -114,6 +116,11 @@ public class TopDownAnalyzer {
     @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
+    }
+
+    @Inject
+    public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
+        this.namespaceFactory = namespaceFactory;
     }
 
     @Inject
@@ -288,7 +295,7 @@ public class TopDownAnalyzer {
         // Import the lang package
         scope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
 
-        NamespaceDescriptorImpl rootNs = typeHierarchyResolver.createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true);
+        NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
 
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves

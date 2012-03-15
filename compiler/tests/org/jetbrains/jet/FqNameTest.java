@@ -1,0 +1,88 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.jet;
+
+import com.google.common.collect.Lists;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * @author Stepan Koltsov
+ */
+public class FqNameTest {
+
+    @Test
+    public void pathRoot() {
+        List<FqName> path = new FqName("").path();
+        Assert.assertEquals(1, path.size());
+        Assert.assertEquals("", path.get(0).getFqName());
+    }
+
+    @Test
+    public void pathLevel1() {
+        List<FqName> path = new FqName("com").path();
+        Assert.assertEquals(2, path.size());
+        Assert.assertEquals("", path.get(0).getFqName());
+        Assert.assertEquals("com", path.get(1).getFqName());
+        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("", path.get(1).parent().getFqName());
+    }
+
+    @Test
+    public void pathLevel2() {
+        List<FqName> path = new FqName("com.jetbrains").path();
+        Assert.assertEquals(3, path.size());
+        Assert.assertEquals("", path.get(0).getFqName());
+        Assert.assertEquals("com", path.get(1).getFqName());
+        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("", path.get(1).parent().getFqName());
+        Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
+        Assert.assertEquals("jetbrains", path.get(2).shortName());
+        Assert.assertEquals("com", path.get(2).parent().getFqName());
+    }
+
+    @Test
+    public void pathLevel3() {
+        List<FqName> path = new FqName("com.jetbrains.jet").path();
+        Assert.assertEquals(4, path.size());
+        Assert.assertEquals("", path.get(0).getFqName());
+        Assert.assertEquals("com", path.get(1).getFqName());
+        Assert.assertEquals("com", path.get(1).shortName());
+        Assert.assertEquals("", path.get(1).parent().getFqName());
+        Assert.assertEquals("com.jetbrains", path.get(2).getFqName());
+        Assert.assertEquals("jetbrains", path.get(2).shortName());
+        Assert.assertEquals("com", path.get(2).parent().getFqName());
+        Assert.assertEquals("com.jetbrains.jet", path.get(3).getFqName());
+        Assert.assertEquals("jet", path.get(3).shortName());
+        Assert.assertEquals("com.jetbrains", path.get(3).parent().getFqName());
+    }
+
+    @Test
+    public void pathSegments() {
+        Assert.assertEquals(Lists.newArrayList(), new FqName("").pathSegments());
+
+        for (String name : new String[] { "com", "com.jetbrains", "com.jetbrains.jet" }) {
+            List<String> segments = new FqName(name).pathSegments();
+            Assert.assertEquals(Arrays.asList(name.split("\\.")), segments);
+        }
+    }
+
+}

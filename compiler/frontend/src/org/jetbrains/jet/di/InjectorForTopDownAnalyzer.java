@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.DelegationResolver;
+import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
@@ -81,6 +82,7 @@ public class InjectorForTopDownAnalyzer {
         OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
         ImportsResolver importsResolver = new ImportsResolver();
         DelegationResolver delegationResolver = new DelegationResolver();
+        NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
         OverloadResolver overloadResolver = new OverloadResolver();
         OverrideResolver overrideResolver = new OverrideResolver();
         TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver();
@@ -93,6 +95,7 @@ public class InjectorForTopDownAnalyzer {
         this.topDownAnalyzer.setDeclarationsChecker(declarationsChecker);
         this.topDownAnalyzer.setDelegationResolver(delegationResolver);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
+        this.topDownAnalyzer.setNamespaceFactory(namespaceFactoryImpl);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
@@ -142,16 +145,19 @@ public class InjectorForTopDownAnalyzer {
 
         delegationResolver.setContext(topDownAnalysisContext);
 
+        namespaceFactoryImpl.setConfiguration(moduleConfiguration);
+        namespaceFactoryImpl.setContext(topDownAnalysisContext);
+        namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
+
         overloadResolver.setContext(topDownAnalysisContext);
 
         overrideResolver.setContext(topDownAnalysisContext);
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
-        typeHierarchyResolver.setConfiguration(moduleConfiguration);
         typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
-        typeHierarchyResolver.setModuleDescriptor(moduleDescriptor);
+        typeHierarchyResolver.setNamespaceFactory(namespaceFactoryImpl);
 
     }
 
