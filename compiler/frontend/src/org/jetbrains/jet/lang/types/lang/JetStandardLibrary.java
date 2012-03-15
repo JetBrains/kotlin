@@ -60,12 +60,12 @@ public class JetStandardLibrary {
     // before any type checking is run
     public static synchronized void initialize(@NotNull Project project) {
         if (instance == null) {
-            if (initializing) {
-                throw new IllegalStateException("builtin library initialization loop");
-            }
             if (initializationFailed != null) {
                 throw new RuntimeException(
                         "builtin library initialization failed previously: " + initializationFailed, initializationFailed);
+            }
+            if (initializing) {
+                throw new IllegalStateException("builtin library initialization loop");
             }
             initializing = true;
             try {
