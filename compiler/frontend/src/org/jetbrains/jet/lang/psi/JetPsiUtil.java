@@ -23,8 +23,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -194,14 +194,14 @@ public class JetPsiUtil {
     }
 
     @Nullable @JetElement.IfNotParsed
-    public static String getImportPath(JetImportDirective importDirective) {
+    public static ImportPath getImportPath(JetImportDirective importDirective) {
         final JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
             return null;
         }
 
         final String text = importedReference.getText();
-        return text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : "");
+        return new ImportPath(text.replaceAll(" ", "") + (importDirective.isAllUnder() ? ".*" : ""));
     }
 
     @NotNull

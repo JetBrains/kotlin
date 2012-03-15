@@ -33,7 +33,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import javax.swing.*;
 import java.util.List;
@@ -49,7 +50,7 @@ public class JetAddImportAction implements QuestionAction {
     private final Project myProject;
     private final Editor myEditor;
     private final PsiElement myElement;
-    private final List<String> possibleImports;
+    private final List<FqName> possibleImports;
 
     /**
      * @param project Project where action takes place.
@@ -61,7 +62,7 @@ public class JetAddImportAction implements QuestionAction {
             @NotNull Project project,
             @NotNull Editor editor,
             @NotNull PsiElement element,
-            @NotNull Iterable<String> imports
+            @NotNull Iterable<FqName> imports
     ) {
         myProject = project;
         myEditor = editor;
@@ -90,14 +91,14 @@ public class JetAddImportAction implements QuestionAction {
     }
 
     protected BaseListPopupStep getImportSelectionPopup() {
-        return new BaseListPopupStep<String>(QuickFixBundle.message("class.to.import.chooser.title"), possibleImports) {
+        return new BaseListPopupStep<FqName>(QuickFixBundle.message("class.to.import.chooser.title"), possibleImports) {
             @Override
             public boolean isAutoSelectionEnabled() {
                 return false;
             }
 
             @Override
-            public PopupStep onChosen(String selectedValue, boolean finalChoice) {
+            public PopupStep onChosen(FqName selectedValue, boolean finalChoice) {
                 if (selectedValue == null) {
                     return FINAL_CHOICE;
                 }
@@ -107,7 +108,7 @@ public class JetAddImportAction implements QuestionAction {
                     return FINAL_CHOICE;
                 }
 
-                List<String> toExclude = AddImportAction.getAllExcludableStrings(selectedValue);
+                List<String> toExclude = AddImportAction.getAllExcludableStrings(selectedValue.getFqName());
 
                 return new BaseListPopupStep<String>(null, toExclude) {
                     @NotNull
@@ -128,24 +129,25 @@ public class JetAddImportAction implements QuestionAction {
             }
 
             @Override
-            public boolean hasSubstep(String selectedValue) {
+            public boolean hasSubstep(FqName selectedValue) {
                 return true;
             }
 
             @NotNull
             @Override
-            public String getTextFor(String value) {
-                return value;
+            public String getTextFor(FqName value) {
+                return value.getFqName();
             }
 
             @Override
-            public Icon getIconFor(String aValue) {
+            public Icon getIconFor(FqName aValue) {
+                // TODO: change icon
                 return PlatformIcons.CLASS_ICON;
             }
         };
     }
 
-    protected static void addImport(final PsiElement element, final Project project, final String selectedImport) {
+    protected static void addImport(final PsiElement element, final Project project, final FqName selectedImport) {
         PsiDocumentManager.getInstance(project).commitAllDocuments();
 
         CommandProcessor.getInstance().executeCommand(project, new Runnable() {
@@ -154,13 +156,10 @@ public class JetAddImportAction implements QuestionAction {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        // TODO: See {@link com.intellij.codeInsight.daemon.impl.actions.AddImportAction#_addImport} for more ideas.
-                        // TODO: Optimize imports
                         PsiFile file = element.getContainingFile();
                         if (!(file instanceof JetFile)) return;
-                        ImportClassHelper.addImportDirective(
-                                selectedImport,
-                                (JetFile)file
+                        ImportInsertHelper.addImportDirective(selectedImport,
+                                (JetFile) file
                         );
                     }
                 });

@@ -17,19 +17,20 @@
 package org.jetbrains.jet.plugin.editor.importOptimizer;
 
 import com.intellij.lang.ImportOptimizer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Nikolay Krasko
@@ -47,17 +48,79 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void run() {
-                JetFile jetFile = (JetFile) file;
-                Set<String> usedQualifiedNames = extractUsedQualifiedNames(jetFile);
+                final JetFile jetFile = (JetFile) file;
+                final Set<FqName> usedQualifiedNames = extractUsedQualifiedNames(jetFile);
 
+                final List<JetImportDirective> sortedDirectives = jetFile.getImportDirectives();
+                Collections.sort(sortedDirectives, new Comparator<JetImportDirective>() {
+                    @Override
+                    public int compare(JetImportDirective directive1, JetImportDirective directive2) {
+                        ImportPath firstPath = JetPsiUtil.getImportPath(directive1);
+                        ImportPath secondPath = JetPsiUtil.getImportPath(directive2);
+
+                        if (firstPath == null || secondPath == null) {
+                            return firstPath == null && secondPath == null ? 0 :
+                                   firstPath == null ? -1 :
+                                   1;
+                        }
+
+                        // import bla.bla.bla.* should be before import bla.bla.bla.something
+                        if (firstPath.isAllUnder() && !secondPath.isAllUnder() && firstPath.fqnPart().equals(secondPath.fqnPart().parent())) {
+                            return -1;
+                        }
+
+                        if (!firstPath.isAllUnder() && secondPath.isAllUnder() && secondPath.fqnPart().equals(firstPath.fqnPart().parent())) {
+                            return 1;
+                        }
+
+                        return firstPath.getPathStr().compareTo(secondPath.getPathStr());
+                    }
+                });
+
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Remove imports
+                        List<JetImportDirective> imports = jetFile.getImportDirectives();
+                        if (!imports.isEmpty()) {
+                            jetFile.deleteChildRange(imports.get(0), imports.get(imports.size() - 1));
+                        }
+
+                        // Insert back only necessary imports in correct order
+                        for (JetImportDirective anImport : sortedDirectives) {
+                            ImportPath importPath = JetPsiUtil.getImportPath(anImport);
+                            if (importPath == null) {
+                                continue;
+                            }
+
+                            if (isUseful(importPath, anImport.getAliasName(), usedQualifiedNames)) {
+                                ImportInsertHelper.addImportDirective(importPath, anImport.getAliasName(), jetFile);
+                            }
+                        }
+                    }
+                });
             }
         };
-
     }
 
-    public static Set<String> extractUsedQualifiedNames(JetFile jetFile) {
+    public static boolean isUseful(ImportPath importPath, @Nullable String aliasName, Collection<FqName> usedNames) {
+        if (aliasName != null) {
+            // TODO: Add better analysis for aliases
+            return true;
+        }
 
-        final Set<String> usedQualifiedNames = new HashSet<String>();
+        for (FqName usedName : usedNames) {
+            if (QualifiedNamesUtil.isImported(importPath, usedName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static Set<FqName> extractUsedQualifiedNames(JetFile jetFile) {
+
+        final Set<FqName> usedQualifiedNames = new HashSet<FqName>();
         jetFile.accept(new JetVisitorVoid() {
             @Override
             public void visitElement(PsiElement element) {
@@ -83,7 +146,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                         }
 
                         for (PsiElement psiReference : references) {
-                            String fqName = getElementFQName(psiReference);
+                            FqName fqName = getElementFQName(psiReference);
                             if (fqName != null) {
                                 usedQualifiedNames.add(fqName);
                             }
@@ -101,7 +164,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
 
     @Nullable
-    public static String getElementFQName(PsiElement element) {
+    public static FqName getElementFQName(PsiElement element) {
         if (element instanceof JetClassOrObject) {
             return JetPsiUtil.getFQName((JetClassOrObject) element);
         }
@@ -109,7 +172,10 @@ public class JetImportOptimizer implements ImportOptimizer {
             return JetPsiUtil.getFQName((JetNamedFunction) element);
         }
         if (element instanceof PsiClass) {
-            return ((PsiClass) element).getQualifiedName();
+            String qualifiedName = ((PsiClass) element).getQualifiedName();
+            if (qualifiedName != null) {
+                return new FqName(qualifiedName);
+            }
         }
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
@@ -117,15 +183,14 @@ public class JetImportOptimizer implements ImportOptimizer {
             PsiClass containingClass = method.getContainingClass();
 
             if (containingClass != null) {
-                String classFQN = containingClass.getQualifiedName();
-
-                if (classFQN != null) {
-                    if (QualifiedNamesUtil.fqnToShortName(classFQN).equals(JvmAbi.PACKAGE_CLASS)) {
-                        String classParentFQN = QualifiedNamesUtil.withoutLastSegment(classFQN);
-                        return QualifiedNamesUtil.combine(classParentFQN, method.getName());
+                String classFQNStr = containingClass.getQualifiedName();
+                if (classFQNStr != null) {
+                    FqName classFQN = new FqName(classFQNStr);
+                    if (classFQN.shortName().equals(JvmAbi.PACKAGE_CLASS)) {
+                        return QualifiedNamesUtil.combine(classFQN.parent(), method.getName());
                     }
                     else {
-                        return QualifiedNamesUtil.combine(containingClass.getQualifiedName(), method.getName());
+                        return QualifiedNamesUtil.combine(classFQN, method.getName());
                     }
                 }
             }

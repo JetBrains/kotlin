@@ -225,13 +225,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
     @NotNull
     private JetAddImportAction createAction(@NotNull Project project, @NotNull Editor editor) {
-        Collection<String> suggesionStrings = Collections2.transform(suggestions, new Function<FqName, String>() {
-            @Override
-            public String apply(FqName fqName) {
-                return fqName.getFqName();
-            }
-        });
-        return new JetAddImportAction(project, editor, element, suggesionStrings);
+        return new JetAddImportAction(project, editor, element, suggestions);
     }
 
     @Nullable

@@ -36,10 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.ImportsResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -177,7 +174,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         for (PsiMethod method : topLevelFunctionPrototypes) {
             FqName functionFQN = JetFromJavaDescriptorHelper.getJetTopLevelDeclarationFQN(method);
             if (functionFQN != null) {
-                JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, functionFQN);
+                JetImportDirective importDirective = JetPsiFactory.createImportDirective(project, new ImportPath(functionFQN, false));
                 Collection<? extends DeclarationDescriptor> declarationDescriptors = ImportsResolver.analyseImportReference(importDirective, jetScope, new BindingTraceContext());
                 for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
                     if (declarationDescriptor instanceof FunctionDescriptor) {

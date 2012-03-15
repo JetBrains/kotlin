@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.IOException;
@@ -28,19 +29,19 @@ import java.io.IOException;
  */
 public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
     public void testDoNotImportIfGeneralExist() {
-        testImportInFile("jettesting.data.testFunction");
+        doFileTest("jettesting.data.testFunction");
     }
 
     public void testDoNotImportIfGeneralSpaceExist() {
-        testImportInFile("jettesting.data.testFunction");
+        doFileTest("jettesting.data.testFunction");
     }
 
     public void testNoDefaultImport() {
-        testImportInFile("kotlin.io.println");
+        doFileTest("kotlin.io.println");
     }
 
     public void testImportBeforeObject() {
-        testImportInFile("java.util.HashSet");
+        doFileTest("java.util.HashSet");
     }
 
     public void testInsertInEmptyFile() throws IOException {
@@ -48,7 +49,7 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportClassHelper.addImportDirective("java.util.ArrayList", (JetFile) getFile());
+                ImportInsertHelper.addImportDirective(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
@@ -60,19 +61,19 @@ public class ImportClassHelperTest extends LightDaemonAnalyzerTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportClassHelper.addImportDirective("java.util.ArrayList", (JetFile) getFile());
+                ImportInsertHelper.addImportDirective(new FqName("java.util.ArrayList"), (JetFile) getFile());
             }
         });
 
         checkResultByText("package some\n\nimport java.util.ArrayList");
     }
 
-    public void testImportInFile(final String importString) {
+    public void doFileTest(final String importString) {
         configureByFile(getTestName(false) + ".kt");
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ImportClassHelper.addImportDirective(importString, (JetFile) getFile());
+                ImportInsertHelper.addImportDirective(new FqName(importString), (JetFile) getFile());
             }
         });
         checkResultByFile(getTestName(false) + ".kt.after");

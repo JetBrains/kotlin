@@ -18,10 +18,12 @@ package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -35,7 +37,10 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class ImportClassHelper {
+public class ImportInsertHelper {
+    private ImportInsertHelper() {
+    }
+
     /**
      * Add import directive corresponding to a type to file when it is needed.
      *
@@ -51,36 +56,42 @@ public class ImportClassHelper {
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
         }
-        addImportDirective(JetPluginUtil.computeTypeFullName(type).getFqName(), file);
+        addImportDirective(JetPluginUtil.computeTypeFullName(type), file);
     }
 
     /**
      * Add import directive into the PSI tree for the given namespace.
      *
-     * @param importString full name of the import. Can contain .* if necessary.
+     * @param importFqn full name of the import
      * @param file File where directive should be added.
      */
-    public static void addImportDirective(@NotNull String importString, @NotNull JetFile file) {
+    public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
+        addImportDirective(new ImportPath(importFqn, false), null, file);
+    }
 
-        // TODO: hack
-        if (importString.startsWith(JavaDescriptorResolver.JAVA_ROOT + ".")) {
-            importString = importString.substring((JavaDescriptorResolver.JAVA_ROOT + ".").length());
+    public static void addImportDirective(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
+
+        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT)) {
+            FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
+            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder());
         }
 
-        if (isImportedByDefault(importString, JetPsiUtil.getFQName(file))) {
+        if (isImportedByDefault(importPath, aliasName, JetPsiUtil.getFQName(file))) {
             return;
         }
 
-        List<JetImportDirective> importDirectives = file.getImportDirectives();
+        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath, aliasName);
 
-        JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importString);
+        List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         if (!importDirectives.isEmpty()) {
             
             // Check if import is already present
             for (JetImportDirective directive : importDirectives) {
-                String importPath = JetPsiUtil.getImportPath(directive);
-                if (importPath != null && QualifiedNamesUtil.isImported(importPath, importString)) {
+                ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
+                if (existentImportPath != null &&
+                        directive.getAliasName() == null &&
+                        QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
                     return;
                 }
             }
@@ -101,25 +112,40 @@ public class ImportClassHelper {
         }
     }
 
-    // Check that import is useless
-    private static boolean isImportedByDefault(@NotNull String importString, @NotNull FqName filePackageFqn) {
-        if (QualifiedNamesUtil.isOneSegmentFQN(importString) ||
-            filePackageFqn.getFqName().equals(QualifiedNamesUtil.withoutLastSegment(importString))) {
-
+    /**
+     * Check that import is useless.
+     */
+    private static boolean isImportedByDefault(@NotNull ImportPath importPath, String aliasName, @NotNull FqName filePackageFqn) {
+        if (importPath.fqnPart().isRoot()) {
             return true;
         }
 
-        for (String defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
-            if (QualifiedNamesUtil.isImported(defaultJetImport, importString)) {
+        if (aliasName != null) {
+            return false;
+        }
+
+        // Single element import without .* and alias is useless
+        if (!importPath.isAllUnder() && QualifiedNamesUtil.isOneSegmentFQN(importPath.fqnPart())) {
+            return true;
+        }
+
+        // There's no need to import a declaration from the package of current file
+        if (!importPath.isAllUnder() && filePackageFqn.equals(importPath.fqnPart().parent())) {
+            return true;
+        }
+
+        for (ImportPath defaultJetImport : DefaultModuleConfiguration.DEFAULT_JET_IMPORTS) {
+            if (QualifiedNamesUtil.isImported(defaultJetImport, importPath)) {
                 return true;
             }
         }
 
-        for (String defaultJavaImport : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
-            if (QualifiedNamesUtil.isImported(defaultJavaImport + ".*", importString)) {
+        for (ImportPath defaultJavaImport : JavaBridgeConfiguration.DEFAULT_JAVA_IMPORTS) {
+            if (QualifiedNamesUtil.isImported(defaultJavaImport, importPath)) {
                 return true;
             }
         }
+
         return false;
     }
 }

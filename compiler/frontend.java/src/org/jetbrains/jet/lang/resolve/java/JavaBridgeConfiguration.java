@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
@@ -36,7 +37,7 @@ import java.util.Collections;
  */
 public class JavaBridgeConfiguration implements ModuleConfiguration {
 
-    public static final String[] DEFAULT_JAVA_IMPORTS = new String[] { "java.lang.*" };
+    public static final ImportPath[] DEFAULT_JAVA_IMPORTS = new ImportPath[] { new ImportPath("java.lang.*") };
 
     public static ModuleConfiguration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, ModuleConfiguration delegateConfiguration) {
         return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
@@ -54,8 +55,8 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
-        for (String importFQN : DEFAULT_JAVA_IMPORTS) {
-            directives.add(JetPsiFactory.createImportDirective(project, importFQN));
+        for (ImportPath importPath : DEFAULT_JAVA_IMPORTS) {
+            directives.add(JetPsiFactory.createImportDirective(project, importPath));
         }
         delegateConfiguration.addDefaultImports(rootScope, directives);
     }

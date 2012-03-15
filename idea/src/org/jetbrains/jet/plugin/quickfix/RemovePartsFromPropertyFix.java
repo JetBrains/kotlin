@@ -119,7 +119,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
             }
         }
         if (needImport) {
-            ImportClassHelper.addImportDirectiveIfNeeded(type, (JetFile)file);
+            ImportInsertHelper.addImportDirectiveIfNeeded(type, (JetFile) file);
         }
         element.replace(newElement);
     }

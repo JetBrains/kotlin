@@ -19,13 +19,17 @@ package org.jetbrains.jet.util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 
 /**
- * Common methods for working with qualified names strings.
+ * Common methods for working with qualified names.
  *
  * @author Nikolay Krasko
  */
 public final class QualifiedNamesUtil {
+
+    private QualifiedNamesUtil() {
+    }
 
     public static boolean isSubpackageOf(@NotNull final FqName subpackageName, @NotNull FqName packageName) {
         return subpackageName.equals(packageName) ||
@@ -45,6 +49,10 @@ public final class QualifiedNamesUtil {
         return fqn.indexOf('.') < 0;
     }
 
+    public static boolean isOneSegmentFQN(@NotNull FqName fqn) {
+        return isOneSegmentFQN(fqn.getFqName());
+    }
+
     @NotNull
     public static String fqnToShortName(@NotNull FqName fqn) {
         return getLastSegment(fqn);
@@ -62,18 +70,18 @@ public final class QualifiedNamesUtil {
     }
 
     @NotNull
-    public static String withoutLastSegment(@NotNull String fqn) {
-        final int lastDotIndex = fqn.lastIndexOf('.');
-        if (lastDotIndex > 0) {
-            return fqn.substring(0, lastDotIndex);
-        }
-
-        return "";
+    public static FqName withoutLastSegment(@NotNull FqName fqName) {
+        return fqName.parent();
     }
 
     @NotNull
-    public static FqName withoutLastSegment(@NotNull FqName fqName) {
-        return fqName.parent();
+    public static FqName withoutFirstSegment(@NotNull FqName fqName) {
+        if (fqName.isRoot() || fqName.parent().isRoot()) {
+            return FqName.ROOT;
+        }
+
+        String fqNameStr = fqName.getFqName();
+        return new FqName(fqNameStr.substring(fqNameStr.indexOf('.'), fqNameStr.length()));
     }
 
     @NotNull
@@ -121,18 +129,19 @@ public final class QualifiedNamesUtil {
         return null;
     }
 
-    /**
-     * Check that given fqn could be imported with import.
-     *
-     * @param importPath path from the import. Could contain .* part
-     * @param fqn or another import directive
-     */
-    public static boolean isImported(@NotNull String importPath, @NotNull String fqn) {
-        if (importPath.endsWith("*")) {
-            // TODO: import path is not valid FQN
-            return withoutLastSegment(importPath).equals(withoutLastSegment(fqn));
+    public static boolean isImported(@NotNull ImportPath alreadyImported, @NotNull FqName fqName) {
+        if (alreadyImported.isAllUnder()) {
+            return alreadyImported.fqnPart().equals(fqName.parent());
         }
 
-        return importPath.equals(fqn);
+        return alreadyImported.fqnPart().equals(fqName);
+    }
+
+    public static boolean isImported(@NotNull ImportPath alreadyImported, @NotNull ImportPath newImport) {
+        if (newImport.isAllUnder()) {
+            return alreadyImported.equals(newImport);
+        }
+
+        return isImported(alreadyImported, newImport.fqnPart());
     }
 }

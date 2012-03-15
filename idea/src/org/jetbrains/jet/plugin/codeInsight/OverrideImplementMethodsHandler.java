@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,7 +93,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append("val ");
         }
         bodyBuilder.append(descriptor.getName()).append(":").append(descriptor.getType());
-        ImportClassHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
+        ImportInsertHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
             bodyBuilder.append("=").append(initializer);
@@ -118,14 +118,14 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append(":");
             bodyBuilder.append(parameterDescriptor.getType().toString());
 
-            ImportClassHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
+            ImportInsertHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
         if (!returnType.equals(stdlib.getTuple0Type())) {
             bodyBuilder.append(":").append(returnType.toString());
-            ImportClassHelper.addImportDirectiveIfNeeded(returnType, file);
+            ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 
         bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
