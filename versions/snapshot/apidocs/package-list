@@ -9,6 +9,3 @@ kotlin.properties
 kotlin.template
 kotlin.test
 kotlin.util
-org.w3c.dom
-org.w3c.dom.ls
-org.xml.sax
