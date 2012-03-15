@@ -45,11 +45,17 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 public class OverrideResolver {
 
     private TopDownAnalysisContext context;
+    private TopDownAnalysisParameters topDownAnalysisParameters;
 
 
     @Inject
     public void setContext(TopDownAnalysisContext context) {
         this.context = context;
+    }
+
+    @Inject
+    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
 
@@ -213,7 +219,7 @@ public class OverrideResolver {
     }
 
     protected void checkOverridesInAClass(MutableClassDescriptor classDescriptor, JetClassOrObject klass) {
-        if (context.analyzingBootstrapLibrary()) return;
+        if (topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {

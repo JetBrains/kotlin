@@ -25,7 +25,7 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent, NamespaceLikeBuilder {
+public class ModuleDescriptor extends DeclarationDescriptorImpl implements ClassOrNamespaceDescriptor, NamespaceDescriptorParent {
     private NamespaceDescriptor rootNs;
 
     public ModuleDescriptor(String name) {
@@ -55,17 +55,6 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
     }
 
 
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOwnerForChildren() {
-        return this;
-    }
-
-    @Override
-    public NamespaceDescriptorImpl getNamespace(String name) {
-        throw new IllegalStateException();
-    }
-
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
         if (namespaceDescriptor.getContainingDeclaration() != this) {
@@ -74,28 +63,4 @@ public class ModuleDescriptor extends DeclarationDescriptorImpl implements Class
         setRootNs(namespaceDescriptor);
     }
 
-    @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        throw new IllegalStateException();
-    }
-
-    @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-        throw new IllegalStateException();
-    }
 }

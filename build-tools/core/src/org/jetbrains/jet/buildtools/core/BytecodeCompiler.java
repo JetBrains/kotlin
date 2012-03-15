@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
@@ -64,11 +66,15 @@ public class BytecodeCompiler {
 
     /**
      * Retrieves compilation error message.
-     * @param  source compilation source
+     *
+     * @param  source          compilation source
+     * @param  exceptionThrown whether compilation failed due to exception thrown
+     *
      * @return compilation error message
      */
-    private String compilationError ( String source ) {
-        return String.format( "[%s] compilation failed, see \"ERROR:\" messages above for more details.",
+    private static String errorMessage( @NotNull String source, boolean exceptionThrown ) {
+        return String.format( "[%s] compilation failed" +
+                              ( exceptionThrown ? "" : ", see \"ERROR:\" messages above for more details." ),
                               new File( source ).getAbsolutePath());
     }
 
@@ -81,10 +87,15 @@ public class BytecodeCompiler {
      * @param stdlib    "kotlin-runtime.jar" path
      * @param classpath compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToDir ( String src, String output, String stdlib, String[] classpath ) {
-        boolean success = env( stdlib, classpath ).compileBunchOfSources( src, null, output, true /* Last arg is ignored anyway */ );
-        if ( ! success ) {
-            throw new CompileEnvironmentException( compilationError( src ));
+    public void sourcesToDir ( @NotNull String src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath ) {
+        try {
+            boolean success = env( stdlib, classpath ).compileBunchOfSources( src, null, output, true /* Last arg is ignored anyway */ );
+            if ( ! success ) {
+                throw new CompileEnvironmentException( errorMessage( src, false ));
+            }
+        }
+        catch ( Exception e ) {
+            throw new CompileEnvironmentException( errorMessage( src, true ), e );
         }
     }
 
@@ -98,10 +109,15 @@ public class BytecodeCompiler {
      * @param stdlib         "kotlin-runtime.jar" path
      * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
-    public void sourcesToJar ( String src, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
-        boolean success = env( stdlib, classpath ).compileBunchOfSources( src, jar, null, includeRuntime );
-        if ( ! success ) {
-            throw new CompileEnvironmentException( compilationError( src ));
+    public void sourcesToJar ( @NotNull String src, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
+        try {
+            boolean success = env( stdlib, classpath ).compileBunchOfSources( src, jar, null, includeRuntime );
+            if ( ! success ) {
+                throw new CompileEnvironmentException( errorMessage( src, false ));
+            }
+        }
+        catch ( Exception e ) {
+            throw new CompileEnvironmentException( errorMessage( src, true ), e );
         }
     }
 
@@ -115,10 +131,15 @@ public class BytecodeCompiler {
      * @param stdlib         "kotlin-runtime.jar" path
      * @param classpath      compilation classpath, can be <code>null</code> or empty
      */
-    public void moduleToJar ( String module, String jar, boolean includeRuntime, String stdlib, String[] classpath ) {
-        boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
-        if ( ! success ) {
-            throw new CompileEnvironmentException( compilationError( module ));
+    public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
+        try {
+            boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime );
+            if ( ! success ) {
+                throw new CompileEnvironmentException( errorMessage( module, false ));
+            }
+        }
+        catch ( Exception e ) {
+            throw new CompileEnvironmentException( errorMessage( module, true ), e );
         }
     }
 

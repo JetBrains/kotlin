@@ -18,12 +18,16 @@ package jet;
 /**
  * Represents a string template object; that is a string with $ expressions such as "Hello $user".
  *
- * It is represented as an object that contains a Tuple
+ * It is represented as an object that contains a Tuple such that all the even items in the tuple are constant
+ * strings and the odd items are dynamic expressions which may need to be escaped.
+ *
+ * So the expression "Hello $foo$bar how are you?" would be represented as a tuple #("Hello ", foo, "", bar, " how are you?).
+ * i.e. we insert an empty string to ensure that the tuple starts with a constant string and every other value is a dynamic expression.
  */
-public class StringTemplate<T extends Tuple> {
-    private final T tuple;
+public class StringTemplate {
+    private final Tuple tuple;
 
-    public StringTemplate(T tuple) {
+    public StringTemplate(Tuple tuple) {
         this.tuple = tuple;
     }
 
@@ -50,11 +54,11 @@ public class StringTemplate<T extends Tuple> {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        tuple.forEach(new Function1<Object,Void>(){
+        tuple.forEach(new Function1<Object,Tuple0>(){
             @Override
-            public Void invoke(Object o) {
+            public Tuple0 invoke(Object o) {
                 builder.append(o);
-                return null;
+                return Tuple0.INSTANCE;
             }
         });
         return builder.toString();
@@ -62,9 +66,20 @@ public class StringTemplate<T extends Tuple> {
     }
 
     /**
-     * Returns the values in the string template
+     * Returns the tuple of values in the string template
      */
-    public T getValues() {
+    public Tuple getValues() {
         return tuple;
     }
+
+
+    /**
+     * Performs the given function on each value in the string template
+     */
+    public void forEach(Function1<Object, Tuple0> fn) {
+        if (tuple != null) {
+            tuple.forEach(fn);
+        }
+    }
+
 }

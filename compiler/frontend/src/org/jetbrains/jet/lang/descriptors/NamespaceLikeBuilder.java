@@ -31,11 +31,6 @@ public interface NamespaceLikeBuilder {
     @NotNull
     DeclarationDescriptor getOwnerForChildren();
 
-    @Nullable
-    NamespaceDescriptorImpl getNamespace(String name);
-
-    void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
-
     void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor);
 
     void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor);

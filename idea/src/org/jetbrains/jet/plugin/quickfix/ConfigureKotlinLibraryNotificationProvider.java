@@ -50,7 +50,7 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.PathUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;

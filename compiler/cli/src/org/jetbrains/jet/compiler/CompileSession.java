@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.utils.Progress;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -55,9 +56,13 @@ import java.util.List;
  */
 public class CompileSession {
     private final JetCoreEnvironment myEnvironment;
+    private final MessageCollector myMessageCollector;
     private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
     private List<String> myErrors = new ArrayList<String>();
     private boolean stubs = false;
+    private final MessageRenderer myMessageRenderer;
+    private final PrintStream myErrorStream;
+    private final boolean myIsVerbose;
 
     public BindingContext getMyBindingContext() {
         return myBindingContext;
@@ -65,8 +70,12 @@ public class CompileSession {
 
     private BindingContext myBindingContext;
 
-    public CompileSession(JetCoreEnvironment environment) {
+    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose) {
         myEnvironment = environment;
+        myMessageRenderer = messageRenderer;
+        myErrorStream = errorStream;
+        myIsVerbose = verbose;
+        myMessageCollector = new MessageCollector(myMessageRenderer);
     }
 
     public void setStubs(boolean stubs) {
@@ -130,19 +139,17 @@ public class CompileSession {
         return mySourceFiles;
     }
 
-    public boolean analyze(@NotNull PrintStream out, @NotNull MessageRenderer renderer) {
-        MessageCollector collector = new MessageCollector(renderer);
-
+    public boolean analyze() {
         for (String error : myErrors) {
-            collector.report(Severity.ERROR, error, null, -1, -1);
+            myMessageCollector.report(Severity.ERROR, error, null, -1, -1);
         }
 
-        reportSyntaxErrors(collector);
-        analyzeAndReportSemanticErrors(collector);
+        reportSyntaxErrors();
+        analyzeAndReportSemanticErrors();
 
-        collector.printTo(out);
+        myMessageCollector.printTo(myErrorStream);
 
-        return !collector.hasErrors();
+        return !myMessageCollector.hasErrors();
     }
 
     /**
@@ -158,17 +165,17 @@ public class CompileSession {
         }
     }
 
-    private void analyzeAndReportSemanticErrors(MessageCollector collector) {
+    private void analyzeAndReportSemanticErrors() {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         myBindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
         for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
-            reportDiagnostic(collector, diagnostic);
+            reportDiagnostic(myMessageCollector, diagnostic);
         }
 
-        reportIncompleteHierarchies(collector);
+        reportIncompleteHierarchies(myMessageCollector);
     }
 
     private void reportIncompleteHierarchies(MessageCollector collector) {
@@ -182,7 +189,7 @@ public class CompileSession {
         }
     }
 
-    private void reportSyntaxErrors(final MessageCollector messageCollector) {
+    private void reportSyntaxErrors() {
         for (JetFile file : mySourceFiles) {
             file.accept(new PsiRecursiveElementWalkingVisitor() {
                 @Override
@@ -190,7 +197,7 @@ public class CompileSession {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
                     Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
-                    reportDiagnostic(messageCollector, diagnostic);
+                    reportDiagnostic(myMessageCollector, diagnostic);
                 }
             });
         }
@@ -206,7 +213,7 @@ public class CompileSession {
     @NotNull
     public ClassFileFactory generate(boolean module) {
         Project project = myEnvironment.getProject();
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs));
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), myIsVerbose ? new BackendProgress() : Progress.DEAF);
         generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 
@@ -219,5 +226,12 @@ public class CompileSession {
             }
         }
         return answer;
+    }
+
+    private class BackendProgress implements Progress {
+        @Override
+        public void log(String message) {
+            myErrorStream.println(myMessageRenderer.render(Severity.LOGGING, message, null, -1, -1));
+        }
     }
 }

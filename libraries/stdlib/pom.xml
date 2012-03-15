@@ -30,7 +30,7 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/../testlib/test</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>com.goldin.plugins</groupId>

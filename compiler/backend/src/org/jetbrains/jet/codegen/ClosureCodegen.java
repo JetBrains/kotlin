@@ -31,8 +31,8 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -128,7 +128,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                        funClass,
                        new String[0]
         );
-        cv.visitSource(state.transformFileName(fun.getContainingFile().getName()), null);
+        cv.visitSource(fun.getContainingFile().getName(), null);
 
 
         generateBridge(name, funDescriptor, fun, cv);

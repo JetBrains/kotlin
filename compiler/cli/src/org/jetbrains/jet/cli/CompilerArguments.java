@@ -56,6 +56,9 @@ public class CompilerArguments {
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
 
+    @Argument(value = "verbose", description = "Enable verbose logging output")
+    public boolean verbose;
+
 
     public String getClasspath() {
         return classpath;

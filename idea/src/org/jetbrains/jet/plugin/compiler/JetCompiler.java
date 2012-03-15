@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.*;
 import java.lang.ref.SoftReference;
@@ -262,7 +263,7 @@ public class JetCompiler implements TranslatingCompiler {
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags" };
+            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose" };
 
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
@@ -312,6 +313,7 @@ public class JetCompiler implements TranslatingCompiler {
         params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
         params.getProgramParametersList().add("-output", path(outputDir));
         params.getProgramParametersList().add("-tags");
+        params.getProgramParametersList().add("-verbose");
 
         for (File jar : kompilerClasspath(kotlinHome, compileContext)) {
             params.getClassPath().add(jar);
@@ -383,10 +385,10 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     private static class CompilerProcessListener extends ProcessAdapter {
-        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION)", Pattern.MULTILINE);
+        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION|LOGGING)", Pattern.MULTILINE);
         private static final Pattern OPEN_TAG_END_PATTERN = Pattern.compile(">", Pattern.MULTILINE | Pattern.DOTALL);
         private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("\\s*(path|line|column)\\s*=\\s*\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION)>", Pattern.MULTILINE | Pattern.DOTALL);
+        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION|LOGGING)>", Pattern.MULTILINE | Pattern.DOTALL);
 
         private enum State {
             WAITING, ATTRIBUTES, MESSAGE
@@ -408,6 +410,9 @@ public class JetCompiler implements TranslatingCompiler {
                 }
                 else if (Severity.WARNING.toString().equals(tagName)) {
                     messageCategory = WARNING;
+                }
+                else if (Severity.LOGGING.toString().equals(tagName)) {
+                    messageCategory = STATISTICS;
                 }
                 else {
                     messageCategory = INFORMATION;
@@ -441,9 +446,17 @@ public class JetCompiler implements TranslatingCompiler {
             }
 
             public void reportTo(CompileContext compileContext) {
-                compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line, column == null ? -1 : column);
-                if (isException) {
-                    LOG.error(message);
+                if (messageCategory == STATISTICS) {
+                    compileContext.getProgressIndicator().setText(message);
+                }
+                else {
+                    compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line,
+                                              column == null
+                                              ? -1
+                                              : column);
+                    if (isException) {
+                        LOG.error(message);
+                    }
                 }
             }
         }

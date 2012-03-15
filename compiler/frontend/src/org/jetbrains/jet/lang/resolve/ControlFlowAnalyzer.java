@@ -35,9 +35,15 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
  * @author svtk
  */
 public class ControlFlowAnalyzer {
+    private TopDownAnalysisParameters topDownAnalysisParameters;
     private TopDownAnalysisContext context;
     private JetControlFlowDataTraceFactory flowDataTraceFactory;
 
+
+    @Inject
+    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
+    }
 
     @Inject
     public void setContext(TopDownAnalysisContext context) {
@@ -83,7 +89,7 @@ public class ControlFlowAnalyzer {
     private void checkClassOrObject(JetClassOrObject klass) {
         // A pseudocode of class initialization corresponds to a class
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
-        flowInformationProvider.markUninitializedVariables((JetElement) klass, context.isDeclaredLocally());
+        flowInformationProvider.markUninitializedVariables((JetElement) klass, topDownAnalysisParameters.isDeclaredLocally());
     }
     
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
@@ -107,7 +113,7 @@ public class ControlFlowAnalyzer {
 
         // Property accessor is checked through initialization of a class check (at 'checkClassOrObject')
         boolean isPropertyAccessor = function instanceof JetPropertyAccessor;
-        flowInformationProvider.markUninitializedVariables(function.asElement(), context.isDeclaredLocally() || isPropertyAccessor);
+        flowInformationProvider.markUninitializedVariables(function.asElement(), topDownAnalysisParameters.isDeclaredLocally() || isPropertyAccessor);
 
         flowInformationProvider.markUnusedVariables(function.asElement());
 

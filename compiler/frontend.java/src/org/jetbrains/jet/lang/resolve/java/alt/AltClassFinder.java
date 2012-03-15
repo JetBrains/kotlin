@@ -26,7 +26,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.plugin.compiler.PathUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.util.List;
 

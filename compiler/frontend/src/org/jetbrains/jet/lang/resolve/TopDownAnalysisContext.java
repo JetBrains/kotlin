@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +42,7 @@ import java.util.Set;
  */
 public class TopDownAnalysisContext {
 
-    private final ObservableBindingTrace trace;
+    private ObservableBindingTrace trace;
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
@@ -54,40 +55,19 @@ public class TopDownAnalysisContext {
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
 
-    private final Predicate<PsiFile> analyzeCompletely;
-
     private StringBuilder debugOutput;
-    private final boolean analyzingBootstrapLibrary;
-    private boolean declaredLocally;
 
-    private final InjectorForTopDownAnalyzer injector;
 
-    public TopDownAnalysisContext(
-            final Project project,
-            final BindingTrace trace,
-            Predicate<PsiFile> analyzeCompletely,
-            @NotNull final ModuleConfiguration configuration,
-            @NotNull final ModuleDescriptor moduleDescriptor,
-            boolean declaredLocally,
-            boolean analyzingBootstrapLibrary,
-            @Nullable final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory) {
+    private TopDownAnalysisParameters topDownAnalysisParameters;
 
-        if (analyzingBootstrapLibrary == (jetControlFlowDataTraceFactory != null)) {
-            throw new IllegalStateException(
-                    "jetControlFlowDataTraceFactory must not be passed when analyzingBootstrapLibrary and vice versa");
-        }
-
-        this.injector = new InjectorForTopDownAnalyzer(project, this, configuration, moduleDescriptor, jetControlFlowDataTraceFactory);
-
-        this.trace = new ObservableBindingTrace(trace);
-        this.analyzeCompletely = analyzeCompletely;
-        this.declaredLocally = declaredLocally;
-        this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
+    @Inject
+    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
+        this.trace = new ObservableBindingTrace(topDownAnalysisParameters.getTrace());
     }
 
-    public InjectorForTopDownAnalyzer getInjector() {
-        return injector;
-    }
+
+
 
     public void debug(Object message) {
         if (debugOutput != null) {
@@ -107,13 +87,9 @@ public class TopDownAnalysisContext {
         }
     }
 
-    public boolean analyzingBootstrapLibrary() {
-        return analyzingBootstrapLibrary;
-    }
-
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
-        boolean result = containingFile != null && analyzeCompletely.apply(containingFile);
+        boolean result = containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);
         if (!result) {
             debug(containingFile);
         }
@@ -159,10 +135,6 @@ public class TopDownAnalysisContext {
 
     public Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions() {
         return functions;
-    }
-
-    public boolean isDeclaredLocally() {
-        return declaredLocally;
     }
 
 }

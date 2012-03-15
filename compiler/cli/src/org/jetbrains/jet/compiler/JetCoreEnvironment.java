@@ -24,7 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.PathUtil;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.net.URL;

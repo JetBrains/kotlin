@@ -165,7 +165,7 @@ public class Tuple18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14
     }
 
     @Override
-    public void forEach(Function1<Object, Void> fn) {
+    public void forEach(Function1<Object, Tuple0> fn) {
         fn.invoke(_1);
         fn.invoke(_2);
         fn.invoke(_3);

@@ -110,16 +110,27 @@ public class DependencyInjectorGenerator {
     }
 
     public void addPublicParameter(Class<?> type) {
-        addParameter(true, type, var(type));
+        addPublicParameter(type, true);
     }
+
+    public void addPublicParameter(Class<?> type, boolean required) {
+        addParameter(true, type, var(type), required);
+    }
+
 
     public void addParameter(Class<?> type) {
-        addParameter(false, type, var(type));
+        addParameter(type, true);
     }
 
-    public void addParameter(boolean reexport, @NotNull Class<?> type, @Nullable String name) {
+    public void addParameter(Class<?> type, boolean required) {
+        addParameter(false, type, var(type), required);
+    }
+
+
+
+    public void addParameter(boolean reexport, @NotNull Class<?> type, @Nullable String name, boolean required) {
         Field field = addField(reexport, type, name, null);
-        Parameter parameter = new Parameter(type, name, field);
+        Parameter parameter = new Parameter(type, name, field, required);
         parameters.add(parameter);
         field.setInitialization(new ParameterExpression(parameter));
         backsParameter.add(field);
@@ -147,6 +158,12 @@ public class DependencyInjectorGenerator {
         }
         for (Parameter parameter : parameters) {
             generateImportDirective(out, parameter.getType(), injectorPackageName);
+        }
+        for (Parameter parameter : parameters) {
+            if (parameter.isRequired()) {
+                generateImportDirective(out, NotNull.class, injectorPackageName);
+                break;
+            }
         }
     }
 
@@ -180,7 +197,11 @@ public class DependencyInjectorGenerator {
             out.println("    public " + injectorClassName + "(");
             for (Iterator<Parameter> iterator = parameters.iterator(); iterator.hasNext(); ) {
                 Parameter parameter = iterator.next();
-                out.print(indent + parameter.getType().getSimpleName() + " " + parameter.getName());
+                out.print(indent);
+                if (parameter.isRequired()) {
+                    out.print("@NotNull ");
+                }
+                out.print(parameter.getType().getSimpleName() + " " + parameter.getName());
                 if (iterator.hasNext()) {
                     out.println(",");
                 }
@@ -317,6 +338,10 @@ public class DependencyInjectorGenerator {
 
     private void initializeByConstructorCall(Field field, Field neededFor) {
         Class<?> type = field.getType();
+
+        if (type.isInterface()) {
+            throw new IllegalArgumentException("cannot instantiate interface: " + type.getName() + " needed for " + neededFor);
+        }
 
         // Look for constructor
         Constructor<?>[] constructors = type.getConstructors();

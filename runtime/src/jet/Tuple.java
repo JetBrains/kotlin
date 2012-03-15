@@ -23,7 +23,7 @@ public abstract class Tuple extends DefaultJetObject {
     /**
      * Performs the given function on each item in the tuple
      */
-    public abstract void forEach(Function1<Object, Void> fn);
+    public abstract void forEach(Function1<Object, Tuple0> fn);
 
     /**
      * Returns the size of the tuple

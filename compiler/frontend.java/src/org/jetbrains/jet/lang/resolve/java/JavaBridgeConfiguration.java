@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -72,24 +71,4 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     }
 
 
-    @Override
-    public NamespaceDescriptor getTopLevelNamespace(@NotNull String shortName) {
-        NamespaceDescriptor namespaceDescriptor = javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.topLevel(shortName));
-        if (namespaceDescriptor != null) {
-            return namespaceDescriptor;
-        }
-        return delegateConfiguration.getTopLevelNamespace(shortName);
-    }
-
-    @Override
-    public void addAllTopLevelNamespacesTo(@NotNull Collection<? super NamespaceDescriptor> topLevelNamespaces) {
-        NamespaceDescriptor defaultPackage = javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.ROOT);
-        assert defaultPackage != null : "Cannot resolve Java's default package";
-        for (DeclarationDescriptor declarationDescriptor : defaultPackage.getMemberScope().getAllDescriptors()) {
-            if (declarationDescriptor instanceof NamespaceDescriptor) {
-                NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) declarationDescriptor;
-                topLevelNamespaces.add(namespaceDescriptor);
-            }
-        }
-    }
 }
