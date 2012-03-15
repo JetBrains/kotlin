@@ -18,9 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,60 +29,50 @@ public class FqName {
     public static final FqName ROOT = new FqName("");
 
     @NotNull
-    private final String fqName;
+    private final FqNameUnsafe fqName;
 
     // cache
     private transient FqName parent;
-    private transient String shortName;
 
 
     public FqName(@NotNull String fqName) {
+        this.fqName = new FqNameUnsafe(fqName, this);
+    }
+
+    public FqName(@NotNull FqNameUnsafe fqName) {
         this.fqName = fqName;
 
         validateFqName();
     }
 
-    private FqName(@NotNull String fqName, FqName parent, String shortName) {
+    private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
         this.fqName = fqName;
         this.parent = parent;
-        this.shortName = shortName;
 
         validateFqName();
     }
 
 
     private void validateFqName() {
-        if (fqName.length() == 0) {
-            return;
-        }
-
-        // TODO: prohibit < everywhere
-        if (fqName.indexOf('/') >= 0 || fqName.charAt(0) == '<') {
+        if (fqName.getFqName().indexOf('<') >= 0) {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
     }
 
-    private void compute() {
-        int lastDot = fqName.lastIndexOf('.');
-        if (lastDot >= 0) {
-            shortName = fqName.substring(lastDot + 1);
-            parent = new FqName(fqName.substring(0, lastDot));
-        } else {
-            shortName = fqName;
-            parent = ROOT;
-        }
-    }
-
-
-
     @NotNull
     public String getFqName() {
+        return fqName.getFqName();
+    }
+
+    @NotNull
+    public FqNameUnsafe toUnsafe() {
         return fqName;
     }
 
     public boolean isRoot() {
-        return fqName.equals("");
+        return fqName.isRoot();
     }
+
     @NotNull
     public FqName parent() {
         if (parent != null) {
@@ -95,49 +83,30 @@ public class FqName {
             throw new IllegalStateException("root");
         }
 
-        compute();
+        parent = new FqName(fqName.parent());
 
         return parent;
     }
 
     @NotNull
     public FqName child(@NotNull String name) {
-        String childFqName;
-        if (isRoot()) {
-            childFqName = name;
-        } else {
-            childFqName = fqName + "." + name;
-        }
-        return new FqName(childFqName, this, name);
+        return new FqName(fqName.child(name), this);
     }
 
     @NotNull
     public String shortName() {
-        if (shortName != null) {
-            return shortName;
-        }
-
-        if (isRoot()) {
-            throw new IllegalStateException("root");
-        }
-
-        compute();
-
-        return shortName;
-    }
-
-    private interface WalkCallback {
-        void segment(@NotNull String shortName, @NotNull FqName fqName);
+        return fqName.shortName();
     }
 
     @NotNull
     public List<FqName> path() {
         final List<FqName> path = Lists.newArrayList();
         path.add(ROOT);
-        walk(new WalkCallback() {
+        fqName.walk(new FqNameUnsafe.WalkCallback() {
             @Override
-            public void segment(@NotNull String shortName, @NotNull FqName fqName) {
-                path.add(fqName);
+            public void segment(@NotNull String shortName, @NotNull FqNameUnsafe fqName) {
+                // TODO: do not validate
+                path.add(new FqName(fqName));
             }
         });
         return path;
@@ -145,75 +114,19 @@ public class FqName {
 
     @NotNull
     public List<String> pathSegments() {
-        final List<String> path = Lists.newArrayList();
-        walk(new WalkCallback() {
-            @Override
-            public void segment(@NotNull String shortName, @NotNull FqName fqName) {
-                path.add(shortName);
-            }
-        });
-        return path;
+        return fqName.pathSegments();
     }
-
-
-    private void walk(@NotNull WalkCallback callback) {
-        if (isRoot()) {
-            return;
-        }
-
-        int pos = fqName.indexOf('.');
-
-        if (pos < 0) {
-            if (this.parent == null) {
-                this.parent = ROOT;
-            }
-            if (this.shortName == null) {
-                this.shortName = fqName;
-            }
-            callback.segment(fqName, this);
-            return;
-        }
-
-        String firstSegment = fqName.substring(0, pos);
-        FqName last = new FqName(firstSegment, ROOT, firstSegment);
-        callback.segment(firstSegment, last);
-
-        for (;;) {
-            int next = fqName.indexOf('.', pos + 1);
-            if (next < 0) {
-                if (this.parent == null) {
-                    this.parent = last;
-                }
-                String shortName = fqName.substring(pos + 1);
-                if (this.shortName == null) {
-                    this.shortName = shortName;
-                }
-                callback.segment(shortName, this);
-                return;
-            }
-
-            String shortName = fqName.substring(pos + 1, next);
-            last = new FqName(fqName.substring(0, next), last, shortName);
-            callback.segment(shortName, last);
-
-            pos = next;
-        }
-    }
-
 
 
     @NotNull
     public static FqName topLevel(@NotNull String shortName) {
-        if (shortName.indexOf('.') >= 0) {
-            throw new IllegalArgumentException();
-        }
-        return new FqName(shortName, ROOT, shortName);
+        return new FqName(FqNameUnsafe.topLevel(shortName));
     }
 
 
     @Override
     public String toString() {
-        return isRoot() ? "<root>" : fqName;
+        return fqName.toString();
     }
 
     @Override

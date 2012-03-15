@@ -113,7 +113,7 @@ public abstract class CodegenContext {
         while(!(descriptor instanceof NamespaceDescriptor)) {
             descriptor = descriptor.getContainingDeclaration();
         }
-        return NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(descriptor), true);
+        return NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(descriptor).toSafe(), true);
     }
 
     public OwnerKind getContextKind() {

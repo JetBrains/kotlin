@@ -101,7 +101,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
-                return DescriptorUtils.getFQName(declarationDescriptor);
+                return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
             }
         });
     }
@@ -126,7 +126,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
-                return DescriptorUtils.getFQName(declarationDescriptor);
+                return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
             }
         });
     }

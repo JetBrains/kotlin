@@ -178,25 +178,28 @@ public class DescriptorUtils {
         return false;
     }
 
-    public static FqName getFQName(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ModuleDescriptor || descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
-            return FqName.ROOT;
+    @NotNull
+    public static FqNameUnsafe getFQName(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+
+        if (descriptor instanceof ModuleDescriptor || containingDeclaration instanceof ModuleDescriptor) {
+            return FqName.ROOT.toUnsafe();
         }
 
-        if (descriptor.getContainingDeclaration() == null) {
+        if (containingDeclaration == null) {
             if (descriptor instanceof NamespaceDescriptor) {
                 // TODO: namespace must always have parent
                 if (descriptor.getName().equals("jet")) {
-                    return FqName.topLevel("jet");
+                    return FqNameUnsafe.topLevel("jet");
                 }
                 if (descriptor.getName().equals("<java_root>")) {
-                    return FqName.ROOT;
+                    return FqName.ROOT.toUnsafe();
                 }
             }
-            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + descriptor.getContainingDeclaration());
+            throw new IllegalStateException("descriptor is not module descriptor and has null containingDeclaration: " + containingDeclaration);
         }
 
-        return getFQName(descriptor.getContainingDeclaration()).child(descriptor.getName());
+        return getFQName(containingDeclaration).child(descriptor.getName());
     }
 
     public static boolean isTopLevelFunction(@NotNull SimpleFunctionDescriptor functionDescriptor) {

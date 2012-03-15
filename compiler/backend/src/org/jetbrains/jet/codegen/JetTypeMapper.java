@@ -114,9 +114,9 @@ public class JetTypeMapper {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof JavaNamespaceDescriptor) {
             JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) containingDeclaration;
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration), javaNamespaceDescriptor.isNamespace());
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration).toSafe(), javaNamespaceDescriptor.isNamespace());
         } else if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration), true);
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration).toSafe(), true);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -395,7 +395,7 @@ public class JetTypeMapper {
             if (functionParent instanceof JavaNamespaceDescriptor) {
                 namespace = ((JavaNamespaceDescriptor) functionParent).isNamespace();
             }
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent), namespace);
+            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent).toSafe(), namespace);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

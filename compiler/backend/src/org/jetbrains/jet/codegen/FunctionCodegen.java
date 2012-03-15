@@ -318,7 +318,7 @@ public class FunctionCodegen {
             int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
             String ownerInternalName = contextClass instanceof NamespaceDescriptor ?
-                                       NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(contextClass), true) :
+                                       NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(contextClass).toSafe(), true) :
                                        state.getTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
 
             String descriptor = jvmSignature.getDescriptor().replace(")","I)");

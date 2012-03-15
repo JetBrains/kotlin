@@ -134,7 +134,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                                 @Override
                                 public void run() {
-                                    final FqName fqn = DescriptorUtils.getFQName(functionDescriptor);
+                                    final FqName fqn = DescriptorUtils.getFQName(functionDescriptor).toSafe();
                                     ImportClassHelper.addImportDirective(fqn.getFqName(), file);
                                 }
                             });

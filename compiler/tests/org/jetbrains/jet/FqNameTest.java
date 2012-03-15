@@ -18,6 +18,7 @@ package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -85,4 +86,15 @@ public class FqNameTest {
         }
     }
 
+    @Test
+    public void safeUnsafe() {
+        FqName fqName = new FqName("com.yandex");
+        Assert.assertSame(fqName, fqName.toUnsafe().toSafe());
+    }
+
+    @Test
+    public void unsafeSafe() {
+        FqNameUnsafe fqName = new FqNameUnsafe("ru.yandex");
+        Assert.assertSame(fqName, fqName.toSafe().toUnsafe());
+    }
 }

@@ -40,7 +40,7 @@ public class JetPluginUtil {
     @NotNull
     public static FqName computeTypeFullName(@NotNull JetType type) {
         ClassDescriptor clazz = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
-        return DescriptorUtils.getFQName(clazz);
+        return DescriptorUtils.getFQName(clazz).toSafe();
     }
 
     @NotNull

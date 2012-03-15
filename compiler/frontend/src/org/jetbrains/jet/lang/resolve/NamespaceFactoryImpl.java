@@ -119,7 +119,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             namespaceDescriptor = ((ModuleDescriptor) owner).getRootNs();
         }
         else {
-            FqName ownerFqName = DescriptorUtils.getFQName(owner);
+            FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
             fqName = ownerFqName.child(name);
             namespaceDescriptor = ((NamespaceDescriptorImpl) owner).getNamespace(name);
         }

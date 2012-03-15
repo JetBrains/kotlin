@@ -22,7 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 
 import java.util.Map;
 
@@ -39,13 +39,13 @@ public final class StandardClasses {
     private final class Builder {
 
         @Nullable
-        private /*var*/ FqName currentFQName = null;
+        private /*var*/ FqNameUnsafe currentFQName = null;
         @Nullable
         private /*var*/ String currentObjectName = null;
 
         @NotNull
         public Builder forFQ(@NotNull String classFQName) {
-            currentFQName = new FqName(classFQName);
+            currentFQName = new FqNameUnsafe(classFQName);
             return this;
         }
 
@@ -119,46 +119,46 @@ public final class StandardClasses {
 
 
     @NotNull
-    private final Map<FqName, JsName> standardObjects = Maps.newHashMap();
+    private final Map<FqNameUnsafe, JsName> standardObjects = Maps.newHashMap();
 
     @NotNull
-    private final Map<FqName, JsScope> scopeMap = Maps.newHashMap();
+    private final Map<FqNameUnsafe, JsScope> scopeMap = Maps.newHashMap();
 
     private StandardClasses(@NotNull JsScope kotlinScope) {
         this.kotlinScope = kotlinScope;
     }
 
-    private void declareTopLevelObjectInScope(@NotNull JsScope scope, @NotNull Map<FqName, JsName> map,
-                                              @NotNull FqName fullQualifiedName, @NotNull String name) {
+    private void declareTopLevelObjectInScope(@NotNull JsScope scope, @NotNull Map<FqNameUnsafe, JsName> map,
+                                              @NotNull FqNameUnsafe fullQualifiedName, @NotNull String name) {
         JsName declaredName = scope.declareName(name);
         declaredName.setObfuscatable(false);
         map.put(fullQualifiedName, declaredName);
         scopeMap.put(fullQualifiedName, new JsScope(scope, "scope for " + name));
     }
 
-    private void declareKotlinObject(@NotNull FqName fullQualifiedName, @NotNull String kotlinLibName) {
+    private void declareKotlinObject(@NotNull FqNameUnsafe fullQualifiedName, @NotNull String kotlinLibName) {
         declareTopLevelObjectInScope(kotlinScope, standardObjects, fullQualifiedName, kotlinLibName);
     }
 
-    private void declareInner(@NotNull FqName fullQualifiedClassName,
+    private void declareInner(@NotNull FqNameUnsafe fullQualifiedClassName,
                               @NotNull String shortMethodName,
                               @NotNull String javascriptName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
         assert classScope != null;
-        FqName fullQualifiedMethodName = new FqName(fullQualifiedClassName + "." + shortMethodName);
+        FqNameUnsafe fullQualifiedMethodName = fullQualifiedClassName.child(shortMethodName);
         JsName declaredName = classScope.declareName(javascriptName);
         declaredName.setObfuscatable(false);
         standardObjects.put(fullQualifiedMethodName, declaredName);
     }
 
-    private void declareMethods(@NotNull FqName classFQName,
+    private void declareMethods(@NotNull FqNameUnsafe classFQName,
                                 @NotNull String... methodNames) {
         for (String methodName : methodNames) {
             declareInner(classFQName, methodName, methodName);
         }
     }
 
-    private void declareReadonlyProperties(@NotNull FqName classFQName,
+    private void declareReadonlyProperties(@NotNull FqNameUnsafe classFQName,
                                            @NotNull String... propertyNames) {
         for (String propertyName : propertyNames) {
             declareInner(classFQName, propertyName, propertyName);
