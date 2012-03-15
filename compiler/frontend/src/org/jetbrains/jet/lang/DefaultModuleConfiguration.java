@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.Collection;
@@ -30,7 +31,8 @@ import java.util.Collection;
  * @author svtk
  */
 public class DefaultModuleConfiguration implements ModuleConfiguration {
-    public static final String[] DEFAULT_JET_IMPORTS = new String[] { "kotlin.*", "kotlin.io.*" };
+    public static final ImportPath[] DEFAULT_JET_IMPORTS = new ImportPath[] {
+            new ImportPath("kotlin.*"), new ImportPath("kotlin.io.*") };
 
     private Project project;
 
@@ -44,7 +46,7 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
 
     @Override
     public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
-        for (String defaultJetImport : DEFAULT_JET_IMPORTS) {
+        for (ImportPath defaultJetImport : DEFAULT_JET_IMPORTS) {
             directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
         }
     }
@@ -52,5 +54,4 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
     }
-
 }

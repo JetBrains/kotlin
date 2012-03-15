@@ -24,7 +24,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.LocalTimeCounter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -140,21 +140,35 @@ public class JetPsiFactory {
         return function.getValueParameters().get(0);
     }
 
-//    public static JetNamespace createNamespace(Project project, String text) {
-//        JetFile file = createFile(project, text);
-//        return file.getRootNamespace();
-//    }
-
-    public static JetImportDirective createImportDirective(Project project, @NotNull String classPath) {
-        if (classPath.isEmpty()) {
-            throw new IllegalArgumentException("import path must not be empty");
-        }
-        JetFile namespace = createFile(project, "import " + classPath);
-        return namespace.getImportDirectives().iterator().next();
+    @NotNull
+    public static JetImportDirective createImportDirective(Project project, @NotNull String path) {
+        return createImportDirective(project, new ImportPath(path));
     }
 
-    public static JetImportDirective createImportDirective(Project project, @NotNull FqName fqName) {
-        return createImportDirective(project, fqName.getFqName());
+    @NotNull
+    public static JetImportDirective createImportDirective(Project project, @NotNull ImportPath importPath) {
+        return createImportDirective(project, importPath, null);
+    }
+
+    @NotNull
+    public static JetImportDirective createImportDirective(Project project, @NotNull ImportPath importPath, @Nullable String aliasName) {
+        if (importPath.fqnPart().isRoot()) {
+            throw new IllegalArgumentException("import path must not be empty");
+        }
+
+        StringBuilder importDirectiveBuilder = new StringBuilder("import ");
+        importDirectiveBuilder.append(importPath.getPathStr());
+
+        if (aliasName != null) {
+            if (aliasName.isEmpty()) {
+                throw new IllegalArgumentException("Alias must not be empty");
+            }
+
+            importDirectiveBuilder.append(" as ").append(aliasName);
+        }
+
+        JetFile namespace = createFile(project, importDirectiveBuilder.toString());
+        return namespace.getImportDirectives().iterator().next();
     }
 
     public static PsiElement createPrimaryConstructor(Project project) {

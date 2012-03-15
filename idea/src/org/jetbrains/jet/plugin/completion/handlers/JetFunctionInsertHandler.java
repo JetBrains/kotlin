@@ -31,12 +31,11 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
-import org.jetbrains.jet.plugin.quickfix.ImportClassHelper;
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 /**
  * Performs number of code modification after insertion jet function:
@@ -135,7 +134,7 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
                                 @Override
                                 public void run() {
                                     final FqName fqn = DescriptorUtils.getFQName(functionDescriptor).toSafe();
-                                    ImportClassHelper.addImportDirective(fqn.getFqName(), file);
+                                    ImportInsertHelper.addImportDirective(fqn, file);
                                 }
                             });
                         }
