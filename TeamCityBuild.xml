@@ -8,6 +8,7 @@
     <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
+    <property name="plugin.xml.versioned" value="${plugin.xml}.versioned.bk" />
 
     <property name="plugin.verifier" value="${basedir}/PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar"/>
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
@@ -42,9 +43,13 @@
     </target>
 
     <target name="writeVersionToPluginXml">
+        <!-- Create backup. Backup will be restored after build end. This will allow to rebuild project without renew
+             plugin.xml from repository. -->
+        <copy file="${plugin.xml}" tofile="${plugin.xml.bk}" />
+
         <!-- Check that version has correct pattern for substitution -->
         <copy todir="">
-            <fileset file="${plugin.xml}">
+            <fileset file="${plugin.xml.bk}">
                 <contains text="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
             </fileset>
             <filterchain>
@@ -52,11 +57,17 @@
                     <token key="snapshot" value="${build.number}"/>
                 </replacetokens>
             </filterchain>
-            <mergemapper to="${plugin.xml.bk}"/>
+            <mergemapper to="${plugin.xml.versioned}"/>
         </copy>
 
-        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+        <!-- If file doesn't exist - there's a problem with original plugin.xml. Probably there's a bad pattern used for version -->
+        <copy file="${plugin.xml.versioned}" tofile="${plugin.xml}" overwrite="true"/>
 
+        <delete file="${plugin.xml.versioned}" quiet="true"/>
+    </target>
+
+    <target name="revertPluginXml">
+        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
         <delete file="${plugin.xml.bk}" quiet="true"/>
     </target>
 
@@ -85,7 +96,7 @@
         -->
     </target>
 
-    <target name="post_build" depends="zipArtifact, verifyPlugin"/>
+    <target name="post_build" depends="zipArtifact, revertPluginXml, verifyPlugin"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
