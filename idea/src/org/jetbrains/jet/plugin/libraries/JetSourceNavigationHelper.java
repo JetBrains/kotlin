@@ -59,7 +59,7 @@ public class JetSourceNavigationHelper {
             getBindingContextAndClassOrNamespaceDescriptor(@NotNull WritableSlice<FqName, D> slice,
                                                            @NotNull JetDeclaration declaration,
                                                            @Nullable FqName fqName) {
-        if (fqName == null) {
+        if (fqName == null || DumbService.isDumb(declaration.getProject())) {
             return null;
         }
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
