@@ -22,10 +22,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
@@ -43,7 +40,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final WritableScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
-    private final WritableScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
+    private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
 
     public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration, kind);
@@ -53,7 +50,9 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH));
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, this, redeclarationHandler).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);
+        if (getKind() == ClassKind.TRAIT) {
+            setUpScopeForInitializers(this);
+        }
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,11 +89,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, @NotNull BindingTrace trace) {
         super.addConstructor(constructorDescriptor, trace);
         if (constructorDescriptor.isPrimary()) {
+            setUpScopeForInitializers(constructorDescriptor);
             for (ValueParameterDescriptor valueParameterDescriptor : constructorDescriptor.getValueParameters()) {
                 JetParameter parameter = (JetParameter) trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
                 assert parameter != null;
                 if (parameter.getValOrVarNode() == null || !constructorDescriptor.isPrimary()) {
-                    scopeForInitializers.addVariableDescriptor(valueParameterDescriptor);
+                    getWritableScopeForInitializers().addVariableDescriptor(valueParameterDescriptor);
                 }
             }
         }
@@ -168,17 +168,28 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public JetScope getScopeForMemberResolution() {
         return scopeForMemberResolution;
     }
-    
+
+    private WritableScope getWritableScopeForInitializers() {
+        if (scopeForInitializers == null) {
+            throw new IllegalStateException("Scope for initializers queried before the primary constructor is set");
+        }
+        return scopeForInitializers;
+    }
+
     @NotNull
     public JetScope getScopeForInitializers() {
-        return scopeForInitializers;
+        return getWritableScopeForInitializers();
+    }
+
+    private void setUpScopeForInitializers(@NotNull DeclarationDescriptor containingDeclaration) {
+        this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
     public void lockScopes() {
         super.lockScopes();
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
         scopeForMemberResolution.changeLockLevel(WritableScope.LockLevel.READING);
-        scopeForInitializers.changeLockLevel(WritableScope.LockLevel.READING);
+        getWritableScopeForInitializers().changeLockLevel(WritableScope.LockLevel.READING);
     }
 
 }

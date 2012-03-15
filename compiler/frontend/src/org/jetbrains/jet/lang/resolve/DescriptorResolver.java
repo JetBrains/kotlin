@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -42,6 +41,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.lazy.LazyValue;
 import org.jetbrains.jet.util.lazy.LazyValueWithDefault;
 
+import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -520,7 +520,7 @@ public class DescriptorResolver {
     public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope,
             @NotNull PropertyDescriptor propertyDescriptor, List<TypeParameterDescriptor> typeParameters,
             ReceiverDescriptor receiver, BindingTrace trace) {
-        WritableScopeImpl result = new WritableScopeImpl(outerScope, propertyDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
+        WritableScopeImpl result = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
         }
