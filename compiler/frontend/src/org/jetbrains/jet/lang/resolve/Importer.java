@@ -21,9 +21,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.types.JetType;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -68,26 +66,12 @@ import java.util.List;
             if (descriptor instanceof NamespaceDescriptor) {
                 namespaceScope.importScope(((NamespaceDescriptor) descriptor).getMemberScope());
             }
-            if (firstPhase) {
-                if (descriptor instanceof ClassDescriptor) {
-                    ClassDescriptor objectDescriptor = DescriptorUtils.getObjectIfObjectOrClassObjectDescriptor((ClassDescriptor) descriptor);
-                    if (objectDescriptor != null) {
-                        Collection<? extends DeclarationDescriptor> innerClassesAndObjects = objectDescriptor.getInnerClassesAndObjects();
-                        for (DeclarationDescriptor innerClassOrObject : innerClassesAndObjects) {
-                            namespaceScope.importClassifierAlias(innerClassOrObject.getName(), (ClassifierDescriptor) innerClassOrObject);
-                        }
-                    }
-                }
-                return;
-            }
-            if (descriptor instanceof VariableDescriptor) {
-                JetType type = ((VariableDescriptor) descriptor).getType();
-                namespaceScope.importScope(type.getMemberScope());
-            }
-            else if (descriptor instanceof ClassDescriptor) {
-                JetType classObjectType = ((ClassDescriptor) descriptor).getClassObjectType();
-                if (classObjectType != null) {
-                    namespaceScope.importScope(classObjectType.getMemberScope());
+            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.OBJECT) {
+                ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+                namespaceScope.importScope(classDescriptor.getUnsubstitutedInnerClassesScope());
+                ClassDescriptor classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
+                if (classObjectDescriptor != null) {
+                    namespaceScope.importScope(classObjectDescriptor.getUnsubstitutedInnerClassesScope());
                 }
             }
         }

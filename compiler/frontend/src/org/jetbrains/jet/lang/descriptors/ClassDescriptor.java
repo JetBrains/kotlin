@@ -37,6 +37,9 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
     JetScope getMemberScope(List<TypeProjection> typeArguments);
 
     @NotNull
+    JetScope getUnsubstitutedInnerClassesScope();
+
+    @NotNull
     Set<ConstructorDescriptor> getConstructors();
 
     @Nullable
@@ -77,10 +80,4 @@ public interface ClassDescriptor extends ClassifierDescriptor, MemberDescriptor,
 
     @NotNull
     ReceiverDescriptor getImplicitReceiver();
-
-    @Nullable
-    ClassDescriptor getInnerClassOrObject(String name);
-    
-    @NotNull
-    Collection<ClassDescriptor> getInnerClassesAndObjects();
 }

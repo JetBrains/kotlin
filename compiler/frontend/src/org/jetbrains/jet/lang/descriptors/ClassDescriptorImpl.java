@@ -176,14 +176,9 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         return implicitReceiver;
     }
 
-    @Override
-    public ClassDescriptor getInnerClassOrObject(String name) {
-        return null;
-    }
-
     @NotNull
     @Override
-    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
-        return Collections.emptyList();
+    public JetScope getUnsubstitutedInnerClassesScope() {
+        return JetScope.EMPTY;
     }
 }

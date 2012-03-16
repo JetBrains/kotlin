@@ -247,14 +247,6 @@ public class DescriptorUtils {
         return null;
     }
 
-    @Nullable
-    public static ClassDescriptor getObjectIfObjectOrClassObjectDescriptor(ClassDescriptor descriptor) {
-        if ((descriptor).getKind() == ClassKind.OBJECT) {
-            return descriptor;
-        }
-        return descriptor.getClassObjectDescriptor();
-    }
-    
     @NotNull
     public static JetType getFunctionExpectedReturnType(@NotNull FunctionDescriptor descriptor, @NotNull JetElement function) {
         JetType expectedType;

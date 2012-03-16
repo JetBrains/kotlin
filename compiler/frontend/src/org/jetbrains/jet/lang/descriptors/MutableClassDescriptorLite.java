@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -42,8 +40,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     private List<AnnotationDescriptor> annotations = Lists.newArrayList();
 
-    private Map<String, ClassDescriptor> innerClassesAndObjects = Maps.newHashMap();
-
     private List<TypeParameterDescriptor> typeParameters;
     private Collection<JetType> supertypes = Lists.newArrayList();
 
@@ -58,6 +54,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private final ClassKind kind;
 
     private JetScope scopeForMemberLookup;
+    private JetScope innerClassesScope;
 
     private ClassReceiver implicitReceiver;
 
@@ -109,6 +106,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     public void setScopeForMemberLookup(JetScope scopeForMemberLookup) {
         this.scopeForMemberLookup = scopeForMemberLookup;
+        this.innerClassesScope = new InnerClassesScopeWrapper(scopeForMemberLookup);
     }
 
     public void createTypeConstructor() {
@@ -264,25 +262,17 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     @Override
     public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
         getScopeForMemberLookupAsWritableScope().addClassifierDescriptor(classDescriptor);
-        innerClassesAndObjects.put(classDescriptor.getName(), classDescriptor);
     }
 
-    @Override
-    @Nullable
-    public ClassDescriptor getInnerClassOrObject(String name) {
-        return innerClassesAndObjects.get(name);
-    }
-
-    @Override
     @NotNull
-    public Collection<ClassDescriptor> getInnerClassesAndObjects() {
-        return innerClassesAndObjects.values();
+    @Override
+    public JetScope getUnsubstitutedInnerClassesScope() {
+        return innerClassesScope;
     }
 
     @Override
     public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
         getScopeForMemberLookupAsWritableScope().addObjectDescriptor(objectDescriptor);
-        innerClassesAndObjects.put(objectDescriptor.getName(), objectDescriptor);
     }
 
     public void addSupertype(@NotNull JetType supertype) {
@@ -303,7 +293,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
             this.typeParameters.add(typeParameterDescriptor);
         }
     }
-
 
     public void lockScopes() {
         getScopeForMemberLookupAsWritableScope().changeLockLevel(WritableScope.LockLevel.READING);

@@ -117,7 +117,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitOuterClass(typeMapper.mapType(container.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), null, null);
         }
 
-        for (ClassDescriptor innerClass : descriptor.getInnerClassesAndObjects()) {
+        for (DeclarationDescriptor declarationDescriptor : descriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
+            assert declarationDescriptor instanceof ClassDescriptor;
+            ClassDescriptor innerClass = (ClassDescriptor) declarationDescriptor;
             // TODO: proper access
             int innerClassAccess = ACC_PUBLIC;
             if (innerClass.getModality() == Modality.FINAL) {

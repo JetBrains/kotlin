@@ -1,0 +1,9 @@
+//FILE:a.kt
+package lib
+trait WithInner {
+    trait Inner {
+    }
+}
+//FILE:b.kt
+package user
+import lib.WithInner.Inner

@@ -35,7 +35,7 @@ object N {
 //FILE:b.kt
 package b
 
-import N.M
+import <!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.M
 import A.P
 import b.A.B
 
@@ -45,7 +45,7 @@ fun foo() {
 
     P.foo()
 
-    M.bar()
+    <!UNRESOLVED_REFERENCE!>M<!>.bar()
 }
 
 class A() {
@@ -65,66 +65,5 @@ class A() {
 object N {
     object M {
         fun bar() {}
-    }
-}
-
-//FILE:c.kt
-// import all members from class object
-package c
-
-import A.*
-import M.*
-
-fun foo() {
-    val <!UNUSED_VARIABLE!>b<!>: B = B()
-    var <!UNUSED_VARIABLE!>r<!>: R = R()
-}
-
-class A() {
-    class object {
-        class B() {
-            class object {
-            }
-        }
-    }
-}
-
-object M {
-    fun foo() {}
-    class R() {}
-}
-
-//FILE:d.kt
-package d
-
-//import from objects before properties resolve
-
-import A.*
-import M.R
-import M.R.<!CANNOT_BE_IMPORTED!>bar<!>
-import M.T
-import M.Y
-
-var r: T = T()
-val y: T = Y
-
-fun f() {
-    <!UNRESOLVED_REFERENCE!>bar<!>()
-    R.bar()
-    B.foo()
-}
-
-object M {
-    object R {
-        fun bar() {}
-    }
-    open class T() {}
-
-    object Y : T() {}
-}
-
-object A {
-    object B {
-        fun foo() {}
     }
 }

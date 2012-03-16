@@ -1,0 +1,33 @@
+package d
+
+//import from objects before properties resolve
+
+import <!CANNOT_IMPORT_FROM_ELEMENT!>A<!>.*
+import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R
+import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R.bar
+import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.T
+import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.Y
+
+var r: T = <!UNRESOLVED_REFERENCE!>T<!>()
+val y: T = <!UNRESOLVED_REFERENCE!>Y<!>
+
+fun f() {
+    <!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>R<!>.bar()
+    <!UNRESOLVED_REFERENCE!>B<!>.foo()
+}
+
+object M {
+    object R {
+        fun bar() {}
+    }
+    open class T() {}
+
+    object Y : T() {}
+}
+
+object A {
+    object B {
+        fun foo() {}
+    }
+}
