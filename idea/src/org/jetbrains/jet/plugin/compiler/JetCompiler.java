@@ -274,8 +274,10 @@ public class JetCompiler implements TranslatingCompiler {
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
             
             Object rc = exec.invoke(kompiler.newInstance(), out, arguments);
-            if (rc instanceof Integer) {
-                return ((Integer) rc).intValue();
+            // exec() returns a KotlinCompiler.ExitCode object, that class is not accessible here,
+            // so we take it's contents through reflection
+            if ("org.jetbrains.jet.cli.KotlinCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
+                return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
             }
             else {
                 throw new IllegalStateException("Unexpected return: " + rc);

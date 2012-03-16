@@ -55,10 +55,10 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File stdlib = ForTestCompileStdlib.stdlibJarForTests();
             File resultJar = new File(tempDir, "result.jar");
-            int rv = new KotlinCompiler().exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
-                                "-jar", resultJar.getAbsolutePath(),
-                                "-stdlib", stdlib.getAbsolutePath());
-            Assert.assertEquals("compilation completed with non-zero code", 0, rv);
+            KotlinCompiler.ExitCode rv = new KotlinCompiler().exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+                                                                   "-jar", resultJar.getAbsolutePath(),
+                                                                   "-stdlib", stdlib.getAbsolutePath());
+            Assert.assertEquals("compilation completed with non-zero code", KotlinCompiler.ExitCode.OK, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
                 JarInputStream is = new JarInputStream(fileInputStream);

@@ -23,12 +23,30 @@ import org.jetbrains.jet.compiler.MessageRenderer;
 
 import java.io.PrintStream;
 
+import static org.jetbrains.jet.cli.KotlinCompiler.ExitCode.*;
+
 /**
  * @author yole
  * @author alex.tkachman
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class KotlinCompiler {
+
+    public enum ExitCode {
+        OK(0),
+        COMPILATION_ERROR(1),
+        INTERNAL_ERROR(2);
+
+        private final int code;
+
+        private ExitCode(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
 
     public static void main(String... args) {
         doMain(new KotlinCompiler(), args);
@@ -39,25 +57,25 @@ public class KotlinCompiler {
      */
     public static void doMain(KotlinCompiler compiler, String[] args) {
         try {
-            int rc = compiler.exec(args);
-            if (rc != 0) {
+            ExitCode rc = compiler.exec(args);
+            if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
-                System.exit(rc);
+                System.exit(rc.getCode());
             }
         } catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());
-            System.exit(1);
+            System.exit(INTERNAL_ERROR.getCode());
         }
     }
 
-    public int exec(String... args) {
+    public ExitCode exec(String... args) {
         return exec(System.out, args);
     }
 
-    public int exec(PrintStream errStream, String... args) {
+    public ExitCode exec(PrintStream errStream, String... args) {
         CompilerArguments arguments = createArguments();
         if (!parseArguments(errStream, arguments, args)) {
-            return 1;
+            return INTERNAL_ERROR;
         }
         return exec(errStream, arguments);
     }
@@ -65,10 +83,10 @@ public class KotlinCompiler {
     /**
      * Executes the compiler on the parsed arguments
      */
-    public int exec(PrintStream errStream, CompilerArguments arguments) {
+    public ExitCode exec(PrintStream errStream, CompilerArguments arguments) {
         if (arguments.help) {
             usage(errStream);
-            return 0;
+            return OK;
         }
         System.setProperty("java.awt.headless", "true");
 
@@ -84,11 +102,11 @@ public class KotlinCompiler {
             else {
                 noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
-            return noErrors ? 0 : 1;
+            return noErrors ? OK : COMPILATION_ERROR;
         }
         catch (Throwable t) {
             errStream.println(messageRenderer.renderException(t));
-            return 1;
+            return INTERNAL_ERROR;
         }
         finally {
             environment.dispose();
@@ -104,7 +122,7 @@ public class KotlinCompiler {
             return true;
         }
         catch (IllegalArgumentException e) {
-            usage(System.err);
+            usage(errStream);
         }
         catch (Throwable t) {
             // Always use tags
