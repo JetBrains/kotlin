@@ -59,7 +59,7 @@ public class FqNameUnsafe {
 
 
     private void validateFqName() {
-        if (fqName.indexOf('/') >= 0) {
+        if (fqName.indexOf('/') >= 0 || fqName.indexOf('*') >= 0) {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
     }
