@@ -146,22 +146,6 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
 
     }
 
-//    public void doMethodTest(@NonNls final String before, @NonNls final String after) throws Exception {
-//        doTextTest(
-//                Action.REFORMAT,
-//                "class Foo{\n" + "    void foo() {\n" + before + '\n' + "    }\n" + "}",
-//                "class Foo {\n" + "    void foo() {\n" + StringUtil.shiftIndentInside(after, 8, false) + '\n' + "    }\n" + "}"
-//        );
-//    }
-//
-//    public void doClassTest(@NonNls final String before, @NonNls final String after) throws Exception {
-//        doTextTest(
-//                Action.REFORMAT,
-//                "class Foo{\n" + before + '\n' + "}",
-//                "class Foo {\n" + StringUtil.shiftIndentInside(after, 4, false) + '\n' + "}"
-//        );
-//    }
-
     private static String prepareText(String actual) {
         if (actual.startsWith("\n")) {
             actual = actual.substring(1);

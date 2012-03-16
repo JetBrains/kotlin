@@ -89,10 +89,10 @@ public class ImportInsertHelper {
             // Check if import is already present
             for (JetImportDirective directive : importDirectives) {
                 ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
-                if (existentImportPath != null &&
-                        directive.getAliasName() == null &&
-                        QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
-                    return;
+                if (directive.getAliasName() == null && aliasName == null) {
+                    if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
+                        return;
+                    }
                 }
             }
 
