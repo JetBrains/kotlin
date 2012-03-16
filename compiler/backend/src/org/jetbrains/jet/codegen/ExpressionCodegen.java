@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.tree.IElementType;
@@ -35,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.objectweb.asm.Label;
@@ -151,7 +152,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         try {
             return selector.accept(this, receiver);
         }
-        catch(CompilationException e) {
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (CompilationException e) {
             throw e;
         }
         catch (Throwable error) {
