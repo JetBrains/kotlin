@@ -129,7 +129,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
-                if (PsiTreeUtil.getParentOfType(expression, JetQualifiedExpression.class) == null) {
+                if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null) {
                     PsiReference reference = expression.getReference();
                     if (reference != null) {
                         List<PsiElement> references = new ArrayList<PsiElement>();
@@ -145,7 +145,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                         }
 
                         for (PsiElement psiReference : references) {
-                            FqName fqName = getElementFQName(psiReference);
+                            FqName fqName = getElementUsageFQName(psiReference);
                             if (fqName != null) {
                                 usedQualifiedNames.add(fqName);
                             }
@@ -163,7 +163,7 @@ public class JetImportOptimizer implements ImportOptimizer {
 
 
     @Nullable
-    public static FqName getElementFQName(PsiElement element) {
+    public static FqName getElementUsageFQName(PsiElement element) {
         if (element instanceof JetClassOrObject) {
             return JetPsiUtil.getFQName((JetClassOrObject) element);
         }
@@ -184,6 +184,10 @@ public class JetImportOptimizer implements ImportOptimizer {
             if (containingClass != null) {
                 String classFQNStr = containingClass.getQualifiedName();
                 if (classFQNStr != null) {
+                    if (method.isConstructor()) {
+                        return new FqName(classFQNStr);
+                    }
+
                     FqName classFQN = new FqName(classFQNStr);
                     if (classFQN.shortName().equals(JvmAbi.PACKAGE_CLASS)) {
                         return QualifiedNamesUtil.combine(classFQN.parent(), method.getName());
@@ -197,6 +201,4 @@ public class JetImportOptimizer implements ImportOptimizer {
 
         return null;
     }
-
-
 }
