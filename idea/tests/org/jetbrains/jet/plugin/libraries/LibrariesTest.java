@@ -150,8 +150,8 @@ public class LibrariesTest extends PlatformTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         String libraryDir = FileUtil.getTempDirectory();
-        int compilerExec = new KotlinCompiler().exec("-src", TEST_DATA_PATH + "/library", "-output", libraryDir);
-        assertEquals(0, compilerExec);
+        KotlinCompiler.ExitCode compilerExec = new KotlinCompiler().exec("-src", TEST_DATA_PATH + "/library", "-output", libraryDir);
+        assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
         myLibraryDir = LocalFileSystem.getInstance().findFileByPath(libraryDir);
         assertNotNull(myLibraryDir);
 
