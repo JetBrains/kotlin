@@ -12,7 +12,6 @@ dist
 ideaSDK
 PluginVerifier
 .idea/dictionaries/yozh.xml
-.idea/codeStyleSettings.xml
 .idea/workspace.xml
 tmp
 *TestMy.java
