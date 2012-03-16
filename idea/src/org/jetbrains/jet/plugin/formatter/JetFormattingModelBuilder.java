@@ -52,8 +52,8 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
         return new SpacingBuilder(settings)
                 // ============ Line breaks ==============
                 .after(NAMESPACE_HEADER).blankLines(1)
-
                 .before(IMPORT_DIRECTIVE).lineBreakInCode()
+
                 .between(IMPORT_DIRECTIVE, CLASS).blankLines(1)
                 .between(IMPORT_DIRECTIVE, FUN).blankLines(1)
                 .between(IMPORT_DIRECTIVE, PROPERTY).blankLines(1)
@@ -77,7 +77,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .around(TokenSet.create(EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ)).spaceIf(jetCommonSettings.SPACE_AROUND_EQUALITY_OPERATORS)
                 .aroundInside(TokenSet.create(LT, GT, LTEQ, GTEQ), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
                 .around(TokenSet.create(PLUS, MINUS)).spaceIf(jetCommonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
-                .around(TokenSet.create(MUL, DIV, PERC)).spaceIf(jetCommonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+                .aroundInside(TokenSet.create(MUL, DIV, PERC), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
                 .around(TokenSet.create(PLUSPLUS, MINUSMINUS, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
                 .around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
 
