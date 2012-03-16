@@ -16,10 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.codegen.signature.kotlin.JetMethodAnnotationWriter;
 import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWriter;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -28,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -263,8 +263,13 @@ public class FunctionCodegen {
         try {
             mv.visitMaxs(-1, -1);
         }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
         catch (Throwable t) {
-            throw new CompilationException("wrong code generated" + (description != null ? " for " + description : "") + t.getClass().getName() + " " + t.getMessage(), t, method);
+            throw new CompilationException(
+                "wrong code generated" + (description != null ? " for " + description : "") + t.getClass().getName() + " " + t.getMessage(),
+                t, method);
         }
         mv.visitEnd();
     }

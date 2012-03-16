@@ -20,6 +20,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -151,6 +152,9 @@ public class GenerationState {
                 progress.log("For source: " + path);
                 try {
                     generateNamespace(file);
+                }
+                catch (ProcessCanceledException e) {
+                    throw e;
                 }
                 catch (Throwable e) {
                     errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
