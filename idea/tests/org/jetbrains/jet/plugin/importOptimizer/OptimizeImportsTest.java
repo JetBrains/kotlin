@@ -98,8 +98,7 @@ public class OptimizeImportsTest extends LightCodeInsightTestCase {
 
     private static void invokeFormatFile() {
         CommandProcessor.getInstance().executeCommand(
-                getProject(), new JetImportOptimizer().processFile(getFile()),
-                "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+            getProject(), new JetImportOptimizer().processFile(getFile()),
+            "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
-
 }
