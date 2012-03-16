@@ -17,11 +17,13 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -34,9 +36,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -56,24 +57,30 @@ public final class WholeProjectAnalyzerFacade {
         public Collection<JetFile> fun(final JetFile rootFile) {
             final Project project = rootFile.getProject();
             final Set<JetFile> files = Sets.newLinkedHashSet();
-            final ProjectRootManager rootManager = ProjectRootManager.getInstance(project);
 
-            if (rootManager != null /* && !ApplicationManager.getApplication().isUnitTestMode() */) {
-                List<VirtualFile> contentRoots = Arrays.asList(rootManager.getContentRoots());
+            Module rootModule = ModuleUtil.findModuleForPsiElement(rootFile);
+            if (rootModule != null) {
+                Set<Module> allModules = new HashSet<Module>();
+                ModuleUtil.getDependencies(rootModule, allModules);
 
-                CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
-                    @Override
-                    protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
-                        final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
-                        if (fileType != JetFileType.INSTANCE) return;
-                        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                        if (psiFile instanceof JetFile) {
-                            if (rootFile.getOriginalFile() != psiFile) {
-                                files.add((JetFile) psiFile);
+                for (Module module : allModules) {
+                    ModuleRootManager.getInstance(module).getFileIndex().iterateContent(new ContentIterator() {
+                        @Override
+                        public boolean processFile(VirtualFile file) {
+                            if (file.isDirectory()) return true;
+
+                            final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
+                            if (fileType != JetFileType.INSTANCE) return true;
+                            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                            if (psiFile instanceof JetFile) {
+                                if (rootFile.getOriginalFile() != psiFile) {
+                                    files.add((JetFile) psiFile);
+                                }
                             }
+                            return true;
                         }
-                    }
-                });
+                    });
+                }
             }
 
             files.add(rootFile);
