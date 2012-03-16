@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-[class SimpleTraitImpl : testData.libraries.SimpleTrait {
+[final class SimpleTraitImpl : testData.libraries.SimpleTrait {
 }]

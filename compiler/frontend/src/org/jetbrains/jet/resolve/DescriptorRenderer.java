@@ -401,7 +401,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
-            if (descriptor.getKind() != ClassKind.TRAIT) {
+            if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
                 renderModality(descriptor.getModality(), builder);
             }
             builder.append(renderKeyword(keyword));

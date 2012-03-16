@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[class WithTraitClassObject {
+[final class WithTraitClassObject {
     class object : testData.libraries.SimpleTrait {
     }
 }]
