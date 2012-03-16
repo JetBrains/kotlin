@@ -17,11 +17,17 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
+import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+
+import org.junit.Test;
 
 /**
  * @author alex.tkachman
@@ -32,6 +38,13 @@ public class StdlibTest extends CodegenTestCase {
         super.setUp();
         createEnvironmentWithFullJdk();
         myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
+        File junitJar = new File("libraries/testlib/lib/junit-4.9.jar");
+
+        if (!junitJar.exists()) {
+            throw new AssertionError();
+        }
+
+        myEnvironment.addToClasspath(junitJar);
         CompileEnvironment.ensureRuntime(myEnvironment);
     }
 
@@ -127,5 +140,28 @@ public class StdlibTest extends CodegenTestCase {
 
     public void testKt1515() throws Exception {
         blackBoxFile("regressions/kt1515.kt");
+    }
+
+    public void testKt1592 () throws MalformedURLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        loadFile("regressions/kt1592.kt");
+        ClassFileFactory codegens = generateClassesInFile();
+        GeneratedClassLoader loader = createClassLoader(codegens);
+
+        try {
+            String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
+            Class<?> namespaceClass = loader.loadClass(fqName);
+            Method method = namespaceClass.getMethod("box", Method.class);
+            method.setAccessible(true);
+            Test annotation = method.getAnnotation(Test.class);
+            assertEquals(annotation.timeout(), 0l);
+            assertEquals(annotation.expected(), Test.None.class);
+        }
+        catch (Throwable t) {
+            System.out.println(generateToText());
+            throw new RuntimeException(t);
+        }
+        finally {
+           loader.dispose();
+        }
     }
 }

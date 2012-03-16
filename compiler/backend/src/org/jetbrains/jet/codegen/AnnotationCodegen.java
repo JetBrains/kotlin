@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.DefaultValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -76,13 +77,16 @@ public abstract class AnnotationCodegen {
                 AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
 
                 for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
-                    List<JetExpression> valueArguments = entry.getValue().getArgumentExpressions();
-                    assert  valueArguments.size() == 1 : "Number of assertions on " + resolvedCall.getResultingDescriptor() + " = " + valueArguments.size(); // todo
-                    CompileTimeConstant<?> compileTimeConstant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, valueArguments.get(0));
-                    assert compileTimeConstant != null;
+                    ResolvedValueArgument valueArgument = entry.getValue();
+                    if (!(valueArgument instanceof DefaultValueArgument)) {
+                        List<JetExpression> valueArguments = valueArgument.getArgumentExpressions();
+                        assert  valueArguments.size() == 1 : "Number of assertions on " + resolvedCall.getResultingDescriptor() + " = " + valueArguments.size(); // todo
+                        CompileTimeConstant<?> compileTimeConstant = bindingContext.get(BindingContext.COMPILE_TIME_VALUE, valueArguments.get(0));
+                        assert compileTimeConstant != null;
 
-                    Object value = compileTimeConstant.getValue();
-                    annotationVisitor.visit(entry.getKey().getName(), value);
+                        Object value = compileTimeConstant.getValue();
+                        annotationVisitor.visit(entry.getKey().getName(), value);
+                    }
                 }
 
                 annotationVisitor.visitEnd();
