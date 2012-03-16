@@ -99,8 +99,14 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
     private Library findOrCreateRuntimeLibrary(final Module module) {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
-        final Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
-        if (kotlinRuntime != null) return null;
+        Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
+        if (kotlinRuntime != null) {
+            for (VirtualFile root : kotlinRuntime.getFiles(OrderRootType.CLASSES)) {
+                if (root.getName().equals("kotlin-runtime.jar")) {
+                    return kotlinRuntime;
+                }
+            }
+        }
 
         File runtimePath = PathUtil.getDefaultRuntimePath();
         if (runtimePath == null) {
@@ -124,17 +130,20 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             return null;
         }
 
-        final Library answer = table.createLibrary("KotlinRuntime");
+        if (kotlinRuntime == null) {
+            kotlinRuntime = table.createLibrary("KotlinRuntime");
+        }
 
+        final Library finalKotlinRuntime = kotlinRuntime;
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                Library.ModifiableModel model = answer.getModifiableModel();
+                Library.ModifiableModel model = finalKotlinRuntime.getModifiableModel();
                 model.addRoot(VfsUtil.getUrlForLibraryRoot(targetJar), OrderRootType.CLASSES);
                 model.commit();
             }
         });
 
-        return answer;
+        return kotlinRuntime;
     }
 
     private EditorNotificationPanel createNotificationPanel(final Module module) {
@@ -151,8 +160,10 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
                         Library library = findOrCreateRuntimeLibrary(module);
                         if (library != null) {
                             ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-                            model.addLibraryEntry(library);
-                            model.commit();
+                            if (model.findLibraryOrderEntry(library) == null) {
+                                model.addLibraryEntry(library);
+                                model.commit();
+                            }
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
