@@ -83,7 +83,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         myProject = project;
         myEditor = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""), project, JetFileType.INSTANCE, true);
         add(myEditor.getComponent());
-        myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+        myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
         myUpdateAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
