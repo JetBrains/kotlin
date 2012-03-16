@@ -82,21 +82,21 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return new JetLightClass(getManager(), file, qualifiedName);
     }
 
-    @Override
-    public PsiFile getContainingFile() {
-        return file;
-    }
-
+    @NotNull
     @Override
     public PsiClass getDelegate() {
         if (delegate == null) {
-            // TODO: What is the reason for this?
             delegate = findClass(qualifiedName, getStub());
             if (delegate == null) {
-                delegate = findClass(qualifiedName, getStub());
+                throw new IllegalStateException("Class not found for qualified name: " + qualifiedName);
             }
         }
         return delegate;
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+        return file;
     }
 
     private static PsiClass findClass(FqName fqn, StubElement<?> stub) {
