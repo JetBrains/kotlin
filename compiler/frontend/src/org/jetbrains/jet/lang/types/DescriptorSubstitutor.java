@@ -50,6 +50,11 @@ public class DescriptorSubstitutor {
             public boolean isEmpty() {
                 return originalSubstitutor.isEmpty() && mutableSubstitution.isEmpty();
             }
+
+            @Override
+            public String toString() {
+                return "DescriptorSubstitutor.substituteTypeParameters(" + mutableSubstitution + " / " + originalSubstitutor.getSubstitution() + ")";
+            }
         });
 
         for (TypeParameterDescriptor descriptor : typeParameters) {

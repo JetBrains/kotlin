@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -28,6 +29,8 @@ import java.util.*;
  * @author abreslav
  */
 public class TypeSubstitutor {
+
+    private static final int MAX_RECURSION_DEPTH = 100;
 
     public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
         final Set<TypeConstructor> constructors = Sets.newHashSet();
@@ -49,6 +52,11 @@ public class TypeSubstitutor {
             public boolean isEmpty() {
                 return false;
             }
+
+            @Override
+            public String toString() {
+                return "TypeConstructor.makeConstantSubstitutor(" + constructors + " -> " + projection + ")";
+            }
         });
     }
 
@@ -62,6 +70,11 @@ public class TypeSubstitutor {
             @Override
             public boolean isEmpty() {
                 return true;
+            }
+
+            @Override
+            public String toString() {
+                return "Empty TypeSubstitution";
             }
         };
         
@@ -85,6 +98,11 @@ public class TypeSubstitutor {
         @Override
         public boolean isEmpty() {
             return substitutionContext.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return substitutionContext.toString();
         }
     }
 
@@ -170,12 +188,12 @@ public class TypeSubstitutor {
 
             TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) constructor.getDeclarationDescriptor();
 
-            TypeProjection result = substitutionResult(typeParameterDescriptor, howThisTypeIsUsed, Variance.INVARIANT, value);
+            TypeProjection result = substitutionResult(typeParameterDescriptor, howThisTypeIsUsed, Variance.INVARIANT, value, 0);
 
             return TypeUtils.makeNullableIfNeeded(result.getType(), type.isNullable());
         }
 
-        return specializeType(type, howThisTypeIsUsed);
+        return specializeType(type, howThisTypeIsUsed, 0);
     }
 
     private TypeProjection getValueWithCorrectNullability(TypeSubstitution substitution, JetType type) {
@@ -190,7 +208,8 @@ public class TypeSubstitutor {
         return new TypeProjection(value.getProjectionKind(), TypeUtils.makeNullable(value.getType()));
     }
 
-    private JetType specializeType(JetType subjectType, Variance callSiteVariance) throws SubstitutionException {
+    private JetType specializeType(JetType subjectType, Variance callSiteVariance, int recursionDepth) throws SubstitutionException {
+        assertRecursionDepth(recursionDepth, subjectType, substitution);
         if (ErrorUtils.isErrorType(subjectType)) return subjectType;
 
         List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
@@ -202,7 +221,7 @@ public class TypeSubstitutor {
                     substitution,
                     argument,
                     parameterDescriptor,
-                    callSiteVariance));
+                    callSiteVariance, recursionDepth + 1));
         }
         return new JetTypeImpl(
                 subjectType.getAnnotations(),
@@ -217,7 +236,10 @@ public class TypeSubstitutor {
             @NotNull TypeSubstitution substitutionContext,
             @NotNull TypeProjection passedProjection,
             @NotNull TypeParameterDescriptor correspondingTypeParameter,
-            @NotNull Variance contextCallSiteVariance) throws SubstitutionException {
+            @NotNull Variance contextCallSiteVariance,
+            int recursionDepth) throws SubstitutionException {
+        assertRecursionDepth(recursionDepth, correspondingTypeParameter, passedProjection, substitution);
+
         JetType typeToSubstituteIn = passedProjection.getType();
         if (ErrorUtils.isErrorType(typeToSubstituteIn)) return passedProjection;
 
@@ -235,20 +257,23 @@ public class TypeSubstitutor {
                 return TypeUtils.makeStarProjection(correspondingTypeParameter);
             }
 
-            return substitutionResult(correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue);
+            return substitutionResult(correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue, recursionDepth + 1);
         }
         return new TypeProjection(
                 passedProjectionKind,
                 specializeType(
                         typeToSubstituteIn,
-                        effectiveContextVariance));
+                        effectiveContextVariance, recursionDepth + 1));
     }
 
     private TypeProjection substitutionResult(
             TypeParameterDescriptor correspondingTypeParameter,
             Variance effectiveContextVariance,
             Variance passedProjectionKind,
-            TypeProjection value) throws SubstitutionException {
+            TypeProjection value,
+            int recursionDepth) throws SubstitutionException {
+        assertRecursionDepth(recursionDepth, correspondingTypeParameter, value, substitution);
+
         Variance projectionKindValue = value.getProjectionKind();
         JetType typeValue = value.getType();
         Variance effectiveProjectionKindValue = asymmetricOr(passedProjectionKind, projectionKindValue);
@@ -285,7 +310,7 @@ public class TypeSubstitutor {
 //                throw new SubstitutionException(""); // TODO : error message
 //            }
 //
-        return new TypeProjection(effectiveProjectionKindValue, specializeType(effectiveTypeValue, effectiveContextVariance));
+        return new TypeProjection(effectiveProjectionKindValue, specializeType(effectiveTypeValue, effectiveContextVariance, recursionDepth + 1));
     }
 
     private static Variance asymmetricOr(Variance a, Variance b) {
@@ -299,5 +324,29 @@ public class TypeSubstitutor {
             case OUT_VARIANCE: return callSiteVariance != Variance.IN_VARIANCE;
         }
         throw new IllegalStateException(declarationSiteVariance.toString());
+    }
+
+    private static void assertRecursionDepth(int recursionDepth, TypeParameterDescriptor parameter, TypeProjection value, TypeSubstitution substitution) {
+        if (recursionDepth > MAX_RECURSION_DEPTH) {
+            throw new IllegalStateException("Recursion too deep. Most likely infinite loop while substituting " + safeToString(value) + " for " + safeToString(parameter) + "; substitution: " + safeToString(substitution));
+        }
+    }
+
+    private static void assertRecursionDepth(int recursionDepth, JetType type, TypeSubstitution substitution) {
+        if (recursionDepth > MAX_RECURSION_DEPTH) {
+            throw new IllegalStateException("Recursion too deep. Most likely infinite loop while substituting " + safeToString(type) + "; substitution: " + safeToString(substitution));
+        }
+    }
+
+    private static String safeToString(Object o) {
+        try {
+            return o.toString();
+        }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (Throwable e) {
+            return "[Exception while computing toString(): " + e + "]";
+        }
     }
 }

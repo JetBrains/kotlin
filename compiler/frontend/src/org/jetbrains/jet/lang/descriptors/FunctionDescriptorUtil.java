@@ -44,6 +44,11 @@ public class FunctionDescriptorUtil {
         public boolean isEmpty() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "FunctionDescriptorUtil.MAKE_TYPE_PARAMETERS_FRESH";
+        }
     });
 
     public static Map<TypeConstructor, TypeProjection> createSubstitutionContext(@NotNull FunctionDescriptor functionDescriptor, List<JetType> typeArguments) {

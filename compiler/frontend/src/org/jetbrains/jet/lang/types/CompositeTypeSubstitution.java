@@ -44,4 +44,13 @@ public class CompositeTypeSubstitution implements TypeSubstitutor.TypeSubstituti
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (TypeSubstitutor.TypeSubstitution substitution : inner) {
+            builder.append(substitution).append(" * ");
+        }
+        return builder.toString();
+    }
 }
