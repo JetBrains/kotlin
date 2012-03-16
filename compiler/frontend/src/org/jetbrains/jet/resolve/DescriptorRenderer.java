@@ -298,12 +298,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     builder.append("final");
                     break;
                 case OPEN:
-                    builder.append("open ");
+                    builder.append("open");
                     break;
                 case ABSTRACT:
-                    builder.append("abstract ");
+                    builder.append("abstract");
                     break;
             }
+            builder.append(" ");
         }
 
         @Override
