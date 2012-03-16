@@ -490,6 +490,11 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             public boolean isEmpty() {
                 return false;
             }
+
+            @Override
+            public String toString() {
+                return unknownTypes.toString();
+            }
         });
 
         private SolutionStatus status;
