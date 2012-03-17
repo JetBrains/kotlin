@@ -1,5 +1,7 @@
 package language.scala
 
+import kotlin.nullable.*
+
 import junit.framework.TestCase
 import kotlin.test.assertEquals
 
@@ -94,32 +96,30 @@ class OptionTest: TestCase() {
 
 
     fun testFunctionComposition() {
+        assertEquals("", foo3(Request(null)))
+        assertEquals("", foo3(Request("  ")))
+        assertEquals("BAR", foo3(Request("  bar ")))
+    }
+
+    fun foo3(request: Request): String {
         /* Scala:
 
         val name:Option[String] = request.getParameter("name")
         val upper = name map { _.trim } filter { _.length != 0 } map { _.toUpperCase }
         println(upper.getOrElse(""))
-
         */
 
-        /** TODO
-            The following would work if we implemented the filter/map methods on T?
+        val name = request.getParameter("name")
+        val upper = name.map<String, String>{ it.trim() }.filter{ it.length != 0 }.map<String, String>{ it.toUpperCase() }
+        return upper ?: ""
 
-        fun foo(name: String?): String {
-            val upper = name.map<String,String>{ it.trim() }.filter{ it.length != 0 }.map { it.toUpperCase() }
-            return upper ?: ""
-        }
-
-        assertEquals("", foo(null))
-        assertEquals("", foo("  "))
-        assertEquals("BAR", foo("  bar "))
-        */
-
-        // TODO...
+        // TODO when http://youtrack.jetbrains.com/issue/KT-1145 is fixed
+        // we can get rid of the unnecessary <String, String> on map
     }
 
+
     fun testCompositionWithFor() {
-        fun foo3(request: Request): String {
+        fun foo4(request: Request): String {
             /* Scala:
 
             val upper = for {
@@ -143,8 +143,8 @@ class OptionTest: TestCase() {
             return ""
         }
 
-        assertEquals("", foo3(Request(null)))
-        assertEquals("", foo3(Request("")))
-        assertEquals("BAR", foo3(Request("  bar  ")))
+        assertEquals("", foo4(Request(null)))
+        assertEquals("", foo4(Request("")))
+        assertEquals("BAR", foo4(Request("  bar  ")))
     }
 }
