@@ -130,12 +130,9 @@ open class LocaleFormatter(val locale : Locale = defaultLocale) : ToStringFormat
     public var dateFormat : DateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale).sure()
 
     override fun format(out : Appendable, value : Any?) {
-        /* TODO KT-1583 - uncomment when its fixed
         if (value is Number) {
             format(out, format(value))
-        } else
-        */
-        if (value is Date) {
+        } else if (value is Date) {
             format(out, format(value))
         } else {
             super.format(out, value)

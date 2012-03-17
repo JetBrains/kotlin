@@ -22,8 +22,7 @@ class LocaleTemplateTest : TestCase() {
 
     fun format(formatter: LocaleFormatter): Unit {
         val name = "James"
-        // TODO currently numbers cause: java.lang.ClassNotFoundException: jet.Number
-        //val price: Double = 1.99
+        val price: Double = 1.99
         val now = Date()
 
 
@@ -34,8 +33,7 @@ class LocaleTemplateTest : TestCase() {
         // TODO will use a tuple soon
         //val actual = formatter.format(StringTemplate(Tuple2<String,String>("hello ", name))
         val actual = StringTemplate(array("hello ", name,
-            // TODO currently numbers cause: java.lang.ClassNotFoundException: jet.Number
-            // " price ", price,
+            " price ", price,
             " data ", now)).toString(formatter)
 
         println("Got text: $actual")
