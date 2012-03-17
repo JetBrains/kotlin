@@ -779,6 +779,7 @@ public class JetTypeMapper {
             knowTypes.put(standardLibrary.getNullablePrimitiveJetType(primitiveType), jvmPrimitiveType.getWrapper().getAsmType());
         }
 
+        knowTypes.put(standardLibrary.getNumberType(),JL_NUMBER_TYPE);
         knowTypes.put(standardLibrary.getStringType(),JL_STRING_TYPE);
         knowTypes.put(standardLibrary.getNullableStringType(),JL_STRING_TYPE);
         knowTypes.put(standardLibrary.getCharSequenceType(),JL_CHAR_SEQUENCE_TYPE);
@@ -796,10 +797,6 @@ public class JetTypeMapper {
     private boolean isForceReal(JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
                 || className.getFqName().equals("java.lang.String") || className.getFqName().equals("java.lang.Object");
-    }
-
-    public String isKnownTypeInfo(JetType jetType) {
-        return knowTypeNames.get(jetType);
     }
 
     public boolean isGenericsArray(JetType type) {
