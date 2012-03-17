@@ -17,6 +17,8 @@
         <kotlin-maven-plugin.version>0.2.3.8-beta-10</kotlin-maven-plugin.version>
         <project-root>${project.basedir}/..</project-root>
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
     </properties>
@@ -41,6 +43,7 @@
         <module>kdoc</module>
         <module>kotlin-jdbc</module>
         <module>website</module>
+        <module>kotlin-java</module>
     </modules>
 
     <build>
@@ -64,6 +67,16 @@
                     </executions>
                     <configuration>
                       <verbose>false</verbose>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
                     </configuration>
                 </plugin>
             </plugins>
