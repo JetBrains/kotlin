@@ -62,7 +62,7 @@ class OptionTest: TestCase() {
     }
 
     fun testPatternMatchingUsingIf() {
-        fun foo2(request: Request): String {
+        fun foo(request: Request): String {
 
             /* Scala:
 
@@ -86,40 +86,40 @@ class OptionTest: TestCase() {
             }
         }
 
-        assertEquals("No name value", foo2(Request(null)))
-        assertEquals("BAR", foo2(Request("BAR")))
-        assertEquals("BAR", foo2(Request("  bar ")))
+        assertEquals("No name value", foo(Request(null)))
+        assertEquals("BAR", foo(Request("BAR")))
+        assertEquals("BAR", foo(Request("  bar ")))
 
-        println("foo2(Request(null)) = ${foo2(Request(null))}")
-        println("foo2(Request(\"  bar   \")) = ${foo2(Request("  bar   "))}")
+        println("foo(Request(null)) = ${foo(Request(null))}")
+        println("foo(Request(\"  bar   \")) = ${foo(Request("  bar   "))}")
     }
 
 
     fun testFunctionComposition() {
-        assertEquals("", foo3(Request(null)))
-        assertEquals("", foo3(Request("  ")))
-        assertEquals("BAR", foo3(Request("  bar ")))
-    }
-
-    fun foo3(request: Request): String {
-        /* Scala:
-
-        val name:Option[String] = request.getParameter("name")
-        val upper = name map { _.trim } filter { _.length != 0 } map { _.toUpperCase }
-        println(upper.getOrElse(""))
-        */
-
-        val name = request.getParameter("name")
-        val upper = name.map<String, String>{ it.trim() }.filter{ it.length != 0 }.map<String, String>{ it.toUpperCase() }
-        return upper ?: ""
-
-        // TODO when http://youtrack.jetbrains.com/issue/KT-1145 is fixed
-        // we can get rid of the unnecessary <String, String> on map
+        fun foo(request: Request): String {
+            /* Scala:
+    
+            val name:Option[String] = request.getParameter("name")
+            val upper = name map { _.trim } filter { _.length != 0 } map { _.toUpperCase }
+            println(upper.getOrElse(""))
+            */
+    
+            val name = request.getParameter("name")
+            val upper = name.map<String, String>{ it.trim() }.filter{ it.length != 0 }.map<String, String>{ it.toUpperCase() }
+            return upper ?: ""
+    
+            // TODO when http://youtrack.jetbrains.com/issue/KT-1145 is fixed
+            // we can get rid of the unnecessary <String, String> on map
+        }
+    
+        assertEquals("", foo(Request(null)))
+        assertEquals("", foo(Request("  ")))
+        assertEquals("BAR", foo(Request("  bar ")))
     }
 
 
     fun testCompositionWithFor() {
-        fun foo4(request: Request): String {
+        fun foo(request: Request): String {
             /* Scala:
 
             val upper = for {
@@ -143,8 +143,8 @@ class OptionTest: TestCase() {
             return ""
         }
 
-        assertEquals("", foo4(Request(null)))
-        assertEquals("", foo4(Request("")))
-        assertEquals("BAR", foo4(Request("  bar  ")))
+        assertEquals("", foo(Request(null)))
+        assertEquals("", foo(Request("")))
+        assertEquals("BAR", foo(Request("  bar  ")))
     }
 }
