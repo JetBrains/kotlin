@@ -1,10 +1,13 @@
 package language.scala
 
-import kotlin. *
+import junit.framework.TestCase
 import kotlin.test.assertEquals
 
-import junit.framework.TestCase
-import kotlin.util.arrayList
+class Request(val value: String?) {
+    fun getParameter(name: String): String? {
+        return value
+    }
+}
 
 /**
  * This test case shows how we can use T?, the Kotlin nullable type instead of Option[T] in Scala
@@ -21,7 +24,7 @@ import kotlin.util.arrayList
 class OptionTest: TestCase() {
 
     fun testPatternMatching() {
-        fun foo(name: String?): String {
+        fun foo(request: Request): String {
 
             /* Scala:
 
@@ -37,6 +40,7 @@ class OptionTest: TestCase() {
             */
 
             // Kotlin version:
+            val name = request.getParameter("name")
             return when (name) {
                 is String -> {
                     name.trim().toUpperCase()
@@ -47,16 +51,16 @@ class OptionTest: TestCase() {
             }
         }
 
-        assertEquals("No name value", foo(null))
-        assertEquals("BAR", foo("BAR"))
-        assertEquals("BAR", foo("  bar "))
+        assertEquals("No name value", foo(Request(null)))
+        assertEquals("BAR", foo(Request("BAR")))
+        assertEquals("BAR", foo(Request("  bar ")))
 
-        println("foo(null) = ${foo(null)}")
-        println("foo(\"  bar   \") = ${foo("  bar   ")}")
+        println("foo(null) = ${foo(Request(null))}")
+        println("foo(\"  bar   \") = ${foo(Request("  bar   "))}")
     }
 
     fun testPatternMatchingUsingIf() {
-        fun foo2(name: String?): String {
+        fun foo2(request: Request): String {
 
             /* Scala:
 
@@ -72,6 +76,7 @@ class OptionTest: TestCase() {
             */
 
             // Kotlin version
+            val name = request.getParameter("name")
             return if (name != null)  {
                 name.trim().toUpperCase()
             } else {
@@ -79,12 +84,12 @@ class OptionTest: TestCase() {
             }
         }
 
-        assertEquals("No name value", foo2(null))
-        assertEquals("BAR", foo2("BAR"))
-        assertEquals("BAR", foo2("  bar "))
+        assertEquals("No name value", foo2(Request(null)))
+        assertEquals("BAR", foo2(Request("BAR")))
+        assertEquals("BAR", foo2(Request("  bar ")))
 
-        println("foo2(null) = ${foo2(null)}")
-        println("foo2(\"  bar   \") = ${foo2("  bar   ")}")
+        println("foo2(Request(null)) = ${foo2(Request(null))}")
+        println("foo2(Request(\"  bar   \")) = ${foo2(Request("  bar   "))}")
     }
 
 
@@ -114,20 +119,21 @@ class OptionTest: TestCase() {
     }
 
     fun testCompositionWithFor() {
-        fun foo3(name: String?): String {
-        /* Scala:
+        fun foo3(request: Request): String {
+            /* Scala:
 
-        val upper = for {
-            name <- request.getParameter("name")
-            trimmed <- Some(name.trim)
-            upper <- Some(trimmed.toUpperCase) if trimmed.length != 0
-        } yield upper
-        println(upper.getOrElse(""))
-        */
+            val upper = for {
+                name <- request.getParameter("name")
+                trimmed <- Some(name.trim)
+                upper <- Some(trimmed.toUpperCase) if trimmed.length != 0
+            } yield upper
+            println(upper.getOrElse(""))
+            */
 
             // Kotlin version
             // not as clean as we've no way to compose if statements so have
             // to cheat and use returns
+            val name = request.getParameter("name")
             if (name != null) {
                 val trimmed = name.trim()
                 if (trimmed.length() != 0) {
@@ -136,7 +142,9 @@ class OptionTest: TestCase() {
             }
             return ""
         }
+
+        assertEquals("", foo3(Request(null)))
+        assertEquals("", foo3(Request("")))
+        assertEquals("BAR", foo3(Request("  bar  ")))
     }
-
-
 }
