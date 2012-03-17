@@ -59,6 +59,9 @@ public class CompilerArguments {
     @Argument(value = "verbose", description = "Enable verbose logging output")
     public boolean verbose;
 
+    @Argument(value = "version", description = "Display compiler version")
+    public boolean version;
+
 
     public String getClasspath() {
         return classpath;

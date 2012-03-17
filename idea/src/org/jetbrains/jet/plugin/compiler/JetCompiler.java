@@ -268,7 +268,7 @@ public class JetCompiler implements TranslatingCompiler {
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose" };
+            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version" };
 
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);

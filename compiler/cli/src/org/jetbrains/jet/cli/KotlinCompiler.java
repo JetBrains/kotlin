@@ -20,6 +20,7 @@ import com.sampullara.cli.Args;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.MessageRenderer;
+import org.jetbrains.jet.lang.diagnostics.Severity;
 
 import java.io.PrintStream;
 
@@ -91,6 +92,11 @@ public class KotlinCompiler {
         System.setProperty("java.awt.headless", "true");
 
         MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+
+        if (arguments.version) {
+            errStream.println(messageRenderer.render(Severity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, null, -1, -1));
+        }
+
         CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose);
         try {
             configureEnvironment(environment, arguments, errStream);

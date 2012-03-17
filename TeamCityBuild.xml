@@ -8,7 +8,11 @@
     <property name="artifact.output.path" value="${basedir}/out/artifacts"/>
     <property name="plugin.xml" value="idea/src/META-INF/plugin.xml"/>
     <property name="plugin.xml.bk" value="${plugin.xml}.bk"/>
-    <property name="plugin.xml.versioned" value="${plugin.xml}.versioned.bk" />
+    <property name="plugin.xml.versioned" value="${plugin.xml}.versioned" />
+
+    <property name="compiler.version.java" value="compiler/cli/src/org/jetbrains/jet/cli/CompilerVersion.java"/>
+    <property name="compiler.version.java.bk" value="${compiler.version.java}.bk"/>
+    <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
     <property name="plugin.verifier" value="${basedir}/PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar"/>
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
@@ -42,36 +46,61 @@
         <delete dir="${artifact.output.path}" includes="*"/>
     </target>
 
-    <target name="writeVersionToPluginXml">
+    <macrodef name="substituteVersionInFile">
+      <attribute name="target.file"/>
+      <attribute name="test.string"/>
+      <attribute name="target.file.bk" default="@{target.file}.bk"/>
+      <attribute name="target.file.versioned" default="@{target.file}.versioned"/>
+      <attribute name="token.key" default="snapshot"/>
+      <attribute name="version" default="${build.number}"/>
+      <sequential>
         <!-- Create backup. Backup will be restored after build end. This will allow to rebuild project without renew
              plugin.xml from repository. -->
-        <copy file="${plugin.xml}" tofile="${plugin.xml.bk}" />
+        <copy file="@{target.file}" tofile="@{target.file}.bk"/>
 
         <!-- Check that version has correct pattern for substitution -->
         <copy todir="">
-            <fileset file="${plugin.xml.bk}">
-                <contains text="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+            <fileset file="@{target.file.bk}">
+                <contains text="@{test.string}"/>
             </fileset>
             <filterchain>
                 <replacetokens>
-                    <token key="snapshot" value="${build.number}"/>
+                    <token key="@{token.key}" value="@{version}"/>
                 </replacetokens>
             </filterchain>
-            <mergemapper to="${plugin.xml.versioned}"/>
+            <mergemapper to="@{target.file.versioned}"/>
         </copy>
 
         <!-- If file doesn't exist - there's a problem with original plugin.xml. Probably there's a bad pattern used for version -->
-        <copy file="${plugin.xml.versioned}" tofile="${plugin.xml}" overwrite="true"/>
+        <copy file="@{target.file.versioned}" tofile="@{target.file}" overwrite="true"/>
 
-        <delete file="${plugin.xml.versioned}" quiet="true"/>
+        <delete file="@{target.file.versioned}" quiet="true"/>
+      </sequential>
+    </macrodef>
+
+    <target name="writeVersionToTemplateFiles">
+      <substituteVersionInFile
+          target.file="${plugin.xml}"
+          target.file.bk="${plugin.xml.bk}"
+          target.file.versioned="${plugin.xml.versioned}"
+          test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+
+      <substituteVersionInFile
+          target.file="${compiler.version.java}"
+          target.file.bk="${compiler.version.java.bk}"
+          target.file.versioned="${compiler.version.java.versioned}"
+          test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
     </target>
 
-    <target name="revertPluginXml">
-        <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
-        <delete file="${plugin.xml.bk}" quiet="true"/>
-    </target>
+  <target name="revertTemplateFiles">
+      <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
+      <delete file="${plugin.xml.bk}" quiet="true"/>
 
-    <target name="pre_build" depends="cleanupArtifacts, unzipDependencies, dist, writeVersionToPluginXml, generateInjectors">
+      <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
+      <delete file="${compiler.version.java.bk}" quiet="true"/>
+  </target>
+
+    <target name="pre_build" depends="cleanupArtifacts, unzipDependencies, dist, writeVersionToTemplateFiles, generateInjectors">
     </target>
 
     <target name="zipArtifact">
@@ -96,7 +125,7 @@
         -->
     </target>
 
-    <target name="post_build" depends="zipArtifact, revertPluginXml, verifyPlugin"/>
+    <target name="post_build" depends="zipArtifact, revertTemplateFiles, verifyPlugin"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
