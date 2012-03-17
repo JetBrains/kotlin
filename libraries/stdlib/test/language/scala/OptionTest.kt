@@ -21,7 +21,7 @@ class Request(val value: String?) {
  *
  * Examples taken from the [Scala API docs for Option](http://www.scala-lang.org/api/current/scala/Option.html)
  *
- * Note that currently the Kotlin library doesn't support the composition API of collections on T? like Scala's Option[T] does...
+ * Composition of nullable types is currently implemented with the optional kotlin.nullable package
  */
 class OptionTest: TestCase() {
 
