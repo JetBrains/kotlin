@@ -5,6 +5,7 @@ kotlin.io
 kotlin.jdbc
 kotlin.math
 kotlin.modules
+kotlin.nullable
 kotlin.properties
 kotlin.template
 kotlin.test
