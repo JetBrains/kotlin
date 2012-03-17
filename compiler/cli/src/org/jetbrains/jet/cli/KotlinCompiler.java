@@ -138,7 +138,12 @@ public class KotlinCompiler {
     }
 
     protected void usage(PrintStream target) {
-        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
+        // We should say something like
+        //   Args.usage(target, CompilerArguments.class);
+        // but currently cli-parser we are using does not support that
+        // a corresponding patch has been sent to the authors
+        // For now, we are using this:
+        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime] [-version]");
     }
 
     /**
