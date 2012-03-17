@@ -2,8 +2,11 @@
 
 Welcome to [Kotlin](http://www.jetbrains.com/kotlin)! Some handy links:
 
- * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
+ * [Getting Started Guide](http://confluence.jetbrains.net/display/Kotlin/Getting+Started)
  * [Web Demo](http://kotlin-demo.jetbrains.com/)
+ * [Kotlin Site](http://jetbrains.github.com/kotlin/)
+ * [API](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html)
+ * [Issue Tracker](http://youtrack.jetbrains.com/issues/KT)
  * [Kotlin Blog](http://blog.jetbrains.com/kotlin/)
  * [follow Kotlin on twitter](http://twitter.com/#!/project_kotlin)
 
