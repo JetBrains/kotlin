@@ -33,7 +33,7 @@
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
         <plugins>
             <plugin>
-                <groupId>com.goldin.plugins</groupId>
+                <groupId>com.github.goldin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
         </plugins>

@@ -13,8 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-version>4.9</junit-version>
-        <kotlin-compiler.version>0.2.3.8</kotlin-compiler.version>
-        <kotlin-maven-plugin.version>0.2.3.8-beta-10</kotlin-maven-plugin.version>
+        <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
         <project-root>${project.basedir}/..</project-root>
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
@@ -25,15 +24,15 @@
 
     <repositories>
         <repository>
-            <id>evgeny-goldin.org</id>
-            <url>http://evgeny-goldin.org/artifactory/repo/</url>
+            <id>evgenyg.artifactoryonline.com</id>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>evgeny-goldin.org</id>
-            <url>http://evgeny-goldin.org/artifactory/repo/</url>
+            <id>evgenyg.artifactoryonline.com</id>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -53,7 +52,7 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.goldin.plugins</groupId>
+                    <groupId>com.github.goldin</groupId>
                     <artifactId>kotlin-maven-plugin</artifactId>
                     <version>${kotlin-maven-plugin.version}</version>
                     <executions>
@@ -116,7 +115,7 @@
           <pluginManagement>
             <plugins>
               <plugin>
-                  <groupId>com.goldin.plugins</groupId>
+                  <groupId>com.github.goldin</groupId>
                   <artifactId>kotlin-maven-plugin</artifactId>
                   <version>${kotlin-maven-plugin.version}</version>
                   <configuration>
