@@ -20,6 +20,9 @@ inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedLi
 /** Returns a new HashSet with a variable number of initial elements */
 inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
+/** Returns a new SortedSet with a variable number of initial elements */
+inline fun sortedSet<T>(vararg values: T) : TreeSet<T> = values.to(TreeSet<T>())
+
 inline fun <K,V> hashMap(): HashMap<K,V> = HashMap<K,V>()
 
 inline fun <K,V> sortedMap(): SortedMap<K,V> = TreeMap<K,V>()
