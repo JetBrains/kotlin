@@ -134,6 +134,17 @@
         </javac>
     </target>
 
+    <target name="compileTests" depends="dist">
+        <mkdir dir="${output}/classes/tests"/>
+        <javac destdir="${output}/classes/tests" debug="true" includeAntRuntime="false">
+            <src path="compiler/tests"/>
+            <classpath refid="classpath"/>
+            <classpath location="${output}/classes/compiler"/>
+            <classpath location="ideaSDK/lib/junit-4.10.jar"/>
+            <classpath location="ideaSDK/lib/idea.jar"/>
+        </javac>
+    </target>
+
     <target name="jar" depends="compile">
         <jar destfile="${kotlin-home}/lib//kotlin-compiler.jar">
             <fileset dir="${output}/classes/compiler"/>
