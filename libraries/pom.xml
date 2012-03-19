@@ -25,14 +25,14 @@
     <repositories>
         <repository>
             <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/</url>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/</url>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo</url>
         </pluginRepository>
     </pluginRepositories>
 
