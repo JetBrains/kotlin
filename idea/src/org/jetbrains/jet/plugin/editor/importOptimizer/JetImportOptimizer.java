@@ -83,7 +83,9 @@ public class JetImportOptimizer implements ImportOptimizer {
                         // Remove imports
                         List<JetImportDirective> imports = jetFile.getImportDirectives();
                         if (!imports.isEmpty()) {
-                            jetFile.deleteChildRange(imports.get(0), imports.get(imports.size() - 1));
+                            jetFile.deleteChildRange(
+                                    getWithPreviousWhitespaces(imports.get(0)),
+                                    getWithFollowedWhitespaces(imports.get(imports.size() - 1)));
                         }
 
                         // Insert back only necessary imports in correct order
@@ -200,5 +202,41 @@ public class JetImportOptimizer implements ImportOptimizer {
         }
 
         return null;
+    }
+
+    private static PsiElement getWithPreviousWhitespaces(PsiElement element) {
+        PsiElement result = element;
+
+        PsiElement siblingIterator = element.getPrevSibling();
+        while (siblingIterator != null) {
+            if (siblingIterator.getNode().getElementType() != TokenType.WHITE_SPACE) {
+                break;
+            }
+            else {
+                result = siblingIterator;
+            }
+
+            siblingIterator = siblingIterator.getPrevSibling();
+        }
+
+        return result;
+    }
+
+    private static PsiElement getWithFollowedWhitespaces(PsiElement element) {
+        PsiElement result = element;
+
+        PsiElement siblingIterator = element.getNextSibling();
+        while (siblingIterator != null) {
+            if (siblingIterator.getNode().getElementType() != TokenType.WHITE_SPACE) {
+                break;
+            }
+            else {
+                result = siblingIterator;
+            }
+
+            siblingIterator = siblingIterator.getNextSibling();
+        }
+
+        return result;
     }
 }

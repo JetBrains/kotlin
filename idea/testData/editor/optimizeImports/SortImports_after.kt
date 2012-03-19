@@ -1,6 +1,5 @@
 package sometest
 
-
 import java.util.ArrayList
 import java.util.HashSet
 

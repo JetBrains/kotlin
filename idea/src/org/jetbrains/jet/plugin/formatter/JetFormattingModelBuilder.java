@@ -52,12 +52,9 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
         return new SpacingBuilder(settings)
                 // ============ Line breaks ==============
                 .after(NAMESPACE_HEADER).blankLines(1)
-                .before(IMPORT_DIRECTIVE).lineBreakInCode()
 
-                .between(IMPORT_DIRECTIVE, CLASS).blankLines(1)
-                .between(IMPORT_DIRECTIVE, FUN).blankLines(1)
-                .between(IMPORT_DIRECTIVE, PROPERTY).blankLines(1)
-                .between(IMPORT_DIRECTIVE, OBJECT_DECLARATION).blankLines(1)
+                .between(IMPORT_DIRECTIVE, IMPORT_DIRECTIVE).lineBreakInCode()
+                .after(IMPORT_DIRECTIVE).blankLines(1)
 
                 .before(FUN).lineBreakInCode()
                 .before(PROPERTY).lineBreakInCode()

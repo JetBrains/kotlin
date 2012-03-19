@@ -20,7 +20,10 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -100,15 +103,7 @@ public class ImportInsertHelper {
             lastDirective.getParent().addAfter(newDirective, lastDirective);
         }
         else {
-            List<JetDeclaration> declarations = file.getDeclarations();
-
-            if (!declarations.isEmpty()) {
-                JetDeclaration firstDeclaration = declarations.iterator().next();
-                firstDeclaration.getParent().addBefore(newDirective, firstDeclaration);
-            }
-            else {
-                file.getNamespaceHeader().getParent().addAfter(newDirective, file.getNamespaceHeader());
-            }
+            file.getNamespaceHeader().getParent().addAfter(newDirective, file.getNamespaceHeader());
         }
     }
 
