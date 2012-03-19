@@ -55,5 +55,9 @@ public class MultiNamespaceTest extends MultipleFilesTranslationTest {
     public void testCreateClassFromOtherNamespace() throws Exception {
         runMultiFileTest("createClassFromOtherNamespace", "a.foo", "box", true);
     }
+
+    public void testCreateClassFromOtherNamespaceUsingImport() throws Exception {
+        runMultiFileTest("createClassFromOtherNamespaceUsingImport", "a.foo", "box", true);
+    }
 }
 

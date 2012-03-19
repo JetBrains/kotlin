@@ -1,5 +1,3 @@
 package a.foo
 
-import b.foo.*
-
-fun box() = (A().tadada(A()))
+fun box() = (b.foo.A().tadada(b.foo.A()))
