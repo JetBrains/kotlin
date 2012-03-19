@@ -1,3 +1,3 @@
 namespace test
 
-final fun ffgg(): java.util.List<jet.CharSequence>
+final fun ffgg(): java.util.List<java.lang.CharSequence>

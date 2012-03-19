@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.ArrayList;
@@ -122,11 +124,13 @@ public final class AnalyzerFacadeForJS {
         public void addDefaultImports(@NotNull WritableScope rootScope,
                                       @NotNull Collection<JetImportDirective> directives) {
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
+            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
         }
 
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
                                          @NotNull WritableScope namespaceMemberScope) {
+            DefaultModuleConfiguration.createStandardConfiguration(project).extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         }
 
     }

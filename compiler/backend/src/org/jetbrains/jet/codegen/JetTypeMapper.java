@@ -796,7 +796,9 @@ public class JetTypeMapper {
     
     private boolean isForceReal(JvmClassName className) {
         return JvmPrimitiveType.getByWrapperClass(className) != null
-                || className.getFqName().equals("java.lang.String") || className.getFqName().equals("java.lang.Object");
+                || className.getFqName().equals("java.lang.String")
+                || className.getFqName().equals("java.lang.CharSequence")
+                || className.getFqName().equals("java.lang.Object");
     }
 
     public boolean isGenericsArray(JetType type) {

@@ -6,7 +6,6 @@ import java.util.*;
 import java.lang.*;
 
 
-
 native
 val noImpl : Nothing = throw Exception();
 
