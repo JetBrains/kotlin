@@ -42,9 +42,7 @@ class GenerateSiteTest : TestCase() {
         compiler.exec(System.out, args)
     }
 
-    // TODO seems to generate exception here - maybe native ctor/function related?
-    // https://github.com/JetBrains/kotlin/blob/master/compiler/backend/src/org/jetbrains/jet/codegen/AnnotationCodegen.java#L80
-    fun TODO_testGenerateJsKDoc(): Unit {
+    fun testGenerateJsKDoc(): Unit {
         val outDir = File(siteOutputDir, "versions/$versionDir/jsdocs")
         println("Generating JS KDocs to $outDir")
 
@@ -58,6 +56,10 @@ class GenerateSiteTest : TestCase() {
         config.title = "Kotlin JS API ($version)"
         config.version = version
         config.ignorePackages.add("java")
+        config.ignorePackages.add("jet")
+        config.ignorePackages.add("junit")
+        config.ignorePackages.add("org")
+        config.ignorePackages.add("sun")
 
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
