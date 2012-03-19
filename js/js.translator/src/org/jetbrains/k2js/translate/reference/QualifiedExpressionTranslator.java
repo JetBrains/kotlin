@@ -18,13 +18,14 @@ package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetCallExpression;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelector;
 
@@ -58,7 +59,7 @@ public final class QualifiedExpressionTranslator {
     }
 
     @NotNull
-    private static JsExpression dispatchToCorrectTranslator(@NotNull JsExpression receiver,
+    private static JsExpression dispatchToCorrectTranslator(@Nullable JsExpression receiver,
                                                             @NotNull JetExpression selector,
                                                             @NotNull CallType callType,
                                                             @NotNull TranslationContext context) {
@@ -76,10 +77,31 @@ public final class QualifiedExpressionTranslator {
         throw new AssertionError("Unexpected qualified expression: " + selector.getText());
     }
 
-    //TODO: if has duplications
-    @NotNull
+    @Nullable
     private static JsExpression translateReceiver(@NotNull JetQualifiedExpression expression,
                                                   @NotNull TranslationContext context) {
-        return translateAsExpression(expression.getReceiverExpression(), context);
+        JetExpression receiverExpression = expression.getReceiverExpression();
+        if (isFullQualifierForExpression(receiverExpression, context)) {
+            return null;
+        }
+        return translateAsExpression(receiverExpression, context);
+    }
+
+    //TODO: prove correctness
+    private static boolean isFullQualifierForExpression(@Nullable JetExpression receiverExpression, @NotNull TranslationContext context) {
+        if (receiverExpression == null) {
+            return false;
+        }
+        if (receiverExpression instanceof JetReferenceExpression) {
+            DeclarationDescriptor descriptorForReferenceExpression =
+                getDescriptorForReferenceExpression(context.bindingContext(), (JetReferenceExpression)receiverExpression);
+            if (descriptorForReferenceExpression instanceof NamespaceDescriptor) {
+                return true;
+            }
+        }
+        if (receiverExpression instanceof JetQualifiedExpression) {
+            return isFullQualifierForExpression(((JetQualifiedExpression)receiverExpression).getSelectorExpression(), context);
+        }
+        return false;
     }
 }

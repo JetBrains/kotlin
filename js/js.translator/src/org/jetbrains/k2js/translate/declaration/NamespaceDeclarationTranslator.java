@@ -31,7 +31,6 @@ import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getAllNonNativeNamespaceDescriptors;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
-import static org.jetbrains.k2js.translate.utils.NamespaceSortingUtils.sortNamespacesUsingQualificationOrder;
 
 /**
  * @author Pavel Talanov
@@ -51,7 +50,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private NamespaceDeclarationTranslator(@NotNull List<NamespaceDescriptor> namespaceDescriptors,
                                            @NotNull TranslationContext context) {
         super(context);
-        this.namespaceDescriptors = sortNamespacesUsingQualificationOrder(namespaceDescriptors);
+        this.namespaceDescriptors = namespaceDescriptors;
         this.classDeclarationTranslator = new ClassDeclarationTranslator(getAllClasses(), context);
     }
 
@@ -91,7 +90,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<NamespaceTranslator> getTranslatorsForNonEmptyNamespaces() {
         List<NamespaceTranslator> namespaceTranslators = Lists.newArrayList();
-        for (NamespaceDescriptor descriptor : namespaceDescriptors) {
+        for (NamespaceDescriptor descriptor : filterTopLevelNamespaces(namespaceDescriptors)) {
             if (!DescriptorUtils.isNamespaceEmpty(descriptor)) {
                 namespaceTranslators.add(new NamespaceTranslator(descriptor, classDeclarationTranslator, context()));
             }
@@ -103,7 +102,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators) {
         List<JsStatement> result = Lists.newArrayList();
         for (NamespaceTranslator translator : namespaceTranslators) {
-            result.add(translator.getDeclarationStatement());
+            result.add(translator.getDeclarationAsVar());
         }
         return result;
     }
@@ -113,6 +112,17 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
         List<JsStatement> result = Lists.newArrayList();
         for (NamespaceTranslator translator : namespaceTranslators) {
             result.add(translator.getInitializeStatement());
+        }
+        return result;
+    }
+
+    @NotNull
+    private static List<NamespaceDescriptor> filterTopLevelNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
+        List<NamespaceDescriptor> result = Lists.newArrayList();
+        for (NamespaceDescriptor descriptor : namespaceDescriptors) {
+            if (DescriptorUtils.isTopLevelNamespace(descriptor)) {
+                result.add(descriptor);
+            }
         }
         return result;
     }

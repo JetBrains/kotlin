@@ -40,9 +40,20 @@ public class MultiNamespaceTest extends MultipleFilesTranslationTest {
         checkFooBoxIsTrue("namespaceVariableVisibleFromOtherNamespace");
     }
 
-
     public void testNestedNamespaceFunctionCalledFromOtherNamespace() throws Exception {
-        checkFooBoxIsTrue("nestedNamespaceFunctionCalledFromOtherNamespace");
+        runMultiFileTest("nestedNamespaceFunctionCalledFromOtherNamespace", "a.foo", "box", true);
+    }
+
+    public void testSubnamespacesWithClashingNames() throws Exception {
+        runMultiFileTest("subnamespacesWithClashingNames", "a.foo", "box", true);
+    }
+
+    public void testSubnamespacesWithClashingNamesUsingImport() throws Exception {
+        runMultiFileTest("subnamespacesWithClashingNamesUsingImport", "a.foo", "box", true);
+    }
+
+    public void testCreateClassFromOtherNamespace() throws Exception {
+        runMultiFileTest("createClassFromOtherNamespace", "a.foo", "box", true);
     }
 }
 

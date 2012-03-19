@@ -76,7 +76,7 @@ public final class TranslationContext {
     @NotNull
     public JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableDescriptor) {
-            return getFunctionObject((CallableDescriptor) descriptor).getBody();
+            return getFunctionObject((CallableDescriptor)descriptor).getBody();
         }
         else {
             return new JsBlock();
@@ -111,7 +111,7 @@ public final class TranslationContext {
 
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        return staticContext.getQualifierForDescriptor(descriptor.getOriginal());
+        return staticContext.getQualifierForDescriptor(descriptor);
     }
 
     @NotNull

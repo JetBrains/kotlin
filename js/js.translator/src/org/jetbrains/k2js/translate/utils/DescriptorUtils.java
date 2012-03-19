@@ -66,8 +66,8 @@ public final class DescriptorUtils {
                                                        @NotNull String name) {
         Set<FunctionDescriptor> functionDescriptors = scope.getFunctions(name);
         assert functionDescriptors.size() == 1 :
-                "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
-                "Found: " + functionDescriptors.size();
+            "In scope " + scope + " supposed to be exactly one " + name + " function.\n" +
+            "Found: " + functionDescriptors.size();
         //noinspection LoopStatementThatDoesntLoop
         for (FunctionDescriptor descriptor : functionDescriptors) {
             return descriptor;
@@ -84,7 +84,7 @@ public final class DescriptorUtils {
         Set<VariableDescriptor> variables = scope.getProperties(name);
         assert variables.size() == 1 : "Actual size: " + variables.size();
         VariableDescriptor variable = variables.iterator().next();
-        PropertyDescriptor descriptor = (PropertyDescriptor) variable;
+        PropertyDescriptor descriptor = (PropertyDescriptor)variable;
         assert descriptor != null : "Must have a descriptor.";
         return descriptor;
     }
@@ -120,15 +120,15 @@ public final class DescriptorUtils {
     @NotNull
     public static ClassDescriptor getClassDescriptorForType(@NotNull JetType type) {
         DeclarationDescriptor superClassDescriptor =
-                type.getConstructor().getDeclarationDescriptor();
+            type.getConstructor().getDeclarationDescriptor();
         assert superClassDescriptor instanceof ClassDescriptor
-                : "Superclass descriptor of a type should be of type ClassDescriptor";
-        return (ClassDescriptor) superClassDescriptor;
+            : "Superclass descriptor of a type should be of type ClassDescriptor";
+        return (ClassDescriptor)superClassDescriptor;
     }
 
     @NotNull
     public static VariableDescriptor getVariableDescriptorForVariableAsFunction
-            (@NotNull VariableAsFunctionDescriptor descriptor) {
+        (@NotNull VariableAsFunctionDescriptor descriptor) {
         VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
         assert functionVariable != null;
         return functionVariable;
@@ -171,9 +171,9 @@ public final class DescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor getDeclarationDescriptorForReceiver
-            (@NotNull ReceiverDescriptor receiverParameter) {
+        (@NotNull ReceiverDescriptor receiverParameter) {
         DeclarationDescriptor declarationDescriptor =
-                receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+            receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         //TODO: WHY assert?
         assert declarationDescriptor != null;
         return declarationDescriptor.getOriginal();
@@ -194,7 +194,7 @@ public final class DescriptorUtils {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
             if (containing instanceof ClassDescriptor) {
-                return (ClassDescriptor) containing;
+                return (ClassDescriptor)containing;
             }
             containing = containing.getContainingDeclaration();
         }
@@ -206,7 +206,7 @@ public final class DescriptorUtils {
         List<ClassDescriptor> classDescriptors = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
             if (descriptor instanceof ClassDescriptor) {
-                classDescriptors.add((ClassDescriptor) descriptor);
+                classDescriptors.add((ClassDescriptor)descriptor);
             }
         }
         return classDescriptors;
@@ -217,7 +217,7 @@ public final class DescriptorUtils {
         List<NamespaceDescriptor> result = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : getContainedDescriptorsWhichAreNotPredefined(namespaceDescriptor)) {
             if (descriptor instanceof NamespaceDescriptor) {
-                result.add((NamespaceDescriptor) descriptor);
+                result.add((NamespaceDescriptor)descriptor);
             }
         }
         return result;
@@ -235,21 +235,18 @@ public final class DescriptorUtils {
         }
     }
 
-    //TODO:?
-//    @NotNull
-//    public static FunctionDescriptor getOverriddenOrThis(@NotNull FunctionDescriptor functionDescriptor) {
-//        FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor(functionDescriptor);
-//        if (overriddenDescriptor != null) {
-//            return overriddenDescriptor;
-//        }
-//        else {
-//            return functionDescriptor;
-//        }
-//    }
+    public static boolean isTopLevelNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        NamespaceDescriptorParent containingDeclaration = namespaceDescriptor.getContainingDeclaration();
+        boolean containedInModule = !(containingDeclaration instanceof NamespaceDescriptor);
+        if (containedInModule) {
+            return true;
+        }
+        //TODO
+        return containingDeclaration.getName().equals("<root>");
+    }
 
     @NotNull
-    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined
-            (@NotNull NamespaceDescriptor namespace) {
+    public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace) {
         List<DeclarationDescriptor> result = Lists.newArrayList();
         for (DeclarationDescriptor descriptor : namespace.getMemberScope().getAllDescriptors()) {
             if (!AnnotationsUtils.isPredefinedObject(descriptor)) {
@@ -264,7 +261,7 @@ public final class DescriptorUtils {
         List<DeclarationDescriptor> containedDescriptors = getContainedDescriptorsWhichAreNotPredefined(namespace);
         for (DeclarationDescriptor descriptor : containedDescriptors) {
             if (descriptor instanceof NamespaceDescriptor) {
-                if (!isNamespaceEmpty((NamespaceDescriptor) descriptor)) {
+                if (!isNamespaceEmpty((NamespaceDescriptor)descriptor)) {
                     return false;
                 }
             }
@@ -282,7 +279,7 @@ public final class DescriptorUtils {
         while (!current.getName().equals("<root>")) {
             result.add(current);
             if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                current = (NamespaceDescriptor) current.getContainingDeclaration();
+                current = (NamespaceDescriptor)current.getContainingDeclaration();
                 assert current != null;
             }
             else {

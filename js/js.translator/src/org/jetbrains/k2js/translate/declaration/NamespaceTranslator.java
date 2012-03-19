@@ -64,25 +64,35 @@ public final class NamespaceTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsInvocation namespaceCreateMethodInvocation() {
-        return AstUtil.newInvocation(context().namer().namespaceCreationMethodReference());
+    public JsStatement getDeclarationAsVar() {
+        return newVar(namespaceName, getNamespaceDeclaration());
     }
 
     @NotNull
-    public JsStatement getDeclarationStatement() {
+    public JsPropertyInitializer getDeclarationAsInitializer() {
+        return new JsPropertyInitializer(namespaceName.makeRef(), getNamespaceDeclaration());
+    }
+
+    @NotNull
+    private JsInvocation getNamespaceDeclaration() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
         namespaceDeclaration.getArguments().add(translateNamespaceMemberDeclarations());
         namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
-        return newVar(namespaceName, namespaceDeclaration);
+        return namespaceDeclaration;
+    }
+
+    @NotNull
+    private JsInvocation namespaceCreateMethodInvocation() {
+        return AstUtil.newInvocation(context().namer().namespaceCreationMethodReference());
     }
 
     @NotNull
     private JsObjectLiteral getClassesAndNestedNamespaces() {
         JsObjectLiteral classesAndNestedNamespaces = new JsObjectLiteral();
         classesAndNestedNamespaces.getPropertyInitializers()
-                .addAll(getClassesDefined());
+            .addAll(getClassesDefined());
         classesAndNestedNamespaces.getPropertyInitializers()
-                .addAll(getNestedNamespaceDeclarations());
+            .addAll(getNestedNamespaceDeclarations());
         return classesAndNestedNamespaces;
     }
 
@@ -96,8 +106,8 @@ public final class NamespaceTranslator extends AbstractTranslator {
         List<JsPropertyInitializer> result = Lists.newArrayList();
         List<NamespaceDescriptor> nestedNamespaces = DescriptorUtils.getNestedNamespaces(descriptor);
         for (NamespaceDescriptor nestedNamespace : nestedNamespaces) {
-            JsName nameForDescriptor = context().getNameForDescriptor(nestedNamespace);
-            result.add(new JsPropertyInitializer(nameForDescriptor.makeRef(), nameForDescriptor.makeRef()));
+            NamespaceTranslator nestedNamespaceTranslator = new NamespaceTranslator(nestedNamespace, classDeclarationTranslator, context());
+            result.add(nestedNamespaceTranslator.getDeclarationAsInitializer());
         }
         return result;
     }

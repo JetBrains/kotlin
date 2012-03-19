@@ -27,6 +27,7 @@ import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
@@ -51,7 +52,7 @@ public final class StaticContext {
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
         StandardClasses standardClasses =
-                StandardClasses.bindImplementations(namer.getKotlinScope());
+            StandardClasses.bindImplementations(namer.getKotlinScope());
         return new StaticContext(program, bindingContext, aliaser,
                                  namer, intrinsics, standardClasses, scope);
     }
@@ -174,7 +175,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    String nameForNamespace = getNameForNamespace((NamespaceDescriptor) descriptor);
+                    String nameForNamespace = getNameForNamespace((NamespaceDescriptor)descriptor);
                     return getRootScope().declareUnobfuscatableName(nameForNamespace);
                 }
             };
@@ -204,7 +205,7 @@ public final class StaticContext {
                         return null;
                     }
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                    String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName();
+                    String propertyName = ((PropertyAccessorDescriptor)descriptor).getCorrespondingProperty().getName();
                     String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     return enclosingScope.declareObfuscatableName(accessorName);
@@ -245,12 +246,11 @@ public final class StaticContext {
                     if (!descriptor.getName().equals("toString")) {
                         return null;
                     }
-                    if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {
+                    if (((FunctionDescriptor)descriptor).getValueParameters().isEmpty()) {
                         return getEnclosingScope(descriptor).declareUnobfuscatableName("toString");
                     }
                     return null;
                 }
-
             };
 
             Rule<JsName> overridingDescriptorsReferToOriginalName = new Rule<JsName>() {
@@ -260,7 +260,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof FunctionDescriptor)) {
                         return null;
                     }
-                    FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor((FunctionDescriptor) descriptor);
+                    FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor((FunctionDescriptor)descriptor);
                     if (overriddenDescriptor == null) {
                         return null;
                     }
@@ -295,7 +295,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    if (getSuperclass((ClassDescriptor) descriptor) == null) {
+                    if (getSuperclass((ClassDescriptor)descriptor) == null) {
                         return getRootScope().innerScope("Scope for class " + descriptor.getName());
                     }
                     return null;
@@ -307,7 +307,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    ClassDescriptor superclass = getSuperclass((ClassDescriptor) descriptor);
+                    ClassDescriptor superclass = getSuperclass((ClassDescriptor)descriptor);
                     if (superclass == null) {
                         return null;
                     }
@@ -354,7 +354,7 @@ public final class StaticContext {
 
     @Nullable
     public JsNameRef getQualifierForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        if (qualifierIsNull.get(descriptor) != null) {
+        if (qualifierIsNull.get(descriptor.getOriginal()) != null) {
             return null;
         }
         return qualifiers.get(descriptor.getOriginal());
@@ -362,7 +362,7 @@ public final class StaticContext {
 
     private final class QualifierGenerator extends Generator<JsNameRef> {
         public QualifierGenerator() {
-            Rule<JsNameRef> namespacesHaveNoQualifiers = new Rule<JsNameRef>() {
+            Rule<JsNameRef> standardObjectsHaveKotlinQualifier = new Rule<JsNameRef>() {
                 @Override
                 public JsNameRef apply(@NotNull DeclarationDescriptor descriptor) {
                     if (!standardClasses.isStandardObject(descriptor)) {
@@ -379,7 +379,9 @@ public final class StaticContext {
                         return null;
                     }
                     JsName containingDeclarationName = getNameForDescriptor(containingDeclaration);
-                    return containingDeclarationName.makeRef();
+                    JsNameRef qualifier = containingDeclarationName.makeRef();
+                    qualifier.setQualifier(getQualifierForDescriptor(containingDeclaration));
+                    return qualifier;
                 }
             };
             Rule<JsNameRef> constructorHaveTheSameQualifierAsTheClass = new Rule<JsNameRef>() {
@@ -405,7 +407,7 @@ public final class StaticContext {
             };
             addRule(libraryObjectsHaveKotlinQualifier);
             addRule(constructorHaveTheSameQualifierAsTheClass);
-            addRule(namespacesHaveNoQualifiers);
+            addRule(standardObjectsHaveKotlinQualifier);
             addRule(namespaceLevelDeclarationsHaveEnclosingNamespacesNamesAsQualifier);
         }
     }
@@ -441,6 +443,19 @@ public final class StaticContext {
                     return true;
                 }
             };
+            Rule<Boolean> topLevelNamespaceHaveNoQualifier = new Rule<Boolean>() {
+                @Override
+                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
+                    if (!(descriptor instanceof NamespaceDescriptor)) {
+                        return null;
+                    }
+                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor)descriptor)) {
+                        return true;
+                    }
+                    return null;
+                }
+            };
+            addRule(topLevelNamespaceHaveNoQualifier);
             addRule(propertiesHaveNoQualifiers);
             addRule(variableAsFunctionsHaveNoQualifiers);
             addRule(nativeObjectsHaveNoQualifiers);
