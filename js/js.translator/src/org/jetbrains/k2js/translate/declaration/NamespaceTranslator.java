@@ -21,7 +21,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
@@ -30,7 +29,8 @@ import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newObjectLiteral;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 
 /**
  * @author Pavel.Talanov
@@ -55,13 +55,6 @@ public final class NamespaceTranslator extends AbstractTranslator {
         this.classDeclarationTranslator = classDeclarationTranslator;
     }
 
-
-    @NotNull
-    public JsStatement getInitializeStatement() {
-        JsNameRef initializeMethodReference = Namer.initializeMethodReference();
-        setQualifier(initializeMethodReference, namespaceName.makeRef());
-        return AstUtil.newInvocation(initializeMethodReference).makeStmt();
-    }
 
     @NotNull
     public JsStatement getDeclarationAsVar() {

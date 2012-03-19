@@ -53,9 +53,9 @@ public final class BindingUtils {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
-                : expression.toString() + " expected to have of type" + descriptorClass.toString();
+            : expression.toString() + " expected to have of type" + descriptorClass.toString();
         //noinspection unchecked
-        return (D) descriptor;
+        return (D)descriptor;
     }
 
     @NotNull
@@ -68,7 +68,7 @@ public final class BindingUtils {
     public static NamespaceDescriptor getNamespaceDescriptor(@NotNull BindingContext context,
                                                              @NotNull JetFile declaration) {
         NamespaceDescriptor namespaceDescriptor =
-                context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetPsiUtil.getFQName(declaration));
+            context.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetPsiUtil.getFQName(declaration));
         assert namespaceDescriptor != null : "File should have a namespace descriptor.";
         return namespaceDescriptor;
     }
@@ -90,7 +90,7 @@ public final class BindingUtils {
                                                  @NotNull ClassDescriptor descriptor) {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
-        return (JetClass) result;
+        return (JetClass)result;
     }
 
     @NotNull
@@ -118,7 +118,7 @@ public final class BindingUtils {
             return null;
         }
         assert result instanceof JetDeclaration : "Descriptor should correspond to an element.";
-        return (JetDeclaration) result;
+        return (JetDeclaration)result;
     }
 
     @NotNull
@@ -126,7 +126,7 @@ public final class BindingUtils {
                                                           @NotNull ValueParameterDescriptor descriptor) {
         PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
         assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter.";
-        return (JetParameter) result;
+        return (JetParameter)result;
     }
 
     public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClassOrObject classDeclaration) {
@@ -169,7 +169,7 @@ public final class BindingUtils {
         if (!(result instanceof JetProperty)) {
             return null;
         }
-        return (JetProperty) result;
+        return (JetProperty)result;
     }
 
     @NotNull
@@ -186,7 +186,7 @@ public final class BindingUtils {
         DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
         if (isVariableAsFunction(referencedDescriptor)) {
             assert referencedDescriptor != null;
-            return getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor) referencedDescriptor);
+            return getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)referencedDescriptor);
         }
         return referencedDescriptor;
     }
@@ -221,13 +221,13 @@ public final class BindingUtils {
     public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
                                                                                  @NotNull JetOperationExpression expression) {
         DeclarationDescriptor descriptorForReferenceExpression = getNullableDescriptorForReferenceExpression
-                (context, expression.getOperationReference());
+            (context, expression.getOperationReference());
 
         if (descriptorForReferenceExpression == null) return null;
 
         assert descriptorForReferenceExpression instanceof FunctionDescriptor
-                : "Operation should resolve to function descriptor.";
-        return (FunctionDescriptor) descriptorForReferenceExpression;
+            : "Operation should resolve to function descriptor.";
+        return (FunctionDescriptor)descriptorForReferenceExpression;
     }
 
     @NotNull
@@ -294,6 +294,7 @@ public final class BindingUtils {
                                                                                @NotNull List<JetFile> files) {
         Set<NamespaceDescriptor> descriptorSet = Sets.newHashSet();
         for (JetFile file : files) {
+            //TODO: can't be
             NamespaceDescriptor namespaceDescriptor = getNamespaceDescriptor(context, file);
             if (!AnnotationsUtils.isPredefinedObject(namespaceDescriptor)) {
                 descriptorSet.addAll(getNamespaceDescriptorHierarchy(namespaceDescriptor));
@@ -324,7 +325,7 @@ public final class BindingUtils {
     public static ConstructorDescriptor getConstructor(@NotNull BindingContext bindingContext,
                                                        @NotNull JetClassOrObject declaration) {
         ConstructorDescriptor primaryConstructor =
-                getClassDescriptor(bindingContext, declaration).getUnsubstitutedPrimaryConstructor();
+            getClassDescriptor(bindingContext, declaration).getUnsubstitutedPrimaryConstructor();
         assert primaryConstructor != null : "Traits do not have initialize methods.";
         return primaryConstructor;
     }
