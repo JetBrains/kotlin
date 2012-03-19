@@ -69,7 +69,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                 assertNotContainItems(unexpected);
 
                 if (itemsNumber != null) {
-                    assertEquals(itemsNumber.intValue(), myItems.length);
+                    assertEquals("Invalid number of completion items", itemsNumber.intValue(), myItems.length);
                 }
             }
             finally {
