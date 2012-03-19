@@ -85,10 +85,10 @@ public class CompileEnvironmentTest extends TestCase {
         try {
             File out = new File(tempDir, "out");
             File stdlib = ForTestCompileStdlib.stdlibJarForTests();
-            new KotlinCompiler().exec("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
-                                "-output", out.getAbsolutePath(),
-                                "-stdlib", stdlib.getAbsolutePath());
-
+            KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
+                                                                     "-output", out.getAbsolutePath(),
+                                                                     "-stdlib", stdlib.getAbsolutePath());
+            Assert.assertEquals(KotlinCompiler.ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(1, out.listFiles()[0].listFiles().length);
         } finally {
