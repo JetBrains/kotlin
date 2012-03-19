@@ -132,7 +132,12 @@ public class JetStandardLibrary {
         try {
             List<JetFile> files = new LinkedList<JetFile>();
             for(String fileName : libraryFiles) {
-                InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream("jet/" + fileName);
+                String path = "jet/" + fileName;
+                InputStream stream = JetStandardClasses.class.getClassLoader().getResourceAsStream(path);
+                
+                if (stream == null) {
+                    throw new IllegalStateException("resource not found in classpath: " + path);
+                }
 
                 //noinspection IOResourceOpenedButNotSafelyClosed
                 JetFile file = (JetFile) PsiFileFactory.getInstance(project).createFileFromText(fileName,
