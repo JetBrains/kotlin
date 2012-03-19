@@ -14,19 +14,10 @@
     <artifactId>kotlin-java</artifactId>
 
     <dependencies>
-<!--
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>stdlib</artifactId>
             <version>${project.version}</version>
-        </dependency>
--->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
-            <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${kotlin-sdk}/lib/kotlin-runtime.jar</systemPath>
         </dependency>
 
         <dependency>

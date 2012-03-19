@@ -31,6 +31,17 @@
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>${kotlin-sdk}/../classes/runtime</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.class</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>com.github.goldin</groupId>
