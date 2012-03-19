@@ -117,7 +117,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
 
 
         if (this.classDescriptor == null) {
-            this.classDescriptor = javaDescriptorResolver.resolveClass(ourName);
+            this.classDescriptor = javaDescriptorResolver.resolveClass(ourName, DescriptorSearchRule.INCLUDE_KOTLIN);
         }
 
         if (this.classDescriptor == null) {

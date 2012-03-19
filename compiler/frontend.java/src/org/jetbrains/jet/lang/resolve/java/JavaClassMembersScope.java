@@ -103,7 +103,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
-                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass);
+                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }

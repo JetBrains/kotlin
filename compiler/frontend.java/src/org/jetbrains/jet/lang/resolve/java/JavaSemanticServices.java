@@ -57,15 +57,16 @@ public class JavaSemanticServices {
 
     @Nullable
     public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
-        if (qualifiedName.getFqName().startsWith("jet.")) {
-            ClassDescriptor r = (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.getFqName().substring("jet.".length()));
-            if (r == null) {
-                // TODO: better error
-                //throw new IllegalStateException();
-            }
-            return r;
-        }
         return getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
+    }
+
+    @Nullable
+    public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
+        if (qualifiedName.getFqName().startsWith("jet.")) {
+            return (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.getFqName().substring("jet.".length()));
+        } else {
+            return null;
+        }
     }
 
     @Nullable
