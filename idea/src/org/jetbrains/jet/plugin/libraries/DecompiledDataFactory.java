@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -82,7 +81,7 @@ class DecompiledDataFactory {
         PsiClass psiClass = myClsFile.getClasses()[0];
 
         if (isKotlinNamespaceClass(psiClass)) {
-            NamespaceDescriptor nd = myJavaDescriptorResolver.resolveNamespace(new FqName(packageName), DescriptorSearchRule.INCLUDE_KOTLIN);
+            NamespaceDescriptor nd = myJavaDescriptorResolver.resolveNamespace(new FqName(packageName));
 
             if (nd != null) {
                 for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
@@ -94,7 +93,7 @@ class DecompiledDataFactory {
                 }
             }
         } else {
-            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(psiClass);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
