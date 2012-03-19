@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit-version>4.9</junit-version>
+        <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
         <project-root>${project.basedir}/..</project-root>
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
@@ -23,28 +23,43 @@
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
     </properties>
 
+
     <repositories>
         <repository>
             <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo</url>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo/</url>
         </repository>
     </repositories>
+
 
     <pluginRepositories>
         <pluginRepository>
             <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo</url>
+            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo/</url>
         </pluginRepository>
     </pluginRepositories>
 
+
     <modules>
-        <module>stdlib</module>
         <module>kunit</module>
+        <module>stdlib</module>
         <module>kdoc</module>
         <module>kotlin-jdbc</module>
         <module>website</module>
         <module>kotlin-java</module>
+        <module>kotlin-maven-plugin</module>
     </modules>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>

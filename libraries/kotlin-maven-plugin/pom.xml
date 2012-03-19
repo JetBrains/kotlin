@@ -30,18 +30,30 @@
         </dependency>
     </dependencies>
 
+
     <build>
         <plugins>
+
             <plugin>
                 <groupId>com.github.goldin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
 
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!-- AnnoMojo: http://wiki.jfrog.org/confluence/display/OSS/Maven+Anno+Mojo      -->
+            <!-- http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-plugin-plugin/ -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.9</version>
                 <dependencies>
+                    <dependency>
+                      <groupId>org.apache.maven.plugin-tools</groupId>
+                      <artifactId>maven-plugin-tools-api</artifactId>
+                      <version>2.9</version>
+                    </dependency>
                     <dependency>
                         <groupId>org.jfrog.maven.annomojo</groupId>
                         <artifactId>maven-plugin-tools-anno</artifactId>
