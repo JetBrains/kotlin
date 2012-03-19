@@ -42,8 +42,8 @@ public final class QualifiedExpressionTranslator {
 
         JsExpression receiver = translateReceiver(expression, context);
         PropertyAccessTranslator result =
-                PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver,
-                        CallType.getCallTypeForQualifiedExpression(expression), context);
+            PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver,
+                                                 CallType.getCallTypeForQualifiedExpression(expression), context);
         result.setCallType(CallType.getCallTypeForQualifiedExpression(expression));
         return result;
     }
@@ -65,12 +65,15 @@ public final class QualifiedExpressionTranslator {
         if (PropertyAccessTranslator.canBePropertyGetterCall(selector, context)) {
             assert selector instanceof JetSimpleNameExpression : "Selectors for properties must be simple names.";
             return PropertyAccessTranslator.translateAsPropertyGetterCall
-                    ((JetSimpleNameExpression) selector, receiver, callType, context);
+                ((JetSimpleNameExpression)selector, receiver, callType, context);
         }
         if (selector instanceof JetCallExpression) {
-            return CallExpressionTranslator.translate((JetCallExpression) selector, receiver, callType, context);
+            return CallExpressionTranslator.translate((JetCallExpression)selector, receiver, callType, context);
         }
-        throw new AssertionError("Unexpected qualified expression");
+        if (selector instanceof JetSimpleNameExpression) {
+            return ReferenceTranslator.translateSimpleName((JetSimpleNameExpression)selector, context);
+        }
+        throw new AssertionError("Unexpected qualified expression: " + selector.getText());
     }
 
     //TODO: if has duplications

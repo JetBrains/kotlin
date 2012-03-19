@@ -34,4 +34,7 @@ public final class NamespaceTest extends SingleFileTranslationTest {
         runFunctionOutputTest("deeplyNestedNamespace.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true);
     }
 
+    public void testDeeplyNestedNamespaceFunctionCalled() throws Exception {
+        runFunctionOutputTest("deeplyNestedNamespaceFunctionCalled.kt", "foo1.foo2.foo3.foo5.foo6.foo7.foo8", "box", true);
+    }
 }

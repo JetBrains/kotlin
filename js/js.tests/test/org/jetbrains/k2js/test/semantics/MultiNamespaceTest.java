@@ -40,5 +40,9 @@ public class MultiNamespaceTest extends MultipleFilesTranslationTest {
         checkFooBoxIsTrue("namespaceVariableVisibleFromOtherNamespace");
     }
 
+
+    public void testNestedNamespaceFunctionCalledFromOtherNamespace() throws Exception {
+        checkFooBoxIsTrue("nestedNamespaceFunctionCalledFromOtherNamespace");
+    }
 }
 
