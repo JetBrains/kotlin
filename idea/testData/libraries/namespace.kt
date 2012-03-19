@@ -3,8 +3,8 @@
 
 package testData.libraries
 
-[final fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
-
 [final val globalVal : #(jet.Int, jet.String)] /* compiled code */
 
 [final val globalValWithGetter : jet.Long] /* compiled code */
+
+[final fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }]

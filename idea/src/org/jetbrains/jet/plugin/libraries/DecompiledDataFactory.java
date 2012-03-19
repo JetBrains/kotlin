@@ -37,8 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -85,7 +84,7 @@ class DecompiledDataFactory {
             NamespaceDescriptor nd = myJavaDescriptorResolver.resolveNamespace(new FqName(packageName));
 
             if (nd != null) {
-                for (DeclarationDescriptor member : nd.getMemberScope().getAllDescriptors()) {
+                for (DeclarationDescriptor member : sortDeclarations(nd.getMemberScope().getAllDescriptors())) {
                     if (member instanceof ClassDescriptor || member instanceof NamespaceDescriptor) {
                         continue;
                     }
@@ -114,6 +113,17 @@ class DecompiledDataFactory {
         return new JetDecompiledData(jetFile, myClsElementsToJetElements);
     }
 
+    private List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
+        ArrayList<DeclarationDescriptor> r = new ArrayList<DeclarationDescriptor>(input);
+        Collections.sort(r, new Comparator<DeclarationDescriptor>() {
+            @Override
+            public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        return r;
+    }
+
     private void appendDescriptor(DeclarationDescriptor descriptor, String indent) {
         int startOffset = myBuilder.length();
         myBuilder.append(DescriptorRenderer.COMPACT.render(descriptor));
@@ -140,7 +150,7 @@ class DecompiledDataFactory {
                 myBuilder.append(subindent).append("class ");
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
-            for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
                 if (member.getContainingDeclaration() == descriptor) {
                     if (firstPassed) {
                         myBuilder.append("\n");

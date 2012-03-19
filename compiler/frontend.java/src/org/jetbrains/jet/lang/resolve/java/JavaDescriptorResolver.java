@@ -1024,7 +1024,7 @@ public class JavaDescriptorResolver {
 
         ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
         
-        Set<VariableDescriptor> descriptors = Sets.newLinkedHashSet();
+        Set<VariableDescriptor> descriptors = Sets.newHashSet();
         Map<String, NamedMembers> membersForProperties = scopeData.namedMembersMap;
         for (Map.Entry<String, NamedMembers> entry : membersForProperties.entrySet()) {
             NamedMembers namedMembers = entry.getValue();
@@ -1284,7 +1284,7 @@ public class JavaDescriptorResolver {
         
         final Set<FunctionDescriptor> functions = new HashSet<FunctionDescriptor>();
 
-        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newLinkedHashSet();
+        Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
             FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
                     method);

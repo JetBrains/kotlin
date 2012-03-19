@@ -18,11 +18,14 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,7 +40,7 @@ class JavaDescriptorResolverHelper {
         private final boolean staticMembers;
         private final boolean kotlin;
         
-        private Map<String, NamedMembers> namedMembersMap = new LinkedHashMap<String, NamedMembers>();
+        private Map<String, NamedMembers> namedMembersMap = new HashMap<String, NamedMembers>();
 
         private Builder(PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
             this.psiClass = psiClass;

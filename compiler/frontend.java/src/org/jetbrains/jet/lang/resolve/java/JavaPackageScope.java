@@ -99,7 +99,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
         if (allDescriptors == null) {
-            allDescriptors = Sets.newLinkedHashSet();
+            allDescriptors = Sets.newHashSet();
 
             if (psiClass != null) {
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
