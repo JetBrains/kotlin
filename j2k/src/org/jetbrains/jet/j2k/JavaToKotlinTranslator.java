@@ -224,4 +224,8 @@ public class JavaToKotlinTranslator {
             out.println("EXCEPTION: wrong number of arguments (should be 1).");
         }
     }
+
+    public static String translateToKotlin(String code) {
+        return generateKotlinCode(code);
+    }
 }
