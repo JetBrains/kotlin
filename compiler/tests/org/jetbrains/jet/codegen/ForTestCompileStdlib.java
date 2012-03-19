@@ -98,8 +98,10 @@ public class ForTestCompileStdlib {
     }
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
-        // lame
-        new KotlinCompiler().exec(System.err, "-output", destdir.getPath(), "-src", "./libraries/stdlib/src", "-stdlib", destdir.getAbsolutePath());
+        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(System.err, "-output", destdir.getPath(), "-src", "./libraries/stdlib/src", "-stdlib", destdir.getAbsolutePath());
+        if (exitCode != KotlinCompiler.ExitCode.OK) {
+            throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
+        }
     }
     
     private static List<File> javaFilesInDir(File dir) {
