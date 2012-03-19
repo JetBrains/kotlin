@@ -31,6 +31,7 @@ import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getAllNonNativeNamespaceDescriptors;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
+import static org.jetbrains.k2js.translate.utils.NamespaceSortingUtils.sortNamespacesUsingQualificationOrder;
 
 /**
  * @author Pavel Talanov
@@ -50,7 +51,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private NamespaceDeclarationTranslator(@NotNull List<NamespaceDescriptor> namespaceDescriptors,
                                            @NotNull TranslationContext context) {
         super(context);
-        this.namespaceDescriptors = namespaceDescriptors;
+        this.namespaceDescriptors = sortNamespacesUsingQualificationOrder(namespaceDescriptors);
         this.classDeclarationTranslator = new ClassDeclarationTranslator(getAllClasses(), context);
     }
 
