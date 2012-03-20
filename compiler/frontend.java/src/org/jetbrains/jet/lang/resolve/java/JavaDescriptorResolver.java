@@ -528,19 +528,12 @@ public class JavaDescriptorResolver {
     }
 
 
-    // cache
-    protected ClassDescriptor javaLangObject;
-
-    @NotNull
-    private ClassDescriptor getJavaLangObject() {
-        if (javaLangObject == null) {
-            javaLangObject = resolveClass(new FqName("java.lang.Object"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        }
-        return javaLangObject;
-    }
+    private static final FqName JL_OBJECT = new FqName("java.lang.Object");
 
     private boolean isJavaLangObject(JetType type) {
-        return type.getConstructor().getDeclarationDescriptor() == getJavaLangObject();
+        ClassifierDescriptor classifierDescriptor = type.getConstructor().getDeclarationDescriptor();
+        return classifierDescriptor instanceof ClassDescriptor &&
+               DescriptorUtils.getFQName(classifierDescriptor).equals(JL_OBJECT.toUnsafe());
     }
 
 
