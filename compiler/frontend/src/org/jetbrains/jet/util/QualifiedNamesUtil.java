@@ -130,7 +130,7 @@ public final class QualifiedNamesUtil {
     }
 
     public static boolean isImported(@NotNull ImportPath alreadyImported, @NotNull FqName fqName) {
-        if (alreadyImported.isAllUnder()) {
+        if (alreadyImported.isAllUnder() && !fqName.isRoot()) {
             return alreadyImported.fqnPart().equals(fqName.parent());
         }
 

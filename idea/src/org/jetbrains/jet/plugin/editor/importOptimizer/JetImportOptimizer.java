@@ -83,9 +83,17 @@ public class JetImportOptimizer implements ImportOptimizer {
                         // Remove imports
                         List<JetImportDirective> imports = jetFile.getImportDirectives();
                         if (!imports.isEmpty()) {
-                            jetFile.deleteChildRange(
-                                    getWithPreviousWhitespaces(imports.get(0)),
-                                    getWithFollowedWhitespaces(imports.get(imports.size() - 1)));
+                            PsiElement firstForDelete = getWithPreviousWhitespaces(imports.get(0));
+                            PsiElement lastForDelete = getWithFollowedWhitespaces(imports.get(imports.size() - 1));
+
+                            // Should be found before deletion
+                            PsiElement elementBeforeImports = firstForDelete.getPrevSibling();
+
+                            jetFile.deleteChildRange(firstForDelete, lastForDelete);
+
+                            if (elementBeforeImports != null) {
+                                jetFile.addAfter(JetPsiFactory.createWhiteSpace(jetFile.getProject(), "\n"), elementBeforeImports);
+                            }
                         }
 
                         // Insert back only necessary imports in correct order
@@ -120,7 +128,7 @@ public class JetImportOptimizer implements ImportOptimizer {
         return false;
     }
 
-    public static Set<FqName> extractUsedQualifiedNames(JetFile jetFile) {
+    public static Set<FqName> extractUsedQualifiedNames(final JetFile jetFile) {
         final Set<FqName> usedQualifiedNames = new HashSet<FqName>();
         jetFile.accept(new JetVisitorVoid() {
             @Override
@@ -131,7 +139,9 @@ public class JetImportOptimizer implements ImportOptimizer {
 
             @Override
             public void visitReferenceExpression(JetReferenceExpression expression) {
-                if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null) {
+                if (PsiTreeUtil.getParentOfType(expression, JetImportDirective.class) == null &&
+                        PsiTreeUtil.getParentOfType(expression, JetNamespaceHeader.class) == null) {
+
                     PsiReference reference = expression.getReference();
                     if (reference != null) {
                         List<PsiElement> references = new ArrayList<PsiElement>();
@@ -141,7 +151,7 @@ public class JetImportOptimizer implements ImportOptimizer {
                         }
 
                         if (references.isEmpty() && reference instanceof PsiPolyVariantReference) {
-                            for (ResolveResult resolveResult : ((PsiPolyVariantReference) reference).multiResolve(true)) {
+                            for (ResolveResult resolveResult : ((PsiPolyVariantReference)reference).multiResolve(true)) {
                                 references.add(resolveResult.getElement());
                             }
                         }
@@ -153,7 +163,6 @@ public class JetImportOptimizer implements ImportOptimizer {
                             }
                         }
                     }
-
                 }
 
                 super.visitReferenceExpression(expression);
@@ -166,18 +175,22 @@ public class JetImportOptimizer implements ImportOptimizer {
 
     @Nullable
     public static FqName getElementUsageFQName(PsiElement element) {
-        if (element instanceof JetClassOrObject) {
-            return JetPsiUtil.getFQName((JetClassOrObject) element);
+        if (element instanceof JetFile) {
+            return JetPsiUtil.getFQName((JetFile) element);
         }
-        if (element instanceof JetNamedFunction) {
-            return JetPsiUtil.getFQName((JetNamedFunction) element);
+
+        if (element instanceof JetNamedDeclaration) {
+            return JetPsiUtil.getFQName((JetNamedDeclaration) element);
         }
+
         if (element instanceof PsiClass) {
             String qualifiedName = ((PsiClass) element).getQualifiedName();
             if (qualifiedName != null) {
                 return new FqName(qualifiedName);
             }
         }
+
+        // TODO: Still problem with kotlin global properties imported from class files
         if (element instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) element;
 
@@ -199,6 +212,10 @@ public class JetImportOptimizer implements ImportOptimizer {
                     }
                 }
             }
+        }
+
+        if (element instanceof PsiPackage) {
+            return new FqName(((PsiPackage) element).getQualifiedName());
         }
 
         return null;

@@ -145,49 +145,37 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static FqName getFQName(@NotNull JetClassOrObject jetClass) {
-        if (jetClass.getName() == null) {
-            return null;
-        }
-
-        PsiElement parent = jetClass.getParent();
-        if (parent instanceof JetFile) {
-            return makeFQName(getFQName((JetFile) parent), jetClass);
-        }
-        while (parent instanceof JetClassBody) {
-            parent = parent.getParent();
-            if (parent instanceof JetObjectDeclaration && parent.getParent() instanceof JetClassObject) {
-                parent = parent.getParent().getParent();
+    public static FqName getFQName(JetNamedDeclaration namedDeclaration) {
+        if (namedDeclaration instanceof JetObjectDeclarationName) {
+            JetObjectDeclaration objectDeclaration = PsiTreeUtil.getParentOfType(namedDeclaration, JetObjectDeclaration.class);
+            if (objectDeclaration == null) {
+                return null;
             }
-        }
-        if (parent instanceof JetClassOrObject) {
-            return makeFQName(getFQName(((JetClassOrObject) parent)), jetClass);
-        }
-        return new FqName(jetClass.getName());
-    }
 
-    @Nullable
-    public static FqName getFQName(@NotNull JetNamedFunction jetNamedFunction) {
+            return getFQName(objectDeclaration);
+        }
 
-        String functionName = jetNamedFunction.getName();
+        String functionName = namedDeclaration.getName();
         if (functionName == null) {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
-        PsiElement qualifiedElement = PsiTreeUtil.getParentOfType(
-                jetNamedFunction,
-                JetFile.class, JetClassOrObject.class, JetNamedFunction.class);
+        PsiElement parent = namedDeclaration.getParent();
+        if (parent instanceof JetClassBody) {
+            // One nesting to JetClassBody doesn't affect to qualified name
+            parent = parent.getParent();
+        }
 
-        FqName firstPart = FqName.ROOT;
-        if (qualifiedElement instanceof JetFile) {
-            firstPart = getFQName((JetFile) qualifiedElement);
+        FqName firstPart = null;
+        if (parent instanceof JetFile) {
+            firstPart = getFQName((JetFile) parent);
         }
-        else if (qualifiedElement instanceof JetClassOrObject) {
-            firstPart = getFQName((JetClassOrObject) qualifiedElement);
+        else if (parent instanceof JetNamedDeclaration) {
+            firstPart = getFQName((JetNamedDeclaration) parent);
         }
-        else if (qualifiedElement instanceof JetNamedFunction) {
-            firstPart = getFQName((JetNamedFunction) qualifiedElement);
+
+        if (firstPart == null) {
+            return null;
         }
 
         return firstPart.child(functionName);
