@@ -34,8 +34,8 @@ import org.jetbrains.jet.plugin.JetHighlighter;
 public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProcessor {
 
     @Override
-    public boolean isApplicable(Project project, VirtualFile file) {
-        return JetDecompiledData.isKotlinFile(project, file);
+    public boolean isApplicable(@Nullable Project project, @NotNull VirtualFile file) {
+        return project != null && JetDecompiledData.isKotlinFile(project, file);
     }
 
     @NotNull
