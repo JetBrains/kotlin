@@ -68,24 +68,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.github.goldin</groupId>
-                    <artifactId>kotlin-maven-plugin</artifactId>
-                    <version>${kotlin-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>compile-kotlin-sources</id>
-                            <goals>
-                                <goal>compile</goal>
-                                <goal>testCompile</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <verbose>false</verbose>
-                    </configuration>
-                </plugin>
-
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
@@ -98,6 +80,25 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>com.github.goldin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile-kotlin-sources</id>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <runIf>{{ new File( project.build.sourceDirectory ).directory }}</runIf>
+                    <verbose>false</verbose>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -47,13 +47,6 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-
         <extensions>
             <extension>
                 <groupId>org.apache.maven.scm</groupId>

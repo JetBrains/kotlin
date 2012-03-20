@@ -34,11 +34,6 @@
     <build>
         <plugins>
 
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-
             <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
             <!-- AnnoMojo: http://wiki.jfrog.org/confluence/display/OSS/Maven+Anno+Mojo      -->
             <!-- http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-plugin-plugin/ -->

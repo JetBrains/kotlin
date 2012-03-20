@@ -16,12 +16,6 @@
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 
 </project>

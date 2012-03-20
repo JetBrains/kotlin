@@ -66,6 +66,7 @@ class CollectionTest() : TestCase() {
         assertEquals(arrayList("foo"), foo)
     }
 
+    /*
     fun testFilterIntoLinkedList() {
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
@@ -80,6 +81,7 @@ class CollectionTest() : TestCase() {
             foo is LinkedList<String>
         }
     }
+    */
 
     fun testFilterIntoSet() {
         // TODO would be nice to avoid the <String>
