@@ -63,7 +63,7 @@ public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
     private static void openBrowser(@NotNull K2JSConfigurationSettings configurationSettings) {
         String filePath = configurationSettings.getFilePath();
         String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
-        BrowsersConfiguration.launchBrowser(BrowsersConfiguration.BrowserFamily.FIREFOX, url);
+        BrowsersConfiguration.launchBrowser(configurationSettings.getBrowserFamily(), url);
     }
 
     @NotNull

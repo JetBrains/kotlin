@@ -39,7 +39,7 @@
               <text value="Browser"/>
             </properties>
           </component>
-          <component id="a2cc0" class="javax.swing.JComboBox">
+          <component id="a2cc0" class="javax.swing.JComboBox" binding="browserComboBox">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

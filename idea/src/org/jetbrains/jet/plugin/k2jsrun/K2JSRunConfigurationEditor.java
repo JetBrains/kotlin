@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
+import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -36,6 +38,7 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
 
     private JPanel mainPanel;
     private TextFieldWithBrowseButton chooseFile;
+    private JComboBox browserComboBox;
     @NotNull
     private final Project project;
 
@@ -46,11 +49,16 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
     @Override
     protected void resetEditorFrom(K2JSRunConfiguration configuration) {
         chooseFile.setText(configuration.settings().getFilePath());
+        browserComboBox.setSelectedItem(configuration.settings().getBrowserFamily());
     }
 
     @Override
     protected void applyEditorTo(@NotNull K2JSRunConfiguration configuration) throws ConfigurationException {
         configuration.settings().setFilePath(FileUtil.toSystemIndependentName(chooseFile.getText()));
+        Object item = browserComboBox.getSelectedItem();
+        if (item instanceof BrowsersConfiguration.BrowserFamily) {
+            configuration.settings().setBrowserFamily((BrowsersConfiguration.BrowserFamily)item);
+        }
     }
 
     @NotNull
@@ -59,7 +67,30 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(StdFileTypes.HTML);
         fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
         chooseFile.addBrowseFolderListener("Choose file", "Yeah!", project, fileChooserDescriptor);
+        setupBrowserCombobox();
         return mainPanel;
+    }
+
+    private void setupBrowserCombobox() {
+        for (BrowsersConfiguration.BrowserFamily family : BrowsersConfiguration.getInstance().getActiveBrowsers()) {
+            browserComboBox.addItem(family);
+        }
+        browserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>(browserComboBox) {
+            @Override
+            public void customize(JList list, BrowsersConfiguration.BrowserFamily family, int index, boolean selected, boolean hasFocus) {
+                if (family != null) {
+                    setText(family.getName());
+                    setIcon(family.getIcon());
+                }
+            }
+        });
+        if (browserComboBox.getItemCount() < 2) {
+            browserComboBox.setVisible(false);
+            browserComboBox.setVisible(false);
+        }
+        else {
+            browserComboBox.setSelectedItem(0);
+        }
     }
 
     @Override

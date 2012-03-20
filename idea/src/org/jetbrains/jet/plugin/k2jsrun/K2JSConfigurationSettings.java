@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,6 +26,18 @@ public class K2JSConfigurationSettings {
 
     @NotNull
     private String filePath = "";
+
+    @NotNull
+    private BrowsersConfiguration.BrowserFamily browserFamily = BrowsersConfiguration.getInstance().getActiveBrowsers().get(0);
+
+    @NotNull
+    public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
+        return browserFamily;
+    }
+
+    public void setBrowserFamily(@NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
+        this.browserFamily = browserFamily;
+    }
 
     @NotNull
     public String getFilePath() {
