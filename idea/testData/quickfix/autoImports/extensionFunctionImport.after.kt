@@ -1,4 +1,4 @@
-// "Import Class" "true"
+// "Import Function" "true"
 package testingExtensionFunctionsImport
 
 import testingExtensionFunctionsImport.data.someFun
