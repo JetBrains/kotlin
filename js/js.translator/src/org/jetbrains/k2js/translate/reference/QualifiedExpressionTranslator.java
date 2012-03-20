@@ -40,7 +40,6 @@ public final class QualifiedExpressionTranslator {
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetQualifiedExpression expression,
                                                        @NotNull TranslationContext context) {
-
         JsExpression receiver = translateReceiver(expression, context);
         PropertyAccessTranslator result =
             PropertyAccessTranslator.newInstance(getNotNullSimpleNameSelector(expression), receiver,

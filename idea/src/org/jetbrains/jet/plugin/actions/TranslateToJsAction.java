@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -52,7 +51,7 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.allVirtual
  */
 public final class TranslateToJsAction extends AnAction {
 
-    private static void notifyFailure(@NotNull Throwable exception) {
+    public static void notifyFailure(@NotNull Throwable exception) {
         Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",
                                                   "Exception: " + exception.getMessage(),
                                                   NotificationType.ERROR));
@@ -70,7 +69,8 @@ public final class TranslateToJsAction extends AnAction {
             public void run() {
                 try {
                     performAction(event);
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     e.printStackTrace();
                     notifyFailure(e);
                 }
@@ -82,6 +82,10 @@ public final class TranslateToJsAction extends AnAction {
     private static void performAction(@NotNull AnActionEvent event) throws Exception {
         final Project project = PlatformDataKeys.PROJECT.getData(event.getDataContext());
         assert project != null;
+        doPerform(project);
+    }
+
+    public static void doPerform(@NotNull Project project) throws Exception {
         Set<VirtualFile> allVirtualFiles = getAllProjectVirtualFiles(project);
         List<JetFile> kotlinFiles = getJetFiles(allVirtualFiles, project);
         String outputPath = getOutputPath(JetMainDetector.getFileWithMain(kotlinFiles));
@@ -111,7 +115,7 @@ public final class TranslateToJsAction extends AnAction {
         for (VirtualFile virtualFile : virtualFiles) {
             PsiFile psiFile = psiManager.findFile(virtualFile);
             if (psiFile instanceof JetFile) {
-                kotlinFiles.add((JetFile) psiFile);
+                kotlinFiles.add((JetFile)psiFile);
             }
         }
         return kotlinFiles;
@@ -129,13 +133,13 @@ public final class TranslateToJsAction extends AnAction {
 
         //TODO: make platform independent
         String pathToDir = originalFilePath.substring(0, originalFilePath.lastIndexOf("/") + 1);
-        String generatedFileName = ((JetFile) psiFile).getNamespaceHeader().getName() + ".js";
+        String generatedFileName = ((JetFile)psiFile).getNamespaceHeader().getName() + ".js";
         return pathToDir + generatedFileName;
     }
 
     @Override
     public void update(AnActionEvent e) {
-        Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        e.getPresentation().setEnabled(editor != null);
+        //   Editor editor = e.getData(PlatformDataKeys.EDITOR);
+        // e.getPresentation().setEnabled(editor != null);
     }
 }
