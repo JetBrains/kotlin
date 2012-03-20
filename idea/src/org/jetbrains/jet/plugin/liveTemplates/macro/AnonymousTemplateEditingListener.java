@@ -59,6 +59,7 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
 
     @Override
     public void currentVariableChanged(TemplateState templateState, Template template, int oldIndex, int newIndex) {
+        assert templateState.getTemplate() != null;
         TextRange variableRange = templateState.getVariableRange(0);
         if (variableRange == null) return;
         PsiElement name = psiFile.findElementAt(variableRange.getStartOffset());
