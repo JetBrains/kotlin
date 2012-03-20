@@ -36,46 +36,46 @@ class PreconditionsTest() : TestCase() {
         }
     }
 
-// TODO: uncomment when KT-1540 is resolved.
-//    fun testPassingCheck() {
-//        check1(true)
-//    }
-//
-//    fun testFailingCheck() {
-//        val error = fails {
-//            check1(false)
-//        }
-//        if(error is IllegalStateException) {
-//            assertNull(error.getMessage())
-//        } else {
-//            fail("Invalid exception type: "+error)
-//        }
-//    }
-//
-//    fun testPassingCheckWithMessage() {
-//        check2(true, "Hello")
-//    }
-//
-//    fun testFailingCheckWithMessage() {
-//        val error = fails {
-//            check2(false, "Hello")
-//        }
-//        if(error is IllegalStateException) {
-//            assertEquals("Hello", error.getMessage())
-//        } else {
-//            fail("Invalid exception type: "+error)
-//        }
-//    }
+    fun testPassingCheck() {
+        check(true)
+    }
+
+    fun testFailingCheck() {
+        val error = fails {
+            check(false)
+        }
+        if(error is IllegalStateException) {
+            assertNull(error.getMessage())
+        } else {
+            fail("Invalid exception type: "+error)
+        }
+    }
+
+    fun testPassingCheckWithMessage() {
+        check(true, "Hello")
+    }
+
+    fun testFailingCheckWithMessage() {
+        val error = fails {
+            check(false, "Hello")
+        }
+        if(error is IllegalStateException) {
+            assertEquals("Hello", error.getMessage())
+        } else {
+            fail("Invalid exception type: "+error)
+        }
+    }
 
 
 // TODO: uncomment when KT-1540 is resolved.
 //    fun testPassingAssert() {
-//        assert1(true)
+//        assert(true)
 //    }
+//
 //
 //    fun testFailingAssert() {
 //        val error = fails {
-//            assert1(false)
+//            assert(false)
 //        }
 //        if(error is IllegalStateException) {
 //            assertNull(error.getMessage())
@@ -85,12 +85,12 @@ class PreconditionsTest() : TestCase() {
 //    }
 //
 //    fun testPassingAssertWithMessage() {
-//        assert2(true, "Hello")
+//        assert(true, "Hello")
 //    }
 //
 //    fun testFailingAssertWithMessage() {
 //        val error = fails {
-//            assert2(false, "Hello")
+//            assert(false, "Hello")
 //        }
 //        if(error is IllegalStateException) {
 //            assertEquals("Hello", error.getMessage())
