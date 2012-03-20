@@ -58,6 +58,7 @@ public class DependencyInjectorGenerator {
         String outputFileName = targetSourceRoot + "/" + injectorPackageName.replace(".", "/") + "/" + injectorClassName + ".java";
 
         File file = new File(outputFileName);
+        File tmpfile = new File(outputFileName + ".tmp");
         File parentFile = file.getParentFile();
         if (!parentFile.exists()) {
             if (parentFile.mkdirs()) {
@@ -68,8 +69,8 @@ public class DependencyInjectorGenerator {
             }
         }
 
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        System.out.println("File opened: " + file.getAbsolutePath());
+        FileOutputStream fileOutputStream = new FileOutputStream(tmpfile);
+        System.out.println("File opened: " + tmpfile.getAbsolutePath());
 
         PrintStream out = new PrintStream(fileOutputStream);
         try {
@@ -102,6 +103,13 @@ public class DependencyInjectorGenerator {
 //            out.println();
 //            generateMakeFunction(out);
             out.println("}"); // class
+
+            fileOutputStream.close();
+
+            if (!tmpfile.renameTo(file)) {
+                throw new RuntimeException("failed to rename " + tmpfile + " to " + file);
+            }
+            System.out.println("Renamed " + tmpfile + " to " + file);
         }
         finally {
             fileOutputStream.close();
