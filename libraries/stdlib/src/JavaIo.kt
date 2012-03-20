@@ -199,6 +199,21 @@ inline fun Reader.buffered(): BufferedReader = if(this is BufferedReader) this e
 
 inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
 
+
+inline val OutputStream.writer : OutputStreamWriter
+get() = OutputStreamWriter(this)
+
+inline val OutputStream.bufferedWriter : BufferedWriter
+get() = BufferedWriter(writer)
+
+inline fun OutputStream.writer(encoding: Charset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+
+inline fun OutputStream.writer(encoding: String) = OutputStreamWriter(this, encoding)
+
+inline fun OutputStream.writer(encoding: CharsetEncoder) = OutputStreamWriter(this, encoding)
+
+
+
 inline fun Reader.forEachLine(block: (String) -> Unit): Unit {
     this.use{
         val iter = buffered().lineIterator()
