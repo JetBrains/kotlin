@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.codeInsight.daemon.QuickFixBundle;
 import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.HighPriorityAction;
@@ -61,35 +60,52 @@ import java.util.*;
 public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
 
     @NotNull
-    private final List<FqName> suggestions;
+    private List<FqName> suggestions;
+
+    private boolean functionImports = false;
+
+    private boolean classImports = false;
 
     public ImportClassAndFunFix(@NotNull JetSimpleNameExpression element) {
         super(element);
-        suggestions = computeSuggestions(element);
+        computeSuggestions(element);
     }
 
-    private static List<FqName> computeSuggestions(@NotNull JetSimpleNameExpression element) {
+    private void computeSuggestions(@NotNull JetSimpleNameExpression element) {
         final PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile)) {
-            return Collections.emptyList();
+            suggestions = Collections.emptyList();
         }
 
         final String referenceName = element.getReferencedName();
 
         if (!StringUtil.isNotEmpty(referenceName)) {
-            return Collections.emptyList();
+            suggestions = Collections.emptyList();
         }
 
         assert referenceName != null;
 
-        final ArrayList<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, file.getProject()));
-        result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
-        result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
+        suggestions = Lists.newArrayList();
 
-        return result;
+        Collection<FqName> classNames = getClassNames(referenceName, file.getProject());
+        if (!classNames.isEmpty()) {
+            suggestions.addAll(classNames);
+            classImports = true;
+        }
+
+        Collection<FqName> topLevelFunctions = getJetTopLevelFunctions(referenceName, element, file.getProject());
+        if (!topLevelFunctions.isEmpty()) {
+            suggestions.addAll(topLevelFunctions);
+            functionImports = true;
+        }
+
+        Collection<FqName> extensionFunctions = getJetExtensionFunctions(referenceName, element, file.getProject());
+        if (!extensionFunctions.isEmpty()) {
+            suggestions.addAll(extensionFunctions);
+            functionImports = true;
+        }
     }
-    
+
     private static Collection<FqName> getJetTopLevelFunctions(@NotNull String referenceName, JetSimpleNameExpression expression, @NotNull Project project) {
         JetShortNamesCache namesCache = JetCacheManager.getInstance(project).getNamesCache();
         Collection<FunctionDescriptor> topLevelFunctions = namesCache.getTopLevelFunctionDescriptorsByName(
@@ -194,13 +210,13 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     @Override
     @NotNull
     public String getText() {
-        return QuickFixBundle.message("import.class.fix");
+        return "Import " + getClassOrFunctionText(classImports, functionImports);
     }
 
     @Override
     @NotNull
     public String getFamilyName() {
-        return QuickFixBundle.message("import.class.fix");
+        return "Import Class or Function";
     }
 
     @Override
@@ -225,7 +241,11 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
     @NotNull
     private JetAddImportAction createAction(@NotNull Project project, @NotNull Editor editor) {
-        return new JetAddImportAction(project, editor, element, suggestions);
+        return new JetAddImportAction(project, editor, element, suggestions, classImports, functionImports);
+    }
+
+    public static String getClassOrFunctionText(boolean classImports, boolean functionImports) {
+        return (classImports ? "Class" : "") + (classImports && functionImports ? " or " : "") + (functionImports ? "Function" : "");
     }
 
     @Nullable

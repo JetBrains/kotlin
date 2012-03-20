@@ -34,6 +34,7 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.plugin.quickfix.ImportClassAndFunFix;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import javax.swing.*;
@@ -51,23 +52,28 @@ public class JetAddImportAction implements QuestionAction {
     private final Editor myEditor;
     private final PsiElement myElement;
     private final List<FqName> possibleImports;
+    private final String title;
 
     /**
      * @param project Project where action takes place.
      * @param editor Editor where modification should be done.
      * @param element Element with unresolved reference.
      * @param imports Variants for resolution.
+     * @param classes
+     * @param functions
      */
     public JetAddImportAction(
-            @NotNull Project project,
-            @NotNull Editor editor,
-            @NotNull PsiElement element,
-            @NotNull Iterable<FqName> imports
-    ) {
+        @NotNull Project project,
+        @NotNull Editor editor,
+        @NotNull PsiElement element,
+        @NotNull Iterable<FqName> imports,
+        boolean classImports,
+        boolean functionImports) {
         myProject = project;
         myEditor = editor;
         myElement = element;
         possibleImports = Lists.newArrayList(imports);
+        title = ImportClassAndFunFix.getClassOrFunctionText(classImports, functionImports);
     }
 
     @Override
@@ -91,7 +97,7 @@ public class JetAddImportAction implements QuestionAction {
     }
 
     protected BaseListPopupStep getImportSelectionPopup() {
-        return new BaseListPopupStep<FqName>(QuickFixBundle.message("class.to.import.chooser.title"), possibleImports) {
+        return new BaseListPopupStep<FqName>(title + " to Import", possibleImports) {
             @Override
             public boolean isAutoSelectionEnabled() {
                 return false;
