@@ -60,6 +60,10 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testSureInsert() {
+        doTest();
+    }
+
     public void doTest() {
         doTest(CompletionType.BASIC, 2, null);
     }
