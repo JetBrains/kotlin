@@ -119,7 +119,7 @@ public class JavaTypeTransformer {
                         return jetAnalog;
                     }
 
-                    final JavaDescriptorResolver.ResolverClassData classData = resolver.resolveClassData(psiClass);
+                    final JavaDescriptorResolver.ResolverClassData classData = resolver.resolveClassData(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolve java class: " + classType.getPresentableText());
                     }

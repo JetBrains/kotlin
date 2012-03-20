@@ -66,7 +66,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name));
+        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
             // TODO: this is a big hack against several things that I barely understand myself and cannot explain
             // 1. We should not return objects from this method, and maybe JDR.resolveClass should not return too
@@ -84,7 +84,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(packageFQN, name));
+        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(packageFQN, name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 
     @Override
@@ -114,8 +114,9 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
                 for (PsiPackage psiSubPackage : javaPackage.getSubPackages()) {
-                    if (semanticServices.getKotlinNamespaceDescriptor(new FqName(psiSubPackage.getQualifiedName())) == null) {
-                        allDescriptors.add(descriptorResolver.resolveNamespace(new FqName(psiSubPackage.getQualifiedName())));
+                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                    if (childNs != null) {
+                        allDescriptors.add(childNs);
                     }
                 }
 
@@ -123,10 +124,8 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                     if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
                         continue;
                     }
-
-                    // If this is a Kotlin class, we have already taken it through a containing namespace descriptor
-                    ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(new FqName(psiClass.getQualifiedName()));
-                    if (kotlinClassDescriptor != null) {
+                    
+                    if (psiClass instanceof JetJavaMirrorMarker) {
                         continue;
                     }
 
@@ -136,7 +135,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        ClassDescriptor classDescriptor = descriptorResolver.resolveClass(psiClass);
+                        ClassDescriptor classDescriptor = descriptorResolver.resolveClass(psiClass, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
                         if (classDescriptor != null) {
                             allDescriptors.add(classDescriptor);
                         }

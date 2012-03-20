@@ -1,5 +1,6 @@
 package java.util
 import java.io.*
+import java.util.Map.Entry
 public open class HashMap<erased K, erased V>(m : java.util.Map<out K, out V>) : java.util.AbstractMap<K, V>(),
                                                                                  java.util.Map<K, V>,
                                                                                  java.lang.Cloneable,
@@ -19,5 +20,5 @@ public open class HashMap<erased K, erased V>(m : java.util.Map<out K, out V>) :
     override public fun clone() : Any? {}
     override public fun keySet() : java.util.Set<K> {}
     override public fun values() : java.util.Collection<V> {}
-    override public fun entrySet() : java.util.Set<java.util.Map.Entry<K, V>> {}
+    override public fun entrySet() : java.util.Set<Entry<K, V>> {}
 }
