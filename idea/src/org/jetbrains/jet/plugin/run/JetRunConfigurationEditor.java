@@ -55,7 +55,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     @Override
     protected void resetEditorFrom(JetRunConfiguration configuration) {
         myCommonProgramParameters.reset(configuration);
-        myMainClassField.setText(configuration.MAIN_CLASS_NAME.getFqName());
+        myMainClassField.setText(configuration.MAIN_CLASS_NAME == null ? null : configuration.MAIN_CLASS_NAME.getFqName());
         myModuleSelector.reset(configuration);
     }
 
