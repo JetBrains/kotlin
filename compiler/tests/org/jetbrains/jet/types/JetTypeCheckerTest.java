@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -584,9 +585,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
-        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(getProject(), JetTestUtils.DUMMY_TRACE);
-        writableScope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace(FqName.ROOT, DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
-        writableScope.importScope(javaSemanticServices.getDescriptorResolver().resolveNamespace(new FqName("java.lang"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
+        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(getProject()).getJavaDescriptorResolver();
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
+                DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
+        writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
+                DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
         return writableScope;
     }

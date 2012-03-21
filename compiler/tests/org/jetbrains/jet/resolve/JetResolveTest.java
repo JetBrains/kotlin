@@ -25,18 +25,18 @@ import com.intellij.psi.PsiMethod;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -123,8 +123,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
-        JavaSemanticServices javaSemanticServices = new JavaSemanticServices(project, new BindingTraceContext());
-        return javaSemanticServices.getDescriptorResolver().findClass(new FqName(qualifiedName));
+        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(project).getJavaDescriptorResolver();
+        return javaDescriptorResolver.findClass(new FqName(qualifiedName));
     }
 
     @NotNull

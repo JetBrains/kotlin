@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,18 +39,26 @@ import java.util.Map;
  */
 public class JavaTypeTransformer {
 
-    private final JavaSemanticServices javaSemanticServices;
-    private final JavaDescriptorResolver resolver;
-    private final JetStandardLibrary standardLibrary;
+    private JavaSemanticServices javaSemanticServices;
+    private JavaDescriptorResolver resolver;
+
+    @Inject
+    public void setJavaSemanticServices(JavaSemanticServices javaSemanticServices) {
+        this.javaSemanticServices = javaSemanticServices;
+    }
+
+    @Inject
+    public void setResolver(JavaDescriptorResolver resolver) {
+        this.resolver = resolver;
+    }
+
+
+
     private Map<String, JetType> primitiveTypesMap;
     private Map<String, JetType> classTypesMap;
     private Map<String, ClassDescriptor> classDescriptorMap;
 
-    public JavaTypeTransformer(JavaSemanticServices javaSemanticServices, JetStandardLibrary standardLibrary, JavaDescriptorResolver resolver) {
-        this.javaSemanticServices = javaSemanticServices;
-        this.resolver = resolver;
-        this.standardLibrary = standardLibrary;
-    }
+
 
     @NotNull
     public TypeProjection transformToTypeProjection(@NotNull final PsiType javaType,
@@ -85,7 +94,7 @@ public class JavaTypeTransformer {
     @NotNull
     public JetType transformToType(@NotNull String kotlinSignature, TypeVariableResolver typeVariableResolver) {
         final JetType[] r = new JetType[1];
-        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, standardLibrary, typeVariableResolver) {
+        JetTypeJetSignatureReader reader = new JetTypeJetSignatureReader(javaSemanticServices, JetStandardLibrary.getInstance(), typeVariableResolver) {
             @Override
             protected void done(@NotNull JetType jetType) {
                 r[0] = jetType;
@@ -173,7 +182,7 @@ public class JavaTypeTransformer {
                 }
 
                 JetType type = transformToType(componentType, typeVariableResolver);
-                return TypeUtils.makeNullable(standardLibrary.getArrayType(type));
+                return TypeUtils.makeNullable(JetStandardLibrary.getInstance().getArrayType(type));
             }
 
             @Override
@@ -188,9 +197,9 @@ public class JavaTypeTransformer {
             primitiveTypesMap = new HashMap<String, JetType>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                primitiveTypesMap.put(jvmPrimitiveType.getName(), standardLibrary.getPrimitiveJetType(primitiveType));
-                primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), standardLibrary.getPrimitiveArrayJetType(primitiveType));
-                primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getNullablePrimitiveJetType(primitiveType));
+                primitiveTypesMap.put(jvmPrimitiveType.getName(), JetStandardLibrary.getInstance().getPrimitiveJetType(primitiveType));
+                primitiveTypesMap.put("[" + jvmPrimitiveType.getName(), JetStandardLibrary.getInstance().getPrimitiveArrayJetType(primitiveType));
+                primitiveTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
             }
             primitiveTypesMap.put("void", JetStandardClasses.getUnitType());
         }
@@ -202,12 +211,12 @@ public class JavaTypeTransformer {
             classTypesMap = new HashMap<String, JetType>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getNullablePrimitiveJetType(primitiveType));
+                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
             }
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
-            classTypesMap.put("java.lang.String", standardLibrary.getNullableStringType());
-            classTypesMap.put("java.lang.CharSequence", standardLibrary.getNullableCharSequenceType());
-            classTypesMap.put("java.lang.Throwable", standardLibrary.getNullableThrowableType());
+            classTypesMap.put("java.lang.String", JetStandardLibrary.getInstance().getNullableStringType());
+            classTypesMap.put("java.lang.CharSequence", JetStandardLibrary.getInstance().getNullableCharSequenceType());
+            classTypesMap.put("java.lang.Throwable", JetStandardLibrary.getInstance().getNullableThrowableType());
         }
         return classTypesMap;
     }
@@ -217,11 +226,11 @@ public class JavaTypeTransformer {
             classDescriptorMap = new HashMap<String, ClassDescriptor>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), standardLibrary.getPrimitiveClassDescriptor(primitiveType));
+                classDescriptorMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getPrimitiveClassDescriptor(primitiveType));
             }
-            classDescriptorMap.put("java.lang.String", standardLibrary.getString());
-            classDescriptorMap.put("java.lang.CharSequence", standardLibrary.getCharSequence());
-            classDescriptorMap.put("java.lang.Throwable", standardLibrary.getThrowable());
+            classDescriptorMap.put("java.lang.String", JetStandardLibrary.getInstance().getString());
+            classDescriptorMap.put("java.lang.CharSequence", JetStandardLibrary.getInstance().getCharSequence());
+            classDescriptorMap.put("java.lang.Throwable", JetStandardLibrary.getInstance().getThrowable());
         }
         return classDescriptorMap;
     }

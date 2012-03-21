@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -39,19 +41,26 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     public static final ImportPath[] DEFAULT_JAVA_IMPORTS = new ImportPath[] { new ImportPath("java.lang.*") };
 
-    public static ModuleConfiguration createJavaBridgeConfiguration(@NotNull Project project, @NotNull BindingTrace trace, ModuleConfiguration delegateConfiguration) {
-        return new JavaBridgeConfiguration(project, trace, delegateConfiguration);
-    }
 
-    private final Project project;
-    private final JavaSemanticServices javaSemanticServices;
-    private final ModuleConfiguration delegateConfiguration;
+    @NotNull
+    private Project project;
+    @NotNull
+    private JavaSemanticServices javaSemanticServices;
+    @NotNull
+    private ModuleConfiguration delegateConfiguration;
 
-    private JavaBridgeConfiguration(Project project, BindingTrace trace, ModuleConfiguration delegateConfiguration) {
+    @Inject
+    public void setProject(@NotNull Project project) {
         this.project = project;
-        this.javaSemanticServices = new JavaSemanticServices(project, trace);
-        this.delegateConfiguration = delegateConfiguration;
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project);
     }
+
+    @Inject
+    public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
+        this.javaSemanticServices = javaSemanticServices;
+    }
+
+
 
     @Override
     public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {

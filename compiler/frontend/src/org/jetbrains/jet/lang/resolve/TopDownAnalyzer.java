@@ -18,12 +18,11 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -31,11 +30,9 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.JetScopeAdapter;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -155,7 +152,7 @@ public class TopDownAnalyzer {
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(analyzeCompletely, false, declaredLocally, trace);
 
-        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(project, topDownAnalysisParameters, configuration, moduleDescriptor, flowDataTraceFactory);
+        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(project, topDownAnalysisParameters, moduleDescriptor, flowDataTraceFactory, configuration);
 
         injector.getTopDownAnalyzer().doProcess(outerScope, owner, declarations);
 
@@ -208,9 +205,9 @@ public class TopDownAnalyzer {
             @NotNull List<JetFile> files) {
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(Predicates.<PsiFile>alwaysFalse(), true, false, trace);
-        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(
-                project, topDownAnalysisParameters, ModuleConfiguration.EMPTY,
-                JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, null);
+        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
+                project, topDownAnalysisParameters,
+                JetStandardClasses.FAKE_STANDARD_CLASSES_MODULE, null,  ModuleConfiguration.EMPTY);
 
         injector.getTopDownAnalyzer().doProcessStandardLibraryNamespace(outerScope, standardLibraryNamespace, files);
     }
@@ -279,14 +276,14 @@ public class TopDownAnalyzer {
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false, bindingTraceContext);
 
-        InjectorForTopDownAnalyzer injector = new InjectorForTopDownAnalyzer(
-                project, topDownAnalysisParameters, configuration, owner, flowDataTraceFactory);
+        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
+                project, topDownAnalysisParameters, owner, flowDataTraceFactory, configuration);
 
 
         injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);
     }
 
-    private void doAnalyzeFilesWithGivenTrance2(Collection<JetFile> files) {
+    public void doAnalyzeFilesWithGivenTrance2(Collection<JetFile> files) {
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, moduleDescriptor,
                 new TraceBasedRedeclarationHandler(topDownAnalysisParameters.getTrace())).setDebugName("Root scope in analyzeNamespace");

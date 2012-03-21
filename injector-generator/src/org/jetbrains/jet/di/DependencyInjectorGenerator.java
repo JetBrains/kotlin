@@ -329,7 +329,13 @@ public class DependencyInjectorGenerator {
     }
 
     private Field findDependencyOfType(Class<?> parameterType, String errorMessage, Field neededFor) {
-        Collection<Field> fields = typeToField.get(parameterType);
+        List<Field> fields = Lists.newArrayList();
+        for (Map.Entry<Class<?>, Field> entry : typeToField.entries()) {
+            if (parameterType.isAssignableFrom(entry.getKey())) {
+                fields.add(entry.getValue());
+            }
+        }
+        
         Field dependency;
         if (fields.isEmpty()) {
             dependency = addField(parameterType);

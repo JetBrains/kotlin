@@ -29,14 +29,15 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -145,14 +146,18 @@ public class AnalyzerFacadeForJVM {
     public static BindingContext analyzeFilesWithJavaIntegration(Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
                                                                  JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        AnalyzingUtils.analyzeFilesWithGivenTrace(
-                project,
-                JavaBridgeConfiguration.createJavaBridgeConfiguration(project, bindingTraceContext, DefaultModuleConfiguration.createStandardConfiguration(project)),
-                files,
-                filesToAnalyzeCompletely,
-                flowDataTraceFactory,
-                bindingTraceContext
-        );
+
+        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                filesToAnalyzeCompletely, false, false, bindingTraceContext);
+
+
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+                project, topDownAnalysisParameters, owner, flowDataTraceFactory, bindingTraceContext);
+
+
+        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);
         return bindingTraceContext.getBindingContext();
     }
 

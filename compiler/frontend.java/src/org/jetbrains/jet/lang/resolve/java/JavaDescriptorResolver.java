@@ -48,6 +48,7 @@ import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -193,23 +194,32 @@ public class JavaDescriptorResolver {
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
-    protected final JavaPsiFacade javaFacade;
-    protected final GlobalSearchScope javaSearchScope;
-    protected final JavaSemanticServices semanticServices;
-    private final AltClassFinder altClassFinder;
+    protected JavaPsiFacade javaFacade;
+    protected Project project;
+    protected GlobalSearchScope javaSearchScope ;
+    protected JavaSemanticServices semanticServices;
+    private AltClassFinder altClassFinder;
 
-    public JavaDescriptorResolver(Project project, JavaSemanticServices semanticServices) {
-        this.javaFacade = JavaPsiFacade.getInstance(project);
+    @Inject
+    public void setProject(Project project) {
+        this.project = project;
+        this.altClassFinder = new AltClassFinder(project);
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
             }
         };
-        this.semanticServices = semanticServices;
-        altClassFinder = new AltClassFinder(project);
+        this.javaFacade = JavaPsiFacade.getInstance(project);
     }
-    
+
+    @Inject
+    public void setSemanticServices(JavaSemanticServices semanticServices) {
+        this.semanticServices = semanticServices;
+    }
+
+
+
     @Nullable
     ResolverClassData resolveClassData(@NotNull PsiClass psiClass, @NotNull DescriptorSearchRule searchRule) {
         FqName qualifiedName = new FqName(psiClass.getQualifiedName());

@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -35,14 +38,29 @@ import java.io.IOException;
 public class AllInjectorsGenerator {
 
     public static void main(String[] args) throws IOException {
-        generateProductionInjector();
+        generateInjectorForTopDownAnalyzerBasic();
+        generateInjectorForTopDownAnalyzerForJvm();
         generateMacroInjector();
         generateTestInjector();
+        generateInjectorForJavaSemanticServices();
     }
 
-    private static void generateProductionInjector() throws IOException {
+    private static void generateInjectorForTopDownAnalyzerBasic() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generateInjectorForTopDownAnalyzerCommon(generator);
+        generator.addParameter(ModuleConfiguration.class);
+        generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic");
+    }
 
+    private static void generateInjectorForTopDownAnalyzerForJvm() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generateInjectorForTopDownAnalyzerCommon(generator);
+        generator.addPublicField(JavaBridgeConfiguration.class);
+        generator.addPublicParameter(BindingTrace.class);
+        generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
+    }
+
+    private static void generateInjectorForTopDownAnalyzerCommon(DependencyInjectorGenerator generator) {
         // Fields
         generator.addPublicField(TopDownAnalyzer.class);
         generator.addPublicField(TopDownAnalysisContext.class);
@@ -54,11 +72,8 @@ public class AllInjectorsGenerator {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
-        generator.addParameter(ModuleConfiguration.class);
         generator.addParameter(ModuleDescriptor.class);
         generator.addParameter(JetControlFlowDataTraceFactory.class, false);
-
-        generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzer");
     }
 
     private static void generateMacroInjector() throws IOException {
@@ -87,6 +102,20 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
 
         generator.generate("compiler/tests", "org.jetbrains.jet.di", "InjectorForTests");
+    }
+    
+    private static void generateInjectorForJavaSemanticServices() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        
+        // Fields
+        generator.addPublicField(JavaSemanticServices.class);
+        generator.addPublicField(JavaDescriptorResolver.class);
+        generator.addField(true, BindingTrace.class, null, new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
+        
+        // Parameters
+        generator.addPublicParameter(Project.class);
+        
+        generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaSemanticServices");
     }
 
 }

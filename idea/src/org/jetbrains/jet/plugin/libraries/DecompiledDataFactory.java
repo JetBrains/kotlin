@@ -26,11 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.runtime.typeinfo.JetClass;
 import jet.runtime.typeinfo.JetMethod;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -60,9 +60,9 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         myClsFile = clsFile;
         Project project = myClsFile.getProject();
-        JavaSemanticServices jss = new JavaSemanticServices(project, new BindingTraceContext());
-        myBindingContext = jss.getTrace().getBindingContext();
-        myJavaDescriptorResolver = jss.getDescriptorResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        myBindingContext = injector.getBindingTrace().getBindingContext();
+        myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
 
     @NotNull

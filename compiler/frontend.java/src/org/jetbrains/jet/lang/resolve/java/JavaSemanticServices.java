@@ -26,19 +26,36 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
+import javax.inject.Inject;
+
 /**
  * @author abreslav
  */
 public class JavaSemanticServices {
-    private final JavaTypeTransformer typeTransformer;
-    private final JavaDescriptorResolver descriptorResolver;
-    private final BindingTrace trace;
+    @NotNull
+    private JavaTypeTransformer typeTransformer;
+    @NotNull
+    private JavaDescriptorResolver descriptorResolver;
+    @NotNull
+    private BindingTrace trace;
 
-    public JavaSemanticServices(Project project, BindingTrace trace) {
-        this.trace = trace;
-        this.descriptorResolver = new JavaDescriptorResolver(project, this);
-        this.typeTransformer = new JavaTypeTransformer(this, JetStandardLibrary.getInstance(), descriptorResolver);
+
+    @Inject
+    public void setTypeTransformer(@NotNull JavaTypeTransformer typeTransformer) {
+        this.typeTransformer = typeTransformer;
     }
+
+    @Inject
+    public void setDescriptorResolver(@NotNull JavaDescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setTrace(@NotNull BindingTrace trace) {
+        this.trace = trace;
+    }
+
+
 
     @NotNull
     public JavaTypeTransformer getTypeTransformer() {
