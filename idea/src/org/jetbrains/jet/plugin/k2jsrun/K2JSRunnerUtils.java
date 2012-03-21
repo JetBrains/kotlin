@@ -38,12 +38,13 @@ import java.util.Set;
 
 import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.allVirtualFiles;
 
-//TODO: clean up
-
 /**
  * @author Pavel Talanov
  */
 public final class K2JSRunnerUtils {
+
+    private K2JSRunnerUtils() {
+    }
 
     public static void notifyFailure(@NotNull Throwable exception) {
         Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",

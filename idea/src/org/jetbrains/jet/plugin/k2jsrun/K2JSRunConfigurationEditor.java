@@ -84,7 +84,7 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
     private void setUpChooseGenerateFilePath() {
         FileChooserDescriptor fileChooserDescriptor =
             FileChooserDescriptorFactory.getDirectoryChooserDescriptor("directory where generated files will be stored");
-        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
+        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRoots());
         generatedChooseFile.addBrowseFolderListener(null, null, project, fileChooserDescriptor);
     }
 
@@ -101,7 +101,7 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
 
     private void setUpChooseHtmlToShow() {
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(StdFileTypes.HTML);
-        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
+        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRoots());
         htmlChooseFile.addBrowseFolderListener("Choose file to show after translation is finished", null, project, fileChooserDescriptor);
     }
 
