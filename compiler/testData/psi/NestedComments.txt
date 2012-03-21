@@ -1,0 +1,34 @@
+JetFile: NestedComments.jet
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('doo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiComment(BLOCK_COMMENT)('/*/b\n// */')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(DOC_COMMENT)('/**/\nb\n/* */\nb\n/*/**/*/\nb\n/***/\nb\n/**/***/')
+      PsiErrorElement:Expecting an element
+        PsiElement(MUL)('*')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(DIV)('/')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(DOC_COMMENT)('/** /**\n\n*/***/')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

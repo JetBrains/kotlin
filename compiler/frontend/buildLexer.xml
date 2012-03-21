@@ -1,5 +1,13 @@
 <project name="JetLexer" default="lexer">
     <property name="home" value="${basedir}"/>
+<!--
+    This script relies on a custom JFlex that is available in the sources of IntelliJ IDEA Community Edition
+    put the idea.properties file to the root directory of the frontend module, and put the following property there:
+
+       idea.home=../../../idea/src
+
+    where "../../../idea/src" is the relative location of the sources of IntelliJ IDEA Community
+-->
     <property file="${home}/idea.properties"/>
 
     <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>

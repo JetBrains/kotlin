@@ -1,0 +1,4 @@
+JetFile: DocCommentAtBeginningOfFile4.jet
+  PsiComment(DOC_COMMENT)('/**\n\n/**foo*/\n\nasdfas')
+  NAMESPACE_HEADER
+    <empty list>

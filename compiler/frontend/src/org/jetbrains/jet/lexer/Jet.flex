@@ -22,10 +22,18 @@ import org.jetbrains.jet.lexer.JetTokens;
             this.state = state;
             this.lBraceCount = lBraceCount;
         }
+
+        @Override
+        public String toString() {
+            return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
+        }
     }
 
     private final Stack<State> states = new Stack<State>();
     private int lBraceCount;
+
+    private int commentStart;
+    private int commentDepth;
 
     private void pushState(int state) {
         states.push(new State(yystate(), lBraceCount));
@@ -38,14 +46,26 @@ import org.jetbrains.jet.lexer.JetTokens;
         lBraceCount = state.lBraceCount;
         yybegin(state.state);
     }
+
+    private IElementType commentStateToTokenType(int state) {
+        switch (state) {
+            case BLOCK_COMMENT:
+                return JetTokens.BLOCK_COMMENT;
+            case DOC_COMMENT:
+                return JetTokens.DOC_COMMENT;
+            default:
+                throw new IllegalArgumentException("Unexpected state: " + state);
+        }
+    }
 %}
 
 %function advance
 %type IElementType
-%eof{  return;
+%eof{
+  return;
 %eof}
 
-%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY
+%xstate STRING RAW_STRING SHORT_TEMPLATE_ENTRY BLOCK_COMMENT DOC_COMMENT
 %state LONG_TEMPLATE_ENTRY
 
 DIGIT=[0-9]
@@ -63,10 +83,6 @@ IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
 LABEL_IDENTIFIER = \@{IDENTIFIER}
 
-BLOCK_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"
-// TODO: Wiki markup for doc comments?
-DOC_COMMENT="/*""*"+("/"|([^"/""*"]{COMMENT_TAIL}))?
-COMMENT_TAIL=([^"*"]*("*"+[^"*""/"])?)*("*"+"/")?
 EOL_COMMENT="/""/"[^\n]*
 
 INTEGER_LITERAL={DECIMAL_INTEGER_LITERAL}|{HEX_INTEGER_LITERAL}|{BIN_INTEGER_LITERAL}
@@ -146,10 +162,48 @@ LONG_TEMPLATE_ENTRY_END=\}
                                            return JetTokens.RBRACE;
                                        }
 
-// Mere mortals
+// (Nested) comments
 
-{BLOCK_COMMENT} { return JetTokens.BLOCK_COMMENT; }
-{DOC_COMMENT} { return JetTokens.DOC_COMMENT; }
+"/**" {
+    pushState(DOC_COMMENT);
+    commentDepth = 0;
+    commentStart = getTokenStart();
+}
+
+"/*" {
+    pushState(BLOCK_COMMENT);
+    commentDepth = 0;
+    commentStart = getTokenStart();
+}
+
+<BLOCK_COMMENT, DOC_COMMENT> {
+    "/*" {
+         commentDepth++;
+    }
+
+    <<EOF>> {
+        int state = yystate();
+        popState();
+        zzStartRead = commentStart;
+        return commentStateToTokenType(state);
+    }
+
+    "*/" {
+        if (commentDepth > 0) {
+            commentDepth--;
+        }
+        else {
+             int state = yystate();
+             popState();
+             zzStartRead = commentStart;
+             return commentStateToTokenType(state);
+        }
+    }
+
+    .|{WHITE_SPACE_CHAR} {}
+}
+
+// Mere mortals
 
 ({WHITE_SPACE_CHAR})+ { return JetTokens.WHITE_SPACE; }
 
@@ -162,7 +216,6 @@ LONG_TEMPLATE_ENTRY_END=\}
 {HEX_DOUBLE_LITERAL} { return JetTokens.FLOAT_LITERAL; }
 
 {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
-//{STRING_LITERAL} { return JetTokens.STRING_LITERAL; }
 
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 "package"    { return JetTokens.PACKAGE_KEYWORD ;}

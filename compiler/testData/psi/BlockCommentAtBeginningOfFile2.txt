@@ -1,0 +1,4 @@
+JetFile: BlockCommentAtBeginningOfFile2.jet
+  PsiComment(BLOCK_COMMENT)('/*\n/*')
+  NAMESPACE_HEADER
+    <empty list>
