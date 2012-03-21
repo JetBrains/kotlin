@@ -350,6 +350,9 @@ public class DependencyInjectorGenerator {
         if (type.isInterface()) {
             throw new IllegalArgumentException("cannot instantiate interface: " + type.getName() + " needed for " + neededFor);
         }
+        if (Modifier.isAbstract(type.getModifiers())) {
+            throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getName() + " needed for " + neededFor);
+        }
 
         // Look for constructor
         Constructor<?>[] constructors = type.getConstructors();
