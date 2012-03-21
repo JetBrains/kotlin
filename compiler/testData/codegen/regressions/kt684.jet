@@ -2,7 +2,7 @@ fun escapeChar(c : Char) : String? = when (c) {
   '\\' -> "\\\\"
   '\n' -> "\\n"
   '"'  -> "\\\""
-  else -> String.valueOf(c)
+  else -> "" + c
 }
 
 fun String.escape(i : Int = 0, result : String = "") : String =
