@@ -13,17 +13,17 @@ private fun <T> asSequence(iterator: Iterator<T>) = Sequence<T> { if (iterator.h
 private fun <T> asSequence(iterator: java.util.Iterator<T>) = Sequence<T> { if (iterator.hasNext()) iterator.next() else null }
 
 /**
- * Produces the [cartesian square](http://en.wikipedia.org/wiki/Cartesian_product#Cartesian_square_and_Cartesian_power)
- * as sequence of order pairs of elements lazily obtained from this range of elements
+ * Produces the [cartesian product](http://en.wikipedia.org/wiki/Cartesian_product#n-ary_product) as a sequence of ordered pairs of elements lazily obtained
+ * from two [[Iterable]] instances
  */
-fun <T> Iterable<T>.cartesianSquare(): Sequence<#(T, T)> {
-  val first = iterator(); var second = iterator(); var a: T? = null
+fun <T> Iterable<T>.times(other: Iterable<T>): Sequence<#(T, T)> {
+  val first = iterator(); var second = other.iterator(); var a: T? = null
 
   fun nextPair(): #(T, T)? {
     if (a == null && first.hasNext) a = first.next()
     if (second.hasNext) return #(a.sure(), second.next())
     if (first.hasNext) {
-      a = first.next(); second = iterator()
+      a = first.next(); second = other.iterator()
       return #(a.sure(), second.next())
     }
     return null
