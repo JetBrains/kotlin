@@ -44,14 +44,14 @@
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
-      
+
       <action id="Kotlin.TranslateToJs" class="org.jetbrains.jet.plugin.actions.TranslateToJsAction"
               text="Translate Kotlin to JavaScript.">
           <keyboard-shortcut keymap="$default" first-keystroke="control alt shift W"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
 
-      
+
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -135,6 +135,8 @@
 
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
+      <configurationType implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSRunConfigurationType"/>
+      <programRunner implementation="org.jetbrains.jet.plugin.k2jsrun.K2JSBrowserProgramRunner"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationProducer"/>
       <configurationProducer implementation="org.jetbrains.jet.plugin.run.JetJUnitConfigurationProducer"/>
       <codeInsight.lineMarkerProvider language="jet" implementationClass="org.jetbrains.jet.plugin.annotations.JetLineMarkerProvider"/>
