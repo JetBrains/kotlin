@@ -38,7 +38,7 @@ public class StdlibTest extends CodegenTestCase {
         super.setUp();
         createEnvironmentWithFullJdk();
         myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
-        File junitJar = new File("libraries/testlib/lib/junit-4.9.jar");
+        File junitJar = new File("libraries/lib/junit-4.9.jar");
 
         if (!junitJar.exists()) {
             throw new AssertionError();

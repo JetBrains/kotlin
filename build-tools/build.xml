@@ -2,7 +2,7 @@
 
     <property name="tests-dir"   location="${output}/ant-test/build-tools-test"/>
     <property name="tests-jar"   location="${tests-dir}/out.jar"/>
-    <property name="junit-jar"   location="${basedir}/libraries/testlib/lib/junit-4.9.jar"/>
+    <property name="junit-jar"   location="${basedir}/libraries/lib/junit-4.9.jar"/>
     <property name="failonerror" value="true"/>  <!-- Whether invoking compiled classes should file on error -->
     <property name="use-ivy"     value="false"/> <!-- Whether Ivy should be used to define "kotlin.classpath" and <kotlinc> task -->
                                                  <!-- Override with "-Duse-ivy=true" -->
@@ -378,19 +378,19 @@
     <macrodef name="testlib-tests">
         <sequential>
             <!-- Dir => Dir -->
-            <kotlinc-dir         src       = "${basedir}/libraries/testlib/test"/>
+            <kotlinc-dir         src       = "${basedir}/libraries/stdlib/test"/>
             <testlib-junit-tests classpath = "${tests-dir}"/>
 
             <!-- Dir => Jar -->
-            <kotlinc-jar         src       = "${basedir}/libraries/testlib/test"/>
+            <kotlinc-jar         src       = "${basedir}/libraries/stdlib/test"/>
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Explicit Jar -->
-            <kotlinc-jar         module    = "${basedir}/libraries/testlib/module.kt"/>
+            <kotlinc-jar         module    = "${basedir}/libraries/stdlib/testModule.kt"/>
             <testlib-junit-tests classpath = "${tests-jar}"/>
 
             <!-- Module => Default Jar -->
-            <kotlinc-jar         module    = "${basedir}/libraries/testlib/module.kt" jar=""/>
+            <kotlinc-jar         module    = "${basedir}/libraries/stdlib/testModule.kt" jar=""/>
             <move file="${basedir}/libraries/testlib/testlib.jar" todir="${tests-dir}"/>
             <testlib-junit-tests classpath = "${tests-dir}/testlib.jar"/>
         </sequential>
