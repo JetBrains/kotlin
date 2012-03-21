@@ -78,7 +78,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         JetRunConfiguration configuration = (JetRunConfiguration) settings.getConfiguration();
         configuration.setModule(module);
         configuration.setName(StringUtil.trimEnd(fqName.getFqName(), "." + JvmAbi.PACKAGE_CLASS));
-        configuration.MAIN_CLASS_NAME = fqName;
+        configuration.setRunClass(fqName.getFqName());
         return settings;
     }
 
