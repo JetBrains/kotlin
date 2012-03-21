@@ -40,6 +40,8 @@
             <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/${build.zip}"/>
 
+            <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
+            <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
             <!--
                  This one needs to be deleted because otherwise it gets onto the classpath
                  together with junit-4.10.jar and the classloading goes crazy that breaks
