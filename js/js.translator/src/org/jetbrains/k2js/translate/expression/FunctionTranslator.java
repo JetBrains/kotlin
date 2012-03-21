@@ -20,6 +20,7 @@ package org.jetbrains.k2js.translate.expression;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
@@ -34,6 +35,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.closure.ClosureContext;
 import org.jetbrains.k2js.translate.utils.closure.ClosureUtils;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
@@ -45,7 +47,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescrip
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.newAliasForThis;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 
@@ -62,12 +63,14 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new FunctionTranslator(function, context);
     }
 
+    @Nullable
+    private TemporaryVariable aliasForContaingClassThis = null;
     @NotNull
     private final JetDeclarationWithBody functionDeclaration;
+    @Nullable
+    private JsName extensionFunctionReceiverName = null;
     @NotNull
     private final JsFunction functionObject;
-    @NotNull
-    private final TranslationContext functionBodyContext;
     @NotNull
     private final FunctionDescriptor descriptor;
     // function body needs to be explicitly created here to include it in the context
@@ -81,14 +84,49 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.functionDeclaration = functionDeclaration;
         this.functionObject = context().getFunctionObject(descriptor);
         this.functionBody = functionObject.getBody();
-        this.functionBodyContext = functionBodyContext().innerBlock(functionBody);
+    }
+
+    @NotNull
+    private TranslationContext getFunctionBodyContext() {
+        if (isLiteral()) {
+            return getFunctionBodyContextForLiteral();
+        }
+        if (isExtensionFunction()) {
+            return getFunctionBodyContextForExtensionFunction();
+        }
+        return getContextWithFunctionBodyBlock();
+    }
+
+    @NotNull
+    private TranslationContext getFunctionBodyContextForLiteral() {
+        ClassDescriptor containingClass = getContainingClass(descriptor);
+        if (containingClass == null) {
+            return getContextWithFunctionBodyBlock();
+        }
+        JsExpression thisQualifier = TranslationUtils.getThisObject(context(), containingClass);
+        aliasForContaingClassThis = context().declareTemporary(thisQualifier);
+        return getContextWithFunctionBodyBlock().innerContextWithThisAliased(containingClass, aliasForContaingClassThis.name());
+    }
+
+    @NotNull
+    private TranslationContext getFunctionBodyContextForExtensionFunction() {
+        TranslationContext contextWithFunctionBodyBlock = getContextWithFunctionBodyBlock();
+        extensionFunctionReceiverName = contextWithFunctionBodyBlock.jsScope().declareName(Namer.getReceiverParameterName());
+        DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+        assert expectedReceiverDescriptor != null;
+        return contextWithFunctionBodyBlock.innerContextWithThisAliased(expectedReceiverDescriptor, extensionFunctionReceiverName);
+    }
+
+    @NotNull
+    private TranslationContext getContextWithFunctionBodyBlock() {
+        return context().newDeclaration(functionDeclaration).innerBlock(functionBody);
     }
 
 
     @NotNull
     public JsFunction translateAsLocalFunction() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        generateFunctionObject();
+        generateFunctionObject(getFunctionBodyContext());
         functionObject.setName(functionName);
         return functionObject;
     }
@@ -96,7 +134,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        generateFunctionObject();
+        generateFunctionObject(getFunctionBodyContext());
         return new JsPropertyInitializer(functionName.makeRef(), functionObject);
     }
 
@@ -108,17 +146,26 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression doTranslateAsLiteral() {
         assert getExpectedThisDescriptor(descriptor) == null;
-        ClassDescriptor containingClass = getContainingClass(descriptor);
-        if (containingClass == null) {
-            generateFunctionObject();
+        generateFunctionObject(getFunctionBodyContext());
+        boolean shouldAliasThisObject = shouldAliasThisObject();
+        if (!shouldAliasThisObject) {
             return functionObject;
         }
-        return generateFunctionObjectWithAliasedThisReference(containingClass);
+        assert aliasForContaingClassThis != null;
+        return AstUtil.newSequence(aliasForContaingClassThis.assignmentExpression(), functionObject);
+    }
+
+    private boolean shouldAliasThisObject() {
+        if (!isLiteral()) {
+            return false;
+        }
+        ClassDescriptor containingClass = getContainingClass(descriptor);
+        return containingClass != null;
     }
 
     @NotNull
     private JsExpression mayBeWrapInClosureCaptureExpression(@NotNull JsExpression wrappedExpression) {
-        ClosureContext closureContext = ClosureUtils.captureClosure(context(), (JetElement) functionDeclaration);
+        ClosureContext closureContext = ClosureUtils.captureClosure(context(), (JetElement)functionDeclaration);
         if (closureContext.getDescriptors().isEmpty()) {
             return wrappedExpression;
         }
@@ -138,35 +185,18 @@ public final class FunctionTranslator extends AbstractTranslator {
         return dummyFunctionInvocation;
     }
 
-    @NotNull
-    private JsExpression generateFunctionObjectWithAliasedThisReference(@NotNull ClassDescriptor containingClass) {
-        TemporaryVariable aliasForThis = newAliasForThis(context(), containingClass);
-        generateFunctionObject();
-        aliaser().removeAliasForThis(containingClass);
-        return AstUtil.newSequence(aliasForThis.assignmentExpression(), functionObject);
-    }
-
-    private void generateFunctionObject() {
+    private void generateFunctionObject(@NotNull TranslationContext context) {
         setParameters(functionObject, translateParameters());
-        translateBody();
-        restoreContext();
+        translateBody(context);
     }
 
-    private void restoreContext() {
-        if (isExtensionFunction()) {
-            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-            assert expectedReceiverDescriptor != null : "Extension functions should always have receiver descriptors.";
-            functionBodyContext.aliaser().removeAliasForThis(expectedReceiverDescriptor);
-        }
-    }
-
-    private void translateBody() {
+    private void translateBody(@NotNull TranslationContext context) {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         if (jetBodyExpression == null) {
             assert descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }
-        JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
+        JsNode realBody = Translation.translateExpression(jetBodyExpression, context);
         functionBody.getStatements().add(wrapWithReturnIfNeeded(realBody, mustAddReturnToGeneratedFunctionBody()));
     }
 
@@ -192,14 +222,9 @@ public final class FunctionTranslator extends AbstractTranslator {
                 if (!(node instanceof JsExpression)) {
                     return node;
                 }
-                return new JsReturn((JsExpression) node);
+                return new JsReturn((JsExpression)node);
             }
         });
-    }
-
-    @NotNull
-    private TranslationContext functionBodyContext() {
-        return context().newDeclaration(functionDeclaration);
     }
 
     @NotNull
@@ -220,11 +245,8 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void mayBeAddThisParameterForExtensionFunction(@NotNull List<JsParameter> jsParameters) {
         if (isExtensionFunction()) {
-            JsName receiver = functionBodyContext.jsScope().declareName(Namer.getReceiverParameterName());
-            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
-            assert expectedReceiverDescriptor != null;
-            aliaser().setAliasForThis(expectedReceiverDescriptor, receiver);
-            jsParameters.add(new JsParameter(receiver));
+            assert extensionFunctionReceiverName != null;
+            jsParameters.add(new JsParameter(extensionFunctionReceiverName));
         }
     }
 

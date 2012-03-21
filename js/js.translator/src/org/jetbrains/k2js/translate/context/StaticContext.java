@@ -48,13 +48,11 @@ public final class StaticContext {
         JsProgram program = new JsProgram("main");
         JsRootScope jsRootScope = program.getRootScope();
         Namer namer = Namer.newInstance(jsRootScope);
-        Aliaser aliaser = Aliaser.newInstance();
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
         StandardClasses standardClasses =
             StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, aliaser,
-                                 namer, intrinsics, standardClasses, scope);
+        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, scope);
     }
 
     @NotNull
@@ -62,10 +60,6 @@ public final class StaticContext {
 
     @NotNull
     private final BindingContext bindingContext;
-
-    @NotNull
-    private final Aliaser aliaser;
-
     @NotNull
     private final Namer namer;
 
@@ -90,14 +84,12 @@ public final class StaticContext {
     private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
 
-    //qTODO: too many parameters in constructor
+    //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
-                          @NotNull Aliaser aliaser,
                           @NotNull Namer namer, @NotNull Intrinsics intrinsics,
                           @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope) {
         this.program = program;
         this.bindingContext = bindingContext;
-        this.aliaser = aliaser;
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
@@ -112,11 +104,6 @@ public final class StaticContext {
     @NotNull
     public BindingContext getBindingContext() {
         return bindingContext;
-    }
-
-    @NotNull
-    public Aliaser getAliaser() {
-        return aliaser;
     }
 
     @NotNull

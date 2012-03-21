@@ -84,11 +84,11 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
     public List<JsStatement> visitObjectDeclarationName(@NotNull JetObjectDeclarationName objectName,
                                                         @NotNull TranslationContext context) {
         PropertyDescriptor propertyDescriptorForObjectDeclaration
-                = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
+            = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
         JetObjectDeclaration objectDeclaration = getObjectDeclarationForName(objectName);
         JsInvocation objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
         JsExprStmt assignment = assignmentToBackingField(context, propertyDescriptorForObjectDeclaration, objectValue)
-                .makeStmt();
+            .makeStmt();
         return Collections.<JsStatement>singletonList(assignment);
     }
 

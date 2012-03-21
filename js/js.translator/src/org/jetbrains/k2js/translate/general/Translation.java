@@ -36,6 +36,7 @@ import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
@@ -64,8 +65,9 @@ public final class Translation {
 
     @NotNull
     public static JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
+                                                         @NotNull Map<JsName, JsName> aliasingMap,
                                                          @NotNull TranslationContext context) {
-        return ClassTranslator.generateClassCreationExpression(classDeclaration, context);
+        return ClassTranslator.generateClassCreationExpression(classDeclaration, aliasingMap, context);
     }
 
     @NotNull
@@ -124,6 +126,4 @@ public final class Translation {
         namer.exec(context.program());
         return context.program();
     }
-
-
 }

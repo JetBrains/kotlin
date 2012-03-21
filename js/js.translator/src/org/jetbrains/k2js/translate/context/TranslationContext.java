@@ -38,28 +38,35 @@ public final class TranslationContext {
     private final DynamicContext dynamicContext;
     @NotNull
     private final StaticContext staticContext;
+    @NotNull
+    private final AliasingContext aliasingContext;
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
         JsProgram program = staticContext.getProgram();
         JsBlock globalBlock = program.getGlobalBlock();
+        DynamicContext rootDynamicContext = DynamicContext.rootContext(staticContext.getRootScope(), globalBlock);
+        AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
         return new TranslationContext(staticContext,
-                                      DynamicContext.rootContext(staticContext.getRootScope(), globalBlock));
+                                      rootDynamicContext, rootAliasingContext);
     }
 
-    private TranslationContext(@NotNull StaticContext staticContext, @NotNull DynamicContext dynamicContext) {
+    private TranslationContext(@NotNull StaticContext staticContext,
+                               @NotNull DynamicContext dynamicContext,
+                               @NotNull AliasingContext context) {
         this.dynamicContext = dynamicContext;
         this.staticContext = staticContext;
+        aliasingContext = context;
     }
 
     @NotNull
     public TranslationContext contextWithScope(@NotNull NamingScope newScope, @NotNull JsBlock block) {
-        return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block));
+        return new TranslationContext(staticContext, DynamicContext.newContext(newScope, block), aliasingContext);
     }
 
     @NotNull
     public TranslationContext innerBlock(@NotNull JsBlock block) {
-        return new TranslationContext(staticContext, dynamicContext.innerBlock(block));
+        return new TranslationContext(staticContext, dynamicContext.innerBlock(block), aliasingContext);
     }
 
     @NotNull
@@ -71,6 +78,11 @@ public final class TranslationContext {
     @NotNull
     public TranslationContext innerContextWithGivenScopeAndBlock(@NotNull JsScope scope, @NotNull JsBlock block) {
         return contextWithScope(dynamicContext.getScope().innerScope(scope), block);
+    }
+
+    @NotNull
+    public TranslationContext innerContextWithThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsName alias) {
+        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withThisAliased(correspondingDescriptor, alias));
     }
 
     @NotNull
@@ -120,11 +132,6 @@ public final class TranslationContext {
     }
 
     @NotNull
-    public Aliaser aliaser() {
-        return staticContext.getAliaser();
-    }
-
-    @NotNull
     public Namer namer() {
         return staticContext.getNamer();
     }
@@ -142,6 +149,11 @@ public final class TranslationContext {
     @NotNull
     public JsScope jsScope() {
         return dynamicContext.jsScope();
+    }
+
+    @NotNull
+    public AliasingContext aliasingContext() {
+        return aliasingContext;
     }
 
     @NotNull

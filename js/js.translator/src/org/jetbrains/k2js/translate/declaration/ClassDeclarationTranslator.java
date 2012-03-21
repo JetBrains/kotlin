@@ -16,6 +16,8 @@
 
 package org.jetbrains.k2js.translate.declaration;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.util.AstUtil;
@@ -32,9 +34,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.ClassSortingUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
@@ -49,7 +49,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private final List<ClassDescriptor> descriptors;
     @NotNull
-    private final Map<JsName, JsName> localToGlobalClassName;
+    private final BiMap<JsName, JsName> localToGlobalClassName;
     @NotNull
     private final JsFunction dummyFunction;
     @Nullable
@@ -61,7 +61,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
                                       @NotNull TranslationContext context) {
         super(context);
         this.descriptors = descriptors;
-        this.localToGlobalClassName = new HashMap<JsName, JsName>();
+        this.localToGlobalClassName = HashBiMap.create();
         this.dummyFunction = new JsFunction(context.jsScope());
     }
 
@@ -69,7 +69,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         declarationsObject = context().jsScope().declareName(Namer.nameForClassesVariable());
         assert declarationsObject != null;
         declarationsStatement =
-                newVar(declarationsObject, generateDummyFunctionInvocation());
+            newVar(declarationsObject, generateDummyFunctionInvocation());
     }
 
     @NotNull
@@ -112,16 +112,9 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         for (JetClass jetClass : getClassDeclarations()) {
             classDeclarations.add(generateDeclaration(jetClass));
         }
-        removeAliases();
         return classDeclarations;
     }
 
-    private void removeAliases() {
-        for (JetClass jetClass : getClassDeclarations()) {
-            ClassDescriptor descriptor = BindingUtils.getClassDescriptor(bindingContext(), jetClass);
-            aliaser().removeAliasForDescriptor(descriptor);
-        }
-    }
 
     @NotNull
     private List<JetClass> getClassDeclarations() {
@@ -136,7 +129,7 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
     private JsStatement generateDeclaration(@NotNull JetClass declaration) {
         JsName localClassName = generateLocalAlias(declaration);
         JsInvocation classDeclarationExpression =
-                Translation.translateClassDeclaration(declaration, context());
+            Translation.translateClassDeclaration(declaration, localToGlobalClassName.inverse(), context());
         return newVar(localClassName, classDeclarationExpression);
     }
 
@@ -145,8 +138,6 @@ public final class ClassDeclarationTranslator extends AbstractTranslator {
         JsName globalClassName = context().getNameForElement(declaration);
         JsName localAlias = dummyFunction.getScope().declareTemporary();
         localToGlobalClassName.put(localAlias, globalClassName);
-        ClassDescriptor descriptor = BindingUtils.getClassDescriptor(bindingContext(), declaration);
-        aliaser().setAliasForDescriptor(descriptor, localAlias);
         return localAlias;
     }
 

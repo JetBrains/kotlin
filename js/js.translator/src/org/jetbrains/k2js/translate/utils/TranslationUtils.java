@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
@@ -117,22 +116,20 @@ public final class TranslationUtils {
     @NotNull
     public static JsExpression getThisObject(@NotNull TranslationContext context,
                                              @NotNull DeclarationDescriptor correspondingDeclaration) {
-        JsExpression thisRef = null;
         if (correspondingDeclaration instanceof ClassDescriptor) {
-            if (context.aliaser().hasAliasForThis(correspondingDeclaration)) {
-                thisRef = context.aliaser().getAliasForThis(correspondingDeclaration);
+            JsName alias = context.aliasingContext().getAliasForThis(correspondingDeclaration);
+            if (alias != null) {
+                return alias.makeRef();
             }
         }
         if (correspondingDeclaration instanceof CallableDescriptor) {
             DeclarationDescriptor receiverDescriptor =
-                    getExpectedReceiverDescriptor((CallableDescriptor) correspondingDeclaration);
+                getExpectedReceiverDescriptor((CallableDescriptor)correspondingDeclaration);
             assert receiverDescriptor != null;
-            if (context.aliaser().hasAliasForThis(receiverDescriptor)) {
-                thisRef = context.aliaser().getAliasForThis(receiverDescriptor);
+            JsName alias = context.aliasingContext().getAliasForThis(receiverDescriptor);
+            if (alias != null) {
+                return alias.makeRef();
             }
-        }
-        if (thisRef != null) {
-            return thisRef;
         }
         return new JsThisRef();
     }
@@ -171,7 +168,7 @@ public final class TranslationUtils {
     public static boolean isIntrinsicOperation(@NotNull TranslationContext context,
                                                @NotNull JetOperationExpression expression) {
         FunctionDescriptor operationDescriptor =
-                BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+            BindingUtils.getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
 
         if (operationDescriptor == null) return true;
         if (context.intrinsics().isIntrinsic(operationDescriptor)) return true;
@@ -183,7 +180,7 @@ public final class TranslationUtils {
     public static JsNameRef getMethodReferenceForOverloadedOperation(@NotNull TranslationContext context,
                                                                      @NotNull JetOperationExpression expression) {
         FunctionDescriptor overloadedOperationDescriptor = getFunctionDescriptorForOperationExpression
-                (context.bindingContext(), expression);
+            (context.bindingContext(), expression);
         assert overloadedOperationDescriptor != null;
         JsNameRef overloadedOperationReference = context.getNameForDescriptor(overloadedOperationDescriptor).makeRef();
         assert overloadedOperationReference != null;
@@ -193,15 +190,6 @@ public final class TranslationUtils {
     @NotNull
     public static JsNumberLiteral zeroLiteral(@NotNull TranslationContext context) {
         return context.program().getNumberLiteral(0);
-    }
-
-    @NotNull
-    public static TemporaryVariable newAliasForThis(@NotNull TranslationContext context,
-                                                    @NotNull DeclarationDescriptor descriptor) {
-        JsExpression thisQualifier = getThisObject(context, descriptor);
-        TemporaryVariable aliasForThis = context.declareTemporary(thisQualifier);
-        context.aliaser().setAliasForThis(descriptor, aliasForThis.name());
-        return aliasForThis;
     }
 
     @NotNull

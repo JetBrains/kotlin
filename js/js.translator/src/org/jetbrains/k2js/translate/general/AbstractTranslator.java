@@ -19,7 +19,6 @@ package org.jetbrains.k2js.translate.general;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.k2js.translate.context.Aliaser;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 /**
@@ -42,11 +41,6 @@ public abstract class AbstractTranslator {
     @NotNull
     protected TranslationContext context() {
         return context;
-    }
-
-    @NotNull
-    protected Aliaser aliaser() {
-        return context.aliaser();
     }
 
     @NotNull
