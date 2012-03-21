@@ -46,6 +46,7 @@ public class OverrideResolver {
 
     private TopDownAnalysisContext context;
     private TopDownAnalysisParameters topDownAnalysisParameters;
+    private BindingTrace trace;
 
 
     @Inject
@@ -56,6 +57,11 @@ public class OverrideResolver {
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
+    }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
     }
 
 
@@ -126,8 +132,8 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration jetProperty = (JetDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
-                            context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
+                            JetDeclaration jetProperty = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
+                            trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
                         }
                     });
         }
@@ -245,7 +251,7 @@ public class OverrideResolver {
         if (nameIdentifier == null) return;
 
         for (CallableMemberDescriptor memberDescriptor : manyImpl) {
-            context.getTrace().report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
             break;
         }
 
@@ -255,7 +261,7 @@ public class OverrideResolver {
         }
 
         for (CallableMemberDescriptor memberDescriptor : abstractNoImpl) {
-            context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
+            trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, memberDescriptor));
             break;
         }
 
@@ -278,9 +284,9 @@ public class OverrideResolver {
 //                if (functionDescriptor.getModality() == Modality.ABSTRACT && !allOverriddenFunctions.contains(functionDescriptor.getOriginal()) && !foundError && nameIdentifier != null) {
 //                    DeclarationDescriptor declarationDescriptor = functionDescriptor.getContainingDeclaration();
 //                    if (declarationDescriptor != classDescriptor) {
-////                        context.getTrace().getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
+////                        trace.getErrorHandler().genericError(nameIdentifier.getNode(), "Class '" + klass.getName() + "' must be declared abstract or implement abstract method '" +
 ////                                                                                                    functionDescriptor.getName() + "' declared in " + declarationDescriptor.getName());
-//                        context.getTrace().report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
+//                        trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, functionDescriptor));
 //                        foundError = true;
 //                    }
 //                }
@@ -356,9 +362,9 @@ public class OverrideResolver {
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {
-        JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
+        JetNamedDeclaration member = (JetNamedDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
         if (member == null) {
-            assert context.getTrace().get(DELEGATED, declared);
+            assert trace.get(DELEGATED, declared);
             return;
         }
 
@@ -377,29 +383,29 @@ public class OverrideResolver {
             if (overridden != null) {
                 if (hasOverrideModifier) {
                     if (!overridden.getModality().isOverridable() && !finalOverriddenError) {
-                        context.getTrace().report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
+                        trace.report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
                         finalOverriddenError = true;
                     }
 
                     if (!OverridingUtil.isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, overridden, declared) && !typeMismatchError) {
-                        context.getTrace().report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
                         typeMismatchError = true;
                     }
 
                     if (checkPropertyKind(overridden, true) && checkPropertyKind(declared, false) && !kindMismatchError) {
-                        context.getTrace().report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                        trace.report(VAR_OVERRIDDEN_BY_VAL.on((JetProperty) member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
                         kindMismatchError = true;
                     }
                 }
             }
         }
         if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
-            context.getTrace().report(NOTHING_TO_OVERRIDE.on(member, declared));
+            trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
         }
         PsiElement nameIdentifier = member.getNameIdentifier();
         if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
             CallableMemberDescriptor overridden = declared.getOverriddenDescriptors().iterator().next();
-            context.getTrace().report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
+            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
         }
     }
 

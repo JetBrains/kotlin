@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -42,6 +43,7 @@ import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -58,10 +60,12 @@ public class InjectorForTopDownAnalyzerBasic {
     private DescriptorResolver descriptorResolver;
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final ObservableBindingTrace observableBindingTrace;
 
     public InjectorForTopDownAnalyzerBasic(
         @NotNull Project project,
         @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+        @NotNull ObservableBindingTrace observableBindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor,
         JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory,
         @NotNull ModuleConfiguration moduleConfiguration
@@ -74,6 +78,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.descriptorResolver = new DescriptorResolver();
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
+        this.observableBindingTrace = observableBindingTrace;
         DeclarationResolver declarationResolver = new DeclarationResolver();
         AnnotationResolver annotationResolver = new AnnotationResolver();
         CallResolver callResolver = new CallResolver();
@@ -99,6 +104,7 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
+        this.topDownAnalyzer.setTrace(observableBindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
 
         this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
@@ -108,12 +114,15 @@ public class InjectorForTopDownAnalyzerBasic {
         this.bodyResolver.setDescriptorResolver(descriptorResolver);
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
+        this.bodyResolver.setTrace(observableBindingTrace);
 
         this.controlFlowAnalyzer.setContext(topDownAnalysisContext);
         this.controlFlowAnalyzer.setFlowDataTraceFactory(jetControlFlowDataTraceFactory);
         this.controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
+        this.controlFlowAnalyzer.setTrace(observableBindingTrace);
 
         this.declarationsChecker.setContext(topDownAnalysisContext);
+        this.declarationsChecker.setTrace(observableBindingTrace);
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);
@@ -123,6 +132,7 @@ public class InjectorForTopDownAnalyzerBasic {
         declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
         declarationResolver.setImportsResolver(importsResolver);
+        declarationResolver.setTrace(observableBindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setExpressionTypingServices(expressionTypingServices);
@@ -142,22 +152,27 @@ public class InjectorForTopDownAnalyzerBasic {
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);
+        importsResolver.setTrace(observableBindingTrace);
 
         delegationResolver.setContext(topDownAnalysisContext);
+        delegationResolver.setTrace(observableBindingTrace);
 
         namespaceFactoryImpl.setConfiguration(moduleConfiguration);
-        namespaceFactoryImpl.setContext(topDownAnalysisContext);
         namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
+        namespaceFactoryImpl.setTrace(observableBindingTrace);
 
         overloadResolver.setContext(topDownAnalysisContext);
+        overloadResolver.setTrace(observableBindingTrace);
 
         overrideResolver.setContext(topDownAnalysisContext);
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
+        overrideResolver.setTrace(observableBindingTrace);
 
         typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
         typeHierarchyResolver.setNamespaceFactory(namespaceFactoryImpl);
+        typeHierarchyResolver.setTrace(observableBindingTrace);
 
     }
 
@@ -191,6 +206,10 @@ public class InjectorForTopDownAnalyzerBasic {
 
     public TopDownAnalysisParameters getTopDownAnalysisParameters() {
         return this.topDownAnalysisParameters;
+    }
+
+    public ObservableBindingTrace getObservableBindingTrace() {
+        return this.observableBindingTrace;
     }
 
 }

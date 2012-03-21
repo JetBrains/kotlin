@@ -23,13 +23,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -56,6 +54,8 @@ public class TypeHierarchyResolver {
     private DescriptorResolver descriptorResolver;
     @NotNull
     private NamespaceFactoryImpl namespaceFactory;
+    @NotNull
+    private BindingTrace trace;
 
     // state
     private LinkedList<MutableClassDescriptor> topologicalOrder;
@@ -78,6 +78,11 @@ public class TypeHierarchyResolver {
     @Inject
     public void setNamespaceFactory(@NotNull NamespaceFactoryImpl namespaceFactory) {
         this.namespaceFactory = namespaceFactory;
+    }
+
+    @Inject
+    public void setTrace(@NotNull ObservableBindingTrace trace) {
+        this.trace = trace;
     }
 
 
@@ -115,7 +120,7 @@ public class TypeHierarchyResolver {
                     NamespaceDescriptorImpl namespaceDescriptor = namespaceFactory.createNamespaceDescriptorPathIfNeeded(file, outerScope);
                     context.getNamespaceDescriptors().put(file, namespaceDescriptor);
 
-                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(context.getTrace()));
+                    WriteThroughScope namespaceScope = new WriteThroughScope(outerScope, namespaceDescriptor.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
                     namespaceScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getNamespaceScopes().put(file, namespaceScope);
 
@@ -124,11 +129,11 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitClass(JetClass klass) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), outerScope, getClassKind(klass));
-                    context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner.getOwnerForChildren(), outerScope, getClassKind(klass));
+                    trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(klass), mutableClassDescriptor);
 
                     if (klass.hasModifier(JetTokens.ENUM_KEYWORD)) {
-                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(context.getTrace(), mutableClassDescriptor, outerScope, ClassKind.OBJECT);
+                        MutableClassDescriptor classObjectDescriptor = new MutableClassDescriptor(trace, mutableClassDescriptor, outerScope, ClassKind.OBJECT);
                         classObjectDescriptor.setName("class-object-for-" + klass.getName());
                         classObjectDescriptor.setModality(Modality.FINAL);
                         classObjectDescriptor.setVisibility(DescriptorResolver.resolveVisibilityFromModifiers(klass.getModifierList()));
@@ -146,7 +151,7 @@ public class TypeHierarchyResolver {
                 @Override
                 public void visitObjectDeclaration(JetObjectDeclaration declaration) {
                     final MutableClassDescriptor objectDescriptor = createClassDescriptorForObject(declaration, owner, outerScope, ClassKind.OBJECT);
-                    context.getTrace().record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
+                    trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getFQName(declaration), objectDescriptor);
                 }
 
                 @Override
@@ -157,7 +162,7 @@ public class TypeHierarchyResolver {
                         createClassDescriptorForObject(enumEntry, classObjectDescriptor, outerScopeForStatic, ClassKind.ENUM_ENTRY);
                         return;
                     }
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), classObjectDescriptor, outerScope, ClassKind.ENUM_ENTRY);
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, classObjectDescriptor, outerScope, ClassKind.ENUM_ENTRY);
                     visitClassOrObject(
                             enumEntry,
                             (Map) context.getClasses(),
@@ -167,7 +172,7 @@ public class TypeHierarchyResolver {
                 }
 
                 private MutableClassDescriptor createClassDescriptorForObject(@NotNull JetClassOrObject declaration, @NotNull NamespaceLikeBuilder owner, JetScope scope, ClassKind classKind) {
-                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(context.getTrace(), owner.getOwnerForChildren(), scope, classKind) {
+                    MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(trace, owner.getOwnerForChildren(), scope, classKind) {
                         @Override
                         public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                             return ClassObjectStatus.NOT_ALLOWED;
@@ -177,7 +182,7 @@ public class TypeHierarchyResolver {
                     visitClassOrObject(declaration, map, mutableClassDescriptor);
                     createPrimaryConstructorForObject((JetDeclaration) declaration, mutableClassDescriptor);
                     owner.addObjectDescriptor(mutableClassDescriptor);
-                    context.getTrace().record(BindingContext.CLASS, declaration, mutableClassDescriptor);
+                    trace.record(BindingContext.CLASS, declaration, mutableClassDescriptor);
                     return mutableClassDescriptor;
                 }
 
@@ -186,9 +191,9 @@ public class TypeHierarchyResolver {
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                             Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
-                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, context.getTrace());
+                    mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
                     if (object != null) {
-                        context.getTrace().record(CONSTRUCTOR, object, constructorDescriptor);
+                        trace.record(CONSTRUCTOR, object, constructorDescriptor);
                     }
                 }
 
@@ -204,7 +209,7 @@ public class TypeHierarchyResolver {
 
                 @Override
                 public void visitTypedef(JetTypedef typedef) {
-                    context.getTrace().report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
+                    trace.report(UNSUPPORTED.on(typedef, "TypeHierarchyResolver"));
                 }
 
                 @Override
@@ -214,10 +219,10 @@ public class TypeHierarchyResolver {
                         NamespaceLikeBuilder.ClassObjectStatus status = owner.setClassObjectDescriptor(createClassDescriptorForObject(objectDeclaration, owner, outerScopeForStatic, ClassKind.OBJECT));
                         switch (status) {
                             case DUPLICATE:
-                                context.getTrace().report(MANY_CLASS_OBJECTS.on(classObject));
+                                trace.report(MANY_CLASS_OBJECTS.on(classObject));
                                 break;
                             case NOT_ALLOWED:
-                                context.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+                                trace.report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
                                 break;
                         }
                     }
@@ -238,7 +243,7 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor, context.getTrace());
+            descriptorResolver.resolveMutableClassDescriptor(jetClass, descriptor, trace);
             descriptor.createTypeConstructor();
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
@@ -255,13 +260,13 @@ public class TypeHierarchyResolver {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
             JetClass jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters(), context.getTrace());
-            descriptorResolver.resolveSupertypes(jetClass, descriptor, context.getTrace());
+            descriptorResolver.resolveGenericBounds(jetClass, descriptor.getScopeForSupertypeResolution(), descriptor.getTypeConstructor().getParameters(), trace);
+            descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
         }
         for (Map.Entry<JetObjectDeclaration, MutableClassDescriptor> entry : context.getObjects().entrySet()) {
             JetClassOrObject jetClass = entry.getKey();
             MutableClassDescriptor descriptor = entry.getValue();
-            descriptorResolver.resolveSupertypes(jetClass, descriptor, context.getTrace());
+            descriptorResolver.resolveSupertypes(jetClass, descriptor, trace);
         }
     }
 
@@ -344,7 +349,7 @@ public class TypeHierarchyResolver {
             if (!found) continue;
 
             ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
-            PsiElement psiElement = context.getTrace().get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
+            PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
 
             PsiElement elementToMark = null;
             if (psiElement instanceof JetClassOrObject) {
@@ -352,7 +357,7 @@ public class TypeHierarchyResolver {
                 for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
                     JetTypeReference typeReference = delegationSpecifier.getTypeReference();
                     if (typeReference == null) continue;
-                    JetType supertype = context.getTrace().get(TYPE, typeReference);
+                    JetType supertype = trace.get(TYPE, typeReference);
                     if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
                         elementToMark = typeReference;
                     }
@@ -366,7 +371,7 @@ public class TypeHierarchyResolver {
                 }
             }
             if (elementToMark != null) {
-                context.getTrace().report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
+                trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
             }
         }
     }
@@ -404,13 +409,13 @@ public class TypeHierarchyResolver {
                     if (conflictingTypes.size() > 1) {
                         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                         assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                        PsiElement psiElement = context.getTrace().get(DESCRIPTOR_TO_DECLARATION, mutableClassDescriptor);
+                        PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, mutableClassDescriptor);
                         assert psiElement instanceof JetClassOrObject : psiElement;
                         JetClassOrObject declaration = (JetClassOrObject) psiElement;
                         JetDelegationSpecifierList delegationSpecifierList = declaration.getDelegationSpecifierList();
                         assert delegationSpecifierList != null;
-//                        context.getTrace().getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
-                        context.getTrace().report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration, conflictingTypes));
+//                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration, conflictingTypes));
                     }
                 }
             }
@@ -454,9 +459,9 @@ public class TypeHierarchyResolver {
             for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
                 JetTypeReference typeReference = delegationSpecifier.getTypeReference();
                 if (typeReference != null) {
-                    JetType type = context.getTrace().getBindingContext().get(TYPE, typeReference);
+                    JetType type = trace.getBindingContext().get(TYPE, typeReference);
                     if (type != null) {
-                        descriptorResolver.checkBounds(typeReference, type, context.getTrace());
+                        descriptorResolver.checkBounds(typeReference, type, trace);
                     }
                 }
             }
@@ -464,9 +469,9 @@ public class TypeHierarchyResolver {
             for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
                 JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
                 if (extendsBound != null) {
-                    JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
+                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, context.getTrace());
+                        descriptorResolver.checkBounds(extendsBound, type, trace);
                     }
                 }
             }
@@ -474,9 +479,9 @@ public class TypeHierarchyResolver {
             for (JetTypeConstraint constraint : jetClass.getTypeConstaints()) {
                 JetTypeReference extendsBound = constraint.getBoundTypeReference();
                 if (extendsBound != null) {
-                    JetType type = context.getTrace().getBindingContext().get(TYPE, extendsBound);
+                    JetType type = trace.getBindingContext().get(TYPE, extendsBound);
                     if (type != null) {
-                        descriptorResolver.checkBounds(extendsBound, type, context.getTrace());
+                        descriptorResolver.checkBounds(extendsBound, type, trace);
                     }
                 }
             }

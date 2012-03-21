@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 
 import java.util.Collection;
@@ -150,11 +151,12 @@ public class AnalyzerFacadeForJVM {
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                filesToAnalyzeCompletely, false, false, bindingTraceContext);
+                filesToAnalyzeCompletely, false, false);
 
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
-                project, topDownAnalysisParameters, owner, flowDataTraceFactory, bindingTraceContext);
+                project, topDownAnalysisParameters,
+                new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory);
 
 
         injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);

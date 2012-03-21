@@ -32,12 +32,20 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 public class DelegationResolver {
     @NotNull
     private TopDownAnalysisContext context;
+    @NotNull
+    private BindingTrace trace;
 
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
+    @Inject
+    public void setTrace(@NotNull BindingTrace trace) {
+        this.trace = trace;
+    }
+
 
 
     public void process() {
@@ -57,7 +65,7 @@ public class DelegationResolver {
         for (JetDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
             if (delegationSpecifier instanceof JetDelegatorByExpressionSpecifier) {
                 JetDelegatorByExpressionSpecifier specifier = (JetDelegatorByExpressionSpecifier) delegationSpecifier;
-                JetType type = context.getTrace().get(BindingContext.TYPE, specifier.getTypeReference());
+                JetType type = trace.get(BindingContext.TYPE, specifier.getTypeReference());
                 if (type != null) {
                     for (DeclarationDescriptor declarationDescriptor : type.getMemberScope().getAllDescriptors()) {
                         if (declarationDescriptor instanceof PropertyDescriptor) {
@@ -65,7 +73,7 @@ public class DelegationResolver {
                             if (propertyDescriptor.getModality().isOverridable()) {
                                 PropertyDescriptor copy = propertyDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.addPropertyDescriptor(copy);
-                                context.getTrace().record(DELEGATED, copy);
+                                trace.record(DELEGATED, copy);
                             }
                         }
                         else if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
@@ -73,7 +81,7 @@ public class DelegationResolver {
                             if (functionDescriptor.getModality().isOverridable()) {
                                 SimpleFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.addFunctionDescriptor(copy);
-                                context.getTrace().record(DELEGATED, copy);
+                                trace.record(DELEGATED, copy);
                             }
                         }
                     }

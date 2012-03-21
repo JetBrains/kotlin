@@ -37,12 +37,19 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
  */
 public class OverloadResolver {
     private TopDownAnalysisContext context;
+    private BindingTrace trace;
 
 
     @Inject
     public void setContext(TopDownAnalysisContext context) {
         this.context = context;
     }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
+    }
+
 
 
     public void process() {
@@ -186,16 +193,16 @@ public class OverloadResolver {
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(function, function2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration member = (JetDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, function);
+                    JetDeclaration member = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, function);
                     if (member == null) {
-                        assert context.getTrace().get(DELEGATED, function);
+                        assert trace.get(DELEGATED, function);
                         return;
                     }
 
                     if (function instanceof PropertyDescriptor) {
-                        context.getTrace().report(Errors.REDECLARATION.on(function, context.getTrace().getBindingContext()));
+                        trace.report(Errors.REDECLARATION.on(function, trace.getBindingContext()));
                     } else {
-                        context.getTrace().report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
+                        trace.report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
                     }
                 }
             }

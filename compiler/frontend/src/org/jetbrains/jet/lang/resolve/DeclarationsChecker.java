@@ -47,12 +47,20 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 public class DeclarationsChecker {
     @NotNull
     private TopDownAnalysisContext context;
+    @NotNull
+    private BindingTrace trace;
 
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
         this.context = context;
     }
+
+    @Inject
+    public void setTrace(@NotNull BindingTrace trace) {
+        this.trace = trace;
+    }
+
 
 
     public void process() {
@@ -108,13 +116,13 @@ public class DeclarationsChecker {
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
-            context.getTrace().report(Errors.TRAIT_CAN_NOT_BE_FINAL.on(modifierList.getModifierNode(JetTokens.FINAL_KEYWORD).getPsi()));
+            trace.report(Errors.TRAIT_CAN_NOT_BE_FINAL.on(modifierList.getModifierNode(JetTokens.FINAL_KEYWORD).getPsi()));
         }
         if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-            context.getTrace().report(Errors.ABSTRACT_MODIFIER_IN_TRAIT.on(aClass));
+            trace.report(Errors.ABSTRACT_MODIFIER_IN_TRAIT.on(aClass));
         }
         if (modifierList.hasModifier(JetTokens.OPEN_KEYWORD)) {
-            context.getTrace().report(Errors.OPEN_MODIFIER_IN_TRAIT.on(aClass));
+            trace.report(Errors.OPEN_MODIFIER_IN_TRAIT.on(aClass));
         }
     }
 
@@ -126,9 +134,9 @@ public class DeclarationsChecker {
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
 
-            JetNamedDeclaration member = (JetNamedDeclaration) context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
+            JetNamedDeclaration member = (JetNamedDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
-                context.getTrace().report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
+                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
         }
     }
@@ -155,7 +163,7 @@ public class DeclarationsChecker {
             hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
         }
         if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) && hasDeferredType) {
-            context.getTrace().report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
+            trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
         }
     }
 
@@ -167,18 +175,18 @@ public class DeclarationsChecker {
 
         if (abstractNode != null) { //has abstract modifier
             if (classDescriptor == null) {
-                context.getTrace().report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(property));
+                trace.report(ABSTRACT_PROPERTY_NOT_IN_CLASS.on(property));
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
                 assert classElement instanceof JetClass;
                 String name = property.getName();
-                context.getTrace().report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, (JetClass) classElement));
+                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, (JetClass) classElement));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
-                context.getTrace().report(ABSTRACT_MODIFIER_IN_TRAIT.on(property));
+                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(property));
             }
         }
 
@@ -190,13 +198,13 @@ public class DeclarationsChecker {
 
             JetExpression initializer = property.getInitializer();
             if (initializer != null) {
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
+                trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
             }
             if (getter != null && getter.getBodyExpression() != null) {
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
+                trace.report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
             }
             if (setter != null && setter.getBodyExpression() != null) {
-                context.getTrace().report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
+                trace.report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
             }
         }
     }
@@ -210,27 +218,27 @@ public class DeclarationsChecker {
 
         boolean inTrait = classDescriptor != null && classDescriptor.getKind() == ClassKind.TRAIT;
         JetExpression initializer = property.getInitializer();
-        boolean backingFieldRequired = context.getTrace().getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+        boolean backingFieldRequired = trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
 
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            context.getTrace().report(BACKING_FIELD_IN_TRAIT.on(property));
+            trace.report(BACKING_FIELD_IN_TRAIT.on(property));
         }
         if (initializer == null) {
-            if (backingFieldRequired && !inTrait && !context.getTrace().getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
+            if (backingFieldRequired && !inTrait && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
-                    context.getTrace().report(MUST_BE_INITIALIZED.on(property));
+                    trace.report(MUST_BE_INITIALIZED.on(property));
                 }
                 else {
-                    context.getTrace().report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
+                    trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
             }
             return;
         }
         if (inTrait) {
-            context.getTrace().report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
+            trace.report(PROPERTY_INITIALIZER_IN_TRAIT.on(initializer));
         }
         else if (!backingFieldRequired) {
-            context.getTrace().report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
+            trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
         }
     }
 
@@ -244,26 +252,26 @@ public class DeclarationsChecker {
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                PsiElement classElement = context.getTrace().get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
                 assert classElement instanceof JetClass;
-                context.getTrace().report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
             }
             if (hasAbstractModifier && inTrait) {
-                context.getTrace().report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
+                trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
             }
             if (function.getBodyExpression() != null && hasAbstractModifier) {
-                context.getTrace().report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
+                trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
             if (function.getBodyExpression() == null && !hasAbstractModifier && !inTrait) {
-                context.getTrace().report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+                trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
             }
             return;
         }
         if (hasAbstractModifier) {
-            context.getTrace().report(NON_MEMBER_ABSTRACT_FUNCTION.on(function, functionDescriptor));
+            trace.report(NON_MEMBER_ABSTRACT_FUNCTION.on(function, functionDescriptor));
         }
         if (function.getBodyExpression() == null && !hasAbstractModifier) {
-            context.getTrace().report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+            trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
     }
 
@@ -278,12 +286,12 @@ public class DeclarationsChecker {
             Map<JetKeywordToken, ASTNode> nodes = getNodesCorrespondingToModifiers(getterModifierList, Sets.newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.INTERNAL_KEYWORD));
             if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                 for (ASTNode node : nodes.values()) {
-                    context.getTrace().report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(node.getPsi()));
+                    trace.report(Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.on(node.getPsi()));
                 }
             }
             else {
                 for (ASTNode node : nodes.values()) {
-                    context.getTrace().report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(node.getPsi()));
+                    trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(node.getPsi()));
                 }
             }
         }
@@ -326,7 +334,7 @@ public class DeclarationsChecker {
             }
         }
         for (JetKeywordToken token : presentModifiers) {
-            context.getTrace().report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
+            trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
         }
     }
 
@@ -335,7 +343,7 @@ public class DeclarationsChecker {
             JetKeywordToken redundantModifier = tokenPair.getFirst();
             JetKeywordToken sufficientModifier = tokenPair.getSecond();
             if (modifierList.hasModifier(redundantModifier) && modifierList.hasModifier(sufficientModifier)) {
-                context.getTrace().report(Errors.REDUNDANT_MODIFIER.on(modifierList.getModifierNode(redundantModifier).getPsi(), redundantModifier, sufficientModifier));
+                trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList.getModifierNode(redundantModifier).getPsi(), redundantModifier, sufficientModifier));
             }
         }
     }
@@ -344,7 +352,7 @@ public class DeclarationsChecker {
         if (modifierList == null) return;
         for (JetKeywordToken modifier : illegalModifiers) {
             if (modifierList.hasModifier(modifier)) {
-                context.getTrace().report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier).getPsi(), modifier));
+                trace.report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier).getPsi(), modifier));
             }
         }
     }
@@ -372,17 +380,17 @@ public class DeclarationsChecker {
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();
         assert constructor != null;
         if (!constructor.getValueParameters().isEmpty() && delegationSpecifiers.isEmpty()) {
-            context.getTrace().report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(aClass, enumClass));
+            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(aClass, enumClass));
         }
 
         for (JetDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
             JetTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
-                JetType type = context.getTrace().getBindingContext().get(TYPE, typeReference);
+                JetType type = trace.getBindingContext().get(TYPE, typeReference);
                 if (type != null) {
                     JetType enumType = enumClass.getDefaultType();
                     if (!type.getConstructor().equals(enumType.getConstructor())) {
-                        context.getTrace().report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
+                        trace.report(ENUM_ENTRY_ILLEGAL_TYPE.on(typeReference, enumClass));
                     }
                 }
             }

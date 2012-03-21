@@ -56,7 +56,6 @@ public class AllInjectorsGenerator {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addPublicField(JavaBridgeConfiguration.class);
-        generator.addPublicParameter(BindingTrace.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
     }
 
@@ -72,6 +71,7 @@ public class AllInjectorsGenerator {
         // Parameters
         generator.addPublicParameter(Project.class);
         generator.addPublicParameter(TopDownAnalysisParameters.class);
+        generator.addPublicParameter(ObservableBindingTrace.class);
         generator.addParameter(ModuleDescriptor.class);
         generator.addParameter(JetControlFlowDataTraceFactory.class, false);
     }

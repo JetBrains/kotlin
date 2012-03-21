@@ -36,8 +36,6 @@ import java.util.Set;
  */
 public class TopDownAnalysisContext {
 
-    private ObservableBindingTrace trace;
-
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
     protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
@@ -57,7 +55,6 @@ public class TopDownAnalysisContext {
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.trace = new ObservableBindingTrace(topDownAnalysisParameters.getTrace());
     }
 
 
@@ -88,11 +85,6 @@ public class TopDownAnalysisContext {
             debug(containingFile);
         }
         return result;
-    }
-
-    @NotNull
-    public ObservableBindingTrace getTrace() {
-        return trace;
     }
 
     public Map<JetClass, MutableClassDescriptor> getClasses() {

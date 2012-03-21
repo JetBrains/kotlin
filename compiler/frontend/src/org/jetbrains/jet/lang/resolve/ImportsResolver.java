@@ -45,6 +45,8 @@ public class ImportsResolver {
     private ModuleConfiguration configuration;
     @NotNull
     private SingleImportResolver singleImportResolver;
+    @NotNull
+    private ObservableBindingTrace trace;
 
     @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
@@ -54,6 +56,11 @@ public class ImportsResolver {
     @Inject
     public void setConfiguration(@NotNull ModuleConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Inject
+    public void setTrace(@NotNull ObservableBindingTrace trace) {
+        this.trace = trace;
     }
 
     public ImportsResolver() {
@@ -71,7 +78,7 @@ public class ImportsResolver {
     // On first phase all classes and objects are imported,
     // on second phase previous imports are thrown and everything (including functions and properties at namespace level) is imported
     private void processImports(boolean firstPhase) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.getTrace()); //not to trace errors of default imports
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
             Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope, firstPhase);
@@ -87,7 +94,7 @@ public class ImportsResolver {
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
-                Collection<? extends DeclarationDescriptor> descriptors = singleImportResolver.processImportReference(importDirective, namespaceScope, delayedImporter, context.getTrace(), firstPhase);
+                Collection<? extends DeclarationDescriptor> descriptors = singleImportResolver.processImportReference(importDirective, namespaceScope, delayedImporter, trace, firstPhase);
                 if (descriptors.size() == 1) {
                     resolvedDirectives.put(importDirective, descriptors.iterator().next());
                 }
@@ -154,10 +161,10 @@ public class ImportsResolver {
             isResolved = namespaceScope.getNamespace(aliasName);
         }
         if (isResolved != null && isResolved != wasResolved) {
-            context.getTrace().report(USELESS_HIDDEN_IMPORT.on(importedReference));
+            trace.report(USELESS_HIDDEN_IMPORT.on(importedReference));
         }
         if (!importDirective.isAllUnder() && importedReference instanceof JetSimpleNameExpression && importDirective.getAliasName() == null) {
-            context.getTrace().report(USELESS_SIMPLE_IMPORT.on(importedReference));
+            trace.report(USELESS_SIMPLE_IMPORT.on(importedReference));
         }
     }
 

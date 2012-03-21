@@ -30,18 +30,14 @@ public class TopDownAnalysisParameters {
     private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
-    @NotNull
-    private final BindingTrace trace;
 
     public TopDownAnalysisParameters(
             @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
-            boolean declaredLocally,
-            @NotNull BindingTrace trace) {
+            boolean declaredLocally) {
         this.analyzeCompletely = analyzeCompletely;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
-        this.trace = trace;
     }
 
     @NotNull
@@ -55,10 +51,5 @@ public class TopDownAnalysisParameters {
 
     public boolean isDeclaredLocally() {
         return declaredLocally;
-    }
-
-    @NotNull
-    public BindingTrace getTrace() {
-        return trace;
     }
 }

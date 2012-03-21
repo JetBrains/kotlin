@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 public class NamespaceFactoryImpl implements NamespaceFactory {
 
     private ModuleDescriptor moduleDescriptor;
-    private TopDownAnalysisContext context;
+    private BindingTrace trace;
     private ModuleConfiguration configuration;
 
     @Inject
@@ -53,8 +53,8 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     }
 
     @Inject
-    public void setContext(TopDownAnalysisContext context) {
-        this.context = context;
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
     }
 
     @Inject
@@ -83,14 +83,14 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
 
             currentOwner = namespaceDescriptor;
 
-            context.getTrace().record(REFERENCE_TARGET, nameExpression, currentOwner);
-            context.getTrace().record(RESOLUTION_SCOPE, nameExpression, outerScope);
+            trace.record(REFERENCE_TARGET, nameExpression, currentOwner);
+            trace.record(RESOLUTION_SCOPE, nameExpression, outerScope);
 
             outerScope = namespaceDescriptor.getMemberScope();
         }
 
         String name = JetPsiUtil.safeName(namespaceHeader.getName());
-        context.getTrace().record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
+        trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
 
         return createNamespaceDescriptorIfNeeded(file, currentOwner, name, false);
     }
@@ -130,19 +130,19 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
                     name
             );
-            context.getTrace().record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
-            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(context.getTrace())).setDebugName("Namespace member scope");
+            trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
+            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);
-            configuration.extendNamespaceScope(context.getTrace(), namespaceDescriptor, scope);
+            configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
             owner.addNamespace(namespaceDescriptor);
             if (file != null) {
-                context.getTrace().record(BindingContext.NAMESPACE, file, namespaceDescriptor);
+                trace.record(BindingContext.NAMESPACE, file, namespaceDescriptor);
             }
         }
 
         if (file != null) {
-            context.getTrace().record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
+            trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
         }
 
         return namespaceDescriptor;

@@ -37,6 +37,7 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     private TopDownAnalysisParameters topDownAnalysisParameters;
     private TopDownAnalysisContext context;
+    private BindingTrace trace;
     private JetControlFlowDataTraceFactory flowDataTraceFactory;
 
 
@@ -48,6 +49,11 @@ public class ControlFlowAnalyzer {
     @Inject
     public void setContext(TopDownAnalysisContext context) {
         this.context = context;
+    }
+
+    @Inject
+    public void setTrace(BindingTrace trace) {
+        this.trace = trace;
     }
 
     @Inject
@@ -88,7 +94,7 @@ public class ControlFlowAnalyzer {
     
     private void checkClassOrObject(JetClassOrObject klass) {
         // A pseudocode of class initialization corresponds to a class
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, context.getTrace());
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) klass, (JetExpression) klass, flowDataTraceFactory, trace);
         flowInformationProvider.markUninitializedVariables((JetElement) klass, topDownAnalysisParameters.isDeclaredLocally());
     }
     
@@ -107,7 +113,7 @@ public class ControlFlowAnalyzer {
 
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, context.getTrace());
+        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetDeclaration) function, bodyExpression, flowDataTraceFactory, trace);
 
         flowInformationProvider.checkDefiniteReturn(function, expectedReturnType);
 
