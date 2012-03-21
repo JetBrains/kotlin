@@ -45,12 +45,6 @@
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
 
-      <action id="Kotlin.TranslateToJs" class="org.jetbrains.jet.plugin.actions.TranslateToJsAction"
-              text="Translate Kotlin to JavaScript.">
-          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift W"/>
-         <add-to-group group-id="CodeMenu" anchor="last"/>
-     </action>
-
 
   </actions>
 
