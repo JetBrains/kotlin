@@ -23,104 +23,32 @@
     </dependencies>
 
 
-    <properties>
-        <temp-directory>${project.build.directory}/temp</temp-directory>
-        <kotlin-maven-plugin-dir>${temp-directory}/kotlin-maven-plugin</kotlin-maven-plugin-dir>
-        <kotlin-runtime-dir>${temp-directory}/kotlin-runtime</kotlin-runtime-dir>
-
-        <!-- DO NOT update manually or through -D, it is set to "true" by "localKotlin" profile -->
-        <localKotlin>false</localKotlin>
-    </properties>
-
-
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
 
         <plugins>
 
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <!-- Unpacking "kotlin-maven-plugin" to get its "ivyconf.xml" -->
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!-- Unpacking "kotlin-runtime.jar" to ${project.build.outputDirectory} -->
+            <!-- so that its content is packed together with our jar                -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
             <plugin>
                 <groupId>com.github.goldin</groupId>
                 <artifactId>copy-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>unpack-ivyconf</id>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <runIf>! Boolean.valueOf( localKotlin )</runIf>
-                            <resource>
-                                <targetPath>${kotlin-maven-plugin-dir}</targetPath>
-                                <dependency>
-                                    <groupId>com.github.goldin</groupId>
-                                    <artifactId>kotlin-maven-plugin</artifactId>
-                                    <version>${kotlin-maven-plugin.version}</version>
-                                </dependency>
-                                <unpack>true</unpack>
-                            </resource>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <!-- Copying "kotlin-runtime" dependency -->
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>ivy-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy-kotlin-runtime</id>
-                        <goals>
-                            <goal>ivy</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <runIf>! Boolean.valueOf( localKotlin )</runIf>
-                            <ivyconf>${kotlin-maven-plugin-dir}/ivyconf.xml</ivyconf>
-                            <dir>${kotlin-runtime-dir}</dir>
-                            <dependency>
-                                <groupId>ivy.org</groupId>
-                                <artifactId>bt344</artifactId>
-                                <version>latest.lastSuccessful</version>
-                                <classifier>kotlin-runtime</classifier>
-                            </dependency>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <!-- Unpacking "kotlin-runtime" dependency -->
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>copy-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
+                <version>0.2.3.8</version>
                 <executions>
                     <execution>
                         <id>unpack-kotlin-runtime</id>
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <phase>process-sources</phase>
+                        <phase>initialize</phase>
                         <configuration>
-                            <runIf>! Boolean.valueOf( localKotlin )</runIf>
                             <resource>
                                 <targetPath>${project.build.outputDirectory}</targetPath>
-                                <directory>${kotlin-runtime-dir}</directory>
-                                <include>*.jar</include>
+                                <file>${kotlin-sdk}/lib/kotlin-runtime.jar</file>
                                 <unpack>true</unpack>
                             </resource>
                         </configuration>
@@ -129,41 +57,4 @@
             </plugin>
         </plugins>
     </build>
-
-
-    <profiles>
-        <profile>
-            <id>localKotlin</id>
-            <properties>
-                <localKotlin>true</localKotlin>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.goldin</groupId>
-                        <artifactId>copy-maven-plugin</artifactId>
-                        <version>${kotlin-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>copy-runtime</id>
-                                <goals>
-                                    <goal>copy</goal>
-                                </goals>
-                                <phase>initialize</phase>
-                                <configuration>
-                                    <resource>
-                                        <targetPath>${project.build.outputDirectory}</targetPath>
-                                        <directory>${kotlin-sdk}/../classes/runtime</directory>
-                                        <include>**/*.class</include>
-                                        <preservePath>true</preservePath>
-                                    </resource>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>
