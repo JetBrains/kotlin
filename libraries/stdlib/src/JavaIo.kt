@@ -5,8 +5,16 @@ import java.nio.charset.*
 import java.util.NoSuchElementException
 import java.net.URL
 
-protected val defaultBufferSize: Int = 64 * 1024
-protected val defaultCharset: String = "UTF-8"
+/**
+ * Returns the default buffer size when working with buffered streams
+ */
+public val defaultBufferSize: Int = 64 * 1024
+
+/**
+ * Returns the default [[Charset]] which defaults to UTF-8
+ */
+public val defaultCharset: Charset = Charset.forName("UTF-8") ?: Charset.defaultCharset().sure()
+
 
 /** Prints the given message to [[System.out]] */
 inline fun print(message : Any?) {
@@ -171,46 +179,34 @@ object: ByteIterator() {
 }
 
 /** Creates a buffered input stream */
-inline fun InputStream.buffered(bufferSize: Int)
+inline fun InputStream.buffered(bufferSize: Int = defaultBufferSize)
     = if (this is BufferedInputStream)
         this
     else
         BufferedInputStream(this, bufferSize)
 
-inline val InputStream.reader : InputStreamReader
-get() = InputStreamReader(this)
-
-inline val InputStream.bufferedReader : BufferedReader
-get() = BufferedReader(reader)
-
-inline fun InputStream.reader(encoding: Charset) : InputStreamReader = InputStreamReader(this, encoding)
+inline fun InputStream.reader(encoding: Charset = defaultCharset) : InputStreamReader = InputStreamReader(this, encoding)
 
 inline fun InputStream.reader(encoding: String) = InputStreamReader(this, encoding)
 
 inline fun InputStream.reader(encoding: CharsetDecoder) = InputStreamReader(this, encoding)
 
-inline val InputStream.buffered : BufferedInputStream
-get() = if(this is BufferedInputStream) this else BufferedInputStream(this)
 
-//  inline val Reader.buffered : BufferedReader
-//        get() = if(this is BufferedReader) this else BufferedReader(this)
+inline fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedWriter
+    = if (this is BufferedWriter) this else BufferedWriter(writer(), bufferSize)
 
-inline fun Reader.buffered(): BufferedReader = if(this is BufferedReader) this else BufferedReader(this)
-
-inline fun Reader.buffered(bufferSize: Int) = BufferedReader(this, bufferSize)
-
-
-inline val OutputStream.writer : OutputStreamWriter
-get() = OutputStreamWriter(this)
-
-inline val OutputStream.bufferedWriter : BufferedWriter
-get() = BufferedWriter(writer)
-
-inline fun OutputStream.writer(encoding: Charset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
+inline fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
 inline fun OutputStream.writer(encoding: String) = OutputStreamWriter(this, encoding)
 
 inline fun OutputStream.writer(encoding: CharsetEncoder) = OutputStreamWriter(this, encoding)
+
+
+inline fun Reader.buffered(bufferSize: Int = defaultBufferSize): BufferedReader
+    = if(this is BufferedReader) this else BufferedReader(this, bufferSize)
+
+inline fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
+    = if(this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 
 
@@ -225,6 +221,7 @@ inline fun Reader.forEachLine(block: (String) -> Unit): Unit {
 }
 
 inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffered().use<BufferedReader, T>{block(it.lineIterator())}
+
 /**
  * Returns an iterator over each line.
  * <b>Note</b> the caller must close the underlying <code>BufferedReader</code>
