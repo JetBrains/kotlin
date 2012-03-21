@@ -267,7 +267,8 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                 }
             }
         } catch (e: Throwable) {
-            println("Caught exception finding function declarations on $owner")
+            println("Caught exception finding function declarations on $owner $e")
+            e.printStackTrace()
         }
 
     }
