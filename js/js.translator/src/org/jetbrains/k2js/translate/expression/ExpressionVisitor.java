@@ -40,6 +40,7 @@ import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
 
+import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationName;
@@ -51,39 +52,33 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
  */
 public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
-    @NotNull
-    private JsExpression translateAsExpression(@NotNull JetExpression expression,
-                                               @NotNull TranslationContext context) {
-        return convertToExpression(expression.accept(this, context));
-    }
-
     @Override
     @NotNull
     public JsNode visitConstantExpression(@NotNull JetConstantExpression expression,
                                           @NotNull TranslationContext context) {
         CompileTimeConstant<?> compileTimeValue =
-                context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+            context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
         assert compileTimeValue != null;
         if (compileTimeValue instanceof NullValue) {
             return context.program().getNullLiteral();
         }
         Object value = compileTimeValue.getValue();
         if (value instanceof Integer) {
-            return context.program().getNumberLiteral((Integer) value);
+            return context.program().getNumberLiteral((Integer)value);
         }
         if (value instanceof Boolean) {
-            return context.program().getBooleanLiteral((Boolean) value);
+            return context.program().getBooleanLiteral((Boolean)value);
         }
 
         //TODO: test
         if (value instanceof Float) {
-            return context.program().getNumberLiteral((Float) value);
+            return context.program().getNumberLiteral((Float)value);
         }
         if (value instanceof Double) {
-            return context.program().getNumberLiteral((Double) value);
+            return context.program().getNumberLiteral((Double)value);
         }
         if (value instanceof String) {
-            return context.program().getStringLiteral((String) value);
+            return context.program().getStringLiteral((String)value);
         }
         if (value instanceof Character) {
             return context.program().getStringLiteral(value.toString());
@@ -163,7 +158,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         }
         TemporaryVariable result = context.declareTemporary(context.program().getNullLiteral());
         AssignToExpressionMutator saveResultToTemporaryMutator =
-                new AssignToExpressionMutator(result.reference());
+            new AssignToExpressionMutator(result.reference());
         JsNode mutatedIfStatement = mutateLastExpression(ifStatement, saveResultToTemporaryMutator);
         JsStatement resultingStatement = convertToStatement(mutatedIfStatement);
         context.addStatementToCurrentBlock(resultingStatement);
@@ -221,7 +216,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expression == null) {
             return null;
         }
-        return translateAsExpression(expression, context);
+        return convertToExpression(expression.accept(this, context));
     }
 
     //NOTE: since JsWhile and JsDoWhile do not have an ancestor, cannot avoid duplication here
@@ -268,7 +263,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return null;
         }
         assert value instanceof String : "Compile time constant template should be a String constant.";
-        String constantString = (String) value;
+        String constantString = (String)value;
         return context.program().getStringLiteral(constantString);
     }
 
@@ -284,7 +279,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitPrefixExpression(@NotNull JetPrefixExpression expression,
                                         @NotNull TranslationContext context) {
         return UnaryOperationTranslator.translate(expression, context);
-
     }
 
     @Override
@@ -350,7 +344,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitThisExpression(@NotNull JetThisExpression expression,
                                       @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
-                getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
+            getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
         return TranslationUtils.getThisObject(context, descriptor);
     }
 
@@ -381,7 +375,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
                                        @NotNull TranslationContext context) {
         JsArrayLiteral result = new JsArrayLiteral();
         for (JetExpression entry : expression.getEntries()) {
-            result.getExpressions().add(Translation.translateAsExpression(entry, context));
+            result.getExpressions().add(translateAsExpression(entry, context));
         }
         return result;
     }
