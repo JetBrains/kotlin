@@ -29,7 +29,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public K2JSRunConfigurationType() {
-        super("K2JSConfigurationType", "K2JS", "Kotlin to Javascript", JetFileType.INSTANCE.getIcon());
+        super("K2JSConfigurationType", "K2JS", "Kotlin to Javascript configuration", JetFileType.INSTANCE.getIcon());
         addFactory(new K2JSConfigurationFactory());
     }
 

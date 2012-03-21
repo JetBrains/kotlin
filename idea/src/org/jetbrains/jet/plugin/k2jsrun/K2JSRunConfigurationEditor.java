@@ -26,10 +26,13 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import static com.intellij.openapi.util.io.FileUtil.toSystemIndependentName;
 
 /**
  * @author Pavel Talanov
@@ -37,8 +40,10 @@ import javax.swing.*;
 public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConfiguration> {
 
     private JPanel mainPanel;
-    private TextFieldWithBrowseButton chooseFile;
+    private TextFieldWithBrowseButton htmlChooseFile;
     private JComboBox browserComboBox;
+    private JCheckBox openInBrowserCheckBox;
+    private TextFieldWithBrowseButton generatedChooseFile;
     @NotNull
     private final Project project;
 
@@ -47,31 +52,60 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
     }
 
     @Override
-    protected void resetEditorFrom(K2JSRunConfiguration configuration) {
-        chooseFile.setText(configuration.settings().getFilePath());
+    protected void resetEditorFrom(@NotNull K2JSRunConfiguration configuration) {
+        htmlChooseFile.setText(toSystemIndependentName(configuration.settings().getPageToOpenFilePath()));
         browserComboBox.setSelectedItem(configuration.settings().getBrowserFamily());
+        generatedChooseFile.setText(toSystemIndependentName(configuration.settings().getGeneratedFilePath()));
+        openInBrowserCheckBox.setSelected(configuration.settings().isShouldOpenInBrowserAfterTranslation());
     }
 
     @Override
     protected void applyEditorTo(@NotNull K2JSRunConfiguration configuration) throws ConfigurationException {
-        configuration.settings().setFilePath(FileUtil.toSystemIndependentName(chooseFile.getText()));
+        K2JSConfigurationSettings settings = configuration.settings();
+        settings.setPageToOpenFilePath(toSystemIndependentName(htmlChooseFile.getText()));
         Object item = browserComboBox.getSelectedItem();
         if (item instanceof BrowsersConfiguration.BrowserFamily) {
-            configuration.settings().setBrowserFamily((BrowsersConfiguration.BrowserFamily)item);
+            settings.setBrowserFamily((BrowsersConfiguration.BrowserFamily)item);
         }
+        settings.setGeneratedFilePath(toSystemIndependentName(generatedChooseFile.getText()));
+        settings.setShouldOpenInBrowserAfterTranslation(openInBrowserCheckBox.isSelected());
     }
 
     @NotNull
     @Override
     protected JComponent createEditor() {
-        FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(StdFileTypes.HTML);
-        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
-        chooseFile.addBrowseFolderListener("Choose file", "Yeah!", project, fileChooserDescriptor);
-        setupBrowserCombobox();
+        setUpShowInBrowserCheckBox();
+        setUpChooseHtmlToShow();
+        setUpBrowserCombobox();
+        setUpChooseGenerateFilePath();
         return mainPanel;
     }
 
-    private void setupBrowserCombobox() {
+    private void setUpChooseGenerateFilePath() {
+        FileChooserDescriptor fileChooserDescriptor =
+            FileChooserDescriptorFactory.getDirectoryChooserDescriptor("directory where generated files will be stored");
+        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
+        generatedChooseFile.addBrowseFolderListener(null, null, project, fileChooserDescriptor);
+    }
+
+    private void setUpShowInBrowserCheckBox() {
+        openInBrowserCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                boolean selected = openInBrowserCheckBox.isSelected();
+                htmlChooseFile.setEnabled(selected);
+                browserComboBox.setEnabled(selected);
+            }
+        });
+    }
+
+    private void setUpChooseHtmlToShow() {
+        FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(StdFileTypes.HTML);
+        fileChooserDescriptor.setRoots(ProjectRootManager.getInstance(project).getContentRootUrls());
+        htmlChooseFile.addBrowseFolderListener("Choose file to show after translation is finished", null, project, fileChooserDescriptor);
+    }
+
+    private void setUpBrowserCombobox() {
         for (BrowsersConfiguration.BrowserFamily family : BrowsersConfiguration.getInstance().getActiveBrowsers()) {
             browserComboBox.addItem(family);
         }

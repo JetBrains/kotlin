@@ -17,18 +17,32 @@
 package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Pavel Talanov
  */
-public class K2JSConfigurationSettings {
+public final class K2JSConfigurationSettings {
 
     @NotNull
-    private String filePath = "";
+    private String pageToOpenFilePath = "";
+
+    @NotNull
+    private String generatedFilePath;
+
+    private boolean shouldOpenInBrowserAfterTranslation = false;
 
     @NotNull
     private BrowsersConfiguration.BrowserFamily browserFamily = BrowsersConfiguration.getInstance().getActiveBrowsers().get(0);
+
+    public K2JSConfigurationSettings(@NotNull Project project) {
+        generatedFilePath = project.getBasePath() + "/generated.js";
+    }
+
+    public K2JSConfigurationSettings() {
+        generatedFilePath = "";
+    }
 
     @NotNull
     public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
@@ -40,11 +54,28 @@ public class K2JSConfigurationSettings {
     }
 
     @NotNull
-    public String getFilePath() {
-        return filePath;
+    public String getPageToOpenFilePath() {
+        return pageToOpenFilePath;
     }
 
-    public void setFilePath(@NotNull String filePath) {
-        this.filePath = filePath;
+    public void setPageToOpenFilePath(@NotNull String pageToOpenFilePath) {
+        this.pageToOpenFilePath = pageToOpenFilePath;
+    }
+
+    @NotNull
+    public String getGeneratedFilePath() {
+        return generatedFilePath;
+    }
+
+    public void setGeneratedFilePath(@NotNull String generatedFilePath) {
+        this.generatedFilePath = generatedFilePath;
+    }
+
+    public boolean isShouldOpenInBrowserAfterTranslation() {
+        return shouldOpenInBrowserAfterTranslation;
+    }
+
+    public void setShouldOpenInBrowserAfterTranslation(boolean shouldOpenInBrowserAfterTranslation) {
+        this.shouldOpenInBrowserAfterTranslation = shouldOpenInBrowserAfterTranslation;
     }
 }

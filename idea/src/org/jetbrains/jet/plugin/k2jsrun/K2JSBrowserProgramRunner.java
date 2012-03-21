@@ -28,7 +28,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.actions.TranslateToJsAction;
 
 /**
  * @author Pavel Talanov
@@ -46,10 +45,10 @@ public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
         try {
             K2JSConfigurationSettings configurationSettings = getSettings(state);
             try {
-                TranslateToJsAction.doPerform(project);
+                K2JSRunnerUtils.translateAndSave(project, configurationSettings.getGeneratedFilePath());
             }
             catch (Throwable e) {
-                TranslateToJsAction.notifyFailure(e);
+                K2JSRunnerUtils.notifyFailure(e);
                 return null;
             }
             openBrowser(configurationSettings);
@@ -61,7 +60,10 @@ public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
     }
 
     private static void openBrowser(@NotNull K2JSConfigurationSettings configurationSettings) {
-        String filePath = configurationSettings.getFilePath();
+        if (!configurationSettings.isShouldOpenInBrowserAfterTranslation()) {
+            return;
+        }
+        String filePath = configurationSettings.getPageToOpenFilePath();
         String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
         BrowsersConfiguration.launchBrowser(configurationSettings.getBrowserFamily(), url);
     }

@@ -42,11 +42,11 @@ import java.util.Collection;
 /**
  * @author Pavel Talanov
  */
-public class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
+public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
     implements RunConfigurationWithSuppressedDefaultRunAction {
 
     @NotNull
-    private K2JSConfigurationSettings settings = new K2JSConfigurationSettings();
+    private K2JSConfigurationSettings settings = new K2JSConfigurationSettings(getProject());
 
     public K2JSRunConfiguration(String name, RunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
         super(name, runConfigurationModule, factory);

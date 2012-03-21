@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.actions;
+package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -33,9 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.util.Collection;
@@ -49,7 +43,7 @@ import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.allVirtual
 /**
  * @author Pavel Talanov
  */
-public final class TranslateToJsAction extends AnAction {
+public final class K2JSRunnerUtils {
 
     public static void notifyFailure(@NotNull Throwable exception) {
         Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",
@@ -63,36 +57,18 @@ public final class TranslateToJsAction extends AnAction {
                                                   NotificationType.INFORMATION));
     }
 
-    public void actionPerformed(final AnActionEvent event) {
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    performAction(event);
-                }
-                catch (Throwable e) {
-                    e.printStackTrace();
-                    notifyFailure(e);
-                }
-            }
-        };
-        ApplicationManager.getApplication().runWriteAction(task);
-    }
-
-    private static void performAction(@NotNull AnActionEvent event) throws Exception {
-        final Project project = PlatformDataKeys.PROJECT.getData(event.getDataContext());
-        assert project != null;
-        doPerform(project);
-    }
-
-    public static void doPerform(@NotNull Project project) throws Exception {
+    public static void translateAndSave(@NotNull Project project, @NotNull String outputDirPath) throws Exception {
         Set<VirtualFile> allVirtualFiles = getAllProjectVirtualFiles(project);
         List<JetFile> kotlinFiles = getJetFiles(allVirtualFiles, project);
-        String outputPath = getOutputPath(JetMainDetector.getFileWithMain(kotlinFiles));
+        String outputFilePath = constructPathToGeneratedFile(project, outputDirPath);
         K2JSTranslator.translateWithCallToMainAndSaveToFile(kotlinFiles,
-                                                            outputPath,
+                                                            outputFilePath,
                                                             project);
-        notifySuccess(outputPath);
+        notifySuccess(outputDirPath);
+    }
+
+    private static String constructPathToGeneratedFile(Project project, String outputDirPath) {
+        return outputDirPath + "/" + project.getName() + ".js";
     }
 
     @NotNull
@@ -119,27 +95,5 @@ public final class TranslateToJsAction extends AnAction {
             }
         }
         return kotlinFiles;
-    }
-
-
-    @NotNull
-    private static String getOutputPath(@Nullable PsiFile psiFile) {
-        if (psiFile == null) {
-            throw new AssertionError("Main was not detected.");
-        }
-        VirtualFile virtualFile = psiFile.getVirtualFile();
-        assert virtualFile != null : "Internal error: Psi file should correspond to actual virtual file";
-        String originalFilePath = virtualFile.getPath();
-
-        //TODO: make platform independent
-        String pathToDir = originalFilePath.substring(0, originalFilePath.lastIndexOf("/") + 1);
-        String generatedFileName = ((JetFile)psiFile).getNamespaceHeader().getName() + ".js";
-        return pathToDir + generatedFileName;
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-        //   Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        // e.getPresentation().setEnabled(editor != null);
     }
 }
