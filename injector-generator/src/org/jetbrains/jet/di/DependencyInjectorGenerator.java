@@ -338,6 +338,12 @@ public class DependencyInjectorGenerator {
         
         Field dependency;
         if (fields.isEmpty()) {
+            
+            if (parameterType.isPrimitive() || parameterType.getPackage().getName().equals("java.lang")) {
+                throw new IllegalArgumentException(
+                        "cannot declare magic field of type " + parameterType + ": " + errorMessage);
+            }
+            
             dependency = addField(parameterType);
             satisfyDependenciesFor(dependency, neededFor);
         }
