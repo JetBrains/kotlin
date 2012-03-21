@@ -42,7 +42,7 @@ public class JetFileType extends LanguageFileType {
 
     @NotNull
     public String getName() {
-        return "jet";
+        return "Kotlin";
     }
 
     @NotNull
