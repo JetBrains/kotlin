@@ -1,5 +1,5 @@
 namespace test
 
 final class test.ClassWithTypePRefSelf</*0*/ P : java.lang.Enum<P>?> : jet.Any {
-    final /*constructor*/ fun </*0*/ P : java.lang.Enum<P>?><init>(): test.ClassWithTypePRefSelf</*0*/ P : java.lang.Enum<P>?>
+    final /*constructor*/ fun </*0*/ P : java.lang.Enum<P>?><init>(): test.ClassWithTypePRefSelf<P>
 }

@@ -1,6 +1,6 @@
 namespace test
 
 final class test.ClassParamUsedInFun</*0,r*/ T : jet.Any?> : jet.Any {
-    final /*constructor*/ fun </*0,r*/ T : jet.Any?><init>(): test.ClassParamUsedInFun</*0,r*/ T : jet.Any?>
+    final /*constructor*/ fun </*0,r*/ T : jet.Any?><init>(): test.ClassParamUsedInFun<T>
     final fun f(/*0*/ t: T): jet.Int
 }

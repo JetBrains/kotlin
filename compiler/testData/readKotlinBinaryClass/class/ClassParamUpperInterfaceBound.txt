@@ -1,5 +1,5 @@
 namespace test
 
 final class test.Clock</*0,r*/ A : java.io.Serializable> : jet.Any {
-    final /*constructor*/ fun </*0,r*/ A : java.io.Serializable><init>(): test.Clock</*0,r*/ A : java.io.Serializable>
+    final /*constructor*/ fun </*0,r*/ A : java.io.Serializable><init>(): test.Clock<A>
 }

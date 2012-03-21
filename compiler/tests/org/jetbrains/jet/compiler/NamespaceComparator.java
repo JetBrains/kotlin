@@ -43,10 +43,7 @@ import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.types.Variance;
 import org.junit.Assert;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -263,15 +260,15 @@ class NamespaceComparator {
             }
 
             if (fun.getReceiverParameter().exists()) {
-                new Serializer(sb).serialize(fun.getReceiverParameter());
+                new TypeSerializer(sb).serialize(fun.getReceiverParameter());
                 sb.append(".");
             }
 
             sb.append(fun.getName());
             sb.append("(");
-            new ValueParameterSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
+            new TypeSerializer(sb).serializeCommaSeparated(fun.getValueParameters());
             sb.append("): ");
-            new Serializer(sb).serialize(fun.getReturnType());
+            new TypeSerializer(sb).serialize(fun.getReturnType());
         }
 
         public void serialize(ExtensionReceiver extensionReceiver) {
@@ -298,13 +295,12 @@ class NamespaceComparator {
                 sb.append("> ");
             }
             if (prop.getReceiverParameter().exists()) {
-                // TODO: print only name for type parameter
-                new Serializer(sb).serialize(prop.getReceiverParameter().getType());
+                new TypeSerializer(sb).serialize(prop.getReceiverParameter().getType());
                 sb.append(".");
             }
             sb.append(prop.getName());
             sb.append(": ");
-            new Serializer(sb).serialize(prop.getType());
+            new TypeSerializer(sb).serialize(prop.getType());
         }
 
         public void serialize(ValueParameterDescriptor valueParameter) {
@@ -317,9 +313,9 @@ class NamespaceComparator {
             sb.append(valueParameter.getName());
             sb.append(": ");
             if (valueParameter.getVarargElementType() != null) {
-                serialize(valueParameter.getVarargElementType());
+                new TypeSerializer(sb).serialize(valueParameter.getVarargElementType());
             } else {
-                serialize(valueParameter.getType());
+                new TypeSerializer(sb).serialize(valueParameter.getType());
             }
             if (valueParameter.hasDefaultValue()) {
                 sb.append(" = ?");
@@ -339,28 +335,8 @@ class NamespaceComparator {
             sb.append(modality.name().toLowerCase());
         }
 
-        public void serialize(@NotNull JetType type) {
-            serialize(type.getConstructor().getDeclarationDescriptor());
-            if (!type.getArguments().isEmpty()) {
-                sb.append("<");
-                boolean first = true;
-                for (TypeProjection proj : type.getArguments()) {
-                    if (!first) {
-                        sb.append(", ");
-                    }
-                    serialize(proj.getProjectionKind());
-                    serialize(proj.getType());
-                    first = false;
-                }
-                sb.append(">");
-            }
-            if (type.isNullable()) {
-                sb.append("?");
-            }
-        }
-
         public void serialize(AnnotationDescriptor annotation) {
-            serialize(annotation.getType());
+            new TypeSerializer(sb).serialize(annotation.getType());
             sb.append("(");
             serializeCommaSeparated(annotation.getValueArguments());
             sb.append(")");
@@ -436,13 +412,46 @@ class NamespaceComparator {
                 List<String> list = new ArrayList<String>();
                 for (JetType upper : param.getUpperBounds()) {
                     StringBuilder sb = new StringBuilder();
-                    new ValueParameterSerializer(sb).serialize(upper);
+                    new TypeSerializer(sb).serialize(upper);
                     list.add(sb.toString());
                 }
                 Collections.sort(list);
                 serializeSeparated(list, " & "); // TODO: use where
             }
             // TODO: lower bounds
+        }
+
+    }
+    
+    private static class TypeSerializer extends Serializer {
+
+        public TypeSerializer(StringBuilder sb) {
+            super(sb);
+        }
+
+        @Override
+        public void serialize(TypeParameterDescriptor param) {
+            sb.append(param.getName());
+        }
+
+        public void serialize(@NotNull JetType type) {
+            serialize(type.getConstructor().getDeclarationDescriptor());
+            if (!type.getArguments().isEmpty()) {
+                sb.append("<");
+                boolean first = true;
+                for (TypeProjection proj : type.getArguments()) {
+                    if (!first) {
+                        sb.append(", ");
+                    }
+                    serialize(proj.getProjectionKind());
+                    serialize(proj.getType());
+                    first = false;
+                }
+                sb.append(">");
+            }
+            if (type.isNullable()) {
+                sb.append("?");
+            }
         }
 
     }
@@ -474,18 +483,6 @@ class NamespaceComparator {
         }
     }
 
-    private static class ValueParameterSerializer extends Serializer {
-
-        public ValueParameterSerializer(StringBuilder sb) {
-            super(sb);
-        }
-
-        @Override
-        public void serialize(TypeParameterDescriptor param) {
-            sb.append(param.getName());
-        }
-    }
-
     private class FullContentSerialier extends Serializer {
         private FullContentSerialier(StringBuilder sb) {
             super(sb);
@@ -513,7 +510,7 @@ class NamespaceComparator {
 
             if (!klass.getTypeConstructor().getSupertypes().isEmpty()) {
                 sb.append(" : ");
-                new Serializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
+                new TypeSerializer(sb).serializeCommaSeparated(new ArrayList<JetType>(klass.getTypeConstructor().getSupertypes()));
             }
 
             sb.append(" {\n");

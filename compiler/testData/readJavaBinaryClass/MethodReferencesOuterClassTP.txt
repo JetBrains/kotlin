@@ -1,7 +1,7 @@
 namespace test
 
 final class test.Outer</*0*/ P : jet.Any?> : jet.Any {
-    final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Outer</*0*/ P : jet.Any?>
+    final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Outer<P>
     final class test.Outer.Inner : jet.Any {
         final /*constructor*/ fun <init>(): test.Outer.Inner
         final fun </*0*/ Q : P>f(): jet.Tuple0

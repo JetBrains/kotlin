@@ -1,8 +1,8 @@
 namespace test
 
 open class test.Outer</*0*/ P : jet.Any?> : jet.Any {
-    final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Outer</*0*/ P : jet.Any?>
+    final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Outer<P>
     open class test.Outer.Inner</*0*/ Q : P> : jet.Any {
-        final /*constructor*/ fun </*0*/ Q : P><init>(): test.Outer.Inner</*0*/ Q : P>
+        final /*constructor*/ fun </*0*/ Q : P><init>(): test.Outer.Inner<Q>
     }
 }
