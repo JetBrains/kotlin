@@ -20,8 +20,11 @@ package org.jetbrains.jet.di;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
+import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,18 +42,29 @@ public class InjectorForJavaSemanticServices {
         this.javaSemanticServices = new JavaSemanticServices();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
+        JavaBridgeConfiguration javaBridgeConfiguration = new JavaBridgeConfiguration();
+        ModuleDescriptor moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
         this.project = project;
         JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
+        NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
+        this.javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
         this.javaDescriptorResolver.setProject(project);
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
 
+        javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
+        javaBridgeConfiguration.setProject(project);
+
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
+
+        namespaceFactoryImpl.setConfiguration(javaBridgeConfiguration);
+        namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
+        namespaceFactoryImpl.setTrace(bindingTrace);
 
     }
 

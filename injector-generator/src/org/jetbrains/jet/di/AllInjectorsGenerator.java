@@ -110,7 +110,11 @@ public class AllInjectorsGenerator {
         // Fields
         generator.addPublicField(JavaSemanticServices.class);
         generator.addPublicField(JavaDescriptorResolver.class);
-        generator.addField(true, BindingTrace.class, null, new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
+        generator.addField(true, BindingTrace.class, null,
+                new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
+        generator.addField(JavaBridgeConfiguration.class);
+        generator.addField(false, ModuleDescriptor.class, null,
+                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
         
         // Parameters
         generator.addPublicParameter(Project.class);

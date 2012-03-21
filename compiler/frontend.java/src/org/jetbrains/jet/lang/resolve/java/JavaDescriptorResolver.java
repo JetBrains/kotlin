@@ -32,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
@@ -199,6 +196,7 @@ public class JavaDescriptorResolver {
     protected GlobalSearchScope javaSearchScope ;
     protected JavaSemanticServices semanticServices;
     private AltClassFinder altClassFinder;
+    private NamespaceFactory namespaceFactory;
 
     @Inject
     public void setProject(Project project) {
@@ -211,6 +209,11 @@ public class JavaDescriptorResolver {
             }
         };
         this.javaFacade = JavaPsiFacade.getInstance(project);
+    }
+
+    @Inject
+    public void setNamespaceFactory(NamespaceFactoryImpl namespaceFactory) {
+        this.namespaceFactory = namespaceFactory;
     }
 
     @Inject
