@@ -887,11 +887,15 @@ public class JavaDescriptorResolver {
                 true
         );
 
-        namespaceData.namespaceDescriptor.setMemberScope(new JavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor, semanticServices));
+        namespaceData.namespaceDescriptor.setMemberScope(createJavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor));
         semanticServices.getTrace().record(BindingContext.NAMESPACE, psiPackage, namespaceData.namespaceDescriptor);
         // TODO: hack
         namespaceData.kotlin = true;
         return namespaceData;
+    }
+
+    public JavaPackageScope createJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
+        return new JavaPackageScope(fqName, ns, semanticServices);
     }
 
     @NotNull

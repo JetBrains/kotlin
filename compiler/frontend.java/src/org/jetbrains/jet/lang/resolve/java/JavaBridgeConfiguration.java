@@ -61,13 +61,9 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
         delegateConfiguration.addDefaultImports(rootScope, directives);
     }
 
-    public static JavaNamespaceDescriptor createNamespaceDescriptor(String name, FqName qualifiedName) {
-        return new JavaNamespaceDescriptor(null, Collections.<AnnotationDescriptor>emptyList(), name, qualifiedName, true);
-    }
-
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        namespaceMemberScope.importScope(new JavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor, javaSemanticServices));
+        namespaceMemberScope.importScope(javaSemanticServices.getDescriptorResolver().createJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor));
         delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 
