@@ -1,5 +1,8 @@
 package kotlin.sequences
 
+/** Creates a sequence without elements of type *T* */
+inline fun <T> empty(): Sequence<T> = Sequence<T> { null }
+
 /** Creates a sequence from the given list of *elements* */
 inline fun <T> sequence(vararg elements: T): Sequence<T> = asSequence(elements.iterator())
 

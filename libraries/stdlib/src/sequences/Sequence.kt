@@ -12,6 +12,19 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
 
   override fun iterator(): Iterator<T> = YieldingIterator { (next)() }
 
+  fun equals(obj: Any?): Boolean = obj is Sequence<T> && equal(iterator(), obj.iterator())
+
+  private fun equal(a: Iterator<T>, b: Iterator<T>): Boolean {
+      while (a.hasNext && b.hasNext) {
+          val elementOfA = a.next()
+          val elementOfB = b.next()
+
+          if (elementOfA == elementOfB) continue
+          if (elementOfA == null || elementOfA != elementOfB) return false
+      }
+      return !a.hasNext && !b.hasNext
+  }
+
   /**
    * Retains only elements that satisfy the given predicate
    *
