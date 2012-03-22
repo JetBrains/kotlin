@@ -13,7 +13,7 @@ public val defaultBufferSize: Int = 64 * 1024
 /**
  * Returns the default [[Charset]] which defaults to UTF-8
  */
-public val defaultCharset: Charset = Charset.forName("UTF-8") ?: Charset.defaultCharset().sure()
+public val defaultCharset: Charset = Charset.forName("UTF-8").sure()
 
 
 /** Prints the given message to [[System.out]] */
@@ -192,8 +192,8 @@ inline fun InputStream.reader(encoding: String) = InputStreamReader(this, encodi
 inline fun InputStream.reader(encoding: CharsetDecoder) = InputStreamReader(this, encoding)
 
 
-inline fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedWriter
-    = if (this is BufferedWriter) this else BufferedWriter(writer(), bufferSize)
+inline fun OutputStream.buffered(bufferSize: Int = defaultBufferSize) : BufferedOutputStream
+    = if (this is BufferedOutputStream) this else BufferedOutputStream(this, bufferSize)
 
 inline fun OutputStream.writer(encoding: Charset = defaultCharset) : OutputStreamWriter = OutputStreamWriter(this, encoding)
 
