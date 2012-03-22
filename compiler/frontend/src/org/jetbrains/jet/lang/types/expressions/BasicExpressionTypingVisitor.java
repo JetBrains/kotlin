@@ -680,25 +680,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         IElementType operationType = operationSign.getReferencedNameElementType();
 
         // Type check the base expression
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-        ExpressionTypingContext contextWithTemporaryTrace = context.replaceBindingTrace(temporaryTrace);
-        JetType type = facade.getType(baseExpression, contextWithTemporaryTrace.replaceExpectedType(NO_EXPECTED_TYPE));
+        JetType type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
         if (type == null) {
-            temporaryTrace.commit();
             return null;
         }
 
         // Special case for expr!!
         if (operationType == JetTokens.EXCLEXCL) {
             JetType result;
-            if (isKnownToBeNotNull(baseExpression, contextWithTemporaryTrace)) {
-                temporaryTrace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
+            if (isKnownToBeNotNull(baseExpression, context)) {
+                context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
                 result = type;
             }
             else {
                 result = TypeUtils.makeNotNullable(type);
             }
-            temporaryTrace.commit();
             return DataFlowUtils.checkType(result, expression, context);
         }
 
@@ -711,23 +707,22 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         // a[i]++/-- takes special treatment because it is actually let j = i, arr = a in arr.set(j, a.get(j).inc())
         if ((operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) && baseExpression instanceof JetArrayAccessExpression) {
-            JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, contextWithTemporaryTrace.trace);
+            JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, context.trace);
             resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression,
                                         stubExpression,
                                         context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(TemporaryBindingTrace.create(context.trace)),
-                                        contextWithTemporaryTrace.trace);
+                                        context.trace);
         }
 
         ExpressionReceiver receiver = new ExpressionReceiver(baseExpression, type);
 
         // Resolve the operation reference
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = contextWithTemporaryTrace.resolveCallWithGivenNameToDescriptor(
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, expression),
                 expression.getOperationReference(),
                 name);
 
         if (!resolutionResults.isSuccess()) {
-            temporaryTrace.commit();
             return null;
         }
 
@@ -737,17 +732,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
                 result = ErrorUtils.createErrorType("Unit");
-                contextWithTemporaryTrace.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
+                context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
                 JetType receiverType = receiver.getType();
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, receiverType)) {
-                    contextWithTemporaryTrace.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name, receiverType, returnType));
+                    context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name, receiverType, returnType));
                 }
                 else {
-                    contextWithTemporaryTrace.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
+                    context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
 
-                    checkLValue(contextWithTemporaryTrace.trace, baseExpression);
+                    checkLValue(context.trace, baseExpression);
                 }
                 // TODO : Maybe returnType?
                 result = receiverType;
@@ -756,7 +751,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             result = returnType;
         }
-        temporaryTrace.commit();
         return DataFlowUtils.checkType(result, expression, context);
     }
 
