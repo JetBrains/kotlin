@@ -41,7 +41,7 @@ public class JetHighlighter extends SyntaxHighlighterBase {
     private static final Map<IElementType, TextAttributesKey> keys1;
     private static final Map<IElementType, TextAttributesKey> keys2;
 
-    private static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
+    static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
                                                   "JET.KEYWORD",
                                                   SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
                                                  );
