@@ -66,18 +66,21 @@ public class JetCompletionContributor extends CompletionContributor {
                        JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
 
+                           // Prevent from adding reference variants from standard reference contributor
+                           result.stopHere();
+
+                           if (isOnlyKeywordCompletion(position)) {
+                               return;
+                           }
+
                            if (shouldRunTypeCompletionOnly(position, jetReference)) {
                                addClasses(parameters, result);
-                               result.stopHere();
                                return;
                            }
 
                            for (Object variant : jetReference.getVariants()) {
                                addReferenceVariant(result, variant, positions);
                            }
-
-                           // Prevent from adding reference variants from standard reference contributor
-                           result.stopHere();
 
                            String prefix = result.getPrefixMatcher().getPrefix();
 
@@ -103,6 +106,10 @@ public class JetCompletionContributor extends CompletionContributor {
                        }
                    }
                });
+    }
+
+    private static boolean isOnlyKeywordCompletion(PsiElement position) {
+        return PsiTreeUtil.getParentOfType(position, JetModifierList.class) != null;
     }
 
     private static void addJetExtensions(JetSimpleNameExpression expression, CompletionResultSet result, PsiElement position) {

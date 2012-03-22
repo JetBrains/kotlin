@@ -51,9 +51,9 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void testSingleBrackets() {
-        configureByFile("SingleBrackets.kt");
+        configureByFile(getBeforeFileName());
         type('(');
-        checkResultByFile("SingleBrackets.kt.after");
+        checkResultByFile(getAfterFileName());
     }
 
     public void testExistingSingleBrackets() {
@@ -69,9 +69,8 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
     }
 
     public void doTest(CompletionType type, int time, @Nullable String completeItem) {
-        String fileName = getTestName(false);
         try {
-            configureByFileNoComplete(fileName + ".kt");
+            configureByFileNoComplete(getBeforeFileName());
             setType(type);
 
             complete(time);
@@ -80,10 +79,18 @@ public class CompletionHandlerTest extends LightCompletionTestCase {
                 selectItem(LookupElementBuilder.create(completeItem), '\t');
             }
 
-            checkResultByFile(fileName + ".kt.after");
+            checkResultByFile(getAfterFileName());
         } catch (Exception e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected String getBeforeFileName() {
+        return getTestName(false) + ".kt";
+    }
+
+    protected String getAfterFileName() {
+        return getTestName(false) + ".kt.after";
     }
 
     @Override
