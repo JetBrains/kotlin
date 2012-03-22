@@ -235,7 +235,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             opSet.removeAll(usedSet);
             assert false : opSet;
         }
-        assert usedSet.size() == opSet.size() : "Either some operations are unused, or something that's not an operation is used";
+        assert usedSet.size() == opSet.size() : "Either some ops are unused, or something a non-op is used";
 
         usedSet.removeAll(opSet);
 
