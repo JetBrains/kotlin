@@ -41,11 +41,6 @@ public class JetHighlighter extends SyntaxHighlighterBase {
     private static final Map<IElementType, TextAttributesKey> keys1;
     private static final Map<IElementType, TextAttributesKey> keys2;
 
-    static final TextAttributesKey JET_KEYWORD = TextAttributesKey.createTextAttributesKey(
-                                                  "JET.KEYWORD",
-                                                  SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
-                                                 );
-
     public static final TextAttributesKey JET_SOFT_KEYWORD;
     static {
         TextAttributes attributes = SyntaxHighlighterColors.KEYWORD.getDefaultAttributes().clone();
@@ -173,9 +168,9 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys2 = new HashMap<IElementType, TextAttributesKey>();
 
 
-        fillMap(keys1, JetTokens.KEYWORDS, JET_KEYWORD);
+        fillMap(keys1, JetTokens.KEYWORDS, JetHighlightingColors.JET_KEYWORD);
 
-        keys1.put(JetTokens.AS_SAFE, JET_KEYWORD);
+        keys1.put(JetTokens.AS_SAFE, JetHighlightingColors.JET_KEYWORD);
         keys1.put(JetTokens.LABEL_IDENTIFIER, JET_LABEL_IDENTIFIER);
         keys1.put(JetTokens.ATAT, JET_LABEL_IDENTIFIER);
         keys1.put(JetTokens.FIELD_IDENTIFIER, JET_FIELD_IDENTIFIER);

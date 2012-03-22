@@ -95,7 +95,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @Override
     public AttributesDescriptor[] getAttributeDescriptors() {
         return new AttributesDescriptor[]{
-            new AttributesDescriptor("Keyword", JetHighlighter.JET_KEYWORD)
+            new AttributesDescriptor(JetHighlightingColors.JET_KEYWORD.getExternalName(), JetHighlightingColors.JET_KEYWORD)
         };
     }
 
