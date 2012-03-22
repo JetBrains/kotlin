@@ -9,7 +9,6 @@ import kotlin.util.arrayList
 import kotlin.util.fold
 
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 import org.junit.Test
 
 class SequenceTest {
