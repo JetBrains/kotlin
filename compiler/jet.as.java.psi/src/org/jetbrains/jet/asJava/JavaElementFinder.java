@@ -83,6 +83,10 @@ public class JavaElementFinder extends PsiElementFinder {
     @NotNull
     @Override
     public PsiClass[] findClasses(@NotNull String qualifiedNameString, @NotNull GlobalSearchScope scope) {
+        if (!FqName.isValid(qualifiedNameString)) {
+            return PsiClass.EMPTY_ARRAY;
+        }
+
         FqName qualifiedName = new FqName(qualifiedNameString);
 
         // Backend searches for java.lang.String. Will fail with SOE if continue
@@ -159,6 +163,10 @@ public class JavaElementFinder extends PsiElementFinder {
 
     @Override
     public PsiPackage findPackage(@NotNull String qualifiedNameString) {
+        if (!FqName.isValid(qualifiedNameString)) {
+            return null;
+        }
+
         FqName fqName = new FqName(qualifiedNameString);
 
         final List<JetFile> psiFiles = collectProjectJetFiles(project, GlobalSearchScope.allScope(project));

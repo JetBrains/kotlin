@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -54,9 +55,20 @@ public class FqName {
 
 
     private void validateFqName() {
-        if (fqName.getFqName().indexOf('<') >= 0) {
+        if (!isValidAfterUnsafeCheck(fqName.getFqName())) {
             throw new IllegalArgumentException("incorrect fq name: " + fqName);
         }
+    }
+
+    private static boolean isValidAfterUnsafeCheck(@NotNull String qualifiedName) {
+        // TODO: There's a valid name with escape char ``
+        return qualifiedName.indexOf('<') < 0;
+    }
+
+    public static boolean isValid(@Nullable String qualifiedName) {
+        return qualifiedName != null &&
+               FqNameUnsafe.isValid(qualifiedName) &&
+               isValidAfterUnsafeCheck(qualifiedName);
     }
 
     @NotNull
