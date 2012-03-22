@@ -53,8 +53,6 @@ import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.m
 /**
  * @author Pavel Talanov
  */
-
-//TODO: class has convoluted code. REFACTOR before changing
 public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
@@ -63,6 +61,8 @@ public final class FunctionTranslator extends AbstractTranslator {
         return new FunctionTranslator(function, context);
     }
 
+    @NotNull
+    private final TranslationContext functionBodyContext;
     @Nullable
     private TemporaryVariable aliasForContaingClassThis = null;
     @NotNull
@@ -84,6 +84,8 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.functionDeclaration = functionDeclaration;
         this.functionObject = context().getFunctionObject(descriptor);
         this.functionBody = functionObject.getBody();
+        //NOTE: it's important we compute the context before we start the computation
+        this.functionBodyContext = getFunctionBodyContext();
     }
 
     @NotNull
@@ -126,7 +128,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public JsFunction translateAsLocalFunction() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        generateFunctionObject(getFunctionBodyContext());
+        generateFunctionObject();
         functionObject.setName(functionName);
         return functionObject;
     }
@@ -134,21 +136,20 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     public JsPropertyInitializer translateAsMethod() {
         JsName functionName = context().getNameForElement(functionDeclaration);
-        generateFunctionObject(getFunctionBodyContext());
+        generateFunctionObject();
         return new JsPropertyInitializer(functionName.makeRef(), functionObject);
     }
 
     @NotNull
     public JsExpression translateAsLiteral() {
-        return mayBeWrapInClosureCaptureExpression(doTranslateAsLiteral());
+        assert getExpectedThisDescriptor(descriptor) == null;
+        generateFunctionObject();
+        return mayBeWrapInClosureCaptureExpression(mayBeWrapWithThisAlias());
     }
 
     @NotNull
-    private JsExpression doTranslateAsLiteral() {
-        assert getExpectedThisDescriptor(descriptor) == null;
-        generateFunctionObject(getFunctionBodyContext());
-        boolean shouldAliasThisObject = shouldAliasThisObject();
-        if (!shouldAliasThisObject) {
+    private JsExpression mayBeWrapWithThisAlias() {
+        if (!shouldAliasThisObject()) {
             return functionObject;
         }
         assert aliasForContaingClassThis != null;
@@ -185,19 +186,27 @@ public final class FunctionTranslator extends AbstractTranslator {
         return dummyFunctionInvocation;
     }
 
-    private void generateFunctionObject(@NotNull TranslationContext context) {
+    private void generateFunctionObject() {
         setParameters(functionObject, translateParameters());
-        translateBody(context);
+        translateBody();
     }
 
-    private void translateBody(@NotNull TranslationContext context) {
+    private void translateBody() {
         JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
         if (jetBodyExpression == null) {
             assert descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }
-        JsNode realBody = Translation.translateExpression(jetBodyExpression, context);
-        functionBody.getStatements().add(wrapWithReturnIfNeeded(realBody, mustAddReturnToGeneratedFunctionBody()));
+        JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
+        functionBody.getStatements().add(mayBeWrapWithReturn(realBody));
+    }
+
+    @NotNull
+    private JsBlock mayBeWrapWithReturn(@NotNull JsNode body) {
+        if (!mustAddReturnToGeneratedFunctionBody()) {
+            return convertToBlock(body);
+        }
+        return convertToBlock(lastExpressionReturned(body));
     }
 
     private boolean mustAddReturnToGeneratedFunctionBody() {
@@ -207,13 +216,6 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static JsBlock wrapWithReturnIfNeeded(@NotNull JsNode body, boolean needsReturn) {
-        if (!needsReturn) {
-            return convertToBlock(body);
-        }
-        return convertToBlock(lastExpressionReturned(body));
-    }
-
     private static JsNode lastExpressionReturned(@NotNull JsNode body) {
         return mutateLastExpression(body, new Mutator() {
             @Override
