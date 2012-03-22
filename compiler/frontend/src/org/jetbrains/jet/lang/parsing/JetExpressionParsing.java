@@ -53,7 +53,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS,
+            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
 //            MUL,
             PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
@@ -126,7 +126,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
-        POSTFIX(PLUSPLUS, MINUSMINUS,
+        POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
 //                HASH,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
@@ -235,7 +235,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             opSet.removeAll(usedSet);
             assert false : opSet;
         }
-        assert usedSet.size() == opSet.size();
+        assert usedSet.size() == opSet.size() : "Either some operations are unused, or something that's not an operation is used";
 
         usedSet.removeAll(opSet);
 
@@ -350,7 +350,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * atomicExpression postfixUnaryOperation?
      *
      * postfixUnaryOperation
-     *   : "++" : "--"
+     *   : "++" : "--" : "!!"
      *   : typeArguments? valueArguments (getEntryPoint? functionLiteral)
      *   : typeArguments (getEntryPoint? functionLiteral)
      *   : arrayAccess

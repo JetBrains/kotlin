@@ -1,0 +1,35 @@
+fun main(args : Array<String>) {
+    val a : Int? = null
+    val b : Int? = null
+    a!! : Int
+    a!! + 2
+    a!!.plus(2)
+    a!!.plus(b!!)
+    2.plus(b!!)
+    2 + b!!
+
+    val c = 1
+    c<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+
+    val d : Any? = null
+
+    if (d != null) {
+        d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    }
+
+    if (d is String) {
+        d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    }
+
+    if (d is String?) {
+        if (d != null) {
+            d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+        }
+        if (d is String) {
+            d<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+        }
+    }
+
+    val <!UNUSED_VARIABLE!>f<!> : String = <!TYPE_MISMATCH!>a!!<!>
+    <!TYPE_MISMATCH!>a!!<!> : String
+}
