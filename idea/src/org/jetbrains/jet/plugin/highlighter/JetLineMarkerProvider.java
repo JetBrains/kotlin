@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.annotations;
+package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeHighlighting.Pass;

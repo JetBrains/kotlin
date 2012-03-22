@@ -17,7 +17,7 @@
 /*
  * @author max
  */
-package org.jetbrains.jet.plugin.annotations;
+package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -28,7 +28,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetHighlighter;
 
 public class SoftKeywordsAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {

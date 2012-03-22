@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.annotations;
+package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.Sets;
 import com.intellij.lang.annotation.AnnotationHolder;
@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.JetHighlighter;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
 import java.util.Collection;

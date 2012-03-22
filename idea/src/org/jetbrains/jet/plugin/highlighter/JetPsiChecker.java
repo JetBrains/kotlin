@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.annotations;
+package org.jetbrains.jet.plugin.highlighter;
 
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -39,7 +39,7 @@ import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.JetHighlighter;
+import org.jetbrains.jet.plugin.highlighter.JetHighlighter;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
