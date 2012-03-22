@@ -119,13 +119,13 @@ public class DebugInfoAnnotator implements Annotator {
                         boolean unresolved = unresolvedReferences.contains(expression);
                         JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
                         if (declarationDescriptor != null && !ApplicationManager.getApplication().isUnitTestMode() && (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
-                            holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").setTextAttributes(JetHighlighter.JET_RESOLVED_TO_ERROR);
+                            holder.createErrorAnnotation(expression, "[DEBUG] Resolved to error element").setTextAttributes(JetHighlightingColors.RESOLVED_TO_ERROR);
                         }
                         if (resolved && unresolved) {
-                            holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target).setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
+                            holder.createErrorAnnotation(expression, "[DEBUG] Reference marked as unresolved is actually resolved to " + target).setTextAttributes(JetHighlightingColors.DEBUG_INFO);
                         }
                         else if (!resolved && !unresolved) {
-                            holder.createErrorAnnotation(expression, "[DEBUG] Reference is not resolved to anything, but is not marked unresolved").setTextAttributes(JetHighlighter.JET_DEBUG_INFO);
+                            holder.createErrorAnnotation(expression, "[DEBUG] Reference is not resolved to anything, but is not marked unresolved").setTextAttributes(JetHighlightingColors.DEBUG_INFO);
                         }
                     }
 

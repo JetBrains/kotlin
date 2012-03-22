@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.options.OptionsBundle;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
@@ -94,8 +95,32 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public AttributesDescriptor[] getAttributeDescriptors() {
+        // TODO i18n
         return new AttributesDescriptor[]{
-            new AttributesDescriptor(JetHighlightingColors.JET_KEYWORD.getExternalName(), JetHighlightingColors.JET_KEYWORD)
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.keyword"), JetHighlightingColors.KEYWORD),
+            new AttributesDescriptor("Soft keyword", JetHighlightingColors.SOFT_KEYWORD),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.number"), JetHighlightingColors.NUMBER),
+
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.string"), JetHighlightingColors.STRING),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.valid.escape.in.string"), JetHighlightingColors.VALID_STRING_ESCAPE),
+
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
+            new AttributesDescriptor("KDoc comment", JetHighlightingColors.DOC_COMMENT),
+
+            new AttributesDescriptor("Wrapped into ref", JetHighlightingColors.WRAPPED_INTO_REF),
+
+            new AttributesDescriptor("Instance property with backing field", JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD),
+            new AttributesDescriptor("Instance property backing field access", JetHighlightingColors.INSTANCE_BACKING_FIELD_ACCESS),
+
+            new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
+            new AttributesDescriptor("Function literal bracket", JetHighlightingColors.FUNCTION_LITERAL_BRACKET),
+
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
+
+            new AttributesDescriptor("Automatically casted value", JetHighlightingColors.AUTO_CASTED_VALUE),
+
+            new AttributesDescriptor("Label", JetHighlightingColors.LABEL),
         };
     }
 

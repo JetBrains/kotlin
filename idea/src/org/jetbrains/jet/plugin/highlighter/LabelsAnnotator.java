@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lexer.JetTokens;
-import org.jetbrains.jet.plugin.highlighter.JetHighlighter;
 
 public class LabelsAnnotator implements Annotator {
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
@@ -38,7 +37,7 @@ public class LabelsAnnotator implements Annotator {
             public void visitPrefixExpression(JetPrefixExpression expression) {
                 JetSimpleNameExpression operationSign = expression.getOperationReference();
                 if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
-                    holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
+                    holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlightingColors.LABEL);
                 }
             }
 
@@ -46,7 +45,7 @@ public class LabelsAnnotator implements Annotator {
             public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
                 JetSimpleNameExpression targetLabel = expression.getTargetLabel();
                 if (targetLabel != null) {
-                    holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlighter.JET_LABEL_IDENTIFIER);
+                    holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlightingColors.LABEL);
                 }
             }
 

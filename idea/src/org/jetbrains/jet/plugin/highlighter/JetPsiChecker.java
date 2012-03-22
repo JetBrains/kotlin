@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.highlighter.JetHighlighter;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
@@ -94,7 +93,7 @@ public class JetPsiChecker implements Annotator {
                         if (target instanceof ValueParameterDescriptor) {
                             ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
                             if (bindingContext.get(AUTO_CREATED_IT, parameterDescriptor)) {
-                                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(JetHighlighter.JET_AUTOCREATED_IT);
+                                holder.createInfoAnnotation(expression, "Automatically declared based on the expected type").setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER);
                             }
                         }
 
@@ -106,7 +105,8 @@ public class JetPsiChecker implements Annotator {
                         if (target instanceof VariableDescriptor) {
                             VariableDescriptor variableDescriptor = (VariableDescriptor) target;
                             if (bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor)) {
-                                holder.createInfoAnnotation(node, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(JetHighlighter.JET_WRAPPED_INTO_REF);
+                                holder.createInfoAnnotation(node, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
+                                    JetHighlightingColors.WRAPPED_INTO_REF);
                             }
 
                         }
@@ -126,7 +126,8 @@ public class JetPsiChecker implements Annotator {
                     public void visitExpression(@NotNull JetExpression expression) {
                         JetType autoCast = bindingContext.get(AUTOCAST, expression);
                         if (autoCast != null) {
-                            holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(JetHighlighter.JET_AUTO_CAST_EXPRESSION);
+                            holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(
+                                JetHighlightingColors.AUTO_CASTED_VALUE);
                         }
                         expression.acceptChildren(this);
                     }
@@ -295,7 +296,7 @@ public class JetPsiChecker implements Annotator {
             holder.createInfoAnnotation(
                     nameIdentifier,
                     "This property has a backing field")
-                .setTextAttributes(JetHighlighter.JET_PROPERTY_WITH_BACKING_FIELD_IDENTIFIER);
+                .setTextAttributes(JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD);
         }
     }
 }

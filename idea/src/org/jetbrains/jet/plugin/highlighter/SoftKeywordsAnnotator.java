@@ -36,7 +36,7 @@ public class SoftKeywordsAnnotator implements Annotator {
             public void visitElement(PsiElement element) {
                 if (element instanceof LeafPsiElement) {
                     if (JetTokens.SOFT_KEYWORDS.contains(((LeafPsiElement) element).getElementType())) {
-                        holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlighter.JET_SOFT_KEYWORD);
+                        holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.SOFT_KEYWORD);
                     }
                 }
             }
@@ -54,14 +54,14 @@ public class SoftKeywordsAnnotator implements Annotator {
             public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
                 if (ApplicationManager.getApplication().isUnitTestMode()) return;
                 JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-                holder.createInfoAnnotation(functionLiteral.getOpenBraceNode(), null).setTextAttributes(JetHighlighter.JET_FUNCTION_LITERAL_DELIMITER);
+                holder.createInfoAnnotation(functionLiteral.getOpenBraceNode(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
                 ASTNode closingBraceNode = functionLiteral.getClosingBraceNode();
                 if (closingBraceNode != null) {
-                    holder.createInfoAnnotation(closingBraceNode, null).setTextAttributes(JetHighlighter.JET_FUNCTION_LITERAL_DELIMITER);
+                    holder.createInfoAnnotation(closingBraceNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
                 }
                 ASTNode arrowNode = functionLiteral.getArrowNode();
                 if (arrowNode != null) {
-                    holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlighter.JET_FUNCTION_LITERAL_DELIMITER);
+                    holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
                 }
             }
         });
@@ -73,7 +73,7 @@ public class SoftKeywordsAnnotator implements Annotator {
             if (userType.getQualifier() == null) {
                 JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
                 if (referenceExpression != null) {
-                    holder.createInfoAnnotation(referenceExpression.getNode(), "Annotation").setTextAttributes(JetHighlighter.JET_SOFT_KEYWORD);
+                    holder.createInfoAnnotation(referenceExpression.getNode(), "Annotation").setTextAttributes(JetHighlightingColors.SOFT_KEYWORD);
                 }
             }
         }
