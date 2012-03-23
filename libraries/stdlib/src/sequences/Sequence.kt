@@ -1,16 +1,42 @@
 package kotlin.sequences
 
 /**
- * A sequence of items of type *T* that are lazily produced by the given closure
+ * A sequence of elements of type *T* that are lazily produced by the given closure
  *
+ * @param reset a closure initialising the iteration context
  * @param next a closure yielding the next element in this sequence
  *
  * @author [Franck Rasolo](http://www.linkedin.com/in/franckrasolo)
  * @since 1.0
  */
-class Sequence<in T>(val next: () -> T?) : Iterable<T> {
+class Sequence<in T>(val reset: () -> Unit = {}, val next: () -> T? = { null }) : Iterable<T> {
 
-  override fun iterator(): Iterator<T> = YieldingIterator { (next)() }
+  override fun iterator(): Iterator<T> { (reset)(); return YieldingIterator { (next)() } }
+
+  fun equals(obj: Any?): Boolean = obj is Sequence<T> && iterator() == obj.iterator()
+
+  fun toString(): String = join(separator = ", ", prefix = "[ ", postfix = " ]")
+
+  /**
+   * Creates a string from the first *n (limit)* elements in the sequence, separated by *separator* and using the given *prefix* and *postfix* if supplied
+   */
+  fun join(separator: String = " : ", prefix : String = "", postfix : String = "", limit: Int = 30): String {
+    val iterator = iterator(); val builder = StringBuilder(); var count = 0
+    builder.append(prefix)
+
+    if (iterator.hasNext) builder.append(iterator.next())
+    count++
+
+    while (iterator.hasNext && count < limit) {
+      count++
+      builder.append(separator)?.append(iterator.next())
+    }
+
+    if (count == limit) builder.append(separator)?.append("...")
+    builder.append(postfix)
+
+    return builder.toString().sure()
+  }
 
   /**
    * Retains only elements that satisfy the given predicate
@@ -18,8 +44,9 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
    * @param predicate the predicate evaluated against objects of type *T*
    */
   fun filter(predicate: (T) -> Boolean): Sequence<T> {
-    val iterator = iterator()
+    var iterator: Iterator<T>
 
+    fun reset() { iterator = iterator() }
     fun next(): T? {
       while (iterator.hasNext) {
         val item = iterator.next()
@@ -28,7 +55,7 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
       return null
     }
 
-    return Sequence<T> { next() }
+    return Sequence<T>({ reset() }, { next() })
   }
 
   /**
@@ -50,9 +77,12 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
    * @param transform the function transforming an object of type *T* into an object of type *R*
    */
   fun <in R> map(transform: (T) -> R): Sequence<R> {
-    val iterator = iterator()
+    var iterator: Iterator<T>
+
+    fun reset() { iterator = iterator() }
     fun next(): R? = if (iterator.hasNext) (transform)(iterator.next()) else null
-    return Sequence<R> { next() }
+
+    return Sequence<R>({ reset() }, { next() })
   }
 
   /**
@@ -74,8 +104,9 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
    * @param predicate the predicate evaluated against objects of type *T*
    */
   fun takeWhile(predicate: (T) -> Boolean): Sequence<T> {
-    val iterator = iterator()
+    var iterator: Iterator<T>
 
+    fun reset() { iterator = iterator() }
     fun next(): T? {
       if (iterator.hasNext) {
         val item = iterator.next()
@@ -84,7 +115,7 @@ class Sequence<in T>(val next: () -> T?) : Iterable<T> {
       return null
     }
 
-    return Sequence<T> { next() }
+    return Sequence<T>({ reset() }, { next() })
   }
 }
 
@@ -101,5 +132,18 @@ private class YieldingIterator<T>(val yield: () -> T?) : Iterator<T> {
       return next
     }
     throw java.util.NoSuchElementException()
+  }
+
+  fun <T> equals(obj: Any?): Boolean = obj is YieldingIterator<T> && equal(this, obj as YieldingIterator<T>)
+
+  private fun <T> equal(a: Iterator<T>, b: Iterator<T>): Boolean {
+    while (a.hasNext && b.hasNext) {
+      val elementOfA = a.next()
+      val elementOfB = b.next()
+
+      if (elementOfA == elementOfB) continue
+      if (elementOfA == null || elementOfA != elementOfB) return false
+    }
+    return !a.hasNext && !b.hasNext
   }
 }
