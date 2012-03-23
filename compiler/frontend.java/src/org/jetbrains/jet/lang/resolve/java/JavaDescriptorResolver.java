@@ -905,6 +905,7 @@ public class JavaDescriptorResolver {
                 name == null ? FqName.ROOT : new FqName(psiPackage.getQualifiedName()),
                 true
         );
+        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, false);
 
         namespaceData.namespaceDescriptor.setMemberScope(createJavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor));
         trace.record(BindingContext.NAMESPACE, psiPackage, namespaceData.namespaceDescriptor);
@@ -942,6 +943,8 @@ public class JavaDescriptorResolver {
                 new FqName(psiClass.getQualifiedName()),
                 false
         );
+        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, true);
+
         namespaceData.namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
         trace.record(BindingContext.NAMESPACE, psiClass, namespaceData.namespaceDescriptor);
         return namespaceData;

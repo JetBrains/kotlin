@@ -80,6 +80,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName, false);
+            trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
 
             currentOwner = namespaceDescriptor;
 
@@ -92,7 +93,10 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         String name = JetPsiUtil.safeName(namespaceHeader.getName());
         trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
 
-        return createNamespaceDescriptorIfNeeded(file, currentOwner, name, false);
+        NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, currentOwner, name, false);
+        trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
+
+        return namespaceDescriptor;
     }
 
     @Override

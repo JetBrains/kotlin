@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -112,11 +113,8 @@ public class JetTypeMapper {
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof JavaNamespaceDescriptor) {
-            JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) containingDeclaration;
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration).toSafe(), javaNamespaceDescriptor.isNamespace());
-        } else if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(containingDeclaration).toSafe(), true);
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration);
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -138,6 +136,29 @@ public class JetTypeMapper {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
         return owner;
+    }
+
+    private String jvmClassNameForNamespace(NamespaceDescriptor namespace) {
+        FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
+        Boolean javaClassStatics = bindingContext.get(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespace);
+        Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, namespace);
+
+        if (javaClassStatics == null && src == null) {
+            throw new IllegalStateException("unknown namespace origin: " + fqName);
+        }
+
+        boolean classStatics;
+        if (javaClassStatics != null) {
+            if (javaClassStatics.booleanValue() && src != null) {
+                throw new IllegalStateException(
+                        "conflicting namespace " + fqName + ": it is both java statics and from src");
+            }
+            classStatics = javaClassStatics.booleanValue();
+        } else {
+            classStatics = false;
+        }
+
+        return NamespaceCodegen.getJVMClassName(fqName, !classStatics);
     }
 
     @NotNull public Type mapReturnType(@NotNull final JetType jetType) {
@@ -218,12 +239,9 @@ public class JetTypeMapper {
             if (container instanceof ModuleDescriptor) {
                 throw new IllegalStateException("missed something");
             }
-            if(container instanceof JavaNamespaceDescriptor && JavaDescriptorResolver.JAVA_ROOT.equals(container.getName())) {
-                return name;
-            }
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) { 
-                return baseName + (container instanceof JavaNamespaceDescriptor || container instanceof NamespaceDescriptor ? "/" : "$") + name;
+                return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name;
             }
         }
 
@@ -391,11 +409,7 @@ public class JetTypeMapper {
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            boolean namespace = true;
-            if (functionParent instanceof JavaNamespaceDescriptor) {
-                namespace = ((JavaNamespaceDescriptor) functionParent).isNamespace();
-            }
-            owner = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(functionParent).toSafe(), namespace);
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

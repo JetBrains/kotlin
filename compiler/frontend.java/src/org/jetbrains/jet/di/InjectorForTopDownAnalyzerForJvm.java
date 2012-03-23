@@ -190,6 +190,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
         javaDescriptorResolver.setProject(project);
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
+        javaDescriptorResolver.setTrace(observableBindingTrace);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);

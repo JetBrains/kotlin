@@ -55,6 +55,7 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
         this.javaDescriptorResolver.setProject(project);
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
+        this.javaDescriptorResolver.setTrace(bindingTrace);
 
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
         javaBridgeConfiguration.setProject(project);
