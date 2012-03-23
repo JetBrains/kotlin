@@ -1,5 +1,7 @@
 package kotlin.util
 
+import kotlin.support.AbstractIterator
+
 import java.util.*
 import java.util.Iterator
 
@@ -24,3 +26,21 @@ inline fun <T> java.util.Iterator<T>.toLinkedHashSet() = to(LinkedHashSet<T>())
 
 /** Add iterated elements to java.util.TreeSet */
 inline fun <T> java.util.Iterator<T>.toTreeSet() = to(TreeSet<T>())
+
+/** Filters the iterator for all elements of a certain kind */
+inline fun <T, R: T> java.util.Iterator<T>.filterIs(): Iterator<R> {
+    val iter = this
+    return object : AbstractIterator<R>() {
+
+        override fun computeNext(): R? {
+            while (iter.hasNext()) {
+                val next = iter.next()
+                if (next is R) {
+                    return next as R
+                }
+            }
+            done()
+            return null
+        }
+    }
+}
