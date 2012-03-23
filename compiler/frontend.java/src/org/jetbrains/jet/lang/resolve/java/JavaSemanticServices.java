@@ -67,14 +67,9 @@ public class JavaSemanticServices {
         return descriptorResolver;
     }
 
-    @NotNull
-    public BindingTrace getTrace() {
-        return trace;
-    }
-
     @Nullable
     public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
-        return getTrace().get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
+        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
     }
 
     @Nullable
@@ -88,6 +83,6 @@ public class JavaSemanticServices {
 
     @Nullable
     public NamespaceDescriptor getKotlinNamespaceDescriptor(@NotNull FqName qualifiedName) {
-        return getTrace().get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
+        return trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, qualifiedName);
     }
 }
