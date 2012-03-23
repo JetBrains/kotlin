@@ -16,8 +16,13 @@
 
 package org.jetbrains.jet.completion;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +39,39 @@ import java.util.List;
  * @author Nikolay Krasko
  */
 public class ExpectedCompletionUtils {
+
+    public static class CompletionProposal {
+        public static final String TAIL_FLAG = "~";
+
+        private final String lookupString;
+        private final String tailString;
+
+
+
+        public CompletionProposal(@NotNull String lookupString, @Nullable String tailString) {
+            this.lookupString = lookupString;
+            this.tailString = tailString != null ? tailString.trim() : null;
+        }
+
+        public boolean isSuitable(CompletionProposal proposal) {
+            if (proposal.tailString != null) {
+                if (!proposal.tailString.equals(tailString)) {
+                    return false;
+                }
+            }
+
+            return lookupString.equals(proposal.lookupString);
+        }
+
+        @Override
+        public String toString() {
+            if (tailString != null) {
+                return lookupString + TAIL_FLAG + tailString;
+            }
+
+            return lookupString;
+        }
+    }
     
     public static final String EXIST_LINE_PREFIX = "// EXIST:";
     public static final String ABSENT_LINE_PREFIX = "// ABSENT:";
@@ -57,13 +95,30 @@ public class ExpectedCompletionUtils {
     }
 
     @NotNull
-    public String[] itemsShouldExist(String fileText) {
-        return findListWithPrefix(existLinePrefix, fileText);
+    public CompletionProposal[] itemsShouldExist(String fileText) {
+        return processProposalAssertions(existLinePrefix, fileText);
     }
 
     @NotNull
-    public String[] itemsShouldAbsent(String fileText) {
-        return findListWithPrefix(absentLinePrefix, fileText);
+    public CompletionProposal[] itemsShouldAbsent(String fileText) {
+        return processProposalAssertions(absentLinePrefix, fileText);
+    }
+
+    public static CompletionProposal[] processProposalAssertions(String prefix, String fileText) {
+        List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
+        for (String proposalStr : findListWithPrefix(prefix, fileText)) {
+            int tailChar = proposalStr.indexOf(CompletionProposal.TAIL_FLAG);
+
+            if (tailChar > 0) {
+                proposals.add(new CompletionProposal(proposalStr.substring(0, tailChar),
+                                                     proposalStr.substring(tailChar + 1, proposalStr.length())));
+            }
+            else {
+                proposals.add(new CompletionProposal(proposalStr, null));
+            }
+        }
+
+        return ArrayUtil.toObjectArray(proposals, CompletionProposal.class);
     }
 
     @Nullable
@@ -136,5 +191,58 @@ public class ExpectedCompletionUtils {
         }
 
         return result;
+    }
+
+    protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items) {
+        List<CompletionProposal> itemsInformation = getItemsInformation(items);
+
+        for (CompletionProposal expectedProposal : expected) {
+            boolean isFound = false;
+
+            for (CompletionProposal proposal : itemsInformation) {
+                if (proposal.isSuitable(expectedProposal)) {
+                    isFound = true;
+                    break;
+                }
+            }
+
+            Assert.assertTrue("Expected '" + expectedProposal + "' not found in " + listToString(itemsInformation), isFound);
+        }
+    }
+
+    protected static void assertNotContainsRenderedItems(CompletionProposal[] unexpected,LookupElement[] items) {
+        List<CompletionProposal> itemsInformation = getItemsInformation(items);
+
+        for (CompletionProposal unexpectedProposal : unexpected) {
+            for (CompletionProposal proposal : itemsInformation) {
+                Assert.assertFalse("Unexpected '" + unexpectedProposal + "' presented in " + listToString(itemsInformation),
+                                   proposal.isSuitable(unexpectedProposal));
+            }
+        }
+    }
+
+    protected static List<CompletionProposal> getItemsInformation(LookupElement[] items) {
+        final LookupElementPresentation presentation = new LookupElementPresentation();
+
+        List<CompletionProposal> result = new ArrayList<CompletionProposal>();
+        if (items != null) {
+            for (LookupElement item : items) {
+                item.renderElement(presentation);
+                result.add(new ExpectedCompletionUtils.CompletionProposal(item.getLookupString(), presentation.getTailText()));
+            }
+        }
+
+        return result;
+    }
+
+    protected static String listToString(List<ExpectedCompletionUtils.CompletionProposal> items) {
+        return StringUtil.join(
+            Collections2.transform(items, new Function<CompletionProposal, String>() {
+                @Override
+                public String apply(@Nullable CompletionProposal proposal) {
+                    assert proposal != null;
+                    return proposal.toString();
+                }
+            }), "\n");
     }
 }

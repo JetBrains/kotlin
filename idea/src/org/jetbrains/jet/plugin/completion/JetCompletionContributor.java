@@ -30,8 +30,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -41,13 +40,16 @@ import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Nikolay Krasko
  */
 public class JetCompletionContributor extends CompletionContributor {
+
+    private static class CompletionSession {
+        public boolean isSomethingAdded = false;
+        public int customInvocationCount = 0;
+    }
 
     public JetCompletionContributor() {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement(),
@@ -55,8 +57,10 @@ public class JetCompletionContributor extends CompletionContributor {
                    @Override
                    protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
                                                  @NotNull CompletionResultSet result) {
+                       result.restartCompletionWhenNothingMatches();
 
-                       Set<LookupPositionObject> positions = new HashSet<LookupPositionObject>();
+                       CompletionSession session = new CompletionSession();
+                       session.customInvocationCount = parameters.getInvocationCount();
 
                        PsiElement position = parameters.getPosition();
                        if (!(position.getContainingFile() instanceof JetFile)) {
@@ -65,47 +69,72 @@ public class JetCompletionContributor extends CompletionContributor {
 
                        JetSimpleNameReference jetReference = getJetReference(parameters);
                        if (jetReference != null) {
+                           completeForReference(parameters, result, position, jetReference, session);
 
-                           // Prevent from adding reference variants from standard reference contributor
-                           result.stopHere();
-
-                           if (isOnlyKeywordCompletion(position)) {
-                               return;
-                           }
-
-                           if (shouldRunTypeCompletionOnly(position, jetReference)) {
-                               addClasses(parameters, result);
-                               return;
-                           }
-
-                           for (Object variant : jetReference.getVariants()) {
-                               addReferenceVariant(result, variant, positions);
-                           }
-
-                           String prefix = result.getPrefixMatcher().getPrefix();
-
-                           // Try to avoid computing not-imported descriptors for empty prefix
-                           if (prefix.isEmpty()) {
-                               if (parameters.getInvocationCount() < 2) {
-                                   return;
-                               }
-
-                               if (PsiTreeUtil.getParentOfType(jetReference.getElement(), JetDotQualifiedExpression.class) == null) {
-                                   return;
-                               }
-                           }
-
-                           if (shouldRunTopLevelCompletion(parameters, prefix)) {
-                               addClasses(parameters, result);
-                               addJetTopLevelFunctions(jetReference.getExpression(), result, position, positions);
-                           }
-
-                           if (shouldRunExtensionsCompletion(parameters, prefix)) {
-                               addJetExtensions(jetReference.getExpression(), result, position);
+                           if (!session.isSomethingAdded && session.customInvocationCount == 0) {
+                               // Rerun completion if nothing was found
+                               session.customInvocationCount = 1;
+                               completeForReference(parameters, result, position, jetReference, session);
                            }
                        }
                    }
                });
+    }
+
+    private static void completeForReference(
+        @NotNull CompletionParameters parameters,
+        @NotNull CompletionResultSet result,
+        @NotNull PsiElement position,
+        @NotNull JetSimpleNameReference jetReference,
+        @NotNull CompletionSession session
+    ) {
+        // Prevent from adding reference variants from standard reference contributor
+        result.stopHere();
+
+        if (isOnlyKeywordCompletion(position)) {
+            return;
+        }
+
+        if (shouldRunTypeCompletionOnly(position, jetReference)) {
+            if (session.customInvocationCount > 0) {
+                addClasses(parameters, result);
+            }
+            else {
+                for (Object variant : jetReference.getVariants()) {
+                    if (isTypeDeclaration(variant)) {
+                        addReferenceVariant(result, variant, session);
+                    }
+                }
+            }
+
+            return;
+        }
+
+        for (Object variant : jetReference.getVariants()) {
+            addReferenceVariant(result, variant, session);
+        }
+
+        String prefix = result.getPrefixMatcher().getPrefix();
+
+        // Try to avoid computing not-imported descriptors for empty prefix
+        if (prefix.isEmpty()) {
+            if (session.customInvocationCount < 2) {
+                return;
+            }
+
+            if (PsiTreeUtil.getParentOfType(jetReference.getElement(), JetDotQualifiedExpression.class) == null) {
+                return;
+            }
+        }
+
+        if (shouldRunTopLevelCompletion(parameters, session)) {
+            addClasses(parameters, result);
+            addJetTopLevelFunctions(jetReference.getExpression(), result, position, session);
+        }
+
+        if (shouldRunExtensionsCompletion(parameters, prefix, session)) {
+            addJetExtensions(jetReference.getExpression(), result, position);
+        }
     }
 
     private static boolean isOnlyKeywordCompletion(PsiElement position) {
@@ -135,18 +164,32 @@ public class JetCompletionContributor extends CompletionContributor {
     private static void addReferenceVariant(
             @NotNull CompletionResultSet result,
             @NotNull Object variant,
-            @NotNull Set<LookupPositionObject> positions) {
+            @NotNull CompletionSession session) {
 
         if (variant instanceof LookupElement) {
-            addCompletionToResult(result, (LookupElement) variant, positions);
+            addCompletionToResult(result, (LookupElement) variant, session);
         }
         else {
-            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), positions);
+            addCompletionToResult(result, LookupElementBuilder.create(variant.toString()), session);
         }
     }
 
+    public static boolean isTypeDeclaration(@NotNull Object variant) {
+        if (variant instanceof LookupElement) {
+            Object object = ((LookupElement)variant).getObject();
+            if (object instanceof JetLookupObject) {
+                DeclarationDescriptor descriptor = ((JetLookupObject) object).getDescriptor();
+                return (descriptor instanceof ClassDescriptor) ||
+                       (descriptor instanceof NamespaceDescriptor) ||
+                       (descriptor instanceof TypeParameterDescriptor);
+            }
+        }
+
+        return false;
+    }
+
     private static void addJetTopLevelFunctions(JetSimpleNameExpression expression, @NotNull CompletionResultSet result, @NotNull PsiElement position,
-                                                @NotNull Set<LookupPositionObject> positions) {
+                                                @NotNull CompletionSession session) {
 
         String actualPrefix = result.getPrefixMatcher().getPrefix();
 
@@ -161,7 +204,7 @@ public class JetCompletionContributor extends CompletionContributor {
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
                 for (FunctionDescriptor function : namesCache.getTopLevelFunctionDescriptorsByName(name, expression, scope)) {
-                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), positions);
+                    addCompletionToResult(result, DescriptorLookupConverter.createLookupElement(resolutionContext, function), session);
                 }
             }
         }
@@ -194,8 +237,8 @@ public class JetCompletionContributor extends CompletionContributor {
         return false;
     }
 
-    private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters, String prefix) {
-        if (parameters.getInvocationCount() == 0 && prefix.length() < 3) {
+    private static boolean shouldRunTopLevelCompletion(@NotNull CompletionParameters parameters, CompletionSession session) {
+        if (session.customInvocationCount == 0) {
             return false;
         }
 
@@ -212,8 +255,8 @@ public class JetCompletionContributor extends CompletionContributor {
         return false;
     }
 
-    private static boolean shouldRunExtensionsCompletion(CompletionParameters parameters, String prefix) {
-        if (parameters.getInvocationCount() == 0 && prefix.length() < 3) {
+    private static boolean shouldRunExtensionsCompletion(CompletionParameters parameters, String prefix, CompletionSession session) {
+        if (session.customInvocationCount == 0 && prefix.length() < 3) {
             return false;
         }
 
@@ -243,36 +286,28 @@ public class JetCompletionContributor extends CompletionContributor {
     private static void addCompletionToResult(
             @NotNull CompletionResultSet result,
             @NotNull LookupElement element,
-            @NotNull Set<LookupPositionObject> positions) {
+            @NotNull CompletionSession session) {
 
-//        LookupPositionObject lookupPosition = getLookupPosition(element);
-//        if (lookupPosition != null) {
-//            if (!positions.contains(lookupPosition)) {
-//                positions.add(lookupPosition);
-//                result.addElement(element);
-//            }
-//
-//            // There is already an element with same position - ignore duplicate
-//        }
-//        else {
+        if (result.getPrefixMatcher().prefixMatches(element)) {
             result.addElement(element);
-//         }
+            session.isSomethingAdded = true;
+        }
     }
 
-    private static LookupPositionObject getLookupPosition(LookupElement element) {
-        Object lookupObject = element.getObject();
-        if (lookupObject instanceof PsiElement) {
-            return new LookupPositionObject((PsiElement) lookupObject);
-        }
-        else if (lookupObject instanceof JetLookupObject) {
-            PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
-            if (psiElement != null) {
-                return new LookupPositionObject(psiElement);
-            }
-        }
-
-        return null;
-    }
+    //private static LookupPositionObject getLookupPosition(LookupElement element) {
+    //    Object lookupObject = element.getObject();
+    //    if (lookupObject instanceof PsiElement) {
+    //        return new LookupPositionObject((PsiElement) lookupObject);
+    //    }
+    //    else if (lookupObject instanceof JetLookupObject) {
+    //        PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
+    //        if (psiElement != null) {
+    //            return new LookupPositionObject(psiElement);
+    //        }
+    //    }
+    //
+    //    return null;
+    //}
 
     @Override
     public void beforeCompletion(@NotNull CompletionInitializationContext context) {
