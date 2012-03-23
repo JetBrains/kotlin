@@ -66,3 +66,27 @@ val globalValWithGetter : Long
 get() {
     return System.currentTimeMillis()
 }
+
+val String.exProp : String
+get() {
+    return this
+}
+
+val Int.exProp : Int
+get() {
+    return this
+}
+
+val <T> #(T, T).exProp : String
+get() {
+    return "${this._1} : ${this._2}"
+}
+
+fun func(a : Int, b : String = "55") {
+}
+
+fun func(a : Int, b : Int) {
+}
+
+fun func() {
+}
