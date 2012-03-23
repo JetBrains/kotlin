@@ -1,26 +1,48 @@
 package kotlin.sequences
 
+import com.sun.tools.javac.resources.javac
+
 /** Creates a sequence without elements of type *T* */
-inline fun <T> empty(): Sequence<T> = Sequence<T> { null }
+inline fun <T> empty(): Sequence<T> = Sequence<T>
 
 /** Creates a sequence from the given list of *elements* */
-inline fun <T> sequence(vararg elements: T): Sequence<T> = asSequence(elements.iterator())
+inline fun <T> sequence(vararg elements: T): Sequence<T> {
+  var iterator: Iterator<T>
+
+  fun reset() { iterator = elements.iterator() }
+  fun next(): T? = if (iterator.hasNext) iterator.next() else null
+
+  return Sequence<T>({ reset() }, { next() })
+}
 
 /** Creates a sequence of elements lazily obtained from this Kotlin [[jet.Iterable]] */
-inline fun <T> Iterable<T>.asSequence(): Sequence<T> = asSequence(iterator())
+inline fun <T> Iterable<T>.asSequence(): Sequence<T> {
+  var iterator: Iterator<T>
+
+  fun reset() { iterator = iterator() }
+  fun next(): T? = if (iterator.hasNext) iterator.next() else null
+
+  return Sequence<T>({ reset() }, { next() })
+}
 
 /** Creates a sequence of elements lazily obtained from this Java [[java.lang.Iterable]] */
-inline fun <T> java.lang.Iterable<T>.asSequence(): Sequence<T> = asSequence(iterator().sure() as java.util.Iterator<T>)
+inline fun <T> java.lang.Iterable<T>.asSequence(): Sequence<T> {
+  var iterator: java.util.Iterator<T>
 
-private fun <T> asSequence(iterator: Iterator<T>) = Sequence<T> { if (iterator.hasNext) iterator.next() else null }
-private fun <T> asSequence(iterator: java.util.Iterator<T>) = Sequence<T> { if (iterator.hasNext()) iterator.next() else null }
+  fun reset() { iterator = iterator().sure() }
+  fun next(): T? = if (iterator.hasNext()) iterator.next() else null
+
+  return Sequence<T>({ reset() }, { next() })
+}
 
 /**
  * Produces the [cartesian product](http://en.wikipedia.org/wiki/Cartesian_product#n-ary_product) as a sequence of ordered pairs of elements lazily obtained
  * from two [[Iterable]] instances
  */
 fun <T> Iterable<T>.times(other: Iterable<T>): Sequence<#(T, T)> {
-  val first = iterator(); var second = other.iterator(); var a: T? = null
+  var first: Iterator<T>; var second: Iterator<T>; var a: T?
+
+  fun reset() { first = iterator(); second = other.iterator(); a = null }
 
   fun nextPair(): #(T, T)? {
     if (a == null && first.hasNext) a = first.next()
@@ -32,7 +54,7 @@ fun <T> Iterable<T>.times(other: Iterable<T>): Sequence<#(T, T)> {
     return null
   }
 
-  return Sequence<#(T, T)> { nextPair() }
+  return Sequence<#(T, T)>({ reset() }, { nextPair() })
 }
 
 /**
@@ -42,7 +64,10 @@ fun <T> Iterable<T>.times(other: Iterable<T>): Sequence<#(T, T)> {
  *
  * @return a sequence of strings of size *size*, except the last will be truncated if the elements do not divide evenly
  */
-fun String.grouped(size: Int, iterator: CharIterator = iterator()): Sequence<String> {
+fun String.grouped(size: Int): Sequence<String> {
+  var iterator: CharIterator
+
+  fun reset() { iterator = iterator() }
   fun nextGroup(): String? {
     if (iterator.hasNext) {
       val window = StringBuilder()
@@ -52,7 +77,7 @@ fun String.grouped(size: Int, iterator: CharIterator = iterator()): Sequence<Str
     return null
   }
 
-  return Sequence<String> { nextGroup() }
+  return Sequence<String>({ reset() }, { nextGroup() })
 }
 
 /**
@@ -62,8 +87,10 @@ fun String.grouped(size: Int, iterator: CharIterator = iterator()): Sequence<Str
  *
  * @return a sequence of strings of size *size*, except the last and the only element will be truncated if there are fewer characters than *size*
  */
-fun String.sliding(size: Int, iterator: CharIterator = iterator()): Sequence<String> {
-  val window = StringBuilder()
+fun String.sliding(size: Int): Sequence<String> {
+  var iterator: CharIterator; var window: StringBuilder
+
+  fun reset() { iterator = iterator(); window = StringBuilder() }
 
   fun nextWindow(): String? {
     if (window.length() == 0) {
@@ -73,5 +100,5 @@ fun String.sliding(size: Int, iterator: CharIterator = iterator()): Sequence<Str
     return if (iterator.hasNext) window.deleteCharAt(0)?.append(iterator.next()).toString() else null
   }
 
-  return Sequence<String> { nextWindow() }
+  return Sequence<String>({ reset() }, { nextWindow() })
 }
