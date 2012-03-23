@@ -16,25 +16,15 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.compiled.ClsElementImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
-import com.intellij.testFramework.PlatformTestCase;
-import org.jetbrains.jet.cli.KotlinCompiler;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.Map;
 
@@ -42,10 +32,7 @@ import java.util.Map;
  * @author Evgeny Gerashchenko
  * @since 3/11/12
  */
-public class LibrariesTest extends PlatformTestCase {
-    private static final String PACKAGE = "testData.libraries";
-    private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
-    private VirtualFile myLibraryDir;
+public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
     private VirtualFile myClassFile;
 
     public void testAbstractClass() {
@@ -143,28 +130,5 @@ public class LibrariesTest extends PlatformTestCase {
         VirtualFile classFile = packageDir.findChild(getTestName(false) + ".class");
         assertNotNull(classFile);
         return classFile;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        String libraryDir = FileUtil.getTempDirectory();
-        KotlinCompiler.ExitCode compilerExec = new KotlinCompiler().exec("-src", TEST_DATA_PATH + "/library", "-output", libraryDir);
-        assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
-        myLibraryDir = LocalFileSystem.getInstance().findFileByPath(libraryDir);
-        assertNotNull(myLibraryDir);
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                ModifiableRootModel moduleModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
-
-                Library.ModifiableModel libraryModel = moduleModel.getModuleLibraryTable().getModifiableModel().createLibrary("myKotlinLib").getModifiableModel();
-                libraryModel.addRoot(myLibraryDir, OrderRootType.CLASSES);
-                libraryModel.commit();
-
-                moduleModel.commit();
-            }
-        });
     }
 }
