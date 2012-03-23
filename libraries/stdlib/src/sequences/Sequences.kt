@@ -1,11 +1,9 @@
 package kotlin.sequences
 
-import com.sun.tools.javac.resources.javac
-
-/** Creates a sequence without elements of type *T* */
+/** Creates an empty sequence which would have otherwise contained elements of type *T* */
 inline fun <T> empty(): Sequence<T> = Sequence<T>
 
-/** Creates a sequence from the given list of *elements* */
+/** Creates a sequence from the given list of *elements* of type *T* */
 inline fun <T> sequence(vararg elements: T): Sequence<T> {
   var iterator: Iterator<T>
 

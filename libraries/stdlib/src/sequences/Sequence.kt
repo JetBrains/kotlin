@@ -1,8 +1,9 @@
 package kotlin.sequences
 
 /**
- * A sequence of items of type *T* that are lazily produced by the given closure
+ * A sequence of elements of type *T* that are lazily produced by the given closure
  *
+ * @param reset a closure initialising the iteration context
  * @param next a closure yielding the next element in this sequence
  *
  * @author [Franck Rasolo](http://www.linkedin.com/in/franckrasolo)
