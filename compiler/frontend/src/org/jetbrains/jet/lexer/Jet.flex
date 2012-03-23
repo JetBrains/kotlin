@@ -164,6 +164,10 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 // (Nested) comments
 
+"/**/" {
+    return JetTokens.BLOCK_COMMENT;
+}
+
 "/**" {
     pushState(DOC_COMMENT);
     commentDepth = 0;

@@ -17,11 +17,27 @@ JetFile: NestedComments.jet
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('b')
       PsiWhiteSpace('\n')
-      PsiComment(DOC_COMMENT)('/**/\nb\n/* */\nb\n/*/**/*/\nb\n/***/\nb\n/**/***/')
-      PsiErrorElement:Expecting an element
-        PsiElement(MUL)('*')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(DIV)('/')
+      PsiComment(BLOCK_COMMENT)('/**/')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(BLOCK_COMMENT)('/* */')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(BLOCK_COMMENT)('/*/**/*/')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(DOC_COMMENT)('/***/')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace('\n')
+      PsiComment(DOC_COMMENT)('/** /***/*/')
       PsiWhiteSpace('\n')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('b')
