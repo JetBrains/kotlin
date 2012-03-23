@@ -639,6 +639,9 @@ public class CallResolver {
 
             List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
             for (JetExpression argumentExpression : argumentExpressions) {
+                if (argumentExpression == null) {
+                    throw new IllegalStateException("A null instead of an expression in the arguments for " + entry.getKey());
+                }
                 JetType type = expressionTypingServices.getType(context.scope, argumentExpression, parameterType, context.dataFlowInfo, context.candidateCall.getTrace());
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     context.candidateCall.argumentHasNoType();

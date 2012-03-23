@@ -200,7 +200,10 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 varargs.put(valueParameterDescriptor, vararg);
                 candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
             }
-            vararg.getArgumentExpressions().add(valueArgument.getArgumentExpression());
+            JetExpression expression = valueArgument.getArgumentExpression();
+            if (expression != null) {
+                vararg.getArgumentExpressions().add(expression);
+            }
         }
         else {
             ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument.getArgumentExpression());
