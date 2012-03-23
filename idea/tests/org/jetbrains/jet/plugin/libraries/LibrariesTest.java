@@ -43,7 +43,6 @@ import java.util.Map;
  * @since 3/11/12
  */
 public class LibrariesTest extends PlatformTestCase {
-
     private static final String PACKAGE = "testData.libraries";
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
     private VirtualFile myLibraryDir;
@@ -92,7 +91,7 @@ public class LibrariesTest extends PlatformTestCase {
         checkNavigationElements(map);
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
-        assertSameLinesWithFile(TEST_DATA_PATH + "/" + getTestName(false) + ".kt", decompiledTextWithMarks);
+        assertSameLinesWithFile(TEST_DATA_PATH + "/decompiled/" + getTestName(false) + ".kt", decompiledTextWithMarks);
     }
 
     private String getDecompiledTextWithMarks(Map<ClsElementImpl, JetDeclaration> map) {
