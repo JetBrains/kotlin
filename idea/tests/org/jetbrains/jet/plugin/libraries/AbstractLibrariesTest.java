@@ -37,6 +37,8 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
     protected VirtualFile myLibraryDir;
 
+    protected abstract boolean isWithSources();
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -53,6 +55,11 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
 
                 Library.ModifiableModel libraryModel = moduleModel.getModuleLibraryTable().getModifiableModel().createLibrary("myKotlinLib").getModifiableModel();
                 libraryModel.addRoot(myLibraryDir, OrderRootType.CLASSES);
+                if (isWithSources()) {
+                    VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
+                    assert sourceDir != null;
+                    libraryModel.addRoot(sourceDir, OrderRootType.SOURCES);
+                }
                 libraryModel.commit();
 
                 moduleModel.commit();

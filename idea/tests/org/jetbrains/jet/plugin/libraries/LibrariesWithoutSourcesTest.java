@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2012 JetBrains s.r.o.
+ * Copyright 2010-2012 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -130,5 +130,10 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
         VirtualFile classFile = packageDir.findChild(getTestName(false) + ".class");
         assertNotNull(classFile);
         return classFile;
+    }
+
+    @Override
+    protected boolean isWithSources() {
+        return false;
     }
 }
