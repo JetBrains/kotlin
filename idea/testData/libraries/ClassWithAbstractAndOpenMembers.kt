@@ -4,13 +4,9 @@
 package testData.libraries
 
 [abstract class ClassWithAbstractAndOpenMembers {
-    [abstract fun abstractFun() : Unit]
-
     [abstract val abstractVal : jet.String]
 
     [abstract var abstractVar : jet.String]
-
-    [open fun openFun() : Unit { /* compiled code */ }]
 
     [open val openVal : jet.String] /* compiled code */
 
@@ -19,4 +15,8 @@ package testData.libraries
     [open var openVar : jet.String] /* compiled code */
 
     [open var openVarWithGetter : jet.String] /* compiled code */
+
+    [abstract fun abstractFun() : Unit]
+
+    [open fun openFun() : Unit { /* compiled code */ }]
 }]

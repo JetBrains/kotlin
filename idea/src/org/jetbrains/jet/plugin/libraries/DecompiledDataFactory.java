@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.*;
@@ -114,12 +115,63 @@ class DecompiledDataFactory {
         return new JetDecompiledData(jetFile, myClsElementsToJetElements);
     }
 
+    private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return 4;
+        } else if (descriptor instanceof PropertyDescriptor) {
+            return 3;
+        } else if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor fun = (FunctionDescriptor)descriptor;
+            if (fun.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
+                return 2;
+            } else {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
     private static List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
         ArrayList<DeclarationDescriptor> r = new ArrayList<DeclarationDescriptor>(input);
         Collections.sort(r, new Comparator<DeclarationDescriptor>() {
             @Override
             public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
-                return o1.getName().compareTo(o2.getName());
+                int prioritiesCompareTo = getDeclarationPriority(o2) - getDeclarationPriority(o1);
+                if (prioritiesCompareTo != 0) {
+                    return prioritiesCompareTo;
+                }
+
+                int namesCompareTo = o1.getName().compareTo(o2.getName());
+                if (namesCompareTo != 0) {
+                    return namesCompareTo;
+                }
+
+                if (!(o1 instanceof CallableDescriptor) || !(o2 instanceof CallableDescriptor)) {
+                    assert false;
+                }
+
+                CallableDescriptor c1 = (CallableDescriptor)o1;
+                CallableDescriptor c2 = (CallableDescriptor)o2;
+
+                if (c1.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER && c2.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                    String r1 = DescriptorRenderer.TEXT.renderType(c1.getReceiverParameter().getType());
+                    String r2 = DescriptorRenderer.TEXT.renderType(c2.getReceiverParameter().getType());
+                    int receiversCompareTo = r1.compareTo(r2);
+                    if (receiversCompareTo != 0) {
+                        return receiversCompareTo;
+                    }
+                }
+
+                for (int i = 0; i < Math.min(c1.getValueParameters().size(), c2.getValueParameters().size()); i++) {
+                    String p1 = DescriptorRenderer.TEXT.renderType(c1.getValueParameters().get(i).getType());
+                    String p2 = DescriptorRenderer.TEXT.renderType(c2.getValueParameters().get(i).getType());
+                    int parametersCompareTo = p1.compareTo(p2);
+                    if (parametersCompareTo != 0) {
+                        return parametersCompareTo;
+                    }
+                }
+
+                return c1.getValueParameters().size() - c2.getValueParameters().size();
             }
         });
         return r;

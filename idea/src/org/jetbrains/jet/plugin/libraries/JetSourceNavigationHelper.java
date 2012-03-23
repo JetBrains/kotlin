@@ -168,7 +168,11 @@ public class JetSourceNavigationHelper {
             }
         }
         else if (declarationContainer instanceof JetClassBody) {
-            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass) declarationContainer.getParent());
+            JetClassOrObject parent = (JetClassOrObject)declarationContainer.getParent();
+            if (parent instanceof JetObjectDeclaration) {
+                return null; // TODO
+            }
+            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass)parent);
             if (bindingContextAndClassDescriptor != null) {
                 BindingContext bindingContext = bindingContextAndClassDescriptor._1;
                 ClassDescriptor classDescriptor = bindingContextAndClassDescriptor._2;
