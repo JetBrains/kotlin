@@ -270,7 +270,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 ">="         { return JetTokens.GTEQ      ; }
 "=="         { return JetTokens.EQEQ      ; }
 "!="         { return JetTokens.EXCLEQ    ; }
-"!!"         { return JetTokens.EXCLEXCL  ; }
+//"!!"         { return JetTokens.EXCLEXCL  ; }
 "&&"         { return JetTokens.ANDAND    ; }
 "||"         { return JetTokens.OROR      ; }
 //"?."         { return JetTokens.SAFE_ACCESS;}

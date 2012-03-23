@@ -1,0 +1,126 @@
+JetFile: AssertNotNull.jet
+  NAMESPACE_HEADER
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('main')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('args')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Array')
+            TYPE_ARGUMENT_LIST
+              PsiElement(LT)('<')
+              TYPE_PROJECTION
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('String')
+              PsiElement(GT)('>')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(EXCL)('!')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(EXCL)('!')
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE
+            PsiElement(EXCL)('!')
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(EXCL)('!')
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE
+            PsiElement(EXCL)('!')
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(EXCL)('!')
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(EXCL)('!')
+        PREFIX_EXPRESSION
+          OPERATION_REFERENCE
+            PsiElement(EXCL)('!')
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(EXCL)('!')
+            PREFIX_EXPRESSION
+              OPERATION_REFERENCE
+                PsiElement(EXCL)('!')
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n    ')
+      POSTFIX_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+        OPERATION_REFERENCE
+          PsiElement(EXCLEXCL)('!!')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(EXCL)('!')
+      PsiWhiteSpace('\n    ')
+      POSTFIX_EXPRESSION
+        POSTFIX_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+        OPERATION_REFERENCE
+          PsiElement(EXCLEXCL)('!!')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        POSTFIX_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('and')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          BOOLEAN_CONSTANT
+            PsiElement(false)('false')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        POSTFIX_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+          OPERATION_REFERENCE
+            PsiElement(EXCLEXCL)('!!')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('and')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

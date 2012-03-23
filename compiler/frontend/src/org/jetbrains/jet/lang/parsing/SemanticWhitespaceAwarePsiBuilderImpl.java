@@ -32,7 +32,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  * @author abreslav
  */
 public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter implements SemanticWhitespaceAwarePsiBuilder {
-    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS);
+    private final TokenSet complexTokens = TokenSet.create(SAFE_ACCESS, ELVIS, EXCLEXCL);
     private final Stack<Boolean> joinComplexTokens = new Stack<Boolean>();
 
     private final Stack<Boolean> newlinesEnabled = new Stack<Boolean>();
@@ -125,6 +125,10 @@ public class SemanticWhitespaceAwarePsiBuilderImpl extends PsiBuilderAdapter imp
             IElementType nextRawToken = rawLookup(rawLookupSteps);
             if (nextRawToken == DOT) return SAFE_ACCESS;
             if (nextRawToken == COLON) return ELVIS;
+        }
+        else if (rawTokenType == EXCL) {
+            IElementType nextRawToken = rawLookup(rawLookupSteps);
+            if (nextRawToken == EXCL) return EXCLEXCL;
         }
         return rawTokenType;
     }
