@@ -2,25 +2,26 @@ package kotlin.support
 
 import java.util.*
 
-// TODO should we use enums?
-private val Ready = 0
-private val NotReady = 1
-private val Done = 2
-private val Failed = 3
+enum class State {
+    Ready
+    NotReady
+    Done
+    Failed
+}
 
 /**
  * A base class to simplify implementing iterators so that implementations only have to implement [[#computeNext()]]
  * to implement the iterator, calling [[done()]] when the iteration is complete.
  */
 abstract class AbstractIterator<T>: java.util.Iterator<T> {
-    var state = NotReady
+    var state: State = State.NotReady
     var next: T? = null
 
     override fun hasNext(): Boolean {
-        require(state != Failed)
+        require(state != State.Failed)
         return when (state) {
-            Done -> false
-            Ready -> true
+            State.Done -> false
+            State.Ready -> true
             else -> tryToComputeNext()
         }
     }
@@ -29,7 +30,7 @@ abstract class AbstractIterator<T>: java.util.Iterator<T> {
         if (!hasNext()) {
             throw NoSuchElementException();
         } else {
-            state = NotReady
+            state = State.NotReady
             return next.sure()
         }
     }
@@ -49,10 +50,10 @@ abstract class AbstractIterator<T>: java.util.Iterator<T> {
     }
 
     private fun tryToComputeNext(): Boolean {
-        state = Failed
+        state = State.Failed
         next = computeNext();
-        return if (state != Done) {
-            state = Ready
+        return if (state != State.Done) {
+            state = State.Ready
             true
         } else false
     }
@@ -67,6 +68,6 @@ abstract class AbstractIterator<T>: java.util.Iterator<T> {
      * Sets the state to done so that the iteration terminates
      */
     protected fun done() {
-        state = Done
+        state = State.Done
     }
 }
