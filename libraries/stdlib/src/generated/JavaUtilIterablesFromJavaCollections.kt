@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from stdlib/ktSrc/JavaCollections.kt
+// NOTE this file is auto-generated from src/JavaCollections.kt
 package kotlin.util
 
 import java.util.*

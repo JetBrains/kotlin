@@ -54,9 +54,9 @@ inline fun <T, C: Collection<in T>> java.lang.Iterable<T>.filterTo(result: C, pr
 }
 
 /** Returns a List containing all the non null elements in this collection */
-inline fun <T> java.lang.Iterable<T?>?.filterNotNull() : Collection<T> = filterNotNullTo(java.util.ArrayList<T>())
+inline fun <T> java.lang.Iterable<T?>?.filterNotNull() : Collection<T> = filterNotNullTo<T, java.util.ArrayList<T>>(java.util.ArrayList<T>())
 
-/** Filters all the null elements in this collection winto the given result collection */
+/** Filters all the null elements in this collection into the given result collection */
 inline fun <T, C: Collection<in T>> java.lang.Iterable<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (elem in this) {

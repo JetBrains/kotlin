@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from stdlib/ktSrc/JavaIterables.kt
+// NOTE this file is auto-generated from src/JavaIterables.kt
 package kotlin
 
 import kotlin.util.*
@@ -57,9 +57,9 @@ inline fun <T, C: Collection<in T>> Array<T>.filterTo(result: C, predicate: (T)-
 }
 
 /** Returns a List containing all the non null elements in this collection */
-inline fun <T> Array<T?>?.filterNotNull() : Collection<T> = filterNotNullTo(java.util.ArrayList<T>())
+inline fun <T> Array<T?>?.filterNotNull() : Collection<T> = filterNotNullTo<T, java.util.ArrayList<T>>(java.util.ArrayList<T>())
 
-/** Filters all the null elements in this collection winto the given result collection */
+/** Filters all the null elements in this collection into the given result collection */
 inline fun <T, C: Collection<in T>> Array<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (elem in this) {

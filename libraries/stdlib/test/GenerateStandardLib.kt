@@ -1,39 +1,35 @@
 package org.jetbrains.kotlin.tools
 
-import kotlin.*
-import kotlin.io.*
-import kotlin.util.*
 import java.io.*
-import java.util.*
 
 fun generateFile(outFile: File, header: String, inputFile: File, f: (String)-> String) {
-  println("Parsing $inputFile and writing $outFile")
+    println("Parsing $inputFile and writing $outFile")
 
-  outFile.getParentFile()?.mkdirs()
-  val writer = PrintWriter(FileWriter(outFile))
-  try {
-    writer.println("// NOTE this file is auto-generated from $inputFile")
-    writer.println(header)
-
-    val reader = FileReader(inputFile).buffered()
+    outFile.getParentFile()?.mkdirs()
+    val writer = PrintWriter(FileWriter(outFile))
     try {
-      // TODO ideally we'd use a filterNot() here :)
-      val iter = reader.lineIterator()
-      while (iter.hasNext) {
-        val line = iter.next()
+        writer.println("// NOTE this file is auto-generated from $inputFile")
+        writer.println(header)
 
-        if (line.startsWith("package")) continue
+        val reader = FileReader(inputFile).buffered()
+        try {
+            // TODO ideally we'd use a filterNot() here :)
+            val iter = reader.lineIterator()
+            while (iter.hasNext) {
+                val line = iter.next()
 
-        val xform = f(line)
-        writer.println(xform)
-      }
+                if (line.startsWith("package")) continue
+
+                val xform = f(line)
+                writer.println(xform)
+            }
+        } finally {
+            reader.close()
+            reader.close()
+        }
     } finally {
-      reader.close()
-      reader.close()
+        writer.close()
     }
-  } finally {
-    writer.close()
-  }
 }
 
 
@@ -45,39 +41,35 @@ fun generateFile(outFile: File, header: String, inputFile: File, f: (String)-> S
  * at runtime.
  */
 fun main(args: Array<String>) {
-  var stdlib = File("stdlib")
-  if (!stdlib.exists()) {
-    stdlib = File("../stdlib")
-    if (!stdlib.exists()) {
-      println("Cannot find stdlib!")
-      return
+    var srcDir = File("src")
+    if (!srcDir.exists()) {
+        srcDir = File("stdlib/src")
+        require(srcDir.exists(), "Could not find the src directory!")
     }
-  }
-  val srcDir = File(stdlib, "ktSrc")
-  val outDir = File(srcDir, "generated")
+    val outDir = File(srcDir, "generated")
 
 
-  // JavaIterables - Generic iterable stuff
-  generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
-      it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
-  }
+    // JavaIterables - Generic iterable stuff
+    generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
+    }
 
-  generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
-    it.replaceAll("java.lang.Iterable<T", "Iterable<T")
-  }
+    generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Iterable<T")
+    }
 
 
-  // JavaCollections - methods returning a collection of the same input size (if its a collection)
+    // JavaCollections - methods returning a collection of the same input size (if its a collection)
 
-  generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T", "Array<T")
-  }
+    generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+        it.replaceAll("java.util.Collection<T", "Array<T")
+    }
 
-  generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin.util", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
-  }
+    generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin.util", File(srcDir, "JavaCollections.kt")) {
+        it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
+    }
 
-  generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-    it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
-  }
+    generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+        it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
+    }
 }

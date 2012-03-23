@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from stdlib/ktSrc/JavaIterables.kt
+// NOTE this file is auto-generated from src/JavaIterables.kt
 package kotlin
 
 import kotlin.util.*
@@ -56,7 +56,19 @@ inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (
   return result
 }
 
+/** Returns a List containing all the non null elements in this collection */
+inline fun <T> Iterable<T?>?.filterNotNull() : Collection<T> = filterNotNullTo<T, java.util.ArrayList<T>>(java.util.ArrayList<T>())
 
+/** Filters all the null elements in this collection into the given result collection */
+inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C {
+    if (this != null) {
+        for (elem in this) {
+            if (elem != null)
+                result.add(elem)
+        }
+    }
+    return result
+}
 
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
 inline fun <T> Iterable<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
