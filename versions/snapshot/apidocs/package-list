@@ -8,6 +8,7 @@ kotlin.modules
 kotlin.nullable
 kotlin.properties
 kotlin.sequences
+kotlin.support
 kotlin.template
 kotlin.test
 kotlin.util
