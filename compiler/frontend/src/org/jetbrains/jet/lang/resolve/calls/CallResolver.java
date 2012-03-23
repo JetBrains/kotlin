@@ -467,19 +467,20 @@ public class CallResolver {
 
         // Value parameters
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
-            ResolvedValueArgument valueArgument = entry.getValue();
+            ResolvedValueArgument resolvedValueArgument = entry.getValue();
             ValueParameterDescriptor valueParameterDescriptor = candidateWithFreshVariables.getValueParameters().get(entry.getKey().getIndex());
 
-            JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor);
 
-            for (JetExpression expression : valueArgument.getArgumentExpressions()) {
+            for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
                 // TODO : more attempts, with different expected types
+
+                JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
 
                 // Here we type check expecting an error type (that is a subtype of any type and a supertype of any type
                 // and throw the results away
                 // We'll type check the arguments later, with the inferred types expected
                 TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(context.trace);
-                JetType type = expressionTypingServices.getType(context.scope, expression, substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT), traceForUnknown);
+                JetType type = expressionTypingServices.getType(context.scope, valueArgument.getArgumentExpression(), substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT), traceForUnknown);
                 if (type != null && !ErrorUtils.isErrorType(type)) {
                     constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                 }
@@ -523,14 +524,6 @@ public class CallResolver {
             context.tracing.typeInferenceFailed(context.trace, solution.getStatus());
             return OTHER_ERROR.combine(checkAllValueArguments(context));
         }
-    }
-
-    private static JetType getEffectiveExpectedType(ValueParameterDescriptor valueParameterDescriptor) {
-        JetType effectiveExpectedType = valueParameterDescriptor.getVarargElementType();
-        if (effectiveExpectedType == null) {
-            effectiveExpectedType = valueParameterDescriptor.getType();
-        }
-        return effectiveExpectedType;
     }
 
     private static void recordAutoCastIfNecessary(ReceiverDescriptor receiver, BindingTrace trace) {
@@ -635,19 +628,19 @@ public class CallResolver {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
 
-            JetType parameterType = getEffectiveExpectedType(parameterDescriptor);
 
-            List<JetExpression> argumentExpressions = resolvedArgument.getArgumentExpressions();
-            for (JetExpression argumentExpression : argumentExpressions) {
-                if (argumentExpression == null) {
-                    throw new IllegalStateException("A null instead of an expression in the arguments for " + entry.getKey());
-                }
-                JetType type = expressionTypingServices.getType(context.scope, argumentExpression, parameterType, context.dataFlowInfo, context.candidateCall.getTrace());
+            for (ValueArgument argument : resolvedArgument.getArguments()) {
+                JetExpression expression = argument.getArgumentExpression();
+                if (expression == null) continue;
+
+                JetType expectedType = getEffectiveExpectedType(parameterDescriptor, argument);
+
+                JetType type = expressionTypingServices.getType(context.scope, expression, expectedType, context.dataFlowInfo, context.candidateCall.getTrace());
                 if (type == null || ErrorUtils.isErrorType(type)) {
                     context.candidateCall.argumentHasNoType();
                 }
-                else if (!typeChecker.isSubtypeOf(type, parameterType)) {
-//                    VariableDescriptor variableDescriptor = AutoCastUtils.getVariableDescriptorFromSimpleName(temporaryTrace.getBindingContext(), argumentExpression);
+                else if (!typeChecker.isSubtypeOf(type, expectedType)) {
+//                    VariableDescriptor variableDescriptor = AutoCastUtils.getVariableDescriptorFromSimpleName(temporaryTrace.getBindingContext(), argument);
 //                    if (variableDescriptor != null) {
 //                        JetType autoCastType = null;
 //                        for (JetType possibleType : dataFlowInfo.getPossibleTypesForVariable(variableDescriptor)) {
@@ -658,10 +651,10 @@ public class CallResolver {
 //                        }
 //                        if (autoCastType != null) {
 //                            if (AutoCastUtils.isStableVariable(variableDescriptor)) {
-//                                temporaryTrace.record(AUTOCAST, argumentExpression, autoCastType);
+//                                temporaryTrace.record(AUTOCAST, argument, autoCastType);
 //                            }
 //                            else {
-//                                temporaryTrace.report(AUTOCAST_IMPOSSIBLE.on(argumentExpression, autoCastType, variableDescriptor));
+//                                temporaryTrace.report(AUTOCAST_IMPOSSIBLE.on(argument, autoCastType, variableDescriptor));
 //                                result = false;
 //                            }
 //                        }
@@ -672,6 +665,31 @@ public class CallResolver {
             }
         }
         return result;
+    }
+
+    @NotNull
+    private JetType getEffectiveExpectedType(ValueParameterDescriptor parameterDescriptor, ValueArgument argument) {
+        if (argument.getSpreadElement() != null) {
+            if (parameterDescriptor.getVarargElementType() == null) {
+                // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
+                return ErrorUtils.createErrorType("Don't care");
+            }
+            else {
+                return parameterDescriptor.getType();
+            }
+        }
+        else {
+            if (argument.isNamed()) {
+                return parameterDescriptor.getType();
+            }
+            else {
+                JetType varargElementType = parameterDescriptor.getVarargElementType();
+                if (varargElementType == null) {
+                    return parameterDescriptor.getType();
+                }
+                return varargElementType;
+            }
+        }
     }
 
     @NotNull

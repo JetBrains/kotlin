@@ -1495,7 +1495,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameterDescriptor.getIndex());
             if(resolvedValueArgument instanceof ExpressionValueArgument) {
                 ExpressionValueArgument valueArgument = (ExpressionValueArgument) resolvedValueArgument;
-                gen(valueArgument.getExpression(), valueParameterTypes.get(index));
+                gen(valueArgument.getValueArgument().getArgumentExpression(), valueParameterTypes.get(index));
             }
             else if(resolvedValueArgument instanceof DefaultValueArgument) {
                 Type type = valueParameterTypes.get(index);
@@ -1522,14 +1522,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 Type type = asmType(outType);
                 assert type.getSort() == Type.ARRAY;
                 Type elementType = correctElementType(type);
-                int size = valueArgument.getArgumentExpressions().size();
+                int size = valueArgument.getArguments().size();
 
-                v.iconst(valueArgument.getArgumentExpressions().size());
+                v.iconst(valueArgument.getArguments().size());
                 v.newarray(elementType);
                 for(int i = 0; i != size; ++i) {
                     v.dup();
                     v.iconst(i);
-                    gen(valueArgument.getArgumentExpressions().get(i), elementType);
+                    gen(valueArgument.getArguments().get(i).getArgumentExpression(), elementType);
                     StackValue.arrayElement(elementType, false).store(v);
                 }
             }

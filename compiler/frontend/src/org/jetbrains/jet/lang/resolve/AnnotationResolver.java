@@ -107,10 +107,10 @@ public class AnnotationResolver {
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
                 results.getResultingCall().getValueArguments().entrySet()) {
             // TODO: are varargs supported here?
-            List<JetExpression> argumentExpressions = descriptorToArgument.getValue().getArgumentExpressions();
+            List<ValueArgument> valueArguments = descriptorToArgument.getValue().getArguments();
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
-            for (JetExpression argument : argumentExpressions) {
-                arguments.add(resolveAnnotationArgument(argument, parameterDescriptor.getType(), trace));
+            for (ValueArgument argument : valueArguments) {
+                arguments.add(resolveAnnotationArgument(argument.getArgumentExpression(), parameterDescriptor.getType(), trace));
             }
         }
         descriptor.setValueArguments(arguments);

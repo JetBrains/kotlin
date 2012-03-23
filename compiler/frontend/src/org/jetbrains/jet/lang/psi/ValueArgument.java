@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,4 +37,7 @@ public interface ValueArgument {
     @NotNull
     PsiElement asElement();
 
+    /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
+    @Nullable
+    LeafPsiElement getSpreadElement();
 }

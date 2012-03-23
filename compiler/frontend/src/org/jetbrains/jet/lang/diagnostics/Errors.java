@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -113,6 +114,7 @@ public interface Errors {
     DiagnosticFactory<JetReferenceExpression> ARGUMENT_PASSED_TWICE = DiagnosticFactory.create(ERROR, "An argument is already passed for this parameter");
     UnresolvedReferenceDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = UnresolvedReferenceDiagnosticFactory.create("Cannot find a parameter with this name");
     DiagnosticFactory<JetExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory.create(ERROR, "Passing value as a vararg is only allowed inside a parenthesized argument list");
+    DiagnosticFactory<LeafPsiElement> NON_VARARG_SPREAD = DiagnosticFactory.create(ERROR, "The spread operator (*foo) may only be applied in a vararg position");
 
     DiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = DiagnosticFactory.create(ERROR, "Only one function literal is allowed outside a parenthesized argument list");
     DiagnosticFactory<PsiElement> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory.create(ERROR, "This property must either have a type annotation or be initialized");

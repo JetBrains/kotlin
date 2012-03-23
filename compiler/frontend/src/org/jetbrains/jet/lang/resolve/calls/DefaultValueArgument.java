@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +32,8 @@ public class DefaultValueArgument implements ResolvedValueArgument {
 
     @NotNull
     @Override
-    public List<JetExpression> getArgumentExpressions() {
-        return Collections.emptyList(); //throw new UnsupportedOperationException("Look into the default value of the parameter");
+    public List<ValueArgument> getArguments() {
+        return Collections.emptyList();
     }
 
     @Override

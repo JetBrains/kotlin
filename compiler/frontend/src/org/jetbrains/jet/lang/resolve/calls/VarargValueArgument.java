@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 
 import java.util.Iterator;
 import java.util.List;
@@ -27,20 +28,25 @@ import java.util.List;
 * @author abreslav
 */
 public class VarargValueArgument implements ResolvedValueArgument {
-    private final List<JetExpression> values = Lists.newArrayList();
+    private final List<ValueArgument> arguments = Lists.newArrayList();
 
-    @NotNull
+    public void addArgument(@NotNull ValueArgument argument) {
+        arguments.add(argument);
+    }
+
     @Override
-    public List<JetExpression> getArgumentExpressions() {
-        return values;
+    @NotNull
+    public List<ValueArgument> getArguments() {
+        return arguments;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("vararg:{");
-        for (Iterator<JetExpression> iterator = values.iterator(); iterator.hasNext(); ) {
-            JetExpression expression = iterator.next();
-            builder.append(expression.getText());
+        for (Iterator<ValueArgument> iterator = arguments.iterator(); iterator.hasNext(); ) {
+            ValueArgument valueArgument = iterator.next();
+            JetExpression expression = valueArgument.getArgumentExpression();
+            builder.append(expression == null ? "no expression" : expression.getText());
             if (iterator.hasNext()) {
                 builder.append(", ");
             }

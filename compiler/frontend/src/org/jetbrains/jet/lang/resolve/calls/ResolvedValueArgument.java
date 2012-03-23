@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 
 import java.util.List;
 
@@ -26,6 +26,6 @@ import java.util.List;
 */
 public interface ResolvedValueArgument {
     @NotNull
-    List<JetExpression> getArgumentExpressions();
+    List<ValueArgument> getArguments();
 
 }

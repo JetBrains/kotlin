@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -121,24 +122,24 @@ public final class CallExpressionTranslator extends AbstractTranslator {
     @NotNull
     private List<JsExpression> translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,
                                                        @NotNull ValueParameterDescriptor parameterDescriptor) {
-        List<JetExpression> argumentExpressions = actualArgument.getArgumentExpressions();
+        List<ValueArgument> valueArguments = actualArgument.getArguments();
         if (actualArgument instanceof VarargValueArgument) {
-            return translateVarargArgument(argumentExpressions);
+            return translateVarargArgument(valueArguments);
         }
         if (actualArgument instanceof DefaultValueArgument) {
             JetExpression defaultArgument = getDefaultArgument(bindingContext(), parameterDescriptor);
             return Arrays.asList(Translation.translateAsExpression(defaultArgument, context()));
         }
         assert actualArgument instanceof ExpressionValueArgument;
-        assert argumentExpressions.size() == 1;
-        return Arrays.asList(Translation.translateAsExpression(argumentExpressions.get(0), context()));
+        assert valueArguments.size() == 1;
+        return Arrays.asList(Translation.translateAsExpression(valueArguments.get(0).getArgumentExpression(), context()));
     }
 
     @NotNull
-    private List<JsExpression> translateVarargArgument(@NotNull List<JetExpression> arguments) {
+    private List<JsExpression> translateVarargArgument(@NotNull List<ValueArgument> arguments) {
         List<JsExpression> translatedArgs = Lists.newArrayList();
-        for (JetExpression argument : arguments) {
-            translatedArgs.add(Translation.translateAsExpression(argument, context()));
+        for (ValueArgument argument : arguments) {
+            translatedArgs.add(Translation.translateAsExpression(argument.getArgumentExpression(), context()));
         }
         if (isNativeFunctionCall) {
             return translatedArgs;

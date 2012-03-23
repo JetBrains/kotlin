@@ -152,7 +152,6 @@ longTemplate
   : "${" expression "}"
   ;
 
-
 isRHS
   : pattern
   ;
@@ -232,7 +231,7 @@ typeArguments
   ;
 
 valueArguments
-  : "(" (SimpleName "=")? expression{","} ")"
+  : "(" (SimpleName "=")? "*"? expression{","} ")"
   ;
 
 jump

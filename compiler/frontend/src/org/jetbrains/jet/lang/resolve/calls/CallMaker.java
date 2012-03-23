@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -37,9 +38,6 @@ public class CallMaker {
         private final JetExpression expression;
 
         private final PsiElement reportErrorsOn;
-        private ExpressionValueArgument(@NotNull JetExpression expression) {
-            this(expression, expression);
-        }
 
         private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
             this.expression = expression;
@@ -67,6 +65,10 @@ public class CallMaker {
             return reportErrorsOn;
         }
 
+        @Override
+        public LeafPsiElement getSpreadElement() {
+            return null;
+        }
     }
 
     private static class CallImpl implements Call {

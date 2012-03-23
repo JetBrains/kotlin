@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -67,8 +68,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
             ValueArgument valueArgument = valueArguments.get(i);
             if (valueArgument.isNamed()) {
                 someNamed = true;
-                JetReferenceExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
-                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(valueArgument.getArgumentName().getReferenceExpression().getReferencedName());
+                JetSimpleNameExpression nameReference = valueArgument.getArgumentName().getReferenceExpression();
+                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedName());
                 if (valueParameterDescriptor == null) {
                     temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     error = true;
@@ -200,13 +201,14 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
                 varargs.put(valueParameterDescriptor, vararg);
                 candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
             }
-            JetExpression expression = valueArgument.getArgumentExpression();
-            if (expression != null) {
-                vararg.getArgumentExpressions().add(expression);
-            }
+            vararg.addArgument(valueArgument);
         }
         else {
-            ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument.getArgumentExpression());
+            LeafPsiElement spread = valueArgument.getSpreadElement();
+            if (spread != null) {
+                 candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
+            }
+            ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);
             candidateCall.recordValueArgument(valueParameterDescriptor, argument);
         }
     }

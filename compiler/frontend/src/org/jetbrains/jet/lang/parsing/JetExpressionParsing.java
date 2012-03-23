@@ -1812,7 +1812,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * valueArguments
-     *   : "(" (SimpleName "=")? ("out" | "ref")? element{","} ")"
+     *   : "(" (SimpleName "=")? "*"? element{","} ")"
      *   ;
      */
     public void parseValueArgumentList() {
@@ -1841,7 +1841,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * (SimpleName "=")? element
+     * (SimpleName "=")? "*"? element
      */
     private void parseValueArgument() {
         PsiBuilder.Marker argument = mark();
@@ -1852,6 +1852,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
             reference.done(REFERENCE_EXPRESSION);
             argName.done(VALUE_ARGUMENT_NAME);
             advance(); // EQ
+        }
+        if (at(MUL)) {
+            advance(); // MUL
         }
         parseExpression();
         argument.done(VALUE_ARGUMENT);

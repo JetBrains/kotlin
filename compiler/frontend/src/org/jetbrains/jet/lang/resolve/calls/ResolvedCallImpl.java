@@ -120,12 +120,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     }
 
     public void recordTypeArgument(@NotNull TypeParameterDescriptor typeParameter, @NotNull JetType typeArgument) {
-        assert !typeArguments.containsKey(typeParameter);
+        assert !typeArguments.containsKey(typeParameter) : typeParameter + " -> " + typeArgument;
         typeArguments.put(typeParameter, typeArgument);
     }
 
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
-        assert !valueArguments.containsKey(valueParameter);
+        assert !valueArguments.containsKey(valueParameter) : valueParameter + " -> " + valueArgument;
         valueArguments.put(valueParameter, valueArgument);
     }
 

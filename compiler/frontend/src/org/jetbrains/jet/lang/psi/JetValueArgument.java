@@ -18,9 +18,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 /**
  * @author max
@@ -60,5 +62,11 @@ public class JetValueArgument extends JetElement implements ValueArgument {
     @Override
     public PsiElement asElement() {
         return this;
+    }
+
+    @Override
+    public LeafPsiElement getSpreadElement() {
+        ASTNode node = getNode().findChildByType(JetTokens.MUL);
+        return node == null ? null : (LeafPsiElement) node.getPsi();
     }
 }

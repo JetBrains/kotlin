@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,27 +28,28 @@ import java.util.List;
 * @author abreslav
 */
 public class ExpressionValueArgument implements ResolvedValueArgument {
-    private final JetExpression expression;
+    private final ValueArgument valueArgument;
 
-    public ExpressionValueArgument(@Nullable JetExpression expression) {
-        this.expression = expression;
+    public ExpressionValueArgument(@Nullable ValueArgument valueArgument) {
+        this.valueArgument = valueArgument;
     }
 
     // Nullable when something like f(a, , b) was in the source code
     @Nullable
-    public JetExpression getExpression() {
-        return expression;
+    public ValueArgument getValueArgument() {
+        return valueArgument;
     }
 
     @NotNull
     @Override
-    public List<JetExpression> getArgumentExpressions() {
-        if (expression == null) return Collections.emptyList();
-        return Collections.singletonList(expression);
+    public List<ValueArgument> getArguments() {
+        if (valueArgument == null) return Collections.emptyList();
+        return Collections.singletonList(valueArgument);
     }
 
     @Override
     public String toString() {
-        return expression.getText();
+        JetExpression expression = valueArgument.getArgumentExpression();
+        return expression == null ? "no expression" : expression.getText();
     }
 }
