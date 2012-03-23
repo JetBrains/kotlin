@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -661,7 +662,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetType visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext context, boolean isStatement) {
         JetExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return null;
+
         JetSimpleNameExpression operationSign = expression.getOperationReference();
+
+        // If it's a labeled expression
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
             String referencedName = operationSign.getReferencedName();
             referencedName = referencedName == null ? " <?>" : referencedName;
@@ -672,42 +676,62 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.labelResolver.exitLabeledElement(baseExpression);
             return DataFlowUtils.checkType(type, expression, context);
         }
+
         IElementType operationType = operationSign.getReferencedNameElementType();
+
+        // Type check the base expression
+        JetType type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
+        if (type == null) {
+            return null;
+        }
+
+        // Special case for expr!!
+        if (operationType == JetTokens.EXCLEXCL) {
+            JetType result;
+            if (isKnownToBeNotNull(baseExpression, context)) {
+                context.trace.report(UNNECESSARY_NOT_NULL_ASSERTION.on(operationSign, type));
+                result = type;
+            }
+            else {
+                result = TypeUtils.makeNotNullable(type);
+            }
+            return DataFlowUtils.checkType(result, expression, context);
+        }
+
+        // Conventions for unary operations
         String name = OperatorConventions.UNARY_OPERATION_NAMES.get(operationType);
         if (name == null) {
             context.trace.report(UNSUPPORTED.on(operationSign, "visitUnaryExpression"));
             return null;
         }
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-        BindingTrace initialTrace = context.trace;
-        context = context.replaceBindingTrace(temporaryTrace);
-        JetType type = facade.getType(baseExpression, context.replaceExpectedType(NO_EXPECTED_TYPE));
-        if (type == null) {
-            temporaryTrace.commit();
-            return null;
-        }
 
+        // a[i]++/-- takes special treatment because it is actually let j = i, arr = a in arr.set(j, a.get(j).inc())
         if ((operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) && baseExpression instanceof JetArrayAccessExpression) {
             JetExpression stubExpression = ExpressionTypingUtils.createStubExpressionOfNecessaryType(baseExpression.getProject(), type, context.trace);
-            resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression, stubExpression, context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(TemporaryBindingTrace.create(initialTrace)), context.trace);
+            resolveArrayAccessSetMethod((JetArrayAccessExpression) baseExpression,
+                                        stubExpression,
+                                        context.replaceExpectedType(NO_EXPECTED_TYPE).replaceBindingTrace(TemporaryBindingTrace.create(context.trace)),
+                                        context.trace);
         }
 
         ExpressionReceiver receiver = new ExpressionReceiver(baseExpression, type);
 
-        OverloadResolutionResults<FunctionDescriptor> functionDescriptor = context.resolveCallWithGivenNameToDescriptor(
+        // Resolve the operation reference
+        OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, expression),
                 expression.getOperationReference(),
                 name);
 
-        if (!functionDescriptor.isSuccess()) {
-            temporaryTrace.commit();
+        if (!resolutionResults.isSuccess()) {
             return null;
         }
-        JetType returnType = functionDescriptor.getResultingDescriptor().getReturnType();
+
+        // Computing the return type
+        JetType returnType = resolutionResults.getResultingDescriptor().getReturnType();
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                result = JetStandardClasses.getUnitType();
+                result = ErrorUtils.createErrorType("Unit");
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
@@ -727,8 +751,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             result = returnType;
         }
-        temporaryTrace.commit();
         return DataFlowUtils.checkType(result, expression, context);
+    }
+
+    private boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {
+        JetType type = context.trace.get(EXPRESSION_TYPE, expression);
+        assert type != null : "This method is only supposed to be called when the type is not null";
+        if (!type.isNullable()) return true;
+        List<JetType> possibleTypes = context.dataFlowInfo
+            .getPossibleTypes(DataFlowValueFactory.INSTANCE.createDataFlowValue(expression, type, context.trace.getBindingContext()));
+        for (JetType possibleType : possibleTypes) {
+            if (!possibleType.isNullable()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void checkLValue(BindingTrace trace, JetExpression expression) {

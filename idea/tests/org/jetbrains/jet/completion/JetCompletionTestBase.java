@@ -59,14 +59,14 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
 
                 complete(completionTime == null ? 1 : completionTime);
 
-                final String[] expected = completionUtils.itemsShouldExist(fileText);
-                final String[] unexpected = completionUtils.itemsShouldAbsent(fileText);
+                ExpectedCompletionUtils.CompletionProposal[] expected = completionUtils.itemsShouldExist(fileText);
+                ExpectedCompletionUtils.CompletionProposal[] unexpected = completionUtils.itemsShouldAbsent(fileText);
                 Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
 
                 assertTrue("Should be some assertions about completion", expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
 
-                assertContainsItems(expected);
-                assertNotContainItems(unexpected);
+                ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems);
+                ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, myItems);
 
                 if (itemsNumber != null) {
                     assertEquals("Invalid number of completion items", itemsNumber.intValue(), myItems.length);

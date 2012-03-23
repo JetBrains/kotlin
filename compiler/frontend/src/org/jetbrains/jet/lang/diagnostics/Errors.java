@@ -322,6 +322,7 @@ public interface Errors {
     DiagnosticFactory<JetSimpleNameExpression> AMBIGUOUS_LABEL = DiagnosticFactory.create(ERROR, "Ambiguous label");
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED = DiagnosticFactory1.create(ERROR, "Unsupported [{0}]");
     DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}");
+    DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}");
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER = DiagnosticFactory2.create(ERROR, "{0} does not refer to a type parameter of {1}", new Renderer<JetTypeConstraint>() {
         @NotNull
         @Override

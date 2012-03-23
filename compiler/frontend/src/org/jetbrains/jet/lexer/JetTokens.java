@@ -107,6 +107,7 @@ public interface JetTokens {
     JetToken EXCLEQEQEQ  = new JetToken("EXCLEQEQEQ");
     JetToken EQEQ        = new JetToken("EQEQ");
     JetToken EXCLEQ      = new JetToken("EXCLEQ");
+    JetToken EXCLEXCL      = new JetToken("EXCLEXCL");
     JetToken ANDAND      = new JetToken("ANDAND");
     JetToken OROR        = new JetToken("OROR");
     JetToken SAFE_ACCESS = new JetToken("SAFE_ACCESS");
@@ -184,7 +185,7 @@ public interface JetTokens {
     TokenSet COMMENTS = TokenSet.create(EOL_COMMENT, BLOCK_COMMENT, DOC_COMMENT);
 
     TokenSet STRINGS = TokenSet.create(CHARACTER_LITERAL, REGULAR_STRING_PART);
-    TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, MUL, PLUS,
+    TokenSet OPERATIONS = TokenSet.create(AS_KEYWORD, AS_SAFE, IS_KEYWORD, IN_KEYWORD, DOT, PLUSPLUS, MINUSMINUS, EXCLEXCL, MUL, PLUS,
             MINUS, EXCL, DIV, PERC, LT, GT, LTEQ, GTEQ, EQEQEQ, EXCLEQEQEQ, EQEQ, EXCLEQ, ANDAND, OROR,
             SAFE_ACCESS, ELVIS,
 //            MAP, FILTER,

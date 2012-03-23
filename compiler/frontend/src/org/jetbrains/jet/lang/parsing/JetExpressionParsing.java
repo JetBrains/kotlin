@@ -53,7 +53,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             FUN_KEYWORD, FOR_KEYWORD, NULL_KEYWORD,
             TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD,
             CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD, TRY_KEYWORD, ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD,
-            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS,
+            WHEN_KEYWORD, RBRACKET, RBRACE, RPAR, PLUSPLUS, MINUSMINUS, EXCLEXCL,
 //            MUL,
             PLUS, MINUS, EXCL, DIV, PERC, LTEQ,
             // TODO GTEQ,   foo<bar, baz>=x
@@ -64,7 +64,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*package*/ static final TokenSet EXPRESSION_FIRST = TokenSet.create(
             // Prefix
-            MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
+            MINUS, PLUS, MINUSMINUS, PLUSPLUS,
+            EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
+            LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
             // Atomic
 
             LPAR, // parenthesized
@@ -126,7 +128,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     @SuppressWarnings({"UnusedDeclaration"})
     private enum Precedence {
-        POSTFIX(PLUSPLUS, MINUSMINUS,
+        POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
 //                HASH,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
@@ -235,7 +237,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             opSet.removeAll(usedSet);
             assert false : opSet;
         }
-        assert usedSet.size() == opSet.size();
+        assert usedSet.size() == opSet.size() : "Either some ops are unused, or something a non-op is used";
 
         usedSet.removeAll(opSet);
 
@@ -325,24 +327,34 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parsePrefixExpression() {
 //        System.out.println("pre at "  + myBuilder.getTokenText());
+
         if (at(LBRACKET)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
                 myJetParsing.parseAnnotations(false);
                 parsePrefixExpression();
                 expression.done(ANNOTATED_EXPRESSION);
-            } else {
+            }
+            else {
                 return;
             }
-        } else if (atSet(Precedence.PREFIX.getOperations())) {
-            PsiBuilder.Marker expression = mark();
+        }
+        else {
+            myBuilder.disableJoiningComplexTokens();
+            if (atSet(Precedence.PREFIX.getOperations())) {
+                PsiBuilder.Marker expression = mark();
 
-            parseOperationReference();
+                parseOperationReference();
 
-            parsePrefixExpression();
-            expression.done(PREFIX_EXPRESSION);
-        } else {
-            parsePostfixExpression();
+                myBuilder.restoreJoiningComplexTokensState();
+
+                parsePrefixExpression();
+                expression.done(PREFIX_EXPRESSION);
+            }
+            else {
+                myBuilder.restoreJoiningComplexTokensState();
+                parsePostfixExpression();
+            }
         }
     }
 
@@ -350,7 +362,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * atomicExpression postfixUnaryOperation?
      *
      * postfixUnaryOperation
-     *   : "++" : "--"
+     *   : "++" : "--" : "!!"
      *   : typeArguments? valueArguments (getEntryPoint? functionLiteral)
      *   : typeArguments (getEntryPoint? functionLiteral)
      *   : arrayAccess

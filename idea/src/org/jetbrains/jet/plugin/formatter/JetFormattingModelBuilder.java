@@ -75,7 +75,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
                 .aroundInside(TokenSet.create(LT, GT, LTEQ, GTEQ), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_RELATIONAL_OPERATORS)
                 .around(TokenSet.create(PLUS, MINUS)).spaceIf(jetCommonSettings.SPACE_AROUND_ADDITIVE_OPERATORS)
                 .aroundInside(TokenSet.create(MUL, DIV, PERC), BINARY_EXPRESSION).spaceIf(jetCommonSettings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
-                .around(TokenSet.create(PLUSPLUS, MINUSMINUS, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
+                .around(TokenSet.create(PLUSPLUS, MINUSMINUS, EXCLEXCL, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
                 .around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
 
                 .beforeInside(BLOCK, FUN).spaceIf(jetCommonSettings.SPACE_BEFORE_METHOD_LBRACE)

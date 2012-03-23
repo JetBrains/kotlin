@@ -164,6 +164,10 @@ LONG_TEMPLATE_ENTRY_END=\}
 
 // (Nested) comments
 
+"/**/" {
+    return JetTokens.BLOCK_COMMENT;
+}
+
 "/**" {
     pushState(DOC_COMMENT);
     commentDepth = 0;
@@ -266,6 +270,7 @@ LONG_TEMPLATE_ENTRY_END=\}
 ">="         { return JetTokens.GTEQ      ; }
 "=="         { return JetTokens.EQEQ      ; }
 "!="         { return JetTokens.EXCLEQ    ; }
+//"!!"         { return JetTokens.EXCLEXCL  ; }
 "&&"         { return JetTokens.ANDAND    ; }
 "||"         { return JetTokens.OROR      ; }
 //"?."         { return JetTokens.SAFE_ACCESS;}

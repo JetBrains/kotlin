@@ -97,6 +97,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testOnlyScopedClassesWithoutExplicit() {
+        doTest();
+    }
+
     public void testOverloadFunctions() {
         doTest();
     }
