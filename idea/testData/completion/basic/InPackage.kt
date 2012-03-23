@@ -7,5 +7,4 @@ class Test {
 }
 
 // EXIST: concurrent
-// ABSENT: TodoAbstractList, Date, Random, import
-// TODO: add AbstractList back to ABSENT
+// ABSENT: AbstractList, Date, Random, import

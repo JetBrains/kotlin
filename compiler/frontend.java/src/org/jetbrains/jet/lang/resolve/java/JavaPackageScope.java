@@ -46,18 +46,21 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     public JavaPackageScope(
             @NotNull FqName packageFQN,
             @NotNull NamespaceDescriptor containingDescriptor,
-            @NotNull JavaSemanticServices semanticServices,
-            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
-        super(containingDescriptor, semanticServices, getPiClass(packageFQN, semanticServices), resolverScopeData);
+            @NotNull JavaSemanticServices semanticServices) {
+        super(containingDescriptor, semanticServices, getPiClass(packageFQN, semanticServices));
         this.packageFQN = packageFQN;
     }
 
     private static PsiClass getPiClass(FqName packageFQN, JavaSemanticServices semanticServices) {
-        PsiClass psiClass = semanticServices.getDescriptorResolver().findClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
-        if (psiClass instanceof JetJavaMirrorMarker) {
+        // TODO: move this check outside
+        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
+        // Kotlin functions are already there
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
+        if (kotlinNamespaceDescriptor != null) {
             return null;
         } else {
-            return psiClass;
+            // TODO: what is GlobalSearchScope
+            return semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS).getFqName());
         }
     }
 
@@ -99,9 +102,9 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
             allDescriptors = Sets.newHashSet();
 
             if (psiClass != null) {
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor, getResolverScopeData()));
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
 
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers(), getResolverScopeData()));
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
             }
 
             final PsiPackage javaPackage = semanticServices.getDescriptorResolver().findPackage(packageFQN);

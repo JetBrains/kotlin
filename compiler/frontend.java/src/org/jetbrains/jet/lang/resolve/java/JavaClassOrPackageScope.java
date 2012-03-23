@@ -39,18 +39,12 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     protected final JavaSemanticServices semanticServices;
     @Nullable
     protected final PsiClass psiClass;
-    @NotNull
-    private final JavaDescriptorResolver.ResolverScopeData resolverScopeData;
 
-    protected JavaClassOrPackageScope(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull JavaSemanticServices semanticServices,
-            @Nullable PsiClass psiClass,
-            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices,
+                                      @Nullable PsiClass psiClass) {
         this.descriptor = descriptor;
         this.semanticServices = semanticServices;
         this.psiClass = psiClass;
-        this.resolverScopeData = resolverScopeData;
 
         JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
     }
@@ -72,7 +66,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
         // TODO: cache
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(
-                descriptor, psiClass, name, staticMembers(), getResolverScopeData());
+                descriptor, psiClass, name, staticMembers());
     }
 
     @NotNull
@@ -83,14 +77,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
 
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(
-                descriptor, psiClass, name, staticMembers(), getResolverScopeData());
-    }
-
-    @NotNull
-    protected JavaDescriptorResolver.ResolverScopeData getResolverScopeData() {
-        semanticServices.getDescriptorResolver().initializeResolverScopeData(resolverScopeData, psiClass, staticMembers());
-        return resolverScopeData;
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClass, name, staticMembers());
     }
 
 }

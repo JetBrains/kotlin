@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -69,7 +68,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
         if (moduleDescriptor.getRootNs() == null) {
-            createNamespaceDescriptorIfNeeded(null, null, moduleDescriptor, "<root>", true);
+            createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true);
         }
 
         NamespaceDescriptorParent currentOwner = moduleDescriptor.getRootNs();
@@ -80,7 +79,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         for (JetSimpleNameExpression nameExpression : namespaceHeader.getParentNamespaceNames()) {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
-            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, null, currentOwner, namespaceName, false);
+            NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(null, currentOwner, namespaceName, false);
             trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
 
             currentOwner = namespaceDescriptor;
@@ -94,8 +93,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         String name = JetPsiUtil.safeName(namespaceHeader.getName());
         trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
 
-        NamespaceDescriptorImpl namespaceDescriptor =
-                createNamespaceDescriptorIfNeeded(file, file, namespaceHeader.isRoot() ? moduleDescriptor : currentOwner, name, namespaceHeader.isRoot());
+        NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, currentOwner, name, false);
         trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
 
         return namespaceDescriptor;
@@ -103,21 +101,17 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
 
     @Override
     @NotNull
-    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(
-            @NotNull FqName fqName, @Nullable PsiElement declaration) {
+    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
         NamespaceDescriptorParent owner = moduleDescriptor;
         for (FqName pathElement : fqName.path()) {
-            boolean needDeclaration = pathElement.equals(fqName);
-            owner = createNamespaceDescriptorIfNeeded(null, needDeclaration ? declaration : null,
+            owner = createNamespaceDescriptorIfNeeded(null,
                     owner, pathElement.isRoot() ? "<root>" : pathElement.shortName(), pathElement.isRoot());
         }
         return (NamespaceDescriptorImpl) owner;
     }
 
     @NotNull
-    public NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(
-            @Nullable JetFile file, @Nullable PsiElement declaration,
-            @NotNull NamespaceDescriptorParent owner, @NotNull String name, boolean root) {
+    public NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceDescriptorParent owner, @NotNull String name, boolean root) {
 
         FqName fqName;
         NamespaceDescriptorImpl namespaceDescriptor;
@@ -126,7 +120,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                 throw new IllegalStateException();
             }
             fqName = FqName.ROOT;
-            namespaceDescriptor = (NamespaceDescriptorImpl) trace.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.ROOT);
+            namespaceDescriptor = ((ModuleDescriptor) owner).getRootNs();
         }
         else {
             FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
@@ -146,8 +140,8 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             namespaceDescriptor.initialize(scope);
             configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
             owner.addNamespace(namespaceDescriptor);
-            if (declaration != null) {
-                trace.record(BindingContext.NAMESPACE, declaration, namespaceDescriptor);
+            if (file != null) {
+                trace.record(BindingContext.NAMESPACE, file, namespaceDescriptor);
             }
         }
 

@@ -218,11 +218,7 @@ public class JetTypeMapper {
      *
      * @see DescriptorUtils#getFQName(DeclarationDescriptor)
      */
-    public String getFQName(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ModuleDescriptor) {
-            throw new IllegalStateException("missed something");
-        }
-
+    public String getFQName(DeclarationDescriptor descriptor) {
         descriptor = descriptor.getOriginal();
 
         if(descriptor instanceof FunctionDescriptor) {
@@ -237,8 +233,11 @@ public class JetTypeMapper {
         if(name.contains("/"))
             return name;
         if (container != null) {
+            if (container.getContainingDeclaration() instanceof ModuleDescriptor) {
+                return name;
+            }
             if (container instanceof ModuleDescriptor) {
-                return "";
+                throw new IllegalStateException("missed something");
             }
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) { 

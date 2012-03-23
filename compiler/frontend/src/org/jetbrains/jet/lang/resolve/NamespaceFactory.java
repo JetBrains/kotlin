@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 
 /**
@@ -26,6 +24,5 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
  */
 public interface NamespaceFactory {
     @NotNull
-    NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(
-            @NotNull FqName fqName, @Nullable PsiElement declaration);
+    NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName);
 }

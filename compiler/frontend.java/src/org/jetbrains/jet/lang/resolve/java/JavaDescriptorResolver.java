@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -119,7 +118,7 @@ public class JavaDescriptorResolver {
     }
 
 
-    static abstract class ResolverScopeData {
+    private static abstract class ResolverScopeData {
         protected boolean kotlin;
         
         private Map<String, NamedMembers> namedMembersMap;
@@ -174,8 +173,7 @@ public class JavaDescriptorResolver {
 
     /** Either package or class with static members */
     private static class ResolverNamespaceData extends ResolverScopeData {
-        private NamespaceDescriptor namespaceDescriptor;
-        private JavaClassOrPackageScope scope;
+        private JavaNamespaceDescriptor namespaceDescriptor;
 
         @NotNull
         public NamespaceDescriptor getNamespaceDescriptor() {
@@ -367,7 +365,7 @@ public class JavaDescriptorResolver {
         }
         classData.classDescriptor.setModality(modality);
         classData.classDescriptor.createTypeConstructor();
-        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false, classData));
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
 
         initializeTypeParameters(classData.typeParameters, classData.classDescriptor, "class " + psiClass.getQualifiedName());
 
@@ -515,7 +513,7 @@ public class JavaDescriptorResolver {
         classData.classDescriptor.setModality(Modality.FINAL);
         classData.classDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
         classData.classDescriptor.createTypeConstructor();
-        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, classObjectPsiClass, semanticServices, false, classData));
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, classObjectPsiClass, semanticServices, false));
 
         // TODO: wrong: class objects do not need visible constructors
         ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
@@ -841,12 +839,13 @@ public class JavaDescriptorResolver {
             }
         }
 
-        PsiClassOrPsiPackage psiElement = findPsiElementForNamespace(qualifiedName);
-        if (psiElement == null) {
-            return null;
+        PsiPackage psiPackage = findPackage(qualifiedName);
+        if (psiPackage == null) {
+            PsiClass psiClass = findClass(qualifiedName);
+            if (psiClass == null) return null;
+            return resolveNamespace(psiClass);
         }
-
-        return resolveNamespace(psiElement);
+        return resolveNamespace(psiPackage);
     }
 
     @Nullable
@@ -876,102 +875,81 @@ public class JavaDescriptorResolver {
         return javaFacade.findPackage(qualifiedName.getFqName());
     }
 
-    @Nullable
-    private PsiClassOrPsiPackage findPsiElementForNamespace(@NotNull FqName fqName) {
-        PsiPackage psiPackage = findPackage(fqName);
-        if (psiPackage != null) {
-            return new PsiClassOrPsiPackage(psiPackage);
+    private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {
+        ResolverNamespaceData namespaceData = namespaceDescriptorCache.get(psiPackage);
+        if (namespaceData == null) {
+            namespaceData = createJavaNamespaceDescriptor(psiPackage);
+            namespaceDescriptorCache.put(psiPackage, namespaceData);
+            namespaceDescriptorCacheByFqn.put(new FqName(psiPackage.getQualifiedName()), namespaceData);
         }
-        PsiClass psiClass = findClass(fqName);
-        if (psiClass != null) {
-            return new PsiClassOrPsiPackage(psiClass);
+        return namespaceData.namespaceDescriptor;
+    }
+
+    private NamespaceDescriptor resolveNamespace(@NotNull PsiClass psiClass) {
+        ResolverNamespaceData namespaceData = namespaceDescriptorCache.get(psiClass);
+        if (namespaceData == null) {
+            namespaceData = createJavaNamespaceDescriptor(psiClass);
+            namespaceDescriptorCache.put(psiClass, namespaceData);
+            namespaceDescriptorCacheByFqn.put(new FqName(psiClass.getQualifiedName()), namespaceData);
         }
-        return null;
+        return namespaceData.namespaceDescriptor;
+    }
+
+    private ResolverNamespaceData createJavaNamespaceDescriptor(@NotNull PsiPackage psiPackage) {
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
+        String name = psiPackage.getName();
+        namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
+                (NamespaceDescriptorParent) resolveParentDescriptor(psiPackage),
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                name == null ? JAVA_ROOT : name,
+                name == null ? FqName.ROOT : new FqName(psiPackage.getQualifiedName()),
+                true
+        );
+        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, false);
+
+        namespaceData.namespaceDescriptor.setMemberScope(createJavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor));
+        trace.record(BindingContext.NAMESPACE, psiPackage, namespaceData.namespaceDescriptor);
+        // TODO: hack
+        namespaceData.kotlin = true;
+        return namespaceData;
+    }
+
+    public JavaPackageScope createJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
+        return new JavaPackageScope(fqName, ns, semanticServices);
     }
 
     @NotNull
-    private NamespaceDescriptor resolveNamespace(@NotNull PsiClassOrPsiPackage psi) {
-        return namespaceFactory.createNamespaceDescriptorPathIfNeeded(psi.getFqName(), psi.getPsiElement());
+    private DeclarationDescriptor resolveParentDescriptor(@NotNull PsiPackage psiPackage) {
+        PsiPackage parentPackage = psiPackage.getParentPackage();
+        if (parentPackage == null) {
+            return FAKE_ROOT_MODULE;
+        }
+        return resolveNamespace(parentPackage);
     }
 
-    private static class PsiClassOrPsiPackage {
-        @NotNull
-        private final PsiElement psiElement;
-        @NotNull
-        private final FqName fqName;
+    /**
+     * TODO
+     * @see #createClassObjectDescriptor(org.jetbrains.jet.lang.descriptors.ClassDescriptor, com.intellij.psi.PsiClass)
+     */
+    private ResolverNamespaceData createJavaNamespaceDescriptor(@NotNull final PsiClass psiClass) {
 
-        private PsiClassOrPsiPackage(@NotNull PsiClass psiElement) {
-            this.psiElement = psiElement;
-            this.fqName = new FqName(psiElement.getQualifiedName());
-        }
+        checkPsiClassIsNotJet(psiClass);
 
-        private PsiClassOrPsiPackage(@NotNull PsiPackage psiElement) {
-            this.psiElement = psiElement;
-            this.fqName = new FqName(psiElement.getQualifiedName());
-        }
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
+        namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
+                (NamespaceDescriptorParent) resolveParentDescriptor(psiClass),
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                psiClass.getName(),
+                new FqName(psiClass.getQualifiedName()),
+                false
+        );
+        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, true);
 
-        public boolean isClass() {
-            return psiElement instanceof PsiClass;
-        }
-
-        public boolean isPackage() {
-            return psiElement instanceof PsiPackage;
-        }
-
-        @NotNull
-        public PsiClass getPsiClass() {
-            return (PsiClass)psiElement;
-        }
-
-        @NotNull
-        public PsiPackage getPsiPackage() {
-            return (PsiPackage)psiElement;
-        }
-
-        @NotNull
-        public PsiElement getPsiElement() {
-            return psiElement;
-        }
-
-        @NotNull
-        public FqName getFqName() {
-            return fqName;
-        }
+        namespaceData.namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
+        trace.record(BindingContext.NAMESPACE, psiClass, namespaceData.namespaceDescriptor);
+        return namespaceData;
     }
-
-    @Nullable
-    public JavaClassOrPackageScope resolveJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor namespace) {
-        PsiClassOrPsiPackage psi = findPsiElementForNamespace(fqName);
-        if (psi == null) {
-            return null;
-        }
-
-        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(fqName);
-        if (namespaceData != null) {
-            throw new IllegalStateException("cache must be empty for ns " + fqName);
-        }
-
-        namespaceData = new ResolverNamespaceData();
-        namespaceDescriptorCache.put(psi.getPsiElement(), namespaceData);
-        namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
-
-        if (psi.isClass()) {
-            checkPsiClassIsNotJet(psi.getPsiClass());
-        }
-
-        namespaceData.namespaceDescriptor = namespace;
-        namespaceData.kotlin = psi.isPackage();
-        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, psi.isClass());
-
-        if (psi.isClass()) {
-            namespaceData.scope = new JavaClassMembersScope(namespace, psi.getPsiClass(), semanticServices, true, namespaceData);
-        } else {
-            namespaceData.scope = new JavaPackageScope(fqName, namespace, semanticServices, namespaceData);
-        }
-
-        return namespaceData.scope;
-    }
-
+    
     private static class ValueParameterDescriptors {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
@@ -1074,12 +1052,8 @@ public class JavaDescriptorResolver {
         }
     }
 
-    public Set<VariableDescriptor> resolveFieldGroupByName(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiClass psiClass,
-            String fieldName,
-            boolean staticMembers,
-            @NotNull ResolverScopeData scopeData) {
+    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass, String fieldName, boolean staticMembers) {
+        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
 
         NamedMembers namedMembers = scopeData.namedMembersMap.get(fieldName);
         if (namedMembers == null) {
@@ -1099,12 +1073,10 @@ public class JavaDescriptorResolver {
     }
     
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(
-            @NotNull ClassOrNamespaceDescriptor owner,
-            @NotNull PsiClass psiClass,
-            boolean staticMembers,
-            @NotNull ResolverScopeData scopeData) {
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass, boolean staticMembers) {
 
+        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
+        
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
         Map<String, NamedMembers> membersForProperties = scopeData.namedMembersMap;
         for (Map.Entry<String, NamedMembers> entry : membersForProperties.entrySet()) {
@@ -1358,7 +1330,7 @@ public class JavaDescriptorResolver {
         namedMembers.propertyDescriptors = r;
     }
 
-    private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
+    private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
@@ -1367,7 +1339,8 @@ public class JavaDescriptorResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
-            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass, method, scopeData);
+            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
+                    method);
             if (function != null) {
                 functionsFromCurrent.add((SimpleFunctionDescriptor) function);
             }
@@ -1407,30 +1380,42 @@ public class JavaDescriptorResolver {
         return r;
     }
 
-    void initializeResolverScopeData(@NotNull ResolverScopeData scopeData, @Nullable PsiClass psiClass, boolean staticMembers) {
-        if (scopeData.namedMembersMap == null) {
-            if (psiClass != null) {
-                scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(
-                        new PsiClassWrapper(psiClass), staticMembers, scopeData.kotlin);
-            } else {
-                scopeData.namedMembersMap = Maps.newHashMap();
-            }
+    private ResolverScopeData getResolverScopeData(@NotNull ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
+        // TODO: store scopeData in Java*Scope
+        ResolverScopeData scopeData;
+        boolean staticMembers;
+        if (owner instanceof JavaNamespaceDescriptor) {
+            scopeData = namespaceDescriptorCacheByFqn.get(((JavaNamespaceDescriptor) owner).getQualifiedName());
+            staticMembers = true;
+        } else if (owner instanceof ClassDescriptor) {
+            scopeData = classDescriptorCache.get(new FqName(psiClass.getQualifiedName()));
+            staticMembers = false;
+        } else {
+            throw new IllegalStateException("unknown owner: " + owner.getClass().getName());
         }
+        if (scopeData == null) {
+            throw new IllegalStateException();
+        }
+        
+        if (scopeData.namedMembersMap == null) {
+            scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(psiClass, staticMembers, scopeData.kotlin);
+        }
+        
+        return scopeData;
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(
-            @NotNull ClassOrNamespaceDescriptor descriptor,
-            @NotNull PsiClass psiClass,
-            @NotNull String methodName,
-            boolean staticMembers,
-            @NotNull ResolverScopeData scopeData) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
 
-        Map<String, NamedMembers> namedMembersMap = scopeData.namedMembersMap;
+        ResolverScopeData resolverScopeData = getResolverScopeData(descriptor, new PsiClassWrapper(psiClass));
+
+        Map<String, NamedMembers> namedMembersMap = resolverScopeData.namedMembersMap;
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null && namedMembers.methods != null) {
-            resolveNamedGroupFunctions(descriptor, psiClass, namedMembers, methodName, scopeData);
+            TypeSubstitutor typeSubstitutor = typeSubstitutorForGenericSupertypes(resolverScopeData);
+
+            resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, namedMembers, methodName, resolverScopeData);
 
             return namedMembers.functionDescriptors;
         } else {
@@ -1474,24 +1459,20 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(
-            ClassOrNamespaceDescriptor owner,
-            final PsiClass psiClass,
-            final PsiMethodWrapper method,
-            @NotNull ResolverScopeData scopeData) {
+    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, final PsiMethodWrapper method) {
 
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;
         }
+        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
 
         boolean kotlin;
-        if (owner instanceof NamespaceDescriptor) {
-            NamespaceDescriptor javaNamespaceDescriptor = (NamespaceDescriptor) owner;
-            FqName fqName = DescriptorUtils.getFQName(javaNamespaceDescriptor).toSafe();
-            ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(fqName);
+        if (owner instanceof JavaNamespaceDescriptor) {
+            JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) owner;
+            ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(javaNamespaceDescriptor.getQualifiedName());
             if (namespaceData == null) {
-                throw new IllegalStateException("namespaceData not found by name " + fqName);
+                throw new IllegalStateException("namespaceData not found by name " + javaNamespaceDescriptor.getQualifiedName());
             }
             kotlin = namespaceData.kotlin;
         } else {
@@ -1521,7 +1502,7 @@ public class JavaDescriptorResolver {
             classDescriptor = classClassDescriptor;
         }
         else {
-            classDescriptor = resolveNamespace(new PsiClassOrPsiPackage(method.getPsiMethod().getContainingClass()));
+            classDescriptor = resolveNamespace(method.getPsiMethod().getContainingClass());
         }
         if (classDescriptor == null) {
             return null;
@@ -1620,10 +1601,9 @@ public class JavaDescriptorResolver {
         return annotation;
     }
 
-    public List<FunctionDescriptor> resolveMethods(
-            @NotNull PsiClass psiClass,
-            @NotNull ClassOrNamespaceDescriptor containingDeclaration,
-            @NotNull ResolverScopeData scopeData) {
+    public List<FunctionDescriptor> resolveMethods(@NotNull PsiClass psiClass, @NotNull ClassOrNamespaceDescriptor containingDeclaration) {
+        ResolverScopeData scopeData = getResolverScopeData(containingDeclaration, new PsiClassWrapper(psiClass));
+
         TypeSubstitutor substitutorForGenericSupertypes = typeSubstitutorForGenericSupertypes(scopeData);
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
@@ -1631,7 +1611,7 @@ public class JavaDescriptorResolver {
         for (Map.Entry<String, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
             String methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(containingDeclaration, psiClass, namedMembers, methodName, scopeData);
+            resolveNamedGroupFunctions(containingDeclaration, psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.functionDescriptors);
         }
 
