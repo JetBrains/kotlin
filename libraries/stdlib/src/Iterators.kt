@@ -5,14 +5,14 @@ import kotlin.support.AbstractIterator
 import java.util.*
 import java.util.Iterator
 
-/** Filters the iterator for all elements of a certain kind */
-inline fun <T, R: T> java.util.Iterator<T>.filterIs(): Iterator<R> = FilterIsIterator<T,R>(this)
+/** Filters the iterator for all elements of a certain sub class */
+inline fun <T, R: T> java.util.Iterator<T>.filterIsInstance(klass: Class<R>): Iterator<R> = FilterIsIterator<T,R>(this, klass)
 
-private class FilterIsIterator<T, R :T>(val iter: java.util.Iterator<T>) : AbstractIterator<R>() {
+private class FilterIsIterator<T, R :T>(val iter: java.util.Iterator<T>, val klass: Class<R>) : AbstractIterator<R>() {
     override fun computeNext(): R? {
         while (iter.hasNext()) {
             val next = iter.next()
-            if (next is R) {
+            if (klass.isInstance(next)) {
                 return next as R
             }
         }

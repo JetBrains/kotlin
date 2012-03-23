@@ -225,10 +225,10 @@ protected class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>
 }
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
-fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIs<Node, Element>()
+fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 /** Returns an [[Iterator]] of all the previous [[Element]] siblings */
-fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIs<Node, Element>()
+fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
 
 /** Returns the attribute value or empty string if its not present */
 inline fun Element.attribute(name: String): String {

@@ -61,7 +61,9 @@ class DomBuilderTest() : TestCase() {
         assertEquals(1, doc["#id3"].size())
 
         val root = doc.rootElement
-        if (root != null) {
+        if (root == null) {
+            fail("No root!")
+        } else {
             assertTrue {
                 root.hasClass("bar")
             }
@@ -82,10 +84,13 @@ class DomBuilderTest() : TestCase() {
             assertEquals(1, root["#id1"].size())
             assertEquals(1, root["#id2"].size())
             assertEquals(1, root["#id3"].size())
-        } else {
-            fail("No root!")
-        }
 
+            // iterating through next element siblings
+            for (e in root.nextElements()) {
+                println("found element: $e")
+            }
+
+        }
         val grandChild = doc["grandChild"].first
         if (grandChild != null) {
             println("got element ${grandChild.toXmlString()} with text '${grandChild.text}`")
@@ -119,5 +124,6 @@ class DomBuilderTest() : TestCase() {
         val xml = nodesToXmlString(children)
         println("root element has children: ${xml}")
         assertEquals(1, children.size())
+
     }
 }
