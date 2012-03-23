@@ -21,18 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author abreslav
@@ -72,7 +70,11 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        namespaceMemberScope.importScope(javaSemanticServices.getDescriptorResolver().createJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor));
+        JetScope scope = javaSemanticServices.getDescriptorResolver().resolveJavaPackageScope(
+                DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor);
+        if (scope != null) {
+            namespaceMemberScope.importScope(scope);
+        }
         delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 

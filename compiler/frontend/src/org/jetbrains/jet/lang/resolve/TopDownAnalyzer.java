@@ -297,11 +297,11 @@ public class TopDownAnalyzer {
                 new TraceBasedRedeclarationHandler(trace)).setDebugName("Root scope in analyzeNamespace");
         scope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
+        NamespaceDescriptorImpl rootNs = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT, null);
 
         // map "jet" namespace into JetStandardLibrary/Classes
         // @see DefaultModuleConfiguraiton#extendNamespaceScope
-        namespaceFactory.createNamespaceDescriptorPathIfNeeded(JetStandardClasses.STANDARD_CLASSES_FQNAME);
+        namespaceFactory.createNamespaceDescriptorPathIfNeeded(JetStandardClasses.STANDARD_CLASSES_FQNAME, null);
 
         // Import a scope that contains all top-level namespaces that come from dependencies
         // This makes the namespaces visible at all, does not import themselves

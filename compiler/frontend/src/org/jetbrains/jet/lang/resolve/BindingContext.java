@@ -172,7 +172,7 @@ public interface BindingContext {
     WritableSlice<JetParameter, PropertyDescriptor> VALUE_PARAMETER_AS_PROPERTY = Slices.<JetParameter, PropertyDescriptor>sliceBuilder().build();
 
     WritableSlice<FqName, ClassDescriptor> FQNAME_TO_CLASS_DESCRIPTOR = new BasicWritableSlice<FqName, ClassDescriptor>(DO_NOTHING, true);
-    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<FqName, NamespaceDescriptor>(DO_NOTHING);
+    WritableSlice<FqName, NamespaceDescriptor> FQNAME_TO_NAMESPACE_DESCRIPTOR = new BasicWritableSlice<FqName, NamespaceDescriptor>(Slices.ONLY_REWRITE_TO_EQUAL);
 
     /**
      * Each namespace found in src must be registered here.

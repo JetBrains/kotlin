@@ -42,8 +42,9 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
             @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor,
             @NotNull PsiClass psiClass,
             @NotNull JavaSemanticServices semanticServices,
-            boolean staticMembers) {
-        super(classOrNamespaceDescriptor, semanticServices, psiClass);
+            boolean staticMembers,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+        super(classOrNamespaceDescriptor, semanticServices, psiClass, resolverScopeData);
         this.psiClass = psiClass;
         this.staticMembers = staticMembers;
     }
@@ -89,9 +90,9 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor, getResolverScopeData()));
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers, getResolverScopeData()));
 
             allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass, staticMembers));
         }

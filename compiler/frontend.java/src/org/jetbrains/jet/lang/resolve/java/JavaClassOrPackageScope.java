@@ -39,12 +39,18 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
     protected final JavaSemanticServices semanticServices;
     @Nullable
     protected final PsiClass psiClass;
+    @NotNull
+    private final JavaDescriptorResolver.ResolverScopeData resolverScopeData;
 
-    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices,
-                                      @Nullable PsiClass psiClass) {
+    protected JavaClassOrPackageScope(
+            @NotNull ClassOrNamespaceDescriptor descriptor,
+            @NotNull JavaSemanticServices semanticServices,
+            @Nullable PsiClass psiClass,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
         this.descriptor = descriptor;
         this.semanticServices = semanticServices;
         this.psiClass = psiClass;
+        this.resolverScopeData = resolverScopeData;
 
         JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
     }
@@ -66,7 +72,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
         // TODO: cache
         return semanticServices.getDescriptorResolver().resolveFieldGroupByName(
-                descriptor, psiClass, name, staticMembers());
+                descriptor, psiClass, name, staticMembers(), getResolverScopeData());
     }
 
     @NotNull
@@ -77,7 +83,14 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
             return Collections.emptySet();
         }
 
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClass, name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(
+                descriptor, psiClass, name, staticMembers(), getResolverScopeData());
+    }
+
+    @NotNull
+    protected JavaDescriptorResolver.ResolverScopeData getResolverScopeData() {
+        semanticServices.getDescriptorResolver().initializeResolverScopeData(resolverScopeData, psiClass, staticMembers());
+        return resolverScopeData;
     }
 
 }
