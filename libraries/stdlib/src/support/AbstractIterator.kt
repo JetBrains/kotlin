@@ -12,7 +12,7 @@ private val Failed = 3
  * A base class to simplify implementing iterators so that implementations only have to implement [[#computeNext()]]
  * to implement the iterator, calling [[done()]] when the iteration is complete.
  */
-abstract class AbstractIterator<T>: Iterator<T> {
+abstract class AbstractIterator<T>: java.util.Iterator<T> {
     var state = NotReady
     var next: T? = null
 

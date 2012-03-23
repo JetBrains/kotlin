@@ -48,14 +48,23 @@ fun main(args: Array<String>) {
     }
     val outDir = File(srcDir, "generated")
 
-
     // JavaIterables - Generic iterable stuff
     generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
+    }
+    generateFile(File(outDir, "ArraysFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
 
     generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
+    }
+    generateFile(File(outDir, "StandardFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "Iterable<T")
+    }
+
+    generateFile(File(outDir, "JavaUtilIteratorsFromJavaIterables.kt"), "package kotlin.util", File(srcDir, "JavaIterables.kt")) {
+        it.replaceAll("java.lang.Iterable<T", "java.util.Iterator<T")
     }
 
 

@@ -44,9 +44,6 @@ inline fun <T> Iterable<T>.find(predicate: (T)-> Boolean) : T? {
   return null
 }
 
-/** Returns a new List containing all elements in this collection which match the given predicate */
-inline fun <T> Iterable<T>.filter(predicate: (T)-> Boolean) : Collection<T> = filterTo(java.util.ArrayList<T>(), predicate)
-
 /** Filters all elements in this collection which match the given predicate into the given result collection */
 inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
@@ -55,9 +52,6 @@ inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (
   }
   return result
 }
-
-/** Returns a List containing all the non null elements in this collection */
-inline fun <T> Iterable<T?>?.filterNotNull() : Collection<T> = filterNotNullTo<T, java.util.ArrayList<T>>(java.util.ArrayList<T>())
 
 /** Filters all the null elements in this collection into the given result collection */
 inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C {
@@ -71,23 +65,12 @@ inline fun <T, C: Collection<in T>> Iterable<T?>?.filterNotNullTo(result: C) : C
 }
 
 /** Returns a new collection containing all elements in this collection which do not match the given predicate */
-inline fun <T> Iterable<T>.filterNot(predicate: (T)-> Boolean) : Collection<T> =  filterNotTo(ArrayList<T>(), predicate)
-
-/** Returns a new collection containing all elements in this collection which do not match the given predicate */
 inline fun <T, C: Collection<in T>> Iterable<T>.filterNotTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (!predicate(elem))
       result.add(elem)
   }
   return result
-}
-
-/**
-  * Returns the result of transforming each item in the collection to a one or more values which
-  * are concatenated together into a single collection
-  */
-inline fun <T, R> Iterable<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> {
-    return flatMapTo(ArrayList<R>(), transform)
 }
 
 /**
