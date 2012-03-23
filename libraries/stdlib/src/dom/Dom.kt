@@ -1,6 +1,7 @@
 package kotlin.dom
 
 import kotlin.*
+import kotlin.support.*
 import kotlin.util.*
 import java.util.*
 import org.w3c.dom.*
@@ -190,6 +191,45 @@ fun Element.get(selector: String): List<Element> {
     }
 }
 
+/** Returns an [[Iterator]] over the next siblings of this node */
+fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
+
+protected class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+
+    override fun computeNext(): Node? {
+        val next = node.getNextSibling()
+        if (next != null) {
+            node = next
+            return next
+        } else {
+            done()
+            return null
+        }
+    }
+}
+/** Returns an [[Iterator]] over the next siblings of this node */
+fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
+
+protected class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+
+    override fun computeNext(): Node? {
+        val next = node.getPreviousSibling()
+        if (next != null) {
+            node = next
+            return next
+        } else {
+            done()
+            return null
+        }
+    }
+}
+
+/** Returns an [[Iterator]] of all the next [[Element]] siblings */
+fun Node.nextElements(): Iterator<Element> = nextSiblings().filterIs<Node, Element>()
+
+/** Returns an [[Iterator]] of all the previous [[Element]] siblings */
+fun Node.previousElements(): Iterator<Element> = previousSiblings().filterIs<Node, Element>()
+
 /** Returns the attribute value or empty string if its not present */
 inline fun Element.attribute(name: String): String {
     return this.getAttribute(name) ?: ""
@@ -271,7 +311,7 @@ inline fun NodeList?.toElementList(): List<Element> {
 fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
     return if (this == null)
         "" else {
-        this.toList().toXmlString(xmlDeclaration)
+        nodesToXmlString(this.toList(), xmlDeclaration)
     }
 }
 

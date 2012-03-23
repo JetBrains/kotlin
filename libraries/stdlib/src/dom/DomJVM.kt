@@ -17,6 +17,7 @@ import javax.xml.transform.OutputKeys
 import java.lang.Iterable
 import java.util.List
 import java.util.Collection
+import java.io.Writer
 
 /** Creates a new document with the given document builder*/
 fun createDocument(builder: DocumentBuilder): Document {
@@ -39,35 +40,26 @@ fun createTransformer(source: Source? = null, factory: TransformerFactory = Tran
 }
 
 /** Converts the node to an XML String */
-fun Node.toXmlString(xmlDeclaration: Boolean = this is Document): String {
-    return nodeToXmlString(this, xmlDeclaration)
+fun Node.toXmlString(xmlDeclaration: Boolean = false): String {
+    val writer = StringWriter()
+    writeXmlString(writer, xmlDeclaration)
+    return writer.toString().sure()
+}
+
+/** Converts the node to an XML String and writes it to the given [[Writer]] */
+fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
+    val transformer = createTransformer()
+    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")
+    transformer.transform(DOMSource(this), StreamResult(writer))
 }
 
 /** Converts the collection of nodes to an XML String */
-fun java.lang.Iterable<Node>.toXmlString(xmlDeclaration: Boolean = false): String {
+fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
     // TODO this should work...
     // return this.map<Node,String>{it.toXmlString()}.join("")
     val builder = StringBuilder()
-    for (n in this) {
+    for (n in nodes) {
         builder.append(n.toXmlString(xmlDeclaration))
     }
     return builder.toString().sure()
 }
-
-
-/*
-fun Document.toXmlString(xmlDeclaration: Boolean = true): String {
-    return nodeToXmlString(this, xmlDeclaration)
-}
-*/
-
-/** Converts the node to an XML String */
-fun nodeToXmlString(node: Node, xmlDeclaration: Boolean): String {
-    val transformer = createTransformer()
-    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")
-    val buffer = StringWriter()
-    transformer.transform(DOMSource(node), StreamResult(buffer))
-    return buffer.toString().sure()
-
-}
-

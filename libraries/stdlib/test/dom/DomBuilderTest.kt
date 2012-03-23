@@ -116,7 +116,7 @@ class DomBuilderTest() : TestCase() {
             fail("Not an Element $grandChild")
         }
         val children = doc.rootElement.children()
-        val xml = children.toXmlString()
+        val xml = nodesToXmlString(children)
         println("root element has children: ${xml}")
         assertEquals(1, children.size())
     }
