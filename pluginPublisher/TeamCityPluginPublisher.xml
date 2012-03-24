@@ -29,7 +29,7 @@
         <include name="idea-IC-*"/>
       </dirset>
     </pathconvert>
-    <basename property="idea.version" file="${idea.dir}"/>
+    <loadfile property="idea.version" srcfile="${idea.dir}/build.txt" />
 
     <echo message="IDEA version is ${idea.version} located ${idea.dir}"/>
 
@@ -52,16 +52,31 @@
 
     <echo message="Kotlin Plugin version is ${plugin.version} located ${plugin.path}"/>
 
+    <!-- Extract plugin, add <since> tag to plugin descriptor -->
+    <delete dir="${basedir}/plugin" failonerror="false"/>
+
+    <unzip src="${plugin.path}" dest="${basedir}/plugin"/>
+    <unzip src="${basedir}/plugin/Kotlin/lib/kotlin-plugin.jar" dest="${basedir}/plugin/jar"/>
+    <move file="${basedir}/plugin/jar/META-INF/plugin.xml" tofile="${basedir}/plugin/jar/META-INF/plugin.xml.src"/>
+    <xslt in="${basedir}/plugin/jar/META-INF/plugin.xml.src" out="${basedir}/plugin/jar/META-INF/plugin.xml"
+          style="${basedir}/add-since-tag.xsl">
+      <param name="ideaversion" expression="${idea.version}"/>
+    </xslt>
+    <zip destfile="${basedir}/plugin/Kotlin/lib/kotlin-plugin.jar" update="true" basedir="${basedir}/plugin/jar" includes="META-INF/plugin.xml" />
+    <delete file="${plugin.path}"/>
+    <zip destfile="${plugin.path}" basedir="${basedir}/plugin" includes="Kotlin/**/*"/>
+
     <!-- Get plugin verifier -->
-    <delete file="plugin-verifier.jar" failonerror="false" />
-    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar" dest="plugin-verifier.jar" />
+    <delete file="plugin-verifier.jar" failonerror="false"/>
+    <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
+         dest="plugin-verifier.jar"/>
 
     <!-- Run plugin verifier -->
     <java fork="true" failonerror="true" jar="plugin-verifier.jar">
-        <arg value="-r" />
-        <arg value="${jdk16.home}" />
-        <arg value="${plugin.path}" />
-        <arg value="${idea.dir}" />
+      <arg value="-r"/>
+      <arg value="${jdk16.home}"/>
+      <arg value="${plugin.path}"/>
+      <arg value="${idea.dir}"/>
     </java>
 
     <!-- Make IDEA custom repository xml -->
@@ -72,8 +87,8 @@
     </echoxml>
 
     <!-- Everything is ok, publish plugin and xml descriptor -->
-    <echo message="##teamcity[buildStatus text='${plugin.filename} has been verified against ${idea.version}']" />
-    <echo message="##teamcity[publishArtifacts '${plugin.path}']" />
-    <echo message="##teamcity[publishArtifacts '${updatePlugins.xml}']" />
+    <echo message="##teamcity[buildStatus text='${plugin.filename} has been verified against ${idea.version}']"/>
+    <echo message="##teamcity[publishArtifacts '${plugin.path}']"/>
+    <echo message="##teamcity[publishArtifacts '${updatePlugins.xml}']"/>
   </target>
 </project>
