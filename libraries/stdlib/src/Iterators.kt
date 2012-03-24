@@ -21,33 +21,19 @@ private class FilterIsIterator<T, R :T>(val iter: java.util.Iterator<T>, val kla
     }
 }
 
-
-// TODO when we're past the compiler error
-// http://youtrack.jetbrains.com/issue/KT-1646
-//
-// we can use this code to replace the other
-// filter / FilterIterator class as it reuses the
-// core logic from AbstractIterator
-
 /** Returns a new lazy iterator containing all elements in this iteration which match the given predicate */
-inline fun <T> java.util.Iterator<T>.filter2(predicate: (T)-> Boolean) : java.util.Iterator<T> {
-    return FilterIterator2(this, predicate)
+inline fun <T> java.util.Iterator<T>.filter(predicate: (T)-> Boolean) : java.util.Iterator<T> {
+    return FilterIterator(this, predicate)
 }
 
-private class FilterIterator2<T>(val iter: java.util.Iterator<T>, val fn: (T)-> Boolean) : AbstractIterator<T>() {
+private class FilterIterator<T>(val iter: java.util.Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
     override protected fun computeNext(): T? {
-        /*
-
-        TODO this block generates a compiler error:
-        http://youtrack.jetbrains.com/issue/KT-1646
-
         while (iter.hasNext()) {
             val element = iter.next()
-            if (fn(element)) {
+            if ((predicate)(element)) {
                 return element
             }
         }
-        */
         done()
         return null
     }
