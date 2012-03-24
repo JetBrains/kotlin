@@ -33,7 +33,7 @@ import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFi
 public abstract class BasicTest extends TestWithEnvironment {
 
     private static final boolean DELETE_OUT = false;
-    private static final String TEST_FILES = "js.translator/testFiles/";
+    private static final String TEST_FILES = "js/js.translator/testFiles/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = pathToTestFilesRoot() + "kotlin_lib.js";

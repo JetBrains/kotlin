@@ -46,7 +46,7 @@ public abstract class Config {
             "/html5/image.kt"
     );
 
-    protected static final String LIBRARIES_LOCATION = "js.libraries/src";
+    protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
 
     @NotNull
     private final Project project;

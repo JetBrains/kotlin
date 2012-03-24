@@ -63,7 +63,7 @@ public final class TestConfig extends Config {
                 libFiles.add(file);
             } catch (FileNotFoundException e) {
                 //TODO: throw generic expception
-                throw new AssertionError("Lib files not found.");
+                throw new IllegalStateException(e);
             }
 
         }
