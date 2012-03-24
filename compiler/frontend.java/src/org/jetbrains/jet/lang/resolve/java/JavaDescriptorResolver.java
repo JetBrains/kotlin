@@ -1081,25 +1081,12 @@ public class JavaDescriptorResolver {
         Map<String, NamedMembers> membersForProperties = scopeData.namedMembersMap;
         for (Map.Entry<String, NamedMembers> entry : membersForProperties.entrySet()) {
             NamedMembers namedMembers = entry.getValue();
-            if (namedMembers.propertyAccessors == null) {
-                continue;
-            }
-            
             String propertyName = entry.getKey();
 
             resolveNamedGroupProperties(owner, scopeData, staticMembers, namedMembers, propertyName, "class or namespace " + psiClass.getQualifiedName());
             descriptors.addAll(namedMembers.propertyDescriptors);
         }
 
-        for (JetType supertype : getSupertypes(scopeData)) {
-            for (DeclarationDescriptor descriptor : supertype.getMemberScope().getAllDescriptors()) {
-                // TODO: ugly
-                if (descriptor instanceof VariableDescriptor) {
-                    descriptors.add((VariableDescriptor) descriptor);
-                }
-            }
-        }
-        
         return descriptors;
     }
     
@@ -1142,8 +1129,7 @@ public class JavaDescriptorResolver {
         }
         
         if (namedMembers.propertyAccessors == null) {
-            namedMembers.propertyDescriptors = Collections.emptySet();
-            return;
+            namedMembers.propertyAccessors = Collections.emptyList();
         }
 
         TypeVariableResolver typeVariableResolver = TypeVariableResolvers.classTypeVariableResolver(owner, context);
@@ -1193,7 +1179,7 @@ public class JavaDescriptorResolver {
         }
 
         
-        Set<VariableDescriptor> r = new HashSet<VariableDescriptor>(1);
+        Set<PropertyDescriptor> propertiesFromCurrent = new HashSet<PropertyDescriptor>(1);
 
         int regularProperitesCount = 0;
         for (GroupingValue members : map.values()) {
@@ -1324,10 +1310,33 @@ public class JavaDescriptorResolver {
 
             trace.record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
             
-            r.add(propertyDescriptor);
+            propertiesFromCurrent.add(propertyDescriptor);
         }
 
-        namedMembers.propertyDescriptors = r;
+
+        Set<PropertyDescriptor> propertiesFromSupertypes = getPropertiesFromSupertypes(scopeData, propertyName);
+
+        final Set<VariableDescriptor> properties = Sets.newHashSet();
+
+        if (owner instanceof ClassDescriptor) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) owner;
+
+            OverrideResolver.generateOverridesInFunctionGroup(propertyName, propertiesFromSupertypes, propertiesFromCurrent, classDescriptor, new OverrideResolver.DescriptorSink() {
+                @Override
+                public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
+                    properties.add((PropertyDescriptor) fakeOverride);
+                }
+
+                @Override
+                public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
+                    // nop
+                }
+            });
+        }
+
+        properties.addAll(propertiesFromCurrent);
+
+        namedMembers.propertyDescriptors = properties;
     }
 
     private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
@@ -1375,6 +1384,16 @@ public class JavaDescriptorResolver {
         for (JetType supertype : getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
                 r.add((SimpleFunctionDescriptor) function);
+            }
+        }
+        return r;
+    }
+
+    private Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, String propertyName) {
+        Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
+        for (JetType supertype : getSupertypes(scopeData)) {
+            for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
+                r.add((PropertyDescriptor) property);
             }
         }
         return r;

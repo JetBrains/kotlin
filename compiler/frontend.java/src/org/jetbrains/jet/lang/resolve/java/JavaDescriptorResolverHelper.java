@@ -81,14 +81,15 @@ class JavaDescriptorResolverHelper {
         
         private void processFields() {
             if (!kotlin) {
-                for (PsiField field0 : psiClass.getPsiClass().getFields()) {
+                for (PsiField field0 : psiClass.getPsiClass().getAllFields()) {
                     PsiFieldWrapper field = new PsiFieldWrapper(field0);
-                    
+
+                    // group must be created even for excluded field
+                    NamedMembers namedMembers = getNamedMembers(field.getName());
+
                     if (!includeMember(field)) {
                         continue;
                     }
-
-                    NamedMembers namedMembers = getNamedMembers(field.getName());
 
                     TypeSource type = new TypeSource("", field.getType(), field0);
                     namedMembers.addPropertyAccessor(new PropertyAccessorData(field, type, null));
