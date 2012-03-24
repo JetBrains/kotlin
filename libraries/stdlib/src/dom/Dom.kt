@@ -39,7 +39,7 @@ get() {
         while (i < size) {
             val node = nodeList.item(i)
             if (node != null) {
-                if (node.getNodeType() == Node.TEXT_NODE || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+                if (node.isText()) {
                     buffer.append(node.getNodeValue())
                 }
             }
@@ -50,7 +50,12 @@ get() {
 }
 set(value) {
     // lets remove all the previous text nodes first
-    this.setAttribute("id", value)
+    for (node in children()) {
+        if (node.isText()) {
+            removeChild(node)
+        }
+    }
+    addText(value)
 }
 
 var Element.id : String
@@ -222,6 +227,12 @@ protected class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>
             return null
         }
     }
+}
+
+/** Returns true if this node is a Text node or a CDATA node */
+fun Node.isText(): Boolean {
+    val nodeType = getNodeType()
+    return nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
 }
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
