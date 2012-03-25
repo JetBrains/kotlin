@@ -71,3 +71,18 @@ abstract class AbstractIterator<T>: java.util.Iterator<T> {
         state = State.Done
     }
 }
+
+/**
+ * An [[Iterator]] implementation which invokes a function to calculate the next value in the iteration
+ * until the function returns null
+ */
+class FunctionIterator<T>(val nextFn: () -> T?) : AbstractIterator<T>() {
+
+    override fun computeNext(): T? {
+        val next = (nextFn)()
+        if (next == null) {
+            done()
+        }
+        return next
+    }
+}

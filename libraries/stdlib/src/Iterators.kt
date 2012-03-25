@@ -1,6 +1,7 @@
 package kotlin
 
 import kotlin.support.AbstractIterator
+import kotlin.support.FunctionIterator
 
 import java.util.*
 import java.util.Iterator
@@ -77,3 +78,8 @@ inline fun <T, R> java.util.Iterator<T>.flatMap(transform: (T)-> java.util.Itera
     return flatMapTo<>(ArrayList<R>(), transform)
 }
 */
+
+/**
+ * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns null
+ */
+inline fun <T> iterate(nextFunction: () -> T?) : Iterator<T> = FunctionIterator(nextFunction)
