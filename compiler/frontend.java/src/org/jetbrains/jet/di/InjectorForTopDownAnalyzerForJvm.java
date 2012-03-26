@@ -99,7 +99,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
-        this.topDownAnalyzer.setConfiguration(javaBridgeConfiguration);
         this.topDownAnalyzer.setContext(topDownAnalysisContext);
         this.topDownAnalyzer.setControlFlowAnalyzer(controlFlowAnalyzer);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);

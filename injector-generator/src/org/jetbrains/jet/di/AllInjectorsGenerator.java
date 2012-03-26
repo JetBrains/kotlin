@@ -40,6 +40,7 @@ public class AllInjectorsGenerator {
     public static void main(String[] args) throws IOException {
         generateInjectorForTopDownAnalyzerBasic();
         generateInjectorForTopDownAnalyzerForJvm();
+        generateInjectorForTopDownAnalyzerForJs();
         generateMacroInjector();
         generateTestInjector();
         generateInjectorForJavaSemanticServices();
@@ -50,6 +51,13 @@ public class AllInjectorsGenerator {
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addParameter(ModuleConfiguration.class);
         generator.generate("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic");
+    }
+
+    private static void generateInjectorForTopDownAnalyzerForJs() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generateInjectorForTopDownAnalyzerCommon(generator);
+        generator.addParameter(ModuleConfiguration.class);
+        generator.generate("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs");
     }
 
     private static void generateInjectorForTopDownAnalyzerForJvm() throws IOException {

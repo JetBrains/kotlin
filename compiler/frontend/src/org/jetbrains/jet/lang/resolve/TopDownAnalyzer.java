@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -61,8 +60,6 @@ public class TopDownAnalyzer {
     private TopDownAnalysisContext context;
     @NotNull
     private BindingTrace trace;
-    @NotNull
-    private ModuleConfiguration configuration;
     @NotNull
     private ModuleDescriptor moduleDescriptor;
     @NotNull
@@ -113,11 +110,6 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setConfiguration(@NotNull ModuleConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
     }
@@ -142,29 +134,6 @@ public class TopDownAnalyzer {
         this.declarationsChecker = declarationsChecker;
     }
 
-
-
-
-    public static void process(
-            @NotNull Project project,
-            @NotNull BindingTrace trace,
-            @NotNull JetScope outerScope,
-            @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull NamespaceLikeBuilder owner,
-            @NotNull Collection<? extends PsiElement> declarations,
-            @NotNull Predicate<PsiFile> analyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull ModuleConfiguration configuration,
-            boolean declaredLocally) {
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(analyzeCompletely, false, declaredLocally);
-
-        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor, flowDataTraceFactory, configuration);
-
-        injector.getTopDownAnalyzer().doProcess(outerScope, owner, declarations);
-
-    }
 
     public void doProcess(
             JetScope outerScope,
@@ -242,7 +211,14 @@ public class TopDownAnalyzer {
 
         ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for objec>");
 
-        process(project, trace, outerScope, moduleDescriptor, new NamespaceLikeBuilder() {
+        TopDownAnalysisParameters topDownAnalysisParameters =
+                new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()), false, true);
+
+        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
+                project, topDownAnalysisParameters, new ObservableBindingTrace(trace), moduleDescriptor,
+                JetControlFlowDataTraceFactory.EMPTY, ModuleConfiguration.EMPTY);
+
+        injector.getTopDownAnalyzer().doProcess(outerScope, new NamespaceLikeBuilder() {
 
             @NotNull
             @Override
@@ -274,22 +250,9 @@ public class TopDownAnalyzer {
             public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
                 return ClassObjectStatus.NOT_ALLOWED;
             }
-        }, Collections.<PsiElement>singletonList(object), Predicates.equalTo(object.getContainingFile()), JetControlFlowDataTraceFactory.EMPTY, ModuleConfiguration.EMPTY, true);
+        }, Collections.<PsiElement>singletonList(object));
     }
 
-
-    public static void doAnalyzeFilesWithGivenTrace(Project project, final ModuleConfiguration configuration, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely, JetControlFlowDataTraceFactory flowDataTraceFactory, BindingTraceContext bindingTraceContext) {
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                filesToAnalyzeCompletely, false, false);
-
-        InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory, configuration);
-
-
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);
-    }
 
     public void doAnalyzeFilesWithGivenTrance2(Collection<JetFile> files) {
         final WritableScope scope = new WritableScopeImpl(

@@ -76,27 +76,4 @@ public class AnalyzingUtils {
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-
-    public static BindingContext analyzeFiles(
-            @NotNull Project project,
-            @NotNull ModuleConfiguration configuration,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        analyzeFilesWithGivenTrace(project, configuration, files, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext);
-        return bindingTraceContext.getBindingContext();
-    }
-
-    public static void analyzeFilesWithGivenTrace(
-            @NotNull Project project,
-            @NotNull final ModuleConfiguration configuration,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull BindingTraceContext bindingTraceContext) {
-
-        TopDownAnalyzer.doAnalyzeFilesWithGivenTrace(project, configuration, files, filesToAnalyzeCompletely, flowDataTraceFactory, bindingTraceContext);
-    }
-
 }
