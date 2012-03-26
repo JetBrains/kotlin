@@ -1,9 +1,7 @@
 package test.compare
 
 import kotlin.test.*
-import java.util.*
 import org.junit.Test
-
 
 class Item(val name: String, val rating: Int) {
 }
@@ -28,11 +26,11 @@ class CompareTest {
     }
 
     Test fun createComparator() {
-        val c = comparator<Item>({(i: Item) -> i.rating}, {(i: Item) -> i.name})
+        val c = comparator<Item>({it.rating}, {it.name})
         println("Created comparator $c")
 
         todo {
-            // TODO needs KT-729 before this code works
+        // TODO needs KT-729 before this code works
             val diff = c.compare(v1, v2)
             assertTrue(diff < 0)
             val items = arrayList(v1, v2)
