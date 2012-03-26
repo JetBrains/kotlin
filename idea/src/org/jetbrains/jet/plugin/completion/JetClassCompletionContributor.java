@@ -62,6 +62,8 @@ public class JetClassCompletionContributor extends CompletionContributor {
                            });
                            result.stopHere();
                        }
+
+                       result.stopHere();
                    }
                });
     }

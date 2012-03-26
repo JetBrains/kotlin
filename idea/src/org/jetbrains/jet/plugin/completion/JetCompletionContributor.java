@@ -77,6 +77,9 @@ public class JetCompletionContributor extends CompletionContributor {
                                completeForReference(parameters, result, position, jetReference, session);
                            }
                        }
+
+                       // Prevent from adding reference variants from standard reference contributor
+                       result.stopHere();
                    }
                });
     }
@@ -88,9 +91,6 @@ public class JetCompletionContributor extends CompletionContributor {
         @NotNull JetSimpleNameReference jetReference,
         @NotNull CompletionSession session
     ) {
-        // Prevent from adding reference variants from standard reference contributor
-        result.stopHere();
-
         if (isOnlyKeywordCompletion(position)) {
             return;
         }

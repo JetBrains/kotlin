@@ -90,10 +90,13 @@
       <completion.contributor language="jet" id="JetPackagesContributor" order="after JetKeywordCompletionContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetPackagesContributor" />
 
-      <completion.contributor language="jet" id="JetClassCompletionContributor" order="after JetPackagesContributor"
+      <completion.contributor language="jet" id="JetExtensionFunctionReceiverContributor" order="after JetPackagesContributor"
+                            implementationClass="org.jetbrains.jet.plugin.completion.JetExtensionReceiverTypeContributor" />
+
+      <completion.contributor language="jet" id="JetClassCompletionContributor" order="after JetExtensionFunctionReceiverContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetClassCompletionContributor" />
 
-      <completion.contributor language="jet" id="JetCompletionContributor"
+      <completion.contributor language="jet" id="JetCompletionContributor" order="after JetClassCompletionContributor"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor" id="liveTemplates" order="first"/>

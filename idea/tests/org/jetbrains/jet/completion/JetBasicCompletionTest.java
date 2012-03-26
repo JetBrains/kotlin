@@ -49,6 +49,14 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testExtensionFunReceiver() {
+        doTest();
+    }
+
+    public void testExtensionForProperty() {
+        doTest();
+    }
+
     public void testFromImports() {
         doTest();
     }
