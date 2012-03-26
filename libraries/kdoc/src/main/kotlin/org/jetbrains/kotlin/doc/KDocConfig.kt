@@ -94,7 +94,11 @@ class KDocConfig() {
 }
 
 protected class LongestFirstStringComparator() : Comparator<String> {
-    override fun compare(s1: String, s2: String): Int {
+    override fun compare(s1: String?, s2: String?): Int {
+        // TODO could we make this kind of code much easier?
+        if (s1 == s2) return 0
+        if (s1 == null) return -1
+        if (s2 == null) return 1
         var answer = s1.length() - s2.length()
         if (answer == 0) {
             answer = s1.compareTo(s2)
