@@ -61,7 +61,6 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
     }
 
     @Nullable
-    @Override
     public PsiFile getDecompiledPsiFile(PsiFile psiFile) {
         return JetDecompiledData.getDecompiledData((ClsFileImpl) psiFile).getJetFile();
     }
