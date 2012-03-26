@@ -54,7 +54,7 @@
         </javac>
     </target>
 
-    <target name="compileStdlib" depends="jar">
+    <target name="compileStdlib" depends="jar,jarLang">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
@@ -68,7 +68,7 @@
         </java>
     </target>
 
-    <target name="compileJDKHeaders" depends="jar">
+    <target name="compileJDKHeaders" depends="jar,jarLang">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
             <classpath>
