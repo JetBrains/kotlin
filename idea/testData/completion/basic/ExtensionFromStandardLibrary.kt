@@ -10,4 +10,4 @@ fun firstFun() {
 // RUNTIME: 1
 // TIME: 1
 // EXIST: toLinkedList
-// NUMBER: 2
+// NUMBER: 3
