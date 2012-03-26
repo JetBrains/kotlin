@@ -232,7 +232,7 @@ inline fun <T> Reader.useLines(block: (Iterator<String>) -> T): T = this.buffere
  */
 inline fun BufferedReader.lineIterator() : Iterator<String> = LineIterator(this)
 
-protected class LineIterator(val reader: BufferedReader) : Iterator<String> {
+class LineIterator(val reader: BufferedReader) : Iterator<String> {
     private var nextValue: String? = null
     private var done = false
 

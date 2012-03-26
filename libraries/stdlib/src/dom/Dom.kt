@@ -199,7 +199,7 @@ fun Element.get(selector: String): List<Element> {
 /** Returns an [[Iterator]] over the next siblings of this node */
 fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
 
-protected class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Node? {
         val next = node.getNextSibling()
@@ -215,7 +215,7 @@ protected class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 /** Returns an [[Iterator]] over the next siblings of this node */
 fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
 
-protected class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
+class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Node? {
         val next = node.getPreviousSibling()

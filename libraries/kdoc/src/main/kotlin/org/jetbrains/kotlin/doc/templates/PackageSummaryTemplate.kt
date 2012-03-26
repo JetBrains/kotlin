@@ -114,7 +114,7 @@ ${pkg.description(this)}
 <P>
 """)
 
-        printClasses("interface", "Interfaces")
+        printClasses("trait", "Traits")
         printClasses("class", "Classes")
         printClasses("enum", "Enums")
         printClasses("annotation", "Annotations")

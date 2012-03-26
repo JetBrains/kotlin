@@ -33,7 +33,7 @@ ${pkg.name} (${model.title})
 <FONT size="+1" CLASS="FrameTitleFont">
 <A HREF="${pkg.nameAsRelativePath}${pkg.nameAsPath}/package-summary.html" target="classFrame">${pkg.name}</A></FONT>""")
 
-        printClasses("interface", "Interfaces")
+        printClasses("trait", "Traits")
         printClasses("class", "Classes")
         printClasses("enum", "Enums")
         printClasses("annotation", "Annotations")

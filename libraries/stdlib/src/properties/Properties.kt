@@ -7,13 +7,13 @@ import java.util.Map
 import java.util.HashMap
 import java.util.ArrayList
 
-class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
+public class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
     var propogationId: Any? = null
 
     fun toString() = "ChangeEvent($name, $oldValue, $newValue)"
 }
 
-trait ChangeListener {
+public trait ChangeListener {
     fun onPropertyChange(event: ChangeEvent): Unit
 }
 
@@ -22,7 +22,7 @@ trait ChangeListener {
  * updates for easier binding to user interfaces, undo/redo command stacks and
  * change tracking mechanisms for persistence or distributed change notifications.
  */
-abstract class ChangeSupport {
+public abstract class ChangeSupport {
     private var allListeners: List<ChangeListener>? = null
     private var nameListeners: Map<String, List<ChangeListener>>? = null
 

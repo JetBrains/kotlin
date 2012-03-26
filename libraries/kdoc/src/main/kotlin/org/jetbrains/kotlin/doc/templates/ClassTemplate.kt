@@ -184,7 +184,7 @@ Class ${klass.simpleName}</H2>
 <DL>
 <DT><PRE><FONT SIZE="-1">""")
         printAnnotations(klass.annotations)
-        print("""</FONT>public class <A HREF="${sourceHref(klass)}"><B>${klass.simpleName}</B></A><DT>""")
+        print("""</FONT>${klass.visibility} ${klass.kindCode} <A HREF="${sourceHref(klass)}"><B>${klass.simpleName}</B></A><DT>""")
         if (!klass.baseClasses.isEmpty()) {
             print("""extends """)
             for (bc in klass.baseClasses) {

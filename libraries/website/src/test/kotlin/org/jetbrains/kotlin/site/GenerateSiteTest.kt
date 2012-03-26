@@ -30,6 +30,7 @@ class GenerateSiteTest : TestCase() {
         val config = args.docConfig
         config.title = "Kotlin API ($version)"
         config.version = version
+        config.ignorePackages.add("kotlin.support")
         config.ignorePackages.add("org.jetbrains.kotlin")
         config.ignorePackages.add("java")
         config.ignorePackages.add("jet")

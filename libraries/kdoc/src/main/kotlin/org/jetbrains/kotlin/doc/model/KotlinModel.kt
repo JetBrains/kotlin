@@ -32,6 +32,8 @@ import org.pegdown.ast.ExpLinkNode
 import org.pegdown.Extensions
 import org.jetbrains.kotlin.doc.templates.KDocTemplate
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
+import org.jetbrains.jet.lang.descriptors.Visibility
+import org.jetbrains.jet.lang.descriptors.ClassKind
 
 
 /**
@@ -136,7 +138,7 @@ fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KPr
     return map
 }
 
-abstract class KClassOrPackage(model: KModel, declarationDescriptor: DeclarationDescriptor) : KAnnotated(model, declarationDescriptor) {
+abstract class KClassOrPackage(model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor) {
 
     public open val functions: SortedSet<KFunction> = TreeSet<KFunction>()
 
@@ -431,9 +433,9 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 }
 
-class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate) : LinkRenderer() {
+class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate): LinkRenderer() {
 
-    override fun render(node : WikiLinkNode?) : Rendering? {
+    override fun render(node: WikiLinkNode?): Rendering? {
         val answer = super.render(node)
         if (answer != null) {
             val text = answer.text
@@ -537,17 +539,17 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
         */
     }
 
-    override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
+    override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
         // println("LinkRenderer.render(RefLinkNode): $node url: $url title: $title text: $text")
         return super.render(node, url, title, text)
     }
 
-    override fun render(node : AutoLinkNode?) : Rendering? {
+    override fun render(node: AutoLinkNode?): Rendering? {
         // println("LinkRenderer.render(AutoLinkNode): $node")
         return super.render(node)
     }
 
-    override fun render(node : ExpLinkNode?, text : String?) : Rendering? {
+    override fun render(node: ExpLinkNode?, text: String?): Rendering? {
         // println("LinkRenderer.render(ExpLinkNode): $node text: $text")
         return super.render(node, text)
     }
@@ -575,7 +577,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 }
 
-abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor) : KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
+abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
 
     override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
 
@@ -587,7 +589,7 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 
 class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         val name: String,
-        var local: Boolean = false) : KClassOrPackage(model, descriptor), Comparable<KPackage> {
+        var local: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
 
     override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
@@ -645,7 +647,8 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     //val classes = sortedMap<String,KClass>()
     public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
 
-    public val classes: Collection<KClass> = classMap.values().sure()
+    public val classes: Collection<KClass>
+    get() = classMap.values().sure().filter{ it.isApi() }
 
     public val annotations: Collection<KClass> = ArrayList<KClass>()
 
@@ -700,20 +703,54 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
 
 class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         val simpleName: String,
-        var kind: String = "class", var group: String = "Other",
+        var group: String = "Other",
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
         var baseClasses: List<KType> = arrayList<KType>(),
         var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2) : KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
+        var sourceLine: Int = 2): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
 
     override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
     fun equals(other: KClass) = name == other.name
 
     fun toString() = "$kind($name)"
+
+    fun isApi(): Boolean {
+        val visibility = descriptor.getVisibility()
+        return visibility.isAPI()
+    }
+
+    val kind: String
+    get() {
+        val k = descriptor.getKind()
+        return if (k == ClassKind.TRAIT) "trait"
+        else if (k == ClassKind.OBJECT) "object"
+        else if (k == ClassKind.ENUM_CLASS || k == ClassKind.ENUM_ENTRY) "enum"
+        else if (k == ClassKind.ANNOTATION_CLASS) "annotation"
+        else "class"
+    }
+
+    val kindCode: String
+    get() {
+        val k = descriptor.getKind()
+        return if (k == ClassKind.TRAIT) "trait"
+        else if (k == ClassKind.OBJECT) "object"
+        else if (k == ClassKind.ENUM_CLASS || k == ClassKind.ENUM_ENTRY) "enum class"
+        else if (k == ClassKind.ANNOTATION_CLASS) "class"
+        else "class"
+    }
+
+    val visibility: String
+    get() {
+        val v = descriptor.getVisibility()
+        return if (v == Visibility.PUBLIC) "public"
+        else if (v == Visibility.PROTECTED) "protected"
+        else if (v == Visibility.PRIVATE) "private"
+        else ""
+    }
 
     /** Link to the type which is relative if its a local type but could be a type in a different library or null if no link */
     public var url: String? = null
@@ -755,7 +792,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var sourceLine: Int = 2) : KAnnotated(owner.model, descriptor), Comparable<KFunction> {
+        var sourceLine: Int = 2): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
     public val parameterTypeText: String = parameters.map{ it.aType.name }.join(", ")
 
@@ -785,7 +822,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
-        val returnType: KType, val extensionClass: KClass?) : KAnnotated(owner.model, descriptor), Comparable<KProperty> {
+        val returnType: KType, val extensionClass: KClass?): KAnnotated(owner.model, descriptor), Comparable<KProperty> {
 
     override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 
@@ -797,7 +834,7 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
 }
 
 class KParameter(val name: String,
-        var aType: KType) : KAnnotated(aType.model, aType.declarationDescriptor)  {
+        var aType: KType): KAnnotated(aType.model, aType.declarationDescriptor)  {
 
     fun toString() = "$name: ${aType.name}"
 }
@@ -805,12 +842,12 @@ class KParameter(val name: String,
 class KTypeParameter(val name: String,
         val descriptor: TypeParameterDescriptor,
         model: KModel,
-        var extends: List<KClass> = arrayList<KClass>()) : KAnnotated(model, descriptor) {
+        var extends: List<KClass> = arrayList<KClass>()): KAnnotated(model, descriptor) {
 
     fun toString() = "$name"
 }
 
-class KAnnotation(var klass: KClass) : KAnnotated(klass.model, klass.descriptor)  {
+class KAnnotation(var klass: KClass): KAnnotated(klass.model, klass.descriptor)  {
 
     // TODO add some parameter values?
 
