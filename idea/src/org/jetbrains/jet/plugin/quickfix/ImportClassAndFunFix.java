@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -46,6 +47,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
@@ -61,14 +63,14 @@ import java.util.*;
 public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression> implements HighPriorityAction {
 
     @NotNull
-    private final List<FqName> suggestions;
+    private final Collection<FqName> suggestions;
 
     public ImportClassAndFunFix(@NotNull JetSimpleNameExpression element) {
         super(element);
         suggestions = computeSuggestions(element);
     }
 
-    private static List<FqName> computeSuggestions(@NotNull JetSimpleNameExpression element) {
+    private static Collection<FqName> computeSuggestions(@NotNull JetSimpleNameExpression element) {
         final PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile)) {
             return Collections.emptyList();
@@ -82,12 +84,18 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
 
         assert referenceName != null;
 
-        final ArrayList<FqName> result = Lists.newArrayList();
+        List<FqName> result = Lists.newArrayList();
         result.addAll(getClassNames(referenceName, file.getProject()));
         result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
         result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
 
-        return result;
+        return Collections2.filter(result, new Predicate<FqName>() {
+            @Override
+            public boolean apply(@Nullable FqName fqName) {
+                assert fqName != null;
+                return ImportInsertHelper.doNeedImport(new ImportPath(fqName, false), null, (JetFile) file);
+            }
+        });
     }
     
     private static Collection<FqName> getJetTopLevelFunctions(@NotNull String referenceName, JetSimpleNameExpression expression, @NotNull Project project) {
@@ -180,7 +188,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         }
 
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.get(0).getFqName());
+            String hintText = ShowAutoImportPass.getMessage(suggestions.size() > 1, suggestions.iterator().next().getFqName());
 
             HintManager.getInstance().showQuestionHint(
                     editor, hintText,

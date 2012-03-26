@@ -73,32 +73,14 @@ public class ImportInsertHelper {
     }
 
     public static void addImportDirective(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
-
-        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT)) {
-            FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
-            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder());
-        }
-
-        if (isImportedByDefault(importPath, aliasName, JetPsiUtil.getFQName(file))) {
+        if (!doNeedImport(importPath, aliasName, file)) {
             return;
         }
 
         JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath, aliasName);
-
         List<JetImportDirective> importDirectives = file.getImportDirectives();
 
         if (!importDirectives.isEmpty()) {
-            
-            // Check if import is already present
-            for (JetImportDirective directive : importDirectives) {
-                ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
-                if (directive.getAliasName() == null && aliasName == null) {
-                    if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
-                        return;
-                    }
-                }
-            }
-
             JetImportDirective lastDirective = importDirectives.get(importDirectives.size() - 1);
             lastDirective.getParent().addAfter(newDirective, lastDirective);
         }
@@ -110,7 +92,7 @@ public class ImportInsertHelper {
     /**
      * Check that import is useless.
      */
-    private static boolean isImportedByDefault(@NotNull ImportPath importPath, String aliasName, @NotNull FqName filePackageFqn) {
+    private static boolean isImportedByDefault(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull FqName filePackageFqn) {
         if (importPath.fqnPart().isRoot()) {
             return true;
         }
@@ -142,5 +124,32 @@ public class ImportInsertHelper {
         }
 
         return false;
+    }
+
+    public static boolean doNeedImport(@NotNull ImportPath importPath, @Nullable String aliasName, @NotNull JetFile file) {
+        if (QualifiedNamesUtil.getFirstSegment(importPath.fqnPart().getFqName()).equals(JavaDescriptorResolver.JAVA_ROOT)) {
+            FqName withoutJavaRoot = QualifiedNamesUtil.withoutFirstSegment(importPath.fqnPart());
+            importPath = new ImportPath(withoutJavaRoot, importPath.isAllUnder());
+        }
+
+        if (isImportedByDefault(importPath, null, JetPsiUtil.getFQName(file))) {
+            return false;
+        }
+
+        List<JetImportDirective> importDirectives = file.getImportDirectives();
+
+        if (!importDirectives.isEmpty()) {
+            // Check if import is already present
+            for (JetImportDirective directive : importDirectives) {
+                ImportPath existentImportPath = JetPsiUtil.getImportPath(directive);
+                if (directive.getAliasName() == null && aliasName == null) {
+                    if (existentImportPath != null && QualifiedNamesUtil.isImported(existentImportPath, importPath)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
     }
 }
