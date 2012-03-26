@@ -1,9 +1,11 @@
 package test.compare
 
+import java.util.Comparator
 import kotlin.test.*
 import org.junit.Test
 
 class Item(val name: String, val rating: Int) {
+    fun toString() = "Item($name, $rating)"
 }
 
 class CompareTest {
@@ -25,7 +27,7 @@ class CompareTest {
         assertTrue(diff == 0)
     }
 
-    Test fun createComparator() {
+    Test fun sortUsingComparatorHelperMethod() {
         val c = comparator<Item>({it.rating}, {it.name})
         println("Created comparator $c")
 
@@ -38,4 +40,23 @@ class CompareTest {
             println("Sorted list in rating order $items")
         }
     }
+
+    Test fun sortUsingCustomComparator() {
+        val c = object : Comparator<Item>{
+            override fun compare(o1: Item?, o2: Item?): Int {
+                return compareBy(o1, o2, {(it: Item) -> it.name}, {(it: Item) -> it.rating})
+            }
+            override fun equals(obj: Any?): Boolean {
+                return this == obj
+            }
+        }
+        println("Created comparator $c")
+
+        val diff = c.compare(v1, v2)
+        assertTrue(diff > 0)
+        val items = arrayList(v1, v2)
+        items.sort(c)
+        println("Sorted list in rating order $items")
+    }
+
 }
