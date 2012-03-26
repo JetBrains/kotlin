@@ -43,7 +43,7 @@ public class TypeInfoTest extends CodegenTestCase {
         Method foo = generateFunction();
         Runnable r = newRunnable();
         assertSame(r, foo.invoke(null, r));
-        assertThrows(foo, TypeCastException.class, null, new Object());
+        assertThrows(foo, ClassCastException.class, null, new Object());
     }
 
     public void testIsOperator() throws Exception {

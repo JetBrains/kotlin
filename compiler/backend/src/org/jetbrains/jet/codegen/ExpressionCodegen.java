@@ -2550,24 +2550,40 @@ If finally block is present, its last expression is the value of try expression.
         }
         else {
             JetTypeReference typeReference = expression.getRight();
-            JetType jetType = bindingContext.get(BindingContext.TYPE, typeReference);
-            assert jetType != null;
-            DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+            JetType rightType = bindingContext.get(BindingContext.TYPE, typeReference);
+            Type rightTypeAsm = boxType(asmType(rightType));
+            assert rightType != null;
+            JetExpression left = expression.getLeft();
+            JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
+            DeclarationDescriptor descriptor = rightType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor || descriptor instanceof TypeParameterDescriptor) {
-                Type type = boxType(asmType(jetType));
-                generateInstanceOf(StackValue.expression(TYPE_OBJECT, expression.getLeft(), this), jetType, true);
-                Label isInstance = new Label();
-                v.ifne(isInstance);
-                v.pop();
-                if (opToken == JetTokens.AS_SAFE) {
-                    v.aconst(null);
+                StackValue value = genQualified(receiver, left);
+                value.put(JetTypeMapper.boxType(value.type), v);
+                assert leftType != null;
+
+                if (opToken != JetTokens.AS_SAFE) {
+                    if(leftType.isNullable()) {
+                        if (!rightType.isNullable()) {
+                            v.dup();
+                            Label nonnull = new Label();
+                            v.ifnonnull(nonnull);
+                            throwNewException(CLASS_TYPE_CAST_EXCEPTION);
+                            v.mark(nonnull);
+                        }
+                    }
                 }
                 else {
-                    throwNewException(CLASS_TYPE_CAST_EXCEPTION);
+                    v.dup();
+                    v.instanceOf(rightTypeAsm);
+                    Label ok = new Label();
+                    v.ifne(ok);
+                    v.pop();
+                    v.aconst(null);
+                    v.mark(ok);
                 }
-                v.mark(isInstance);
-                v.checkcast(type);
-                return StackValue.onStack(type);
+
+                v.checkcast(rightTypeAsm);
+                return StackValue.onStack(rightTypeAsm);
             }
             else {
                 throw new UnsupportedOperationException("don't know how to handle non-class types in as/as?");
