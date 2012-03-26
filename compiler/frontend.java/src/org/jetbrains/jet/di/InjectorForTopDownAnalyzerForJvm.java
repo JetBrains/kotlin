@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
 import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -82,6 +83,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.observableBindingTrace = observableBindingTrace;
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
+        PsiClassFinderForJvm psiClassFinderForJvm = new PsiClassFinderForJvm();
         DeclarationResolver declarationResolver = new DeclarationResolver();
         AnnotationResolver annotationResolver = new AnnotationResolver();
         CallResolver callResolver = new CallResolver();
@@ -136,6 +138,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
         this.javaBridgeConfiguration.setProject(project);
 
+        psiClassFinderForJvm.setProject(project);
+
         declarationResolver.setAnnotationResolver(annotationResolver);
         declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
@@ -183,11 +187,13 @@ public class InjectorForTopDownAnalyzerForJvm {
         typeHierarchyResolver.setTrace(observableBindingTrace);
 
         javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
+        javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
         javaSemanticServices.setTrace(observableBindingTrace);
         javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
         javaDescriptorResolver.setProject(project);
+        javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
         javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         javaDescriptorResolver.setTrace(observableBindingTrace);
 

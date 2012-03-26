@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -64,6 +65,7 @@ public class AllInjectorsGenerator {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generateInjectorForTopDownAnalyzerCommon(generator);
         generator.addPublicField(JavaBridgeConfiguration.class);
+        generator.addField(PsiClassFinderForJvm.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
     }
 
@@ -121,6 +123,7 @@ public class AllInjectorsGenerator {
         generator.addField(true, BindingTrace.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.resolve.BindingTraceContext()"));
         generator.addField(JavaBridgeConfiguration.class);
+        generator.addPublicField(PsiClassFinderForJvm.class);
         generator.addField(false, ModuleDescriptor.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
         

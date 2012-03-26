@@ -191,25 +191,15 @@ public class JavaDescriptorResolver {
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
     protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
-    protected JavaPsiFacade javaFacade;
     protected Project project;
-    protected GlobalSearchScope javaSearchScope ;
     protected JavaSemanticServices semanticServices;
-    private AltClassFinder altClassFinder;
     private NamespaceFactory namespaceFactory;
     private BindingTrace trace;
+    private PsiClassFinder psiClassFinder;
 
     @Inject
     public void setProject(Project project) {
         this.project = project;
-        this.altClassFinder = new AltClassFinder(project);
-        this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
-            @Override
-            public boolean contains(VirtualFile file) {
-                return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
-            }
-        };
-        this.javaFacade = JavaPsiFacade.getInstance(project);
     }
 
     @Inject
@@ -227,7 +217,10 @@ public class JavaDescriptorResolver {
         this.trace = trace;
     }
 
-
+    @Inject
+    public void setPsiClassFinder(PsiClassFinder psiClassFinder) {
+        this.psiClassFinder = psiClassFinder;
+    }
 
     @Nullable
     ResolverClassData resolveClassData(@NotNull PsiClass psiClass, @NotNull DescriptorSearchRule searchRule) {
@@ -313,7 +306,7 @@ public class JavaDescriptorResolver {
         // Not let's take a descriptor of a Java class
         ResolverBinaryClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
-            PsiClass psiClass = findClass(qualifiedName);
+            PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName);
             if (psiClass == null) {
                 return null;
             }
@@ -752,7 +745,8 @@ public class JavaDescriptorResolver {
         List<TypeParameterDescriptor> prevTypeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
             prevTypeParameters.add(psiTypeParameter.descriptor);
-            initializeTypeParameter(psiTypeParameter, TypeVariableResolvers.typeVariableResolverFromTypeParameters(prevTypeParameters, typeParametersOwner, context));
+            initializeTypeParameter(psiTypeParameter,
+                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(prevTypeParameters, typeParametersOwner, context));
         }
     }
 
@@ -839,40 +833,13 @@ public class JavaDescriptorResolver {
             }
         }
 
-        PsiPackage psiPackage = findPackage(qualifiedName);
+        PsiPackage psiPackage = psiClassFinder.findPsiPackage(qualifiedName);
         if (psiPackage == null) {
-            PsiClass psiClass = findClass(qualifiedName);
+            PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName);
             if (psiClass == null) return null;
             return resolveNamespace(psiClass);
         }
         return resolveNamespace(psiPackage);
-    }
-
-    @Nullable
-    public PsiClass findClass(@NotNull FqName qualifiedName) {
-        PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
-        PsiClass altClass = altClassFinder.findClass(qualifiedName);
-        PsiClass result = original;
-        if (altClass != null) {
-            if (altClass instanceof ClsClassImpl) {
-                altClass.putUserData(ClsClassImpl.DELEGATE_KEY, original);
-            }
-
-            result = altClass;
-        }
-
-        if (result != null) {
-            FqName actualQualifiedName = new FqName(result.getQualifiedName());
-            if (!actualQualifiedName.equals(qualifiedName)) {
-//                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
-            }
-        }
-
-        return result;
-    }
-
-    /*package*/ PsiPackage findPackage(@NotNull FqName qualifiedName) {
-        return javaFacade.findPackage(qualifiedName.getFqName());
     }
 
     private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {

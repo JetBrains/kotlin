@@ -123,8 +123,8 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(project).getJavaDescriptorResolver();
-        return javaDescriptorResolver.findClass(new FqName(qualifiedName));
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName));
     }
 
     @NotNull

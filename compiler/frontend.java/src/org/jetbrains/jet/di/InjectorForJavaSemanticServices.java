@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
@@ -34,6 +35,7 @@ public class InjectorForJavaSemanticServices {
     private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver javaDescriptorResolver;
     private BindingTrace bindingTrace;
+    private PsiClassFinderForJvm psiClassFinderForJvm;
     private final Project project;
 
     public InjectorForJavaSemanticServices(
@@ -43,22 +45,27 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         JavaBridgeConfiguration javaBridgeConfiguration = new JavaBridgeConfiguration();
+        this.psiClassFinderForJvm = new PsiClassFinderForJvm();
         ModuleDescriptor moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
         this.project = project;
         JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
         NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
+        this.javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);
         this.javaSemanticServices.setTrace(bindingTrace);
         this.javaSemanticServices.setTypeTransformer(javaTypeTransformer);
 
         this.javaDescriptorResolver.setNamespaceFactory(namespaceFactoryImpl);
         this.javaDescriptorResolver.setProject(project);
+        this.javaDescriptorResolver.setPsiClassFinder(psiClassFinderForJvm);
         this.javaDescriptorResolver.setSemanticServices(javaSemanticServices);
         this.javaDescriptorResolver.setTrace(bindingTrace);
 
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
         javaBridgeConfiguration.setProject(project);
+
+        this.psiClassFinderForJvm.setProject(project);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
@@ -79,6 +86,10 @@ public class InjectorForJavaSemanticServices {
 
     public BindingTrace getBindingTrace() {
         return this.bindingTrace;
+    }
+
+    public PsiClassFinderForJvm getPsiClassFinderForJvm() {
+        return this.psiClassFinderForJvm;
     }
 
     public Project getProject() {

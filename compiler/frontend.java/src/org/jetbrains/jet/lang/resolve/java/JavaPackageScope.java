@@ -60,7 +60,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
             return null;
         } else {
             // TODO: what is GlobalSearchScope
-            return semanticServices.getDescriptorResolver().javaFacade.findClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS).getFqName());
+            return semanticServices.getPsiClassFinder().findPsiClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
         }
     }
 
@@ -107,7 +107,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
             }
 
-            final PsiPackage javaPackage = semanticServices.getDescriptorResolver().findPackage(packageFQN);
+            final PsiPackage javaPackage = semanticServices.getPsiClassFinder().findPsiPackage(packageFQN);
 
             if (javaPackage != null) {
                 boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(new FqName(javaPackage.getQualifiedName())) != null;

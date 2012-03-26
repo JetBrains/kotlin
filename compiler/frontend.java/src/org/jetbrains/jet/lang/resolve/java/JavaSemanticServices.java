@@ -37,6 +37,8 @@ public class JavaSemanticServices {
     @NotNull
     private JavaDescriptorResolver descriptorResolver;
     @NotNull
+    private PsiClassFinder psiClassFinder;
+    @NotNull
     private BindingTrace trace;
 
 
@@ -48,6 +50,11 @@ public class JavaSemanticServices {
     @Inject
     public void setDescriptorResolver(@NotNull JavaDescriptorResolver descriptorResolver) {
         this.descriptorResolver = descriptorResolver;
+    }
+
+    @Inject
+    public void setPsiClassFinder(@NotNull PsiClassFinder psiClassFinder) {
+        this.psiClassFinder = psiClassFinder;
     }
 
     @Inject
@@ -71,6 +78,13 @@ public class JavaSemanticServices {
     public ClassDescriptor getKotlinClassDescriptor(@NotNull FqName qualifiedName) {
         return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qualifiedName);
     }
+
+    @NotNull
+    public PsiClassFinder getPsiClassFinder() {
+        return psiClassFinder;
+    }
+
+
 
     @Nullable
     public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
