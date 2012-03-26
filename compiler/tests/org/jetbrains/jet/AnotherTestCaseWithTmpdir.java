@@ -17,24 +17,28 @@
 package org.jetbrains.jet;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.jet.cli.KotlinCompiler;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import java.io.File;
 
 /**
  * @author Stepan Koltsov
  */
-public class CompileJdkHeadersTest extends AnotherTestCaseWithTmpdir {
+public abstract class AnotherTestCaseWithTmpdir {
+    protected File tmpdir;
 
-    @Test
-    public void compile() {
-        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(
-                System.err, "-output", tmpdir.getPath(), "-src", "./jdk-headers/src", "-stubs");
-        if (exitCode != KotlinCompiler.ExitCode.OK) {
-            throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
+    @Before
+    public void before() throws Exception {
+        tmpdir = JetTestUtils.tmpDir(CompileJdkHeadersTest.class.getName());
+    }
+
+    @After
+    public void after() {
+        if (tmpdir != null) {
+            FileUtil.delete(tmpdir);
         }
     }
+
+
 }
