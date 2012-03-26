@@ -1,13 +1,13 @@
-package test
-
-import org.junit.Test
+package test.compare
 
 import kotlin.test.*
+import java.util.*
+import org.junit.Test
 
-class Item(val name: String, val rating: Int)
 
-/**
- */
+class Item(val name: String, val rating: Int) {
+}
+
 class CompareTest {
     val v1 = Item("wine", 9)
     val v2 = Item("beer", 10)
@@ -28,13 +28,16 @@ class CompareTest {
     }
 
     Test fun createComparator() {
-        val c = comparator({(i: Item) -> i.rating}, {(i: Item) -> i.name})
+        val c = comparator<Item>({(i: Item) -> i.rating}, {(i: Item) -> i.name})
         println("Created comparator $c")
-/*
-        val items = arrayList(v1, v2)
-        items.sort(c)
-        println("Sorted list in rating order $items")
-*/
 
+        todo {
+            // TODO needs KT-729 before this code works
+            val diff = c.compare(v1, v2)
+            assertTrue(diff < 0)
+            val items = arrayList(v1, v2)
+            items.sort(c)
+            println("Sorted list in rating order $items")
+        }
     }
 }

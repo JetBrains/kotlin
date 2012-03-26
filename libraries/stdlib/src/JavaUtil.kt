@@ -53,7 +53,7 @@ inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : List<T> {
   return this
 }
 
-inline fun <in T: java.lang.Comparable<T>> List<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
+inline fun <in T> List<T>.sort(comparator: java.util.Comparator<T>) : List<T> {
   Collections.sort(this, comparator)
   return this
 }

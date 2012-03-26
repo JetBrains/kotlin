@@ -1,16 +1,13 @@
 package test.collections
 
-import kotlin.*
-import kotlin.io.*
-import kotlin.util.*
 import kotlin.test.*
 import java.util.*
-import junit.framework.TestCase
+import org.junit.Test
 
-class SetTest() : TestCase() {
+class SetTest {
     val data = hashSet("foo", "bar")
 
-    fun testAny() {
+    Test fun any() {
         assertTrue {
             data.any{it.startsWith("f")}
         }
@@ -19,7 +16,7 @@ class SetTest() : TestCase() {
         }
     }
 
-    fun testAll() {
+    Test fun all() {
         assertTrue {
             data.all{it.length == 3}
         }
@@ -28,7 +25,7 @@ class SetTest() : TestCase() {
         }
     }
 
-    fun testFilter() {
+    Test fun filter() {
         val foo = data.filter{it.startsWith("f")}.toSet()
 
         assertTrue {
@@ -42,7 +39,7 @@ class SetTest() : TestCase() {
         }
     }
 
-    fun testFind() {
+    Test fun find() {
         val x = data.find{it.startsWith("x")}
         assertNull(x)
         fails {
@@ -54,7 +51,7 @@ class SetTest() : TestCase() {
         assertEquals("foo", f)
     }
 
-    fun testMap() {
+    Test fun map() {
         /**
           TODO compiler bug
           we should be able to remove the explicit type on the function

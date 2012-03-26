@@ -2,15 +2,11 @@ package test.collections
 
 import kotlin.test.*
 
-// TODO can we avoid importing all this stuff by default I wonder?
-// e.g. making println and the collection builder methods public by default?
-import kotlin.*
-import kotlin.io.*
-import kotlin.util.*
 import java.util.*
-import junit.framework.TestCase
 
-class CollectionTest() : TestCase() {
+import org.junit.Test
+
+class CollectionTest {
 
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
         private val collection = collection
@@ -23,7 +19,7 @@ class CollectionTest() : TestCase() {
 
     val data = arrayList("foo", "bar")
 
-    fun testAny() {
+    Test fun any() {
         assertTrue {
             data.any{it.startsWith("f")}
         }
@@ -32,7 +28,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testAll() {
+    Test fun all() {
         assertTrue {
             data.all{it.length == 3}
         }
@@ -41,12 +37,12 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testCount() {
+    Test fun count() {
         assertEquals(1, data.count{it.startsWith("b")})
         assertEquals(2, data.count{it.size == 3})
     }
 
-    fun testFilter() {
+    Test fun filter() {
         val foo = data.filter{it.startsWith("f")}
 
         assertTrue {
@@ -56,7 +52,7 @@ class CollectionTest() : TestCase() {
         assertEquals(arrayList("foo"), foo)
     }
 
-    fun testFilterNot() {
+    Test fun filterNot() {
         val foo = data.filterNot{it.startsWith("b")}
 
         assertTrue {
@@ -66,7 +62,7 @@ class CollectionTest() : TestCase() {
         assertEquals(arrayList("foo"), foo)
     }
 
-    fun testFilterIntoLinkedList() {
+    Test fun filterIntoLinkedList() {
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
 
@@ -81,7 +77,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testFilterIntoSet() {
+    Test fun filterIntoSet() {
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
@@ -96,7 +92,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testFilterIntoSortedSet() {
+    Test fun filterIntoSortedSet() {
         // TODO would be nice to avoid the <String>
         val sorted = data.filterTo(sortedSet<String>()){it.length == 3}
         assertEquals(2, sorted.size)
@@ -106,7 +102,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testFind() {
+    Test fun find() {
         val x = data.find{it.startsWith("x")}
         assertNull(x)
         fails {
@@ -118,7 +114,7 @@ class CollectionTest() : TestCase() {
         assertEquals("foo", f)
     }
 
-    fun testFlatMap() {
+    Test fun flatMap() {
         val characters = arrayList('f', 'o', 'o', 'b', 'a', 'r')
         // TODO figure out how to get a line like this to compile :)
         /*
@@ -133,13 +129,13 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testForeach() {
+    Test fun foreach() {
         var count = 0
         data.forEach{ count += it.length }
         assertEquals(6, count)
     }
 
-    fun testFold() {
+    Test fun fold() {
         expect(10) {
             val numbers = arrayList(1, 2, 3, 4)
 
@@ -162,7 +158,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testFoldRight() {
+    Test fun foldRight() {
         expect("4321") {
             val numbers = arrayList(1, 2, 3, 4)
 
@@ -173,7 +169,7 @@ class CollectionTest() : TestCase() {
     }
 
 
-    fun testGroupBy() {
+    Test fun groupBy() {
         val words = arrayList("a", "ab", "abc", "def", "abcd")
         /*
         TODO inference engine should not need this type info?
@@ -191,12 +187,12 @@ class CollectionTest() : TestCase() {
 
     }
 
-    fun testJoin() {
+    Test fun join() {
         val text = data.join("-", "<", ">")
         assertEquals("<foo-bar>", text)
     }
 
-    fun testMap() {
+    Test fun map() {
         /**
           TODO compiler bug
           we should be able to remove the explicit type on the function
@@ -210,12 +206,12 @@ class CollectionTest() : TestCase() {
         assertEquals(arrayList(3, 3), lengths)
     }
 
-    fun testReverse() {
+    Test fun reverse() {
         val rev = data.reverse()
         assertEquals(arrayList("bar", "foo"), rev)
     }
 
-    fun testSort() {
+    Test fun sort() {
         val coll: List<String> = arrayList("foo", "bar", "abc")
 
         // TODO fixme
@@ -228,7 +224,7 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testToArray() {
+    Test fun toArray() {
         val arr = data.toArray()
         println("Got array ${arr}")
         todo {
@@ -238,26 +234,26 @@ class CollectionTest() : TestCase() {
         }
     }
 
-    fun testSimpleCount() {
+    Test fun simpleCount() {
         assertEquals(2, data.count())
         assertEquals(3, hashSet(12, 14, 15).count())
         assertEquals(0, ArrayList<Double>().count())
     }
 
-    fun testLast() {
+    Test fun last() {
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
         // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
         assertEquals('a', linkedList('a').last())
     }
 
-    fun testLastException() {
+    Test fun lastException() {
         fails { arrayList<Int>().last() }
         fails { linkedList<String>().last() }
         fails { hashSet<Char>().last() }
     }
 
-    fun testSubscript() {
+    Test fun subscript() {
         val list = arrayList("foo", "bar")
         assertEquals("foo", list[0])
         assertEquals("bar", list[1])
@@ -280,7 +276,7 @@ class CollectionTest() : TestCase() {
         assertEquals(arrayList("new", "thing", "works"), list)
     }
 
-    fun testIndices() {
+    Test fun indices() {
         val indices = data.indices
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
@@ -288,7 +284,7 @@ class CollectionTest() : TestCase() {
         assertFalse(indices.isReversed)
     }
 
-    fun testContains() {
+    Test fun contains() {
         assertTrue(data.contains("foo"))
         assertTrue(data.contains("bar"))
         assertFalse(data.contains("some"))

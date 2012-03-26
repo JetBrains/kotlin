@@ -58,9 +58,7 @@ private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  C
     }
 
     override fun compare(o1: T?, o2: T?): Int {
-        // TODO compile error
-        //return compareBy<T>(o1, o2, functions)
-        throw UnsupportedOperationException("TODO")
+        return compareBy<T>(o1, o2, *functions)
     }
 
     override fun equals(obj: Any?): Boolean {
