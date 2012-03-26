@@ -84,7 +84,7 @@ inline fun   FloatArray.copyOf(newLength: Int = this.size) = Arrays.copyOf(this,
 inline fun  DoubleArray.copyOf(newLength: Int = this.size) = Arrays.copyOf(this, newLength).sure()
 inline fun    CharArray.copyOf(newLength: Int = this.size) = Arrays.copyOf(this, newLength).sure()
 
-inline fun  <T> Array<T>.copyOf(newLength: Int = this.size) : Array<T> = Arrays.copyOf(this, newLength).sure()
+inline fun  <T> Array<T>.copyOf(newLength: Int = this.size) : Array<T> = Arrays.copyOf(this as Array<T?>, newLength) as Array<T>
 
 inline fun BooleanArray.copyOfRange(from: Int, to: Int) = Arrays.copyOfRange(this, from, to).sure()
 inline fun    ByteArray.copyOfRange(from: Int, to: Int) = Arrays.copyOfRange(this, from, to).sure()
@@ -95,7 +95,7 @@ inline fun   FloatArray.copyOfRange(from: Int, to: Int) = Arrays.copyOfRange(thi
 inline fun  DoubleArray.copyOfRange(from: Int, to: Int) = Arrays.copyOfRange(this, from, to).sure()
 inline fun    CharArray.copyOfRange(from: Int, to: Int) = Arrays.copyOfRange(this, from, to).sure()
 
-inline fun  <T> Array<T>.copyOfRange(from: Int, to: Int) : Array<T> = Arrays.copyOfRange(this, from, to).sure()
+inline fun  <T> Array<T>.copyOfRange(from: Int, to: Int) : Array<T> = Arrays.copyOfRange(this as Array<T?>, from, to) as Array<T>
 
 inline val ByteArray.inputStream : ByteArrayInputStream
     get() = ByteArrayInputStream(this)

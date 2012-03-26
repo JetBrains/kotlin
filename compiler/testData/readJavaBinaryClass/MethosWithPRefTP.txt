@@ -2,5 +2,5 @@ namespace test
 
 final class test.MethosWithPRefTP : jet.Any {
     final /*constructor*/ fun <init>(): test.MethosWithPRefTP
-    final fun </*0*/ P : jet.Any?>f(/*0*/ p0: P): jet.Tuple0
+    final fun </*0*/ P : jet.Any?>f(/*0*/ p0: P?): jet.Tuple0
 }

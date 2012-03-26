@@ -174,7 +174,7 @@
         <chmod dir="${kotlin-home}/bin" includes="*" perm="755"/>
     </target>
 
-    <target name="dist" depends="init,jarRT,copyKotlinJars,jarJDKHeaders,jarLang,jar,buildToolsJar"/>
+    <target name="dist" depends="init,copyKotlinJars,jar,buildToolsJar,jarJDKHeaders,jarRT,jarLang"/>
 
     <target name="doc" depends="dist"/>
 

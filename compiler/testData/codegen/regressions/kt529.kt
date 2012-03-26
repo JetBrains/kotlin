@@ -61,7 +61,7 @@ class Luhny() {
 
     private fun printOneDigit() {
         while (!buffer.isEmpty()) {
-            val c = buffer.removeFirst()
+            val c = buffer.removeFirst().sure()
             print(c)
             if (c.isDigit()) {
                 digits.removeFirst()

@@ -10,7 +10,7 @@ import java.util.TreeSet
 /**
 Helper to make jet.Iterator usable in for
 */
-inline fun <T> jet.Iterator<T>.iterator() = this
+inline fun <T> Iterator<T>.iterator() = this
 
 /**
 Helper to make java.util.Iterator usable in for
@@ -24,7 +24,7 @@ fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterat
   override val hasNext: Boolean
     get() = hasMoreElements()
 
-  override fun next() = nextElement()
+  override fun next() = nextElement().sure()
 }
 
 /*

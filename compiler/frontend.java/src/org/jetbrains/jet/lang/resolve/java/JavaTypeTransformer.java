@@ -80,12 +80,12 @@ public class JavaTypeTransformer {
 
                 PsiType bound = wildcardType.getBound();
                 assert bound != null;
-                return new TypeProjection(variance, transformToType(bound, typeVariableByPsiResolver));
+                return new TypeProjection(variance, transformToType(bound, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
             }
 
             @Override
             public TypeProjection visitType(PsiType type) {
-                return new TypeProjection(transformToType(type, typeVariableByPsiResolver));
+                return new TypeProjection(transformToType(type, TypeUsage.TYPE_ARGUMENT, typeVariableByPsiResolver));
             }
         });
         return result;
@@ -106,6 +106,12 @@ public class JavaTypeTransformer {
 
     @NotNull
     public JetType transformToType(@NotNull PsiType javaType,
+                                   @NotNull final TypeVariableResolver typeVariableResolver) {
+        return transformToType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT, typeVariableResolver);
+    }
+
+    @NotNull
+    public JetType transformToType(@NotNull PsiType javaType, @NotNull final TypeUsage howThisTypeIsUsed,
             @NotNull final TypeVariableResolver typeVariableResolver) {
         return javaType.accept(new PsiTypeVisitor<JetType>() {
             @Override
@@ -119,8 +125,16 @@ public class JavaTypeTransformer {
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
                     TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
-//                    return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
-                    return typeParameterDescriptor.getDefaultType();
+
+                    if (howThisTypeIsUsed == TypeUsage.TYPE_ARGUMENT || howThisTypeIsUsed == TypeUsage.UPPER_BOUND) {
+                        // In Java: ArrayList<T>
+                        // In Kotlin: ArrayList<T>, not ArrayList<T?>
+                        // nullability will be taken care of in individual member signatures
+                        return typeParameterDescriptor.getDefaultType();
+                    }
+                    else {
+                        return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
+                    }
                 }
                 else {
                     JetType jetAnalog = getClassTypesMap().get(psiClass.getQualifiedName());
@@ -211,7 +225,8 @@ public class JavaTypeTransformer {
             classTypesMap = new HashMap<String, JetType>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
+                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(
+                    primitiveType));
             }
             classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
             classTypesMap.put("java.lang.String", JetStandardLibrary.getInstance().getNullableStringType());
@@ -233,5 +248,19 @@ public class JavaTypeTransformer {
             classDescriptorMap.put("java.lang.Throwable", JetStandardLibrary.getInstance().getThrowable());
         }
         return classDescriptorMap;
+    }
+
+    /**
+     * We convert Java types differently, depending on where they occur in the Java code
+     * This enum encodes the kinds of occurrences
+     */
+    public enum TypeUsage {
+        // Type T occurs somewhere as a generic argument, e.g.: List<T> or List<? extends T>
+        TYPE_ARGUMENT,
+        UPPER_BOUND,
+        MEMBER_SIGNATURE_COVARIANT,
+        MEMBER_SIGNATURE_CONTRAVARIANT,
+        MEMBER_SIGNATURE_INVARIANT,
+        SUPERTYPE
     }
 }

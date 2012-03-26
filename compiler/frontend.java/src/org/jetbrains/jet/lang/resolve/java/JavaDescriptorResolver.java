@@ -737,11 +737,11 @@ public class JavaDescriptorResolver {
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
             }
             else if (referencedTypes.length == 1) {
-                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], typeVariableByPsiResolver));
+                typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedTypes[0], JavaTypeTransformer.TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
             }
             else {
                 for (PsiClassType referencedType : referencedTypes) {
-                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, typeVariableByPsiResolver));
+                    typeParameterDescriptor.addUpperBound(semanticServices.getTypeTransformer().transformToType(referencedType, JavaTypeTransformer.TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
                 }
             }
         }
