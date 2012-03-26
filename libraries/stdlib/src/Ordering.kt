@@ -23,6 +23,7 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T,Any?>): Int
 
 /**
  * Compares the two values which may be [[Comparable]] otherwise
+ * they are compared via [[#equals()]] and if they are not the same then
  * the [[#hashCode()]] method is used as the difference
  */
 inline fun <T> compareValues(a: T?, b: T?): Int {
