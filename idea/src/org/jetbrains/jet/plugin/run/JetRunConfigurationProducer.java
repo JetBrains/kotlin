@@ -21,6 +21,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -56,19 +57,31 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             return null;
         }
 
+        FqName startClassFQName = getStartClassFQName(location);
+        if (startClassFQName == null) {
+            return null;
+        }
+
+        return createConfigurationByQName(module, configurationContext, startClassFQName);
+    }
+
+    @Nullable
+    private FqName getStartClassFQName(Location location) {
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetFile jetFile = (JetFile) psiFile;
             if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
                 mySourceElement = jetFile;
                 FqName fqName = JetPsiUtil.getFQName(jetFile);
-                FqName className = fqName.child(JvmAbi.PACKAGE_CLASS);
-                return createConfigurationByQName(module, configurationContext, className);
+                return fqName.child(JvmAbi.PACKAGE_CLASS);
             }
         }
+
         return null;
     }
 
+
+    @NotNull
     private RunnerAndConfigurationSettings createConfigurationByQName(
             @NotNull Module module,
             ConfigurationContext context,
@@ -80,6 +93,30 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         configuration.setName(StringUtil.trimEnd(fqName.getFqName(), "." + JvmAbi.PACKAGE_CLASS));
         configuration.setRunClass(fqName.getFqName());
         return settings;
+    }
+
+    @Override
+    protected RunnerAndConfigurationSettings findExistingByElement(
+            Location location,
+            @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
+            ConfigurationContext context
+    ) {
+        FqName startClassFQName = getStartClassFQName(location);
+        if (startClassFQName == null) {
+            return null;
+        }
+
+        for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
+            if (existingConfiguration.getType() instanceof JetRunConfigurationType) {
+                JetRunConfiguration jetConfiguration = (JetRunConfiguration)existingConfiguration.getConfiguration();
+                if (Comparing.equal(jetConfiguration.settings().getMainClassName(), startClassFQName.getFqName())) {
+                    if (Comparing.equal(location.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
+                        return existingConfiguration;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
