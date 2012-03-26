@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -47,7 +46,7 @@ import java.util.*;
 class DecompiledDataFactory {
     private static final String JET_CLASS = JetClass.class.getName();
     private static final String JET_METHOD = JetMethod.class.getName();
-    private static final String DECOMPILED_COMMENT = "/* " + PsiBundle.message("psi.decompiled.method.body") + " */";
+    private static final String DECOMPILED_COMMENT = "/* compiled code */";
 
     private StringBuilder myBuilder = new StringBuilder();
     private ClsFileImpl myClsFile;
@@ -71,7 +70,8 @@ class DecompiledDataFactory {
     }
 
     private JetDecompiledData build() {
-        myBuilder.append(PsiBundle.message("psi.decompiled.text.header"));
+        myBuilder.append("// IntelliJ API Decompiler stub source generated from a class file\n" +
+                         "// Implementation of methods is not available");
         myBuilder.append("\n\n");
 
         String packageName = myClsFile.getPackageName();
@@ -114,7 +114,7 @@ class DecompiledDataFactory {
         return new JetDecompiledData(jetFile, myClsElementsToJetElements);
     }
 
-    private List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
+    private static List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
         ArrayList<DeclarationDescriptor> r = new ArrayList<DeclarationDescriptor>(input);
         Collections.sort(r, new Comparator<DeclarationDescriptor>() {
             @Override
