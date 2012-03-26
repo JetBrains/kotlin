@@ -1,8 +1,7 @@
 package regressions
 
 // TODO comment out the next line to reproduce KT-1617
-import kotlin.util.map
-import kotlin.util.arrayList
+//import kotlin.util.map
 
 import java.util.Collection
 import java.io.File

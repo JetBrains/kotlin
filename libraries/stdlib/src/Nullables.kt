@@ -1,7 +1,6 @@
 package kotlin.nullable
 
 import java.util.*
-import kotlin.util.getOrPut
 
 /** Returns true if the element is not null and matches the given predicate */
 inline fun <T> T?.any(predicate: (T)-> Boolean): Boolean {

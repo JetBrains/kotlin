@@ -1,4 +1,4 @@
-package kotlin.util
+package kotlin
 // Number of extension function for java.lang.Iterable that shouldn't participate in auto generation
 
 import java.util.Collection

@@ -5,7 +5,6 @@ import org.jetbrains.jet.compiler.CompileEnvironment
 import org.jetbrains.jet.cli.CompilerArguments
 import java.io.PrintStream
 import java.io.File
-import kotlin.util.orEmpty
 
 /**
  * Main for running the KDocCompiler

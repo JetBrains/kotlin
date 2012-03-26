@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.site
 
 import junit.framework.TestCase
 import java.io.File
-import kotlin.util.arrayList
 import org.jetbrains.kotlin.doc.KDocArguments
 import org.jetbrains.kotlin.doc.KDocCompiler
 

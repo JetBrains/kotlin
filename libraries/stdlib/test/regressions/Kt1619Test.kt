@@ -2,7 +2,6 @@ package regressions
 
 import junit.framework.TestCase
 import java.util.List
-import kotlin.util.arrayList
 
 class Kt1619Test: TestCase() {
 

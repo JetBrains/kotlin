@@ -1,13 +1,13 @@
 package kotlin.jdbc
 
-import java.sql. *
-import java.util.List
-import kotlin.util.arrayList
+import java.sql.*
+import java.util.ArrayList
 import java.util.Collection
+import java.util.List
 
 /**
- * Creates an iterator through a [[ResultSet]]
- */
+* Creates an iterator through a [[ResultSet]]
+*/
 fun ResultSet.iterator() : Iterator<ResultSet> {
     val rs = this
     return object : Iterator<ResultSet>{
@@ -32,7 +32,7 @@ fun ResultSet.get(columnName: String): Any? = this.getObject(columnName)
  * Maps the collection of rows to some value
  */
 fun <T> ResultSet.map(fn: (ResultSet) -> T) : List<T> {
-    val answer = arrayList<T>()
+    val answer = ArrayList<T>()
     mapTo(answer, fn)
     return answer
 }

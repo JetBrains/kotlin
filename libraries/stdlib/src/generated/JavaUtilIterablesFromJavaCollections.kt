@@ -1,5 +1,5 @@
 // NOTE this file is auto-generated from src/JavaCollections.kt
-package kotlin.util
+package kotlin
 
 import java.util.*
 
