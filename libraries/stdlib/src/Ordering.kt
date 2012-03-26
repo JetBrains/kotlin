@@ -1,14 +1,13 @@
 package kotlin
 
-import java.lang.Iterable
-import java.util.Comparator
 import java.util.Comparator
 
 /**
- * Helper method for implementing [[Comparable<T>]] methods using a list of functions
- * to calculate the values to compare
- */
-inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T,Any?>): Int {
+* Helper method for implementing [[Comparable<T>]] methods using a list of functions
+* to calculate the values to compare
+*/
+inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): Int {
+    require(functions.size > 0)
     if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
@@ -18,7 +17,7 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T,Any?>): Int
         val diff = compareValues(v1, v2)
         if (diff != null) return diff
     }
-    return compareValues(a, b)
+    return 0
 }
 
 /**
