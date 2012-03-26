@@ -323,7 +323,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         val returnType = getType(descriptor.getReturnType())
         if (returnType != null) {
             val name = descriptor.getName()
-            val answer = KParameter(name, returnType)
+            val answer = KParameter(descriptor, name, returnType)
             configureComments(answer, descriptor)
             return answer
         }
@@ -833,10 +833,21 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
     fun toString() = "property $name"
 }
 
-class KParameter(val name: String,
+class KParameter(val descriptor: ValueParameterDescriptor, val name: String,
         var aType: KType): KAnnotated(aType.model, aType.declarationDescriptor)  {
 
     fun toString() = "$name: ${aType.name}"
+
+    fun isVarArg(): Boolean = descriptor.getVarargElementType() != null
+
+    fun hasDefaultValue(): Boolean = descriptor.hasDefaultValue()
+
+    fun varArgType(): KType? {
+        val varType = descriptor.getVarargElementType()
+        return if (varType != null) {
+            aType.model.getType(varType)
+        } else null
+    }
 }
 
 class KTypeParameter(val name: String,

@@ -219,10 +219,28 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     fun printParameters(method: KFunction): Unit {
         print("(")
         var first = true
+        var defaultValue = false
         for (p in method.parameters) {
+            if (!p.hasDefaultValue() && defaultValue) {
+                print("]")
+                defaultValue = false
+            }
             if (first) first = false else print(", ")
+            if (p.hasDefaultValue() && !defaultValue) {
+                print(" [")
+                defaultValue = true
+            }
+            val pType = if (p.isVarArg()) {
+                print("vararg ")
+                p.varArgType().sure()
+            } else {
+                p.aType
+            }
             print("${p.name}:&nbsp;")
-            print(link(p.aType))
+            print(link(pType))
+        }
+        if (defaultValue) {
+            print("]")
         }
         print(")")
     }
