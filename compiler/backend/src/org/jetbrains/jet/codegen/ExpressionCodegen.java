@@ -2088,6 +2088,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     @Override
     public StackValue visitPostfixExpression(JetPostfixExpression expression, StackValue receiver) {
+        if(expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL) {
+            JetExpression baseExpression = expression.getBaseExpression();
+            JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, baseExpression);
+            StackValue base = genQualified(receiver, baseExpression);
+            if(type != null && type.isNullable()) {
+                base.put(base.type, v);
+                v.dup();
+                Label ok = new Label();
+                v.ifnonnull(ok);
+                v.invokestatic("jet/runtime/Intrinsics", "throwNpe", "()V");
+                v.mark(ok);
+                return StackValue.onStack(base.type);
+            }
+            else 
+                return base;
+        }
         DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
@@ -2153,7 +2169,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
             }
         }
-        throw new UnsupportedOperationException("Don't know how to generate this prefix expression");
+        throw new UnsupportedOperationException("Don't know how to generate this postfix expression");
     }
 
     private void generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand, StackValue receiver) {
