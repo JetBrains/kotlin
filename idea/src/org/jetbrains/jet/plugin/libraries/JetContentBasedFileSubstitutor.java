@@ -59,10 +59,5 @@ public class JetContentBasedFileSubstitutor implements ContentBasedClassFileProc
     public SyntaxHighlighter createHighlighter(Project project, VirtualFile vFile) {
         return new JetHighlighter();
     }
-
-    @Nullable
-    public PsiFile getDecompiledPsiFile(PsiFile psiFile) {
-        return JetDecompiledData.getDecompiledData((ClsFileImpl) psiFile).getJetFile();
-    }
 }
 
