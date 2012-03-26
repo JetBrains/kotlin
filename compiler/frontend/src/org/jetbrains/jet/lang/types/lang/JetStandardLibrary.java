@@ -108,8 +108,6 @@ public class JetStandardLibrary {
 
     private JetType tuple0Type;
 
-    private Set<FunctionDescriptor> typeInfoFunction;
-
     private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
     private EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
     private EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
@@ -177,7 +175,6 @@ public class JetStandardLibrary {
 
             this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
             this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
-            this.typeInfoFunction = libraryScope.getFunctions("typeinfo");
 
             this.numberType = new JetTypeImpl(getNumber());
             this.stringType = new JetTypeImpl(getString());
@@ -324,11 +321,6 @@ public class JetStandardLibrary {
     public ClassDescriptor getThrowable() {
         initStdClasses();
         return throwableClass;
-    }
-    
-    public Set<FunctionDescriptor> getTypeInfoFunctions() {
-        initStdClasses();
-        return typeInfoFunction;
     }
 
     @NotNull

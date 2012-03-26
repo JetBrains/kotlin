@@ -94,8 +94,6 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(type, "dec", 0, DEC, false);
         }
 
-        final Set<FunctionDescriptor> typeInfoFunctionGroup = stdlib.getTypeInfoFunctions();
-
         declareBinaryOp("plus", Opcodes.IADD);
         declareBinaryOp("minus", Opcodes.ISUB);
         declareBinaryOp("times", Opcodes.IMUL);
