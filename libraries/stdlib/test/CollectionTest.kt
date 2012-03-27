@@ -8,18 +8,8 @@ import org.junit.Test
 
 class CollectionTest {
 
-    class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
-        private val collection = collection
-
-        override fun iterator(): java.util.Iterator<T> {
-            return collection.iterator().sure()
-        }
-    }
-
-
-    val data = arrayList("foo", "bar")
-
     Test fun any() {
+        val data = arrayList("foo", "bar")
         assertTrue {
             data.any{it.startsWith("f")}
         }
@@ -29,6 +19,7 @@ class CollectionTest {
     }
 
     Test fun all() {
+        val data = arrayList("foo", "bar")
         assertTrue {
             data.all{it.length == 3}
         }
@@ -38,13 +29,14 @@ class CollectionTest {
     }
 
     Test fun count() {
+        val data = arrayList("foo", "bar")
         assertEquals(1, data.count{it.startsWith("b")})
         assertEquals(2, data.count{it.size == 3})
     }
 
     Test fun filter() {
+        val data = arrayList("foo", "bar")
         val foo = data.filter{it.startsWith("f")}
-
         assertTrue {
             foo.all{it.startsWith("f")}
         }
@@ -53,6 +45,7 @@ class CollectionTest {
     }
 
     Test fun filterNot() {
+        val data = arrayList("foo", "bar")
         val foo = data.filterNot{it.startsWith("b")}
 
         assertTrue {
@@ -62,8 +55,9 @@ class CollectionTest {
         assertEquals(arrayList("foo"), foo)
     }
 
+    // TODO would be nice to avoid the <String>
     Test fun filterIntoLinkedList() {
-        // TODO would be nice to avoid the <String>
+        val data = arrayList("foo", "bar")
         val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
 
         assertTrue {
@@ -77,7 +71,37 @@ class CollectionTest {
         }
     }
 
+    // TODO would be nice to avoid the <String>
+    Test fun filterNotIntoLinkedList() {
+        val data = arrayList("foo", "bar")
+        val foo = data.filterNotTo(linkedList<String>()){it.startsWith("f")}
+
+        assertTrue {
+            foo.all{!it.startsWith("f")}
+        }
+        assertEquals(1, foo.size)
+        assertEquals(linkedList("bar"), foo)
+
+        assertTrue {
+            foo is LinkedList<String>
+        }
+    }
+
+    // TODO would be nice to avoid the <String>
+    Test fun filterNotNullIntoLinkedList() {
+        val data = arrayList(null, "foo", null, "bar")
+        val foo = data.filterNotNullTo(linkedList<String>())
+
+        assertEquals(2, foo.size)
+        assertEquals(linkedList("foo", "bar"), foo)
+
+        assertTrue {
+            foo is LinkedList<String>
+        }
+    }
+
     Test fun filterIntoSet() {
+        val data = arrayList("foo", "bar")
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
@@ -93,6 +117,7 @@ class CollectionTest {
     }
 
     Test fun filterIntoSortedSet() {
+        val data = arrayList("foo", "bar")
         // TODO would be nice to avoid the <String>
         val sorted = data.filterTo(sortedSet<String>()){it.length == 3}
         assertEquals(2, sorted.size)
@@ -103,6 +128,7 @@ class CollectionTest {
     }
 
     Test fun find() {
+        val data = arrayList("foo", "bar")
         val x = data.find{it.startsWith("x")}
         assertNull(x)
         fails {
@@ -115,6 +141,7 @@ class CollectionTest {
     }
 
     Test fun flatMap() {
+        val data = arrayList("foo", "bar")
         val characters = arrayList('f', 'o', 'o', 'b', 'a', 'r')
         // TODO figure out how to get a line like this to compile :)
         /*
@@ -129,18 +156,27 @@ class CollectionTest {
         }
     }
 
-    Test fun foreach() {
+    Test fun forEach() {
+        val data = arrayList("foo", "bar")
         var count = 0
         data.forEach{ count += it.length }
         assertEquals(6, count)
     }
 
+
+    /*
+    // TODO would be nice to be able to write this as this
+    //numbers.fold(0){it + it2}
+    numbers.fold(0){(it, it2) -> it + it2}
+
+    // TODO would be nice to be able to write this as this
+    // numbers.map{it.toString()}.fold(""){it + it2}
+    numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
+    */
     Test fun fold() {
+        // lets calculate the sum of some numbers
         expect(10) {
             val numbers = arrayList(1, 2, 3, 4)
-
-            // TODO would be nice to be able to write this as this
-            //numbers.fold(0){it + it2}
             numbers.fold(0){(it, it2) -> it + it2}
         }
 
@@ -149,50 +185,48 @@ class CollectionTest {
             numbers.fold(0){(it, it2) -> it + it2}
         }
 
+        // lets concatenate some strings
         expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
-
-            // TODO would be nice to be able to write this as this
-            // numbers.map{it.toString()}.fold(""){it + it2}
             numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
         }
     }
 
+    /*
+        // TODO would be nice to be able to write this as this
+        // numbers.map{it.toString()}.foldRight(""){it + it2}
+        numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
+    */
     Test fun foldRight() {
         expect("4321") {
             val numbers = arrayList(1, 2, 3, 4)
-
-            // TODO would be nice to be able to write this as this
-            // numbers.map{it.toString()}.foldRight(""){it + it2}
             numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
         }
     }
 
 
+    /*
+        TODO inference engine should not need this type info?
+        val byLength = words.groupBy<String, Int>{it.length}
+    */
     Test fun groupBy() {
         val words = arrayList("a", "ab", "abc", "def", "abcd")
-        /*
-        TODO inference engine should not need this type info?
-        */
         val byLength = words.groupBy<String, Int>{it.length}
         assertEquals(4, byLength.size())
 
-        println("Grouped by length is: $byLength")
-        /*
-         TODO compiler bug...
-
         val l3 = byLength.getOrElse(3, {ArrayList<String>()})
         assertEquals(2, l3.size)
-        */
 
     }
 
     Test fun join() {
+        val data = arrayList("foo", "bar")
         val text = data.join("-", "<", ">")
         assertEquals("<foo-bar>", text)
     }
 
     Test fun map() {
+        val data = arrayList("foo", "bar")
         /**
           TODO compiler bug
           we should be able to remove the explicit type on the function
@@ -207,6 +241,7 @@ class CollectionTest {
     }
 
     Test fun reverse() {
+        val data = arrayList("foo", "bar")
         val rev = data.reverse()
         assertEquals(arrayList("bar", "foo"), rev)
     }
@@ -225,6 +260,7 @@ class CollectionTest {
     }
 
     Test fun toArray() {
+        val data = arrayList("foo", "bar")
         val arr = data.toArray()
         println("Got array ${arr}")
         todo {
@@ -235,12 +271,14 @@ class CollectionTest {
     }
 
     Test fun simpleCount() {
+        val data = arrayList("foo", "bar")
         assertEquals(2, data.count())
         assertEquals(3, hashSet(12, 14, 15).count())
         assertEquals(0, ArrayList<Double>().count())
     }
 
     Test fun last() {
+        val data = arrayList("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
         // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
@@ -277,6 +315,7 @@ class CollectionTest {
     }
 
     Test fun indices() {
+        val data = arrayList("foo", "bar")
         val indices = data.indices
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
@@ -285,6 +324,7 @@ class CollectionTest {
     }
 
     Test fun contains() {
+        val data = arrayList("foo", "bar")
         assertTrue(data.contains("foo"))
         assertTrue(data.contains("bar"))
         assertFalse(data.contains("some"))
@@ -298,5 +338,14 @@ class CollectionTest {
 
         //    assertTrue(IterableWrapper(hashSet(45, 14, 13)).contains(14))
         //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
+    }
+
+
+    class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
+        private val collection = collection
+
+        override fun iterator(): java.util.Iterator<T> {
+            return collection.iterator().sure()
+        }
     }
 }
