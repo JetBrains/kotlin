@@ -45,11 +45,9 @@ import java.util.List;
 
     class StandardImporter implements Importer {
         private final WritableScope namespaceScope;
-        private final boolean firstPhase;
 
-        public StandardImporter(WritableScope namespaceScope, boolean firstPhase) {
+        public StandardImporter(WritableScope namespaceScope) {
             this.namespaceScope = namespaceScope;
-            this.firstPhase = firstPhase;
         }
 
         @Override
@@ -96,8 +94,8 @@ import java.util.List;
     class DelayedImporter extends StandardImporter {
         private final List<Pair<DeclarationDescriptor, String>> imports = Lists.newArrayList();
 
-        public DelayedImporter(@NotNull WritableScope namespaceScope, boolean firstPhase) {
-            super(namespaceScope, firstPhase);
+        public DelayedImporter(@NotNull WritableScope namespaceScope) {
+            super(namespaceScope);
         }
 
         @Override

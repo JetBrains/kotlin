@@ -30,7 +30,7 @@ import java.util.Collection;
 public interface ModuleConfiguration {
     ModuleConfiguration EMPTY = new ModuleConfiguration() {
         @Override
-        public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
+        public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
         }
 
         @Override
@@ -39,7 +39,7 @@ public interface ModuleConfiguration {
 
     };
 
-    void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives);
+    void addDefaultImports(@NotNull Collection<JetImportDirective> directives);
 
     /**
      *

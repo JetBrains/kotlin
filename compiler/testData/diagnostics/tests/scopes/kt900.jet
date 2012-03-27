@@ -35,8 +35,8 @@ object N {
 //FILE:b.kt
 package b
 
-import <!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.M
-import A.P
+import b.<!CANNOT_IMPORT_FROM_ELEMENT!>N<!>.M
+import b.A.P
 import b.A.B
 
 fun foo() {

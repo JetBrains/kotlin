@@ -2,11 +2,11 @@ package d
 
 //import from objects before properties resolve
 
-import <!CANNOT_IMPORT_FROM_ELEMENT!>A<!>.*
-import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R
-import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R.bar
-import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.T
-import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.Y
+import d.<!CANNOT_IMPORT_FROM_ELEMENT!>A<!>.*
+import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R
+import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.R.bar
+import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.T
+import d.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.Y
 
 var r: T = <!UNRESOLVED_REFERENCE!>T<!>()
 val y: T = <!UNRESOLVED_REFERENCE!>Y<!>

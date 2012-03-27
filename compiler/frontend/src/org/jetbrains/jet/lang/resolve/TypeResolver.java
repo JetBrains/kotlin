@@ -18,10 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -32,11 +29,11 @@ import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 /**
  * @author abreslav
@@ -45,6 +42,7 @@ public class TypeResolver {
 
     private AnnotationResolver annotationResolver;
     private DescriptorResolver descriptorResolver;
+    private QualifiedExpressionResolver qualifiedExpressionResolver;
 
     @Inject
     public void setDescriptorResolver(DescriptorResolver descriptorResolver) {
@@ -54,6 +52,11 @@ public class TypeResolver {
     @Inject
     public void setAnnotationResolver(AnnotationResolver annotationResolver) {
         this.annotationResolver = annotationResolver;
+    }
+
+    @Inject
+    public void setQualifiedExpressionResolver(QualifiedExpressionResolver qualifiedExpressionResolver) {
+        this.qualifiedExpressionResolver = qualifiedExpressionResolver;
     }
 
     @NotNull
@@ -267,90 +270,13 @@ public class TypeResolver {
 
     @Nullable
     public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType, BindingTrace trace) {
-        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType, trace);
-
-        if (classifierDescriptor == null) {
-            trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
-        }
-        else {
-            trace.record(REFERENCE_TARGET, userType.getReferenceExpression(), classifierDescriptor);
-        }
-
-        return classifierDescriptor;
-    }
-
-    @Nullable
-    private ClassifierDescriptor resolveClassWithoutErrorReporting(JetScope scope, JetUserType userType, BindingTrace trace) {
-        JetSimpleNameExpression expression = userType.getReferenceExpression();
-        if (expression == null) {
-            return null;
-        }
-        String referencedName = expression.getReferencedName();
-        if (referencedName == null) {
-            return null;
-        }
-        ClassifierDescriptor classifierDescriptor;
-        if (userType.isAbsoluteInRootNamespace()) {
-            classifierDescriptor = JetModuleUtil.getRootNamespaceType(userType).getMemberScope().getClassifier(referencedName);
-            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(),
-                    JetModuleUtil.getRootNamespaceType(userType).getMemberScope());
-        }
-        else {
-            JetUserType qualifier = userType.getQualifier();
-            if (qualifier != null) {
-                scope = resolveClassLookupScope(scope, qualifier, trace);
-            }
-            if (scope == null) {
-                return ErrorUtils.getErrorClass();
-            }
-            classifierDescriptor = scope.getClassifier(referencedName);
-            trace.record(BindingContext.RESOLUTION_SCOPE, userType.getReferenceExpression(), scope);
-        }
-
-        return classifierDescriptor;
-    }
-
-    @Nullable
-    private JetScope resolveClassLookupScope(JetScope scope, JetUserType userType, BindingTrace trace) {
-        ClassifierDescriptor classifierDescriptor = resolveClassWithoutErrorReporting(scope, userType, trace);
-        if (classifierDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) classifierDescriptor;
-            JetType classObjectType = classDescriptor.getClassObjectType();
-            if (classObjectType != null) {
-                return classObjectType.getMemberScope();
+        Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver
+            .lookupDescriptorsForUserType(userType, scope, trace);
+        for (DeclarationDescriptor descriptor : descriptors) {
+            if (descriptor instanceof ClassifierDescriptor) {
+                return (ClassifierDescriptor) descriptor;
             }
         }
-
-        NamespaceDescriptor namespaceDescriptor = resolveNamespace(scope, userType, trace);
-        if (namespaceDescriptor == null) {
-            trace.report(UNRESOLVED_REFERENCE.on(userType.getReferenceExpression()));
-            return null;
-        }
-        return namespaceDescriptor.getMemberScope();
+        return null;
     }
-
-    @Nullable
-    private NamespaceDescriptor resolveNamespace(JetScope scope, JetUserType userType, BindingTrace trace) {
-        if (userType.isAbsoluteInRootNamespace()) {
-            return resolveNamespace(JetModuleUtil.getRootNamespaceType(userType).getMemberScope(), userType, trace);
-        }
-
-        JetUserType qualifier = userType.getQualifier();
-        NamespaceDescriptor namespace;
-        if (qualifier != null) {
-            NamespaceDescriptor domain = resolveNamespace(scope, qualifier, trace);
-            if (domain == null) {
-                return null;
-            }
-            namespace = domain.getMemberScope().getNamespace(userType.getReferencedName());
-        }
-        else {
-            namespace = scope.getNamespace(userType.getReferencedName());
-        }
-        if (namespace != null) {
-            trace.record(BindingContext.REFERENCE_TARGET, userType.getReferenceExpression(), namespace);
-        }
-        return namespace;
-    }
-
 }

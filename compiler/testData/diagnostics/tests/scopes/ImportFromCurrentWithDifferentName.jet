@@ -1,5 +1,5 @@
 package a
 
-import A as ER
+import a.A as ER
 
 class A()

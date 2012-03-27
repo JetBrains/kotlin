@@ -12,7 +12,7 @@ fun test(<warning>l</warning> : java.util.List<Int>) {
   val <warning>y</warning> : java.util.List<Int>
   val <warning>b</warning> : java.lang.Object
   val <warning>a</warning> : util.List<Int>
-  val <warning>z</warning> : java.<error>utils</error>.List<Int>
+  val <warning>z</warning> : java.<error>utils</error>.<error>List</error><Int>
 
   val <warning>f</warning> : java.io.File? = null
 

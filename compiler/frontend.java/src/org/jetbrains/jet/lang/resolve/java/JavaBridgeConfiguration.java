@@ -63,11 +63,11 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
 
     @Override
-    public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
+    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
         for (ImportPath importPath : DEFAULT_JAVA_IMPORTS) {
             directives.add(JetPsiFactory.createImportDirective(project, importPath));
         }
-        delegateConfiguration.addDefaultImports(rootScope, directives);
+        delegateConfiguration.addDefaultImports(directives);
     }
 
     @Override

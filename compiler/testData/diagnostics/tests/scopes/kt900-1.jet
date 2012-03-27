@@ -1,8 +1,8 @@
 // import all members from class object
 package c
 
-import A.*
-import <!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.*
+import c.A.*
+import c.<!CANNOT_IMPORT_FROM_ELEMENT!>M<!>.*
 
 fun foo() {
     val <!UNUSED_VARIABLE!>b<!>: B = B()

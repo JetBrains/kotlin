@@ -49,7 +49,7 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     }
 
     @Override
-    public void addDefaultImports(@NotNull WritableScope rootScope, @NotNull Collection<JetImportDirective> directives) {
+    public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
         for (ImportPath defaultJetImport : DEFAULT_JET_IMPORTS) {
             directives.add(JetPsiFactory.createImportDirective(project, defaultJetImport));
         }

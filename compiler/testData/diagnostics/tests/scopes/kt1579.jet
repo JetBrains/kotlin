@@ -1,3 +1,4 @@
+//KT-1579 Can't import nested class/trait
 //FILE:a.kt
 package lib
 trait WithInner {

@@ -2,5 +2,5 @@ package Test
 
 import <caret>
 
-// EXIST: java, javax, reflect
+// EXIST: java, javax
 // ABSENT: Array, Integer

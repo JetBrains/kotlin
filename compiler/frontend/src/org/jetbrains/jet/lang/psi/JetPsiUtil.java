@@ -274,4 +274,29 @@ public class JetPsiUtil {
         }
     }
 
+    @Nullable
+    public static String getAliasName(@NotNull JetImportDirective importDirective) {
+        String aliasName = importDirective.getAliasName();
+        JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference == null) {
+            return null;
+        }
+        JetSimpleNameExpression referenceExpression = getLastReference(importedReference);
+        if (aliasName == null) {
+            aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
+        }
+        return aliasName;
+    }
+
+    @Nullable
+    public static JetSimpleNameExpression getLastReference(@NotNull JetExpression importedReference) {
+        if (importedReference instanceof JetDotQualifiedExpression) {
+            JetExpression selectorExpression = ((JetDotQualifiedExpression)importedReference).getSelectorExpression();
+            return (selectorExpression instanceof JetSimpleNameExpression) ? (JetSimpleNameExpression)selectorExpression : null;
+        }
+        if (importedReference instanceof JetSimpleNameExpression) {
+            return (JetSimpleNameExpression)importedReference;
+        }
+        return null;
+    }
 }

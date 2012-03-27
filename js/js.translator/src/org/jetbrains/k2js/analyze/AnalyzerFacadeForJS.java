@@ -135,8 +135,7 @@ public final class AnalyzerFacadeForJS {
         }
 
         @Override
-        public void addDefaultImports(@NotNull WritableScope rootScope,
-                                      @NotNull Collection<JetImportDirective> directives) {
+        public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
         }
