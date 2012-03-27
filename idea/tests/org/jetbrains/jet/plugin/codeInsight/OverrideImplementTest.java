@@ -49,6 +49,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement");
     }
 
+    public void testFunctionProperty() {
+        doFileTest();
+    }
+
     public void testJavaInterfaceMethod() {
         doDirectoryTest();
     }
@@ -103,6 +107,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     private void doImplement() {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        assertNotNull("Caret should be inside class or object", classOrObject);
         final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
         assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
@@ -118,6 +123,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     private void doMultiImplement() {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+        assertNotNull("Caret should be inside class or object", classOrObject);
         final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);

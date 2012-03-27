@@ -91,6 +91,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     }
 
     public String renderType(JetType type) {
+        return renderType(type, false);
+    }
+
+    public String renderTypeWithShortNames(JetType type) {
+        return renderType(type, true);
+    }
+
+    private String renderType(JetType type, boolean shortNamesOnly) {
         if (type == null) {
             return escape("[NULL]");
         }
@@ -98,24 +106,33 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return escape("Unit" + (type.isNullable() ? "?" : ""));
         }
         else if (JetStandardClasses.isTupleType(type)) {
-            return escape(renderTupleType(type));
+            return escape(renderTupleType(type, shortNamesOnly));
         }
         else if (JetStandardClasses.isFunctionType(type)) {
-            return escape(renderFunctionType(type));
+            return escape(renderFunctionType(type, shortNamesOnly));
         }
         else {
-            return escape(renderDefaultType(type));
+            return escape(renderDefaultType(type, shortNamesOnly));
         }
     }
 
-    private String renderDefaultType(JetType type) {
+    private String renderDefaultType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder();
         ClassifierDescriptor cd = type.getConstructor().getDeclarationDescriptor();
-        sb.append(cd == null || cd instanceof TypeParameterDescriptor
-                  ? type.getConstructor() : DescriptorUtils.getFQName(cd));
+
+        Object typeNameObject;
+
+        if (cd == null || cd instanceof TypeParameterDescriptor) {
+            typeNameObject = type.getConstructor();
+        }
+        else {
+            typeNameObject = shortNamesOnly ? cd.getName() : DescriptorUtils.getFQName(cd);
+        }
+
+        sb.append(typeNameObject);
         if (!type.getArguments().isEmpty()) {
             sb.append("<");
-            appendTypeProjections(sb, type.getArguments());
+            appendTypeProjections(sb, type.getArguments(), shortNamesOnly);
             sb.append(">");
         }
         if (type.isNullable()) {
@@ -124,31 +141,31 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    private void appendTypes(StringBuilder result, List<JetType> types) {
+    private void appendTypes(StringBuilder result, List<JetType> types, boolean shortNamesOnly) {
         for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
-            result.append(renderType(iterator.next()));
+            result.append(renderType(iterator.next(), shortNamesOnly));
             if (iterator.hasNext()) {
                 result.append(", ");
             }
         }
     }
 
-    private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections) {
+    private void appendTypeProjections(StringBuilder result, List<TypeProjection> typeProjections, boolean shortNamesOnly) {
         for (Iterator<TypeProjection> iterator = typeProjections.iterator(); iterator.hasNext(); ) {
             TypeProjection typeProjection = iterator.next();
             if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
                 result.append(typeProjection.getProjectionKind()).append(" ");
             }
-            result.append(renderType(typeProjection.getType()));
+            result.append(renderType(typeProjection.getType(), shortNamesOnly));
             if (iterator.hasNext()) {
                 result.append(", ");
             }
         }
     }
 
-    protected String renderTupleType(JetType type) {
+    protected String renderTupleType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder("#(");
-        appendTypes(sb, JetStandardClasses.getTupleElementTypes(type));
+        appendTypes(sb, JetStandardClasses.getTupleElementTypes(type), shortNamesOnly);
         sb.append(")");
 
         if (type.isNullable()) {
@@ -158,19 +175,19 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return sb.toString();
     }
 
-    private String renderFunctionType(JetType type) {
+    private String renderFunctionType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder();
 
         JetType receiverType = JetStandardClasses.getReceiverType(type);
         if (receiverType != null) {
-            sb.append(renderType(receiverType));
+            sb.append(renderType(receiverType, shortNamesOnly));
             sb.append(".");
         }
 
         sb.append("(");
-        appendTypeProjections(sb, JetStandardClasses.getParameterTypeProjectionsFromFunctionType(type));
+        appendTypeProjections(sb, JetStandardClasses.getParameterTypeProjectionsFromFunctionType(type), shortNamesOnly);
         sb.append(") -> ");
-        sb.append(renderType(JetStandardClasses.getReturnTypeFromFunctionType(type)));
+        sb.append(renderType(JetStandardClasses.getReturnTypeFromFunctionType(type), shortNamesOnly));
 
         if (type.isNullable()) {
             return "(" + sb + ")?";

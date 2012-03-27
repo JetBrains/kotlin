@@ -34,12 +34,14 @@ import java.util.Set;
  */
 public class ImplementMethodsHandler extends OverrideImplementMethodsHandler implements IntentionAction {
 
+    @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
         Set<CallableMemberDescriptor> missingImplementations = Sets.newLinkedHashSet();
         OverrideResolver.collectMissingImplementations(descriptor, missingImplementations, missingImplementations);
         return missingImplementations;
     }
 
+    @Override
     protected String getChooserTitle() {
         return "Implement Members";
     }

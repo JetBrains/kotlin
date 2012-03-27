@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,9 +55,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return members;
     }
 
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(JetClassOrObject classOrObject) {
+    @NotNull
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
         BindingContext bindingContext =
-            WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile());
+                WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile());
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
         if (descriptor instanceof MutableClassDescriptor) {
             return collectMethodsToGenerate((MutableClassDescriptor)descriptor);
@@ -74,10 +76,6 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         if (body == null) {
             return;
         }
-
-        // NOTE + TODO: If you try to cache findInsertBeforeAnchor element, there will be failed assertion
-        // "PSI/document inconsistency before reparse: file=" from DocumentCommitThread after inserting two overriding
-        // with the caret right before existing function start.
 
         PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
 
@@ -115,7 +113,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                                                                          }
                                                                      });
 
-        if (offsetCursorElement != null) {
+        if (offsetCursorElement != null && offsetCursorElement != body.getRBrace()) {
             afterAnchor = offsetCursorElement;
         }
 
@@ -130,14 +128,15 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append("val ");
         }
-        bodyBuilder.append(descriptor.getName()).append(":").append(descriptor.getType());
+        bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
+                descriptor.getType()));
         ImportInsertHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
-            bodyBuilder.append("=").append(initializer);
+            bodyBuilder.append(" = ").append(initializer);
         }
         else {
-            bodyBuilder.append("= ?");
+            bodyBuilder.append(" = ?");
         }
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
@@ -153,16 +152,17 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             }
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
-            bodyBuilder.append(":");
-            bodyBuilder.append(parameterDescriptor.getType().toString());
+            bodyBuilder.append(" : ");
+            bodyBuilder.append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(parameterDescriptor.getType()));
 
             ImportInsertHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
         }
         bodyBuilder.append(")");
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
-        if (!returnType.equals(stdlib.getTuple0Type())) {
-            bodyBuilder.append(":").append(returnType.toString());
+
+        if (returnType != null && !stdlib.getTuple0Type().equals(returnType)) {
+            bodyBuilder.append(" : ").append(returnType.toString());
             ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 
@@ -183,6 +183,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else if (returnType.equals(stdlib.getBooleanType())) {
             return "false";
         }
+
         return null;
     }
 
@@ -209,10 +210,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     protected abstract String getNoMethodsFoundHint();
 
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file,
-                       boolean implementAll) {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+
+        assert classOrObject != null : "ClassObject should be checked in isValidFor method";
+
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
@@ -225,10 +228,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             selectedElements = members;
         }
         else {
-            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(project,
-                                                                                              members.toArray(
-                                                                                                  new DescriptorClassMember[members
-                                                                                                      .size()]));
+            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(
+                    project,
+                    members.toArray(new DescriptorClassMember[members.size()]));
+
             if (chooser == null) {
                 return;
             }
