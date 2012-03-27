@@ -25,6 +25,11 @@ public interface SolutionStatus {
         public boolean isSuccessful() {
             return true;
         }
+
+        @Override
+        public String toString() {
+            return "SUCCESS";
+        }
     };
 
     boolean isSuccessful();

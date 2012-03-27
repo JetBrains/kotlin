@@ -934,8 +934,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetType rightType = facade.getType(right, context.replaceScope(context.scope));
 
             if (rightType != null) {
-                JetType intersect = TypeUtils.intersect(JetTypeChecker.INSTANCE, new HashSet<JetType>(Arrays.asList(leftType, rightType)));
-                if (intersect == null) {
+                if (TypeUtils.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, operationSign, leftType, rightType));
                 }
             }

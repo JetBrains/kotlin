@@ -20,12 +20,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintResolutionListener;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemWithPriorities;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -128,11 +134,8 @@ public class TypeUtils {
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), nullable, type.getArguments(), type.getMemberScope());
     }
 
-    @NotNull
-    public static JetType safeIntersect(JetTypeChecker typeChecker, Set<JetType> types) {
-        JetType intersection = intersect(typeChecker, types);
-        if (intersection == null) return ErrorUtils.createErrorType("No intersection for " + types); // TODO : message
-        return intersection;
+    public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
+        return intersect(JetTypeChecker.INSTANCE, Sets.newLinkedHashSet(Lists.newArrayList(typeA, typeB))) == null;
     }
 
     @Nullable
@@ -164,9 +167,9 @@ public class TypeUtils {
         for (JetType type : nullabilityStripped) {
             if (!canHaveSubtypes(typeChecker, type)) {
                 for (JetType other : nullabilityStripped) {
-                    // It makes sense to check for subtyping of other <: type, despite that
+                    // It makes sense to check for subtyping (other <: type), despite that
                     // type is not supposed to be open, for there're enums
-                    if (!type.equals(other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
+                    if (!TypeUnifier.mayBeEqual(type, other) && !typeChecker.isSubtypeOf(type, other) && !typeChecker.isSubtypeOf(other, type)) {
                         return null;
                     }
                 }
@@ -211,6 +214,59 @@ public class TypeUtils {
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
                 new ChainedScope(null, scopes)); // TODO : check intersectibility, don't use a chanied scope
+    }
+
+    private static class TypeUnifier {
+        private static class TypeParameterUsage {
+            private final TypeParameterDescriptor typeParameterDescriptor;
+            private final Variance howTheTypeParameterIsUsed;
+
+            public TypeParameterUsage(TypeParameterDescriptor typeParameterDescriptor, Variance howTheTypeParameterIsUsed) {
+                this.typeParameterDescriptor = typeParameterDescriptor;
+                this.howTheTypeParameterIsUsed = howTheTypeParameterIsUsed;
+            }
+        }
+
+        public static boolean mayBeEqual(@NotNull JetType type, @NotNull JetType other) {
+            return unify(type, other);
+        }
+
+        private static boolean unify(JetType withParameters, JetType expected) {
+            ConstraintSystemWithPriorities constraintSystem = new ConstraintSystemWithPriorities(ConstraintResolutionListener.DO_NOTHING);
+            // T -> how T is used
+            final Map<TypeParameterDescriptor, Variance> parameters = Maps.newHashMap();
+            Processor<TypeParameterUsage> processor = new Processor<TypeParameterUsage>() {
+                @Override
+                public boolean process(TypeParameterUsage parameterUsage) {
+                    Variance howTheTypeIsUsedBefore = parameters.get(parameterUsage.typeParameterDescriptor);
+                    if (howTheTypeIsUsedBefore == null) {
+                        howTheTypeIsUsedBefore = Variance.INVARIANT;
+                    }
+                    parameters.put(parameterUsage.typeParameterDescriptor,
+                                   parameterUsage.howTheTypeParameterIsUsed.superpose(howTheTypeIsUsedBefore));
+                    return true;
+                }
+            };
+            processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
+            processAllTypeParameters(expected, Variance.INVARIANT, processor);
+            for (Map.Entry<TypeParameterDescriptor, Variance> entry : parameters.entrySet()) {
+                constraintSystem.registerTypeVariable(entry.getKey(), entry.getValue());
+            }
+            constraintSystem.addSubtypingConstraint(ConstraintType.VALUE_ARGUMENT.assertSubtyping(withParameters, expected));
+
+            ConstraintSystemSolution solution = constraintSystem.solve();
+            return solution.getStatus().isSuccessful();
+        }
+
+        private static void processAllTypeParameters(JetType type, Variance howThiTypeIsUsed, Processor<TypeParameterUsage> result) {
+            ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+            if (descriptor instanceof TypeParameterDescriptor) {
+                result.process(new TypeParameterUsage((TypeParameterDescriptor)descriptor, howThiTypeIsUsed));
+            }
+            for (TypeProjection projection : type.getArguments()) {
+                processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
+            }
+        }
     }
 
     private static StringBuilder makeDebugNameForIntersectionType(Iterable<JetType> resultingTypes) {
@@ -472,8 +528,9 @@ public class TypeUtils {
     }
 
     public static boolean hasUnsubstitutedTypeParameters(JetType type) {
-        if(type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor)
+        if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return true;
+        }
 
         for(TypeProjection proj : type.getArguments()) {
             if(hasUnsubstitutedTypeParameters(proj.getType())) {

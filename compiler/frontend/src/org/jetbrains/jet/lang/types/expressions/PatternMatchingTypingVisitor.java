@@ -280,7 +280,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 if (type == null) {
                     return;
                 }
-                if (TypeUtils.intersect(JetTypeChecker.INSTANCE, Sets.newHashSet(type, subjectType)) == null) {
+                if (TypeUtils.isIntersectionEmpty(type, subjectType)) {
                     context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType));
                     return;
                 }
