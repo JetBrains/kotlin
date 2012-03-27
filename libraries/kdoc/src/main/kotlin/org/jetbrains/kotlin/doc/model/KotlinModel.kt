@@ -405,6 +405,8 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                     warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
                                 }
                              }
+                        } else {
+                            warning("Uknown kdoc macro @$remaining")
                         }
                     }
                     buffer.append(text)
