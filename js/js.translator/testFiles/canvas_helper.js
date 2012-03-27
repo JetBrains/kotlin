@@ -25,3 +25,9 @@ function getCanvas() {
 function getKotlinLogo() {
     return document.getElementsByTagName('img')[0];
 }
+
+function getImage(src) {
+    var image = document.createElement("img");
+    image.src = src;
+    return image;
+}

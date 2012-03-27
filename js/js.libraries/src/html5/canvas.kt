@@ -128,3 +128,5 @@ native
 fun getCanvas() : Canvas = Canvas();
 native
 fun getKotlinLogo() : HTMLImageElement = HTMLImageElement();
+native
+fun getImage(src: String) : HTMLImageElement = HTMLImageElement();
