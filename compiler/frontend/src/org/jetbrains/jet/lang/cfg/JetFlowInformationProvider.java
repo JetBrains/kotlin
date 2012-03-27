@@ -313,8 +313,6 @@ public class JetFlowInformationProvider {
             hasBackingField = trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor);
         }
         if ((isInitializedNotHere || !hasBackingField) && !variableDescriptor.isVar() && !varWithValReassignErrorGenerated.contains(variableDescriptor)) {
-            varWithValReassignErrorGenerated.add(variableDescriptor);
-
             boolean hasReassignMethodReturningUnit = false;
             JetSimpleNameExpression operationReference = null;
             PsiElement parent = expression.getParent();
@@ -343,6 +341,7 @@ public class JetFlowInformationProvider {
                 }
             }
             if (!hasReassignMethodReturningUnit) {
+                varWithValReassignErrorGenerated.add(variableDescriptor);
                 trace.report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor));
                 return true;
             }
