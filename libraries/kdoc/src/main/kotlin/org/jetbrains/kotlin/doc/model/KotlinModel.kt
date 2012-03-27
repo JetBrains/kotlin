@@ -391,6 +391,9 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                         if (remaining.startsWith(macro)) {
                             val next = remaining.substring(macro.length()).trim()
                             val words = next.split("\\s")
+                            // TODO we could default the test function name to match that of the
+                            // source code function if folks adopted a convention of naming the test method after the
+                            // method its acting as a demo/test for
                             if (words != null && words.size > 1) {
                                 val includeFile = words[0].sure()
                                 val fnName = words[1].sure()
@@ -398,9 +401,10 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                 if (content != null) {
                                     // TODO ideally we'd use pygmentize or somehting here to format the Kotlin code...
                                     text = "<pre><code>" + content + "</code></pre>\n"
+                                } else {
+                                    warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
                                 }
-                                //println("===== included file $includeFile function $fnName as content $content")
-                            }
+                             }
                         }
                     }
                     buffer.append(text)

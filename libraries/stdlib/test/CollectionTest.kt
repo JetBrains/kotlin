@@ -100,6 +100,18 @@ class CollectionTest {
         }
     }
 
+    Test fun filterNotNull() {
+        val data = arrayList(null, "foo", null, "bar")
+        val foo = data.filterNotNull()
+
+        assertEquals(2, foo.size)
+        assertEquals(linkedList("foo", "bar"), foo)
+
+        assertTrue {
+            foo is List<String>
+        }
+    }
+
     Test fun filterIntoSet() {
         val data = arrayList("foo", "bar")
         // TODO would be nice to avoid the <String>
@@ -141,19 +153,12 @@ class CollectionTest {
     }
 
     Test fun flatMap() {
-        val data = arrayList("foo", "bar")
-        val characters = arrayList('f', 'o', 'o', 'b', 'a', 'r')
-        // TODO figure out how to get a line like this to compile :)
-        /*
-        val characters = data.flatMap<String,Character>{
-          it.toCharArray().toList() as Collection<Character>
-        }
-        */
-        todo {
-            println("Got list of characters ${characters}")
-            val text = characters.join("")
-            assertEquals("foobar", text)
-        }
+        val data = arrayList("", "foo", "bar", "x", "")
+        val characters = data.flatMap<String,Character>{ it.toCharList() }
+        println("Got list of characters ${characters}")
+        assertEquals(7, characters.size())
+        val text = characters.join("")
+        assertEquals("foobarx", text)
     }
 
     Test fun forEach() {
@@ -165,13 +170,13 @@ class CollectionTest {
 
 
     /*
-    // TODO would be nice to be able to write this as this
-    //numbers.fold(0){it + it2}
-    numbers.fold(0){(it, it2) -> it + it2}
+        // TODO would be nice to be able to write this as this
+        //numbers.fold(0){it + it2}
+        numbers.fold(0){(it, it2) -> it + it2}
 
-    // TODO would be nice to be able to write this as this
-    // numbers.map{it.toString()}.fold(""){it + it2}
-    numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
+        // TODO would be nice to be able to write this as this
+        // numbers.map{it.toString()}.fold(""){it + it2}
+        numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
     */
     Test fun fold() {
         // lets calculate the sum of some numbers
@@ -204,7 +209,6 @@ class CollectionTest {
         }
     }
 
-
     /*
         TODO inference engine should not need this type info?
         val byLength = words.groupBy<String, Int>{it.length}
@@ -225,14 +229,14 @@ class CollectionTest {
         assertEquals("<foo-bar>", text)
     }
 
+    /*
+        TODO compiler bug
+        we should be able to remove the explicit type <String,Int> on the map function
+        http://youtrack.jetbrains.net/issue/KT-1145
+    */
     Test fun map() {
         val data = arrayList("foo", "bar")
-        /**
-          TODO compiler bug
-          we should be able to remove the explicit type on the function
-          http://youtrack.jetbrains.net/issue/KT-1145
-        */
-        val lengths = data.map<String, Int>{s -> s.length}
+        val lengths = data.map<String, Int>{ it.length }
         assertTrue {
             lengths.all{it == 3}
         }
@@ -281,9 +285,11 @@ class CollectionTest {
         val data = arrayList("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
-        // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
         assertEquals('a', linkedList('a').last())
     }
+        // TODO
+        // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
+
 
     Test fun lastException() {
         fails { arrayList<Int>().last() }

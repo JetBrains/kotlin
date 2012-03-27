@@ -20,7 +20,7 @@ val JMap<*,*>.empty : Boolean
 /** Provides [] access to maps */
 fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
-/** Returns the Mao if its not null otherwise it returns the empty Map */
+/** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
     = if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
 
@@ -35,7 +35,11 @@ inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
 //val <K,V> JEntry<K,V>.value : V
 //    get() = getValue().sure()
 
-/** Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key */
+/**
+ * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
+ *
+ * @includeFunction ../../test/MapTest.kt getOrElse
+ */
 inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
   val current = this.get(key)
   if (current != null) {
@@ -45,7 +49,11 @@ inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V 
   }
 }
 
-/** Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned */
+/**
+ * Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned
+ *
+ * @includeFunction ../../test/MapTest.kt getOrElse
+ */
 inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
   val current = this.get(key)
   if (current != null) {

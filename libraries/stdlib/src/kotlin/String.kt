@@ -1,6 +1,8 @@
 package kotlin
 
 import java.io.StringReader
+import java.util.List
+import java.util.ArrayList
 
 inline fun String.lastIndexOf(str: String)  = (this as java.lang.String).lastIndexOf(str)
 
@@ -51,6 +53,8 @@ inline fun String.length() = (this as java.lang.String).length()
 inline fun String.getBytes() = (this as java.lang.String).getBytes().sure()
 
 inline fun String.toCharArray() = (this as java.lang.String).toCharArray().sure()
+
+inline fun String.toCharList(): List<Character> = toCharArray().toList()
 
 inline fun String.format(format : String, vararg args : Any?)  = java.lang.String.format(format, args).sure()
 

@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream
 
 import java.util.Arrays
 import java.nio.charset.Charset
+import java.util.List
+import java.util.ArrayList
 
 // Array "constructor"
 inline fun <T> array(vararg t : T) : Array<T> = t
@@ -121,3 +123,12 @@ inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
 /** Returns the array if its not null or else returns an empty array */
 inline fun <T> Array<T>?.orEmpty() : Array<T> = if (this != null) this else array<T>()
 
+inline fun CharArray.toList(): List<Character> {
+    val list = ArrayList<Character>(this.size)
+    for (c in this) {
+        if (c != null) {
+            list.add(Character(c))
+        }
+    }
+    return list
+}

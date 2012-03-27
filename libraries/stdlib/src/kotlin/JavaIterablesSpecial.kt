@@ -28,8 +28,8 @@ fun <T> java.lang.Iterable<T>.count() : Int {
  * Get the first element in the collection.
  *
  * Will throw an exception if there are no elements
- * TODO: Specify type of the exception
  */
+// TODO: Specify type of the exception
 inline fun <T> java.lang.Iterable<T>.first() : T {
   if (this is AbstractList<T>) {
     return this.get(0)
@@ -46,8 +46,10 @@ inline fun <T> java.lang.Iterable<T>.first() : T {
  * last item by iterating through the all items.
  *
  * Will throw an exception if there are no elements.
- * TODO: Specify type of the exception
+ *
+ * @includeFunction ../../test/CollectionTest.kt last
  */
+// TODO: Specify type of the exception
 fun <T> java.lang.Iterable<T>.last() : T {
   if (this is List<T>) {
     return this.get(this.size() - 1);
@@ -71,7 +73,6 @@ fun <T> java.lang.Iterable<T>.last() : T {
  * method will be used.
  */
 fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
-  kotlin.io.println("!!!!!")
   if (this is java.util.AbstractCollection<T>) {
     return this.contains(item);
   }
