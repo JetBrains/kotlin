@@ -1,5 +1,5 @@
 <project name="Update Dependencies" default="update">
-    <property name="build.zip" value="ideaIC-118.SNAPSHOT.win.zip"/>
+    <property name="build.zip" value="ideaIC-117.SNAPSHOT.win.zip"/>
 
     <target name="update">
         <execute_update/>
@@ -11,7 +11,7 @@
 
     <macrodef name="execute_update">
         <attribute name="teamcity" default="http://teamcity.jetbrains.com"/>
-        <attribute name="teamcity.build" default="bt343"/>
+        <attribute name="teamcity.build" default="bt365"/> <!-- IDEA CE 11.1 branch 117 -->
         <sequential>
             <delete dir="PluginVerifier" failonerror="false" />
             <delete file="PluginVerifier" failonerror="false" />
