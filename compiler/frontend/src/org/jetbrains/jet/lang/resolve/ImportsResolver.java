@@ -81,7 +81,7 @@ public class ImportsResolver {
     private void processImports(boolean onlyClasses) {
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
-            //JetScope rootScope = context.getRootScope();
+            JetScope rootScope = context.getRootScope();
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
             Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
             if (!onlyClasses) {
@@ -91,13 +91,13 @@ public class ImportsResolver {
             Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
             configuration.addDefaultImports(defaultImportDirectives);
             for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
-                qualifiedExpressionResolver.processImportReference(defaultImportDirective, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
+                qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, delayedImporter, temporaryTrace, onlyClasses);
             }
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
                 Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, namespaceScope, delayedImporter, trace, onlyClasses);
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScope, delayedImporter, trace, onlyClasses);
                 if (descriptors.size() == 1) {
                     resolvedDirectives.put(importDirective, descriptors.iterator().next());
                 }

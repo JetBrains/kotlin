@@ -209,7 +209,7 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object) {
 
-        ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for objec>");
+        ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for object>");
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()), false, true);

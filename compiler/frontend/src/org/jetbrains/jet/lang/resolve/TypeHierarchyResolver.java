@@ -88,6 +88,7 @@ public class TypeHierarchyResolver {
 
 
     public void process(@NotNull JetScope outerScope, @NotNull NamespaceLikeBuilder owner, @NotNull Collection<? extends PsiElement> declarations) {
+        context.setRootScope(outerScope);
         collectNamespacesAndClassifiers(outerScope, outerScope, owner, declarations); // namespaceScopes, classes
 
         importsResolver.processTypeImports();
