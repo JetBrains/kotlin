@@ -27,8 +27,8 @@ class WithC() {
     val zzz = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$a<!>
   }
 
-  this(a : Int) : this() {
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(a : Int) : this() {
     val <!UNUSED_VARIABLE!>b<!> = x
-  }
+  }<!>
 
 }

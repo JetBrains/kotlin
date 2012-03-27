@@ -27,8 +27,8 @@ class WithC() {
     val zzz = <error>$a</error>
   }
 
-  this(a : Int) : this() {
+  <warning>this(a : Int) : this() {
     val <warning>b</warning> = x
-  }
+  }</warning>
 
 }

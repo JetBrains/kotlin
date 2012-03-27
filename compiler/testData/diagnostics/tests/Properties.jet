@@ -16,11 +16,11 @@ class Test() {
     var a : Int = 111
     var b : Int get() = $a; set(x) {a = x; $a = x}
 
-   this(i : Int) : this() {
+   <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(i : Int) : this() {
     <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
     $a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
     a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>
-   }
+   }<!>
    fun f() {
     <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!> = $a
     a = <!NO_BACKING_FIELD_CUSTOM_ACCESSORS!>$b<!>

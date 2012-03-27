@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED;
 
 /**
 * @author abreslav
@@ -219,6 +220,7 @@ public class DeclarationResolver {
     }
 
     private void processSecondaryConstructor(MutableClassDescriptor classDescriptor, JetSecondaryConstructor constructor) {
+        trace.report(SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED.on(constructor));
         if (classDescriptor.getKind() == ClassKind.TRAIT) {
             trace.report(CONSTRUCTOR_IN_TRAIT.on(constructor.getNameNode().getPsi()));
         }

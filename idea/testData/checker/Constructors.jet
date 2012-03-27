@@ -13,19 +13,19 @@ class <error>NoPC</error> {
 }
 
 class WithPC0() {
-  this(a : Int) : this() {}
+  <warning>this(a : Int) : this() {}</warning>
 }
 
 class WithPC1(a : Int) {
-  <error>this</error>() {}
+  <warning><error>this</error>() {}</warning>
 
-  this(b : Long) : this("") {}
+  <warning>this(b : Long) : this("") {}</warning>
 
-  this(s : String) : this(1) {}
+  <warning>this(s : String) : this(1) {}</warning>
 
-  this(b : Char) : <error>this</error>("", 2) {}
+  <warning>this(b : Char) : <error>this</error>("", 2) {}</warning>
 
-  this(b : Byte) : this(""), <error>this(1)</error> {}
+  <warning>this(b : Byte) : this(""), <error>this(1)</error> {}</warning>
 }
 
 

@@ -8,23 +8,23 @@ class NoC3 : WithC1()
 class WithC2() : <!SUPERTYPE_NOT_INITIALIZED_DEFAULT!>WithC1<!>
 
 class <!CONFLICTING_OVERLOADS!>NoPC<!> {
-  <!CONFLICTING_OVERLOADS!><!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}<!>
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED, CONFLICTING_OVERLOADS!><!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}<!>
 }
 
 class WithPC0() {
-  this(a : Int) : this() {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(a : Int) : this() {}<!>
 }
 
 class WithPC1(a : Int) {
-  <!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!><!SECONDARY_CONSTRUCTOR_NO_INITIALIZER_LIST!>this<!>() {}<!>
 
-  this(b : Long) : this("") {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(b : Long) : this("") {}<!>
 
-  this(s : String) : this(1) {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(s : String) : this(1) {}<!>
 
-  this(b : Char) : <!NONE_APPLICABLE!>this<!>("", 2) {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(b : Char) : <!NONE_APPLICABLE!>this<!>("", 2) {}<!>
 
-  this(b : Byte) : this(""), <!MANY_CALLS_TO_THIS!>this(1)<!> {}
+  <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(b : Byte) : this(""), <!MANY_CALLS_TO_THIS!>this(1)<!> {}<!>
 }
 
 

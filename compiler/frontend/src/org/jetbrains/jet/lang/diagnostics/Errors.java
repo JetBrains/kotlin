@@ -302,6 +302,7 @@ public interface Errors {
     DiagnosticFactory<JetTypeReference> SUPERTYPE_NOT_A_CLASS_OR_TRAIT = DiagnosticFactory.create(ERROR, "Only classes and traits may serve as supertypes");
     DiagnosticFactory<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory.create(ERROR, "Traits cannot initialize supertypes");
     DiagnosticFactory<PsiElement> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory.create(ERROR, "A trait may not have a constructor");
+    DiagnosticFactory<JetSecondaryConstructor> SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED = DiagnosticFactory.create(WARNING, "Secondary constructors are not supported");
     DiagnosticFactory<JetTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory.create(ERROR, "A supertype appears twice");
     DiagnosticFactory<JetTypeReference> FINAL_SUPERTYPE = DiagnosticFactory.create(ERROR, "This type is final, so it cannot be inherited from");
 

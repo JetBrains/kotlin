@@ -134,11 +134,11 @@ fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <error>{}</error> else
 val a = <error>return 1</error>
 
 class A() {
-  this(a : Int) : this() {
+  <warning>this(a : Int) : this() {
     if (a == 1)
       return
     return <error>1</error>
-  }
+  }</warning>
 
 }
 fun illegalConstantBody(): Int = <error>"s"</error>

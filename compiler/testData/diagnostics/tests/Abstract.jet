@@ -53,7 +53,7 @@ abstract class B1(
 class B2() : B1(1, "r") {}
 
 abstract class B3(i: Int) {
-    this(): this(1)
+    <!SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED!>this(): this(1)<!>
 }
 
 fun foo(<!UNUSED_PARAMETER!>c<!>: B3) {

@@ -1,7 +1,7 @@
 open class bar()
 
 trait Foo<error>()</error> : bar<error>()</error>, <error>bar</error>, <error>bar</error> {
-    <error>this</error>(x : Int) {}
+    <warning><error>this</error>(x : Int) {}</warning>
 }
 
 trait Foo2 : bar, Foo {

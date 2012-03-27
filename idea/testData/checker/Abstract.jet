@@ -157,7 +157,7 @@ abstract class B1(
 class B2() : B1(1, "r") {}
 
 abstract class B3(i: Int) {
-    this(): this(1)
+    <warning>this(): this(1)</warning>
 }
 
 fun foo(<warning>a</warning>: B3) {
