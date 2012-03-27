@@ -32,18 +32,19 @@ public abstract class Config {
 
     @NotNull
     protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "/core/annotations.kt",
-            "/jquery/common.kt",
-            "/jquery/ui.kt",
-            "/core/javautil.kt",
-            "/core/javalang.kt",
-            "/core/core.kt",
-            "/core/math.kt",
-            "/core/json.kt",
-            "/raphael/raphael.kt",
-            "/html5/canvas.kt",
-            "/html5/files.kt",
-            "/html5/image.kt"
+        "/core/annotations.kt",
+        "/jquery/common.kt",
+        "/jquery/ui.kt",
+        "/core/javautil.kt",
+        "/core/javalang.kt",
+        "/core/date.kt",
+        "/core/core.kt",
+        "/core/math.kt",
+        "/core/json.kt",
+        "/raphael/raphael.kt",
+        "/html5/canvas.kt",
+        "/html5/files.kt",
+        "/html5/image.kt"
     );
 
     protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
