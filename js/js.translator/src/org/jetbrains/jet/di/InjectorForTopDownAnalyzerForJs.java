@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadingConflictResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.DelegationResolver;
@@ -84,6 +85,7 @@ public class InjectorForTopDownAnalyzerForJs {
         CallResolver callResolver = new CallResolver();
         ExpressionTypingServices expressionTypingServices = new ExpressionTypingServices();
         TypeResolver typeResolver = new TypeResolver();
+        QualifiedExpressionResolver qualifiedExpressionResolver = new QualifiedExpressionResolver();
         OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
         ImportsResolver importsResolver = new ImportsResolver();
         DelegationResolver delegationResolver = new DelegationResolver();
@@ -148,9 +150,11 @@ public class InjectorForTopDownAnalyzerForJs {
 
         typeResolver.setAnnotationResolver(annotationResolver);
         typeResolver.setDescriptorResolver(descriptorResolver);
+        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         importsResolver.setConfiguration(moduleConfiguration);
         importsResolver.setContext(topDownAnalysisContext);
+        importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         importsResolver.setTrace(observableBindingTrace);
 
         delegationResolver.setContext(topDownAnalysisContext);
