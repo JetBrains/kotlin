@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.doc.templates.KDocTemplate
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 import org.jetbrains.jet.lang.descriptors.Visibility
 import org.jetbrains.jet.lang.descriptors.ClassKind
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiDirectory
 
 
 /**
@@ -228,7 +231,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         return pkg;
     }
 
-    fun wikiConvert(text: String, linkRenderer: LinkRenderer): String {
+    fun wikiConvert(text: String, linkRenderer: LinkRenderer, fileName: String?): String {
         return markdownProcessor.markdownToHtml(text, linkRenderer).sure()
     }
 
@@ -331,13 +334,22 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
 
-    protected fun commentsFor(descriptor: DeclarationDescriptor): String {
-        val psiElement = try {
+    protected fun fileFor(descriptor: DeclarationDescriptor): String? {
+        val psiElement = getPsiElement(descriptor)
+        return psiElement?.getContainingFile()?.getName()
+    }
+
+    protected fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
+        return try {
             BindingContextUtils.descriptorToDeclaration(context, descriptor)
         } catch (e: Throwable) {
             // ignore exceptions on fake descriptors
             null
         }
+    }
+
+    protected fun commentsFor(descriptor: DeclarationDescriptor): String {
+        val psiElement =  getPsiElement(descriptor)
 
         // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
         if (psiElement != null) {
@@ -368,6 +380,25 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                         text = text.trimLeading("* ")
                         if (text == "*") text = ""
                     }
+                    // lets check for javadoc style @ tags and macros
+                    if (text.startsWith("@")) {
+                        val remaining = text.substring(1)
+                        val macro = "includeFunction"
+                        if (remaining.startsWith(macro)) {
+                            val next = remaining.substring(macro.length()).trim()
+                            val words = next.split("\\s")
+                            if (words != null && words.size > 1) {
+                                val includeFile = words[0].sure()
+                                val fnName = words[1].sure()
+                                val content = findFunctionInclude(psiElement, includeFile, fnName)
+                                if (content != null) {
+                                    // TODO ideally we'd use pygmentize or somehting here to format the Kotlin code...
+                                    text = "<pre><code>" + content + "</code></pre>\n"
+                                }
+                                println("===== included file $includeFile function $fnName as content $content")
+                            }
+                        }
+                    }
                     buffer.append(text)
                 }
                 return buffer.toString() ?: ""
@@ -376,6 +407,93 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             }
         }
         return ""
+    }
+
+    protected fun findFunctionInclude(psiElement: PsiElement, includeFile: String, functionName: String): String? {
+        var dir = psiElement.getContainingFile()?.getParent()
+        if (dir != null) {
+            val file = relativeFile(dir.sure(), includeFile)
+            if (file != null) {
+                val text = file.getText()
+                if (text != null) {
+                    // lets find the function definition
+                    val regex = """fun\s+$functionName\(.*\)""".toRegex()
+                    val matcher = regex.matcher(text)!!
+                    if (matcher.find()) {
+                        val idx = matcher.end()
+                        println("Found at idx $idx")
+                        val remaining = text.substring(idx)
+                        return extractBlock(remaining)
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Extracts the block of code within { .. } tokens or returning null if it can't be found
+     */
+    protected fun extractBlock(text: String): String? {
+        val idx = text.indexOf('{')
+        if (idx >= 0) {
+            var remaining = text.substring(idx + 1)
+            // lets remove any leading blank lines
+            while (true) {
+                val nidx = remaining.indexOf('\n')
+                if (nidx >= 0) {
+                    val line = remaining.substring(0, nidx).trim()
+                    if (line.isEmpty()) {
+                        remaining = remaining.substring(nidx + 1)
+                        continue
+                    }
+                }
+                break
+            }
+            var count = 1
+            for (i in 0.upto(remaining.size - 1)) {
+                val ch = remaining[i]
+                if (ch == '{') count ++
+                else if (ch == '}') {
+                    if (--count <= 0) {
+                        return remaining.substring(0, i)
+                    }
+                }
+            }
+            println("Warning, missing } in code block!")
+            return remaining
+        }
+        return null
+    }
+
+    protected fun relativeFile(directory: PsiDirectory, relativeName: String): PsiFile? {
+        // TODO would have thought there's some helper function already to resolve relative names!
+
+        var dir: PsiDirectory? = directory
+
+        // lets try resolve the include name relative to this file
+        val paths = relativeName.split("/")
+        if (paths != null) {
+            val size = paths.size
+            for (i in 0.upto(size - 2)) {
+                val path = paths[i]
+                println("====== looking for path $i with value $path")
+                if (path == ".") continue
+                else if (path == "..") dir = dir?.getParent()
+                else if (path != null) dir = dir?.findSubdirectory(path)
+            }
+            val name = paths[size - 1]
+            if (dir != null && name != null) {
+                val file = dir?.findFile(name)
+                if (file != null) {
+                    println("Found file $file")
+                    return file
+                } else {
+                    println("Could not find file $relativeName in $dir with name $name")
+                }
+            }
+        }
+        return null
     }
 
     fun configureComments(annotated: KAnnotated, descriptor: DeclarationDescriptor): Unit {
@@ -573,7 +691,8 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 
     fun detailedDescription(template: KDocTemplate): String {
-        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template))
+        val file = model.fileFor(declarationDescriptor)
+        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template), file)
     }
 }
 

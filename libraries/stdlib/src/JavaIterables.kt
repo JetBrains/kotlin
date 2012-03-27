@@ -2,7 +2,11 @@ package kotlin
 
 import java.util.*
 
-/** Returns true if any elements in the collection match the given predicate */
+/**
+ * Returns true if any elements in the collection match the given predicate
+ *
+ * @includeFunction ../test/CollectionTest.kt any
+ */
 inline fun <T> java.lang.Iterable<T>.any(predicate: (T)-> Boolean) : Boolean {
   for (elem in this) {
     if (predicate(elem)) {
