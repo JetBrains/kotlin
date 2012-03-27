@@ -52,7 +52,8 @@ public final class MiscTest extends AbstractExpressionTest {
         try {
             checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
             fail();
-        } catch (JavaScriptException e) {
+        }
+        catch (JavaScriptException e) {
         }
     }
 

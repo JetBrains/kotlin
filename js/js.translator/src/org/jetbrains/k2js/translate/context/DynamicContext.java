@@ -22,7 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.addVarDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.newVar;
 
-public class DynamicContext {
+//TODO: consider renaming to scoping context
+public final class DynamicContext {
 
     @NotNull
     public static DynamicContext rootContext(@NotNull NamingScope rootScope, @NotNull JsBlock globalBlock) {

@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.Map;
 
@@ -39,6 +40,11 @@ public class AliasingContext {
         public JsName getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
             return null;
         }
+
+        @Override
+        public JsName getAliasForExpression(@NotNull JetExpression element) {
+            return null;
+        }
     };
 
     public static AliasingContext getCleanContext() {
@@ -49,6 +55,8 @@ public class AliasingContext {
     private final Map<DeclarationDescriptor, JsName> aliasesForDescriptors = Maps.newHashMap();
     @NotNull
     private final Map<DeclarationDescriptor, JsName> aliasesForThis = Maps.newHashMap();
+    @NotNull
+    private final Map<JetExpression, JsName> aliasesForExpressions = Maps.newHashMap();
 
     @Nullable
     private final AliasingContext parent;
@@ -60,8 +68,14 @@ public class AliasingContext {
     @NotNull
     public AliasingContext withThisAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsName alias) {
         AliasingContext newContext = new AliasingContext(this);
-        assert !newContext.aliasesForThis.containsKey(correspondingDescriptor);
         newContext.aliasesForThis.put(correspondingDescriptor, alias);
+        return newContext;
+    }
+
+    @NotNull
+    public AliasingContext withAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliasesForExpressions) {
+        AliasingContext newContext = new AliasingContext(this);
+        newContext.aliasesForExpressions.putAll(aliasesForExpressions);
         return newContext;
     }
 
@@ -70,7 +84,6 @@ public class AliasingContext {
         assert parent != null;
         return parent;
     }
-
 
     @Nullable
     public JsName getAliasForThis(@NotNull DeclarationDescriptor descriptor) {
@@ -88,5 +101,14 @@ public class AliasingContext {
             return alias;
         }
         return getParent().getAliasForDescriptor(descriptor);
+    }
+
+    @Nullable
+    public JsName getAliasForExpression(@NotNull JetExpression element) {
+        JsName alias = aliasesForExpressions.get(element);
+        if (alias != null) {
+            return alias;
+        }
+        return getParent().getAliasForExpression(element);
     }
 }
