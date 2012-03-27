@@ -68,8 +68,15 @@ public class JetClassBody extends JetElement {
         return (JetClassObject) findChildByType(JetNodeTypes.CLASS_OBJECT);
     }
 
+    @Nullable
     public PsiElement getRBrace() {
         final ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.RBRACE));
+        return children.length == 1 ? children[0].getPsi() : null;
+    }
+
+    @Nullable
+    public PsiElement getLBrace() {
+        final ASTNode[] children = getNode().getChildren(TokenSet.create(JetTokens.LBRACE));
         return children.length == 1 ? children[0].getPsi() : null;
     }
 }

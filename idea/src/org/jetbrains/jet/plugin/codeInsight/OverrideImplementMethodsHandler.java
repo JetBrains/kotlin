@@ -19,15 +19,16 @@ package org.jetbrains.jet.plugin.codeInsight;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -54,34 +55,71 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     public Set<CallableMemberDescriptor> collectMethodsToGenerate(JetClassOrObject classOrObject) {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile());
+        BindingContext bindingContext =
+            WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile());
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
         if (descriptor instanceof MutableClassDescriptor) {
-            return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
+            return collectMethodsToGenerate((MutableClassDescriptor)descriptor);
         }
         return Collections.emptySet();
     }
 
     protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
 
-    public static void generateMethods(Project project, Editor editor, JetClassOrObject classOrObject, List<DescriptorClassMember> selectedElements) {
+    public static void generateMethods(Project project,
+                                       Editor editor,
+                                       JetClassOrObject classOrObject,
+                                       List<DescriptorClassMember> selectedElements) {
         final JetClassBody body = classOrObject.getBody();
         if (body == null) {
             return;
         }
 
-       for (DescriptorClassMember selectedElement : selectedElements) {
-           final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
-           JetFile containingFile = (JetFile) classOrObject.getContainingFile();
-           if (descriptor instanceof SimpleFunctionDescriptor) {
-               JetElement target = overrideFunction(project, containingFile, (SimpleFunctionDescriptor) descriptor);
-               body.addBefore(target, body.getRBrace());
-           }
-           else if (descriptor instanceof PropertyDescriptor) {
-               JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor) descriptor);
-               body.addBefore(target, body.getRBrace());
-           }
-       }
+        // NOTE + TODO: If you try to cache findInsertBeforeAnchor element, there will be failed assertion
+        // "PSI/document inconsistency before reparse: file=" from DocumentCommitThread after inserting two overriding
+        // with the caret right before existing function start.
+
+        PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
+
+        if (afterAnchor == null) {
+            return;
+        }
+
+        for (DescriptorClassMember selectedElement : selectedElements) {
+            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
+            JetFile containingFile = (JetFile)classOrObject.getContainingFile();
+            if (descriptor instanceof SimpleFunctionDescriptor) {
+                JetElement target = overrideFunction(project, containingFile, (SimpleFunctionDescriptor)descriptor);
+                afterAnchor = body.addAfter(target, afterAnchor);
+            }
+            else if (descriptor instanceof PropertyDescriptor) {
+                JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor)descriptor);
+                afterAnchor = body.addBefore(target, afterAnchor);
+            }
+        }
+    }
+
+    @Nullable
+    private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
+        PsiElement afterAnchor = body.getLBrace();
+        if (afterAnchor == null) {
+            return null;
+        }
+
+        int offset = editor.getCaretModel().getOffset();
+        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset),
+                                                                     new Condition<PsiElement>() {
+                                                                         @Override
+                                                                         public boolean value(PsiElement element) {
+                                                                             return element.getParent() == body;
+                                                                         }
+                                                                     });
+
+        if (offsetCursorElement != null) {
+            afterAnchor = offsetCursorElement;
+        }
+
+        return afterAnchor;
     }
 
     private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor) {
@@ -149,7 +187,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,
-                                                                                     DescriptorClassMember[] members) {
+                                                                              DescriptorClassMember[] members) {
         final MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(members, true, true, project);
         chooser.setTitle(getChooserTitle());
         chooser.show();
@@ -185,9 +223,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         final List<DescriptorClassMember> selectedElements;
         if (implementAll) {
             selectedElements = members;
-        } else {
+        }
+        else {
             final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(project,
-                                                                                              members.toArray(new DescriptorClassMember[members.size()]));
+                                                                                              members.toArray(
+                                                                                                  new DescriptorClassMember[members
+                                                                                                      .size()]));
             if (chooser == null) {
                 return;
             }
@@ -196,12 +237,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             if (selectedElements == null || selectedElements.isEmpty()) return;
         }
 
-        new WriteCommandAction(project, file) {
-          protected void run(final Result result) throws Throwable {
-            generateMethods(project, editor, classOrObject, selectedElements);
-          }
-        }.execute();
-
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                generateMethods(project, editor, classOrObject, selectedElements);
+            }
+        });
     }
 
     @Override

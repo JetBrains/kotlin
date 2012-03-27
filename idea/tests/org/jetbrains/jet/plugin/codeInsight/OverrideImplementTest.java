@@ -69,12 +69,16 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doFileTest();
     }
 
-    public void testTraitNullableFunction() {
-        doFileTest();
+    public void testRespectCaretPosition() {
+        doMultiFileTest();
     }
 
     public void testGenerateMulti() {
         doMultiFileTest();
+    }
+
+    public void testTraitNullableFunction() {
+        doFileTest();
     }
 
     private void doFileTest() {
@@ -100,7 +104,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
-        assertEquals(1, descriptors.size());
+        assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
             protected void run(Result result) throws Throwable {
