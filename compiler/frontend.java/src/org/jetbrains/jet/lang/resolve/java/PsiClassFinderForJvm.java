@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 /**
@@ -46,6 +47,10 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
     @Inject
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    @PostConstruct
+    public void initialize() {
         this.altClassFinder = new AltClassFinder(project);
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
@@ -55,8 +60,6 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
         };
         this.javaFacade = JavaPsiFacade.getInstance(project);
     }
-
-
 
 
     @Override

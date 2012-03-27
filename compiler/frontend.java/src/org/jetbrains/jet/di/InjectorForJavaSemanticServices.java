@@ -74,6 +74,8 @@ public class InjectorForJavaSemanticServices {
         namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
         namespaceFactoryImpl.setTrace(bindingTrace);
 
+        psiClassFinderForJvm.initialize();
+
     }
 
     public JavaSemanticServices getJavaSemanticServices() {

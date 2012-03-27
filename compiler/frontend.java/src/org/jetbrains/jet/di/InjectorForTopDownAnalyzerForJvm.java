@@ -204,6 +204,8 @@ public class InjectorForTopDownAnalyzerForJvm {
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);
         javaTypeTransformer.setResolver(javaDescriptorResolver);
 
+        psiClassFinderForJvm.initialize();
+
     }
 
     public TopDownAnalyzer getTopDownAnalyzer() {

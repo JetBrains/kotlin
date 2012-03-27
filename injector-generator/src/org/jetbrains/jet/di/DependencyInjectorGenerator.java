@@ -25,6 +25,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -243,9 +244,34 @@ public class DependencyInjectorGenerator {
                     out.println();
                 }
             }
+
+            // call @PostConstruct
+            for (Field field : fields) {
+                // TODO: type of field may be different from type of object
+                List<Method> postConstructMethods = getPostConstructMethods(field.getType());
+                for (Method postConstruct : postConstructMethods) {
+                    out.println(indent + field.getName() + "." + postConstruct.getName() + "();");
+                }
+                if (postConstructMethods.size() > 0) {
+                    out.println();
+                }
+            }
         }
 
         out.println("    }");
+    }
+
+    private static List<Method> getPostConstructMethods(Class<?> clazz) {
+        List<Method> r = Lists.newArrayList();
+        for (Method method : clazz.getMethods()) {
+            if (method.getAnnotation(PostConstruct.class) != null) {
+                if (method.getParameterTypes().length != 0) {
+                    throw new IllegalStateException("@PostConstruct method must have no arguments: " + method);
+                }
+                r.add(method);
+            }
+        }
+        return r;
     }
 
     private void generateGetters(PrintStream out) {
