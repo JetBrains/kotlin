@@ -69,6 +69,10 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
     }
 }
 
+fun warning(message: String) {
+    println("Warning: $message")
+}
+
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, SortedSet<KFunction>> {
     //fun inheritedExtensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, SortedSet<KFunction>> {
@@ -272,7 +276,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                 }
             }
         } catch (e: Throwable) {
-            println("Caught exception finding function declarations on $owner $e")
+            warning("Caught exception finding function declarations on $owner $e")
             e.printStackTrace()
         }
 
@@ -395,7 +399,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                     // TODO ideally we'd use pygmentize or somehting here to format the Kotlin code...
                                     text = "<pre><code>" + content + "</code></pre>\n"
                                 }
-                                println("===== included file $includeFile function $fnName as content $content")
+                                //println("===== included file $includeFile function $fnName as content $content")
                             }
                         }
                     }
@@ -421,7 +425,6 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     val matcher = regex.matcher(text)!!
                     if (matcher.find()) {
                         val idx = matcher.end()
-                        println("Found at idx $idx")
                         val remaining = text.substring(idx)
                         return extractBlock(remaining)
                     }
@@ -460,7 +463,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     }
                 }
             }
-            println("Warning, missing } in code block!")
+            warning("missing } in code block for $remaining")
             return remaining
         }
         return null
@@ -477,7 +480,6 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val size = paths.size
             for (i in 0.upto(size - 2)) {
                 val path = paths[i]
-                println("====== looking for path $i with value $path")
                 if (path == ".") continue
                 else if (path == "..") dir = dir?.getParent()
                 else if (path != null) dir = dir?.findSubdirectory(path)
@@ -486,10 +488,9 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             if (dir != null && name != null) {
                 val file = dir?.findFile(name)
                 if (file != null) {
-                    println("Found file $file")
                     return file
                 } else {
-                    println("Could not find file $relativeName in $dir with name $name")
+                    warning("could not find file $relativeName in $dir with name $name")
                 }
             }
         }
@@ -535,7 +536,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val pkg = getPackage(container)
             return pkg.getClass(name, classElement)
         } else {
-            println("No package found for $container and class $name")
+            warning("no package found for $container and class $name")
             return null
         }
     }
@@ -580,7 +581,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                 if (href != null) {
                     answer.href = href
                 } else {
-                    println("Warning: could not resolve expression: $qualified into a wiki link")
+                    warning("could not resolve expression: $qualified into a wiki link")
                 }
             }
         }
@@ -658,17 +659,14 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
     }
 
     override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
-        // println("LinkRenderer.render(RefLinkNode): $node url: $url title: $title text: $text")
         return super.render(node, url, title, text)
     }
 
     override fun render(node: AutoLinkNode?): Rendering? {
-        // println("LinkRenderer.render(AutoLinkNode): $node")
         return super.render(node)
     }
 
     override fun render(node: ExpLinkNode?, text: String?): Rendering? {
-        // println("LinkRenderer.render(ExpLinkNode): $node text: $text")
         return super.render(node, text)
     }
 
