@@ -81,10 +81,10 @@ You can now run the various Run/Debug Configurations such as
 * [http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml](http://www.jetbrains.com/kotlin/eap-plugin-repository/updatePlugins.xml)
 * open the [kotlin libraries project](https://github.com/JetBrains/kotlin/libraries)
 
-When building the current maven plugin downloads the latest distro of Kotlin. If you want to use your own local build (done via **ant dist**) then try
+Then build via
 
     cd libraries
-    mvn -PlocalKotlin
+    mvn install
 
 
 ## Contributing
@@ -92,11 +92,20 @@ When building the current maven plugin downloads the latest distro of Kotlin. If
 We love contributions! There's [lots to do](http://youtrack.jetbrains.com/issues/KT) so why not chat
 with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
 
+If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues/KT?q=-Resolved+%23Kontributor) which should find all issues that are not resolved assigned to Kontributor.
+Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
+
 The best way to contribute is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
 [pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
 
 If you create your own fork, it might help to [enable rebase by default when you pull](http://d.strelau.net/post/47338904/git-pull-rebase-by-default)
 which will avoid your local repo having too many merge commits which will help keep your pull request simple and easy to apply.
+
+## Commit comments
+
+If you include in your comment this text (where KT-1234 is the Issue ID in the [Issue Tracker](http://youtrack.jetbrains.com/issues/KT), the issue will get automatically marked as fixed.
+
+    #KT-1234 Fixed
 
 
 ## Kommitter links
