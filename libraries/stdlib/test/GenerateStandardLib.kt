@@ -41,12 +41,12 @@ fun generateFile(outFile: File, header: String, inputFile: File, f: (String)-> S
  * at runtime.
  */
 fun main(args: Array<String>) {
-    var srcDir = File("src")
+    var srcDir = File("src/kotlin")
     if (!srcDir.exists()) {
-        srcDir = File("stdlib/src")
-        require(srcDir.exists(), "Could not find the src directory!")
+        srcDir = File("stdlib/src/kotlin")
+        require(srcDir.exists(), "Could not find the src/kotlin directory!")
     }
-    val outDir = File(srcDir, "generated")
+    val outDir = File(srcDir, "../generated")
 
     // JavaIterables - Generic iterable stuff
     generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {

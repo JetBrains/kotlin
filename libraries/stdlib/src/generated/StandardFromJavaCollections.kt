@@ -1,9 +1,13 @@
-// NOTE this file is auto-generated from src/JavaCollections.kt
+// NOTE this file is auto-generated from src/kotlin/JavaCollections.kt
 package kotlin
 
 import java.util.*
 
-/** Returns a new List containing the results of applying the given function to each element in this collection */
+/**
+ * Returns a new List containing the results of applying the given function to each element in this collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt map
+ */
 inline fun <T, R> Iterable<T>.map(transform : (T) -> R) : java.util.List<R> {
     return mapTo(java.util.ArrayList<R>(), transform)
 }

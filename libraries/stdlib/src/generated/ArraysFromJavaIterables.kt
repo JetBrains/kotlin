@@ -1,11 +1,15 @@
-// NOTE this file is auto-generated from src/JavaIterables.kt
+// NOTE this file is auto-generated from src/kotlin/JavaIterables.kt
 package kotlin
 
 import kotlin.util.*
 
 import java.util.*
 
-/** Returns true if any elements in the collection match the given predicate */
+/**
+ * Returns true if any elements in the collection match the given predicate
+ *
+ * @includeFunction ../../test/CollectionTest.kt any
+ */
 inline fun <T> Array<T>.any(predicate: (T)-> Boolean) : Boolean {
   for (elem in this) {
     if (predicate(elem)) {
@@ -15,7 +19,11 @@ inline fun <T> Array<T>.any(predicate: (T)-> Boolean) : Boolean {
   return false
 }
 
-/** Returns true if all elements in the collection match the given predicate */
+/**
+ * Returns true if all elements in the collection match the given predicate
+ *
+ * @includeFunction ../../test/CollectionTest.kt all
+ */
 inline fun <T> Array<T>.all(predicate: (T)-> Boolean) : Boolean {
   for (elem in this) {
     if (!predicate(elem)) {
@@ -25,7 +33,11 @@ inline fun <T> Array<T>.all(predicate: (T)-> Boolean) : Boolean {
   return true
 }
 
-/** Returns the number of items which match the given predicate  */
+/**
+ * Returns the number of items which match the given predicate
+ *
+ * @includeFunction ../../test/CollectionTest.kt count
+ */
 inline fun <T> Array<T>.count(predicate: (T)-> Boolean) : Int {
   var answer = 0
   for (elem in this) {
@@ -35,7 +47,11 @@ inline fun <T> Array<T>.count(predicate: (T)-> Boolean) : Int {
   return answer
 }
 
-/** Returns the first item in the collection which matches the given predicate or null if none matched */
+/**
+ * Returns the first item in the collection which matches the given predicate or null if none matched
+ *
+ * @includeFunction ../../test/CollectionTest.kt find
+ */
 inline fun <T> Array<T>.find(predicate: (T)-> Boolean) : T? {
   for (elem in this) {
     if (predicate(elem))
@@ -44,7 +60,11 @@ inline fun <T> Array<T>.find(predicate: (T)-> Boolean) : T? {
   return null
 }
 
-/** Filters all elements in this collection which match the given predicate into the given result collection */
+/**
+ * Filters all elements in this collection which match the given predicate into the given result collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt filterIntoLinkedList
+ */
 inline fun <T, C: Collection<in T>> Array<T>.filterTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (predicate(elem))
@@ -53,18 +73,27 @@ inline fun <T, C: Collection<in T>> Array<T>.filterTo(result: C, predicate: (T)-
   return result
 }
 
-/** Filters all the null elements in this collection into the given result collection */
+/**
+ * Filters all the null elements in this collection into the given result collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt filterNotNullIntoLinkedList
+ */
 inline fun <T, C: Collection<in T>> Array<T?>?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (elem in this) {
-            if (elem != null)
+            if (elem != null) {
                 result.add(elem)
+            }
         }
     }
     return result
 }
 
-/** Returns a new collection containing all elements in this collection which do not match the given predicate */
+/**
+ * Returns a new collection containing all elements in this collection which do not match the given predicate
+ *
+ * @includeFunction ../../test/CollectionTest.kt filterNotIntoLinkedList
+ */
 inline fun <T, C: Collection<in T>> Array<T>.filterNotTo(result: C, predicate: (T)-> Boolean) : C {
   for (elem in this) {
     if (!predicate(elem))
@@ -74,9 +103,10 @@ inline fun <T, C: Collection<in T>> Array<T>.filterNotTo(result: C, predicate: (
 }
 
 /**
-  * Returns the result of transforming each item in the collection to a one or more values which
-  * are concatenated together into a single collection
-  */
+ * Returns the result of transforming each item in the collection to a one or more values which
+ * are concatenated together into a single collection
+ */
+// TODO  * @includeFunction ../../test/CollectionTest.kt flatMapTo
 inline fun <T, R> Array<T>.flatMapTo(result: Collection<R>, transform: (T)-> Collection<R>) : Collection<R> {
   for (elem in this) {
     val coll = transform(elem)
@@ -89,7 +119,11 @@ inline fun <T, R> Array<T>.flatMapTo(result: Collection<R>, transform: (T)-> Col
   return result
 }
 
-/** Performs the given operation on each element inside the collection */
+/**
+ * Performs the given operation on each element inside the collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt forEach
+ */
 inline fun <T> Array<T>.forEach(operation: (element: T) -> Unit) {
   for (elem in this)
     operation(elem)
@@ -98,8 +132,7 @@ inline fun <T> Array<T>.forEach(operation: (element: T) -> Unit) {
 /**
  * Folds all the values from from left to right with the initial value to perform the operation on sequential pairs of values
  *
- * For example to sum together all numeric values in a collection of numbers it would be
- * {code}val total = numbers.fold(0){(a, b) -> a + b}{code}
+ * @includeFunction ../../test/CollectionTest.kt fold
  */
 inline fun <T> Array<T>.fold(initial: T, operation: (it: T, it2: T) -> T): T {
   var answer = initial
@@ -111,6 +144,8 @@ inline fun <T> Array<T>.fold(initial: T, operation: (it: T, it2: T) -> T): T {
 
 /**
  * Folds all the values from right to left with the initial value to perform the operation on sequential pairs of values
+ *
+ * @includeFunction ../../test/CollectionTest.kt foldRight
  */
 inline fun <T> Array<T>.foldRight(initial: T, operation: (it: T, it2: T) -> T): T {
   val reversed = this.reverse()
@@ -120,6 +155,8 @@ inline fun <T> Array<T>.foldRight(initial: T, operation: (it: T, it2: T) -> T): 
 /**
  * Iterates through the collection performing the transformation on each element and using the result
  * as the key in a map to group elements by the result
+ *
+ * @includeFunction ../../test/CollectionTest.kt groupBy
  */
 inline fun <T,K> Array<T>.groupBy(result: Map<K,List<T>> = HashMap<K,List<T>>(), toKey: (T)-> K) : Map<K,List<T>> {
   for (elem in this) {
@@ -131,7 +168,11 @@ inline fun <T,K> Array<T>.groupBy(result: Map<K,List<T>> = HashMap<K,List<T>>(),
 }
 
 
-/** Creates a String from all the elements in the collection, using the seperator between them and using the given prefix and postfix if supplied */
+/**
+ * Creates a String from all the elements in the collection, using the seperator between them and using the given prefix and postfix if supplied
+ *
+ * @includeFunction ../../test/CollectionTest.kt join
+ */
 inline fun <T> Array<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
   val buffer = StringBuilder(prefix)
   var first = true
@@ -146,7 +187,11 @@ inline fun <T> Array<T>.join(separator: String, prefix: String = "", postfix: St
   return buffer.toString().sure()
 }
 
-/** Returns a reversed List of this collection */
+/**
+ * Returns a reversed List of this collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt reverse
+ */
 inline fun <T> Array<T>.reverse() : List<T> {
   val answer = LinkedList<T>()
   for (elem in this) {
@@ -155,14 +200,20 @@ inline fun <T> Array<T>.reverse() : List<T> {
   return answer
 }
 
-/** Copies the collection into the given collection */
+/**
+ * Copies the collection into the given collection
+ *
+ * @includeFunction ../../test/CollectionTest.kt reverse
+ */
 inline fun <T, C: Collection<T>> Array<T>.to(result: C) : C {
   for (elem in this)
     result.add(elem)
   return result
 }
 
-/** Converts the collection into a LinkedList */
+/**
+ * Converts the collection into a LinkedList
+ */
 inline fun <T> Array<T>.toLinkedList() : LinkedList<T> = this.to(LinkedList<T>())
 
 /**  Converts the collection into a List */
