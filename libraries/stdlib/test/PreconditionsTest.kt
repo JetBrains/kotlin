@@ -8,6 +8,11 @@ class PreconditionsTest() : TestCase() {
 
     fun testPassingRequire() {
         require(true)
+
+        var called = false
+        require(true) { called = true; "some message" }
+
+        assertFalse(called)
     }
 
     fun testFailingRequire() {
@@ -36,8 +41,24 @@ class PreconditionsTest() : TestCase() {
         }
     }
 
+    fun testFailingRequireWithLazyMessage() {
+        val error = fails {
+            require(false) {"Hello"}
+        }
+        if(error is IllegalArgumentException) {
+            assertEquals("Hello", error.getMessage())
+        } else {
+            fail("Invalid exception type: "+error)
+        }
+    }
+
     fun testPassingCheck() {
         check(true)
+
+        var called = false
+        check(true) { called = true; "some message" }
+
+        assertFalse(called)
     }
 
     fun testFailingCheck() {
@@ -66,10 +87,25 @@ class PreconditionsTest() : TestCase() {
         }
     }
 
+    fun testFailingCheckWithLazyMessage() {
+        val error = fails {
+            check(false) {"Hello"}
+        }
+        if(error is IllegalStateException) {
+            assertEquals("Hello", error.getMessage())
+        } else {
+            fail("Invalid exception type: "+error)
+        }
+    }
+
 
 // TODO: uncomment when KT-1540 is resolved.
 //    fun testPassingAssert() {
 //        assert(true)
+//        var called = false
+//        assert(true) { called = true; "some message" }
+//
+//        assertFalse(called)
 //    }
 //
 //
@@ -91,6 +127,17 @@ class PreconditionsTest() : TestCase() {
 //    fun testFailingAssertWithMessage() {
 //        val error = fails {
 //            assert(false, "Hello")
+//        }
+//        if(error is IllegalStateException) {
+//            assertEquals("Hello", error.getMessage())
+//        } else {
+//            fail("Invalid exception type: "+error)
+//        }
+//    }
+//
+//    fun testFailingAssertWithLazyMessage() {
+//        val error = fails {
+//            assert(false) {"Hello"}
 //        }
 //        if(error is IllegalStateException) {
 //            assertEquals("Hello", error.getMessage())
