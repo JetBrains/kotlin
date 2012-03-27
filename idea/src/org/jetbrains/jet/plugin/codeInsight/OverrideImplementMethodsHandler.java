@@ -94,7 +94,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             }
             else if (descriptor instanceof PropertyDescriptor) {
                 JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor)descriptor);
-                afterAnchor = body.addBefore(target, afterAnchor);
+                afterAnchor = body.addAfter(target, afterAnchor);
             }
         }
     }
