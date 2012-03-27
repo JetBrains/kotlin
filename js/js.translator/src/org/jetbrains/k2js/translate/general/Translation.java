@@ -34,12 +34,15 @@ import org.jetbrains.k2js.translate.expression.PatternTranslator;
 import org.jetbrains.k2js.translate.expression.WhenTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.initializer.NamespaceInitializerTranslator;
+import org.jetbrains.k2js.translate.utils.dangerous.DangerousData;
+import org.jetbrains.k2js.translate.utils.dangerous.DangerousTranslator;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
+import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect;
 
 /**
  * @author Pavel Talanov
@@ -77,6 +80,20 @@ public final class Translation {
 
     @NotNull
     public static JsNode translateExpression(@NotNull JetExpression expression, @NotNull TranslationContext context) {
+        JsName aliasForExpression = context.aliasingContext().getAliasForExpression(expression);
+        if (aliasForExpression != null) {
+            return aliasForExpression.makeRef();
+        }
+        DangerousData data = collect(expression, context);
+        if (data.shouldBeTranslated()) {
+            return DangerousTranslator.translate(data, context);
+        }
+        return doTranslateExpression(expression, context);
+    }
+
+    //NOTE: use with care
+    @NotNull
+    public static JsNode doTranslateExpression(JetExpression expression, TranslationContext context) {
         return expression.accept(new ExpressionVisitor(), context);
     }
 
