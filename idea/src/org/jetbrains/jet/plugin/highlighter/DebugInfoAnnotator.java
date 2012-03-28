@@ -51,19 +51,13 @@ public class DebugInfoAnnotator implements Annotator {
 
     public static final TokenSet EXCLUDED = TokenSet.create(COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS, EXCLEXCL);
 
-    private static volatile boolean debugInfoEnabled = true;
-
-    public static void setDebugInfoEnabled(boolean value) {
-        debugInfoEnabled = value;
-    }
-
     public static boolean isDebugInfoEnabled() {
-        return debugInfoEnabled;
+        return ApplicationManager.getApplication().isInternal();
     }
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        if (!debugInfoEnabled || !JetPsiChecker.isErrorReportingEnabled()) {
+        if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled()) {
             return;
         }
         
