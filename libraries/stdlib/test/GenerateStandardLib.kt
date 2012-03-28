@@ -66,19 +66,4 @@ fun main(args: Array<String>) {
     generateFile(File(outDir, "JavaUtilIteratorsFromJavaIterables.kt"), "package kotlin", File(srcDir, "JavaIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "java.util.Iterator<T")
     }
-
-
-    // JavaCollections - methods returning a collection of the same input size (if its a collection)
-
-    generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-        it.replaceAll("java.util.Collection<T", "Array<T")
-    }
-
-    generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-        it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
-    }
-
-    generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
-        it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
-    }
 }
