@@ -517,9 +517,8 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope,
-            @NotNull PropertyDescriptor propertyDescriptor, List<TypeParameterDescriptor> typeParameters,
-            ReceiverDescriptor receiver, BindingTrace trace) {
+    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull ReceiverDescriptor receiver, BindingTrace trace) {
         WritableScopeImpl result = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
@@ -578,7 +577,7 @@ public class DescriptorResolver {
                 ? ReceiverDescriptor.NO_RECEIVER
                 : new ExtensionReceiver(propertyDescriptor, receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor, trace);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, ReceiverDescriptor.NO_RECEIVER, trace);
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
 
