@@ -21,7 +21,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
 /**
- * @author yole
+ * @author Andrey Breslav
  */
 public class ToggleErrorReportingAction extends AnAction {
     @Override
