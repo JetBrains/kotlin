@@ -28,6 +28,7 @@ import com.intellij.psi.impl.cache.CacheManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.search.UsageSearchContext;
+import com.intellij.psi.util.PsiTreeUtil;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -169,15 +171,28 @@ public class JetSourceNavigationHelper {
         }
         else if (declarationContainer instanceof JetClassBody) {
             JetClassOrObject parent = (JetClassOrObject)declarationContainer.getParent();
-            if (parent instanceof JetObjectDeclaration) {
-                return null; // TODO
+            boolean isClassObject = parent instanceof JetObjectDeclaration;
+            JetClass jetClass =
+                isClassObject ? PsiTreeUtil.getParentOfType(parent, JetClass.class) : (JetClass)parent;
+            if (jetClass == null) {
+                return null;
             }
-            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor((JetClass)parent);
+            Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(jetClass);
             if (bindingContextAndClassDescriptor != null) {
                 BindingContext bindingContext = bindingContextAndClassDescriptor._1;
                 ClassDescriptor classDescriptor = bindingContextAndClassDescriptor._2;
-                for (Descr candidate : matcher.getCandidatesFromScope(classDescriptor.getDefaultType().getMemberScope(), entityName)) {
-                    if (candidate.getContainingDeclaration() == classDescriptor) {
+                JetScope memberScope = classDescriptor.getDefaultType().getMemberScope();
+                if (isClassObject) {
+                    JetType classObjectType = classDescriptor.getClassObjectType();
+                    if (classObjectType == null) {
+                        return null;
+                    }
+                    memberScope = classObjectType.getMemberScope();
+                }
+
+                ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
+                for (Descr candidate : matcher.getCandidatesFromScope(memberScope, entityName)) {
+                    if (candidate.getContainingDeclaration() == expectedContainer) {
                         JetDeclaration property = (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
                         if (property != null) {
                             return property;
