@@ -173,8 +173,6 @@ public class OverloadResolver {
             checkOverloadsWithSameName(e.getKey(), e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
 
-        // properties are checked elsewhere
-
         // Kotlin has no secondary constructors at this time
 
     }
