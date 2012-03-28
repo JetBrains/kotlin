@@ -262,7 +262,7 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     private static int execInProcess(File kotlinHome, VirtualFile outputDir, File scriptFile, PrintStream out, CompileContext context) {
-        URLClassLoader loader = getOrCreateClassloader(kotlinHome, context);
+        URLClassLoader loader = getOrCreateClassLoader(kotlinHome, context);
         try {
             String compilerClassName = "org.jetbrains.jet.cli.KotlinCompiler";
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
@@ -288,13 +288,13 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static SoftReference<URLClassLoader> ourClassloaderRef = new SoftReference<URLClassLoader>(null);
+    private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
 
-    private static URLClassLoader getOrCreateClassloader(File kotlinHome, CompileContext context) {
-        URLClassLoader answer = ourClassloaderRef.get();
+    private static URLClassLoader getOrCreateClassLoader(File kotlinHome, CompileContext context) {
+        URLClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
             answer = createClassloader(kotlinHome, context);
-            ourClassloaderRef = new SoftReference<URLClassLoader>(answer);
+            ourClassLoaderRef = new SoftReference<URLClassLoader>(answer);
         }
         return answer;
     }

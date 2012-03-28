@@ -69,6 +69,13 @@ public class CompileEnvironment {
         this(MessageRenderer.PLAIN, false);
     }
 
+    /**
+     * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
+     * @see Disposer
+     *
+     * @param messageRenderer
+     * @param verbose
+     */
     public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose) {
         this.verbose = verbose;
         myRootDisposable = new Disposable() {
@@ -170,38 +177,46 @@ public class CompileEnvironment {
 
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
         CompileEnvironment moduleCompilationEnvironment = copyEnvironment(false);
-        moduleCompilationEnvironment.myStdlib = myStdlib;
+        try {
+            moduleCompilationEnvironment.myStdlib = myStdlib;
 
-        List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
+            List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
 
-        if (modules == null) {
-            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
-        }
-
-        if (modules.isEmpty()) {
-            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
-        }
-
-        final String directory = new File(moduleScriptFile).getParent();
-        for (Module moduleBuilder : modules) {
-            CompileEnvironment compileEnvironment = copyEnvironment(verbose);
-            ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
-            if (moduleFactory == null) {
-                return false;
+            if (modules == null) {
+                throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
             }
-            if (outputDir != null) {
-                writeToOutputDirectory(moduleFactory, outputDir);
+
+            if (modules.isEmpty()) {
+                throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
             }
-            else {
-                String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+
+            final String directory = new File(moduleScriptFile).getParent();
+            for (Module moduleBuilder : modules) {
+                CompileEnvironment compileEnvironment = copyEnvironment(verbose);
                 try {
-                    writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
-                } catch (FileNotFoundException e) {
-                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
+                    ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
+                    if (moduleFactory == null) {
+                        return false;
+                    }
+                    if (outputDir != null) {
+                        writeToOutputDirectory(moduleFactory, outputDir);
+                    }
+                    else {
+                        String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+                        try {
+                            writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                        } catch (FileNotFoundException e) {
+                            throw new CompileEnvironmentException("Invalid jar path " + path, e);
+                        }
+                    }
+                } finally {
+                    compileEnvironment.dispose();
                 }
             }
+            return true;
+        } finally {
+            moduleCompilationEnvironment.dispose();
         }
-        return true;
     }
 
     private CompileEnvironment copyEnvironment(boolean verbose) {
