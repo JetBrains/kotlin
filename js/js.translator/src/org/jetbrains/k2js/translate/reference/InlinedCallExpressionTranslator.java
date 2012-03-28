@@ -32,6 +32,7 @@ import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
@@ -115,12 +116,21 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         if (classDescriptorForMethod == null) {
             return contextForInlining;
         }
-        //TODO
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
-        TemporaryVariable aliasForThis = contextForInlining.declareTemporary(receiver);
+        TemporaryVariable aliasForThis = contextWithAliasForThisExpression.declareTemporary(getReceiver());
         contextWithAliasForThisExpression = contextForInlining.innerContextWithThisAliased(classDescriptorForMethod, aliasForThis.name());
         contextWithAliasForThisExpression.addStatementToCurrentBlock(aliasForThis.assignmentExpression().makeStmt());
         return contextWithAliasForThisExpression;
+    }
+
+    @NotNull
+    private JsExpression getReceiver() {
+        if (receiver != null) {
+            return receiver;
+        }
+        JsExpression result = TranslationUtils.resolveThisObjectForResolvedCall(resolvedCall, context());
+        assert result != null;
+        return result;
     }
 
     @NotNull

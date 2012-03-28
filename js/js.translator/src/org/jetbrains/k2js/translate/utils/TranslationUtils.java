@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
@@ -32,6 +34,7 @@ import java.util.List;
 import static com.google.dart.compiler.util.AstUtil.newAssignment;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getDeclarationDescriptorForReceiver;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
@@ -206,5 +209,16 @@ public final class TranslationUtils {
                                                         @NotNull JsExpression initExpression) {
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
         return assignmentToBackingField(context, propertyDescriptor, initExpression);
+    }
+
+    @Nullable
+    public static JsExpression resolveThisObjectForResolvedCall(@NotNull ResolvedCall<?> call,
+                                                                @NotNull TranslationContext context) {
+        ReceiverDescriptor thisObject = call.getThisObject();
+        if (!thisObject.exists()) {
+            return null;
+        }
+        DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
+        return TranslationUtils.getThisObject(context, expectedThisDescriptor);
     }
 }
