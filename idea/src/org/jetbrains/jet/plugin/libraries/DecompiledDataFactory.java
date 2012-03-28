@@ -204,15 +204,20 @@ class DecompiledDataFactory {
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
             for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
-                if (member.getContainingDeclaration() == descriptor) {
-                    if (firstPassed) {
-                        myBuilder.append("\n");
-                    } else {
-                        firstPassed = true;
-                    }
-                    myBuilder.append(subindent);
-                    appendDescriptor(member, subindent);
+                if (member.getContainingDeclaration() != descriptor) {
+                    continue;
                 }
+                if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                    continue;
+                }
+
+                if (firstPassed) {
+                    myBuilder.append("\n");
+                } else {
+                    firstPassed = true;
+                }
+                myBuilder.append(subindent);
+                appendDescriptor(member, subindent);
             }
             myBuilder.append(indent).append("}");
             endOffset = myBuilder.length();
