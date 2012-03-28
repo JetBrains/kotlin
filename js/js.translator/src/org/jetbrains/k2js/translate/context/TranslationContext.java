@@ -131,6 +131,10 @@ public final class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        JsName alias = aliasingContext.getAliasForDescriptor(descriptor);
+        if (alias != null) {
+            return alias;
+        }
         return staticContext.getNameForDescriptor(descriptor);
     }
 

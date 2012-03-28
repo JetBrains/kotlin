@@ -288,4 +288,17 @@ public final class DescriptorUtils {
         }
         return result;
     }
+
+    @Nullable
+    public static ClassDescriptor getClassDescriptorForMethod(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+        if (!functionDescriptor.getExpectedThisObject().exists()) {
+            return null;
+        }
+        ClassifierDescriptor descriptor =
+            functionDescriptor.getExpectedThisObject().getType().getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor) {
+            return (ClassDescriptor)descriptor.getOriginal();
+        }
+        return null;
+    }
 }

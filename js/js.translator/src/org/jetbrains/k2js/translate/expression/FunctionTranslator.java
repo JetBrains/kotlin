@@ -35,6 +35,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.closure.ClosureContext;
 import org.jetbrains.k2js.translate.utils.closure.ClosureUtils;
@@ -45,6 +46,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
 import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
@@ -64,7 +66,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private final TranslationContext functionBodyContext;
     @Nullable
-    private TemporaryVariable aliasForContaingClassThis = null;
+    private TemporaryVariable aliasForContainingClassThis = null;
     @NotNull
     private final JetDeclarationWithBody functionDeclaration;
     @Nullable
@@ -106,8 +108,8 @@ public final class FunctionTranslator extends AbstractTranslator {
             return getContextWithFunctionBodyBlock();
         }
         JsExpression thisQualifier = TranslationUtils.getThisObject(context(), containingClass);
-        aliasForContaingClassThis = context().declareTemporary(thisQualifier);
-        return getContextWithFunctionBodyBlock().innerContextWithThisAliased(containingClass, aliasForContaingClassThis.name());
+        aliasForContainingClassThis = context().declareTemporary(thisQualifier);
+        return getContextWithFunctionBodyBlock().innerContextWithThisAliased(containingClass, aliasForContainingClassThis.name());
     }
 
     @NotNull
@@ -152,8 +154,8 @@ public final class FunctionTranslator extends AbstractTranslator {
         if (!shouldAliasThisObject()) {
             return functionObject;
         }
-        assert aliasForContaingClassThis != null;
-        return AstUtil.newSequence(aliasForContaingClassThis.assignmentExpression(), functionObject);
+        assert aliasForContainingClassThis != null;
+        return AstUtil.newSequence(aliasForContainingClassThis.assignmentExpression(), functionObject);
     }
 
     private boolean shouldAliasThisObject() {
@@ -197,37 +199,9 @@ public final class FunctionTranslator extends AbstractTranslator {
             assert descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }
-        JsNode realBody = Translation.translateExpression(jetBodyExpression, functionBodyContext);
-        functionBody.getStatements().add(mayBeWrapWithReturn(realBody));
+        functionBody.getStatements().add(translateFunctionBody(descriptor, functionDeclaration, functionBodyContext));
     }
 
-    @NotNull
-    private JsBlock mayBeWrapWithReturn(@NotNull JsNode body) {
-        if (!mustAddReturnToGeneratedFunctionBody()) {
-            return convertToBlock(body);
-        }
-        return convertToBlock(lastExpressionReturned(body));
-    }
-
-    private boolean mustAddReturnToGeneratedFunctionBody() {
-        JetType functionReturnType = descriptor.getReturnType();
-        assert functionReturnType != null : "Function return typed type must be resolved.";
-        return (!functionDeclaration.hasBlockBody()) && (!JetStandardClasses.isUnit(functionReturnType));
-    }
-
-    @NotNull
-    private static JsNode lastExpressionReturned(@NotNull JsNode body) {
-        return mutateLastExpression(body, new Mutator() {
-            @Override
-            @NotNull
-            public JsNode mutate(@NotNull JsNode node) {
-                if (!(node instanceof JsExpression)) {
-                    return node;
-                }
-                return new JsReturn((JsExpression)node);
-            }
-        });
-    }
 
     @NotNull
     private List<JsParameter> translateParameters() {

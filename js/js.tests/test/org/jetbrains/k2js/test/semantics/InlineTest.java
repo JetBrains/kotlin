@@ -31,11 +31,34 @@ public final class InlineTest extends SingleFileTranslationTest {
     }
 
     public void testFunctionWithoutParameters() throws Exception {
-        String filename = "functionWithoutParameters.kt";
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("functionWithoutParameters.kt", "myInlineFun");
+    }
+
+    public void testFunctionWithBlockBody() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("functionWithBlockBody.kt", "myInlineFun");
+    }
+
+    public void testFunctionWithOneParameter() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("functionWithOneParameter.kt", "myInlineFun");
+    }
+
+    public void testFunctionWithTwoParameters() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("functionWithTwoParameters.kt", "myInlineFun");
+    }
+
+    public void testMethod() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("method.kt", "myInlineMethod");
+    }
+
+    public void testMethodWithReferenceToThis() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("methodWithReferenceToThis.kt", "myInlineMethod");
+    }
+
+    private void checkFooBoxIsTrueAndFunctionNameIsNotReferenced(@NotNull String filename, String funName) throws Exception {
         checkFooBoxIsTrue(filename);
         String generatedJSFilePath = getOutputFilePath(filename);
         String outputFileText = FileUtil.loadFile(new File(generatedJSFilePath));
-        assertTrue(countOccurrences(outputFileText, "myInlineFun") == 1);
+        assertTrue(countOccurrences(outputFileText, funName) == 1);
     }
 
     private static int countOccurrences(@NotNull String str, @NotNull String subStr) {
