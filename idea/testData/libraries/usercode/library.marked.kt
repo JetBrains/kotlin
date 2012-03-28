@@ -9,9 +9,9 @@ class SimpleClass {
 class SimpleTraitImpl : SimpleTrait {
 }
 
-class WithInnerAndObject {
+class <15>WithInnerAndObject {
     class object {
-        fun foo() {
+        fun <16>foo() {
         }
     }
 
