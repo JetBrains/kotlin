@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl implements SimpleFunctionDescriptor {
 
+    private boolean isInline = false;
+
     public SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
@@ -48,9 +50,18 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         super(containingDeclaration, original, annotations, name, kind);
     }
 
-    @Override
-    public FunctionDescriptorImpl initialize(@Nullable JetType receiverType, @NotNull ReceiverDescriptor expectedThisObject, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, @Nullable JetType unsubstitutedReturnType, @Nullable Modality modality, @NotNull Visibility visibility) {
-        return super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
+    public SimpleFunctionDescriptorImpl initialize(@Nullable JetType receiverType,
+                                             @NotNull ReceiverDescriptor expectedThisObject,
+                                             @NotNull List<TypeParameterDescriptor> typeParameters,
+                                             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+                                             @Nullable JetType unsubstitutedReturnType,
+                                             @Nullable Modality modality,
+                                             @NotNull Visibility visibility,
+                                             boolean isInline) {
+        SimpleFunctionDescriptorImpl result = (SimpleFunctionDescriptorImpl)super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters,
+                                                             unsubstitutedReturnType, modality, visibility);
+        result.isInline = isInline;
+        return result;
     }
 
     @NotNull
@@ -82,6 +93,14 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @NotNull
     @Override
     public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
-        return (SimpleFunctionDescriptor) doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils.convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
+        SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils
+            .convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
+        copy.isInline = isInline;
+        return copy;
+    }
+
+    @Override
+    public boolean isInline() {
+        return isInline;
     }
 }

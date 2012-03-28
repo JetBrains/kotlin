@@ -242,7 +242,8 @@ public abstract class CodegenContext {
                                   fd.getValueParameters(),
                                   fd.getReturnType(),
                                   fd.getModality(),
-                                  fd.getVisibility());
+                                  fd.getVisibility(),
+                                  /*isInline = */ false);
             accessor = myAccessor;
         }
         else if(descriptor instanceof PropertyDescriptor) {
