@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -62,16 +64,25 @@ public class IntrinsicMethods {
     public static final ArrayGet ARRAY_GET = new ArrayGet();
     public static final StringPlus STRING_PLUS = new StringPlus();
 
-    private final Project myProject;
-    private final JetStandardLibrary myStdLib;
+    private Project myProject;
+    private JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
-    public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
-        myProject = project;
-        myStdLib = stdlib;
 
+    @Inject
+    public void setMyProject(Project myProject) {
+        this.myProject = myProject;
+    }
+
+    @Inject
+    public void setMyStdLib(JetStandardLibrary myStdLib) {
+        this.myStdLib = myStdLib;
+    }
+
+    @PostConstruct
+    public void init() {
         namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
 

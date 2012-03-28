@@ -17,7 +17,9 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -39,12 +41,12 @@ import java.util.List;
  */
 public class ArrayIterator implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         receiver.put(JetTypeMapper.TYPE_OBJECT, v);
         JetCallExpression call = (JetCallExpression) element;
         FunctionDescriptor funDescriptor = (FunctionDescriptor) codegen.getBindingContext().get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) call.getCalleeExpression());
         ClassDescriptor containingDeclaration = (ClassDescriptor) funDescriptor.getContainingDeclaration().getOriginal();
-        JetStandardLibrary standardLibrary = codegen.getState().getStandardLibrary();
+        JetStandardLibrary standardLibrary = codegen.getState().getInjector().getJetStandardLibrary();
         if(containingDeclaration.equals(standardLibrary.getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);

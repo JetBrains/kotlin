@@ -17,8 +17,8 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -139,10 +139,12 @@ public class AllInjectorsGenerator {
 
     private static void generateInjectorForJvmCodegen() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
-        generator.addParameter(JetStandardLibrary.class);
+        generator.addPublicParameter(JetStandardLibrary.class);
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
+        generator.addParameter(Project.class);
         generator.addPublicField(JetTypeMapper.class);
+        generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 

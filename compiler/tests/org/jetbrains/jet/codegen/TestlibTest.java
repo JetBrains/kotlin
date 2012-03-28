@@ -100,7 +100,8 @@ public class TestlibTest extends CodegenTestCase {
             InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
                     session.getMyBindingContext().getStandardLibrary(),
                     session.getMyBindingContext().getBindingContext(),
-                    session.getSourceFileNamespaces());
+                    session.getSourceFileNamespaces(),
+                    getProject());
             JetTypeMapper typeMapper = injector.getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {

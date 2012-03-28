@@ -391,7 +391,7 @@ public abstract class CodegenContext {
             
             final Type type = enclosingClassType(typeMapper);
             outerExpression = type != null
-                        ? StackValue.field(type, closure.state.getTypeMapper().mapType(contextType.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "this$0", false)
+                        ? StackValue.field(type, closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "this$0", false)
                         : null;
         }
 

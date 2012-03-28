@@ -156,7 +156,7 @@ public class JetPositionManager implements PositionManager {
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
                 .getBindingContext();
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, Collections.singletonList(file));
+        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, Collections.singletonList(file), file.getProject());
         final JetTypeMapper typeMapper = injector.getJetTypeMapper();
         myTypeMappers.put(file, typeMapper);
         return typeMapper;

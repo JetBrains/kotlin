@@ -58,7 +58,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     public ImplementationBodyCodegen(JetClassOrObject aClass, CodegenContext context, ClassBuilder v, GenerationState state) {
         super(aClass, context, v, state);
-        typeMapper = state.getTypeMapper();
+        typeMapper = state.getInjector().getJetTypeMapper();
         bindingContext = state.getBindingContext();
     }
 
@@ -465,7 +465,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (DeclarationDescriptor descriptor : closure.closure.keySet()) {
                 if(descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
                     final Type sharedVarType = typeMapper.getSharedVarType(descriptor);
-                    final Type type = sharedVarType != null ? sharedVarType : state.getTypeMapper().mapType(((VariableDescriptor) descriptor).getType());
+                    final Type type = sharedVarType != null ? sharedVarType : state.getInjector().getJetTypeMapper().mapType(((VariableDescriptor) descriptor).getType());
                     consArgTypes.add(insert++, new JvmMethodParameterSignature(type, "", JvmMethodParameterKind.SHARED_VAR));
                 }
                 else if(descriptor instanceof FunctionDescriptor) {
@@ -601,7 +601,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 JetClass superClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
-                                                   typeMapper.mapType(superClassDescriptor.getDefaultType()).getInternalName()), state.getTypeMapper());
+                                                   typeMapper.mapType(superClassDescriptor.getDefaultType()).getInternalName()), state.getInjector().getJetTypeMapper());
                 generateDelegates(superClass, delegateContext, field);
             }
         }

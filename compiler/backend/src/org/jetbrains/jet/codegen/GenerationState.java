@@ -51,14 +51,12 @@ public class GenerationState {
     private final ClassFileFactory factory;
     private final Project project;
 
-    private JetTypeMapper typeMapper;
     private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
     private final Progress progress;
 
 
     // initialized after analyze
-    private JetStandardLibrary standardLibrary;
-    private IntrinsicMethods intrinsics;
+    private InjectorForJvmCodegen injector;
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
@@ -84,20 +82,12 @@ public class GenerationState {
         return project;
     }
 
-    public JetTypeMapper getTypeMapper() {
-        return typeMapper;
+    public InjectorForJvmCodegen getInjector() {
+        return injector;
     }
 
     public BindingContext getBindingContext() {
         return bindingContexts.peek();
-    }
-
-    public JetStandardLibrary getStandardLibrary() {
-        return standardLibrary;
-    }
-
-    public IntrinsicMethods getIntrinsics() {
-        return intrinsics;
     }
 
     public ClassCodegen forClass() {
@@ -105,15 +95,15 @@ public class GenerationState {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(typeMapper.mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
+        return factory.newVisitor(injector.getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(typeMapper.mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
+        return factory.newVisitor(injector.getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
     }
 
     public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
-        String className = typeMapper.getClosureAnnotator().classNameForAnonymousClass(expression);
+        String className = injector.getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
         return Pair.create(className, factory.forAnonymousSubclass(className));
     }
 
@@ -146,11 +136,7 @@ public class GenerationState {
     }
 
     public void compileCorrectFiles(AnalyzeExhaust analyzeExhaust, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
-        this.standardLibrary = analyzeExhaust.getStandardLibrary();
-        this.intrinsics = new IntrinsicMethods(project, standardLibrary);
-
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), files);
-        typeMapper = injector.getJetTypeMapper();
+        injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), files, project);
         bindingContexts.push(analyzeExhaust.getBindingContext());
         try {
             for (JetFile file : files) {
@@ -175,7 +161,6 @@ public class GenerationState {
         }
         finally {
             bindingContexts.pop();
-            typeMapper = null;
         }
     }
 
@@ -190,12 +175,13 @@ public class GenerationState {
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, typeMapper);
+        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper());
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
         ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
-        CallableMethod callableMethod = closure.state.getTypeMapper().mapToCallableMethod(constructorDescriptor, OwnerKind.IMPLEMENTATION, typeMapper.hasThis0(constructorDescriptor.getContainingDeclaration()));
+        CallableMethod callableMethod = injector.getJetTypeMapper().mapToCallableMethod(
+                constructorDescriptor, OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper().hasThis0(constructorDescriptor.getContainingDeclaration()));
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
     }
 

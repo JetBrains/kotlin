@@ -113,8 +113,8 @@ public abstract class StackValue {
         return new ArrayElement(type, unbox);
     }
 
-    public static StackValue collectionElement(Type type, ResolvedCall<FunctionDescriptor> getter, ResolvedCall<FunctionDescriptor> setter, ExpressionCodegen codegen) {
-        return new CollectionElement(type, getter, setter, codegen);
+    public static StackValue collectionElement(Type type, ResolvedCall<FunctionDescriptor> getter, ResolvedCall<FunctionDescriptor> setter, ExpressionCodegen codegen, GenerationState state) {
+        return new CollectionElement(type, getter, setter, codegen, state);
     }
 
     public static StackValue field(Type type, String owner, String name, boolean isStatic) {
@@ -280,9 +280,9 @@ public abstract class StackValue {
         return new PreIncrement(index, increment);
     }
 
-    public static StackValue receiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @Nullable CallableMethod callableMethod) {
+    public static StackValue receiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @Nullable CallableMethod callableMethod, GenerationState state) {
         if(resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists())
-            return new CallReceiver(resolvedCall, receiver, codegen, callableMethod);
+            return new CallReceiver(resolvedCall, receiver, codegen, state, callableMethod);
         return receiver;
     }
 
@@ -522,16 +522,18 @@ public abstract class StackValue {
         private final Callable getter;
         private final Callable setter;
         private final ExpressionCodegen codegen;
+        private final GenerationState state;
         private final FrameMap frame;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
         private final FunctionDescriptor setterDescriptor;
         private final FunctionDescriptor getterDescriptor;
 
-        public CollectionElement(Type type, ResolvedCall<FunctionDescriptor> resolvedGetCall, ResolvedCall<FunctionDescriptor> resolvedSetCall, ExpressionCodegen codegen) {
+        public CollectionElement(Type type, ResolvedCall<FunctionDescriptor> resolvedGetCall, ResolvedCall<FunctionDescriptor> resolvedSetCall, ExpressionCodegen codegen, GenerationState state) {
             super(type);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
+            this.state = state;
             this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
             this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
             this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false);
@@ -548,7 +550,7 @@ public abstract class StackValue {
             if(getter instanceof CallableMethod)
                 ((CallableMethod)getter).invoke(v);
             else
-                ((IntrinsicMethod)getter).generate(codegen, v, null, null, null, null);
+                ((IntrinsicMethod)getter).generate(codegen, v, null, null, null, null, state);
             coerce(type, v);
         }
 
@@ -569,7 +571,7 @@ public abstract class StackValue {
                 }
             }
             else
-                ((IntrinsicMethod)setter).generate(codegen, v, null, null, null, null);
+                ((IntrinsicMethod) setter).generate(codegen, v, null, null, null, null, state);
         }
 
         public int receiverSize() {
@@ -1060,13 +1062,16 @@ public abstract class StackValue {
         private ResolvedCall<? extends CallableDescriptor> resolvedCall;
         StackValue receiver;
         private ExpressionCodegen codegen;
+        @NotNull
+        private final GenerationState state;
         private CallableMethod callableMethod;
 
-        public CallReceiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, CallableMethod callableMethod) {
+        public CallReceiver(ResolvedCall<? extends CallableDescriptor> resolvedCall, StackValue receiver, ExpressionCodegen codegen, @NotNull GenerationState state, CallableMethod callableMethod) {
             super(calcType(resolvedCall, codegen, callableMethod));
             this.resolvedCall = resolvedCall;
             this.receiver = receiver;
             this.codegen = codegen;
+            this.state = state;
             this.callableMethod = callableMethod;
         }
 

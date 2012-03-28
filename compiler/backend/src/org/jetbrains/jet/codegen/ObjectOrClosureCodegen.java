@@ -60,8 +60,8 @@ public class ObjectOrClosureCodegen {
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
-            final Type sharedVarType = state.getTypeMapper().getSharedVarType(vd);
-            Type localType = state.getTypeMapper().mapType(vd.getType());
+            final Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(vd);
+            Type localType = state.getInjector().getJetTypeMapper().mapType(vd.getType());
             final Type type = sharedVarType != null ? sharedVarType : localType;
 
             StackValue outerValue = StackValue.local(idx, type);
@@ -83,7 +83,7 @@ public class ObjectOrClosureCodegen {
             if (idx < 0) return null;
 
             JetElement expression = (JetElement) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
-            String cn = state.getTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+            String cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
             Type localType = Type.getObjectType(cn);
 
             StackValue outerValue = StackValue.local(idx, localType);
@@ -110,7 +110,7 @@ public class ObjectOrClosureCodegen {
             if(fcontext.getReceiverDescriptor() != fd)
                 return null;
 
-            Type type = state.getTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType());
+            Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType());
             boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
             StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
             final String fieldName = "receiver$0";
