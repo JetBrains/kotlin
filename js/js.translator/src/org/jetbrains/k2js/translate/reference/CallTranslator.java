@@ -45,23 +45,15 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
  * @author Pavel Talanov
  */
 //TODO: write tests on calling backing fields as functions
-//TODO: think of the refactoring the class
 public final class CallTranslator extends AbstractTranslator {
-    @Nullable
-    private final JsExpression callee;
-
     @NotNull
     private final List<JsExpression> arguments;
-
     @NotNull
     private final ResolvedCall<?> resolvedCall;
-
     @NotNull
     private final CallableDescriptor descriptor;
-
     @NotNull
     private final CallType callType;
-
     @NotNull
     private final CallParameters callParameters;
 
@@ -76,7 +68,6 @@ public final class CallTranslator extends AbstractTranslator {
         this.resolvedCall = resolvedCall;
         this.callType = callType;
         this.descriptor = descriptorToCall;
-        this.callee = callee;
         this.callParameters = resolveCallParameters(receiver, callee, descriptor, resolvedCall, context);
     }
 
@@ -104,12 +95,13 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExpressionAsFunction() {
-        return callee != null;
+        return descriptor instanceof ExpressionAsFunctionDescriptor ||
+               descriptor instanceof VariableAsFunctionDescriptor;
     }
 
     @NotNull
     private JsExpression expressionAsFunctionCall() {
-        return methodCall(null, callee);
+        return methodCall(null);
     }
 
     private boolean isIntrinsic() {
@@ -220,15 +212,11 @@ public final class CallTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression methodCall(@Nullable JsExpression receiver) {
-        return methodCall(receiver, callParameters.getFunctionReference());
-    }
-
-    @NotNull
-    private JsExpression methodCall(@Nullable JsExpression receiver, final JsExpression callee) {
         return callType.constructCall(receiver, new CallType.CallConstructor() {
             @NotNull
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
+                JsExpression callee = callParameters.getFunctionReference();
                 if (receiver != null) {
                     setQualifier(callee, receiver);
                 }
