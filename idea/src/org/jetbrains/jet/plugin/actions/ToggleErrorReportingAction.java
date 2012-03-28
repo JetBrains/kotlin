@@ -16,16 +16,23 @@
 
 package org.jetbrains.jet.plugin.actions;
 
-import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
 
 /**
  * @author Andrey Breslav
  */
-public class ToggleErrorReportingAction extends AnAction {
+public class ToggleErrorReportingAction extends ToggleAction {
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        JetPsiChecker.setErrorReportingEnabled(!JetPsiChecker.isErrorReportingEnabled());
+    public boolean isSelected(AnActionEvent e) {
+        return JetPsiChecker.isErrorReportingEnabled();
+    }
+
+    @Override
+    public void setSelected(AnActionEvent e, boolean state) {
+        JetPsiChecker.setErrorReportingEnabled(state);
+        DaemonCodeAnalyzer.getInstance(e.getProject()).restart();
     }
 }

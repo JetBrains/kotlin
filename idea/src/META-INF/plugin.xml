@@ -40,7 +40,7 @@
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
      <action id="ToggleJetErrorReporting" class="org.jetbrains.jet.plugin.actions.ToggleErrorReportingAction"
-             text="Toggle Error Reporting">
+             text="Error Reporting Enabled">
          <keyboard-shortcut keymap="$default" first-keystroke="control alt shift E"/>
          <add-to-group group-id="CodeMenu" anchor="last"/>
      </action>
