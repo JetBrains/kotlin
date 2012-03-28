@@ -254,7 +254,7 @@ public class TopDownAnalyzer {
     }
 
 
-    public void doAnalyzeFilesWithGivenTrance2(Collection<JetFile> files) {
+    public void analyzeFiles(Collection<JetFile> files) {
         final WritableScope scope = new WritableScopeImpl(
                 JetScope.EMPTY, moduleDescriptor,
                 new TraceBasedRedeclarationHandler(trace)).setDebugName("Root scope in analyzeNamespace");

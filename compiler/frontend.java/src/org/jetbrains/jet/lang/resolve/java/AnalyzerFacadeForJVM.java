@@ -159,7 +159,7 @@ public class AnalyzerFacadeForJVM {
                 new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory);
 
 
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(files);
+        injector.getTopDownAnalyzer().analyzeFiles(files);
         return bindingTraceContext.getBindingContext();
     }
 

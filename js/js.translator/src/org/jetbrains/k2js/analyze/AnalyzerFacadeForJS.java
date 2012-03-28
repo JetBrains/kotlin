@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -73,7 +72,7 @@ public final class AnalyzerFacadeForJS {
                 project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
                 JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(withJsLibAdded(files, config));
+        injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
         return bindingTraceContext.getBindingContext();
     }
 
@@ -117,7 +116,7 @@ public final class AnalyzerFacadeForJS {
                 project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
                 JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(Collections.singletonList(file));
+        injector.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(file));
         return bindingTraceContext.getBindingContext();
     }
 
