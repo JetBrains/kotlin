@@ -23,24 +23,28 @@ import com.google.dart.compiler.backend.js.ast.JsNode;
 import com.google.dart.compiler.backend.js.ast.JsReturn;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
+import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 
 /**
@@ -112,25 +116,32 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private TranslationContext createContextWithAliasForThisExpression(@NotNull TranslationContext contextForInlining) {
-        ClassDescriptor classDescriptorForMethod = DescriptorUtils.getClassDescriptorForMethod(getFunctionDescriptor());
-        if (classDescriptorForMethod == null) {
-            return contextForInlining;
-        }
         TranslationContext contextWithAliasForThisExpression = contextForInlining;
-        TemporaryVariable aliasForThis = contextWithAliasForThisExpression.declareTemporary(getReceiver());
-        contextWithAliasForThisExpression = contextForInlining.innerContextWithThisAliased(classDescriptorForMethod, aliasForThis.name());
-        contextWithAliasForThisExpression.addStatementToCurrentBlock(aliasForThis.assignmentExpression().makeStmt());
+        SimpleFunctionDescriptor functionDescriptor = getFunctionDescriptor();
+        CallParameters callParameters = resolveCallParameters(receiver, null, functionDescriptor, resolvedCall, contextForInlining);
+        JsExpression receiver = callParameters.getReceiver();
+        if (receiver != null) {
+            contextWithAliasForThisExpression =
+                contextWithAlias(contextWithAliasForThisExpression, receiver, getExpectedReceiverDescriptor(functionDescriptor));
+        }
+        JsExpression thisObject = callParameters.getThisObject();
+        if (thisObject != null) {
+            contextWithAliasForThisExpression =
+                contextWithAlias(contextWithAliasForThisExpression, thisObject, getExpectedThisDescriptor(functionDescriptor));
+        }
         return contextWithAliasForThisExpression;
     }
 
     @NotNull
-    private JsExpression getReceiver() {
-        if (receiver != null) {
-            return receiver;
-        }
-        JsExpression result = TranslationUtils.resolveThisObjectForResolvedCall(resolvedCall, context());
-        assert result != null;
-        return result;
+    private TranslationContext contextWithAlias(@NotNull TranslationContext contextWithAliasForThisExpression,
+                                                @NotNull JsExpression aliasExpression, @Nullable DeclarationDescriptor descriptorToAlias) {
+        TranslationContext newContext = contextWithAliasForThisExpression;
+        TemporaryVariable aliasForReceiver = context().declareTemporary(aliasExpression);
+        assert descriptorToAlias != null;
+        newContext =
+            newContext.innerContextWithThisAliased(descriptorToAlias, aliasForReceiver.name());
+        newContext.addStatementToCurrentBlock(aliasForReceiver.assignmentExpression().makeStmt());
+        return newContext;
     }
 
     @NotNull
