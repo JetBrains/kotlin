@@ -310,6 +310,7 @@ public final class StaticContext {
                     return getRootScope().innerScope("Namespace " + descriptor.getName());
                 }
             };
+            //TODO: never get there
             Rule<NamingScope> generateInnerScopesForMembers = new Rule<NamingScope>() {
                 @Override
                 public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {

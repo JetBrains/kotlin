@@ -39,6 +39,7 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReferenc
  */
 public abstract class PropertyAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
+    //TODO: is it really called?
     @NotNull
     private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
                                                         @NotNull ResolvedCall<?> resolvedCall,

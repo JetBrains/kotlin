@@ -61,26 +61,17 @@ public final class NamingScope {
 
     @NotNull
         /*package*/ JsName declareObfuscatableName(@NotNull String name) {
-        return scope.declareName(mayBeObfuscateName(name, true));
+        return scope.declareName(obfuscateName(name));
     }
 
     //TODO: temporary solution
     @NotNull
-    private String mayBeObfuscateName(@NotNull String name, boolean shouldObfuscate) {
-        if (!shouldObfuscate) {
-            return name;
-        }
-        return doObfuscate(name);
-    }
-
-    //TODO: refactor
-    @NotNull
-    private String doObfuscate(@NotNull String name) {
+    private String obfuscateName(@NotNull String name) {
         int obfuscate = 0;
         String result = name;
         while (true) {
-            JsName existingNameWithSameIdent = scope.findExistingName(result);
-            boolean isDuplicate = (existingNameWithSameIdent != null) && JsAstUtils.ownsName(scope, existingNameWithSameIdent);
+            JsName existingNameWithSameIdent = this.scope.findExistingName(result);
+            boolean isDuplicate = (existingNameWithSameIdent != null) && JsAstUtils.ownsName(this.scope, existingNameWithSameIdent);
 
             if (!isDuplicate) break;
 

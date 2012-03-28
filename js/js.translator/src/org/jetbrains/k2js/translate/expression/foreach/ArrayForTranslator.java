@@ -82,7 +82,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(loopRange, end).makeStmt());
-        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrExpression(), getBody()));
+        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
         return newBlock(blockStatements);
     }
 
@@ -106,7 +106,7 @@ public final class ArrayForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsExpression getIncrExpression() {
+    private JsExpression getIncrementExpression() {
         return new JsPrefixOperation(JsUnaryOperator.INC, index.reference());
     }
 }

@@ -70,6 +70,7 @@ public final class QualifiedExpressionTranslator {
         if (selector instanceof JetCallExpression) {
             return CallExpressionTranslator.translate((JetCallExpression)selector, receiver, callType, context);
         }
+        //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {
             return ReferenceTranslator.translateSimpleName((JetSimpleNameExpression)selector, context);
         }

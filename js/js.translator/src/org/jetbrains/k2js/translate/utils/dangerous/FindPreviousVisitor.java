@@ -20,8 +20,11 @@ import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.Map;
+
+import static org.jetbrains.k2js.translate.utils.PsiUtils.getBaseExpression;
 
 /**
  * @author Pavel Talanov
@@ -88,7 +91,7 @@ public final class FindPreviousVisitor extends JetTreeVisitor<DangerousData> {
             return null;
         }
         else {
-            if (hasDangerous(expression.getBaseExpression())) {
+            if (hasDangerous(getBaseExpression(expression))) {
                 return null;
             }
             else {

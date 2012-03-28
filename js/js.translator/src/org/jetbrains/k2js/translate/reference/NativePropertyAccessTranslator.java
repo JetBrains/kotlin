@@ -34,6 +34,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
  *         <p/>
  *         For native apis that use .property notation for access.
  */
+//TODO: test this class
 public final class NativePropertyAccessTranslator extends PropertyAccessTranslator {
 
     @Nullable
