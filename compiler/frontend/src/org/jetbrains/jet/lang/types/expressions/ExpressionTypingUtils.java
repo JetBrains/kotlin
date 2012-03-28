@@ -222,7 +222,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
+        ConstraintSystem constraintSystem = new ConstraintSystemWithPriorities(ConstraintResolutionListener.DO_NOTHING);
         for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
             constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
         }

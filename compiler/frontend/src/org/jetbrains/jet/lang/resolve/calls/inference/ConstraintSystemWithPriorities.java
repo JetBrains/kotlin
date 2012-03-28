@@ -26,10 +26,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.checker.TypeCheckingProcedure;
 import org.jetbrains.jet.lang.types.checker.TypingConstraints;
 
-import java.util.Comparator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintType.PARAMETER_BOUND;
 
@@ -44,6 +41,29 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
             return o1.getType().compareTo(o2.getType());
         }
     };
+
+    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
+        final Set<TypeConstructor> constructors = Sets.newHashSet();
+        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
+            constructors.add(typeParameterDescriptor.getTypeConstructor());
+        }
+        final TypeProjection projection = new TypeProjection(type);
+
+        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+            @Override
+            public TypeProjection get(TypeConstructor key) {
+                if (constructors.contains(key)) {
+                    return projection;
+                }
+                return null;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        });
+    }
 
     private static class LoopInTypeVariableConstraintsException extends RuntimeException {
         public LoopInTypeVariableConstraintsException() {}
