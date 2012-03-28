@@ -94,7 +94,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
     private boolean checkElement(final String name, PsiElement sibling) {
         if (myBindingContext == null) {
             myBindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                    (JetFile) myContainer.getContainingFile());
+                    (JetFile) myContainer.getContainingFile()).getBindingContext();
         }
         final Ref<Boolean> result = new Ref<Boolean>(true);
         JetVisitorVoid visitor = new JetVisitorVoid() {

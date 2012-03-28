@@ -163,7 +163,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         HashSet<FunctionDescriptor> result = new HashSet<FunctionDescriptor>();
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null) {
@@ -197,7 +197,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     @NotNull
     public BindingContext getResolutionContext(@NotNull GlobalSearchScope scope) {
-        return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
+        return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope).getBindingContext();
     }
 
     /**
@@ -234,7 +234,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {

@@ -103,7 +103,8 @@ public class JetRefactoringUtil {
                 if (addExpression) {
                     JetExpression expression = (JetExpression) element;
                     BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                              AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+                            AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                                .getBindingContext();
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.

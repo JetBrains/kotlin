@@ -67,7 +67,8 @@ public class JetNameSuggester {
         ArrayList<String> result = new ArrayList<String>();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                    .getBindingContext();
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

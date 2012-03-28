@@ -67,7 +67,8 @@ public class JetSourceNavigationHelper {
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
         for (JetFile libraryFile : libraryFiles) {
             BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(libraryFile,
-                                                                                      AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+                    AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                        .getBindingContext();
             D descriptor = bindingContext.get(slice, fqName);
             if (descriptor != null) {
                 return new Tuple2<BindingContext, D>(bindingContext, descriptor);

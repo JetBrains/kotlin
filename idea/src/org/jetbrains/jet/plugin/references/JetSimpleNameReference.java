@@ -62,7 +62,8 @@ public class JetSimpleNameReference extends JetPsiReference {
     @Override
     public Object[] getVariants() {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile) myExpression.getContainingFile());
+                (JetFile) myExpression.getContainingFile())
+                    .getBindingContext();
 
         return DescriptorLookupConverter.collectLookupElements(
                 bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));

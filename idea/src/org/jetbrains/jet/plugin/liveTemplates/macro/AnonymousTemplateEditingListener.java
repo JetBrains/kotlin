@@ -66,7 +66,8 @@ class AnonymousTemplateEditingListener extends TemplateEditingAdapter {
         if (name != null && name.getParent() instanceof JetReferenceExpression) {
             JetReferenceExpression ref = (JetReferenceExpression) name.getParent();
 
-            BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+            BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+                    .getBindingContext();
             DeclarationDescriptor descriptor = bc.get(BindingContext.REFERENCE_TARGET, ref);
             if (descriptor instanceof ClassDescriptor) {
                 classRef = ref;

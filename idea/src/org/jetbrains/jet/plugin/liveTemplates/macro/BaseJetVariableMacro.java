@@ -62,7 +62,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile).getBindingContext();
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scope == null) {
             return null;

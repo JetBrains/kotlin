@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.utils.Progress;
@@ -52,9 +53,13 @@ public class GenerationState {
 
     private JetTypeMapper typeMapper;
     private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
-    private final JetStandardLibrary standardLibrary;
-    private final IntrinsicMethods intrinsics;
     private final Progress progress;
+
+
+    // initialized after analyze
+    private JetStandardLibrary standardLibrary;
+    private IntrinsicMethods intrinsics;
+
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory) {
         this(project, builderFactory, Progress.DEAF);
@@ -63,9 +68,7 @@ public class GenerationState {
     public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress) {
         this.project = project;
         this.progress = progress;
-        this.standardLibrary = JetStandardLibrary.getInstance();
         this.factory = new ClassFileFactory(builderFactory, this);
-        this.intrinsics = new IntrinsicMethods(project, standardLibrary);
     }
 
     @NotNull
@@ -119,10 +122,11 @@ public class GenerationState {
     }
 
     public BindingContext compile(JetFile file) {
-        final BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-        compileCorrectFiles(bindingContext, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
-        return bindingContext;
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
+
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        compileCorrectFiles(analyzeExhaust, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
+        return analyzeExhaust.getBindingContext();
 //        NamespaceCodegen codegen = forNamespace(namespace);
 //        bindingContexts.push(bindingContext);
 //        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
@@ -137,14 +141,17 @@ public class GenerationState {
 //        }
     }
 
-    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, boolean annotate) {
+    public void compileCorrectFiles(AnalyzeExhaust bindingContext, List<JetFile> files, boolean annotate) {
         compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION, annotate);
     }
 
-    public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, files);
+    public void compileCorrectFiles(AnalyzeExhaust analyzeExhaust, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
+        this.standardLibrary = analyzeExhaust.getStandardLibrary();
+        this.intrinsics = new IntrinsicMethods(project, standardLibrary);
+
+        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), files);
         typeMapper = injector.getJetTypeMapper();
-        bindingContexts.push(bindingContext);
+        bindingContexts.push(analyzeExhaust.getBindingContext());
         try {
             for (JetFile file : files) {
                 if (file == null) throw new IllegalArgumentException("A null file given for compilation");

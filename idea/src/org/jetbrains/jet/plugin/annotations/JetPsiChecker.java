@@ -71,7 +71,8 @@ public class JetPsiChecker implements Annotator {
             JetFile file = (JetFile) element;
 
             try {
-                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                        .getBindingContext();
 
                 if (errorReportingEnabled) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());

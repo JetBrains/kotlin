@@ -122,7 +122,8 @@ public class ResolveToolwindow extends JPanel implements Disposable {
                     || oldLocation.getStartOffset() != startOffset
                     || oldLocation.getEndOffset() != endOffset) {
 
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+                        .getBindingContext();
 
                 
                 PsiElement elementAtOffset;

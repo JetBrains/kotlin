@@ -71,7 +71,8 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile) {
             JetFile file = (JetFile) element;
             try {
-                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+                final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                        .getBindingContext();
 
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

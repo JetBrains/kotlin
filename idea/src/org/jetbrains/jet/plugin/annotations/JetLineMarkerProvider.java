@@ -60,7 +60,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         JetFile file = (JetFile) element.getContainingFile();
         if (file == null) return null;
 
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                .getBindingContext();
 
         if (element instanceof JetClass) {
             JetClass jetClass = (JetClass) element;

@@ -190,7 +190,8 @@ public class JetFunctionParameterInfoHandler implements
             if (descriptor instanceof FunctionDescriptor) {
                 JetFile file = (JetFile) argumentList.getContainingFile();
                 BindingContext bindingContext =
-                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                            .getBindingContext();
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -328,8 +329,10 @@ public class JetFunctionParameterInfoHandler implements
         if (element.getParent() instanceof JetCallElement) {
             callExpression = (JetCallElement) element.getParent();
         } else return null;
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) file,
-                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
+                (JetFile) file,
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                    .getBindingContext();
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;

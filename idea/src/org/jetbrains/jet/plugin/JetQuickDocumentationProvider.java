@@ -42,7 +42,8 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
             ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
         }
         if (ref != null) {
-            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) ref.getContainingFile());
+            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) ref.getContainingFile())
+                    .getBindingContext();
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
             if (declarationDescriptor != null) {
                 return render(declarationDescriptor);

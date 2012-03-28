@@ -154,7 +154,8 @@ public class JetCompletionContributor extends CompletionContributor {
         Collection<DeclarationDescriptor> jetCallableExtensions = namesCache.getJetCallableExtensions(
                 matchPrefixCondition, expression, GlobalSearchScope.allScope(position.getProject()));
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) position.getContainingFile());
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) position.getContainingFile())
+                .getBindingContext();
 
         for (DeclarationDescriptor jetCallableExtension : jetCallableExtensions) {
             result.addElement(DescriptorLookupConverter.createLookupElement(context, jetCallableExtension));

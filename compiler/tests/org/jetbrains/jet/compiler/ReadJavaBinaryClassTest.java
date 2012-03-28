@@ -87,7 +87,8 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
         AnalyzingUtils.checkForSyntacticErrors(psiFile);
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY)
+                .getBindingContext();
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
     }

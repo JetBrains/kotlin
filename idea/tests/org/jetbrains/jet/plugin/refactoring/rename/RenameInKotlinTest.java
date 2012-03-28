@@ -62,7 +62,9 @@ public class RenameInKotlinTest extends MultiFileTestCase {
         doTest(new PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCache(getProject(), GlobalSearchScope.allScope(getProject()));
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCache(
+                        getProject(), GlobalSearchScope.allScope(getProject()))
+                            .getBindingContext();
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
 
                 assertNotNull(classDescriptor);

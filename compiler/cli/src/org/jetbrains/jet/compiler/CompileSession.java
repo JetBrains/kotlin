@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -64,11 +65,11 @@ public class CompileSession {
     private final PrintStream myErrorStream;
     private final boolean myIsVerbose;
 
-    public BindingContext getMyBindingContext() {
+    public AnalyzeExhaust getMyBindingContext() {
         return myBindingContext;
     }
 
-    private BindingContext myBindingContext;
+    private AnalyzeExhaust myBindingContext;
 
     public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose) {
         myEnvironment = environment;
@@ -171,7 +172,7 @@ public class CompileSession {
         myBindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
-        for (Diagnostic diagnostic : myBindingContext.getDiagnostics()) {
+        for (Diagnostic diagnostic : myBindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(myMessageCollector, diagnostic);
         }
 
@@ -179,7 +180,7 @@ public class CompileSession {
     }
 
     private void reportIncompleteHierarchies(MessageCollector collector) {
-        Collection<ClassDescriptor> incompletes = myBindingContext.getKeys(BindingContext.INCOMPLETE_HIERARCHY);
+        Collection<ClassDescriptor> incompletes = myBindingContext.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
         if (!incompletes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
             for (ClassDescriptor incomplete : incompletes) {
@@ -221,7 +222,7 @@ public class CompileSession {
         if (!module) {
             if (plugins != null) {
                 for (CompilerPlugin plugin : plugins) {
-                    plugin.processFiles(myBindingContext, getSourceFileNamespaces());
+                    plugin.processFiles(myBindingContext.getBindingContext(), getSourceFileNamespaces());
                 }
             }
         }

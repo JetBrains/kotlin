@@ -41,7 +41,8 @@ public class JetPackageReference extends JetPsiReference {
     @Override
     public Object[] getVariants() {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile) myExpression.getContainingFile());
+                (JetFile) myExpression.getContainingFile())
+                    .getBindingContext();
 
         return DescriptorLookupConverter.collectLookupElements(
                 bindingContext, TipsManager.getReferenceVariants(packageExpression, bindingContext));

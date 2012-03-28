@@ -57,7 +57,8 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
 
     @Override
     protected PsiElement doResolve() {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile());
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile())
+                .getBindingContext();
         ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
         ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);
         if (getFunction != null && setFunction != null) {
@@ -68,7 +69,8 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
 
     @Override
     protected ResolveResult[] doMultiResolve() {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile());
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) getElement().getContainingFile())
+                .getBindingContext();
         ResolvedCall<FunctionDescriptor> getFunction = bindingContext.get(INDEXED_LVALUE_GET, expression);
         PsiElement getFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, getFunction.getResultingDescriptor());
         ResolvedCall<FunctionDescriptor> setFunction = bindingContext.get(INDEXED_LVALUE_SET, expression);

@@ -99,7 +99,8 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @Nullable
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                .getBindingContext();
         PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, myExpression);
         if (psiElement != null) {
             return psiElement;
@@ -113,7 +114,8 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                .getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
 

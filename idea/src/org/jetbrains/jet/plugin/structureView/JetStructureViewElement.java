@@ -114,7 +114,8 @@ public class JetStructureViewElement implements StructureViewTreeElement {
         if (myElement instanceof JetFile) {
             final JetFile jetFile = (JetFile) myElement;
 
-            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+            context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile)
+                    .getBindingContext();
 
             return wrapDeclarations(jetFile.getDeclarations());
         }

@@ -24,7 +24,6 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -72,7 +71,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     private final BindingContext bindingContext;
     private final Map<TypeParameterDescriptor, StackValue> typeParameterExpressions = new HashMap<TypeParameterDescriptor, StackValue>();
     private final CodegenContext context;
-    private final IntrinsicMethods intrinsics;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
 
@@ -112,7 +110,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         this.v = new InstructionAdapter(v);
         this.bindingContext = state.getBindingContext();
         this.context = context;
-        this.intrinsics = state.getIntrinsics();
     }
 
     StackValue castToRequiredTypeOfInterfaceIfNeeded(StackValue inner, DeclarationDescriptor provided, @Nullable ClassDescriptor required) {
@@ -976,7 +973,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             descriptor = ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
 
-        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(descriptor);
+        final IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(descriptor);
         if (intrinsic != null) {
             final Type expectedType = expressionType(expression);
             return intrinsic.generate(this, v, expectedType, expression, Collections.<JetExpression>emptyList(), receiver);
@@ -1130,7 +1127,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         functionDescriptor = functionDescriptor.getOriginal();
         String owner;
 
-        IntrinsicMethod intrinsic = intrinsics.getIntrinsic(functionDescriptor);
+        IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(functionDescriptor);
         if(intrinsic != null) {
             intrinsic.generate(this, v, type, null, null, StackValue.onStack(TYPE_OBJECT));
             return;
@@ -1321,7 +1318,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     Callable resolveToCallable(DeclarationDescriptor fd, boolean superCall) {
-        final IntrinsicMethod intrinsic = intrinsics.getIntrinsic(fd);
+        final IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(fd);
         if (intrinsic != null) {
             return intrinsic;
         }

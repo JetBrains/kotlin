@@ -57,7 +57,8 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
         JetDeclaration declaration = getValue();
         if (declaration != null) {
             BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                    (JetFile) declaration.getContainingFile());
+                    (JetFile) declaration.getContainingFile())
+                        .getBindingContext();
 
             final DeclarationDescriptor descriptor =
                     context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
