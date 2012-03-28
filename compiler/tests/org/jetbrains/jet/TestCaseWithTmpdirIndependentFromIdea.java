@@ -25,7 +25,7 @@ import java.io.File;
 /**
  * @author Stepan Koltsov
  */
-public abstract class AnotherTestCaseWithTmpdir {
+public abstract class TestCaseWithTmpdirIndependentFromIdea {
     protected File tmpdir;
 
     @Before

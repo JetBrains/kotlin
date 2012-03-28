@@ -16,18 +16,13 @@
 
 package org.jetbrains.jet;
 
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.cli.KotlinCompiler;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * @author Stepan Koltsov
  */
-public class CompileJdkHeadersTest extends AnotherTestCaseWithTmpdir {
+public class CompileJdkHeadersTest extends TestCaseWithTmpdirIndependentFromIdea {
 
     @Test
     public void compile() {

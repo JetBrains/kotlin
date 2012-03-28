@@ -22,7 +22,7 @@ import org.junit.Test;
 /**
  * @author Stepan Koltsov
  */
-public class CompileBuiltinsTest extends AnotherTestCaseWithTmpdir {
+public class CompileBuiltinsTest extends TestCaseWithTmpdirIndependentFromIdea {
 
     @Test
     public void compile() {
