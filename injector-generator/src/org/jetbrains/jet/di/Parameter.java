@@ -20,19 +20,19 @@ package org.jetbrains.jet.di;
 * @author abreslav
 */
 class Parameter {
-    private final Class<?> type;
+    private final DiType type;
     private final String name;
     private final Field field;
     private final boolean required;
 
-    Parameter(Class<?> type, String name, Field field, boolean required) {
+    Parameter(DiType type, String name, Field field, boolean required) {
         this.type = type;
         this.name = name;
         this.field = field;
         this.required = required;
     }
 
-    public Class<?> getType() {
+    public DiType getType() {
         return type;
     }
 

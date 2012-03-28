@@ -33,6 +33,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -44,7 +45,7 @@ public class DependencyInjectorGenerator {
     private static final String LOCK_NAME = "__lock__";
 
     private final boolean lazy;
-    private final Multimap<Class<?>, Field> typeToField = HashMultimap.create();
+    private final Multimap<DiType, Field> typeToField = HashMultimap.create();
     private final Set<Field> satisfied = Sets.newHashSet();
     private final Set<Field> fields = Sets.newLinkedHashSet();
     private final Set<Parameter> parameters = Sets.newLinkedHashSet();
@@ -119,25 +120,37 @@ public class DependencyInjectorGenerator {
     }
 
     public void addPublicParameter(Class<?> type) {
+        addPublicParameter(new DiType(type));
+    }
+
+    public void addPublicParameter(DiType type) {
         addPublicParameter(type, true);
     }
 
-    public void addPublicParameter(Class<?> type, boolean required) {
+    public void addPublicParameter(DiType type, boolean required) {
         addParameter(true, type, var(type), required);
     }
 
 
     public void addParameter(Class<?> type) {
+        addParameter(DiType.fromReflectionType(type));
+    }
+
+    public void addParameter(DiType type) {
         addParameter(type, true);
     }
 
     public void addParameter(Class<?> type, boolean required) {
+        addParameter(new DiType(type), required);
+    }
+
+    public void addParameter(DiType type, boolean required) {
         addParameter(false, type, var(type), required);
     }
 
 
 
-    public void addParameter(boolean reexport, @NotNull Class<?> type, @Nullable String name, boolean required) {
+    public void addParameter(boolean reexport, @NotNull DiType type, @Nullable String name, boolean required) {
         Field field = addField(reexport, type, name, null);
         Parameter parameter = new Parameter(type, name, field, required);
         parameters.add(parameter);
@@ -147,14 +160,26 @@ public class DependencyInjectorGenerator {
     }
 
     public Field addPublicField(Class<?> type) {
+        return addPublicField(new DiType(type));
+    }
+
+    public Field addPublicField(DiType type) {
         return addField(true, type, null, null);
     }
 
     public Field addField(Class<?> type) {
+        return addField(new DiType(type));
+    }
+
+    public Field addField(DiType type) {
         return addField(false, type, null, null);
     }
 
     public Field addField(boolean isPublic, Class<?> type, @Nullable String name, @Nullable Expression init) {
+        return addField(isPublic, new DiType(type), name, init);
+    }
+
+    public Field addField(boolean isPublic, DiType type, @Nullable String name, @Nullable Expression init) {
         Field field = Field.create(isPublic, type, name == null ? var(type) : name, init);
         fields.add(field);
         typeToField.put(type, field);
@@ -163,16 +188,23 @@ public class DependencyInjectorGenerator {
 
     private void generateImports(PrintStream out, String injectorPackageName) {
         for (Field field : fields) {
-            generateImportDirective(out, field.getType(), injectorPackageName);
+            generateImportDirectives(out, field.getType(), injectorPackageName);
         }
         for (Parameter parameter : parameters) {
-            generateImportDirective(out, parameter.getType(), injectorPackageName);
+            generateImportDirectives(out, parameter.getType(), injectorPackageName);
         }
         for (Parameter parameter : parameters) {
             if (parameter.isRequired()) {
                 generateImportDirective(out, NotNull.class, injectorPackageName);
                 break;
             }
+        }
+    }
+
+    private void generateImportDirectives(PrintStream out, DiType type, String injectorPackageName) {
+        generateImportDirective(out, type.getClazz(), injectorPackageName);
+        for (DiType typeParameter : type.getTypeParameters()) {
+            generateImportDirectives(out, typeParameter, injectorPackageName);
         }
     }
 
@@ -248,7 +280,7 @@ public class DependencyInjectorGenerator {
             // call @PostConstruct
             for (Field field : fields) {
                 // TODO: type of field may be different from type of object
-                List<Method> postConstructMethods = getPostConstructMethods(field.getType());
+                List<Method> postConstructMethods = getPostConstructMethods(field.getType().getClazz());
                 for (Method postConstruct : postConstructMethods) {
                     out.println(indent + field.getName() + "." + postConstruct.getName() + "();");
                 }
@@ -333,7 +365,7 @@ public class DependencyInjectorGenerator {
         }
 
         // Sort setters in order to get deterministic behavior
-        List<Method> declaredMethods = Lists.newArrayList(field.getType().getDeclaredMethods());
+        List<Method> declaredMethods = Lists.newArrayList(field.getType().getClazz().getDeclaredMethods());
         Collections.sort(declaredMethods, new Comparator<Method>() {
             @Override
             public int compare(Method o1, Method o2) {
@@ -345,18 +377,18 @@ public class DependencyInjectorGenerator {
                 || !method.getName().startsWith("set")
                 || method.getParameterTypes().length != 1) continue;
 
-            Class<?> parameterType = method.getParameterTypes()[0];
+            Type parameterType = method.getGenericParameterTypes()[0];
 
 
-            Field dependency = findDependencyOfType(parameterType, field + ": " + method + ": " + fields, field);
+            Field dependency = findDependencyOfType(DiType.fromReflectionType(parameterType), field + ": " + method + ": " + fields, field);
 
             field.getDependencies().add(new SetterDependency(field, method.getName(), dependency));
         }
     }
 
-    private Field findDependencyOfType(Class<?> parameterType, String errorMessage, Field neededFor) {
+    private Field findDependencyOfType(DiType parameterType, String errorMessage, Field neededFor) {
         List<Field> fields = Lists.newArrayList();
-        for (Map.Entry<Class<?>, Field> entry : typeToField.entries()) {
+        for (Map.Entry<DiType, Field> entry : typeToField.entries()) {
             if (parameterType.isAssignableFrom(entry.getKey())) {
                 fields.add(entry.getValue());
             }
@@ -365,7 +397,7 @@ public class DependencyInjectorGenerator {
         Field dependency;
         if (fields.isEmpty()) {
             
-            if (parameterType.isPrimitive() || parameterType.getPackage().getName().equals("java.lang")) {
+            if (parameterType.getClazz().isPrimitive() || parameterType.getClazz().getPackage().getName().equals("java.lang")) {
                 throw new IllegalArgumentException(
                         "cannot declare magic field of type " + parameterType + ": " + errorMessage);
             }
@@ -383,35 +415,45 @@ public class DependencyInjectorGenerator {
     }
 
     private void initializeByConstructorCall(Field field, Field neededFor) {
-        Class<?> type = field.getType();
+        DiType type = field.getType();
 
-        if (type.isInterface()) {
-            throw new IllegalArgumentException("cannot instantiate interface: " + type.getName() + " needed for " + neededFor);
+        if (type.getClazz().isInterface()) {
+            throw new IllegalArgumentException("cannot instantiate interface: " + type.getClazz().getName() + " needed for " + neededFor);
         }
-        if (Modifier.isAbstract(type.getModifiers())) {
-            throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getName() + " needed for " + neededFor);
+        if (Modifier.isAbstract(type.getClazz().getModifiers())) {
+            throw new IllegalArgumentException("cannot instantiate abstract class: " + type.getClazz().getName() + " needed for " + neededFor);
         }
+
+        // Note: projections are not computed here
 
         // Look for constructor
-        Constructor<?>[] constructors = type.getConstructors();
+        Constructor<?>[] constructors = type.getClazz().getConstructors();
         if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
-            throw new IllegalArgumentException("No constructor: " + type.getName() + " needed for " + neededFor);
+            throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
         }
         Constructor<?> constructor = constructors[0];
 
         // Find arguments
         ConstructorCall dependency = new ConstructorCall(constructor);
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
-        for (Class<?> parameterType : parameterTypes) {
-            Field fieldForParameter = findDependencyOfType(parameterType, "constructor: " + constructor + ", parameter: " + parameterType, field);
+        Type[] parameterTypes = constructor.getGenericParameterTypes();
+        for (Type parameterType : parameterTypes) {
+            Field fieldForParameter = findDependencyOfType(DiType.fromReflectionType(parameterType), "constructor: " + constructor + ", parameter: " + parameterType, field);
             dependency.getConstructorArguments().add(fieldForParameter);
         }
 
         field.setInitialization(dependency);
     }
 
-    private String var(Class<?> theClass) {
-        return StringUtil.decapitalize(theClass.getSimpleName());
+    private String var(@NotNull DiType type) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(StringUtil.decapitalize(type.getClazz().getSimpleName()));
+        if (type.getTypeParameters().size() > 0) {
+            sb.append("Of");
+        }
+        for (DiType parameter : type.getTypeParameters()) {
+            sb.append(StringUtil.capitalize(var(parameter)));
+        }
+        return sb.toString();
     }
 
     private void generateMakeFunction(PrintStream out) {
