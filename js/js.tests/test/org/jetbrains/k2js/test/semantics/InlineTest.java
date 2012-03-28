@@ -62,6 +62,10 @@ public final class InlineTest extends SingleFileTranslationTest {
         checkFooBoxIsTrueAndFunctionNameIsNotReferenced("extension.kt", "myInlineExtension");
     }
 
+    public void testExtensionWithParameter() throws Exception {
+        checkFooBoxIsTrueAndFunctionNameIsNotReferenced("extensionWithParameter.kt", "myInlineExtension");
+    }
+
     private void checkFooBoxIsTrueAndFunctionNameIsNotReferenced(@NotNull String filename, String funName) throws Exception {
         checkFooBoxIsTrue(filename);
         String generatedJSFilePath = getOutputFilePath(filename);
