@@ -1552,7 +1552,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * functionType
-     *   : (type ".")? "(" (parameter | modifiers type){","} ")" "->" type?
+     *   : (type ".")? "(" (parameter | modifiers type){","}? ")" "->" type?
      *   ;
      */
     private void parseFunctionType() {
@@ -1560,9 +1560,7 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private PsiBuilder.Marker parseFunctionTypeContents() {
-//        assert _at(LPAR) : tt();
-        if (!_at(LPAR))
-            System.out.println(myBuilder.getTokenText());
+        assert _at(LPAR) : tt();
         PsiBuilder.Marker functionType = mark();
 
 //        advance(); // LPAR

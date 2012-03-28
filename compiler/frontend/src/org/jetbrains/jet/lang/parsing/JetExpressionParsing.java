@@ -1859,7 +1859,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         parseExpression();
         argument.done(VALUE_ARGUMENT);
     }
-    
+
+    /*
+     * "object" (":" delegationSpecifier{","})? classBody // Cannot make class body optional: foo(object : F, A)
+     */
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();
