@@ -77,12 +77,12 @@ public class DiagnosticUtils {
         return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
     }
 
-    @Nullable
+    @NotNull
     public static LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         Document document = file.getViewProvider().getDocument();
         List<TextRange> textRanges = diagnostic.getTextRanges();
-        if (textRanges.isEmpty()) return null;
+        if (textRanges.isEmpty()) return LineAndColumn.NONE;
         TextRange firstRange = textRanges.iterator().next();
         return offsetToLineAndColumn(document, firstRange.getStartOffset());
     }
@@ -114,6 +114,9 @@ public class DiagnosticUtils {
     }
 
     public static final class LineAndColumn {
+
+        public static final LineAndColumn NONE = new LineAndColumn(-1, -1);
+
         private final int line;
         private final int column;
 
