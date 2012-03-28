@@ -4,6 +4,7 @@ import kotlin.*
 import kotlin.util.*
 
 import org.jetbrains.kotlin.doc.KDocConfig
+import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
 
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
@@ -180,6 +181,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     get() = packages.flatMap{ it.classes }
 
     public var markdownProcessor: PegDownProcessor = PegDownProcessor(Extensions.ALL)
+    public var highlighter: SyntaxHighligher = SyntaxHighligher()
 
     public val title: String
     get() = config.title
@@ -399,8 +401,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                 val fnName = words[1].sure()
                                 val content = findFunctionInclude(psiElement, includeFile, fnName)
                                 if (content != null) {
-                                    // TODO ideally we'd use pygmentize or somehting here to format the Kotlin code...
-                                    text = "<pre><code>" + content + "</code></pre>\n"
+                                    text = highlighter.highlight(content)
                                 } else {
                                     warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
                                 }

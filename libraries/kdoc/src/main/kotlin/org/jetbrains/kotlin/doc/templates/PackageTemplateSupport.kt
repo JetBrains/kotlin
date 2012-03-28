@@ -251,4 +251,9 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             println(link(a))
         }
     }
+
+    fun stylesheets(): String {
+        return """<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}stylesheet.css" TITLE="Style">
+        <LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}kotlin.css" TITLE="Style">"""
+    }
 }
