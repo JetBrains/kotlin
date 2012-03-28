@@ -162,7 +162,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
 
         if (returnType != null && !stdlib.getTuple0Type().equals(returnType)) {
-            bodyBuilder.append(" : ").append(returnType.toString());
+            bodyBuilder.append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(returnType));
             ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 

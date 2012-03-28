@@ -49,6 +49,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement");
     }
 
+    public void testFunctionMethod() {
+        doFileTest();
+    }
+
     public void testFunctionProperty() {
         doFileTest();
     }

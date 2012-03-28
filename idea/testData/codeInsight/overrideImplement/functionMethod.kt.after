@@ -1,0 +1,11 @@
+// From KT-1254
+trait T {
+    fun Foo() : (String) -> Unit
+}
+
+class C : T {
+
+    override fun Foo() : (String) -> Unit {
+        throw UnsupportedOperationException()
+    }
+}
