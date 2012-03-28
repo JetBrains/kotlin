@@ -32,4 +32,6 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     @NotNull
     @Override
     SimpleFunctionDescriptor getOriginal();
+
+    boolean isInline();
 }

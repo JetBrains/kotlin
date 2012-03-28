@@ -145,7 +145,15 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         else {
             effectiveReceiverType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
         }
-        functionDescriptor.initialize(effectiveReceiverType, NO_RECEIVER, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, Modality.FINAL, Visibility.LOCAL);
+        functionDescriptor.initialize(effectiveReceiverType,
+                                      NO_RECEIVER,
+                                      Collections.<TypeParameterDescriptor>emptyList(),
+                                      valueParameterDescriptors,
+                                      /*unsubstitutedReturnType = */ null,
+                                      Modality.FINAL,
+                                      Visibility.LOCAL,
+                                      /*isInline = */ false
+        );
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
         return functionDescriptor;
     }

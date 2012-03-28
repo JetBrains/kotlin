@@ -1518,7 +1518,8 @@ public class JavaDescriptorResolver {
                 valueParameterDescriptors.descriptors,
                 makeReturnType(returnType, method, methodTypeVariableResolver),
                 Modality.convertFromFlags(method.getPsiMethod().hasModifierProperty(PsiModifier.ABSTRACT), !method.isFinal()),
-                resolveVisibilityFromPsiModifiers(method.getPsiMethod())
+                resolveVisibilityFromPsiModifiers(method.getPsiMethod()),
+                /*isInline = */ false
         );
         trace.record(BindingContext.FUNCTION, method.getPsiMethod(), functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;

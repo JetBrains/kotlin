@@ -172,7 +172,8 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibility.INTERNAL
+                Visibility.INTERNAL,
+                /*isInline = */ false
         );
         return function;
     }
