@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
@@ -103,7 +104,8 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
-                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
+                        .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }

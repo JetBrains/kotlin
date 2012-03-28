@@ -95,7 +95,7 @@ class DecompiledDataFactory {
                 }
             }
         } else {
-            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }

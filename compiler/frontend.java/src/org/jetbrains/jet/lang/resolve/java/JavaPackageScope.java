@@ -135,7 +135,8 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                     }
 
                     if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        ClassDescriptor classDescriptor = descriptorResolver.resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                        ClassDescriptor classDescriptor = descriptorResolver
+                                .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                         if (classDescriptor != null) {
                             allDescriptors.add(classDescriptor);
                         }

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -142,20 +143,21 @@ public class JavaTypeTransformer {
                         return jetAnalog;
                     }
 
-                    final JavaDescriptorResolver.ResolverClassData classData = resolver.resolveClassData(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+                    final ClassDescriptor classData =
+                            resolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
                     if (classData == null) {
                         return ErrorUtils.createErrorType("Unresolve java class: " + classType.getPresentableText());
                     }
 
                     List<TypeProjection> arguments = Lists.newArrayList();
                     if (classType.isRaw()) {
-                        List<TypeParameterDescriptor> parameters = classData.getClassDescriptor().getTypeConstructor().getParameters();
+                        List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         for (TypeParameterDescriptor parameter : parameters) {
                             arguments.add(TypeUtils.makeStarProjection(parameter));
                         }
                     }
                     else {
-                        List<TypeParameterDescriptor> parameters = classData.getClassDescriptor().getTypeConstructor().getParameters();
+                        List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         PsiType[] psiArguments = classType.getParameters();
                         
                         if (parameters.size() != psiArguments.length) {
@@ -171,10 +173,10 @@ public class JavaTypeTransformer {
                     }
                     return new JetTypeImpl(
                             Collections.<AnnotationDescriptor>emptyList(),
-                            classData.getClassDescriptor().getTypeConstructor(),
+                            classData.getTypeConstructor(),
                             true,
                             arguments,
-                            classData.getClassDescriptor().getMemberScope(arguments));
+                            classData.getMemberScope(arguments));
                 }
             }
 

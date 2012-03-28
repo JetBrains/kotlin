@@ -21,11 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.compiled.ClsClassImpl;
-import com.intellij.psi.search.DelegatingGlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScope;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,12 +30,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
@@ -222,59 +216,7 @@ public class JavaDescriptorResolver {
         this.psiClassFinder = psiClassFinder;
     }
 
-    @Nullable
-    ResolverClassData resolveClassData(@NotNull PsiClass psiClass, @NotNull DescriptorSearchRule searchRule) {
-        FqName qualifiedName = new FqName(psiClass.getQualifiedName());
 
-        if (qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
-            // TODO: only if -$$TImpl class is created by Kotlin
-            return null;
-        }
-
-        ClassDescriptor builtinClassDescriptor = semanticServices.getKotlinBuiltinClassDescriptor(qualifiedName);
-        if (builtinClassDescriptor != null) {
-            return new ResolverSrcClassData(builtinClassDescriptor);
-        }
-
-        // First, let's check that this is a real Java class, not a Java's view on a Kotlin class:
-        ClassDescriptor kotlinClassDescriptor = semanticServices.getKotlinClassDescriptor(qualifiedName);
-        if (kotlinClassDescriptor != null) {
-            if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
-                throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            } else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
-                return null;
-            } else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
-                // TODO: probably this is evil
-                return new ResolverSrcClassData(kotlinClassDescriptor);
-            } else {
-                throw new IllegalStateException("unknown searchRule: " + searchRule);
-            }
-        }
-
-        PsiClass containingClass = psiClass.getContainingClass();
-        if (containingClass != null) {
-            // must resolve containing class first, because inner class must have a reference to it
-            resolveClass(containingClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-        }
-
-        // Not let's take a descriptor of a Java class
-        ResolverBinaryClassData classData = classDescriptorCache.get(qualifiedName);
-        if (classData == null) {
-            classData = createJavaClassDescriptor(psiClass);
-            classDescriptorCache.put(qualifiedName, classData);
-        }
-        return classData;
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull PsiClass psiClass, @NotNull DescriptorSearchRule searchRule) {
-        ResolverClassData classData = resolveClassData(psiClass, searchRule);
-        if (classData != null) {
-            return classData.getClassDescriptor();
-        } else {
-            return null;
-        }
-    }
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
@@ -683,7 +625,7 @@ public class JavaDescriptorResolver {
     private ClassOrNamespaceDescriptor resolveParentDescriptor(PsiClass psiClass) {
         PsiClass containingClass = psiClass.getContainingClass();
         if (containingClass != null) {
-            return resolveClass(containingClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+            return resolveClass(new FqName(containingClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
         }
 
         return resolveNamespace(new FqName(psiClass.getQualifiedName()).parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
@@ -1484,7 +1426,8 @@ public class JavaDescriptorResolver {
 
         ClassOrNamespaceDescriptor classDescriptor;
         if (scopeData instanceof ResolverBinaryClassData) {
-            ClassDescriptor classClassDescriptor = resolveClass(method.getPsiMethod().getContainingClass(), DescriptorSearchRule.INCLUDE_KOTLIN);
+            ClassDescriptor classClassDescriptor = resolveClass(new FqName(method.getPsiMethod().getContainingClass().getQualifiedName()),
+                    DescriptorSearchRule.INCLUDE_KOTLIN);
             classDescriptor = classClassDescriptor;
         }
         else {
@@ -1702,7 +1645,7 @@ public class JavaDescriptorResolver {
             if (innerPsiClass.getName().equals(JvmAbi.CLASS_OBJECT_CLASS_NAME)) {
                 continue;
             }
-            r.add(resolveClass(innerPsiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN));
+            r.add(resolveClass(new FqName(innerPsiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN));
         }
         return r;
     }
