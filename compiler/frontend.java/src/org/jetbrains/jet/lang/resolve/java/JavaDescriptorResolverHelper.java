@@ -54,6 +54,9 @@ class JavaDescriptorResolverHelper {
         }
         
         private NamedMembers getNamedMembers(String name) {
+            if (name.length() == 0) {
+                throw new IllegalStateException("Oi! Empty member name in " + psiClass.getPsiClass() + ". How it is possible?");
+            }
             NamedMembers r = namedMembersMap.get(name);
             if (r == null) {
                 r = new NamedMembers();
@@ -113,7 +116,7 @@ class JavaDescriptorResolverHelper {
 
                 // TODO: "is" prefix
                 // TODO: remove getJavaClass
-                if (method.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
+                if (method.getName().startsWith(JvmAbi.GETTER_PREFIX) && method.getName().length() > JvmAbi.GETTER_PREFIX.length()) {
 
                     String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
                     NamedMembers members = getNamedMembers(propertyName);
@@ -153,7 +156,7 @@ class JavaDescriptorResolverHelper {
                         }
                     }
 
-                } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+                } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX) && method.getName().length() > JvmAbi.SETTER_PREFIX.length()) {
 
                     String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
                     NamedMembers members = getNamedMembers(propertyName);
