@@ -1117,6 +1117,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * delegationSpecifier
      *   : constructorInvocation // type and constructor arguments
+     *   : userType
      *   : explicitDelegation
      *   ;
      *
