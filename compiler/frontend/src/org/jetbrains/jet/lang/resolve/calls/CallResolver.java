@@ -276,7 +276,7 @@ public class CallResolver {
         }
         if (traceForFirstNonemptyCandidateSet != null) {
             traceForFirstNonemptyCandidateSet.commit();
-            if (resultsForFirstNonemptyCandidateSet.singleResult()) {
+            if (resultsForFirstNonemptyCandidateSet.isSingleResult()) {
 
                 debugInfo.set(ResolutionDebugInfo.RESULT, resultsForFirstNonemptyCandidateSet.getResultingCall());
             }
@@ -436,7 +436,7 @@ public class CallResolver {
         }
         
         OverloadResolutionResultsImpl<D> results = computeResultAndReportErrors(task.trace, task.tracing, successfulCandidates, failedCandidates);
-        if (!results.singleResult()) {
+        if (!results.isSingleResult()) {
             checkTypesWithNoCallee(task.toBasic());
         }
         return results;

@@ -57,7 +57,7 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
 
     boolean isSuccess();
 
-    boolean singleResult();
+    boolean isSingleResult();
 
     boolean isNothing();
 

@@ -448,6 +448,8 @@ public interface Errors {
     DiagnosticFactory<JetExpression> DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED = DiagnosticFactory.create(WARNING, "This expression is treated as an argument to the function call on the previous line. " +
                                                                                                                       "Separate it with a semicolon (;) if it is not intended to be an argument.");
 
+    DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR, "{0} is not an annotation class");
+
 
     // This field is needed to make the Initializer class load (interfaces cannot have static initializers)
     @SuppressWarnings("UnusedDeclaration")

@@ -63,7 +63,7 @@ import java.util.Collections;
     @Override
     @NotNull
     public ResolvedCallImpl<D> getResultingCall() {
-        assert singleResult();
+        assert isSingleResult();
         return results.iterator().next();
     }
 
@@ -85,7 +85,7 @@ import java.util.Collections;
     }
 
     @Override
-    public boolean singleResult() {
+    public boolean isSingleResult() {
         return isSuccess() || resultCode == Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH;
     }
 
