@@ -1,0 +1,1 @@
+class A<T> : <!SUPERTYPE_NOT_A_CLASS_OR_TRAIT!>T<!> {}

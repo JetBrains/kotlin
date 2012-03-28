@@ -17,13 +17,15 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -277,10 +279,10 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
-            if (!(supertype.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-                throw new IllegalStateException();
+            if (TypeUtils.getClassDescriptor(supertype) != null) {
+                // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
+                supertypes.add(supertype);
             }
-            supertypes.add(supertype);
         }
     }
 
@@ -301,7 +303,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
@@ -310,7 +311,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
         return implicitReceiver;
     }
-
 
     @Override
     public String toString() {
