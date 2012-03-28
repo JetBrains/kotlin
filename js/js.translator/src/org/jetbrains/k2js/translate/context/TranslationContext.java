@@ -94,6 +94,11 @@ public final class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
+        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withDescriptorsAliased(aliases));
+    }
+
+    @NotNull
     public JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableDescriptor) {
             return getFunctionObject((CallableDescriptor)descriptor).getBody();

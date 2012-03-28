@@ -94,6 +94,14 @@ public final class BindingUtils {
     }
 
     @NotNull
+    public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
+                                                       @NotNull SimpleFunctionDescriptor descriptor) {
+        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        assert result instanceof JetFunction : "SimpleFunctionDescriptor should have declaration of type JetFunction";
+        return (JetFunction)result;
+    }
+
+    @NotNull
     public static List<JetDeclaration> getDeclarationsForNamespace(@NotNull BindingContext bindingContext,
                                                                    @NotNull NamespaceDescriptor namespace) {
         List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();

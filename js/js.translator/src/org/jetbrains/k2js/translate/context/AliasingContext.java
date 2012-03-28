@@ -80,6 +80,13 @@ public class AliasingContext {
     }
 
     @NotNull
+    public AliasingContext withDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
+        AliasingContext newContext = new AliasingContext(this);
+        newContext.aliasesForDescriptors.putAll(aliases);
+        return newContext;
+    }
+
+    @NotNull
     private AliasingContext getParent() {
         assert parent != null;
         return parent;
