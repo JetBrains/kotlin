@@ -26,7 +26,7 @@ ${pkg.name} (${model.title})
 
 <META NAME="date" CONTENT="2012-01-09">
 <META NAME="date" CONTENT="2012-01-09">
-<LINK REL="stylesheet" TYPE="text/css" HREF="${pkg.nameAsRelativePath}stylesheet.css" TITLE="Style">
+${stylesheets()}
 
 <SCRIPT type="text/javascript">
 function windowTitle()
