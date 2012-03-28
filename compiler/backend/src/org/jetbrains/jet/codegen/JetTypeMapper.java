@@ -37,6 +37,8 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -58,8 +60,34 @@ public class JetTypeMapper {
 
     public static final Type ARRAY_GENERIC_TYPE = Type.getType(Object[].class);
 
-    private final JetStandardLibrary standardLibrary;
-    public final BindingContext bindingContext;
+    private JetStandardLibrary standardLibrary;
+    public BindingContext bindingContext;
+    private ClosureAnnotator closureAnnotator;
+
+
+    @Inject
+    public void setStandardLibrary(JetStandardLibrary standardLibrary) {
+        this.standardLibrary = standardLibrary;
+    }
+
+    @Inject
+    public void setBindingContext(BindingContext bindingContext) {
+        this.bindingContext = bindingContext;
+    }
+
+    @Inject
+    public void setClosureAnnotator(ClosureAnnotator closureAnnotator) {
+        this.closureAnnotator = closureAnnotator;
+    }
+
+    @PostConstruct
+    public void init() {
+        initKnownTypes();
+        initKnownTypeNames();
+    }
+
+
+
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
         return closureAnnotator.hasThis0(classDescriptor);
@@ -68,8 +96,6 @@ public class JetTypeMapper {
     public ClosureAnnotator getClosureAnnotator() {
         return closureAnnotator;
     }
-
-    private final ClosureAnnotator closureAnnotator;
 
     private final HashMap<JetType,String> knowTypeNames = new HashMap<JetType, String>();
     private final HashMap<JetType,Type> knowTypes = new HashMap<JetType, Type>();
@@ -87,14 +113,6 @@ public class JetTypeMapper {
     public static final Type TYPE_SHARED_BOOLEAN = Type.getObjectType("jet/runtime/SharedVar$Boolean");
     public static final Type TYPE_FUNCTION0 = Type.getObjectType("jet/Function0");
     public static final Type TYPE_FUNCTION1 = Type.getObjectType("jet/Function1");
-
-    public JetTypeMapper(JetStandardLibrary standardLibrary, BindingContext bindingContext, ClosureAnnotator closureAnnotator) {
-        this.standardLibrary = standardLibrary;
-        this.bindingContext = bindingContext;
-        this.closureAnnotator = closureAnnotator;
-        initKnownTypes();
-        initKnownTypeNames();
-    }
 
     public static boolean isIntPrimitive(Type type) {
         return type == Type.INT_TYPE || type == Type.SHORT_TYPE || type == Type.BYTE_TYPE || type == Type.CHAR_TYPE;

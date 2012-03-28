@@ -17,9 +17,12 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.codegen.ClosureAnnotator;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
@@ -45,6 +48,7 @@ public class AllInjectorsGenerator {
         generateMacroInjector();
         generateTestInjector();
         generateInjectorForJavaSemanticServices();
+        generateInjectorForJvmCodegen();
     }
 
     private static void generateInjectorForTopDownAnalyzerBasic() throws IOException {
@@ -131,6 +135,15 @@ public class AllInjectorsGenerator {
         generator.addPublicParameter(Project.class);
         
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForJavaSemanticServices");
+    }
+
+    private static void generateInjectorForJvmCodegen() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generator.addParameter(JetStandardLibrary.class);
+        generator.addParameter(BindingContext.class);
+        generator.addParameter(DiType.listOf(JetFile.class));
+        generator.addPublicField(JetTypeMapper.class);
+        generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
     }
 
 }

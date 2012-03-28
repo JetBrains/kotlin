@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
+import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
@@ -141,8 +142,8 @@ public class GenerationState {
     }
 
     public void compileCorrectFiles(BindingContext bindingContext, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
-        ClosureAnnotator closureAnnotator = !annotate ? null : new ClosureAnnotator(bindingContext, files);
-        typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
+        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, files);
+        typeMapper = injector.getJetTypeMapper();
         bindingContexts.push(bindingContext);
         try {
             for (JetFile file : files) {

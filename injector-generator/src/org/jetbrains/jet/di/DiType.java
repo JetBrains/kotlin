@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -120,5 +121,25 @@ class DiType {
             return new DiType(owner, diTypeParameters);
         }
         throw new IllegalArgumentException("unsupported type: " + type);
+    }
+
+    @NotNull
+    public static DiType collectionOf(@NotNull Class<?> type) {
+        return collectionOf(new DiType(type));
+    }
+
+    @NotNull
+    public static DiType collectionOf(@NotNull DiType type) {
+        return new DiType(List.class, Lists.newArrayList(type));
+    }
+
+    @NotNull
+    public static DiType listOf(@NotNull Class<?> type) {
+        return collectionOf(new DiType(type));
+    }
+
+    @NotNull
+    public static DiType listOf(@NotNull DiType type) {
+        return new DiType(List.class, Lists.newArrayList(type));
     }
 }

@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.compiler.MessageRenderer;
+import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -96,8 +97,9 @@ public class TestlibTest extends CodegenTestCase {
                     new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
-            ClosureAnnotator closureAnnotator = new ClosureAnnotator(session.getMyBindingContext(), session.getSourceFileNamespaces());
-            JetTypeMapper typeMapper = new JetTypeMapper(classFileFactory.state.getStandardLibrary(), session.getMyBindingContext(), closureAnnotator);
+            InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
+                    classFileFactory.state.getStandardLibrary(), session.getMyBindingContext(), session.getSourceFileNamespaces());
+            JetTypeMapper typeMapper = injector.getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {

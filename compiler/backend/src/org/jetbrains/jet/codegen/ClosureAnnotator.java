@@ -26,6 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -39,13 +41,26 @@ public class ClosureAnnotator {
     private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
-    private final BindingContext bindingContext;
 
-    public ClosureAnnotator(BindingContext bindingContext, Collection<JetFile> files) {
+    private BindingContext bindingContext;
+    private List<JetFile> files;
+
+    @Inject
+    public void setBindingContext(BindingContext bindingContext) {
         this.bindingContext = bindingContext;
+    }
+
+    @Inject
+    public void setFiles(List<JetFile> files) {
+        this.files = files;
+    }
+
+    @PostConstruct
+    public void init() {
         mapFilesToNamespaces(files);
         prepareAnonymousClasses();
     }
+
 
     public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor, String name) {
         ClassDescriptorImpl classDescriptor = classesForFunctions.get(funDescriptor);

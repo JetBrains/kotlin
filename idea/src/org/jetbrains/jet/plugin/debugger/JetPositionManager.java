@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -154,8 +155,8 @@ public class JetPositionManager implements PositionManager {
         }
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
         final JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        ClosureAnnotator closureAnnotator = new ClosureAnnotator(bindingContext, Collections.singleton(file));
-        final JetTypeMapper typeMapper = new JetTypeMapper(standardLibrary, bindingContext, closureAnnotator);
+        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, Collections.singletonList(file));
+        final JetTypeMapper typeMapper = injector.getJetTypeMapper();
         myTypeMappers.put(file, typeMapper);
         return typeMapper;
     }
