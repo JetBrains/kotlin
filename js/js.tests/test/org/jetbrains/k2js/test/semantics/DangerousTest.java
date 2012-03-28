@@ -50,4 +50,8 @@ public final class DangerousTest extends SingleFileTranslationTest {
     public void test2dangerousInExpression() throws Exception {
         checkFooBoxIsTrue("2dangerousInExpression.kt");
     }
+
+    public void testDangerousInline() throws Exception {
+        checkFooBoxIsTrue("dangerousInline.kt");
+    }
 }

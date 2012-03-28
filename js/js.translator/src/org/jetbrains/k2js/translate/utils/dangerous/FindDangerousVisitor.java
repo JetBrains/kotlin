@@ -18,7 +18,8 @@ package org.jetbrains.k2js.translate.utils.dangerous;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.reference.InlinedCallExpressionTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 
@@ -28,10 +29,10 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.isStatement;
 public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
 
     @NotNull
-    private final BindingContext bindingContext;
+    private final TranslationContext context;
 
-    public FindDangerousVisitor(@NotNull BindingContext context) {
-        bindingContext = context;
+    public FindDangerousVisitor(@NotNull TranslationContext context) {
+        this.context = context;
     }
 
     @Override
@@ -65,7 +66,7 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
 
     @Override
     public Void visitBlockExpression(JetBlockExpression expression, DangerousData data) {
-        if (isStatement(bindingContext, expression)) {
+        if (isStatement(context.bindingContext(), expression)) {
             return null;
         }
         else {
@@ -73,11 +74,21 @@ public final class FindDangerousVisitor extends JetTreeVisitor<DangerousData> {
         }
     }
 
+    @Override
+    public Void visitCallExpression(JetCallExpression expression, DangerousData data) {
+        if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
+            if (expressionFound(expression, data)) {
+                return null;
+            }
+        }
+        return super.visitCallExpression(expression, data);
+    }
+
     private boolean expressionFound(@NotNull JetExpression expression, @NotNull DangerousData data) {
         if (data.exists()) {
             return true;
         }
-        if (!isStatement(bindingContext, expression)) {
+        if (!isStatement(context.bindingContext(), expression)) {
             data.setDangerousNode(expression);
             return true;
         }

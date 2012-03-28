@@ -58,13 +58,13 @@ public class DangerousData {
     private static DangerousData doCollectData(@NotNull JetExpression expression,
                                                @NotNull TranslationContext context) {
         DangerousData data = new DangerousData();
-        FindDangerousVisitor visitor = new FindDangerousVisitor(context.bindingContext());
+        FindDangerousVisitor visitor = new FindDangerousVisitor(context);
         expression.accept(visitor, data);
         if (!data.exists()) {
             return emptyData();
         }
         data.setRootNode(expression);
-        FindPreviousVisitor findPreviousVisitor = new FindPreviousVisitor();
+        FindPreviousVisitor findPreviousVisitor = new FindPreviousVisitor(data);
         expression.accept(findPreviousVisitor, data);
         return data;
     }
