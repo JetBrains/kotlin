@@ -4,7 +4,7 @@
         val x = this@B : B
         val y = this@A : A
         val z = this : B
-        val Int.xx = this : Int
+        val Int.xx : Int get() = this : Int
         fun Char.xx() : Any {
           this : Char
           val <warning>a</warning> = {Double.() -> this : Double + this@xx : Char}
