@@ -123,6 +123,11 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("KDoc tag value", JetHighlightingColors.DOC_COMMENT_TAG_VALUE),
             new AttributesDescriptor("KDoc markup", JetHighlightingColors.DOC_COMMENT_MARKUP),
 
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.class"), JetHighlightingColors.CLASS),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.abstract.class"), JetHighlightingColors.ABSTRACT_CLASS),
+            new AttributesDescriptor("Trait", JetHighlightingColors.TRAIT),
+
             new AttributesDescriptor("Wrapped into ref", JetHighlightingColors.WRAPPED_INTO_REF),
 
             new AttributesDescriptor("Instance property with backing field", JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD),

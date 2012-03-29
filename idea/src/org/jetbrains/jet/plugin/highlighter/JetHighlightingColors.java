@@ -136,6 +136,26 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.DOC_COMMENT_MARKUP.getDefaultAttributes()
     );
 
+    public static final TextAttributesKey CLASS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_CLASS",
+        CodeInsightColors.CLASS_NAME_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey TYPE_PARAMETER = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_TYPE_PARAMETER",
+        CodeInsightColors.TYPE_PARAMETER_NAME_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey ABSTRACT_CLASS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_ABSTRACT_CLASS",
+        CodeInsightColors.ABSTRACT_CLASS_NAME_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey TRAIT = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_TRAIT",
+        CodeInsightColors.INTERFACE_NAME_ATTRIBUTES.getDefaultAttributes()
+    );
+
     // TODO review: is it needed?
     public static final TextAttributesKey WRAPPED_INTO_REF = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_WRAPPED_INTO_REF",

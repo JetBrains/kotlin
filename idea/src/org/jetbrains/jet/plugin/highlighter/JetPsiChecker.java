@@ -59,6 +59,7 @@ public class JetPsiChecker implements Annotator {
         return new HighlightingVisitor[]{
             new SoftKeywordsHighlightingVisitor(holder),
             new LabelsHighlightingVisitor(holder),
+            new TypeKindHighlightingVisitor(holder),
         };
     }
 
