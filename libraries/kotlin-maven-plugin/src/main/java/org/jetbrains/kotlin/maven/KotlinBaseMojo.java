@@ -21,12 +21,23 @@ public abstract class KotlinBaseMojo extends AbstractMojo {
      */
     private String src;
 
+    /**
+     * The output directory for bytecode classes
+     *
+     * @required
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    private String outputDir;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         arguments = createCompilerArguments();
 
         if (src != null) {
             arguments.setSrc(src);
+        }
+        if (outputDir != null) {
+            arguments.setOutputDir(outputDir);
         }
         configureCompilerArguments(arguments);
 

@@ -13,6 +13,7 @@ import org.jetbrains.k2js.facade.K2JSTranslator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static kotlin.io.namespace.use;
@@ -22,10 +23,6 @@ import static kotlin.io.namespace.use;
  */
 public class K2JSCompilerPlugin implements CompilerPlugin {
 
-    /**
-     * @required
-     * @parameter default-value="${project.build.directory}/target/js/${project.artifactId}.js"
-     */
     private String outFile = "target/js/program.js";
 
     public void processFiles(CompilerPluginContext context) {
@@ -38,8 +35,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                     @NotNull
                     @Override
                     public List<JetFile> getLibFiles() {
-                        // TODO
-                        return null;
+                        return new ArrayList<JetFile>();
                     }
                 };
                 K2JSTranslator translator = new K2JSTranslator(config);

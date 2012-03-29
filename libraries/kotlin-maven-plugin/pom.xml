@@ -107,6 +107,14 @@
             <version>2.9</version>
         </dependency>
 -->
+
+
+        <!-- for JS generation -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>dartc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

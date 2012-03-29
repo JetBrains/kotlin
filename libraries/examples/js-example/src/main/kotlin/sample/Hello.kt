@@ -1,7 +1,9 @@
 package sample
 
 class Hello {
+    var x = 0
+
     fun doSomething(): Unit {
-        println("Hello world!")
+        x++
     }
 }

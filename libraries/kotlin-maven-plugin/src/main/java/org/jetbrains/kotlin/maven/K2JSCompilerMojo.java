@@ -10,6 +10,12 @@ import org.jetbrains.jet.cli.CompilerArguments;
  */
 public class K2JSCompilerMojo extends KotlinBaseMojo {
 
+    /**
+     * The output JS file name
+     *
+     * @required
+     * @parameter default-value="${project.build.directory}/js/${project.artifactId}.js"
+     */
     private String outFile;
 
     @Override
