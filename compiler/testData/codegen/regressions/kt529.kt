@@ -70,7 +70,7 @@ class Luhny() {
         }
     }
 
-    private fun printAll() {
+    fun printAll() {
         while (!buffer.isEmpty())
           print(buffer.removeFirst())
         digits.clear()

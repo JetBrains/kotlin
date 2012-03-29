@@ -78,18 +78,6 @@ public class PropertyGenTest extends CodegenTestCase {
         assertEquals(239, field.get(null));
     }
 
-    public void testProtectedPropertyInNamespace() throws Exception {
-        loadText("protected val x : Int = 239");
-        final Class nsClass = generateNamespaceClass();
-        final Field[] fields = nsClass.getDeclaredFields();
-        assertEquals(1, fields.length);
-        final Field field = fields[0];
-        field.setAccessible(true);
-        assertEquals("x", field.getName());
-        assertEquals(Modifier.PROTECTED | Modifier.STATIC | Modifier.FINAL, field.getModifiers());
-        assertEquals(239, field.get(null));
-    }
-
     public void testFieldPropertyAccess() throws Exception {
         loadFile("properties/fieldPropertyAccess.jet");
 //        System.out.println(generateToText());

@@ -6,13 +6,13 @@ package example;
 fun test() {
   val p = test.Public()
   if (p.public is Int) <!AUTOCAST_IMPOSSIBLE!>p.public<!> + 1
-  if (p.protected is Int) <!AUTOCAST_IMPOSSIBLE!>p.protected<!> + 1
-  if (p.i_protected is Int) p.i_protected + 1
+  if (p.<!UNRESOLVED_REFERENCE!>protected<!> is Int) p.<!UNRESOLVED_REFERENCE!>protected<!> + 1
+  if (p.<!UNRESOLVED_REFERENCE!>i_protected<!> is Int) p.<!UNRESOLVED_REFERENCE!>i_protected<!> + 1
   if (p.internal is Int) p.internal + 1
   val i = test.Public()
   if (i.public is Int) <!AUTOCAST_IMPOSSIBLE!>i.public<!> + 1
-  if (i.protected is Int) <!AUTOCAST_IMPOSSIBLE!>i.protected<!> + 1
-  if (i.i_protected is Int) i.i_protected + 1
+  if (i.<!UNRESOLVED_REFERENCE!>protected<!> is Int) i.<!UNRESOLVED_REFERENCE!>protected<!> + 1
+  if (i.<!UNRESOLVED_REFERENCE!>i_protected<!> is Int) i.<!UNRESOLVED_REFERENCE!>i_protected<!> + 1
   if (i.internal is Int) i.internal + 1
 }
 
@@ -31,4 +31,3 @@ internal class Internal() {
     internal protected val i_protected : Int? = 1;
     val internal : Int? = 1
 }
-
