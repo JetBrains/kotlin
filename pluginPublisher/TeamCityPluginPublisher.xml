@@ -7,6 +7,8 @@
 
   <target name="verifyAndPublish">
     <!-- IDEA Download URL -> ${download.url} -->
+    <!-- Fetch from EAP page -->
+    <!--
     <loadresource property="download.url">
       <url url="${idea.download.page.url}"/>
       <filterchain>
@@ -17,6 +19,8 @@
         </tokenfilter>
       </filterchain>
     </loadresource>
+    -->
+    <property name="download.url" value="http://download.jetbrains.com/idea/ideaIC-11.1.tar.gz" />
 
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
