@@ -21,6 +21,8 @@
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <asm.version>3.3.1</asm.version>
+        <guava.version>11.0.2</guava.version>
     </properties>
 
 
@@ -41,6 +43,7 @@
 
 
     <modules>
+        <module>kotlin-install</module>
         <module>kunit</module>
         <module>stdlib</module>
         <module>kdoc</module>

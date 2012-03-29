@@ -16,61 +16,142 @@
     </parent>
 
     <artifactId>kotlin-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jfrog.maven.annomojo</groupId>
-            <artifactId>maven-plugin-anno</artifactId>
-            <version>${maven-plugin-anno.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
         </dependency>
+        <!--
+                <dependency>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-project</artifactId>
+                    <version>${maven.version}</version>
+                </dependency>
+        -->
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-compiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-build-tools</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>intellij-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>intellij-annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-tree</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-commons</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>${asm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+-->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>org.picocontainer</groupId>
+            <artifactId>picocontainer</artifactId>
+            <version>2.9</version>
+        </dependency>
+-->
     </dependencies>
-
-
     <build>
-        <plugins>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
 
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <!-- AnnoMojo: http://wiki.jfrog.org/confluence/display/OSS/Maven+Anno+Mojo      -->
-            <!-- http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-plugin-plugin/ -->
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.9</version>
-                <dependencies>
-                    <dependency>
-                      <groupId>org.apache.maven.plugin-tools</groupId>
-                      <artifactId>maven-plugin-tools-api</artifactId>
-                      <version>2.9</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jfrog.maven.annomojo</groupId>
-                        <artifactId>maven-plugin-tools-anno</artifactId>
-                        <version>${maven-plugin-anno.version}</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!--
+                                                        <createDependencyReducedPom>true</createDependencyReducedPom>
+                                                        <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+                                                        <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+                            -->
+                            <artifactSet>
+                                <includes>
+                                    <include>org.jetbrains.kotlin:*</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>org.jetbrains.kotlin:stdlib</exclude>
+                                </excludes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>download</id>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>jfrog-plugins</id>
-                    <name>jfrog-plugins-dist</name>
-                    <url>http://repo.jfrog.org/artifactory/plugins-releases</url>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-    </profiles>
-
 </project>
