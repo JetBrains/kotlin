@@ -119,6 +119,9 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
             new AttributesDescriptor("KDoc comment", JetHighlightingColors.DOC_COMMENT),
+            new AttributesDescriptor("KDoc tag", JetHighlightingColors.DOC_COMMENT_TAG),
+            new AttributesDescriptor("KDoc tag value", JetHighlightingColors.DOC_COMMENT_TAG_VALUE),
+            new AttributesDescriptor("KDoc markup", JetHighlightingColors.DOC_COMMENT_MARKUP),
 
             new AttributesDescriptor("Wrapped into ref", JetHighlightingColors.WRAPPED_INTO_REF),
 
