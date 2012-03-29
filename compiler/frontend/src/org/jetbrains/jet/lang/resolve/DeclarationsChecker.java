@@ -71,7 +71,7 @@ public class DeclarationsChecker {
             if (!context.completeAnalysisNeeded(aClass)) continue;
 
             checkClass(aClass, classDescriptor);
-            checkModifiers(aClass.getModifierList());
+            checkModifiers(aClass.getModifierList(), classDescriptor);
         }
 
         Map<JetObjectDeclaration, MutableClassDescriptor> objects = context.getObjects();
@@ -90,7 +90,7 @@ public class DeclarationsChecker {
 
             if (!context.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
-            checkModifiers(function.getModifierList());
+            checkModifiers(function.getModifierList(), functionDescriptor);
         }
 
         Map<JetProperty, PropertyDescriptor> properties = context.getProperties();
@@ -100,7 +100,7 @@ public class DeclarationsChecker {
 
             if (!context.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
-            checkModifiers(property.getModifierList());
+            checkModifiers(property.getModifierList(), propertyDescriptor);
         }
 
     }
@@ -162,7 +162,7 @@ public class DeclarationsChecker {
             JetFunction function = (JetFunction) member;
             hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
         }
-        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) && hasDeferredType) {
+        if ((memberDescriptor.getVisibility().isPublicAPI()) && hasDeferredType) {
             trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
         }
     }
@@ -297,9 +297,9 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkModifiers(@Nullable JetModifierList modifierList) {
+    private void checkModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
         checkModalityModifiers(modifierList);
-        checkVisibilityModifiers(modifierList);
+        checkVisibilityModifiers(modifierList, descriptor);
     }
 
     private void checkModalityModifiers(@Nullable JetModifierList modifierList) {
@@ -310,8 +310,15 @@ public class DeclarationsChecker {
                            Lists.<JetToken>newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD));
     }
 
-    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList) {
+    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
         if (modifierList == null) return;
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+                trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierList.getModifierNode(JetTokens.PROTECTED_KEYWORD).getPsi()));
+            }
+        }
 
         checkCompatibility(modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD),
                            Lists.<JetToken>newArrayList(JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD));

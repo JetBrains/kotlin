@@ -125,6 +125,8 @@ public interface Errors {
     DiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_GETTER = DiagnosticFactory.create(ERROR, "Property with getter implementation cannot be abstract");
     DiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_SETTER = DiagnosticFactory.create(ERROR, "Property with setter implementation cannot be abstract");
 
+    DiagnosticFactory<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = DiagnosticFactory.create(ERROR, "Package member cannot be protected");
+
     DiagnosticFactory<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory.create(ERROR, "Getter visibility must be the same as property visibility");
     DiagnosticFactory<JetProperty> BACKING_FIELD_IN_TRAIT = DiagnosticFactory.create(ERROR, "Property in a trait cannot have a backing field", PositioningStrategies.POSITION_NAME_IDENTIFIER);
     DiagnosticFactory<JetProperty> MUST_BE_INITIALIZED = DiagnosticFactory.create(ERROR, "Property must be initialized", PositioningStrategies.POSITION_NAME_IDENTIFIER);
