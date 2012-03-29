@@ -25,8 +25,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
 * @author yole

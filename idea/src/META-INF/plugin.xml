@@ -52,6 +52,9 @@
       <applicationService serviceInterface="org.jetbrains.jet.lang.psi.stubs.elements.StubIndexService"
                           serviceImplementation="org.jetbrains.jet.plugin.stubindex.StubIndexServiceImpl" />
 
+      <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
+                      serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
+
       <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
       <internalFileTemplate name="Kotlin File"/>

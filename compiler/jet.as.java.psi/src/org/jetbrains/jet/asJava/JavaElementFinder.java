@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -51,7 +52,7 @@ public class JavaElementFinder extends PsiElementFinder {
         psiManager = PsiManager.getInstance(project);
 
         // Monitoring for files instead of collecting them each time
-        VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
+        VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
             @Override
             public void fileCreated(VirtualFileEvent event) {
                 invalidateJetFilesCache();
@@ -71,6 +72,24 @@ public class JavaElementFinder extends PsiElementFinder {
             public void fileCopied(VirtualFileCopyEvent event) {
                 invalidateJetFilesCache();
             }
+
+            @Override
+            public void propertyChanged(VirtualFilePropertyEvent event) {}
+
+            @Override
+            public void contentsChanged(VirtualFileEvent event) {}
+
+            @Override
+            public void beforePropertyChange(VirtualFilePropertyEvent event) {}
+
+            @Override
+            public void beforeContentsChange(VirtualFileEvent event) {}
+
+            @Override
+            public void beforeFileDeletion(VirtualFileEvent event) {}
+
+            @Override
+            public void beforeFileMovement(VirtualFileMoveEvent event) {}
         });
     }
 
@@ -230,7 +249,7 @@ public class JavaElementFinder extends PsiElementFinder {
         List<JetFile> cachedFiles = jetFiles.get(scope);
         
         if (cachedFiles == null) {
-            cachedFiles = JetFileUtil.collectJetFiles(project, scope);
+            cachedFiles = JetFilesProvider.getInstance(project).allInScope(scope);
              jetFiles.put(scope, cachedFiles);
         }
 

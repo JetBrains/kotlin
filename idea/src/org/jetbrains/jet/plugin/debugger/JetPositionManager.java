@@ -34,16 +34,14 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
-import org.jetbrains.jet.di.InjectorForJvmCodegen;
-import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
 

@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
 import java.util.Collection;

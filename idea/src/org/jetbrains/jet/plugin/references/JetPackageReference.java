@@ -22,8 +22,8 @@ import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * @author Nikolay Krasko

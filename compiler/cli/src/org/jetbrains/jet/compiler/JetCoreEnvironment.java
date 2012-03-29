@@ -20,8 +20,12 @@ import com.intellij.core.JavaCoreEnvironment;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.mock.MockApplication;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElementFinder;
+import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
@@ -37,6 +41,7 @@ import java.util.List;
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
+    private CompileSession session;
 
     public JetCoreEnvironment(Disposable parentDisposable) {
         super(parentDisposable);
@@ -47,11 +52,11 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());
 
-/*
+
+        myProject.registerService(JetFilesProvider.class, new CliJetFilesProvider(this));
         Extensions.getArea(myProject)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(myProject));
-*/
 
         for (VirtualFile root : PathUtil.getAltHeadersRoots()) {
             addLibraryRoot(root);
@@ -84,5 +89,13 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                     addToClasspath(file);
             }
         }
+    }
+
+    public void setSession(CompileSession session) {
+        this.session = session;
+    }
+
+    public CompileSession getSession() {
+        return session;
     }
 }

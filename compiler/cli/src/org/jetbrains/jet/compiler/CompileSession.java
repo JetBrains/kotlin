@@ -26,7 +26,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassBuilderFactories;
+import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -136,7 +139,7 @@ public class CompileSession {
         }
     }
 
-    public List<JetFile> getSourceFileNamespaces() {
+    public List<JetFile> getSourceFiles() {
         return sourceFiles;
     }
 
@@ -221,7 +224,7 @@ public class CompileSession {
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();
         if (!module) {
             if (plugins != null) {
-                CompilerPluginContext context = new CompilerPluginContext(project, bindingContext.getBindingContext(), getSourceFileNamespaces());
+                CompilerPluginContext context = new CompilerPluginContext(project, bindingContext.getBindingContext(), getSourceFiles());
                 for (CompilerPlugin plugin : plugins) {
                     plugin.processFiles(context);
                 }

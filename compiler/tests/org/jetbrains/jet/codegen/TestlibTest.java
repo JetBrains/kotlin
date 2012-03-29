@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.compiler.MessageRenderer;
-import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -101,7 +100,7 @@ public class TestlibTest extends CodegenTestCase {
             JetTypeMapper typeMapper = state.getInjector().getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
-                for(JetFile jetFile : session.getSourceFileNamespaces()) {
+                for(JetFile jetFile : session.getSourceFiles()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
                         if(decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;

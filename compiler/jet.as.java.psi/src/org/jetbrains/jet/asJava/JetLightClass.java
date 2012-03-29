@@ -50,9 +50,9 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import javax.swing.*;
@@ -158,7 +158,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         // The context must reflect _all files in the module_. not only the current file
         // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
         // must be loaded from .class files
-        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(WholeProjectAnalyzerFacade.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file));
+        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
+            JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file));
 
         final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override

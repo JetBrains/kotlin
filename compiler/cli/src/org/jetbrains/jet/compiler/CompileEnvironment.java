@@ -394,7 +394,7 @@ public class CompileEnvironment {
         session.addSources(sourceFileOrDir);
 
         FqName mainClass = null;
-        for (JetFile file : session.getSourceFileNamespaces()) {
+        for (JetFile file : session.getSourceFiles()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
                 FqName fqName = JetPsiUtil.getFQName(file);
                 mainClass = fqName.child(JvmAbi.PACKAGE_CLASS);
@@ -426,7 +426,9 @@ public class CompileEnvironment {
     }
 
     private CompileSession newCompileSession() {
-        return new CompileSession(environment, messageRenderer, errorStream, verbose);
+        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose);
+        environment.setSession(answer);
+        return answer;
     }
 
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {

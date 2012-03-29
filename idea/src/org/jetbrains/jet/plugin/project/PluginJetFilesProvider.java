@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.compiler;
+/*
+ * @author max
+ */
+package org.jetbrains.jet.plugin.project;
 
 import com.google.common.collect.Sets;
+import com.intellij.openapi.compiler.ex.CompilerPathsEx;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
@@ -24,34 +28,25 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.JetFileUtil;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.plugin.JetFileType;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-/**
- * @author abreslav
- */
-public final class WholeProjectAnalyzerFacade {
+public class PluginJetFilesProvider extends JetFilesProvider {
+    private final Project project;
 
-    /** Forbid creating */
-    private WholeProjectAnalyzerFacade() {}
+    public PluginJetFilesProvider(Project project) {
+        this.project = project;
+    }
 
-    /**
-     * Will collect all root-namespaces in all kotlin files in the project.
-     */
     public static final Function<JetFile, Collection<JetFile>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
 
         @Override
@@ -89,13 +84,34 @@ public final class WholeProjectAnalyzerFacade {
         }
     };
 
-    @NotNull
-    public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeFileWithCache(file, WHOLE_PROJECT_DECLARATION_PROVIDER);
+    @Override
+    public Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule() {
+        return WHOLE_PROJECT_DECLARATION_PROVIDER;
     }
 
-    @NotNull
-    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacadeForJVM.analyzeProjectWithCache(project, JetFileUtil.collectJetFiles(project, scope));
+    @Override
+    public List<JetFile> allInScope(final GlobalSearchScope scope) {
+        final List<JetFile> answer = new ArrayList<JetFile>();
+
+        final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+        List<VirtualFile> contentRoots = Arrays.asList(ProjectRootManager.getInstance(project).getContentRoots());
+        final PsiManager manager = PsiManager.getInstance(project);
+
+        CompilerPathsEx.visitFiles(contentRoots, new CompilerPathsEx.FileVisitor() {
+            @Override
+            protected void acceptFile(VirtualFile file, String fileRoot, String filePath) {
+                final FileType fileType = fileTypeManager.getFileTypeByFile(file);
+                if (fileType != JetFileType.INSTANCE) return;
+
+                if (scope.accept(file)) {
+                    final PsiFile psiFile = manager.findFile(file);
+                    if (psiFile instanceof JetFile) {
+                        answer.add((JetFile) psiFile);
+                    }
+                }
+            }
+        });
+
+        return answer;
     }
 }
