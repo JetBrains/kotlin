@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet;
-
-import org.jetbrains.jet.cli.KotlinCompiler;
-import org.junit.Test;
+package org.jetbrains.jet.lang.resolve.java;
 
 /**
- * @author Stepan Koltsov
- */
-public class CompileBuiltinsTest extends TestCaseWithTmpdirIndependentFromIdea {
-
-    @Test
-    public void compile() {
-        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(
-                System.err, "-output", tmpdir.getPath(), "-src", "./compiler/frontend/src", "-mode", "builtins");
-        if (exitCode != KotlinCompiler.ExitCode.OK) {
-            throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
-        }
-    }
+* @author Stepan Koltsov
+*/
+public enum CompilerSpecialMode {
+    REGULAR,
+    BUILTINS,
+    JDK_HEADERS,
 }

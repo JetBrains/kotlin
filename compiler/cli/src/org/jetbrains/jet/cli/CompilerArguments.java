@@ -53,8 +53,8 @@ public class CompilerArguments {
     @Argument(value = "help", alias = "h", description = "show help")
     public boolean help;
 
-    @Argument(value = "stubs", description = "Compile stubs: ignore function bodies")
-    public boolean stubs;
+    @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
+    public String mode;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
@@ -128,14 +128,6 @@ public class CompilerArguments {
 
     public void setStdlib(String stdlib) {
         this.stdlib = stdlib;
-    }
-
-    public boolean isStubs() {
-        return stubs;
-    }
-
-    public void setStubs(boolean stubs) {
-        this.stubs = stubs;
     }
 
     public boolean isTags() {

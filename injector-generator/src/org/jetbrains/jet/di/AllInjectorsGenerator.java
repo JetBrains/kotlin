@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
-import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
@@ -72,6 +69,7 @@ public class AllInjectorsGenerator {
     private static void generateInjectorForTopDownAnalyzerForJvm() throws IOException {
         DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
         generateInjectorForTopDownAnalyzerCommon(generator);
+        generator.addParameter(CompilerSpecialMode.class);
         generator.addPublicField(JavaBridgeConfiguration.class);
         generator.addField(PsiClassFinderForJvm.class);
         generator.generate("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJvm");
@@ -134,7 +132,9 @@ public class AllInjectorsGenerator {
         generator.addPublicField(PsiClassFinderForJvm.class);
         generator.addField(false, ModuleDescriptor.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
-        
+        generator.addField(false, CompilerSpecialMode.class, null,
+                new GivenExpression("CompilerSpecialMode.REGULAR"));
+
         // Parameters
         generator.addPublicParameter(Project.class);
         

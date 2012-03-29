@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.*;
@@ -62,11 +63,11 @@ public class CompileEnvironment {
     private URL stdlibUrl;
 
     private boolean ignoreErrors = false;
-    private boolean stubs = false;
+    private final CompilerSpecialMode mode;
     private final boolean verbose;
 
     public CompileEnvironment() {
-        this(MessageRenderer.PLAIN, false);
+        this(MessageRenderer.PLAIN, false, CompilerSpecialMode.REGULAR);
     }
 
     /**
@@ -76,14 +77,15 @@ public class CompileEnvironment {
      * @param messageRenderer
      * @param verbose
      */
-    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose) {
+    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose, CompilerSpecialMode mode) {
+        this.mode = mode;
         this.verbose = verbose;
         rootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
-        environment = new JetCoreEnvironment(rootDisposable);
+        environment = new JetCoreEnvironment(rootDisposable, mode == CompilerSpecialMode.REGULAR);
         this.messageRenderer = messageRenderer;
     }
 
@@ -93,10 +95,6 @@ public class CompileEnvironment {
 
     public void setIgnoreErrors(boolean ignoreErrors) {
         this.ignoreErrors = ignoreErrors;
-    }
-
-    public void setStubs(boolean stubs) {
-        this.stubs = stubs;
     }
 
     public void dispose() {
@@ -123,17 +121,24 @@ public class CompileEnvironment {
     }
 
     public void ensureRuntime() {
-        ensureRuntime(environment);
+        if (mode == CompilerSpecialMode.REGULAR) {
+            ensureRuntime(environment);
+        } else if (mode == CompilerSpecialMode.JDK_HEADERS) {
+            ensureJdkRuntime(environment);
+        } else if (mode == CompilerSpecialMode.BUILTINS) {
+            // nop
+        } else {
+            throw new IllegalStateException("unknown mode: " + mode);
+        }
     }
 
     public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
-        Project project = env.getProject();
-        if (JavaPsiFacade.getInstance(project).findClass("java.lang.Object", GlobalSearchScope.allScope(project)) == null) {
-            // TODO: prepend
-            env.addToClasspath(findRtJar());
-        }
+        ensureJdkRuntime(env);
+        ensureKotlinRuntime(env);
+    }
 
-        if (JavaPsiFacade.getInstance(project).findClass("jet.JetObject", GlobalSearchScope.allScope(project)) == null) {
+    private static void ensureKotlinRuntime(JetCoreEnvironment env) {
+        if (JavaPsiFacade.getInstance(env.getProject()).findClass("jet.JetObject", GlobalSearchScope.allScope(env.getProject())) == null) {
             // TODO: prepend
             File kotlin = PathUtil.getDefaultRuntimePath();
             if (kotlin == null || !kotlin.exists()) {
@@ -144,6 +149,13 @@ public class CompileEnvironment {
                 throw new IllegalStateException("kotlin runtime not found");
             }
             env.addToClasspath(kotlin);
+        }
+    }
+
+    public static void ensureJdkRuntime(JetCoreEnvironment env) {
+        if (JavaPsiFacade.getInstance(env.getProject()).findClass("java.lang.Object", GlobalSearchScope.allScope(env.getProject())) == null) {
+            // TODO: prepend
+            env.addToClasspath(findRtJar());
         }
     }
 
@@ -220,7 +232,7 @@ public class CompileEnvironment {
     }
 
     private CompileEnvironment copyEnvironment(boolean verbose) {
-        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose);
+        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose, mode);
         compileEnvironment.setIgnoreErrors(ignoreErrors);
         compileEnvironment.setErrorStream(errorStream);
         // copy across any compiler plugins
@@ -268,7 +280,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = newCompileSession();
-        moduleCompileSession.setStubs(stubs);
+        moduleCompileSession.setStubs(mode != CompilerSpecialMode.REGULAR);
 
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
@@ -389,7 +401,7 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = newCompileSession();
-        session.setStubs(stubs);
+        session.setStubs(mode != CompilerSpecialMode.REGULAR);
 
         session.addSources(sourceFileOrDir);
 
@@ -426,7 +438,7 @@ public class CompileEnvironment {
     }
 
     private CompileSession newCompileSession() {
-        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose);
+        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose, mode);
         environment.setSession(answer);
         return answer;
     }

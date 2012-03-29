@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -166,7 +167,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
         }
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY)
+                getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR)
                     .getBindingContext();
 
         boolean ok = true;

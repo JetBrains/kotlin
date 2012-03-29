@@ -162,7 +162,7 @@ public class JetTestUtils {
 
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable);
+        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, true);
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         environment.addToClasspath(rtJar);
         environment.addToClasspath(getAnnotationsJar());

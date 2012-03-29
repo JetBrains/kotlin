@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
@@ -69,7 +70,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false);
+            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false, CompilerSpecialMode.REGULAR);
 
             myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
 

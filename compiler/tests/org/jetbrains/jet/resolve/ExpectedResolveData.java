@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
@@ -137,7 +138,8 @@ public abstract class ExpectedResolveData {
         Project project = files.iterator().next().getProject();
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
+                Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {

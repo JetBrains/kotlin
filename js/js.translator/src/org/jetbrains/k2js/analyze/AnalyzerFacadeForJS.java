@@ -142,7 +142,7 @@ public final class AnalyzerFacadeForJS {
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
                                          @NotNull WritableScope namespaceMemberScope) {
-            DefaultModuleConfiguration.createStandardConfiguration(project).extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+            DefaultModuleConfiguration.createStandardConfiguration(project, true).extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         }
 
     }

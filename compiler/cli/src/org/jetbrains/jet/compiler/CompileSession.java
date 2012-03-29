@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.Progress;
@@ -67,13 +68,15 @@ public class CompileSession {
     private final MessageRenderer messageRenderer;
     private final PrintStream errorStream;
     private final boolean isVerbose;
+    private final CompilerSpecialMode compilerSpecialMode;
     private AnalyzeExhaust bindingContext;
 
-    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose) {
+    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose, CompilerSpecialMode mode) {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
         isVerbose = verbose;
+        this.compilerSpecialMode = mode;
         messageCollector = new MessageCollector(this.messageRenderer);
     }
 
@@ -173,7 +176,7 @@ public class CompileSession {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
+                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollector, diagnostic);

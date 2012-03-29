@@ -38,14 +38,16 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     public static final ImportPath[] DEFAULT_JET_IMPORTS = new ImportPath[] {
             new ImportPath("kotlin.*"), new ImportPath("kotlin.io.*"), new ImportPath("jet.*"), };
 
-    private Project project;
+    private final Project project;
+    private final boolean extendBuiltins;
 
-    public static DefaultModuleConfiguration createStandardConfiguration(Project project) {
-        return new DefaultModuleConfiguration(project);
+    public static DefaultModuleConfiguration createStandardConfiguration(Project project, boolean extendBuiltins) {
+        return new DefaultModuleConfiguration(project, extendBuiltins);
     }
 
-    private DefaultModuleConfiguration(Project project) {
+    private DefaultModuleConfiguration(@NotNull Project project, boolean extendBuiltins) {
         this.project = project;
+        this.extendBuiltins = extendBuiltins;
     }
 
     @Override
@@ -58,7 +60,12 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equals(JetStandardClasses.STANDARD_CLASSES_FQNAME.toUnsafe())) {
-            namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+            if (!extendBuiltins) {
+                namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
+            } else {
+                namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
+            }
+
         }
     }
 }

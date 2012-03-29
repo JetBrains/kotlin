@@ -84,7 +84,8 @@ public class AnalyzerFacadeForJVM {
                                     file.getProject(),
                                     declarationProvider.fun(file),
                                     Predicates.<PsiFile>equalTo(file),
-                                    JetControlFlowDataTraceFactory.EMPTY);
+                                    JetControlFlowDataTraceFactory.EMPTY,
+                                    CompilerSpecialMode.REGULAR);
                             return new Result<AnalyzeExhaust>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
@@ -123,7 +124,8 @@ public class AnalyzerFacadeForJVM {
                                     project,
                                     files,
                                     Predicates.<PsiFile>alwaysFalse(),
-                                    JetControlFlowDataTraceFactory.EMPTY);
+                                    JetControlFlowDataTraceFactory.EMPTY,
+                                    CompilerSpecialMode.REGULAR);
                             return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                         catch (ProcessCanceledException e) {
@@ -156,12 +158,14 @@ public class AnalyzerFacadeForJVM {
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory);
+        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
+                Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory, CompilerSpecialMode.REGULAR);
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
-            JetControlFlowDataTraceFactory flowDataTraceFactory) {
+            JetControlFlowDataTraceFactory flowDataTraceFactory,
+            CompilerSpecialMode compilerSpecialMode) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
@@ -172,7 +176,8 @@ public class AnalyzerFacadeForJVM {
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
                 project, topDownAnalysisParameters,
-                new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory);
+                new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory,
+                compilerSpecialMode);
 
 
         injector.getTopDownAnalyzer().analyzeFiles(files);
@@ -184,6 +189,7 @@ public class AnalyzerFacadeForJVM {
 
         Project project = files.iterator().next().getProject();
 
-        return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(), JetControlFlowDataTraceFactory.EMPTY);
+        return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(),
+                JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
     }
 }

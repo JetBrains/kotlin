@@ -17,11 +17,9 @@
 package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Args;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.compiler.CompilerPlugin;
-import org.jetbrains.jet.compiler.MessageRenderer;
+import org.jetbrains.jet.compiler.*;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -99,7 +97,18 @@ public class KotlinCompiler {
             errStream.println(messageRenderer.render(Severity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, null, -1, -1));
         }
 
-        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose);
+        CompilerSpecialMode mode;
+        if (arguments.mode == null) {
+            mode = CompilerSpecialMode.REGULAR;
+        } else if (arguments.mode.equals("jdkHeaders")) {
+            mode = CompilerSpecialMode.JDK_HEADERS;
+        } else if (arguments.mode.equals("builtins")) {
+            mode = CompilerSpecialMode.BUILTINS;
+        } else {
+            throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
+        }
+
+        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose, mode);
         try {
             configureEnvironment(environment, arguments, errStream);
 
@@ -162,8 +171,6 @@ public class KotlinCompiler {
     protected void configureEnvironment(CompileEnvironment environment, CompilerArguments arguments, PrintStream errStream) {
         environment.setIgnoreErrors(false);
         environment.setErrorStream(errStream);
-
-        environment.setStubs(arguments.stubs);
 
         // install any compiler plugins
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();

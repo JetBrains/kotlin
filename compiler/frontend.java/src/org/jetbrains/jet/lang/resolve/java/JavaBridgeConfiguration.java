@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,16 +49,27 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     private JavaSemanticServices javaSemanticServices;
     @NotNull
     private ModuleConfiguration delegateConfiguration;
+    @NotNull
+    private CompilerSpecialMode mode;
 
     @Inject
     public void setProject(@NotNull Project project) {
         this.project = project;
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project);
     }
 
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
         this.javaSemanticServices = javaSemanticServices;
+    }
+
+    @Inject
+    public void setMode(@NotNull CompilerSpecialMode mode) {
+        this.mode = mode;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, mode == CompilerSpecialMode.BUILTINS);
     }
 
 

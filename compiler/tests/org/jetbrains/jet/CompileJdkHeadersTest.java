@@ -27,7 +27,7 @@ public class CompileJdkHeadersTest extends TestCaseWithTmpdirIndependentFromIdea
     @Test
     public void compile() {
         KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(
-                System.err, "-output", tmpdir.getPath(), "-src", "./jdk-headers/src", "-stubs");
+                System.err, "-output", tmpdir.getPath(), "-src", "./jdk-headers/src", "-mode", "jdkHeaders");
         if (exitCode != KotlinCompiler.ExitCode.OK) {
             throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
         }

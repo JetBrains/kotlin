@@ -43,7 +43,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
     private CompileSession session;
 
-    public JetCoreEnvironment(Disposable parentDisposable) {
+    public JetCoreEnvironment(Disposable parentDisposable, boolean includeJdkHeaders) {
         super(parentDisposable);
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -58,8 +58,10 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(myProject));
 
-        for (VirtualFile root : PathUtil.getAltHeadersRoots()) {
-            addLibraryRoot(root);
+        if (includeJdkHeaders) {
+            for (VirtualFile root : PathUtil.getAltHeadersRoots()) {
+                addLibraryRoot(root);
+            }
         }
 
         JetStandardLibrary.initialize(getProject());

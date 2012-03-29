@@ -77,7 +77,8 @@
             <arg value="${basedir}/jdk-headers/src"/>
             <arg value="-output"/>
             <arg value="${output}/classes/jdk-headers"/>
-            <arg value="-stubs"/>
+            <arg value="-mode"/>
+            <arg value="jdkHeaders"/>
         </java>
     </target>
 
@@ -92,7 +93,8 @@
             <arg value="${basedir}/compiler/frontend/src"/>
             <arg value="-output"/>
             <arg value="${output}/classes/lang"/>
-            <arg value="-stubs"/>
+            <arg value="-mode"/>
+            <arg value="builtins"/>
         </java>
     </target>
 

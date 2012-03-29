@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
@@ -47,6 +48,7 @@ public class InjectorForJavaSemanticServices {
         JavaBridgeConfiguration javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinderForJvm = new PsiClassFinderForJvm();
         ModuleDescriptor moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
+        CompilerSpecialMode compilerSpecialMode = CompilerSpecialMode.REGULAR;
         this.project = project;
         JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
         NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
@@ -63,6 +65,7 @@ public class InjectorForJavaSemanticServices {
         this.javaDescriptorResolver.setTrace(bindingTrace);
 
         javaBridgeConfiguration.setJavaSemanticServices(javaSemanticServices);
+        javaBridgeConfiguration.setMode(compilerSpecialMode);
         javaBridgeConfiguration.setProject(project);
 
         this.psiClassFinderForJvm.setProject(project);
@@ -73,6 +76,8 @@ public class InjectorForJavaSemanticServices {
         namespaceFactoryImpl.setConfiguration(javaBridgeConfiguration);
         namespaceFactoryImpl.setModuleDescriptor(moduleDescriptor);
         namespaceFactoryImpl.setTrace(bindingTrace);
+
+        javaBridgeConfiguration.init();
 
         psiClassFinderForJvm.initialize();
 

@@ -235,7 +235,7 @@ public class JetStandardClasses {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    /*package*/ static final JetScope STANDARD_CLASSES;
+    public static final JetScope STANDARD_CLASSES;
 
     static {
         WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
