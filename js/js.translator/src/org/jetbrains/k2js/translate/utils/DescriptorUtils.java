@@ -154,6 +154,8 @@ public final class DescriptorUtils {
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
         if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
             return Namer.getAnonymousNamespaceName();
+        } else if (descriptor.getName().equals("")) {
+            return Namer.getAnonymousNamespaceName();
         } else {
             return descriptor.getName();
         }
