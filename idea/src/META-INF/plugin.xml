@@ -124,7 +124,6 @@
       <liveTemplateMacro implementation="org.jetbrains.jet.plugin.liveTemplates.macro.JetIterableVariableMacro"/>
       <liveTemplateMacro implementation="org.jetbrains.jet.plugin.liveTemplates.macro.JetSuggestVariableNameMacro"/>
 
-      <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.SoftKeywordsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.LabelsAnnotator"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>
