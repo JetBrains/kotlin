@@ -32,7 +32,6 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -84,7 +83,7 @@ public class JetPsiChecker implements Annotator {
                     }
                 }
 
-                highlightBackingFields(holder, file, bindingContext);
+                file.acceptChildren(new BackingFieldHighlightingVisitor(holder, bindingContext));
 
                 file.acceptChildren(new JetVisitorVoid() {
                     @Override
@@ -260,43 +259,5 @@ public class JetPsiChecker implements Annotator {
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return null;
         return holder.createErrorAnnotation(textRanges.get(0), getMessage(diagnostic));
-    }
-
-
-    private void highlightBackingFields(@NotNull final AnnotationHolder holder, @NotNull JetFile file, @NotNull final BindingContext bindingContext) {
-        file.acceptChildren(new JetVisitorVoid() {
-            @Override
-            public void visitProperty(@NotNull JetProperty property) {
-                VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
-                if (propertyDescriptor instanceof PropertyDescriptor) {
-                    if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) propertyDescriptor)) {
-                        putBackingfieldAnnotation(holder, property);
-                    }
-                }
-            }
-
-            @Override
-            public void visitParameter(@NotNull JetParameter parameter) {
-                PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
-                if (propertyDescriptor != null && bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                    putBackingfieldAnnotation(holder, parameter);
-                }
-            }
-
-            @Override
-            public void visitJetElement(@NotNull JetElement element) {
-                element.acceptChildren(this);
-            }
-        });
-    }
-
-    private void putBackingfieldAnnotation(@NotNull AnnotationHolder holder, @NotNull JetNamedDeclaration element) {
-        PsiElement nameIdentifier = element.getNameIdentifier();
-        if (nameIdentifier != null) {
-            holder.createInfoAnnotation(
-                    nameIdentifier,
-                    "This property has a backing field")
-                .setTextAttributes(JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD);
-        }
     }
 }
