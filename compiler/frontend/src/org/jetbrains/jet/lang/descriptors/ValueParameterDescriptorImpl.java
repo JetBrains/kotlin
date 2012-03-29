@@ -125,4 +125,10 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner) {
         return new ValueParameterDescriptorImpl(newOwner, index, Lists.newArrayList(getAnnotations()), getName(), isVar, getType(), hasDefaultValue, varargElementType);
     }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return Visibilities.LOCAL;
+    }
 }
