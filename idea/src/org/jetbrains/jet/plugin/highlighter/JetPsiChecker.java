@@ -55,10 +55,25 @@ public class JetPsiChecker implements Annotator {
         return errorReportingEnabled;
     }
 
+    private static HighlightingVisitor[] getBeforeAnalysisVisitors(AnnotationHolder holder) {
+        return new HighlightingVisitor[]{
+            new SoftKeywordsHighlightingVisitor(holder),
+            new LabelsHighlightingVisitor(holder),
+        };
+    }
+
+    private static HighlightingVisitor[] getAfterAnalysisVisitor(AnnotationHolder holder, BindingContext bindingContext) {
+        return new AfterAnalysisHighlightingVisitor[]{
+            new BackingFieldHighlightingVisitor(holder, bindingContext),
+            new VariablesHighlightingVisitor(holder, bindingContext),
+        };
+    }
+
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-        element.accept(new SoftKeywordsHighlightingVisitor(holder));
-        element.accept(new LabelsHighlightingVisitor(holder));
+        for (HighlightingVisitor visitor : getBeforeAnalysisVisitors(holder)) {
+            element.accept(visitor);
+        }
 
         if (element instanceof JetFile) {
             JetFile file = (JetFile)element;
@@ -77,8 +92,9 @@ public class JetPsiChecker implements Annotator {
                     }
                 }
 
-                file.acceptChildren(new BackingFieldHighlightingVisitor(holder, bindingContext));
-                file.acceptChildren(new VariablesHighlightingVisitor(holder, bindingContext));
+                for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
+                    file.acceptChildren(visitor);
+                }
             }
             catch (ProcessCanceledException e) {
                 throw e;
