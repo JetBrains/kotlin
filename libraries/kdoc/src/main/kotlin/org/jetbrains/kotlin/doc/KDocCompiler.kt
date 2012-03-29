@@ -22,7 +22,7 @@ class KDocCompiler() : KotlinCompiler() {
 
     override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?, errStream : PrintStream?) {
         super.configureEnvironment(environment, arguments, errStream)
-        val coreEnvironment = environment?.getMyEnvironment()
+        val coreEnvironment = environment?.getEnvironment()
         if (coreEnvironment != null) {
             val kdoc = KDoc()
 

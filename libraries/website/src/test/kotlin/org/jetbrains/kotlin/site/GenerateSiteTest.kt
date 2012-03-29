@@ -27,7 +27,7 @@ class GenerateSiteTest : TestCase() {
         args.setOutputDir("target/classes-stdlib")
 
         val config = args.docConfig
-        config.docOutputDir = outDir.getPath()!!
+        config.docOutputDir = outDir.getCanonicalPath()!!
         config.title = "Kotlin API ($version)"
         config.version = version
         config.ignorePackages.add("kotlin.support")
@@ -52,7 +52,7 @@ class GenerateSiteTest : TestCase() {
         args.setOutputDir("target/classes-js")
 
         val config = args.docConfig
-        config.docOutputDir = outDir.getPath()!!
+        config.docOutputDir = outDir.getCanonicalPath()!!
         config.title = "Kotlin JS API ($version)"
         config.version = version
         config.ignorePackages.add("java")
@@ -80,7 +80,7 @@ class GenerateSiteTest : TestCase() {
 
     fun findTemplateDir(): File {
         val path = "src/main/templates"
-        for (p in arrayList(".", "apidocs", "library/apidocs")) {
+        for (p in arrayList(".", "website", "library/website")) {
             val sourceDir = File(".", path)
             if (sourceDir.exists()) {
                 return sourceDir
