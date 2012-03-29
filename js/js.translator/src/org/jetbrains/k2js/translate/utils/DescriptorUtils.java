@@ -241,8 +241,7 @@ public final class DescriptorUtils {
         if (containedInModule) {
             return true;
         }
-        //TODO
-        return containingDeclaration.getName().equals("<root>");
+        return containingDeclaration.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
     @NotNull
@@ -276,7 +275,7 @@ public final class DescriptorUtils {
     public static List<NamespaceDescriptor> getNamespaceDescriptorHierarchy(@NotNull NamespaceDescriptor namespaceDescriptor) {
         List<NamespaceDescriptor> result = Lists.newArrayList(namespaceDescriptor);
         NamespaceDescriptor current = namespaceDescriptor;
-        while (!current.getName().equals("<root>")) {
+        while (!(current.getContainingDeclaration() instanceof ModuleDescriptor)) {
             result.add(current);
             if (current.getContainingDeclaration() instanceof NamespaceDescriptor) {
                 current = (NamespaceDescriptor)current.getContainingDeclaration();
