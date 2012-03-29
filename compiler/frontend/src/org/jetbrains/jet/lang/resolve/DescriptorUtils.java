@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -275,6 +276,31 @@ public class DescriptorUtils {
             return false;
         } else {
             throw new IllegalStateException("unknown classifier: " + classifier);
+        }
+    }
+
+    public static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
+        Set<JetType> allSuperTypes = new THashSet<JetType>();
+
+        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
+
+        final DeclarationDescriptor superOriginal = superClass.getOriginal();
+
+        for (JetType superType : allSuperTypes) {
+            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
+            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static void addSuperTypes(JetType type, Set<JetType> set) {
+        set.add(type);
+
+        for (JetType jetType : type.getConstructor().getSupertypes()) {
+            addSuperTypes(jetType, set);
         }
     }
 }

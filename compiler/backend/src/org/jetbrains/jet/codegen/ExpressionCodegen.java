@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -1441,7 +1442,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(cur instanceof CodegenContext.MethodContext && !(cur instanceof CodegenContext.ConstructorContext))
                 cur = cur.getParentContext();
 
-            if (CodegenUtil.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
+            if (DescriptorUtils.isSubclass(cur.getThisDescriptor(), calleeContainingClass)) {
                 Type type = asmType(calleeContainingClass.getDefaultType());
                 if(!isObject || (cur.getThisDescriptor() == calleeContainingClass)) {
                     result.put(TYPE_OBJECT, v);

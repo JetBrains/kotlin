@@ -79,31 +79,6 @@ public class CodegenUtil {
         return invokeDescriptor;
     }
 
-    public static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
-        Set<JetType> allSuperTypes = new THashSet<JetType>();
-
-        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
-
-        final DeclarationDescriptor superOriginal = superClass.getOriginal();
-
-        for (JetType superType : allSuperTypes) {
-            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static void addSuperTypes(JetType type, Set<JetType> set) {
-        set.add(type);
-
-        for (JetType jetType : type.getConstructor().getSupertypes()) {
-            addSuperTypes(jetType, set);
-        }
-    }
-
     public static boolean isNonLiteralObject(JetClassOrObject myClass) {
         return myClass instanceof JetObjectDeclaration && !((JetObjectDeclaration) myClass).isObjectLiteral() &&
                 !(myClass.getParent() instanceof JetClassObject);
