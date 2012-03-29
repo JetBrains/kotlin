@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -36,6 +33,7 @@ import java.util.*;
 public class WritableScopeImpl extends WritableScopeWithImports {
 
     private final Collection<DeclarationDescriptor> allDescriptors = Sets.newLinkedHashSet();
+    private final Multimap<String, DeclarationDescriptor> declaredDescriptorsAccessibleBySimpleName = HashMultimap.create();
     private boolean allDescriptorsDone = false;
 
     @NotNull
@@ -226,6 +224,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
         }
         allDescriptors.add(variableDescriptor);
+        addToDeclared(variableDescriptor);
     }
 
     @NotNull
@@ -334,6 +333,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkForRedeclaration(name, classifierDescriptor);
         getVariableClassOrNamespaceDescriptors().put(name, classifierDescriptor);
         allDescriptors.add(classifierDescriptor);
+        addToDeclared(classifierDescriptor);
     }
 
     @Override
@@ -343,6 +343,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkForRedeclaration(name, namespaceDescriptor);
         getNamespaceAliases().put(name, namespaceDescriptor);
         allDescriptors.add(namespaceDescriptor);
+        addToDeclared(namespaceDescriptor);
     }
 
     @Override
@@ -361,6 +362,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkForRedeclaration(name, variableDescriptor);
         getVariableClassOrNamespaceDescriptors().put(name, variableDescriptor);
         allDescriptors.add(variableDescriptor);
+        addToDeclared(variableDescriptor);
     }
     
     private void checkForPropertyRedeclaration(String name, VariableDescriptor variableDescriptor) {
@@ -417,6 +419,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
             redeclarationHandler.handleRedeclaration(oldValue, namespaceDescriptor);
         }
         allDescriptors.add(namespaceDescriptor);
+        addToDeclared(namespaceDescriptor);
     }
 
     @Override
@@ -520,5 +523,15 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
         super.setDebugName(debugName);
         return this;
+    }
+
+    private void addToDeclared(DeclarationDescriptor descriptor) {
+        declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor);
+    }
+
+    @NotNull
+    @Override
+    public Multimap<String, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {
+        return declaredDescriptorsAccessibleBySimpleName;
     }
 }

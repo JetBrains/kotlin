@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.scopes;
 
+import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -59,6 +60,9 @@ public interface WritableScope extends JetScope {
 
     @Nullable
     NamespaceDescriptor getDeclaredNamespace(@NotNull String name);
+
+    @NotNull
+    Multimap<String, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName();
 
     void importScope(@NotNull JetScope imported);
 

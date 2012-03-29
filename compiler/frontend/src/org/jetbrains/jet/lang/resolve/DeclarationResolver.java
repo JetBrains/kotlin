@@ -16,17 +16,26 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Multimap;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT;
+import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
 import static org.jetbrains.jet.lang.diagnostics.Errors.SECONDARY_CONSTRUCTORS_ARE_NOT_SUPPORTED;
 
 /**
@@ -77,7 +86,10 @@ public class DeclarationResolver {
         resolveAnnotationStubsOnClassesAndConstructors();
         resolveFunctionAndPropertyHeaders();
         importsResolver.processMembersImports();
+        checkRedeclarationsInNamespaces();
     }
+
+
 
     private void resolveConstructorHeaders() {
         for (Map.Entry<JetClass, MutableClassDescriptor> entry : context.getClasses().entrySet()) {
@@ -233,4 +245,49 @@ public class DeclarationResolver {
         context.getDeclaringScopes().put(constructor, classDescriptor.getScopeForMemberLookup());
     }
 
+    private void checkRedeclarationsInNamespaces() {
+        for (NamespaceDescriptorImpl descriptor : context.getNamespaceDescriptors().values()) {
+            Multimap<String, DeclarationDescriptor> simpleNameDescriptors = descriptor.getMemberScope().getDeclaredDescriptorsAccessibleBySimpleName();
+            for (String name : simpleNameDescriptors.keySet()) {
+                // Keep only properties with no receiver
+                Collection<DeclarationDescriptor> descriptors = Collections2.filter(simpleNameDescriptors.get(name), new Predicate<DeclarationDescriptor>() {
+                    @Override
+                    public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                        if (descriptor instanceof PropertyDescriptor) {
+                            PropertyDescriptor propertyDescriptor = (PropertyDescriptor)descriptor;
+                            return !propertyDescriptor.getReceiverParameter().exists();
+                        }
+                        return true;
+                    }
+                });
+                if (descriptors.size() > 1) {
+                    for (DeclarationDescriptor declarationDescriptor : descriptors) {
+                        for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
+                            assert declaration != null;
+                            trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Collection<PsiElement> getDeclarationsByDescriptor(DeclarationDescriptor declarationDescriptor) {
+        Collection<PsiElement> declarations;
+        if (declarationDescriptor instanceof NamespaceDescriptor) {
+            final NamespaceDescriptor namespace = (NamespaceDescriptor)declarationDescriptor;
+            Collection<JetFile> files = trace.get(BindingContext.NAMESPACE_TO_FILES, namespace);
+            declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
+                @Override
+                public PsiElement apply(@Nullable JetFile file) {
+                    assert file != null : "File is null for namespace " + namespace;
+                    return file.getNamespaceHeader().getNameIdentifier();
+                }
+            });
+        }
+        else {
+            declarations = Collections.singletonList(trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor));
+        }
+        return declarations;
+    }
 }

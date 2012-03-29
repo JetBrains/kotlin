@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -28,15 +29,15 @@ import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.Collections;
 
-import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * @author Stepan Koltsov
@@ -112,7 +113,6 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
 
     @NotNull
     public NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file, @NotNull NamespaceDescriptorParent owner, @NotNull String name, boolean root) {
-
         FqName fqName;
         NamespaceDescriptorImpl namespaceDescriptor;
         if (root) {
@@ -135,7 +135,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
                     name
             );
             trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
-            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, new TraceBasedRedeclarationHandler(trace)).setDebugName("Namespace member scope");
+            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, RedeclarationHandler.DO_NOTHING).setDebugName("Namespace member scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             namespaceDescriptor.initialize(scope);
             configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
@@ -147,6 +147,15 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
 
         if (file != null) {
             trace.record(BindingContext.FILE_TO_NAMESPACE, file, namespaceDescriptor);
+
+            // Register files corresponding to this namespace
+            // The trace currently does not support bi-di multimaps that would handle this task nicer
+            Collection<JetFile> files = trace.get(NAMESPACE_TO_FILES, namespaceDescriptor);
+            if (files == null) {
+                files = Sets.newIdentityHashSet();
+            }
+            files.add(file);
+            trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
         }
 
         return namespaceDescriptor;

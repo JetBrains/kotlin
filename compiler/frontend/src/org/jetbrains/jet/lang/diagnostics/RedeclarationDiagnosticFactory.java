@@ -16,16 +16,8 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
 * @author abreslav
@@ -49,10 +41,6 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
 
     public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
         return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name, this);
-    }
-
-    public Diagnostic on(DeclarationDescriptor duplicatingDescriptor, BindingContext contextToResolveToDeclaration) {
-        return new RedeclarationDiagnostic.RedeclarationDiagnosticWithDeferredResolution(duplicatingDescriptor, contextToResolveToDeclaration, this);
     }
 
     @NotNull
