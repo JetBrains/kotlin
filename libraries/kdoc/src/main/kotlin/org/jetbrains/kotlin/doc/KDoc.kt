@@ -32,12 +32,13 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 
 /** Generates the Kotlin Documentation for the model */
-class KDoc(val outputDir: File) : KModelCompilerPlugin() {
+class KDoc() : KModelCompilerPlugin() {
 
     override fun processModel(model: KModel) {
         // TODO allow this to be configured; maybe we use configuration on the KotlinModule
         // to define what doclets to use?
         val generator = JavadocStyleHtmlDoclet()
+        val outputDir = File(config.docOutputDir)
         generator.generate(model, outputDir)
     }
 }

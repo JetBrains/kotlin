@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.doc.model.KPackage
 class KDocConfig() {
 
     /**
+     * Returns the directory to use to output the API docs
+     */
+    public var docOutputDir: String = "target/site/apidocs"
+
+    /**
      * Returns the name of the documentation set
      */
     public var title: String = "Documentation"

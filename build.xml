@@ -170,6 +170,9 @@
             <fileset dir="${idea.sdk}/core" includes="*.jar"/>
             <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         </copy>
+        <copy todir="${kotlin-home}/lib/js">
+            <fileset dir="${basedir}/js/js.translator/lib" includes="**/*.jar"/>
+        </copy>
         <copy todir="${kotlin-home}/bin">
             <fileset dir="${basedir}/compiler/cli/bin"/>
         </copy>

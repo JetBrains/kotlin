@@ -24,10 +24,10 @@ class GenerateSiteTest : TestCase() {
         copyDocResources(outDir)
         val args = KDocArguments()
         args.setModule("../kdoc/ApiDocsModule.kt")
-        args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-stdlib")
 
         val config = args.docConfig
+        config.docOutputDir = outDir.getPath()!!
         config.title = "Kotlin API ($version)"
         config.version = version
         config.ignorePackages.add("kotlin.support")
@@ -49,10 +49,10 @@ class GenerateSiteTest : TestCase() {
         copyDocResources(outDir)
         val args = KDocArguments()
         args.setModule("../../js/js.libraries/module.kt")
-        args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-js")
 
         val config = args.docConfig
+        config.docOutputDir = outDir.getPath()!!
         config.title = "Kotlin JS API ($version)"
         config.version = version
         config.ignorePackages.add("java")

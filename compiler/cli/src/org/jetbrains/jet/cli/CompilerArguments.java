@@ -32,9 +32,6 @@ public class CompilerArguments {
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 
-    @Argument(value = "docOutput", description = "KDoc output directory")
-    public String docOutputDir;
-
     @Argument(value = "jar", description = "jar file name")
     public String jar;
 
@@ -75,14 +72,6 @@ public class CompilerArguments {
 
     public void setClasspath(String classpath) {
         this.classpath = classpath;
-    }
-
-    public String getDocOutputDir() {
-        return docOutputDir;
-    }
-
-    public void setDocOutputDir(String docOutputDir) {
-        this.docOutputDir = docOutputDir;
     }
 
     public boolean isHelp() {

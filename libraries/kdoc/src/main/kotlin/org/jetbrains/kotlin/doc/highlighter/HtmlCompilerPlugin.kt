@@ -1,23 +1,26 @@
 package org.jetbrains.kotlin.doc.highlighter
 
 import org.jetbrains.jet.compiler.CompilerPlugin
-import org.jetbrains.jet.lang.resolve.BindingContext
-import java.util.List
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.compiler.CompilerPluginContext
 
 /**
- */
-class HtmlCompilerPlugin : CompilerPlugin {
+*/
+class HtmlCompilerPlugin: CompilerPlugin {
 
-    override fun processFiles(bindingContext: BindingContext?, files: List<JetFile?>?) {
-        if (files != null && bindingContext != null) {
-            for (file in files) {
-                if (file != null) {
-                    val visitor = HtmlKotlinVisitor()
-                    file.accept(visitor)
+   override fun processFiles(context: CompilerPluginContext?) {
+        if (context != null) {
+            val bindingContext = context.getContext()
+            val files = context.getFiles()
+            if (bindingContext != null && files != null) {
+                if (files != null && bindingContext != null) {
+                    for (file in files) {
+                        if (file != null) {
+                            val visitor = HtmlKotlinVisitor()
+                            file.accept(visitor)
+                        }
+                    }
                 }
             }
         }
     }
-
 }

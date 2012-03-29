@@ -24,10 +24,10 @@ class KDocTest {
 
         val args = KDocArguments()
         args.setModule(moduleName)
-        args.setDocOutputDir(outDir.toString())
         args.setOutputDir("target/classes-stdlib")
 
         val config = args.docConfig
+        config.docOutputDir = outDir.toString()!!
         config.title = "Kotlin API"
         config.ignorePackages.add("org.jetbrains.kotlin")
         config.ignorePackages.add("java")

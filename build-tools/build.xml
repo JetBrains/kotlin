@@ -468,14 +468,20 @@
                     <include name="maven/src"/>
                     <include name="gradle/src"/>
                 </dirset>
+              <dirset dir="${basedir}/js">
+                <include name="js.translator/src"/>
+              </dirset>
+                <!--
                 <dirset dir="${basedir}/j2k">
                   <include name="src"/>
                 </dirset>
+                -->
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <path refid  = "classpath.kotlin"/>
                 <fileset dir = "${ant.home}/lib" includes="*.jar"/>
+                <fileset dir = "${basedir}/js/js.translator/lib" includes="*.jar"/>
             </classpath>
         </javac>
         <jar destfile="${kotlin-home}/lib/kotlin-build-tools.jar">

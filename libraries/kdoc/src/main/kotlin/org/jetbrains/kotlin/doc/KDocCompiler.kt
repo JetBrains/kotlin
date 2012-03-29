@@ -14,7 +14,6 @@ fun main(args: Array<String?>): Unit {
     KotlinCompiler.doMain(KDocCompiler(), args);
 }
 
-
 /**
  * A version of the [[KotlinCompiler]] which includes the [[KDoc]] compiler plugin and allows
  * command line validation or for the configuration to be provided via [[KDocArguments]]
@@ -22,20 +21,10 @@ fun main(args: Array<String?>): Unit {
 class KDocCompiler() : KotlinCompiler() {
 
     override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?, errStream : PrintStream?) {
-        // TODO lets clear the docOutput as a temporary hack while
-        // KotlinCompiler has a KDoc hook...
-        val docOutputDir = if (arguments != null) {
-            val answer = arguments.docOutputDir
-            arguments.docOutputDir = null
-            answer
-        } else null
-
         super.configureEnvironment(environment, arguments, errStream)
         val coreEnvironment = environment?.getMyEnvironment()
         if (coreEnvironment != null) {
-            // now lets add the KDoc plugin
-            val outDir = File(docOutputDir ?: "target/apidocs")
-            val kdoc = KDoc(outDir)
+            val kdoc = KDoc()
 
             if (arguments is KDocArguments) {
                 kdoc.config = arguments.apply()
@@ -69,13 +58,4 @@ class KDocArguments() : CompilerArguments() {
         // TODO...
         return docConfig
     }
-
-
-    /**
-     * Add more configurations here when value attributes supported
-     * see: KT-1522
-
-    @Argument(value = "docOutput", description = "KDoc output directory")
-    public String docOutputDir;
-    */
 }
