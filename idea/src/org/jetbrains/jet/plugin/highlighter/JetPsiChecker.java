@@ -58,7 +58,8 @@ public class JetPsiChecker implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         element.accept(new SoftKeywordsHighlightingVisitor(holder));
-        
+        element.accept(new LabelsHighlightingVisitor(holder));
+
         if (element instanceof JetFile) {
             JetFile file = (JetFile)element;
 

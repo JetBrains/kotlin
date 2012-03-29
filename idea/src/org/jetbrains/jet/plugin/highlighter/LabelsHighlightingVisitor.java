@@ -29,26 +29,24 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class LabelsAnnotator implements Annotator {
-    public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
-//        if (ApplicationManager.getApplication().isUnitTestMode()) return;
-        element.accept(new JetVisitorVoid() {
-            @Override
-            public void visitPrefixExpression(JetPrefixExpression expression) {
-                JetSimpleNameExpression operationSign = expression.getOperationReference();
-                if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
-                    holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlightingColors.LABEL);
-                }
-            }
+class LabelsHighlightingVisitor extends HighlightingVisitor {
+    LabelsHighlightingVisitor(AnnotationHolder holder) {
+        super(holder);
+    }
 
-            @Override
-            public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
-                JetSimpleNameExpression targetLabel = expression.getTargetLabel();
-                if (targetLabel != null) {
-                    holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlightingColors.LABEL);
-                }
-            }
+    @Override
+    public void visitPrefixExpression(JetPrefixExpression expression) {
+        JetSimpleNameExpression operationSign = expression.getOperationReference();
+        if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+            holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlightingColors.LABEL);
+        }
+    }
 
-        });
+    @Override
+    public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
+        JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+        if (targetLabel != null) {
+            holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlightingColors.LABEL);
+        }
     }
 }
