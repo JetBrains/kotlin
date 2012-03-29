@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
+import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -212,9 +215,19 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return false;
     }
 
-    private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull BasicResolutionContext context, @NotNull JetReferenceExpression functionReference) {
-        if (candidates.isEmpty()) return;
-        result.add(new ResolutionTask<D>(candidates, functionReference, context));
+    private void addTask(@NotNull List<ResolutionTask<D>> result, @NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull final BasicResolutionContext context, @NotNull JetReferenceExpression functionReference) {
+        Collection<ResolvedCallImpl<D>> visibleCandidates = Collections2.filter(candidates, new Predicate<ResolvedCallImpl<D>>() {
+            @Override
+            public boolean apply(@Nullable ResolvedCallImpl<D> call) {
+                if (call == null) return false;
+                D candidateDescriptor = call.getCandidateDescriptor();
+                if (ErrorUtils.isError(candidateDescriptor)) return true;
+                Visibility visibility = candidateDescriptor.getVisibility();
+                return visibility.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
+            }
+        });
+        if (visibleCandidates.isEmpty()) return;
+        result.add(new ResolutionTask<D>(visibleCandidates, functionReference, context));
     }
 
     @NotNull
