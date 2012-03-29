@@ -56,6 +56,56 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes()
     );
 
+    public static final TextAttributesKey OPERATOR_SIGN = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_OPERATION_SIGN",
+        SyntaxHighlighterColors.OPERATION_SIGN.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey PARENTHESIS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_PARENTHESIS",
+        SyntaxHighlighterColors.PARENTHS.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_BRACES",
+        SyntaxHighlighterColors.BRACES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey BRACKETS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_BRACKETS",
+        SyntaxHighlighterColors.BRACKETS.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey FUNCTION_LITERAL_BRACES = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_FUNCTION_LITERAL_BRACES",
+        new TextAttributes(null, null, null, null, Font.BOLD)
+    );
+
+    public static final TextAttributesKey COMMA = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_COMMA",
+        SyntaxHighlighterColors.COMMA.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey SEMICOLON = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_SEMICOLON",
+        SyntaxHighlighterColors.JAVA_SEMICOLON.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey DOT = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_DOT",
+        SyntaxHighlighterColors.DOT.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey SAFE_ACCESS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_SAFE_ACCESS",
+        SyntaxHighlighterColors.DOT.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey ARROW = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_ARROW",
+        SyntaxHighlighterColors.PARENTHS.getDefaultAttributes()
+    );
+
     public static final TextAttributesKey LINE_COMMENT = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_LINE_COMMENT",
         SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()
@@ -89,11 +139,6 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_CLOSURE_DEFAULT_PARAMETER",
-        new TextAttributes(null, null, null, null, Font.BOLD)
-    );
-
-    public static final TextAttributesKey FUNCTION_LITERAL_BRACKET = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_FUNCTION_LITERAL_BRACKET",
         new TextAttributes(null, null, null, null, Font.BOLD)
     );
 

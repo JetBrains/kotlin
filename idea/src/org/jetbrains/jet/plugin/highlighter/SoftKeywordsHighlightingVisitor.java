@@ -55,14 +55,14 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
     public void visitFunctionLiteralExpression(JetFunctionLiteralExpression expression) {
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
         JetFunctionLiteral functionLiteral = expression.getFunctionLiteral();
-        holder.createInfoAnnotation(functionLiteral.getOpenBraceNode(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
+        holder.createInfoAnnotation(functionLiteral.getOpenBraceNode(), null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES);
         ASTNode closingBraceNode = functionLiteral.getClosingBraceNode();
         if (closingBraceNode != null) {
-            holder.createInfoAnnotation(closingBraceNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
+            holder.createInfoAnnotation(closingBraceNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES);
         }
         ASTNode arrowNode = functionLiteral.getArrowNode();
         if (arrowNode != null) {
-            holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACKET);
+            holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES);
         }
     }
 

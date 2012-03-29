@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -58,6 +59,21 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys1.put(JetTokens.FIELD_IDENTIFIER, JetHighlightingColors.INSTANCE_BACKING_FIELD_ACCESS);
         keys1.put(JetTokens.INTEGER_LITERAL, JetHighlightingColors.NUMBER);
         keys1.put(JetTokens.FLOAT_LITERAL, JetHighlightingColors.NUMBER);
+
+        fillMap(keys1, JetTokens.OPERATIONS.minus(
+            TokenSet.create(JetTokens.IDENTIFIER, JetTokens.LABEL_IDENTIFIER)).minus(
+            JetTokens.KEYWORDS), JetHighlightingColors.OPERATOR_SIGN);
+        keys1.put(JetTokens.LPAR, JetHighlightingColors.PARENTHESIS);
+        keys1.put(JetTokens.RPAR, JetHighlightingColors.PARENTHESIS);
+        keys1.put(JetTokens.LBRACE, JetHighlightingColors.BRACES);
+        keys1.put(JetTokens.RBRACE, JetHighlightingColors.BRACES);
+        keys1.put(JetTokens.LBRACKET, JetHighlightingColors.BRACKETS);
+        keys1.put(JetTokens.RBRACKET, JetHighlightingColors.BRACKETS);
+        keys1.put(JetTokens.COMMA, JetHighlightingColors.COMMA);
+        keys1.put(JetTokens.SEMICOLON, JetHighlightingColors.SEMICOLON);
+        keys1.put(JetTokens.DOT, JetHighlightingColors.DOT);
+        keys1.put(JetTokens.SAFE_ACCESS, JetHighlightingColors.SAFE_ACCESS);
+        keys1.put(JetTokens.ARROW, JetHighlightingColors.ARROW);
 
         keys1.put(JetTokens.OPEN_QUOTE, JetHighlightingColors.STRING);
         keys1.put(JetTokens.CLOSING_QUOTE, JetHighlightingColors.STRING);

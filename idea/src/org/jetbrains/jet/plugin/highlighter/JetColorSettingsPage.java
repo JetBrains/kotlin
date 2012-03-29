@@ -105,6 +105,17 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.valid.escape.in.string"), JetHighlightingColors.VALID_STRING_ESCAPE),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.invalid.escape.in.string"), JetHighlightingColors.INVALID_STRING_ESCAPE),
 
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.operator.sign"), JetHighlightingColors.OPERATOR_SIGN),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parentheses"), JetHighlightingColors.PARENTHESIS),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.braces"), JetHighlightingColors.BRACES),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.brackets"), JetHighlightingColors.BRACKETS),
+            new AttributesDescriptor("Function literal braces", JetHighlightingColors.FUNCTION_LITERAL_BRACES),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.comma"), JetHighlightingColors.COMMA),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.semicolon"), JetHighlightingColors.SEMICOLON),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.dot"), JetHighlightingColors.DOT),
+            new AttributesDescriptor("Safe access dot", JetHighlightingColors.SAFE_ACCESS),
+            new AttributesDescriptor("Arrow", JetHighlightingColors.ARROW),
+
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
             new AttributesDescriptor("KDoc comment", JetHighlightingColors.DOC_COMMENT),
@@ -115,7 +126,6 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Instance property backing field access", JetHighlightingColors.INSTANCE_BACKING_FIELD_ACCESS),
 
             new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
-            new AttributesDescriptor("Function literal bracket", JetHighlightingColors.FUNCTION_LITERAL_BRACKET),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
 
