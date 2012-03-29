@@ -51,6 +51,11 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes()
     );
 
+    public static final TextAttributesKey INVALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_INVALID_STRING_ESCAPE",
+        SyntaxHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes()
+    );
+
     public static final TextAttributesKey LINE_COMMENT = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_LINE_COMMENT",
         SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes()

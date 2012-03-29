@@ -147,6 +147,13 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
+            if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE_SEQUENCE) {
+                for (TextRange textRange : diagnostic.getTextRanges()) {
+                    Annotation annotation = holder.createErrorAnnotation(textRange, diagnostic.getMessage());
+                    annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE);
+                }
+            }
+
             if (diagnostic instanceof RedeclarationDiagnostic) {
                 RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic)diagnostic;
                 registerQuickFix(markRedeclaration(redeclarations, redeclarationDiagnostic, holder), diagnostic);
