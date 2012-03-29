@@ -316,7 +316,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     InstructionAdapter iv = new InstructionAdapter(mv);
 
                     iv.load(0, JetTypeMapper.TYPE_OBJECT);
-                    if(original.getVisibility() == Visibility.PRIVATE)
+                    if(original.getVisibility() == Visibilities.PRIVATE)
                         iv.getfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getReturnType().getDescriptor());
                     else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());
@@ -349,7 +349,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         //noinspection AssignmentToForLoopParameter
                         reg += argType.getSize();
                     }
-                    if(original.getVisibility() == Visibility.PRIVATE && original.getModality() == Modality.FINAL)
+                    if(original.getVisibility() == Visibilities.PRIVATE && original.getModality() == Modality.FINAL)
                         iv.putfield(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), original.getName(), originalMethod.getArgumentTypes()[0].getDescriptor());
                     else
                         iv.invokespecial(typeMapper.getOwner(original, OwnerKind.IMPLEMENTATION), originalMethod.getName(), originalMethod.getDescriptor());

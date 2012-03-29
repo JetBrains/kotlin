@@ -216,8 +216,7 @@ public class DescriptorResolver {
             }
         }
         boolean hasBody = function.getBodyExpression() != null;
-        Modality defaultModality = getDefaultModality(containingDescriptor, hasBody);
-        Modality modality = resolveModalityFromModifiers(function.getModifierList(), defaultModality);
+        Modality modality = resolveModalityFromModifiers(function.getModifierList(), getDefaultModality(containingDescriptor, hasBody));
         Visibility visibility = resolveVisibilityFromModifiers(function.getModifierList());
         JetModifierList modifierList = function.getModifierList();
         boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);

@@ -151,7 +151,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                       valueParameterDescriptors,
                                       /*unsubstitutedReturnType = */ null,
                                       Modality.FINAL,
-                                      Visibility.LOCAL,
+                                      Visibilities.LOCAL,
                                       /*isInline = */ false
         );
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);

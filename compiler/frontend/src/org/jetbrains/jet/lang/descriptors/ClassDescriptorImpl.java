@@ -164,7 +164,7 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
     @NotNull
     @Override
     public Visibility getVisibility() {
-        return Visibility.PUBLIC;
+        return Visibilities.PUBLIC;
     }
 
     @NotNull

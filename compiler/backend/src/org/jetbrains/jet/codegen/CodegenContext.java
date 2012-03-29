@@ -139,7 +139,7 @@ public abstract class CodegenContext {
     public ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
         if(descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
-                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibility.PUBLIC);
+                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
         }
         return new ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }

@@ -453,7 +453,7 @@ public class JavaDescriptorResolver {
         // TODO: wrong: class objects do not need visible constructors
         ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
         constructor.setReturnType(classData.classDescriptor.getDefaultType());
-        constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), Visibility.PUBLIC);
+        constructor.initialize(new ArrayList<TypeParameterDescriptor>(0), new ArrayList<ValueParameterDescriptor>(0), Visibilities.PUBLIC);
 
         classData.classDescriptor.addConstructor(constructor, null);
         return classData.classDescriptor;
@@ -1158,10 +1158,10 @@ public class JavaDescriptorResolver {
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;
             if (members.getter != null) {
-                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, resolveAnnotations(members.getter.getMember().psiMember), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
+                getterDescriptor = new PropertyGetterDescriptor(propertyDescriptor, resolveAnnotations(members.getter.getMember().psiMember), Modality.OPEN, Visibilities.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
             if (members.setter != null) {
-                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, resolveAnnotations(members.setter.getMember().psiMember), Modality.OPEN, Visibility.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
+                setterDescriptor = new PropertySetterDescriptor(propertyDescriptor, resolveAnnotations(members.setter.getMember().psiMember), Modality.OPEN, Visibilities.PUBLIC, true, false, CallableMemberDescriptor.Kind.DECLARATION);
             }
 
             propertyDescriptor.initialize(getterDescriptor, setterDescriptor);
@@ -1625,9 +1625,9 @@ public class JavaDescriptorResolver {
 
     private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
         //TODO report error
-        return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibility.PUBLIC :
-                                        (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibility.PRIVATE :
-                                        (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibility.PROTECTED : Visibility.INTERNAL));
+        return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibilities.PUBLIC :
+                                        (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibilities.PRIVATE :
+                                        (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibilities.PROTECTED : Visibilities.PUBLIC));//todo
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {

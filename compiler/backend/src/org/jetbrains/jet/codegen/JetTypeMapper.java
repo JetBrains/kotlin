@@ -757,13 +757,13 @@ public class JetTypeMapper {
         if(CodegenUtil.isInterface(declaration)) {
             return ACC_PUBLIC;
         }
-        if (p.getVisibility() == Visibility.PUBLIC) {
+        if (p.getVisibility() == Visibilities.PUBLIC) {
             return ACC_PUBLIC;
         }
-        else if (p.getVisibility() == Visibility.PROTECTED) {
+        else if (p.getVisibility() == Visibilities.PROTECTED) {
             return ACC_PROTECTED;
         }
-        else if (p.getVisibility() == Visibility.PRIVATE) {
+        else if (p.getVisibility() == Visibilities.PRIVATE) {
             if(CodegenUtil.isClassObject(declaration)) {
                 return defaultFlags;
             }

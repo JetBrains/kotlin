@@ -126,7 +126,7 @@ public class FunctionDescriptorUtil {
                                       Collections.<TypeParameterDescriptor>emptyList(),
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),
-                                      Modality.FINAL, Visibility.LOCAL);
+                                      Modality.FINAL, Visibilities.LOCAL);
     }
 
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {

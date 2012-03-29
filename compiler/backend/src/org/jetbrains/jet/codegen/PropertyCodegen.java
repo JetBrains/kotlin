@@ -119,7 +119,7 @@ public class PropertyCodegen {
     }
 
     private static boolean isExternallyAccessible(PropertyDescriptor p) {
-        return p.getVisibility() != Visibility.PRIVATE || CodegenUtil.isClassObject(p.getContainingDeclaration());
+        return p.getVisibility() != Visibilities.PRIVATE || CodegenUtil.isClassObject(p.getContainingDeclaration());
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {

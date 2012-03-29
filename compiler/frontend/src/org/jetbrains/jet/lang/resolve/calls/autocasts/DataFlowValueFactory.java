@@ -142,7 +142,7 @@ public class DataFlowValueFactory {
     }
 
     private static boolean isInternal(@NotNull DeclarationDescriptorWithVisibility descriptor) {
-        if (Visibility.INTERNAL_VISIBILITIES.contains(descriptor.getVisibility())) return true;
+        if (Visibilities.INTERNAL_VISIBILITIES.contains(descriptor.getVisibility())) return true;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof DeclarationDescriptorWithVisibility)) {
