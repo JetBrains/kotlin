@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.CommonSuppliers;
 
+import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -159,17 +159,18 @@ public class OverrideResolver {
             boolean overrides = false;
             
             for (CallableMemberDescriptor functionFromCurrent : functionsFromCurrent) {
-                OverridingUtil.OverrideCompatibilityInfo.ErrorKind overridable = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).isOverridable();
-                if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
+                OverridingUtil.OverrideCompatibilityInfo.Result result = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).getResult();
+                if (result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                     functionFromCurrent.addOverriddenDescriptor(functionFromSupertype);
                     overrides = true;
-                } else if (overridable == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.CONFLICT) {
+                }
+                else if (result == OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT) {
                     sink.conflict(functionFromSupertype, functionFromCurrent);
                 }
             }
             
             for (CallableMemberDescriptor fakeOverride : fakeOverrides) {
-                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
+                if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                     fakeOverride.addOverriddenDescriptor(functionFromSupertype);
                     overrides = true;
                 }
@@ -352,8 +353,8 @@ public class OverrideResolver {
             for (CallableMemberDescriptor another : filteredMembers) {
 //                if (one == another) continue;
                 factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE
-                        || OverridingUtil.isOverridableBy(another, one).isOverridable() == OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
+                if (OverridingUtil.isOverridableBy(one, another).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+                        || OverridingUtil.isOverridableBy(another, one).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                     factoredMembers.put(one, another);
                 }
             }

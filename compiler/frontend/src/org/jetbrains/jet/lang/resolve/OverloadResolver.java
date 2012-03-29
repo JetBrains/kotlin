@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -27,10 +26,12 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 /**
  * @author Stepan Koltsov
@@ -157,8 +158,8 @@ public class OverloadResolver {
 
     private void checkOverloadsInAClass(
             MutableClassDescriptor classDescriptor, JetClassOrObject klass,
-            Collection<ConstructorDescriptor> nestedClassConstructors)
-    {
+            Collection<ConstructorDescriptor> nestedClassConstructors
+    ) {
         MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
         for (CallableMemberDescriptor function : classDescriptor.getCallableMembers()) {
@@ -183,24 +184,25 @@ public class OverloadResolver {
             return;
         }
         
-        for (CallableMemberDescriptor function : functions) {
-            for (CallableMemberDescriptor function2 : functions) {
-                if (function == function2) {
+        for (CallableMemberDescriptor member : functions) {
+            for (CallableMemberDescriptor member2 : functions) {
+                if (member == member2) {
                     continue;
                 }
 
-                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(function, function2);
+                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration member = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, function);
-                    if (member == null) {
-                        assert trace.get(DELEGATED, function);
+                    JetDeclaration jetDeclaration = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, member);
+                    if (jetDeclaration == null) {
+                        assert trace.get(DELEGATED, member);
                         return;
                     }
 
-                    if (function instanceof PropertyDescriptor) {
-                        trace.report(Errors.REDECLARATION.on(function, trace.getBindingContext()));
-                    } else {
-                        trace.report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
+                    if (member instanceof PropertyDescriptor) {
+                        trace.report(Errors.REDECLARATION.on(trace.get(DESCRIPTOR_TO_DECLARATION, member), member.getName()));
+                    }
+                    else {
+                        trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, member, functionContainer));
                     }
                 }
             }
