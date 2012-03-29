@@ -56,27 +56,27 @@ import java.util.List;
  * @author yole
  */
 public class CompileSession {
-    private final JetCoreEnvironment myEnvironment;
-    private final MessageCollector myMessageCollector;
-    private final List<JetFile> mySourceFiles = new ArrayList<JetFile>();
-    private List<String> myErrors = new ArrayList<String>();
+    private final JetCoreEnvironment environment;
+    private final MessageCollector messageCollector;
+    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
+    private List<String> errors = new ArrayList<String>();
     private boolean stubs = false;
-    private final MessageRenderer myMessageRenderer;
-    private final PrintStream myErrorStream;
-    private final boolean myIsVerbose;
-
-    public AnalyzeExhaust getMyBindingContext() {
-        return myBindingContext;
-    }
-
-    private AnalyzeExhaust myBindingContext;
+    private final MessageRenderer messageRenderer;
+    private final PrintStream errorStream;
+    private final boolean isVerbose;
+    private AnalyzeExhaust bindingContext;
 
     public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose) {
-        myEnvironment = environment;
-        myMessageRenderer = messageRenderer;
-        myErrorStream = errorStream;
-        myIsVerbose = verbose;
-        myMessageCollector = new MessageCollector(myMessageRenderer);
+        this.environment = environment;
+        this.messageRenderer = messageRenderer;
+        this.errorStream = errorStream;
+        isVerbose = verbose;
+        messageCollector = new MessageCollector(this.messageRenderer);
+    }
+
+    @NotNull
+    public AnalyzeExhaust getBindingContext() {
+        return bindingContext;
     }
 
     public void setStubs(boolean stubs) {
@@ -87,13 +87,13 @@ public class CompileSession {
         if(path == null)
             return;
 
-        VirtualFile vFile = myEnvironment.getLocalFileSystem().findFileByPath(path);
+        VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
-            myErrors.add("File/directory not found: " + path);
+            errors.add("File/directory not found: " + path);
             return;
         }
         if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            myErrors.add("Not a Kotlin file: " + path);
+            errors.add("Not a Kotlin file: " + path);
             return;
         }
 
@@ -110,11 +110,11 @@ public class CompileSession {
             }
         }
         else {
-            VirtualFile fileByPath = myEnvironment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            VirtualFile fileByPath = environment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
-                PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(fileByPath);
+                PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(fileByPath);
                 if(psiFile instanceof JetFile) {
-                    mySourceFiles.add((JetFile) psiFile);
+                    sourceFiles.add((JetFile)psiFile);
                 }
             }
         }
@@ -128,29 +128,29 @@ public class CompileSession {
         }
         else {
             if (vFile.getFileType() == JetFileType.INSTANCE) {
-                PsiFile psiFile = PsiManager.getInstance(myEnvironment.getProject()).findFile(vFile);
+                PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(vFile);
                 if (psiFile instanceof JetFile) {
-                    mySourceFiles.add((JetFile) psiFile);
+                    sourceFiles.add((JetFile)psiFile);
                 }
             }
         }
     }
 
     public List<JetFile> getSourceFileNamespaces() {
-        return mySourceFiles;
+        return sourceFiles;
     }
 
     public boolean analyze() {
-        for (String error : myErrors) {
-            myMessageCollector.report(Severity.ERROR, error, null, -1, -1);
+        for (String error : errors) {
+            messageCollector.report(Severity.ERROR, error, null, -1, -1);
         }
 
         reportSyntaxErrors();
         analyzeAndReportSemanticErrors();
 
-        myMessageCollector.printTo(myErrorStream);
+        messageCollector.printTo(errorStream);
 
-        return !myMessageCollector.hasErrors();
+        return !messageCollector.hasErrors();
     }
 
     /**
@@ -169,18 +169,18 @@ public class CompileSession {
     private void analyzeAndReportSemanticErrors() {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
-        myBindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                myEnvironment.getProject(), mySourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
+        bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY);
 
-        for (Diagnostic diagnostic : myBindingContext.getBindingContext().getDiagnostics()) {
-            reportDiagnostic(myMessageCollector, diagnostic);
+        for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
+            reportDiagnostic(messageCollector, diagnostic);
         }
 
-        reportIncompleteHierarchies(myMessageCollector);
+        reportIncompleteHierarchies(messageCollector);
     }
 
     private void reportIncompleteHierarchies(MessageCollector collector) {
-        Collection<ClassDescriptor> incompletes = myBindingContext.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
+        Collection<ClassDescriptor> incompletes = bindingContext.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
         if (!incompletes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
             for (ClassDescriptor incomplete : incompletes) {
@@ -191,14 +191,14 @@ public class CompileSession {
     }
 
     private void reportSyntaxErrors() {
-        for (JetFile file : mySourceFiles) {
+        for (JetFile file : sourceFiles) {
             file.accept(new PsiRecursiveElementWalkingVisitor() {
                 @Override
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
                     Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
-                    reportDiagnostic(myMessageCollector, diagnostic);
+                    reportDiagnostic(messageCollector, diagnostic);
                 }
             });
         }
@@ -213,16 +213,16 @@ public class CompileSession {
 
     @NotNull
     public ClassFileFactory generate(boolean module) {
-        Project project = myEnvironment.getProject();
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), myIsVerbose ? new BackendProgress() : Progress.DEAF);
-        generationState.compileCorrectFiles(myBindingContext, mySourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
+        Project project = environment.getProject();
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), isVerbose ? new BackendProgress() : Progress.DEAF);
+        generationState.compileCorrectFiles(bindingContext, sourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
         ClassFileFactory answer = generationState.getFactory();
 
-        List<CompilerPlugin> plugins = myEnvironment.getCompilerPlugins();
+        List<CompilerPlugin> plugins = environment.getCompilerPlugins();
         if (!module) {
             if (plugins != null) {
                 for (CompilerPlugin plugin : plugins) {
-                    plugin.processFiles(myBindingContext.getBindingContext(), getSourceFileNamespaces());
+                    plugin.processFiles(bindingContext.getBindingContext(), getSourceFileNamespaces());
                 }
             }
         }
@@ -232,7 +232,7 @@ public class CompileSession {
     private class BackendProgress implements Progress {
         @Override
         public void log(String message) {
-            myErrorStream.println(myMessageRenderer.render(Severity.LOGGING, message, null, -1, -1));
+            errorStream.println(messageRenderer.render(Severity.LOGGING, message, null, -1, -1));
         }
     }
 }

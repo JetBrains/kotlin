@@ -98,8 +98,8 @@ public class TestlibTest extends CodegenTestCase {
                                        TestCase.class.getClassLoader()));
 
             InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
-                    session.getMyBindingContext().getStandardLibrary(),
-                    session.getMyBindingContext().getBindingContext(),
+                    session.getBindingContext().getStandardLibrary(),
+                    session.getBindingContext().getBindingContext(),
                     session.getSourceFileNamespaces(),
                     getProject());
             JetTypeMapper typeMapper = injector.getJetTypeMapper();
@@ -110,7 +110,7 @@ public class TestlibTest extends CodegenTestCase {
                         if(decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;
 
-                            ClassDescriptor descriptor = (ClassDescriptor) session.getMyBindingContext().getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
+                            ClassDescriptor descriptor = (ClassDescriptor) session.getBindingContext().getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
                             Set<JetType> allSuperTypes = new THashSet<JetType>();
                             CodegenUtil.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
 

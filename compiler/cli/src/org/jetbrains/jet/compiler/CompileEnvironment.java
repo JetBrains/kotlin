@@ -54,12 +54,12 @@ import java.util.jar.*;
  * @author yole
  */
 public class CompileEnvironment {
-    private JetCoreEnvironment myEnvironment;
-    private final Disposable myRootDisposable;
-    private final MessageRenderer myMessageRenderer;
-    private PrintStream myErrorStream = System.err;
+    private JetCoreEnvironment environment;
+    private final Disposable rootDisposable;
+    private final MessageRenderer messageRenderer;
+    private PrintStream errorStream = System.err;
 
-    private URL myStdlib;
+    private URL stdlibUrl;
 
     private boolean ignoreErrors = false;
     private boolean stubs = false;
@@ -78,17 +78,17 @@ public class CompileEnvironment {
      */
     public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose) {
         this.verbose = verbose;
-        myRootDisposable = new Disposable() {
+        rootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
-        myEnvironment = new JetCoreEnvironment(myRootDisposable);
-        myMessageRenderer = messageRenderer;
+        environment = new JetCoreEnvironment(rootDisposable);
+        this.messageRenderer = messageRenderer;
     }
 
     public void setErrorStream(PrintStream errorStream) {
-        myErrorStream = errorStream;
+        this.errorStream = errorStream;
     }
 
     public void setIgnoreErrors(boolean ignoreErrors) {
@@ -100,7 +100,7 @@ public class CompileEnvironment {
     }
 
     public void dispose() {
-        Disposer.dispose(myRootDisposable);
+        Disposer.dispose(rootDisposable);
     }
 
     @Nullable
@@ -123,7 +123,7 @@ public class CompileEnvironment {
     }
 
     public void ensureRuntime() {
-        ensureRuntime(myEnvironment);
+        ensureRuntime(environment);
     }
 
     public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
@@ -178,7 +178,7 @@ public class CompileEnvironment {
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
         CompileEnvironment moduleCompilationEnvironment = copyEnvironment(false);
         try {
-            moduleCompilationEnvironment.myStdlib = myStdlib;
+            moduleCompilationEnvironment.stdlibUrl = stdlibUrl;
 
             List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
 
@@ -220,11 +220,11 @@ public class CompileEnvironment {
     }
 
     private CompileEnvironment copyEnvironment(boolean verbose) {
-        CompileEnvironment compileEnvironment = new CompileEnvironment(myMessageRenderer, verbose);
+        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose);
         compileEnvironment.setIgnoreErrors(ignoreErrors);
-        compileEnvironment.setErrorStream(myErrorStream);
+        compileEnvironment.setErrorStream(errorStream);
         // copy across any compiler plugins
-        compileEnvironment.getMyEnvironment().getCompilerPlugins().addAll(myEnvironment.getCompilerPlugins());
+        compileEnvironment.getEnvironment().getCompilerPlugins().addAll(environment.getCompilerPlugins());
         return compileEnvironment;
     }
 
@@ -236,13 +236,13 @@ public class CompileEnvironment {
         if (!scriptCompileSession.analyze()) {
             return null;
         }
-        final ClassFileFactory factory = scriptCompileSession.generate(true);
+        ClassFileFactory factory = scriptCompileSession.generate(true);
 
         return runDefineModules(moduleFile, factory);
     }
 
     private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        GeneratedClassLoader loader = myStdlib != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {myStdlib}, AllModules.class.getClassLoader()))
+        GeneratedClassLoader loader = stdlibUrl != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {stdlibUrl}, AllModules.class.getClassLoader()))
                                                        : new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
@@ -287,7 +287,7 @@ public class CompileEnvironment {
             moduleCompileSession.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
-            myEnvironment.addToClasspath(new File(classpathRoot));
+            environment.addToClasspath(new File(classpathRoot));
         }
 
         ensureRuntime();
@@ -426,7 +426,7 @@ public class CompileEnvironment {
     }
 
     private CompileSession newCompileSession() {
-        return new CompileSession(myEnvironment, myMessageRenderer, myErrorStream, verbose);
+        return new CompileSession(environment, messageRenderer, errorStream, verbose);
     }
 
     public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
@@ -451,7 +451,7 @@ public class CompileEnvironment {
             if ( ! path.exists()) {
                 throw new CompileEnvironmentException("'" + path + "' does not exist");
             }
-            myEnvironment.addToClasspath(path);
+            environment.addToClasspath(path);
         }
     }
 
@@ -470,14 +470,14 @@ public class CompileEnvironment {
         addToClasspath(file);
 
         try {
-            myStdlib = file.toURL();
+            stdlibUrl = file.toURL();
         }
         catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public JetCoreEnvironment getMyEnvironment() {
-        return myEnvironment;
+    public JetCoreEnvironment getEnvironment() {
+        return environment;
     }
 }

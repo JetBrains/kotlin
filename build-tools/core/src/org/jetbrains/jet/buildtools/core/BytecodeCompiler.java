@@ -58,7 +58,7 @@ public class BytecodeCompiler {
         }
 
         // lets register any compiler plugins
-        env.getMyEnvironment().getCompilerPlugins().addAll(getCompilerPlugins());
+        env.getEnvironment().getCompilerPlugins().addAll(getCompilerPlugins());
 
         return env;
     }

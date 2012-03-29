@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import junit.framework.TestCase;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +25,7 @@ public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         CompileEnvironment compileEnvironment = new CompileEnvironment();
-        compileEnvironment.getMyEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
+        compileEnvironment.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = compileEnvironment.compileText(text);
         Class<?> namespace = classLoader.loadClass("namespace");
         Method x = namespace.getDeclaredMethod("x");
