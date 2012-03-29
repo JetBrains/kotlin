@@ -468,6 +468,9 @@
                     <include name="maven/src"/>
                     <include name="gradle/src"/>
                 </dirset>
+                <dirset dir="${basedir}/j2k">
+                  <include name="src"/>
+                </dirset>
             </src>
             <compilerarg value="-Xlint:all"/>
             <classpath>
