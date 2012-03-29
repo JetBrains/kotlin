@@ -120,14 +120,14 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected String generateToText() {
-        AnalyzingUtils.checkForSyntacticErrors(myFile);
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(myFile, JetControlFlowDataTraceFactory.EMPTY);
-        GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.TEXT, analyzeExhaust, Collections.singletonList(myFile));
+        return generateCommon(ClassBuilderFactories.TEXT).createText();
+    }
 
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+    private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(myFile, JetControlFlowDataTraceFactory.EMPTY);
+        GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-
-        return state.createText();
+        return state;
     }
 
     protected Class generateNamespaceClass() {
@@ -166,15 +166,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
-            AnalyzingUtils.checkForSyntacticErrors(myFile);
-            final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(myFile, JetControlFlowDataTraceFactory.EMPTY);
-            GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(myFile));
+            ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
 
-            AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-            state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-            analyzeExhaust.getBindingContext();
-
-            return state.getFactory();
+            return generateCommon(classBuilderFactory).getFactory();
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;

@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
@@ -141,6 +142,17 @@ public class AnalyzerFacadeForJVM {
             }
             return bindingContextCachedValue.getValue();
         }
+    }
+
+    public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+            JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        AnalyzingUtils.checkForSyntacticErrors(file);
+
+        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, flowDataTraceFactory);
+
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+
+        return analyzeExhaust;
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {

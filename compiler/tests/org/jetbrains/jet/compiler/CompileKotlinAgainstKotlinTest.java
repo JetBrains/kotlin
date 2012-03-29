@@ -28,11 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -41,7 +37,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
@@ -94,16 +89,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
-
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
-        GenerationState state = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-        analyzeExhaust.getBindingContext();
-
-        ClassFileFactory classFileFactory = state.getFactory();
+        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactory(psiFile);
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, aDir.getPath());
         
@@ -121,15 +107,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY);
-        GenerationState state = new GenerationState(jetCoreEnvironment.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
-        analyzeExhaust.getBindingContext();
-
-        ClassFileFactory classFileFactory = state.getFactory();
+        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactory(psiFile);
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, bDir.getPath());
 

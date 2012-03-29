@@ -85,11 +85,9 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        AnalyzingUtils.checkForSyntacticErrors(psiFile);
-
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, JetControlFlowDataTraceFactory.EMPTY)
-                .getBindingContext();
-        AnalyzingUtils.throwExceptionOnErrors(bindingContext);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+                psiFile, JetControlFlowDataTraceFactory.EMPTY)
+                    .getBindingContext();
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
     }
 
