@@ -11,13 +11,13 @@ return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
 }
 }
 open class Child() : Base() {
-override public fun hashCode() : Int {
+public override fun hashCode() : Int {
 return super.hashCode()
 }
-override public fun equals(o : Any?) : Boolean {
+public override fun equals(o : Any?) : Boolean {
 return super.equals(o)
 }
-override public fun toString() : String? {
+public override fun toString() : String? {
 return super.toString()
 }
 }

@@ -1,37 +1,37 @@
 package jet
 
-trait Iterable<out T> {
-  fun iterator() : Iterator<T>
+public trait Iterable<out T> {
+  public fun iterator() : Iterator<T>
 }
 
-trait ByteIterable : Iterable<Byte> {
-  override fun iterator() : ByteIterator
+public trait ByteIterable : Iterable<Byte> {
+  public override fun iterator() : ByteIterator
 }
 
-trait ShortIterable : Iterable<Short> {
-  override fun iterator() : ShortIterator
+public trait ShortIterable : Iterable<Short> {
+  public override fun iterator() : ShortIterator
 }
 
-trait IntIterable : Iterable<Int> {
-  override fun iterator() : IntIterator
+public trait IntIterable : Iterable<Int> {
+  public override fun iterator() : IntIterator
 }
 
-trait LongIterable : Iterable<Long> {
-  override fun iterator() : LongIterator
+public trait LongIterable : Iterable<Long> {
+  public override fun iterator() : LongIterator
 }
 
-trait FloatIterable : Iterable<Float> {
-  override fun iterator() : FloatIterator
+public trait FloatIterable : Iterable<Float> {
+  public override fun iterator() : FloatIterator
 }
 
-trait DoubleIterable : Iterable<Double> {
-  override fun iterator() : DoubleIterator
+public trait DoubleIterable : Iterable<Double> {
+  public override fun iterator() : DoubleIterator
 }
 
-trait BooleanIterable : Iterable<Boolean> {
-  override fun iterator() : BooleanIterator
+public trait BooleanIterable : Iterable<Boolean> {
+  public override fun iterator() : BooleanIterator
 }
 
-trait CharIterable : Iterable<Char> {
-  override fun iterator() : CharIterator
+public trait CharIterable : Iterable<Char> {
+  public override fun iterator() : CharIterator
 }

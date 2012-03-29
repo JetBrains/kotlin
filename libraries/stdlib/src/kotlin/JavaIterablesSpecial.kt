@@ -12,7 +12,7 @@ import java.util.Iterator
  * If base collection implements [[Collection]] interface method [[Collection.size()]] will be used.
  * Otherwise, this method determines the count by iterating through the all items.
  */
-fun <T> java.lang.Iterable<T>.count() : Int {
+public fun <T> java.lang.Iterable<T>.count() : Int {
   if (this is Collection<T>) {
     return this.size()
   }
@@ -30,7 +30,7 @@ fun <T> java.lang.Iterable<T>.count() : Int {
  * Will throw an exception if there are no elements
  */
 // TODO: Specify type of the exception
-inline fun <T> java.lang.Iterable<T>.first() : T {
+public inline fun <T> java.lang.Iterable<T>.first() : T {
   if (this is AbstractList<T>) {
     return this.get(0)
   }
@@ -50,7 +50,7 @@ inline fun <T> java.lang.Iterable<T>.first() : T {
  * @includeFunction ../../test/CollectionTest.kt last
  */
 // TODO: Specify type of the exception
-fun <T> java.lang.Iterable<T>.last() : T {
+public fun <T> java.lang.Iterable<T>.last() : T {
   if (this is List<T>) {
     return this.get(this.size() - 1);
   }
@@ -72,7 +72,7 @@ fun <T> java.lang.Iterable<T>.last() : T {
  * If collection implements [[java.util.AbstractCollection]] an overridden implementation of the contains
  * method will be used.
  */
-fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
+public fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
   if (this is java.util.AbstractCollection<T>) {
     return this.contains(item);
   }
@@ -89,9 +89,9 @@ fun <T> java.lang.Iterable<T>.contains(item : T) : Boolean {
 /**
  * Convert collection of arbitrary elements to collection of tuples of the index and the element
  */
-fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
+public fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
     return object : java.lang.Iterable<#(Int, T)> {
-        override fun iterator(): java.util.Iterator<#(Int, T)> {
+        public override fun iterator(): java.util.Iterator<#(Int, T)> {
             // TODO explicit typecast as a workaround for KT-1457, should be removed when it is fixed
             return NumberedIterator<T>(this@withIndices.iterator().sure()) as java.util.Iterator<#(Int, T)>
         }
@@ -101,7 +101,7 @@ fun <T> java.lang.Iterable<T>.withIndices() : java.lang.Iterable<#(Int, T)> {
 private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterator<TT>) : java.util.Iterator<#(Int, TT)> {
     private var nextIndex = 0
 
-    override fun remove() {
+    public override fun remove() {
         try {
             sourceIterator.remove()
             nextIndex--;
@@ -110,11 +110,11 @@ private class NumberedIterator<TT>(private val sourceIterator : java.util.Iterat
         }
     }
 
-    override fun hasNext(): Boolean {
+    public override fun hasNext(): Boolean {
         return sourceIterator.hasNext();
     }
 
-    override fun next(): #(Int, TT) {
+    public override fun next(): #(Int, TT) {
         val result = #(nextIndex, sourceIterator.next())
         nextIndex++
         return result

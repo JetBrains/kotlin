@@ -7,9 +7,9 @@ abstract class FunctionalList<T>(public val size: Int) {
     val empty : Boolean
         get() = size == 0
 
-    fun add(element: T) : FunctionalList<T> = FunctionalList.Standard(element, this)
+    public fun add(element: T) : FunctionalList<T> = FunctionalList.Standard(element, this)
 
-    fun reversed() : FunctionalList<T> {
+    public fun reversed() : FunctionalList<T> {
         if(empty)
             return this
 
@@ -23,10 +23,10 @@ abstract class FunctionalList<T>(public val size: Int) {
         return new
     }
 
-    fun iterator() : Iterator<T> = object: Iterator<T> {
+    public fun iterator() : Iterator<T> = object: Iterator<T> {
         var cur = this@FunctionalList
 
-        override fun next(): T {
+        public override fun next(): T {
             if(cur.empty)
                 throw java.util.NoSuchElementException()
 
@@ -49,9 +49,9 @@ abstract class FunctionalList<T>(public val size: Int) {
 
         class Standard<T>(override val head: T, override val tail: FunctionalList<T>) : FunctionalList<T>(tail.size+1)
 
-        fun <T> emptyList() = Empty<T>()
+        public fun <T> emptyList() : FunctionalList<T> = Empty<T>()
 
-        fun <T> of(element: T) : FunctionalList<T> = FunctionalList.Standard<T>(element,emptyList())
+        public fun <T> of(element: T) : FunctionalList<T> = FunctionalList.Standard<T>(element,emptyList())
     }
 }
 

@@ -8,17 +8,17 @@ public open class HashMap<erased K, erased V>(m : java.util.Map<out K, out V>) :
     public this() {}
     public this(initialCapacity : Int) {}
     public this(initialCapacity : Int, loadFactor : Float) {}
-    override public fun size() : Int {}
-    override public fun isEmpty() : Boolean {}
-    override public fun get(key : Any?) : V? {}
-    override public fun containsKey(key : Any?) : Boolean {}
-    override public fun put(key : K, value : V) : V? {}
-    override public fun putAll(m : java.util.Map<out K, out V>) : Unit {}
-    override public fun remove(key : Any?) : V? {}
-    override public fun clear() : Unit {}
-    override public fun containsValue(value : Any?) : Boolean {}
-    override public fun clone() : Any? {}
-    override public fun keySet() : java.util.Set<K> {}
-    override public fun values() : java.util.Collection<V> {}
-    override public fun entrySet() : java.util.Set<Entry<K, V>> {}
+    public override fun size() : Int {}
+    public override fun isEmpty() : Boolean {}
+    public override fun get(key : Any?) : V? {}
+    public override fun containsKey(key : Any?) : Boolean {}
+    public override fun put(key : K, value : V) : V? {}
+    public override fun putAll(m : java.util.Map<out K, out V>) : Unit {}
+    public override fun remove(key : Any?) : V? {}
+    public override fun clear() : Unit {}
+    public override fun containsValue(value : Any?) : Boolean {}
+    public override fun clone() : Any? {}
+    public override fun keySet() : java.util.Set<K> {}
+    public override fun values() : java.util.Collection<V> {}
+    public override fun entrySet() : java.util.Set<Entry<K, V>> {}
 }

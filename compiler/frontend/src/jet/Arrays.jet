@@ -1,84 +1,84 @@
 package jet
 
-fun Array<T>(val size : Int) : Array<T?>
+public fun Array<T>(public val size : Int) : Array<T?>
 
-class Array<T>(val size : Int, init : (Int) -> T) {
-  fun get(index : Int) : T
-  fun set(index : Int, value : T) : Unit
+public class Array<T>(public val size : Int, init : (Int) -> T) {
+  public fun get(index : Int) : T
+  public fun set(index : Int, value : T) : Unit
 
-  fun iterator() : Iterator<T>
+  public fun iterator() : Iterator<T>
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class ByteArray(val size : Int) {
-  fun get(index : Int) : Byte
-  fun set(index : Int, value : Byte) : Unit
+public class ByteArray(public val size : Int) {
+  public fun get(index : Int) : Byte
+  public fun set(index : Int, value : Byte) : Unit
 
-  fun iterator() : ByteIterator
+  public fun iterator() : ByteIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class ShortArray(val size : Int) {
-  fun get(index : Int) : Short
-  fun set(index : Int, value : Short) : Unit
+public class ShortArray(public val size : Int) {
+  public fun get(index : Int) : Short
+  public fun set(index : Int, value : Short) : Unit
 
-  fun iterator() : ShortIterator
+  public fun iterator() : ShortIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class IntArray(val size : Int) {
-  fun get(index : Int) : Int
-  fun set(index : Int, value : Int) : Unit
+public class IntArray(public val size : Int) {
+  public fun get(index : Int) : Int
+  public fun set(index : Int, value : Int) : Unit
 
-  fun iterator() : IntIterator
+  public fun iterator() : IntIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class LongArray(val size : Int) {
-  fun get(index : Int) : Long
-  fun set(index : Int, value : Long) : Unit
+public class LongArray(public val size : Int) {
+  public fun get(index : Int) : Long
+  public fun set(index : Int, value : Long) : Unit
 
-  fun iterator() : LongIterator
+  public fun iterator() : LongIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class FloatArray(val size : Int) {
-  fun get(index : Int) : Float
-  fun set(index : Int, value : Float) : Unit
+public class FloatArray(public val size : Int) {
+  public fun get(index : Int) : Float
+  public fun set(index : Int, value : Float) : Unit
 
-  fun iterator() : FloatIterator
+  public fun iterator() : FloatIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class DoubleArray(val size : Int) {
-  fun get(index : Int) : Double
-  fun set(index : Int, value : Double) : Unit
+public class DoubleArray(public val size : Int) {
+  public fun get(index : Int) : Double
+  public fun set(index : Int, value : Double) : Unit
 
-  fun iterator() : DoubleIterator
+  public fun iterator() : DoubleIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class CharArray(val size : Int) {
-  fun get(index : Int) : Char
-  fun set(index : Int, value : Char) : Unit
+public class CharArray(public val size : Int) {
+  public fun get(index : Int) : Char
+  public fun set(index : Int, value : Char) : Unit
 
-  fun iterator() : CharIterator
+  public fun iterator() : CharIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }
 
-class BooleanArray(val size : Int) {
-  fun get(index : Int) : Boolean
-  fun set(index : Int, value : Boolean) : Unit
+public class BooleanArray(public val size : Int) {
+  public fun get(index : Int) : Boolean
+  public fun set(index : Int, value : Boolean) : Unit
 
-  fun iterator() : BooleanIterator
+  public fun iterator() : BooleanIterator
 
-  val indices : IntRange
+  public val indices : IntRange
 }

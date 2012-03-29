@@ -29,23 +29,23 @@ val Collections = object {
 
 library
 public open class ArrayList<erased E>() : java.util.List<E> {
-    override public fun size() : Int = js.noImpl
-    override public fun isEmpty() : Boolean = js.noImpl
-    override public fun contains(o : Any?) : Boolean = js.noImpl
-    override public fun iterator() : Iterator<E> = js.noImpl
-   // override public fun indexOf(o : Any?) : Int = js.noImpl
-  //  override public fun lastIndexOf(o : Any?) : Int = js.noImpl
-  //  override public fun toArray() : Array<Any?> = js.noImpl
-  //  override public fun toArray<erased T>(a : Array<out T>) : Array<T> = js.noImpl
-    override public fun get(index : Int) : E = js.noImpl
-    override public fun set(index : Int, element : E) : E = js.noImpl
-    override public fun add(e : E) : Boolean = js.noImpl
-    override public fun add(index : Int, element : E) : Unit = js.noImpl
-    override public fun remove(index : Int) : E = js.noImpl
-    override public fun remove(o : Any?) : Boolean = js.noImpl
-    override public fun clear() : Unit = js.noImpl
-    override public fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
-  //  override public fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean = js.noImpl
+    public override fun size() : Int = js.noImpl
+    public override fun isEmpty() : Boolean = js.noImpl
+    public override fun contains(o : Any?) : Boolean = js.noImpl
+    public override fun iterator() : Iterator<E> = js.noImpl
+   // public override fun indexOf(o : Any?) : Int = js.noImpl
+  //  public override fun lastIndexOf(o : Any?) : Int = js.noImpl
+  //  public override fun toArray() : Array<Any?> = js.noImpl
+  //  public override fun toArray<erased T>(a : Array<out T>) : Array<T> = js.noImpl
+    public override fun get(index : Int) : E = js.noImpl
+    public override fun set(index : Int, element : E) : E = js.noImpl
+    public override fun add(e : E) : Boolean = js.noImpl
+    public override fun add(index : Int, element : E) : Unit = js.noImpl
+    public override fun remove(index : Int) : E = js.noImpl
+    public override fun remove(o : Any?) : Boolean = js.noImpl
+    public override fun clear() : Unit = js.noImpl
+    public override fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
+  //  public override fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean = js.noImpl
 }
 
 library
@@ -109,13 +109,13 @@ public trait Set<erased E> : Collection<E> {
 
 library
 public open class HashSet<erased E>() : java.util.Set<E> {
-    override public fun iterator() : java.util.Iterator<E> = js.noImpl
-    override public fun size() : Int = js.noImpl
-    override public fun isEmpty() : Boolean = js.noImpl
-    override public fun contains(o : Any?) : Boolean = js.noImpl
-    override public fun add(e : E) : Boolean = js.noImpl
-    override public fun remove(o : Any?) : Boolean = js.noImpl
-    override public fun clear() : Unit = js.noImpl
+    public override fun iterator() : java.util.Iterator<E> = js.noImpl
+    public override fun size() : Int = js.noImpl
+    public override fun isEmpty() : Boolean = js.noImpl
+    public override fun contains(o : Any?) : Boolean = js.noImpl
+    public override fun add(e : E) : Boolean = js.noImpl
+    public override fun remove(o : Any?) : Boolean = js.noImpl
+    public override fun clear() : Unit = js.noImpl
     override fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
 }
 
@@ -136,33 +136,33 @@ public trait Map<erased K, erased V> {
 
 library
 public open class HashMap<erased K, erased V>() : java.util.Map<K, V> {
-    override public fun size() : Int = js.noImpl
-    override public fun isEmpty() : Boolean = js.noImpl
-    override public fun get(key : Any?) : V = js.noImpl
-    override public fun containsKey(key : Any?) : Boolean = js.noImpl
-    override public fun put(key : K, value : V) : V = js.noImpl
-    override public fun putAll(m : java.util.Map<out K, out V>) : Unit = js.noImpl
-    override public fun remove(key : Any?) : V? = js.noImpl
-    override public fun clear() : Unit = js.noImpl
-    override public fun containsValue(value : Any?) : Boolean = js.noImpl
-    override public fun keySet() : java.util.Set<K> = js.noImpl
-    override public fun values() : java.util.Collection<V> = js.noImpl
+    public override fun size() : Int = js.noImpl
+    public override fun isEmpty() : Boolean = js.noImpl
+    public override fun get(key : Any?) : V = js.noImpl
+    public override fun containsKey(key : Any?) : Boolean = js.noImpl
+    public override fun put(key : K, value : V) : V = js.noImpl
+    public override fun putAll(m : java.util.Map<out K, out V>) : Unit = js.noImpl
+    public override fun remove(key : Any?) : V? = js.noImpl
+    public override fun clear() : Unit = js.noImpl
+    public override fun containsValue(value : Any?) : Boolean = js.noImpl
+    public override fun keySet() : java.util.Set<K> = js.noImpl
+    public override fun values() : java.util.Collection<V> = js.noImpl
 }
 
 library
 public open class LinkedList<erased E>() : List<E> {
-    override public fun iterator() : java.util.Iterator<E> = js.noImpl
-    override public fun isEmpty() : Boolean = js.noImpl
-    override public fun contains(o : Any?) : Boolean = js.noImpl
-    override public fun size() : Int = js.noImpl
-    override public fun add(e : E) : Boolean = js.noImpl
-    override public fun remove(o : Any?) : Boolean = js.noImpl
-    override public fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
-    override public fun clear() : Unit = js.noImpl
-    override public fun get(index : Int) : E = js.noImpl
-    override public fun set(index : Int, element : E) : E = js.noImpl
-    override public fun add(index : Int, element : E) : Unit = js.noImpl
-    override public fun remove(index : Int) : E = js.noImpl
+    public override fun iterator() : java.util.Iterator<E> = js.noImpl
+    public override fun isEmpty() : Boolean = js.noImpl
+    public override fun contains(o : Any?) : Boolean = js.noImpl
+    public override fun size() : Int = js.noImpl
+    public override fun add(e : E) : Boolean = js.noImpl
+    public override fun remove(o : Any?) : Boolean = js.noImpl
+    public override fun addAll(c : java.util.Collection<out E>) : Boolean = js.noImpl
+    public override fun clear() : Unit = js.noImpl
+    public override fun get(index : Int) : E = js.noImpl
+    public override fun set(index : Int, element : E) : E = js.noImpl
+    public override fun add(index : Int, element : E) : Unit = js.noImpl
+    public override fun remove(index : Int) : E = js.noImpl
     public fun poll() : E? = js.noImpl
     public fun peek() : E? = js.noImpl
     public fun offer(e : E) : Boolean = js.noImpl

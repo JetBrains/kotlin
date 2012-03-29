@@ -31,65 +31,65 @@ public var asserter: Asserter
     }
 
 /** Asserts that the given block returns true */
-inline fun assertTrue(message: String, block: ()-> Boolean) {
+public inline fun assertTrue(message: String, block: ()-> Boolean) {
     val actual = block()
     asserter.assertTrue(message, actual)
 }
 
 /** Asserts that the given block returns true */
-inline fun assertTrue(block: ()-> Boolean) = assertTrue(block.toString(), block)
+public inline fun assertTrue(block: ()-> Boolean) : Unit = assertTrue(block.toString(), block)
 
 /** Asserts that the given block returns false */
-inline fun assertNot(message: String, block: ()-> Boolean) {
+public inline fun assertNot(message: String, block: ()-> Boolean) {
     assertTrue(message){ !block() }
 }
 
 /** Asserts that the given block returns true */
-inline fun assertNot(block: ()-> Boolean) = assertNot(block.toString(), block)
+public inline fun assertNot(block: ()-> Boolean) : Unit = assertNot(block.toString(), block)
 
 /** Asserts that the expression is true with an optional message */
-inline fun assertTrue(actual: Boolean, message: String = "") {
+public inline fun assertTrue(actual: Boolean, message: String = "") {
     return assertEquals(true, actual, message)
 }
 
 /** Asserts that the expression is false with an optional message */
-inline fun assertFalse(actual: Boolean, message: String = "") {
+public inline fun assertFalse(actual: Boolean, message: String = "") {
     return assertEquals(false, actual, message)
 }
 
 /** Asserts that the expected value is equal to the actual value, with an optional message */
-inline fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
+public inline fun assertEquals(expected: Any?, actual: Any?, message: String = "") {
     asserter.assertEquals(message, expected, actual)
 }
 
 /** Asserts that the expression is not null, with an optional message */
-inline fun assertNotNull(actual: Any?, message: String = "") {
+public inline fun assertNotNull(actual: Any?, message: String = "") {
     asserter.assertNotNull(message, actual)
 }
 
 /** Asserts that the expression is null, with an optional message */
-inline fun assertNull(actual: Any?, message: String = "") {
+public inline fun assertNull(actual: Any?, message: String = "") {
     asserter.assertNull(message, actual)
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional message */
-inline fun fail(message: String = "") {
+public inline fun fail(message: String = "") {
     asserter.fail(message)
 }
 
 /** Asserts that given function block returns the given expected value */
-inline fun <T> expect(expected: T, block: ()-> T) {
+public inline fun <T> expect(expected: T, block: ()-> T) {
     expect(expected, block.toString(), block)
 }
 
 /** Asserts that given function block returns the given expected value and use the given message if it fails */
-inline fun <T> expect(expected: T, message: String, block: ()-> T) {
+public inline fun <T> expect(expected: T, message: String, block: ()-> T) {
     val actual = block()
     assertEquals(expected, actual, message)
 }
 
 /** Asserts that given function block fails by throwing an exception */
-fun fails(block: ()-> Unit): Throwable? {
+public fun fails(block: ()-> Unit): Throwable? {
     try {
         block()
         asserter.fail("Expected an exception to be thrown")
@@ -101,7 +101,7 @@ fun fails(block: ()-> Unit): Throwable? {
 }
 
 /** Asserts that a block fails with a specific exception being thrown */
-fun <T: Throwable> failsWith(block: ()-> Unit) {
+public fun <T: Throwable> failsWith(block: ()-> Unit) {
     try {
         block()
         asserter.fail("Expected an exception to be thrown")
@@ -115,7 +115,7 @@ fun <T: Throwable> failsWith(block: ()-> Unit) {
  * Comments out a block of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
-inline fun todo(block: ()-> Any) {
+public inline fun todo(block: ()-> Any) {
     println("TODO at " + (Exception() as java.lang.Throwable).getStackTrace()?.get(1) + " for " + block)
 }
 
@@ -123,15 +123,15 @@ inline fun todo(block: ()-> Any) {
  * A plugin for performing assertions which can reuse JUnit or TestNG
  */
 trait Asserter {
-    fun assertTrue(message: String, actual: Boolean): Unit
+    public fun assertTrue(message: String, actual: Boolean): Unit
 
-    fun assertEquals(message: String, expected: Any?, actual: Any?): Unit
+    public fun assertEquals(message: String, expected: Any?, actual: Any?): Unit
 
-    fun assertNotNull(message: String, actual: Any?): Unit
+    public fun assertNotNull(message: String, actual: Any?): Unit
 
-    fun assertNull(message: String, actual: Any?): Unit
+    public fun assertNull(message: String, actual: Any?): Unit
 
-    fun fail(message: String): Unit
+    public fun fail(message: String): Unit
 }
 
 /**
@@ -139,30 +139,30 @@ trait Asserter {
  */
 class DefaultAsserter() : Asserter {
 
-    override fun assertTrue(message : String, actual : Boolean) {
+    public override fun assertTrue(message : String, actual : Boolean) {
         if (!actual) {
             fail(message)
         }
     }
 
-    override fun assertEquals(message : String, expected : Any?, actual : Any?) {
+    public override fun assertEquals(message : String, expected : Any?, actual : Any?) {
         if (expected != actual) {
             fail("$message. Expected <$expected> actual <$actual>")
         }
     }
 
-    override fun assertNotNull(message : String, actual : Any?) {
+    public override fun assertNotNull(message : String, actual : Any?) {
         if (actual == null) {
             fail(message)
         }
     }
 
-    override fun assertNull(message : String, actual : Any?) {
+    public override fun assertNull(message : String, actual : Any?) {
         if (actual != null) {
             fail(message)
         }
     }
-    override fun fail(message : String) {
+    public override fun fail(message : String) {
         // TODO work around compiler bug as it should never try call the private constructor
         throw AssertionError(message as Object)
     }

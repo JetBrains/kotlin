@@ -6,12 +6,12 @@ open public fun windowClosing() : Unit {
 public class Client() : Frame() {
 {
 var a : WindowAdapter? = object : WindowAdapter() {
-override public fun windowClosing() : Unit {
+public override fun windowClosing() : Unit {
 }
 }
 addWindowListener(a)
 addWindowListener(object : WindowAdapter() {
-override public fun windowClosing() : Unit {
+public override fun windowClosing() : Unit {
 }
 })
 }

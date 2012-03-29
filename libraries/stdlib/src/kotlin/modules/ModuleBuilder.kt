@@ -3,20 +3,20 @@ package kotlin.modules
 import java.util.*
 import jet.modules.*
 
-fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
+public fun module(name: String, callback:  ModuleBuilder.() -> Unit) {
     val builder = ModuleBuilder(name)
     builder.callback()
     AllModules.modules.sure().get()?.add(builder)
 }
 
 class SourcesBuilder(val parent: ModuleBuilder) {
-    fun plusAssign(pattern: String) {
+    public fun plusAssign(pattern: String) {
         parent.addSourceFiles(pattern)
     }
 }
 
 class ClasspathBuilder(val parent: ModuleBuilder) {
-    fun plusAssign(name: String) {
+    public fun plusAssign(name: String) {
         parent.addClasspathEntry(name)
     }
 }
@@ -32,16 +32,16 @@ open class ModuleBuilder(val name: String): Module {
     val classpath: ClasspathBuilder
       get() = ClasspathBuilder(this)
 
-    fun addSourceFiles(pattern: String) {
+    public fun addSourceFiles(pattern: String) {
         sourceFiles0.add(pattern)
     }
 
-    fun addClasspathEntry(name: String) {
+    public fun addClasspathEntry(name: String) {
         classpathRoots0.add(name)
     }
 
-    override fun getSourceFiles(): List<String?>? = sourceFiles0
-    override fun getClasspathRoots(): List<String?>? = classpathRoots0
-    override fun getModuleName(): String? = name
+    public override fun getSourceFiles(): List<String?>? = sourceFiles0
+    public override fun getClasspathRoots(): List<String?>? = classpathRoots0
+    public override fun getModuleName(): String? = name
 }
 

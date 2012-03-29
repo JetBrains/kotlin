@@ -11,18 +11,18 @@ import java.util.Collections
 
 /** Returns the size of the map */
 val JMap<*,*>.size : Int
-    get() = size()
+get() = size()
 
 /** Returns true if this map is empty */
 val JMap<*,*>.empty : Boolean
-    get() = isEmpty()
+get() = isEmpty()
 
 /** Provides [] access to maps */
-fun <K, V> JMap<K, V>.set(key : K, value : V) = this.put(key, value)
+public fun <K, V> JMap<K, V>.set(key : K, value : V) : V? = this.put(key, value)
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
-inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
-    = if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
+public inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
+= if (this != null) this else Collections.EMPTY_MAP as java.util.Map<K,V>
 
 
 /** Returns the key of the entry */
@@ -40,13 +40,13 @@ inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
  *
  * @includeFunction ../../test/MapTest.kt getOrElse
  */
-inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
-  val current = this.get(key)
-  if (current != null) {
-    return current
-  } else {
-    return defaultValue()
-  }
+public inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
+    val current = this.get(key)
+    if (current != null) {
+        return current
+    } else {
+        return defaultValue()
+    }
 }
 
 /**
@@ -54,13 +54,13 @@ inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V 
  *
  * @includeFunction ../../test/MapTest.kt getOrElse
  */
-inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
-  val current = this.get(key)
-  if (current != null) {
-    return current
-  } else {
-    val answer = defaultValue()
-    this.put(key, answer)
-    return answer
-  }
+public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
+    val current = this.get(key)
+    if (current != null) {
+        return current
+    } else {
+        val answer = defaultValue()
+        this.put(key, answer)
+        return answer
+    }
 }

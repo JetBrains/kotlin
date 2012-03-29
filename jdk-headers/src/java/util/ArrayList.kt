@@ -8,23 +8,23 @@ public open class ArrayList<erased E>(c : java.util.Collection<out E>) : java.ut
     public this(initialCapacity : Int) {}
     open public fun trimToSize() : Unit {}
     open public fun ensureCapacity(minCapacity : Int) : Unit {}
-    override public fun size() : Int {}
-    override public fun isEmpty() : Boolean {}
-    override public fun contains(o : Any?) : Boolean {}
-    override public fun indexOf(o : Any?) : Int {}
-    override public fun lastIndexOf(o : Any?) : Int {}
-    override public fun clone() : java.lang.Object {}
-    override public fun toArray() : Array<Any?> {}
-    override public fun toArray<erased T>(a : Array<out T>) : Array<T> {}
-    override public fun get(index : Int) : E {}
-    override public fun set(index : Int, element : E) : E {}
-    override public fun add(e : E) : Boolean {}
-    override public fun add(index : Int, element : E) : Unit {}
-    override public fun remove(index : Int) : E {}
-    override public fun remove(o : Any?) : Boolean {}
-    override public fun clear() : Unit {}
-    override public fun addAll(c : java.util.Collection<out E>) : Boolean {}
-    override public fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean {}
+    public override fun size() : Int {}
+    public override fun isEmpty() : Boolean {}
+    public override fun contains(o : Any?) : Boolean {}
+    public override fun indexOf(o : Any?) : Int {}
+    public override fun lastIndexOf(o : Any?) : Int {}
+    public override fun clone() : java.lang.Object {}
+    public override fun toArray() : Array<Any?> {}
+    public override fun toArray<erased T>(a : Array<out T>) : Array<T> {}
+    public override fun get(index : Int) : E {}
+    public override fun set(index : Int, element : E) : E {}
+    public override fun add(e : E) : Boolean {}
+    public override fun add(index : Int, element : E) : Unit {}
+    public override fun remove(index : Int) : E {}
+    public override fun remove(o : Any?) : Boolean {}
+    public override fun clear() : Unit {}
+    public override fun addAll(c : java.util.Collection<out E>) : Boolean {}
+    public override fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean {}
     override protected fun removeRange(fromIndex : Int, toIndex : Int) : Unit {}
 //    class object {
 //        open public fun init<E>() : ArrayList<E> {

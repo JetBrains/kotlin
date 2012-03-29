@@ -24,7 +24,7 @@ public trait Deque<erased E> : java.util.Queue<E> {
     open fun pop() : E
     override fun remove(o : Any?) : Boolean
     override fun contains(o : Any?) : Boolean
-    override public fun size() : Int
+    public override fun size() : Int
     override fun iterator() : java.util.Iterator<E>
     open fun descendingIterator() : java.util.Iterator<E>
 }

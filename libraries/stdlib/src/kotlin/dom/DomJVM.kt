@@ -20,17 +20,17 @@ import java.util.Collection
 import java.io.Writer
 
 /** Creates a new document with the given document builder*/
-fun createDocument(builder: DocumentBuilder): Document {
+public fun createDocument(builder: DocumentBuilder): Document {
     return builder.newDocument().sure()
 }
 
 /** Creates a new document with an optional DocumentBuilderFactory */
-fun createDocument(builderFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().sure()): Document {
+public fun createDocument(builderFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().sure()): Document {
     return createDocument(builderFactory.newDocumentBuilder().sure())
 }
 
 /** Creates a new TrAX transformer */
-fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance().sure()): Transformer {
+public fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance().sure()): Transformer {
     val transformer = if (source != null) {
         factory.newTransformer(source)
     } else {
@@ -40,21 +40,21 @@ fun createTransformer(source: Source? = null, factory: TransformerFactory = Tran
 }
 
 /** Converts the node to an XML String */
-fun Node.toXmlString(xmlDeclaration: Boolean = false): String {
+public fun Node.toXmlString(xmlDeclaration: Boolean = false): String {
     val writer = StringWriter()
     writeXmlString(writer, xmlDeclaration)
     return writer.toString().sure()
 }
 
 /** Converts the node to an XML String and writes it to the given [[Writer]] */
-fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
+public fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
     val transformer = createTransformer()
     transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, if (xmlDeclaration) "no" else "yes")
     transformer.transform(DOMSource(this), StreamResult(writer))
 }
 
 /** Converts the collection of nodes to an XML String */
-fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
+public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
     // TODO this should work...
     // return this.map<Node,String>{it.toXmlString()}.join("")
     val builder = StringBuilder()

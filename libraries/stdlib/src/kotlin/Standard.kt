@@ -10,21 +10,21 @@ import java.util.TreeSet
 /**
 Helper to make jet.Iterator usable in for
 */
-inline fun <T> Iterator<T>.iterator() = this
+public inline fun <T> Iterator<T>.iterator() : Iterator<T> = this
 
 /**
 Helper to make java.util.Iterator usable in for
 */
-inline fun <T> java.util.Iterator<T>.iterator() = this
+public inline fun <T> java.util.Iterator<T>.iterator() : java.util.Iterator<T> = this
 
 /**
 Helper to make java.util.Enumeration usable in for
 */
-fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterator<T> {
-  override val hasNext: Boolean
+public fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterator<T> {
+    override val hasNext: Boolean
     get() = hasMoreElements()
 
-  override fun next() = nextElement().sure()
+    public override fun next() : T = nextElement().sure()
 }
 
 /*
@@ -34,7 +34,7 @@ fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterat
 /**
 Add iterated elements to given container
 */
-fun <T,U: Collection<in T>> Iterator<T>.to(container: U) : U {
+public fun <T,U: Collection<in T>> Iterator<T>.to(container: U) : U {
     while(hasNext)
         container.add(next())
     return container
@@ -43,29 +43,29 @@ fun <T,U: Collection<in T>> Iterator<T>.to(container: U) : U {
 /**
 Add iterated elements to java.util.ArrayList
 */
-inline fun <T> Iterator<T>.toArrayList() = to(ArrayList<T>())
+public inline fun <T> Iterator<T>.toArrayList() : ArrayList<T> = to(ArrayList<T>())
 
 /**
 Add iterated elements to java.util.LinkedList
 */
-inline fun <T> Iterator<T>.toLinkedList() = to(LinkedList<T>())
+public inline fun <T> Iterator<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
 
 /**
 Add iterated elements to java.util.HashSet
 */
-inline fun <T> Iterator<T>.toHashSet() = to(HashSet<T>())
+public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = to(HashSet<T>())
 
 /**
 Add iterated elements to java.util.LinkedHashSet
 */
-inline fun <T> Iterator<T>.toLinkedHashSet() = to(LinkedHashSet<T>())
+public inline fun <T> Iterator<T>.toLinkedHashSet() : LinkedHashSet<T> = to(LinkedHashSet<T>())
 
 /**
 Add iterated elements to java.util.TreeSet
 */
-inline fun <T> Iterator<T>.toTreeSet() = to(TreeSet<T>())
+public inline fun <T> Iterator<T>.toTreeSet() : TreeSet<T> = to(TreeSet<T>())
 
 /**
 Run function f
 */
-inline fun <T> run(f: () -> T) = f()
+public inline fun <T> run(f: () -> T) : T = f()

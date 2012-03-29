@@ -13,11 +13,11 @@ class FunctionalQueue<T> (
     val empty : Boolean
         get() = size == 0
 
-    fun add(element: T) = FunctionalQueue<T>(input add element, output)
+    public fun add(element: T) : FunctionalQueue<T> = FunctionalQueue<T>(input add element, output)
 
-    fun addFirst(element: T) = FunctionalQueue<T>(input, output add element)
+    public fun addFirst(element: T) : FunctionalQueue<T> = FunctionalQueue<T>(input, output add element)
 
-    fun removeFirst() : #(T,FunctionalQueue<T>) =
+    public fun removeFirst() : #(T,FunctionalQueue<T>) =
         if(output.empty) {
             if(input.empty)
                 throw java.util.NoSuchElementException()

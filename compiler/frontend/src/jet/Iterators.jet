@@ -1,73 +1,73 @@
 package jet
 
-trait Iterator<out T> {
-  fun next()  : T
-  val hasNext : Boolean
+public trait Iterator<out T> {
+  public fun next()  : T
+  public val hasNext : Boolean
 }
 
-abstract open class ByteIterator() : Iterator<Byte> {
-  abstract open fun nextByte() : Byte
+public abstract class ByteIterator() : Iterator<Byte> {
+  public abstract open fun nextByte() : Byte
 
-  override fun next() : Byte
+  public override fun next() : Byte
 }
 
-abstract open class ShortIterator() : Iterator<Short> {
-  abstract open fun nextShort() : Short
+public abstract class ShortIterator() : Iterator<Short> {
+  public abstract open fun nextShort() : Short
 
-  override fun next() : Short
+  public override fun next() : Short
 }
 
-abstract open class CharIterator() : Iterator<Char> {
-  abstract open fun nextChar()  : Char
+public abstract class CharIterator() : Iterator<Char> {
+  public abstract open fun nextChar()  : Char
 
-  override fun next() : Char
+  public override fun next() : Char
 }
 
-abstract open class IntIterator() : Iterator<Int> {
-  abstract open fun nextInt()  : Int
+public abstract class IntIterator() : Iterator<Int> {
+  public abstract open fun nextInt()  : Int
 
-  override fun next() : Int
+  public override fun next() : Int
 }
 
-abstract open class LongIterator() : Iterator<Long> {
-  abstract open fun nextLong()  : Long
+public abstract class LongIterator() : Iterator<Long> {
+  public abstract open fun nextLong()  : Long
 
-  override fun next() : Long
+  public override fun next() : Long
 }
 
-abstract open class FloatIterator() : Iterator<Float> {
-  abstract open fun nextFloat()  : Float
+public abstract class FloatIterator() : Iterator<Float> {
+  public abstract open fun nextFloat()  : Float
 
-  override fun next() : Float
+  public override fun next() : Float
 }
 
-abstract open class DoubleIterator() : Iterator<Double> {
-  abstract open fun nextDouble()  : Double
+public abstract class DoubleIterator() : Iterator<Double> {
+  public abstract open fun nextDouble()  : Double
 
-  override fun next() : Double
+  public override fun next() : Double
 }
 
-abstract open class BooleanIterator() : Iterator<Boolean> {
-  abstract open fun nextBoolean()  : Boolean
+abstract open public class BooleanIterator() : Iterator<Boolean> {
+  public abstract open fun nextBoolean()  : Boolean
 
-  override fun next() : Boolean
+  public override fun next() : Boolean
 }
 
-fun <T> Iterator<T>.iterator() : Iterator<T>
+public fun <T> Iterator<T>.iterator() : Iterator<T>
 
-fun ByteIterator.iterator() : ByteIterator
+public fun ByteIterator.iterator() : ByteIterator
 
-fun ShortIterator.iterator() : ShortIterator
+public fun ShortIterator.iterator() : ShortIterator
 
-fun CharIterator.iterator() : CharIterator
+public fun CharIterator.iterator() : CharIterator
 
-fun IntIterator.iterator() : IntIterator
+public fun IntIterator.iterator() : IntIterator
 
-fun BooleanIterator.iterator() : BooleanIterator
+public fun BooleanIterator.iterator() : BooleanIterator
 
-fun DoubleIterator.iterator() : DoubleIterator
+public fun DoubleIterator.iterator() : DoubleIterator
 
-fun FloatIterator.iterator() : FloatIterator
+public fun FloatIterator.iterator() : FloatIterator
 
-fun LongIterator.iterator() : LongIterator
+public fun LongIterator.iterator() : LongIterator
 
