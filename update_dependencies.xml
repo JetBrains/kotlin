@@ -6,7 +6,7 @@
     </target>
 
     <target name="jb_update">
-        <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt662"/>
+        <execute_update teamcity="http://buildserver.labs.intellij.net" teamcity.build="bt2560"/>
     </target>
 
     <macrodef name="execute_update">
