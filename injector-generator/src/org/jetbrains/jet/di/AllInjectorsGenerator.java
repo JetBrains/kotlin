@@ -17,6 +17,9 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -49,6 +52,7 @@ public class AllInjectorsGenerator {
         generateTestInjector();
         generateInjectorForJavaSemanticServices();
         generateInjectorForJvmCodegen();
+        generateInjectorForJetTypeMapper();
     }
 
     private static void generateInjectorForTopDownAnalyzerBasic() throws IOException {
@@ -143,9 +147,21 @@ public class AllInjectorsGenerator {
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(Project.class);
+        generator.addPublicParameter(GenerationState.class);
+        generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicField(JetTypeMapper.class);
         generator.addField(true, IntrinsicMethods.class, "intrinsics", null);
+        generator.addPublicField(ClassFileFactory.class);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJvmCodegen");
+    }
+
+    private static void generateInjectorForJetTypeMapper() throws IOException {
+        DependencyInjectorGenerator generator = new DependencyInjectorGenerator(false);
+        generator.addParameter(JetStandardLibrary.class);
+        generator.addParameter(BindingContext.class);
+        generator.addParameter(DiType.listOf(JetFile.class));
+        generator.addPublicField(JetTypeMapper.class);
+        generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJetTypeMapper");
     }
 
 }

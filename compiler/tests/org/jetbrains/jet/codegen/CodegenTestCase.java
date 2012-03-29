@@ -19,15 +19,19 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.util.Collections;
 
 /**
  * @author yole
@@ -116,9 +120,12 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected String generateToText() {
-        GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.TEXT);
         AnalyzingUtils.checkForSyntacticErrors(myFile);
-        state.compile(myFile);
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(myFile, JetControlFlowDataTraceFactory.EMPTY);
+        GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.TEXT, analyzeExhaust, Collections.singletonList(myFile));
+
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         return state.createText();
     }
@@ -159,9 +166,13 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
-            GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.binaries(false));
             AnalyzingUtils.checkForSyntacticErrors(myFile);
-            state.compile(myFile);
+            final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(myFile, JetControlFlowDataTraceFactory.EMPTY);
+            GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(myFile));
+
+            AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+            state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+            analyzeExhaust.getBindingContext();
 
             return state.getFactory();
         } catch (RuntimeException e) {

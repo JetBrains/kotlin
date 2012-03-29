@@ -47,7 +47,6 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -156,7 +155,12 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             }
         };
 
-        final GenerationState state = new GenerationState(project, builderFactory) {
+        // The context must reflect _all files in the module_. not only the current file
+        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
+        // must be loaded from .class files
+        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(WholeProjectAnalyzerFacade.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file));
+
+        final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
             protected void generateNamespace(JetFile namespace) {
                 PsiManager manager = PsiManager.getInstance(project);
@@ -187,12 +191,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         };
 
 
-        // The context must reflect _all files in the module_. not only the current file
-        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
-        // must be loaded from .class files
-        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(WholeProjectAnalyzerFacade.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file));
-
-        state.compileCorrectFiles(context, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
+        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         state.getFactory().files();
 
         return answer;

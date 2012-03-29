@@ -37,9 +37,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
+import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -153,11 +155,9 @@ public class JetPositionManager implements PositionManager {
         if (mapper != null) {
             return mapper;
         }
-        final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
-                .getBindingContext();
-        final JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        InjectorForJvmCodegen injector = new InjectorForJvmCodegen(standardLibrary, bindingContext, Collections.singletonList(file), file.getProject());
-        final JetTypeMapper typeMapper = injector.getJetTypeMapper();
+        final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        JetTypeMapper typeMapper = new InjectorForJetTypeMapper(
+                analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), Collections.singletonList(file)).getJetTypeMapper();
         myTypeMappers.put(file, typeMapper);
         return typeMapper;
     }

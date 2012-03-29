@@ -236,7 +236,7 @@ public class CompileEnvironment {
         if (!scriptCompileSession.analyze()) {
             return null;
         }
-        ClassFileFactory factory = scriptCompileSession.generate(true);
+        ClassFileFactory factory = scriptCompileSession.generate(true).getFactory();
 
         return runDefineModules(moduleFile, factory);
     }
@@ -295,7 +295,7 @@ public class CompileEnvironment {
         if (!moduleCompileSession.analyze() && !ignoreErrors) {
             return null;
         }
-        return moduleCompileSession.generate(false);
+        return moduleCompileSession.generate(false).getFactory();
     }
 
     public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
@@ -383,7 +383,7 @@ public class CompileEnvironment {
             return null;
         }
 
-        ClassFileFactory factory = session.generate(false);
+        ClassFileFactory factory = session.generate(false).getFactory();
         return new GeneratedClassLoader(factory);
     }
 
@@ -408,7 +408,7 @@ public class CompileEnvironment {
             return false;
         }
 
-        ClassFileFactory factory = session.generate(false);
+        ClassFileFactory factory = session.generate(false).getFactory();
         if (jar != null) {
             try {
                 writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);

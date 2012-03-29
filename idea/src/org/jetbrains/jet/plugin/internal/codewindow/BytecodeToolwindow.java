@@ -41,7 +41,6 @@ import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 
@@ -200,11 +199,12 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
     }
 
     protected String generateToText(JetFile file) {
-        GenerationState state = new GenerationState(myProject, ClassBuilderFactories.TEXT);
+        GenerationState state;
         try {
             AnalyzeExhaust binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 //            AnalyzingUtils.throwExceptionOnErrors(binding);
-            state.compileCorrectFiles(binding, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
+            state = new GenerationState(myProject, ClassBuilderFactories.TEXT, binding, Collections.singletonList(file));
+            state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (Exception e) {
             StringWriter out = new StringWriter(1024);

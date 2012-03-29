@@ -90,19 +90,15 @@ public class TestlibTest extends CodegenTestCase {
                 throw new RuntimeException("There were compilation errors");
             }
 
-            ClassFileFactory classFileFactory = session.generate(false);
+            GenerationState state = session.generate(false);
+            ClassFileFactory classFileFactory = state.getFactory();
 
             final GeneratedClassLoader loader = new GeneratedClassLoader(
                     classFileFactory,
                     new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
-            InjectorForJvmCodegen injector = new InjectorForJvmCodegen(
-                    session.getBindingContext().getStandardLibrary(),
-                    session.getBindingContext().getBindingContext(),
-                    session.getSourceFileNamespaces(),
-                    getProject());
-            JetTypeMapper typeMapper = injector.getJetTypeMapper();
+            JetTypeMapper typeMapper = state.getInjector().getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : session.getSourceFileNamespaces()) {

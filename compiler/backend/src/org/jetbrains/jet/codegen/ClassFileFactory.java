@@ -20,22 +20,33 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
  * @author max
  */
 public class ClassFileFactory {
-    private final ClassBuilderFactory builderFactory;
+    private ClassBuilderFactory builderFactory;
+    public GenerationState state;
+
+
     private final Map<FqName, NamespaceCodegen> ns2codegen = new HashMap<FqName, NamespaceCodegen>();
     private final Map<String, ClassBuilder> generators = new LinkedHashMap<String, ClassBuilder>();
     private boolean isDone = false;
-    public final GenerationState state;
 
-    public ClassFileFactory(ClassBuilderFactory builderFactory, GenerationState state) {
+
+    @Inject
+    public void setBuilderFactory(ClassBuilderFactory builderFactory) {
         this.builderFactory = builderFactory;
+    }
+
+    @Inject
+    public void setState(GenerationState state) {
         this.state = state;
     }
+
+
 
     ClassBuilder newVisitor(String filePath) {
         state.getProgress().log("Emitting: " + filePath);

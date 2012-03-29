@@ -212,11 +212,11 @@ public class CompileSession {
     }
 
     @NotNull
-    public ClassFileFactory generate(boolean module) {
+    public GenerationState generate(boolean module) {
         Project project = environment.getProject();
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), isVerbose ? new BackendProgress() : Progress.DEAF);
-        generationState.compileCorrectFiles(bindingContext, sourceFiles, CompilationErrorHandler.THROW_EXCEPTION, true);
-        ClassFileFactory answer = generationState.getFactory();
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
+                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles);
+        generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();
         if (!module) {
@@ -227,7 +227,7 @@ public class CompileSession {
                 }
             }
         }
-        return answer;
+        return generationState;
     }
 
     private class BackendProgress implements Progress {

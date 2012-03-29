@@ -24,11 +24,8 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -36,50 +33,42 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.utils.Progress;
 
-import java.util.Collections;
 import java.util.List;
 
 public class GenerationState {
-    @NotNull
-    private final ClassFileFactory factory;
     private final Project project;
-
-    private final Stack<BindingContext> bindingContexts = new Stack<BindingContext>();
     private final Progress progress;
+    @NotNull
+    private final AnalyzeExhaust analyzeExhaust;
+    @NotNull
+    private final List<JetFile> files;
+    @NotNull
+    private final InjectorForJvmCodegen injector;
 
 
-    // initialized after analyze
-    private InjectorForJvmCodegen injector;
-
-
-    public GenerationState(Project project, ClassBuilderFactory builderFactory) {
-        this(project, builderFactory, Progress.DEAF);
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files);
     }
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress) {
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress, @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files) {
         this.project = project;
         this.progress = progress;
-        this.factory = new ClassFileFactory(builderFactory, this);
+        this.analyzeExhaust = exhaust;
+        this.files = files;
+        this.injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), this.files, project, this, builderFactory);
     }
 
     @NotNull
     public ClassFileFactory getFactory() {
-        return factory;
+        return getInjector().getClassFileFactory();
     }
 
     public Progress getProgress() {
         return progress;
-    }
-
-    public Project getProject() {
-        return project;
     }
 
     public InjectorForJvmCodegen getInjector() {
@@ -87,7 +76,7 @@ public class GenerationState {
     }
 
     public BindingContext getBindingContext() {
-        return bindingContexts.peek();
+        return analyzeExhaust.getBindingContext();
     }
 
     public ClassCodegen forClass() {
@@ -95,72 +84,41 @@ public class GenerationState {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(injector.getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
+        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
-        return factory.newVisitor(injector.getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
+        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
     }
 
     public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
-        String className = injector.getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
-        return Pair.create(className, factory.forAnonymousSubclass(className));
+        String className = getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+        return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
     public NamespaceCodegen forNamespace(JetFile namespace) {
-        return factory.forNamespace(namespace);
+        return getFactory().forNamespace(namespace);
     }
 
-    public BindingContext compile(JetFile file) {
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, JetControlFlowDataTraceFactory.EMPTY);
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        compileCorrectFiles(analyzeExhaust, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
-        return analyzeExhaust.getBindingContext();
-//        NamespaceCodegen codegen = forNamespace(namespace);
-//        bindingContexts.push(bindingContext);
-//        typeMapper = new JetTypeMapper(standardLibrary, bindingContext);
-//        try {
-//            AnalyzingUtils.throwExceptionOnErrors(bindingContext);
-//
-//            codegen.generate(namespace);
-//        }
-//        finally {
-//            bindingContexts.pop();
-//            typeMapper = null;
-//        }
-    }
-
-    public void compileCorrectFiles(AnalyzeExhaust bindingContext, List<JetFile> files, boolean annotate) {
-        compileCorrectFiles(bindingContext, files, CompilationErrorHandler.THROW_EXCEPTION, annotate);
-    }
-
-    public void compileCorrectFiles(AnalyzeExhaust analyzeExhaust, List<JetFile> files, @NotNull CompilationErrorHandler errorHandler, boolean annotate) {
-        injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), files, project);
-        bindingContexts.push(analyzeExhaust.getBindingContext());
-        try {
-            for (JetFile file : files) {
-                if (file == null) throw new IllegalArgumentException("A null file given for compilation");
-                VirtualFile vFile = file.getVirtualFile();
-                String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
-                progress.log("For source: " + path);
-                try {
-                    generateNamespace(file);
-                }
-                catch (ProcessCanceledException e) {
-                    throw e;
-                }
-                catch (Throwable e) {
-                    errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
-                    DiagnosticUtils.throwIfRunningOnServer(e);
-                    if (ApplicationManager.getApplication().isInternal()) {
-                        e.printStackTrace();
-                    }
+    public void compileCorrectFiles(@NotNull CompilationErrorHandler errorHandler) {
+        for (JetFile file : this.files) {
+            if (file == null) throw new IllegalArgumentException("A null file given for compilation");
+            VirtualFile vFile = file.getVirtualFile();
+            String path = vFile != null ? vFile.getPath() : "no_virtual_file/" + file.getName();
+            progress.log("For source: " + path);
+            try {
+                generateNamespace(file);
+            }
+            catch (ProcessCanceledException e) {
+                throw e;
+            }
+            catch (Throwable e) {
+                errorHandler.reportException(e, vFile == null ? "no file" : vFile.getUrl());
+                DiagnosticUtils.throwIfRunningOnServer(e);
+                if (ApplicationManager.getApplication().isInternal()) {
+                    e.printStackTrace();
                 }
             }
-        }
-        finally {
-            bindingContexts.pop();
         }
     }
 
@@ -175,11 +133,12 @@ public class GenerationState {
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();
-        final CodegenContext objectContext = closure.context.intoAnonymousClass(closure, getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper());
+        final CodegenContext objectContext = closure.context.intoAnonymousClass(
+                closure, analyzeExhaust.getBindingContext().get(BindingContext.CLASS, objectDeclaration), OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper());
 
         new ImplementationBodyCodegen(objectDeclaration, objectContext, nameAndVisitor.getSecond(), this).generate();
 
-        ConstructorDescriptor constructorDescriptor = closure.state.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
+        ConstructorDescriptor constructorDescriptor = analyzeExhaust.getBindingContext().get(BindingContext.CONSTRUCTOR, objectDeclaration);
         CallableMethod callableMethod = injector.getJetTypeMapper().mapToCallableMethod(
                 constructorDescriptor, OwnerKind.IMPLEMENTATION, injector.getJetTypeMapper().hasThis0(constructorDescriptor.getContainingDeclaration()));
         return new GeneratedAnonymousClassDescriptor(nameAndVisitor.first, callableMethod.getSignature().getAsmMethod(), objectContext.outerWasUsed, null);
