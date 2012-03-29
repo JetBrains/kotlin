@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.jetbrains.kotlin.examples</groupId>
+    <artifactId>examples</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project-root>${project.basedir}/../..</project-root>
+    </properties>
+
+    <modules>
+        <module>js-example</module>
+    </modules>
+</project>
