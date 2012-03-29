@@ -1,14 +1,15 @@
 package org.jetbrains.kotlin.doc
 
+import java.io.File
+import java.io.PrintStream
+import org.jetbrains.jet.cli.CompilerArguments
 import org.jetbrains.jet.cli.KotlinCompiler
 import org.jetbrains.jet.compiler.CompileEnvironment
-import org.jetbrains.jet.cli.CompilerArguments
-import java.io.PrintStream
-import java.io.File
+import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
 
 /**
- * Main for running the KDocCompiler
- */
+* Main for running the KDocCompiler
+*/
 fun main(args: Array<String?>): Unit {
     KotlinCompiler.doMain(KDocCompiler(), args);
 }
@@ -39,7 +40,12 @@ class KDocCompiler() : KotlinCompiler() {
             if (arguments is KDocArguments) {
                 kdoc.config = arguments.apply()
             }
-            coreEnvironment.getCompilerPlugins().orEmpty().add(kdoc);
+            val plugins = coreEnvironment.getCompilerPlugins().orEmpty()
+/*
+            val sourcePlugin = HtmlCompilerPlugin()
+            plugins.add(sourcePlugin)
+*/
+            plugins.add(kdoc);
         }
     }
 
