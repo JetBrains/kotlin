@@ -31,16 +31,10 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey SOFT_KEYWORD;
-
-    static {
-        TextAttributes attributes = SyntaxHighlighterColors.KEYWORD.getDefaultAttributes().clone();
-        attributes.setFontType(Font.PLAIN);
-        SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
-            "KOTLIN_SOFT_KEYWORD",
-            attributes
-        );
-    }
+    public static final TextAttributesKey SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_SOFT_KEYWORD",
+        SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+    );
 
     public static final TextAttributesKey NUMBER = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_NUMBER",
