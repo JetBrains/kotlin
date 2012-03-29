@@ -31,8 +31,8 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey SOFT_KEYWORD = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_SOFT_KEYWORD",
+    public static final TextAttributesKey BUILTIN_ANNOTATION = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_BUILTIN_ANNOTATION",
         SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
     );
 
@@ -154,6 +154,11 @@ public class JetHighlightingColors {
     public static final TextAttributesKey TRAIT = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_TRAIT",
         CodeInsightColors.INTERFACE_NAME_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey ANNOTATION = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_ANNOTATION",
+        CodeInsightColors.ANNOTATION_NAME_ATTRIBUTES.getDefaultAttributes()
     );
 
     // TODO review: is it needed?

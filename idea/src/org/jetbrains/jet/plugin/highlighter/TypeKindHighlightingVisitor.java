@@ -34,6 +34,20 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
         super(holder);
     }
 
+    @Override
+    public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
+        JetTypeReference typeReference = annotationEntry.getTypeReference();
+        if (typeReference == null) return;
+        JetTypeElement typeElement = typeReference.getTypeElement();
+        if (!(typeElement instanceof JetUserType)) return;
+        JetUserType userType = (JetUserType)typeElement;
+        if (userType.getQualifier() != null) return;
+        JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
+        if (referenceExpression != null) {
+            holder.createInfoAnnotation(referenceExpression.getNode(), null).setTextAttributes(JetHighlightingColors.ANNOTATION);
+        }
+    }
+
     private void visitNameExpression(JetExpression expression) {
         PsiReference ref = expression.getReference();
         if (ref == null) return;
@@ -77,8 +91,12 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
             textAttributes = JetHighlightingColors.TRAIT;
         } else {
             JetModifierList modifierList = klass.getModifierList();
-            if (modifierList != null && modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-                textAttributes = JetHighlightingColors.ABSTRACT_CLASS;
+            if (modifierList != null) {
+                if (modifierList.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
+                    textAttributes = JetHighlightingColors.ANNOTATION;
+                } else if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+                    textAttributes = JetHighlightingColors.ABSTRACT_CLASS;
+                }
             }
         }
         Annotation annotation = holder.createInfoAnnotation(whatToHighlight, null);

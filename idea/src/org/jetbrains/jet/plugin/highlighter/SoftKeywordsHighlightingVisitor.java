@@ -24,7 +24,6 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -37,17 +36,8 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
     public void visitElement(PsiElement element) {
         if (element instanceof LeafPsiElement) {
             if (JetTokens.SOFT_KEYWORDS.contains(((LeafPsiElement) element).getElementType())) {
-                holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.SOFT_KEYWORD);
+                holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.KEYWORD);
             }
-        }
-    }
-
-    @Override
-    public void visitAnnotationEntry(JetAnnotationEntry annotationEntry) {
-        JetTypeReference typeReference = annotationEntry.getTypeReference();
-        if (typeReference != null) {
-            JetTypeElement typeElement = typeReference.getTypeElement();
-            markAnnotationIdentifiers(typeElement, holder);
         }
     }
 
@@ -63,18 +53,6 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
         ASTNode arrowNode = functionLiteral.getArrowNode();
         if (arrowNode != null) {
             holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES);
-        }
-    }
-
-    private static void markAnnotationIdentifiers(JetTypeElement typeElement, @NotNull AnnotationHolder holder) {
-        if (typeElement instanceof JetUserType) {
-            JetUserType userType = (JetUserType) typeElement;
-            if (userType.getQualifier() == null) {
-                JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
-                if (referenceExpression != null) {
-                    holder.createInfoAnnotation(referenceExpression.getNode(), "Annotation").setTextAttributes(JetHighlightingColors.SOFT_KEYWORD);
-                }
-            }
         }
     }
 }

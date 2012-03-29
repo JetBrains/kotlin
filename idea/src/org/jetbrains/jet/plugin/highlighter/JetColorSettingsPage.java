@@ -98,7 +98,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
         // TODO i18n
         return new AttributesDescriptor[]{
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.keyword"), JetHighlightingColors.KEYWORD),
-            new AttributesDescriptor("Soft keyword", JetHighlightingColors.SOFT_KEYWORD),
+            new AttributesDescriptor("Built-in annotation", JetHighlightingColors.BUILTIN_ANNOTATION),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.number"), JetHighlightingColors.NUMBER),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.string"), JetHighlightingColors.STRING),
@@ -127,6 +127,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.abstract.class"), JetHighlightingColors.ABSTRACT_CLASS),
             new AttributesDescriptor("Trait", JetHighlightingColors.TRAIT),
+            new AttributesDescriptor("Annotation", JetHighlightingColors.ANNOTATION),
 
             new AttributesDescriptor("Wrapped into ref", JetHighlightingColors.WRAPPED_INTO_REF),
 
