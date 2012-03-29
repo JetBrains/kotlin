@@ -28,15 +28,16 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -55,45 +56,46 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon IMPLEMENTING_MARK = IconLoader.getIcon("/gutter/implementingMethod.png");
 
     @Override
-    public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
+    public LineMarkerInfo getLineMarkerInfo(final PsiElement element) {
         JetFile file = (JetFile)element.getContainingFile();
         if (file == null) return null;
 
-        if (!(element instanceof JetNamedFunction))     return null;
-        JetNamedFunction jetFunction = (JetNamedFunction)element;
+        if (!(element instanceof JetNamedFunction || element instanceof JetProperty))     return null;
 
         final BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 
-        final SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, jetFunction);
-        if (functionDescriptor == null) return null;
-        final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
-        if (overriddenFunctions.size() == 0) return null;
+        final DeclarationDescriptor descriptor =
+            bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
+        if (!(descriptor instanceof CallableMemberDescriptor)) return null;
+        final Set<? extends CallableMemberDescriptor> overriddenMembers = ((CallableMemberDescriptor)descriptor).getOverriddenDescriptors();
+        if (overriddenMembers.size() == 0) return null;
 
         boolean allOverriddenAbstract = true;
-        for (FunctionDescriptor function : overriddenFunctions) {
+        for (CallableMemberDescriptor function : overriddenMembers) {
             allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
         }
 
         final String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
+        final String memberKind = element instanceof JetNamedFunction ? "function" : "property";
 
-        return new LineMarkerInfo<JetNamedFunction>(
-                jetFunction,
-                jetFunction.getTextOffset(),
+        return new LineMarkerInfo<PsiElement>(
+                element,
+                element.getTextOffset(),
                 allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
                 Pass.UPDATE_ALL,
-                new Function<JetNamedFunction, String>() {
+                new Function<PsiElement, String>() {
                     @Override
-                    public String fun(JetNamedFunction jetFunction) {
+                    public String fun(PsiElement element) {
                         StringBuilder builder = new StringBuilder();
-                        builder.append(DescriptorRenderer.HTML.render(functionDescriptor));
-                        int overrideCount = overriddenFunctions.size();
+                        builder.append(DescriptorRenderer.HTML.render(descriptor));
+                        int overrideCount = overriddenMembers.size();
                         if (overrideCount >= 1) {
                             builder.append(" ").append(implementsOrOverrides).append(" ");
-                            builder.append(DescriptorRenderer.HTML.render(overriddenFunctions.iterator().next()));
+                            builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
                         }
                         if (overrideCount > 1) {
                             int count = overrideCount - 1;
-                            builder.append(" and ").append(count).append(" other function");
+                            builder.append(" and ").append(count).append(" other ").append(memberKind);
                             if (count > 1) {
                                 builder.append("s");
                             }
@@ -102,13 +104,13 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         return builder.toString();
                     }
                 },
-                new GutterIconNavigationHandler<JetNamedFunction>() {
+                new GutterIconNavigationHandler<PsiElement>() {
                     @Override
-                    public void navigate(MouseEvent event, JetNamedFunction elt) {
-                        if (overriddenFunctions.isEmpty()) return;
+                    public void navigate(MouseEvent event, PsiElement elt) {
+                        if (overriddenMembers.isEmpty()) return;
                         final List<PsiElement> list = Lists.newArrayList();
-                        for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                            PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, overriddenFunction);
+                        for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
+                            PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, overriddenMember);
                             list.add(declarationPsiElement);
                         }
                         if (list.isEmpty()) {
@@ -124,7 +126,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                             PsiNavigateUtil.navigate(list.iterator().next());
                         }
                         else {
-                            final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilBase.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
+                            final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
                                         @Override
                                         public String getElementText(PsiElement element) {
                                             if (element instanceof JetNamedFunction) {
@@ -133,7 +135,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                             }
                                             return super.getElementText(element);
                                         }
-                                    }, DescriptorRenderer.HTML.render(functionDescriptor));
+                                    }, DescriptorRenderer.HTML.render(descriptor));
                             if (event != null) {
                                 popup.show(new RelativePoint(event));
                             }
