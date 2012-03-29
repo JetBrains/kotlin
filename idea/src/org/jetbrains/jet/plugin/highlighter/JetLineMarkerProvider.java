@@ -33,6 +33,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.Function;
 import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -50,8 +51,8 @@ import java.util.Set;
  * @author abreslav
  */
 public class JetLineMarkerProvider implements LineMarkerProvider {
-
-    public static final Icon OVERRIDING_FUNCTION = IconLoader.getIcon("/general/overridingMethod.png");
+    public static final Icon OVERRIDING_MARK = IconLoader.getIcon("/gutter/overridingMethod.png");
+    public static final Icon IMPLEMENTING_MARK = IconLoader.getIcon("/gutter/implementingMethod.png");
 
     @Override
     public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
@@ -68,8 +69,18 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         final Set<? extends FunctionDescriptor> overriddenFunctions = functionDescriptor.getOverriddenDescriptors();
         if (overriddenFunctions.size() == 0) return null;
 
+        boolean allOverriddenAbstract = true;
+        for (FunctionDescriptor function : overriddenFunctions) {
+            allOverriddenAbstract &= function.getModality() == Modality.ABSTRACT;
+        }
+
+        final String implementsOrOverrides = allOverriddenAbstract ? "implements" : "overrides";
+
         return new LineMarkerInfo<JetNamedFunction>(
-                jetFunction, jetFunction.getTextOffset(), OVERRIDING_FUNCTION, Pass.UPDATE_ALL,
+                jetFunction,
+                jetFunction.getTextOffset(),
+                allOverriddenAbstract ? IMPLEMENTING_MARK : OVERRIDING_MARK,
+                Pass.UPDATE_ALL,
                 new Function<JetNamedFunction, String>() {
                     @Override
                     public String fun(JetNamedFunction jetFunction) {
@@ -77,7 +88,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         builder.append(DescriptorRenderer.HTML.render(functionDescriptor));
                         int overrideCount = overriddenFunctions.size();
                         if (overrideCount >= 1) {
-                            builder.append(" overrides ").append(DescriptorRenderer.HTML.render(overriddenFunctions.iterator().next()));
+                            builder.append(" ").append(implementsOrOverrides).append(" ");
+                            builder.append(DescriptorRenderer.HTML.render(overriddenFunctions.iterator().next()));
                         }
                         if (overrideCount > 1) {
                             int count = overrideCount - 1;
