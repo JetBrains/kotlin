@@ -221,8 +221,9 @@ public class CompileSession {
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();
         if (!module) {
             if (plugins != null) {
+                CompilerPluginContext context = new CompilerPluginContext(project, bindingContext.getBindingContext(), getSourceFileNamespaces());
                 for (CompilerPlugin plugin : plugins) {
-                    plugin.processFiles(bindingContext.getBindingContext(), getSourceFileNamespaces());
+                    plugin.processFiles(context);
                 }
             }
         }
