@@ -20,6 +20,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,12 @@ public class DependencyInjectorGenerator {
         String outputFileName = targetSourceRoot + "/" + injectorPackageName.replace(".", "/") + "/" + injectorClassName + ".java";
 
         File file = new File(outputFileName);
-        File tmpfile = new File(outputFileName + ".tmp");
+
+        // Windows prohibits rename of open files by default.
+        // http://teamcity.jetbrains.com/viewLog.html?buildId=62376&buildTypeId=bt345&tab=buildLog
+        boolean useTmpfile = !SystemInfo.isWindows;
+
+        File tmpfile = useTmpfile ? new File(outputFileName + ".tmp") : file;
         File parentFile = file.getParentFile();
         if (!parentFile.exists()) {
             if (parentFile.mkdirs()) {
@@ -108,10 +114,12 @@ public class DependencyInjectorGenerator {
 
             fileOutputStream.close();
 
-            if (!tmpfile.renameTo(file)) {
-                throw new RuntimeException("failed to rename " + tmpfile + " to " + file);
+            if (useTmpfile) {
+                if (!tmpfile.renameTo(file)) {
+                    throw new RuntimeException("failed to rename " + tmpfile + " to " + file);
+                }
+                System.out.println("Renamed " + tmpfile + " to " + file);
             }
-            System.out.println("Renamed " + tmpfile + " to " + file);
         }
         finally {
             fileOutputStream.close();
