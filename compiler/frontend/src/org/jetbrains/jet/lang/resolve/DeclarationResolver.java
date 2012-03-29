@@ -277,6 +277,11 @@ public class DeclarationResolver {
         if (declarationDescriptor instanceof NamespaceDescriptor) {
             final NamespaceDescriptor namespace = (NamespaceDescriptor)declarationDescriptor;
             Collection<JetFile> files = trace.get(BindingContext.NAMESPACE_TO_FILES, namespace);
+
+            if (files == null) {
+                throw new IllegalStateException("declarations corresponding to " + namespace + " are not found");
+            }
+
             declarations = Collections2.transform(files, new Function<JetFile, PsiElement>() {
                 @Override
                 public PsiElement apply(@Nullable JetFile file) {
