@@ -19,10 +19,12 @@ package org.jetbrains.jet.cli;
 import com.sampullara.cli.Args;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.compiler.MessageRenderer;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.jetbrains.jet.cli.KotlinCompiler.ExitCode.*;
 
@@ -165,6 +167,12 @@ public class KotlinCompiler {
 
         if (arguments.docOutputDir != null) {
             KDocLoader.install(arguments.docOutputDir, environment.getMyEnvironment());
+        }
+
+        // install any compiler plugins
+        List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
+        if (plugins != null) {
+            environment.getMyEnvironment().getCompilerPlugins().addAll(plugins);
         }
 
         if (arguments.stdlib != null) {

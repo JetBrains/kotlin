@@ -18,11 +18,17 @@
 package org.jetbrains.jet.cli;
 
 import com.sampullara.cli.Argument;
+import org.jetbrains.jet.compiler.CompilerPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Command line arguments for the {@link KotlinCompiler}
  */
 public class CompilerArguments {
+    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
+
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 
@@ -149,5 +155,16 @@ public class CompilerArguments {
 
     public void setTags(boolean tags) {
         this.tags = tags;
+    }
+
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
+    }
+
+    /**
+     * Sets the compiler plugins to be used when working with the {@link KotlinCompiler}
+     */
+    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
     }
 }
