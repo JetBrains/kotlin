@@ -72,7 +72,16 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
         try {
             checkFooBoxIsTrue("whenAsExpressionWithThrow.kt");
             fail();
-        } catch (JavaScriptException e) {
         }
+        catch (JavaScriptException e) {
+        }
+    }
+
+    public void testKT1665() throws Exception {
+        checkOutput("kt1665.kt", "a", "");
+    }
+
+    public void testWhenWithoutExpression() throws Exception {
+        checkFooBoxIsTrue("whenWithoutExpression.kt");
     }
 }

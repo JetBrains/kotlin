@@ -61,12 +61,16 @@ public final class PatternTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public JsExpression translatePattern(@NotNull JetPattern pattern, @NotNull JsExpression expressionToMatch) {
+    public JsExpression translatePattern(@NotNull JetPattern pattern, @Nullable JsExpression expressionToMatch) {
+        if (expressionToMatch == null) {
+            assert pattern instanceof JetExpressionPattern : "When using when without parameters we can have only expression patterns";
+            return translateExpressionForExpressionPattern((JetExpressionPattern)pattern);
+        }
         if (pattern instanceof JetTypePattern) {
-            return translateTypePattern(expressionToMatch, (JetTypePattern) pattern);
+            return translateTypePattern(expressionToMatch, (JetTypePattern)pattern);
         }
         if (pattern instanceof JetExpressionPattern) {
-            return translateExpressionPattern(expressionToMatch, (JetExpressionPattern) pattern);
+            return translateExpressionPattern(expressionToMatch, (JetExpressionPattern)pattern);
         }
         throw new AssertionError("Unsupported pattern type " + pattern.getClass());
     }
@@ -124,16 +128,20 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     private JsNameRef getClassNameReferenceForTypeReference(@NotNull JetTypeReference typeReference) {
         ClassDescriptor referencedClass = BindingUtils.getClassDescriptorForTypeReference
-                (bindingContext(), typeReference);
+            (bindingContext(), typeReference);
         return TranslationUtils.getQualifiedReference(context(), referencedClass);
     }
 
     @NotNull
-    private JsExpression translateExpressionPattern(JsExpression expressionToMatch, JetExpressionPattern pattern) {
+    private JsExpression translateExpressionPattern(@NotNull JsExpression expressionToMatch, JetExpressionPattern pattern) {
+        JsExpression expressionToMatchAgainst = translateExpressionForExpressionPattern(pattern);
+        return equality(expressionToMatch, expressionToMatchAgainst);
+    }
+
+    @NotNull
+    private JsExpression translateExpressionForExpressionPattern(@NotNull JetExpressionPattern pattern) {
         JetExpression patternExpression = pattern.getExpression();
         assert patternExpression != null : "Expression patter should have an expression.";
-        JsExpression expressionToMatchAgainst =
-                Translation.translateAsExpression(patternExpression, context());
-        return equality(expressionToMatch, expressionToMatchAgainst);
+        return Translation.translateAsExpression(patternExpression, context());
     }
 }
