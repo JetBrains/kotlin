@@ -89,17 +89,23 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof VariableDescriptor) {
-            if (((VariableDescriptor)descriptor).isVar()) {
+            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+            if (variableDescriptor.isVar()) {
                 holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.MUTABLE_VARIABLE);
             }
-        }
-        if (descriptor instanceof LocalVariableDescriptor) {
-            LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) descriptor;
+
             if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
                 holder.createInfoAnnotation(elementToHighlight, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
-            holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.LOCAL_VARIABLE);
+
+            if (descriptor instanceof LocalVariableDescriptor) {
+                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.LOCAL_VARIABLE);
+            }
+
+            if (descriptor instanceof ValueParameterDescriptor) {
+                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.PARAMETER);
+            }
         }
     }
 }

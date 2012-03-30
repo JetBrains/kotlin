@@ -132,6 +132,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Mutable variable, parameter or property", JetHighlightingColors.MUTABLE_VARIABLE),
 
             new AttributesDescriptor("Local variable", JetHighlightingColors.LOCAL_VARIABLE),
+            new AttributesDescriptor("Parameter", JetHighlightingColors.PARAMETER),
             new AttributesDescriptor("Closure or anonymous object bound variable", JetHighlightingColors.WRAPPED_INTO_REF),
 
             new AttributesDescriptor("Instance property", JetHighlightingColors.INSTANCE_PROPERTY),
