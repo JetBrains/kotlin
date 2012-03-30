@@ -1,4 +1,4 @@
-// "Import Class" "true"
+// "Import" "true"
 
 import TestData.TestSample
 

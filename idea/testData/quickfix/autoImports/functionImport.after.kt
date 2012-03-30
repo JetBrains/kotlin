@@ -1,4 +1,4 @@
-// "Import Class" "true"
+// "Import" "true"
 package functionimporttest
 
 import functionimporttest.data.someTestFun
