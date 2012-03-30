@@ -181,33 +181,19 @@ public class JetHighlightingColors {
         CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey INSTANCE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_INSTANCE_PROPERTY_WITH_BACKING_FIELD",
-        TextAttributes
-            .fromFlyweight(CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
-                               .getFlyweight().withEffectType(EffectType.LINE_UNDERSCORE).withEffectColor(
-                    CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))
-    );
-
-    public static final TextAttributesKey INSTANCE_BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_INSTANCE_BACKING_FIELD_ACCESS",
-        CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
-    );
-
     public static final TextAttributesKey NAMESPACE_PROPERTY = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_NAMESPACE_PROPERTY",
         CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey NAMESPACE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_NAMESPACE_PROPERTY_WITH_BACKING_FIELD",
-        TextAttributes.fromFlyweight(CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
-                          .getFlyweight().withEffectType(EffectType.LINE_UNDERSCORE).withEffectColor(
-                CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))    );
+    public static final TextAttributesKey PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_PROPERTY_WITH_BACKING_FIELD",
+        new TextAttributes(null, null, INSTANCE_PROPERTY.getDefaultAttributes().getForegroundColor(), EffectType.LINE_UNDERSCORE, 0)
+);
 
-    public static final TextAttributesKey NAMESPACE_BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_NAMESPACE_BACKING_FIELD_ACCESS",
-        CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
+    public static final TextAttributesKey BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_BACKING_FIELD_ACCESS",
+        new TextAttributes()
     );
 
     public static final TextAttributesKey EXTENSION_PROPERTY = TextAttributesKey.createTextAttributesKey(

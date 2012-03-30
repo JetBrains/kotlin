@@ -46,14 +46,9 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
 
         boolean namespace = target.getContainingDeclaration() instanceof NamespaceDescriptor;
+        putPropertyAnnotation(expression, namespace, false);
         if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            holder.createInfoAnnotation(expression, null).setTextAttributes(
-                (namespace ?
-                 JetHighlightingColors.NAMESPACE_BACKING_FIELD_ACCESS :
-                 JetHighlightingColors.INSTANCE_BACKING_FIELD_ACCESS)
-            );
-        } else {
-            putPropertyAnnotation(expression, namespace, false);
+            holder.createInfoAnnotation(expression, null).setTextAttributes(JetHighlightingColors.BACKING_FIELD_ACCESS);
         }
     }
 
@@ -88,15 +83,16 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void putPropertyAnnotation(@NotNull PsiElement elementToHighlight, boolean namespace, boolean withBackingField) {
-        holder.createInfoAnnotation(
-            elementToHighlight,
-            "This property has a backing field")
-            .setTextAttributes(withBackingField ?
-                (namespace
-                 ? JetHighlightingColors.NAMESPACE_PROPERTY_WITH_BACKING_FIELD
-                 : JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD) :
-                (namespace
-                 ? JetHighlightingColors.NAMESPACE_PROPERTY
-                 : JetHighlightingColors.INSTANCE_PROPERTY));
+        holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(
+            namespace
+            ? JetHighlightingColors.NAMESPACE_PROPERTY
+            : JetHighlightingColors.INSTANCE_PROPERTY
+        );
+        if (withBackingField) {
+            holder.createInfoAnnotation(
+                elementToHighlight,
+                "This property has a backing field")
+                .setTextAttributes(JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD);
+        }
     }
 }
