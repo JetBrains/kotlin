@@ -113,4 +113,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
         checkFooBoxIsTrue("temporaryVariableCreatedInNamespaceInitializer.kt");
     }
+
+    public void testWhenReturnedWithoutBlock() throws Exception {
+        checkFooBoxIsTrue("whenReturnedWithoutBlock.kt");
+    }
 }

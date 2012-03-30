@@ -19,6 +19,10 @@ fun print(s : Any?) {}
 library("parseInt")
 fun parseInt(s : String) : Int = js.noImpl
 library
+fun safeParseInt(s : String) : Int? = js.noImpl
+library
+fun safeParseDouble(s : String) : Double? = js.noImpl
+library
 open class Exception() : Throwable() {}
 library
 class NumberFormatException() : Exception() {}
