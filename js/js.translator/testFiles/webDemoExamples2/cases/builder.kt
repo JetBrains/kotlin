@@ -7,42 +7,41 @@
  * See this page for details:
  * http://confluence.jetbrains.net/display/Kotlin/Type-safe+Groovy-style+builders
  */
-import js.*
 import java.util.*
 
 fun main(args : Array<String>) {
   val result =
-    html {
-      head {
-        title {+"XML encoding with Kotlin"}
-      }
-      body {
-        h1 {+"XML encoding with Kotlin"}
-        p {+"this format can be used as an alternative markup to XML"}
+  html {
+    head {
+    title {+"XML encoding with Kotlin"}
+    }
+    body {
+    h1 {+"XML encoding with Kotlin"}
+    p {+"this format can be used as an alternative markup to XML"}
 
-        // an element with attributes and text content
-        a(href = "http://jetbrains.com/kotlin") {+"Kotlin"}
+    // an element with attributes and text content
+    a(href = "http://jetbrains.com/kotlin") {+"Kotlin"}
 
-        // mixed content
-        p {
-          +"This is some"
-          b {+"mixed"}
-          +"text. For more see the"
-          a(href = "http://jetbrains.com/kotlin") {+"Kotlin"}
-          +"project"
-        }
-        p {+"some text"}
+    // mixed content
+    p {
+      +"This is some"
+      b {+"mixed"}
+      +"text. For more see the"
+      a(href = "http://jetbrains.com/kotlin") {+"Kotlin"}
+      +"project"
+    }
+    p {+"some text"}
 
-        // content generated from command-line arguments
-        p {
-          +"Command line arguments were:"
-          ul {
-            for (arg in args)
-              li {+arg}
-          }
-        }
+    // content generated from command-line arguments
+    p {
+      +"Command line arguments were:"
+      ul {
+      for (arg in args)
+        li {+arg}
       }
     }
+    }
+  }
   println(result)
 }
 
@@ -50,15 +49,15 @@ trait Element {
   fun render(builder : StringBuilder, indent : String)
 
   fun toString() : String? {
-    val builder = StringBuilder()
-    render(builder, "")
-    return builder.toString()
+  val builder = StringBuilder()
+  render(builder, "")
+  return builder.toString()
   }
 }
 
 class TextElement(val text : String) : Element {
   override fun render(builder : StringBuilder, indent : String) {
-    builder.append("$indent$text\n")
+  builder.append("$indent$text\n")
   }
 }
 
@@ -67,31 +66,31 @@ abstract class Tag(val name : String) : Element {
   val attributes = HashMap<String, String>()
 
   protected fun initTag<T : Element>(tag : T, init : T.() -> Unit) : T {
-    tag.init()
-    children.add(tag)
-    return tag
+  tag.init()
+  children.add(tag)
+  return tag
   }
 
   override fun render(builder : StringBuilder, indent : String) {
-    builder.append("$indent<$name${renderAttributes()}>\n")
-    for (c in children) {
-      c.render(builder, indent + "  ")
-    }
-    builder.append("$indent</$name>\n")
+  builder.append("$indent<$name${renderAttributes()}>\n")
+  for (c in children) {
+    c?.render(builder, indent + "  ")
+  }
+  builder.append("$indent</$name>\n")
   }
 
   private fun renderAttributes() : String? {
-    val builder = StringBuilder()
-    for (a in attributes.keySet()) {
-      builder.append(" $a=\"${attributes[a]}\"")
-    }
-    return builder.toString()
+  val builder = StringBuilder()
+  for (a in attributes.keySet()) {
+    builder.append(" $a=\"${attributes[a]}\"")
+  }
+  return builder.toString()
   }
 }
 
 abstract class TagWithText(name : String) : Tag(name) {
   fun String.plus() {
-    children.add(TextElement(this))
+  children.add(TextElement(this))
   }
 }
 
@@ -113,8 +112,8 @@ abstract class BodyTag(name : String) : TagWithText(name) {
   fun h1(init : H1.() -> Unit) = initTag(H1(), init)
   fun ul(init : UL.() -> Unit) = initTag(UL(), init)
   fun a(href : String, init : A.() -> Unit) {
-    val a = initTag(A(), init)
-    a.href = href
+  val a = initTag(A(), init)
+  a.href = href
   }
 }
 
@@ -129,10 +128,10 @@ class P() : BodyTag("p")
 class H1() : BodyTag("h1")
 class A() : BodyTag("a") {
   public var href : String
-    get() = attributes["href"]
-    set(value) {
-      attributes["href"] = value
-    }
+  get() = attributes["href"].sure()
+  set(value) {
+    attributes["href"] = value
+  }
 }
 
 fun html(init : HTML.() -> Unit) : HTML {
@@ -140,6 +139,3 @@ fun html(init : HTML.() -> Unit) : HTML {
   html.init()
   return html
 }
-
-// An excerpt from the Standard Library
-fun <K, V> Map<K, V>.set(key : K, value : V) = this.put(key, value)

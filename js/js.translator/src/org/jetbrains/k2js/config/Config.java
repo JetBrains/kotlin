@@ -44,7 +44,8 @@ public abstract class Config {
         "/raphael/raphael.kt",
         "/html5/canvas.kt",
         "/html5/files.kt",
-        "/html5/image.kt"
+        "/html5/image.kt",
+        "/stdlib/JUMaps.kt"
     );
 
     protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";

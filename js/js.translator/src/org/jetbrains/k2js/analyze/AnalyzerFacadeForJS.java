@@ -66,11 +66,11 @@ public final class AnalyzerFacadeForJS {
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                notLibFiles(config.getLibFiles()), false, false);
+            notLibFiles(config.getLibFiles()), false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
+            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
         injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
         return bindingTraceContext.getBindingContext();
@@ -110,11 +110,11 @@ public final class AnalyzerFacadeForJS {
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false);
+            Predicates.<PsiFile>alwaysTrue(), false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
+            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
         injector.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(file));
         return bindingTraceContext.getBindingContext();
@@ -135,15 +135,17 @@ public final class AnalyzerFacadeForJS {
 
         @Override
         public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
+            //TODO: these thing should not be hard-coded like that
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
+            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("kotlin.*")));
         }
 
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
                                          @NotNull WritableScope namespaceMemberScope) {
-            DefaultModuleConfiguration.createStandardConfiguration(project, true).extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+            DefaultModuleConfiguration.createStandardConfiguration(project, true)
+                .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         }
-
     }
 }
