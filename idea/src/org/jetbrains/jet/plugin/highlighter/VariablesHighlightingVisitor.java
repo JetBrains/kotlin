@@ -23,10 +23,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -38,8 +35,16 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
+    public void visitJetElement(@NotNull JetElement element) {
+        element.acceptChildren(this);
+    }
+
+    @Override
     public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
         DeclarationDescriptor target = bindingContext.get(REFERENCE_TARGET, expression);
+        if (target == null) {
+            return;
+        }
         if (target instanceof ValueParameterDescriptor) {
             ValueParameterDescriptor parameterDescriptor = (ValueParameterDescriptor) target;
             if (Boolean.TRUE.equals(bindingContext.get(AUTO_CREATED_IT, parameterDescriptor))) {
@@ -52,28 +57,16 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitSimpleNameExpression(expression);
     }
 
-    private void highlightVariable(@NotNull PsiElement elementToHighlight, DeclarationDescriptor descriptor) {
-        if (descriptor instanceof LocalVariableDescriptor) {
-            LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) descriptor;
-            if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
-                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
-                    JetHighlightingColors.WRAPPED_INTO_REF);
-            }
-            holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(
-                variableDescriptor.isVar() ?
-                JetHighlightingColors.LOCAL_VAR :
-                JetHighlightingColors.LOCAL_VAL);
-        }
+    @Override
+    public void visitProperty(@NotNull JetProperty property) {
+        visitVariableDeclaration(property);
+        super.visitProperty(property);
     }
 
     @Override
-    public void visitProperty(@NotNull JetProperty property) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
-        PsiElement nameIdentifier = property.getNameIdentifier();
-        if (nameIdentifier != null) {
-            highlightVariable(nameIdentifier, declarationDescriptor);
-        }
-        super.visitProperty(property);
+    public void visitParameter(JetParameter parameter) {
+        visitVariableDeclaration(parameter);
+        super.visitParameter(parameter);
     }
 
     @Override
@@ -86,8 +79,27 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitExpression(expression);
     }
 
-    @Override
-    public void visitJetElement(@NotNull JetElement element) {
-        element.acceptChildren(this);
+    private void visitVariableDeclaration(JetNamedDeclaration declaration) {
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, declaration);
+        PsiElement nameIdentifier = declaration.getNameIdentifier();
+        if (nameIdentifier != null && declarationDescriptor != null) {
+            highlightVariable(nameIdentifier, declarationDescriptor);
+        }
+    }
+
+    private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof VariableDescriptor) {
+            if (((VariableDescriptor)descriptor).isVar()) {
+                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.MUTABLE_VARIABLE);
+            }
+        }
+        if (descriptor instanceof LocalVariableDescriptor) {
+            LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) descriptor;
+            if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
+                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
+                    JetHighlightingColors.WRAPPED_INTO_REF);
+            }
+            holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.LOCAL_VARIABLE);
+        }
     }
 }
