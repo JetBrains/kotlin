@@ -152,11 +152,13 @@ public final class DescriptorUtils {
 
     @NotNull
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
-        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
+        //if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
+        //    return Namer.getAnonymousNamespaceName();
+        //} else
+        if (descriptor.getName().isEmpty()) {
             return Namer.getAnonymousNamespaceName();
-        } else if (descriptor.getName().equals("")) {
-            return Namer.getAnonymousNamespaceName();
-        } else {
+        }
+        else {
             return descriptor.getName();
         }
     }

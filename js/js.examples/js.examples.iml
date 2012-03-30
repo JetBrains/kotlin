@@ -2,8 +2,8 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/src/html5/fancyLines">
-      <sourceFolder url="file://$MODULE_DIR$/src/html5/fancyLines" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/src/html5/creatures">
+      <sourceFolder url="file://$MODULE_DIR$/src/html5/creatures" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
