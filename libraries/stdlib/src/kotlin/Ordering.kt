@@ -15,7 +15,7 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): In
         val v1 = fn(a)
         val v2 = fn(b)
         val diff = compareValues(v1, v2)
-        if (diff != null) return diff
+        if (diff != 0) return diff
     }
     return 0
 }
@@ -26,6 +26,7 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): In
  * the [[#hashCode()]] method is used as the difference
  */
 public inline fun <T> compareValues(a: T?, b: T?): Int {
+    if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
     if (a is Comparable<T>) {
