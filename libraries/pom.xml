@@ -51,6 +51,7 @@
         <module>website</module>
         <module>kotlin-java</module>
         <module>kotlin-maven-plugin</module>
+        <module>examples</module>
     </modules>
 
 

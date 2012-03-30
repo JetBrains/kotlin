@@ -30,6 +30,14 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>js</id>
+                        <goals>
+                            <goal>js</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
