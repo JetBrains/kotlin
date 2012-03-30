@@ -188,7 +188,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_PROPERTY_WITH_BACKING_FIELD",
-        new TextAttributes(null, null, INSTANCE_PROPERTY.getDefaultAttributes().getForegroundColor(), EffectType.LINE_UNDERSCORE, 0)
+        new TextAttributes(null, new Color(0xf5d7ef), null, null, 0)
 );
 
     public static final TextAttributesKey BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
