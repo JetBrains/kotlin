@@ -1511,21 +1511,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             }
             else if(resolvedValueArgument instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
-                JetType outType = valueParameterDescriptor.getType();
-
-                Type type = asmType(outType);
-                assert type.getSort() == Type.ARRAY;
-                Type elementType = correctElementType(type);
-                int size = valueArgument.getArguments().size();
-
-                v.iconst(valueArgument.getArguments().size());
-                v.newarray(elementType);
-                for(int i = 0; i != size; ++i) {
-                    v.dup();
-                    v.iconst(i);
-                    gen(valueArgument.getArguments().get(i).getArgumentExpression(), elementType);
-                    StackValue.arrayElement(elementType, false).store(v);
-                }
+                genVarargs(valueParameterDescriptor, valueArgument);
             }
             else {
                 throw new UnsupportedOperationException();
@@ -1533,6 +1519,24 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             index++;
         }
         return mask;
+    }
+
+    public void genVarargs(ValueParameterDescriptor valueParameterDescriptor, VarargValueArgument valueArgument) {
+        JetType outType = valueParameterDescriptor.getType();
+
+        Type type = asmType(outType);
+        assert type.getSort() == Type.ARRAY;
+        Type elementType = correctElementType(type);
+        int size = valueArgument.getArguments().size();
+
+        v.iconst(valueArgument.getArguments().size());
+        v.newarray(elementType);
+        for(int i = 0; i != size; ++i) {
+            v.dup();
+            v.iconst(i);
+            gen(valueArgument.getArguments().get(i).getArgumentExpression(), elementType);
+            StackValue.arrayElement(elementType, false).store(v);
+        }
     }
 
     public int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {

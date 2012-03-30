@@ -85,6 +85,7 @@ public class IntrinsicMethods {
     public void init() {
         namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
+        namedMethods.put("kotlin.arrays.array", new JavaClassArray());
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {

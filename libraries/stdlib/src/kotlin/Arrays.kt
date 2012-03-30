@@ -7,25 +7,27 @@ import java.nio.charset.Charset
 import java.util.List
 import java.util.ArrayList
 
+import jet.runtime.Intrinsic
+
 // Array "constructor"
-public inline fun <T> array(vararg t : T) : Array<T> = t
+[Intrinsic("kotlin.arrays.array")] public inline fun <T> array(vararg t : T) : Array<T> = t
 
 // "constructors" for primitive types array
-public inline fun doubleArray(vararg content : Double) : DoubleArray    = content
+[Intrinsic("kotlin.arrays.array")] public inline fun doubleArray(vararg content : Double) : DoubleArray    = content
 
-public inline fun floatArray(vararg content : Float) : FloatArray       = content
+[Intrinsic("kotlin.arrays.array")] public inline fun floatArray(vararg content : Float) : FloatArray       = content
 
-public inline fun longArray(vararg content : Long) : LongArray          = content
+[Intrinsic("kotlin.arrays.array")] public inline fun longArray(vararg content : Long) : LongArray          = content
 
-public inline fun intArray(vararg content : Int) : IntArray             = content
+[Intrinsic("kotlin.arrays.array")] public inline fun intArray(vararg content : Int) : IntArray             = content
 
-public inline fun charArray(vararg content : Char) : CharArray          = content
+[Intrinsic("kotlin.arrays.array")] public inline fun charArray(vararg content : Char) : CharArray          = content
 
-public inline fun shortArray(vararg content : Short) : ShortArray       = content
+[Intrinsic("kotlin.arrays.array")] public inline fun shortArray(vararg content : Short) : ShortArray       = content
 
-public inline fun byteArray(vararg content : Byte) : ByteArray          = content
+[Intrinsic("kotlin.arrays.array")] public inline fun byteArray(vararg content : Byte) : ByteArray          = content
 
-public inline fun booleanArray(vararg content : Boolean) : BooleanArray = content
+[Intrinsic("kotlin.arrays.array")] public inline fun booleanArray(vararg content : Boolean) : BooleanArray = content
 
 public inline fun   ByteArray.binarySearch(key: Byte) : Int   = Arrays.binarySearch(this, key)
 public inline fun  ShortArray.binarySearch(key: Short) : Int  = Arrays.binarySearch(this, key)
