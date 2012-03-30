@@ -99,7 +99,7 @@ public inline fun    CharArray.copyOfRange(from: Int, to: Int) : CharArray    = 
 
 public inline fun  <T> Array<T>.copyOfRange(from: Int, to: Int) : Array<T> = Arrays.copyOfRange(this as Array<T?>, from, to) as Array<T>
 
-inline val ByteArray.inputStream : ByteArrayInputStream
+public inline val ByteArray.inputStream : ByteArrayInputStream
     get() = ByteArrayInputStream(this)
 
 public inline fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)

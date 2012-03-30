@@ -8,10 +8,10 @@ import kotlin.support.FunctionIterator
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt fibonacci
  */
-inline fun <T> iterate(nextFunction: () -> T?) : java.util.Iterator<T> = FunctionIterator(nextFunction)
+public inline fun <T> iterate(nextFunction: () -> T?) : java.util.Iterator<T> = FunctionIterator(nextFunction)
 
 /** Returns an iterator over elements that are instances of a given type *R* which is a subclass of *T* */
-inline fun <T, R: T> java.util.Iterator<T>.filterIsInstance(klass: Class<R>): java.util.Iterator<R> = FilterIsIterator<T,R>(this, klass)
+public inline fun <T, R: T> java.util.Iterator<T>.filterIsInstance(klass: Class<R>): java.util.Iterator<R> = FilterIsIterator<T,R>(this, klass)
 
 private class FilterIsIterator<T, R :T>(val iterator : java.util.Iterator<T>, val klass: Class<R>) : AbstractIterator<R>() {
     override protected fun computeNext(): R? {
@@ -29,7 +29,7 @@ private class FilterIsIterator<T, R :T>(val iterator : java.util.Iterator<T>, va
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt filterAndTakeWhileExtractTheElementsWithinRange
  */
-inline fun <T> java.util.Iterator<T>.filter(predicate: (T) -> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, predicate)
+public inline fun <T> java.util.Iterator<T>.filter(predicate: (T) -> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, predicate)
 
 private class FilterIterator<T>(val iterator : java.util.Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
     override protected fun computeNext(): T? {
@@ -43,10 +43,10 @@ private class FilterIterator<T>(val iterator : java.util.Iterator<T>, val predic
 }
 
 /** Returns an iterator over elements which do not match the given *predicate* */
-inline fun <T> java.util.Iterator<T>.filterNot(predicate: (T) -> Boolean) : java.util.Iterator<T> = filter { !predicate(it) }
+public inline fun <T> java.util.Iterator<T>.filterNot(predicate: (T) -> Boolean) : java.util.Iterator<T> = filter { !predicate(it) }
 
 /** Returns an iterator over non-*null* elements */
-inline fun <T> java.util.Iterator<T?>?.filterNotNull() : java.util.Iterator<T> = FilterNotNullIterator(this)
+public inline fun <T> java.util.Iterator<T?>?.filterNotNull() : java.util.Iterator<T> = FilterNotNullIterator(this)
 
 private class FilterNotNullIterator<T>(val iterator : java.util.Iterator<T?>?) : AbstractIterator<T>() {
     override protected fun computeNext(): T? {
@@ -66,7 +66,7 @@ private class FilterNotNullIterator<T>(val iterator : java.util.Iterator<T?>?) :
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt mapAndTakeWhileExtractTheTransformedElements
  */
-inline fun <T, R> java.util.Iterator<T>.map(transform: (T) -> R): java.util.Iterator<R> = MapIterator<T, R>(this, transform)
+public inline fun <T, R> java.util.Iterator<T>.map(transform: (T) -> R): java.util.Iterator<R> = MapIterator<T, R>(this, transform)
 
 private class MapIterator<T, R>(val iterator : java.util.Iterator<T>, val transform: (T) -> R) : AbstractIterator<R>() {
     override protected fun computeNext() : R? = if (iterator.hasNext()) (transform)(iterator.next()) else { done(); null }
@@ -77,7 +77,7 @@ private class MapIterator<T, R>(val iterator : java.util.Iterator<T>, val transf
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt flatMapAndTakeExtractTheTransformedElements
  */
-inline fun <T, R> java.util.Iterator<T>.flatMap(transform: (T) -> java.util.Iterator<R>): java.util.Iterator<R> = FlatMapIterator<T, R>(this, transform)
+public inline fun <T, R> java.util.Iterator<T>.flatMap(transform: (T) -> java.util.Iterator<R>): java.util.Iterator<R> = FlatMapIterator<T, R>(this, transform)
 
 private class FlatMapIterator<T, R>(val iterator : java.util.Iterator<T>, val transform: (T) -> java.util.Iterator<R>) : AbstractIterator<R>() {
     var transformed: java.util.Iterator<R> = iterate<R> { null }
@@ -98,7 +98,7 @@ private class FlatMapIterator<T, R>(val iterator : java.util.Iterator<T>, val tr
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt takeExtractsTheFirstNElements
  */
-inline fun <T> java.util.Iterator<T>.take(n: Int): java.util.Iterator<T> {
+public inline fun <T> java.util.Iterator<T>.take(n: Int): java.util.Iterator<T> {
     fun countTo(n: Int): (T) -> Boolean {
         var count = 0
         return { ++count; count <= n }
@@ -111,7 +111,7 @@ inline fun <T> java.util.Iterator<T>.take(n: Int): java.util.Iterator<T> {
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt filterAndTakeWhileExtractTheElementsWithinRange
  */
-inline fun <T> java.util.Iterator<T>.takeWhile(predicate: (T) -> Boolean): java.util.Iterator<T> = TakeWhileIterator<T>(this, predicate)
+public inline fun <T> java.util.Iterator<T>.takeWhile(predicate: (T) -> Boolean): java.util.Iterator<T> = TakeWhileIterator<T>(this, predicate)
 
 private class TakeWhileIterator<T>(val iterator: java.util.Iterator<T>, val predicate: (T) -> Boolean) : AbstractIterator<T>() {
     override protected fun computeNext() : T? {
@@ -129,7 +129,7 @@ private class TakeWhileIterator<T>(val iterator: java.util.Iterator<T>, val pred
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt joinConcatenatesTheFirstNElementsAboveAThreshold
  */
-inline fun <T> java.util.Iterator<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int? = null) : String {
+public inline fun <T> java.util.Iterator<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int? = null) : String {
     val buffer = StringBuilder(prefix)
     var first = true; var count = 0
     for (element in this) {

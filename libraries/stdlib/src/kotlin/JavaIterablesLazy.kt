@@ -16,35 +16,35 @@ import java.util.List
  *
  * @includeFunction ../../test/CollectionTest.kt filter
  */
-inline fun <T> java.lang.Iterable<T>.filter(predicate: (T) -> Boolean) : List<T> = filterTo(ArrayList<T>(), predicate)
+public inline fun <T> java.lang.Iterable<T>.filter(predicate: (T) -> Boolean) : List<T> = filterTo(ArrayList<T>(), predicate)
 
 /**
  * Returns a list containing all elements which do not match the given predicate
  *
  * @includeFunction ../../test/CollectionTest.kt filterNot
  */
-inline fun <T> java.lang.Iterable<T>.filterNot(predicate: (T)-> Boolean) : List<T> = filterNotTo(ArrayList<T>(), predicate)
+public inline fun <T> java.lang.Iterable<T>.filterNot(predicate: (T)-> Boolean) : List<T> = filterNotTo(ArrayList<T>(), predicate)
 
 /**
  * Returns a list containing all the non-*null* elements
  *
  * @includeFunction ../../test/CollectionTest.kt filterNotNull
  */
-inline fun <T> java.lang.Iterable<T?>?.filterNotNull() : List<T> = filterNotNullTo<T, ArrayList<T>>(java.util.ArrayList<T>())
+public inline fun <T> java.lang.Iterable<T?>?.filterNotNull() : List<T> = filterNotNullTo<T, ArrayList<T>>(java.util.ArrayList<T>())
 
 /**
  * Returns the result of transforming each element to one or more values which are concatenated together into a single collection
  *
  * @includeFunction ../../test/CollectionTest.kt flatMap
  */
-inline fun <T, R> java.lang.Iterable<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> = flatMapTo(ArrayList<R>(), transform)
+public inline fun <T, R> java.lang.Iterable<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> = flatMapTo(ArrayList<R>(), transform)
 
 /**
  * Returns a list containing the first *n* elements
  *
  * @includeFunction ../../test/CollectionTest.kt take
  */
-inline fun <T> java.lang.Iterable<T>.take(n: Int): List<T> {
+public inline fun <T> java.lang.Iterable<T>.take(n: Int): List<T> {
     fun countTo(n: Int): (T) -> Boolean {
       var count = 0
       return { ++count; count <= n }
@@ -57,14 +57,14 @@ inline fun <T> java.lang.Iterable<T>.take(n: Int): List<T> {
  *
  * @includeFunction ../../test/CollectionTest.kt takeWhile
  */
-inline fun <T> java.lang.Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> = takeWhileTo(ArrayList<T>(), predicate)
+public inline fun <T> java.lang.Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> = takeWhileTo(ArrayList<T>(), predicate)
 
 /**
  * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  *
  * @includeFunction ../../test/CollectionTest.kt join
  */
-inline fun <T> java.lang.Iterable<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "") : String {
+public inline fun <T> java.lang.Iterable<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "") : String {
     val buffer = StringBuilder(prefix)
     var first = true
     for (element in this) {
