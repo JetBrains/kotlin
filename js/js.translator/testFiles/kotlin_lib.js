@@ -351,6 +351,16 @@ var Kotlin;
     }
     ;
 
+    Kotlin.safeParseInt = function(str) {
+        var r = parseInt(str, 10);
+        return isNaN(r) ? null : r;
+    };
+
+    Kotlin.safeParseDouble = function(str) {
+        var r = parseFloat(str, 10);
+        return isNaN(r) ? null : r;
+    };
+
     Kotlin.System = function () {
         var output = "";
 
