@@ -176,13 +176,37 @@ public class JetHighlightingColors {
         CodeInsightColors.IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES.getDefaultAttributes()
     );
 
+    public static final TextAttributesKey INSTANCE_PROPERTY = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_INSTANCE_PROPERTY",
+        CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
+    );
+
     public static final TextAttributesKey INSTANCE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_INSTANCE_PROPERTY_WITH_BACKING_FIELD",
-        CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
+        TextAttributes
+            .fromFlyweight(CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
+                               .getFlyweight().withEffectType(EffectType.BOLD_DOTTED_LINE).withEffectColor(
+                    CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))
     );
 
     public static final TextAttributesKey INSTANCE_BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_INSTANCE_BACKING_FIELD_ACCESS",
+        CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey NAMESPACE_PROPERTY = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_NAMESPACE_PROPERTY",
+        CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey NAMESPACE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_NAMESPACE_PROPERTY_WITH_BACKING_FIELD",
+        TextAttributes.fromFlyweight(CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
+                          .getFlyweight().withEffectType(EffectType.BOLD_DOTTED_LINE).withEffectColor(
+                CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))    );
+
+    public static final TextAttributesKey NAMESPACE_BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_NAMESPACE_BACKING_FIELD_ACCESS",
         CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
     );
 
@@ -203,7 +227,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey LABEL = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_LABEL",
-        new TextAttributes(new Color(74, 134, 232), null, null, null, Font.PLAIN)
+        new TextAttributes(new Color(0x4a86e8), null, null, null, Font.PLAIN)
     );
 
     public static final TextAttributesKey DEBUG_INFO = TextAttributesKey.createTextAttributesKey(

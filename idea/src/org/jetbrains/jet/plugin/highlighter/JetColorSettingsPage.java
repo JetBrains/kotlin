@@ -133,8 +133,13 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Read-only local variable (val)", JetHighlightingColors.LOCAL_VAL),
             new AttributesDescriptor("Mutable local variable (var)", JetHighlightingColors.LOCAL_VAR),
 
+            new AttributesDescriptor("Instance property", JetHighlightingColors.INSTANCE_PROPERTY),
             new AttributesDescriptor("Instance property with backing field", JetHighlightingColors.INSTANCE_PROPERTY_WITH_BACKING_FIELD),
             new AttributesDescriptor("Instance property backing field access", JetHighlightingColors.INSTANCE_BACKING_FIELD_ACCESS),
+
+            new AttributesDescriptor("Namespace property", JetHighlightingColors.NAMESPACE_PROPERTY),
+            new AttributesDescriptor("Namespace property with backing field", JetHighlightingColors.NAMESPACE_PROPERTY_WITH_BACKING_FIELD),
+            new AttributesDescriptor("Namespace property backing field access", JetHighlightingColors.NAMESPACE_BACKING_FIELD_ACCESS),
 
             new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
 

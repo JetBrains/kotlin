@@ -65,7 +65,7 @@ public class JetPsiChecker implements Annotator {
 
     private static HighlightingVisitor[] getAfterAnalysisVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         return new AfterAnalysisHighlightingVisitor[]{
-            new BackingFieldHighlightingVisitor(holder, bindingContext),
+            new PropertiesHighlightingVisitor(holder, bindingContext),
             new VariablesHighlightingVisitor(holder, bindingContext),
         };
     }
