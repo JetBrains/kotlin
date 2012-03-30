@@ -4,7 +4,7 @@ BLACK
 RED
 YELLOW
 BLUE
-override public fun run() : Unit {
+public override fun run() : Unit {
 System.out?.println("name()=" + name() + ", toString()=" + toString())
 }
 public fun name() : String { return "" }

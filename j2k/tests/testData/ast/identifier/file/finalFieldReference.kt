@@ -4,7 +4,7 @@ open class `$`() {
 }
 open class `$$`(`$$$$` : `$$$$$`?) : `$`() {
 val `$$$` : `$$$$$`?
-open public fun `$$$$$$`() : `$$$$$`? {
+public open fun `$$$$$$`() : `$$$$$`? {
 return `$$$`
 }
 {

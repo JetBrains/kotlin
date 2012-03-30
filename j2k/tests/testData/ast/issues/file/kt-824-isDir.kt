@@ -2,7 +2,7 @@ package test
 import java.io.File
 public open class Test() {
 class object {
-open public fun isDir(parent : File?) : Boolean {
+public open fun isDir(parent : File?) : Boolean {
 if (parent == null || !parent?.exists())
 {
 return false

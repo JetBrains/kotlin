@@ -1,35 +1,35 @@
 package test
 open class Test() : Base() {
-override public fun hashCode() : Int {
+public override fun hashCode() : Int {
 return super.hashCode()
 }
-override public fun equals(o : Any?) : Boolean {
+public override fun equals(o : Any?) : Boolean {
 return super.equals(o)
 }
-override protected fun clone() : Any? {
+protected override fun clone() : Any? {
 return super.clone()
 }
-override public fun toString() : String? {
+public override fun toString() : String? {
 return super.toString()
 }
-override protected fun finalize() : Unit {
+protected override fun finalize() : Unit {
 super.finalize()
 }
 }
 open class Base() {
-open public fun hashCode() : Int {
+public open fun hashCode() : Int {
 return System.identityHashCode(this)
 }
-open public fun equals(o : Any?) : Boolean {
+public open fun equals(o : Any?) : Boolean {
 return this.identityEquals(o)
 }
-open protected fun clone() : Any? {
+protected open fun clone() : Any? {
 return super.clone()
 }
-open public fun toString() : String? {
+public open fun toString() : String? {
 return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
 }
-open protected fun finalize() : Unit {
+protected open fun finalize() : Unit {
 super.finalize()
 }
 }

@@ -1,7 +1,7 @@
 package switch_demo
 public open class SwitchDemo() {
 class object {
-open public fun main(args : Array<String?>?) : Unit {
+public open fun main(args : Array<String?>?) : Unit {
 var month : Int = 8
 var monthString : String?
 when (month) {
