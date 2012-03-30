@@ -129,20 +129,13 @@ private class TakeWhileIterator<T>(val iterator: java.util.Iterator<T>, val pred
  *
  * @includeFunction ../../test/iterators/IteratorsTest.kt joinConcatenatesTheFirstNElementsAboveAThreshold
  */
-inline fun <T> java.util.Iterator<T>.join(separator: String, prefix: String = "", postfix: String = "", limit: Int = 20) : String {
+inline fun <T> java.util.Iterator<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int? = null) : String {
     val buffer = StringBuilder(prefix)
     var first = true; var count = 0
     for (element in this) {
         if (first) first = false else buffer.append(separator)
-        if (++count <= limit) buffer.append(element) else break
+        if (limit == null || ++count <= limit) buffer.append(element) else break
     }
-    if (count > limit) buffer.append("...")
+    if (limit != null && count > limit) buffer.append("...")
     return buffer.append(postfix).toString().sure()
 }
-
-/**
- * Returns a comma-separated representation of no more than the first 10 elements
- *
- * @includeFunction ../../test/iterators/IteratorsTest.kt toStringJoinsNoMoreThanTheFirstTenElements
- */
-inline fun <T> java.util.Iterator<T>.toString(): String = join(separator = ", ", limit = 10)

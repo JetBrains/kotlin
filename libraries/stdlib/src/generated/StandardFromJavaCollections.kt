@@ -1,7 +1,14 @@
-// NOTE this file is auto-generated from stdlib/src/kotlin/JavaCollections.kt
+// NOTE this file is auto-generated from src/kotlin/JavaCollections.kt
 package kotlin
 
 import java.util.*
+
+//
+// This file contains methods which are optimised for working on Collection / Array collections where the size
+// could be used to implement a more optimal solution
+//
+// See [[GenerateStandardLib.kt]] for more details
+//
 
 /**
  * Returns a new List containing the results of applying the given function to each element in this collection

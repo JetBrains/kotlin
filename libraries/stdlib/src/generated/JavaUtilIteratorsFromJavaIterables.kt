@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from stdlib/src/kotlin/JavaIterables.kt
+// NOTE this file is auto-generated from src/kotlin/JavaIterables.kt
 package kotlin
 
 import java.util.*

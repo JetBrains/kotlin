@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from stdlib/src/kotlin/JavaIterablesLazy.kt
+// NOTE this file is auto-generated from src/kotlin/JavaIterablesLazy.kt
 package kotlin
 
 import kotlin.util.*
@@ -67,7 +67,7 @@ inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> = takeW
  *
  * @includeFunction ../../test/CollectionTest.kt join
  */
-inline fun <T> Iterable<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
+inline fun <T> Iterable<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "") : String {
     val buffer = StringBuilder(prefix)
     var first = true
     for (element in this) {

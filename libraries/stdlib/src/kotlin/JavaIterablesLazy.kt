@@ -64,7 +64,7 @@ inline fun <T> java.lang.Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<
  *
  * @includeFunction ../../test/CollectionTest.kt join
  */
-inline fun <T> java.lang.Iterable<T>.join(separator: String, prefix: String = "", postfix: String = "") : String {
+inline fun <T> java.lang.Iterable<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "") : String {
     val buffer = StringBuilder(prefix)
     var first = true
     for (element in this) {
