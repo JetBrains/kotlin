@@ -187,7 +187,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     fun printPropertySummary(property: KProperty): Unit {
         val deprecated = if (property.deprecated) "<B>Deprecated.</B>" else ""
         print("""<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" WIDTH="1%"><FONT SIZE="-1">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>""")
         print(if (property.isVar()) varKeyword else valKeyword)
         /*
