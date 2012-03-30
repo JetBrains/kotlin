@@ -37,7 +37,8 @@ public final class K2JSConfigurationSettings {
     private BrowsersConfiguration.BrowserFamily browserFamily = BrowsersConfiguration.getInstance().getActiveBrowsers().get(0);
 
     public K2JSConfigurationSettings(@NotNull Project project) {
-        generatedFilePath = project.getBasePath() + "/generated.js";
+        String basePath = project.getBasePath();
+        generatedFilePath = basePath != null ? basePath : "";
     }
 
     public K2JSConfigurationSettings() {

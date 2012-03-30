@@ -44,6 +44,8 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
     private JComboBox browserComboBox;
     private JCheckBox openInBrowserCheckBox;
     private TextFieldWithBrowseButton generatedChooseFile;
+    private JLabel chooseBrowserLabel;
+    private JLabel htmlFileLabel;
     @NotNull
     private final Project project;
 
@@ -95,6 +97,8 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
                 boolean selected = openInBrowserCheckBox.isSelected();
                 htmlChooseFile.setEnabled(selected);
                 browserComboBox.setEnabled(selected);
+                htmlFileLabel.setEnabled(selected);
+                chooseBrowserLabel.setEnabled(selected);
             }
         });
     }

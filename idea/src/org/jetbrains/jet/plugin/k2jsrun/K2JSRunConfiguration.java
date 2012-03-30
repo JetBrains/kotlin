@@ -26,9 +26,8 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
@@ -36,31 +35,17 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * @author Pavel Talanov
  */
-public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
+public final class K2JSRunConfiguration extends RunConfigurationBase
     implements RunConfigurationWithSuppressedDefaultRunAction {
 
     @NotNull
     private K2JSConfigurationSettings settings = new K2JSConfigurationSettings(getProject());
 
-    public K2JSRunConfiguration(String name, RunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
-        super(name, runConfigurationModule, factory);
-        runConfigurationModule.init();
-    }
-
-    @Override
-    public Collection<Module> getValidModules() {
-        return Arrays.asList(ModuleManager.getInstance(getProject()).getModules());
-    }
-
-    @Override
-    protected ModuleBasedConfiguration createInstance() {
-        return new K2JSRunConfiguration(getName(), getConfigurationModule(), getFactory());
+    public K2JSRunConfiguration(String name, Project project, ConfigurationFactory factory) {
+        super(project, factory, name);
     }
 
     @Override
@@ -69,12 +54,27 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
     }
 
     @Override
+    public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
+        return null;
+    }
+
+    @Override
+    public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
+        return null;
+    }
+
+    @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment)
         throws ExecutionException {
         return new MyProfileState();
     }
 
-    private class MyProfileState implements RunProfileState {
+    @Override
+    public void checkConfiguration() throws RuntimeConfigurationException {
+        //do nothing
+    }
+
+    private final class MyProfileState implements RunProfileState {
         @Override
         public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
             return new ExecutionResult() {
