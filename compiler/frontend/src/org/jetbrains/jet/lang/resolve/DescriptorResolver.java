@@ -669,19 +669,19 @@ public class DescriptorResolver {
 
     @NotNull
     /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
-        return resolveVisibilityFromModifiers(modifierList, Visibility.INTERNAL);
+        return resolveVisibilityFromModifiers(modifierList, Visibilities.INTERNAL);
     }
 
     @NotNull
     /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
         if (modifierList == null) return defaultVisibility;
-        if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibility.PRIVATE;
-        if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibility.PUBLIC;
+        if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibilities.PRIVATE;
+        if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibilities.PUBLIC;
         if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
             if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
-                return Visibility.INTERNAL_PROTECTED;
+                return Visibilities.INTERNAL_PROTECTED;
             }
-            return Visibility.PROTECTED;
+            return Visibilities.PROTECTED;
         }
         return defaultVisibility;
     }
@@ -823,7 +823,7 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters, trace),
-                resolveVisibilityFromModifiers(modifierList));
+                resolveVisibilityFromModifiers(modifierList, Visibilities.PUBLIC));
     }
 
     @Nullable

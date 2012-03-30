@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -108,7 +109,7 @@ public class TestlibTest extends CodegenTestCase {
 
                             ClassDescriptor descriptor = (ClassDescriptor) session.getBindingContext().getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
                             Set<JetType> allSuperTypes = new THashSet<JetType>();
-                            CodegenUtil.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
+                            DescriptorUtils.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
 
                             for(JetType type : allSuperTypes) {
                                 String internalName = typeMapper.mapType(type).getInternalName();
