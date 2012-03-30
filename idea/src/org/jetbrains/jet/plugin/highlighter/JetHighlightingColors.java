@@ -161,10 +161,19 @@ public class JetHighlightingColors {
         CodeInsightColors.ANNOTATION_NAME_ATTRIBUTES.getDefaultAttributes()
     );
 
-    // TODO review: is it needed?
+    public static final TextAttributesKey LOCAL_VAL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_LOCAL_VAL",
+        CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey LOCAL_VAR = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_LOCAL_VAR",
+        CodeInsightColors.REASSIGNED_LOCAL_VARIABLE_ATTRIBUTES.getDefaultAttributes()
+    );
+
     public static final TextAttributesKey WRAPPED_INTO_REF = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_WRAPPED_INTO_REF",
-        new TextAttributes(null, null, Color.BLACK, EffectType.LINE_UNDERSCORE, Font.PLAIN)
+        CodeInsightColors.IMPLICIT_ANONYMOUS_CLASS_PARAMETER_ATTRIBUTES.getDefaultAttributes()
     );
 
     public static final TextAttributesKey INSTANCE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(

@@ -16,14 +16,17 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.LocalVariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -45,18 +48,21 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
         }
 
-        markVariableAsWrappedIfNeeded(expression.getNode(), target);
+        highlightVariable(expression, target);
         super.visitSimpleNameExpression(expression);
     }
 
-    private void markVariableAsWrappedIfNeeded(@NotNull ASTNode node, DeclarationDescriptor target) {
-        if (target instanceof VariableDescriptor) {
-            VariableDescriptor variableDescriptor = (VariableDescriptor) target;
+    private void highlightVariable(@NotNull PsiElement elementToHighlight, DeclarationDescriptor descriptor) {
+        if (descriptor instanceof LocalVariableDescriptor) {
+            LocalVariableDescriptor variableDescriptor = (LocalVariableDescriptor) descriptor;
             if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
-                holder.createInfoAnnotation(node, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
+                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
-
+            holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(
+                variableDescriptor.isVar() ?
+                JetHighlightingColors.LOCAL_VAR :
+                JetHighlightingColors.LOCAL_VAL);
         }
     }
 
@@ -65,7 +71,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, property);
         PsiElement nameIdentifier = property.getNameIdentifier();
         if (nameIdentifier != null) {
-            markVariableAsWrappedIfNeeded(nameIdentifier.getNode(), declarationDescriptor);
+            highlightVariable(nameIdentifier, declarationDescriptor);
         }
         super.visitProperty(property);
     }
@@ -77,7 +83,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(
                 JetHighlightingColors.AUTO_CASTED_VALUE);
         }
-        expression.acceptChildren(this);
+        super.visitExpression(expression);
     }
 
     @Override
