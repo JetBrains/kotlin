@@ -1,5 +1,5 @@
 object : Runnable() {
-public override fun run() : Unit {
+override public fun run() : Unit {
 System.out?.println("Run")
 }
 }
