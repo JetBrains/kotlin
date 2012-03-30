@@ -2,7 +2,7 @@ package kotlin.support
 
 import java.util.NoSuchElementException
 
-public enum class State {
+enum class State {
     Ready
     NotReady
     Done
@@ -14,10 +14,10 @@ public enum class State {
  * to implement the iterator, calling [[done()]] when the iteration is complete.
  */
 public abstract class AbstractIterator<T>: java.util.Iterator<T> {
-    public var state: State = State.NotReady
-    public var next: T? = null
+    private var state: State = State.NotReady
+    private var next: T? = null
 
-    public override fun hasNext(): Boolean {
+    override fun hasNext(): Boolean {
         require(state != State.Failed)
         return when (state) {
             State.Done -> false
@@ -26,13 +26,13 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
         }
     }
 
-    public override fun next(): T {
+    override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
         return next.sure()
     }
 
-    public override fun remove() { throw UnsupportedOperationException() }
+    override fun remove() { throw UnsupportedOperationException() }
 
     /** Returns the next element in the iteration without advancing the iteration */
     fun peek(): T {
@@ -42,14 +42,33 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
 
     private fun tryToComputeNext(): Boolean {
         state = State.Failed
-        next = computeNext();
-        return if (state != State.Done) { state = State.Ready; true } else false
+        computeNext();
+        return state == State.Ready
     }
 
-    /** Computes the next element in the iterator, calling [[done()]] when there are no more elements */
-    abstract protected fun computeNext(): T?
+    /**
+     * Computes the next item in the iterator.
+     *
+     * This callback method should call one of these two methods
+     *
+     * * [[setNext(T)]] with the next value of the iteration
+     * * [[done()]] to indicate there are no more elements
+     *
+     * Failure to call either method will result in the iteration terminating with a failed state
+     */
+    abstract protected fun computeNext(): Unit
 
-    /** Sets the state to done so that the iteration terminates */
+    /**
+     * Sets the next value in the iteration, called from the [[computeNext()]] function
+     */
+    protected fun setNext(value: T): Unit {
+        next = value
+        state = State.Ready
+    }
+
+    /**
+     * Sets the state to done so that the iteration terminates
+     */
     protected fun done() {
         state = State.Done
     }
@@ -58,9 +77,12 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
 /** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */
 class FunctionIterator<T>(val nextFunction : () -> T?) : AbstractIterator<T>() {
 
-    override protected fun computeNext(): T? {
+    override protected fun computeNext(): Unit {
         val next = (nextFunction)()
-        if (next == null) done()
-        return next
+        if (next == null) {
+            done()
+        } else {
+            setNext(next)
+        }
     }
 }

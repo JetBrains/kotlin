@@ -14,13 +14,15 @@ public inline fun <T> iterate(nextFunction: () -> T?) : java.util.Iterator<T> = 
 public inline fun <T, R: T> java.util.Iterator<T>.filterIsInstance(klass: Class<R>): java.util.Iterator<R> = FilterIsIterator<T,R>(this, klass)
 
 private class FilterIsIterator<T, R :T>(val iterator : java.util.Iterator<T>, val klass: Class<R>) : AbstractIterator<R>() {
-    override protected fun computeNext(): R? {
+    override protected fun computeNext(): Unit {
         while (iterator.hasNext()) {
             val next = iterator.next()
-            if (klass.isInstance(next)) return next as R
+            if (klass.isInstance(next)) {
+                setNext(next as R)
+                return
+            }
         }
         done()
-        return null
     }
 }
 
@@ -32,13 +34,15 @@ private class FilterIsIterator<T, R :T>(val iterator : java.util.Iterator<T>, va
 public inline fun <T> java.util.Iterator<T>.filter(predicate: (T) -> Boolean) : java.util.Iterator<T> = FilterIterator<T>(this, predicate)
 
 private class FilterIterator<T>(val iterator : java.util.Iterator<T>, val predicate: (T)-> Boolean) : AbstractIterator<T>() {
-    override protected fun computeNext(): T? {
+    override protected fun computeNext(): Unit {
         while (iterator.hasNext()) {
             val next = iterator.next()
-            if ((predicate)(next)) return next
+            if ((predicate)(next)) {
+                setNext(next)
+                return
+            }
         }
         done()
-        return null
     }
 }
 
@@ -49,15 +53,17 @@ public inline fun <T> java.util.Iterator<T>.filterNot(predicate: (T) -> Boolean)
 public inline fun <T> java.util.Iterator<T?>?.filterNotNull() : java.util.Iterator<T> = FilterNotNullIterator(this)
 
 private class FilterNotNullIterator<T>(val iterator : java.util.Iterator<T?>?) : AbstractIterator<T>() {
-    override protected fun computeNext(): T? {
+    override protected fun computeNext(): Unit {
         if (iterator != null) {
             while (iterator.hasNext()) {
                 val next = iterator.next()
-                if (next != null) return next
+                if (next != null) {
+                    setNext(next)
+                    return
+                }
             }
         }
         done()
-        return null
     }
 }
 
@@ -69,7 +75,13 @@ private class FilterNotNullIterator<T>(val iterator : java.util.Iterator<T?>?) :
 public inline fun <T, R> java.util.Iterator<T>.map(transform: (T) -> R): java.util.Iterator<R> = MapIterator<T, R>(this, transform)
 
 private class MapIterator<T, R>(val iterator : java.util.Iterator<T>, val transform: (T) -> R) : AbstractIterator<R>() {
-    override protected fun computeNext() : R? = if (iterator.hasNext()) (transform)(iterator.next()) else { done(); null }
+    override protected fun computeNext() : Unit {
+        if (iterator.hasNext()) {
+            setNext((transform)(iterator.next()))
+        } else {
+            done()
+        }
+    }
 }
 
 /**
@@ -82,14 +94,19 @@ public inline fun <T, R> java.util.Iterator<T>.flatMap(transform: (T) -> java.ut
 private class FlatMapIterator<T, R>(val iterator : java.util.Iterator<T>, val transform: (T) -> java.util.Iterator<R>) : AbstractIterator<R>() {
     var transformed: java.util.Iterator<R> = iterate<R> { null }
 
-    override protected fun computeNext() : R? {
-        if (transformed.hasNext()) return transformed.next()
-        if (iterator.hasNext()) {
-            transformed = (transform)(iterator.next())
-            return computeNext()
+    override protected fun computeNext() : Unit {
+        while (true) {
+            if (transformed.hasNext()) {
+                setNext(transformed.next())
+                return
+            }
+            if (iterator.hasNext()) {
+                transformed = (transform)(iterator.next())
+            } else {
+                done()
+                return
+            }
         }
-        done()
-        return null
     }
 }
 
@@ -114,13 +131,15 @@ public inline fun <T> java.util.Iterator<T>.take(n: Int): java.util.Iterator<T> 
 public inline fun <T> java.util.Iterator<T>.takeWhile(predicate: (T) -> Boolean): java.util.Iterator<T> = TakeWhileIterator<T>(this, predicate)
 
 private class TakeWhileIterator<T>(val iterator: java.util.Iterator<T>, val predicate: (T) -> Boolean) : AbstractIterator<T>() {
-    override protected fun computeNext() : T? {
+    override protected fun computeNext() : Unit {
         if (iterator.hasNext()) {
             val item = iterator.next()
-            if ((predicate)(item)) return item
+            if ((predicate)(item)) {
+                setNext(item)
+                return
+            }
         }
         done()
-        return null
     }
 }
 
@@ -139,3 +158,4 @@ public inline fun <T> java.util.Iterator<T>.join(separator: String = ", ", prefi
     if (limit != null && count > limit) buffer.append("...")
     return buffer.append(postfix).toString().sure()
 }
+
