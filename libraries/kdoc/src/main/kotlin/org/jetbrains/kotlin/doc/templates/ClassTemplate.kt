@@ -95,9 +95,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">FUNCTION</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">FUNCTION</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -151,9 +151,9 @@ DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHO
         </TR>
         <TR>
         <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-          SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+          SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">FUNCTION</A></FONT></TD>
         <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-        DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+        DETAIL:&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">FUNCTION</A></FONT></TD>
         </TR>
         </TABLE>
         <A NAME="skip-navbar_bottom"></A>

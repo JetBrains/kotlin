@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.descriptors.ClassKind
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.descriptors.Visibilities
 
 
 /**
@@ -254,7 +255,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         }
     }
 
-    protected fun addFunctions(owner: KClassOrPackage, scope: JetScope): Unit {
+    fun addFunctions(owner: KClassOrPackage, scope: JetScope): Unit {
         try {
             val descriptors = scope.getAllDescriptors()
             for (descriptor in descriptors) {
@@ -303,14 +304,16 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             configureComments(function, descriptor)
             val receiver = descriptor.getReceiverParameter()
             if (receiver is ExtensionReceiver) {
-                function.extensionClass = getType(receiver.getType())?.klass
+                val receiverType = getType(receiver.getType())
+                function.receiverType = receiverType
+                function.extensionClass = receiverType?.klass
             }
             return function
         }
         return null
     }
 
-    protected fun addTypeParameters(answer: List<KTypeParameter>, descriptors: List<TypeParameterDescriptor?>): Unit {
+    fun addTypeParameters(answer: List<KTypeParameter>, descriptors: List<TypeParameterDescriptor?>): Unit {
         for (typeParam in descriptors) {
             if (typeParam != null) {
                 val p = createTypeParameter(typeParam)
@@ -340,7 +343,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     }
 
 
-    protected fun fileFor(descriptor: DeclarationDescriptor): String? {
+    fun fileFor(descriptor: DeclarationDescriptor): String? {
         val psiElement = getPsiElement(descriptor)
         return psiElement?.getContainingFile()?.getName()
     }
@@ -844,7 +847,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 
     fun isApi(): Boolean {
         val visibility = descriptor.getVisibility()
-        return visibility.isAPI()
+        return visibility.isPublicAPI()
     }
 
     val kind: String
@@ -870,9 +873,9 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
     val visibility: String
     get() {
         val v = descriptor.getVisibility()
-        return if (v == Visibility.PUBLIC) "public"
-        else if (v == Visibility.PROTECTED) "protected"
-        else if (v == Visibility.PRIVATE) "private"
+        return if (v == Visibilities.PUBLIC) "public"
+        else if (v == Visibilities.PROTECTED) "protected"
+        else if (v == Visibilities.PRIVATE) "private"
         else ""
     }
 
@@ -911,6 +914,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
 class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, val name: String,
         var returnType: KType,
         var parameters: List<KParameter>,
+        var receiverType: KType? = null,
         var extensionClass: KClass? = null,
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
@@ -953,6 +957,8 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
     public val link: String = "$name"
 
     fun equals(other: KFunction) = name == other.name
+
+    fun isVar(): Boolean = descriptor.isVar()
 
     fun toString() = "property $name"
 }

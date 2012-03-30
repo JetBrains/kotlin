@@ -18,6 +18,11 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
     protected override fun relativePrefix(): String = pkg.nameAsRelativePath
 
+    val funKeyword = keyword("fun")
+    val valKeyword = keyword("val")
+    val varKeyword = keyword("var")
+
+    protected fun keyword(name: String): String = "<B>$name</B>"
 
     fun printFunctionSummary(functions: Collection<KFunction>): Unit {
         if (functions.notEmpty()) {
@@ -40,6 +45,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
     }
 
+
     fun printFunctionSummary(function: KFunction): Unit {
         val deprecated = if (function.deprecated) "<B>Deprecated.</B>" else ""
         print("""<TR BGCOLOR="white" CLASS="TableRowColor">
@@ -50,18 +56,22 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             <TR ALIGN="right" VALIGN="">
             <TD NOWRAP><FONT SIZE="-1">
             <CODE>""")
+            print("$funKeyword ")
             printTypeParameters(function)
-            println("""<BR>""")
-            print(link(function.returnType))
+            printReceiverType(function, "<BR>")
             println("""</CODE></FONT></TD>
 </TR>
 </TABLE>""")
         } else {
-            print(link(function.returnType))
+            print(funKeyword)
+            printReceiverType(function)
         }
+        // print receiver type
         println("""</CODE></FONT></TD>""")
         print("""<TD><CODE><B><A HREF="${href(function)}">${function.name}</A></B>""")
         printParameters(function)
+        print(": ")
+        print(link(function.returnType))
         println("""</CODE>""")
         println("")
         if (true) {
@@ -73,6 +83,18 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         println("""</TD>""")
         println("""</TR>""")
+    }
+
+
+    fun printReceiverType(function: KFunction, prefix: String = " ", postfix: String = "", none: String = ""): Unit {
+        val receiverType = function.receiverType
+        if (receiverType != null) {
+            print(prefix)
+            print(link(receiverType))
+            print(postfix)
+        } else {
+            print(none)
+        }
     }
 
     fun printFunctionDetail(functions: Collection<KFunction>): Unit {
@@ -102,13 +124,15 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("""<PRE>""")
         println("""<FONT SIZE="-1">""")
         printAnnotations(function.annotations)
-        print("""</FONT>${function.modifiers.join(" ")} """)
+        print("""</FONT>${function.modifiers.join(" ")} $funKeyword""")
 
-        printTypeParameters(function)
+        printTypeParameters(function, " ")
+        printReceiverType(function, " ", ".", " ")
+        print("""<A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
+        printParameters(function)
+        print(": ")
         print(link(function.returnType))
 
-        print(""" <A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
-        printParameters(function)
         val exlist = function.exceptions
         var first = true
         if (!exlist.isEmpty()) {
@@ -163,8 +187,9 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     fun printPropertySummary(property: KProperty): Unit {
         val deprecated = if (property.deprecated) "<B>Deprecated.</B>" else ""
         print("""<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<TD ALIGN="right" WIDTH="1%"><FONT SIZE="-1">
 <CODE>""")
+        print(if (property.isVar()) varKeyword else valKeyword)
         /*
         if (!property.typeParameters.isEmpty()) {
             println("""<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
@@ -181,9 +206,9 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
             print(link(property.returnType))
         }
         */
-        print(link(property.returnType))
         println("""</CODE></FONT></TD>""")
-        print("""<TD><CODE><B><A HREF="${href(property)}">${property.name}</A></B>""")
+        print("""<TD><CODE><B><A HREF="${href(property)}">${property.name}</A></B>: """)
+        print(link(property.returnType))
         //printParameters(property)
         println("""</CODE>""")
         println("""""")
@@ -192,9 +217,10 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("""</TR>""")
     }
 
-    fun printTypeParameters(method: KFunction): Unit {
+    fun printTypeParameters(method: KFunction, separator: String = ""): Unit {
         val typeParameters = method.typeParameters
         if (!typeParameters.isEmpty()) {
+            print(separator)
             print("&lt")
             var separator = ""
             for (t in typeParameters) {
@@ -212,7 +238,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
                     }
                 }
             }
-            print("&gt;&nbsp;")
+            print("&gt")
         }
     }
 

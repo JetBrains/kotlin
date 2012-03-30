@@ -98,7 +98,7 @@ class KDocConfig() {
     }
 }
 
-protected class LongestFirstStringComparator() : Comparator<String> {
+private class LongestFirstStringComparator() : Comparator<String> {
     override fun compare(s1: String?, s2: String?): Int {
         return compareBy(s1, s2, { (s: String) -> s.length() }, { (s: String) -> s })
     }
