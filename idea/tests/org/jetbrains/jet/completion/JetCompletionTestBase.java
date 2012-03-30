@@ -27,6 +27,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.testing.ConfigRuntimeUtil;
+import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
 /**
  * @author Nikolay.Krasko
@@ -48,7 +49,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
             final String fileText = getFile().getText();
             type = getCompletionType(testName, fileText);
 
-            boolean withKotlinRuntime = ExpectedCompletionUtils.getPrefixedInt(fileText, "// RUNTIME:") != null;
+            boolean withKotlinRuntime = InTextDirectivesUtils.getPrefixedInt(fileText, "// RUNTIME:") != null;
 
             try {
                 if (withKotlinRuntime) {

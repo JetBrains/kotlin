@@ -75,32 +75,23 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         LanguageLevelProjectExtension.getInstance(getProject()).setLanguageLevel(LanguageLevel.HIGHEST);
     }
 
-//    public static CommonCodeStyleSettings getSettings() {
-//        CodeStyleSettings rootSettings = CodeStyleSettingsManager.getSettings(getProject());
-//        return rootSettings.getCommonSettings(JavaLanguage.INSTANCE);
-//    }
-//
-//    public static CommonCodeStyleSettings.IndentOptions getIndentOptions() {
-//        return getSettings().getRootSettings().getIndentOptions(StdFileTypes.JAVA);
-//    }
-
     public void doTest() throws Exception {
         doTest(getTestName(false) + ".kt", getTestName(false) + "_after.kt");
     }
 
     public void doTest(@NonNls String fileNameBefore, @NonNls String fileNameAfter) throws Exception {
-        doTextTest(Action.REFORMAT, loadFile(fileNameBefore), loadFile(fileNameAfter));
+        doTextTest(Action.REFORMAT, loadFile(fileNameBefore), loadFile(fileNameAfter), "");
     }
 
-    public void doTextTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
-        doTextTest(Action.REFORMAT, text, textAfter);
+    public void doTextTest(@NonNls final String text, @NonNls String textAfter, String commentToTextCompare) throws IncorrectOperationException {
+        doTextTest(Action.REFORMAT, text, textAfter, commentToTextCompare);
     }
 
     public void doIndentTextTest(@NonNls final String text, @NonNls String textAfter) throws IncorrectOperationException {
-        doTextTest(Action.INDENT, text, textAfter);
+        doTextTest(Action.INDENT, text, textAfter, "");
     }
 
-    public void doTextTest(final Action action, final String text, String textAfter) throws IncorrectOperationException {
+    public void doTextTest(final Action action, final String text, String textAfter, String commentToTextCompare) throws IncorrectOperationException {
         final PsiFile file = createFile("A.kt", text);
 
         if (myLineRange != null) {
@@ -140,10 +131,9 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
             fail("Don't expect the document to be null");
             return;
         }
-        assertEquals(prepareText(textAfter), prepareText(document.getText()));
+        assertEquals(commentToTextCompare, prepareText(textAfter), prepareText(document.getText()));
         manager.commitDocument(document);
-        assertEquals(prepareText(textAfter), prepareText(file.getText()));
-
+        assertEquals(commentToTextCompare, prepareText(textAfter), prepareText(file.getText()));
     }
 
     private static String prepareText(String actual) {
@@ -171,7 +161,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         return doc.getText();
     }
 
-    private static String loadFile(String name) throws Exception {
+    public static String loadFile(String name) throws Exception {
         String text = FileUtil.loadFile(new File(BASE_PATH, name));
         text = StringUtil.convertLineSeparators(text);
         return text;

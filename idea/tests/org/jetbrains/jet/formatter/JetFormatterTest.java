@@ -59,6 +59,14 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         doTest();
     }
 
+    public void testFunctionCallParametersAlign() throws Exception {
+        doTest();
+    }
+
+    public void testFunctionDefParametersAlign() throws Exception {
+        doTest();
+    }
+
     public void testIf() throws Exception {
         doTest();
     }
@@ -84,6 +92,10 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
         getSettings().clearCodeStyleSettings();
     }
 
+    public void testRightBracketOnNewLine() throws Exception {
+        doTestWithInvert();
+    }
+
     public void testSpaceAroundTypeColon() throws Exception {
         getJetSettings().SPACE_AFTER_TYPE_COLON = false;
         getJetSettings().SPACE_BEFORE_TYPE_COLON = true;
@@ -104,5 +116,38 @@ public class JetFormatterTest extends AbstractJetFormatterTest {
 
     public static CodeStyleSettings getSettings() {
         return CodeStyleSettingsManager.getSettings(getProject());
+    }
+
+    @Override
+    public void doTest() throws Exception {
+        String originalFileText = AbstractJetFormatterTest.loadFile(getTestName(false) + ".kt");
+
+        String afterFileName = getTestName(false) + "_after.kt";
+        String afterText = AbstractJetFormatterTest.loadFile(afterFileName);
+
+        FormattingSettingsConfigurator configurator = new FormattingSettingsConfigurator(AbstractJetFormatterTest.loadFile(
+                getTestName(false) + ".kt"));
+        configurator.configureSettings(getSettings());
+
+        doTextTest(originalFileText, afterText, String.format("Failure in NORMAL file: %s", afterFileName));
+
+        getSettings().clearCodeStyleSettings();
+    }
+
+    public void doTestWithInvert() throws Exception {
+        String originalFileText = AbstractJetFormatterTest.loadFile(getTestName(false) + ".kt");
+        FormattingSettingsConfigurator configurator = new FormattingSettingsConfigurator(originalFileText);
+
+        String afterFileName = getTestName(false) + "_after.kt";
+        String afterText = AbstractJetFormatterTest.loadFile(afterFileName);
+        configurator.configureSettings(getSettings());
+        doTextTest(originalFileText, afterText, String.format("Failure in NORMAL file: %s", afterFileName));
+
+        String afterInvertedFileName = getTestName(false) + "_after_inv.kt";
+        String afterInvertedText = AbstractJetFormatterTest.loadFile(afterInvertedFileName);
+        configurator.configureInvertedSettings(getSettings());
+        doTextTest(originalFileText, afterInvertedText, String.format("Failure in INVERTED file: %s", afterInvertedFileName));
+
+        getSettings().clearCodeStyleSettings();
     }
 }
