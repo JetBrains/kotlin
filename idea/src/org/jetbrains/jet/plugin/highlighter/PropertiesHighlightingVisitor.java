@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lexer.JetTokens;
 
 class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -34,10 +35,14 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
-        // TODO highlight extension properties
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (!(target instanceof PropertyDescriptor)) {
             return;
+        }
+
+        if (((PropertyDescriptor)target).getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+            holder.createInfoAnnotation(expression, null).setTextAttributes(
+                JetHighlightingColors.EXTENSION_PROPERTY);
         }
 
         boolean namespace = target.getContainingDeclaration() instanceof NamespaceDescriptor;
@@ -62,6 +67,8 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             boolean namespace = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
             putPropertyAnnotation(nameIdentifier, namespace, Boolean.TRUE.equals(backingFieldRequired));
         }
+
+        super.visitProperty(property);
     }
 
     @Override

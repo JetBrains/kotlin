@@ -185,7 +185,7 @@ public class JetHighlightingColors {
         "KOTLIN_INSTANCE_PROPERTY_WITH_BACKING_FIELD",
         TextAttributes
             .fromFlyweight(CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
-                               .getFlyweight().withEffectType(EffectType.BOLD_DOTTED_LINE).withEffectColor(
+                               .getFlyweight().withEffectType(EffectType.LINE_UNDERSCORE).withEffectColor(
                     CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))
     );
 
@@ -202,12 +202,17 @@ public class JetHighlightingColors {
     public static final TextAttributesKey NAMESPACE_PROPERTY_WITH_BACKING_FIELD = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_NAMESPACE_PROPERTY_WITH_BACKING_FIELD",
         TextAttributes.fromFlyweight(CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
-                          .getFlyweight().withEffectType(EffectType.BOLD_DOTTED_LINE).withEffectColor(
+                          .getFlyweight().withEffectType(EffectType.LINE_UNDERSCORE).withEffectColor(
                 CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes().getForegroundColor()))    );
 
     public static final TextAttributesKey NAMESPACE_BACKING_FIELD_ACCESS = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_NAMESPACE_BACKING_FIELD_ACCESS",
-        CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES.getDefaultAttributes()
+        CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey EXTENSION_PROPERTY = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_EXTENSION_PROPERTY",
+        CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
     );
 
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = TextAttributesKey.createTextAttributesKey(

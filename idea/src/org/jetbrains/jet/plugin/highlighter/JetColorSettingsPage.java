@@ -141,6 +141,8 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Namespace property with backing field", JetHighlightingColors.NAMESPACE_PROPERTY_WITH_BACKING_FIELD),
             new AttributesDescriptor("Namespace property backing field access", JetHighlightingColors.NAMESPACE_BACKING_FIELD_ACCESS),
 
+            new AttributesDescriptor("Extension property", JetHighlightingColors.EXTENSION_PROPERTY),
+
             new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
