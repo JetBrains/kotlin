@@ -72,7 +72,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isInterface = false;
         boolean isFinal = false;
         boolean isStatic = false;
-        
+        boolean isAnnotation = false;
+
         if(myClass instanceof JetClass) {
             JetClass jetClass = (JetClass) myClass;
             if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD))
@@ -80,6 +81,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (jetClass.isTrait()) {
                 isAbstract = true;
                 isInterface = true;
+            }
+            if (jetClass.isAnnotation()) {
+                isAbstract = true;
+                isInterface = true;
+                isAnnotation = true;
+                signature.getInterfaces().add("java/lang/annotation/Annotation");
             }
             if (!jetClass.hasModifier(JetTokens.OPEN_KEYWORD) && !isAbstract) {
                 isFinal = true;
@@ -102,6 +109,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (isStatic) {
             access |= ACC_STATIC;
+        }
+        if (isAnnotation) {
+            access |= ACC_ANNOTATION;
         }
         v.defineClass(myClass, V1_6,
                 access,
@@ -407,8 +417,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     protected void generatePrimaryConstructor() {
-        if(myClass instanceof JetClass && ((JetClass) myClass).isTrait())
-            return;
+        if(myClass instanceof JetClass) {
+            JetClass aClass = (JetClass)myClass;
+            if(aClass.isTrait())
+                return;
+            if(aClass.isAnnotation()) {
+                return;
+            }
+        }
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, myClass);
 

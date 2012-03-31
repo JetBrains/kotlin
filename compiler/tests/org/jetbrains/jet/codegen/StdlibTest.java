@@ -21,6 +21,8 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -163,5 +165,108 @@ public class StdlibTest extends CodegenTestCase {
         finally {
            loader.dispose();
         }
+    }
+
+    public void testAnnotationClassWithClassProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: java.lang.Class<*>)\n" +
+                 "" +
+                 "A(javaClass<String>()) class B()");
+        Class aClass = generateClass("A");
+
+        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        RetentionPolicy value = annotation.value();
+        assertEquals(RetentionPolicy.RUNTIME, value);
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+        assertEquals(Class.class, methods[0].getReturnType());
+        assertEquals(0, methods[0].getParameterTypes().length);
+        assertTrue(aClass.isAnnotation());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        assertEquals(String.class, methods[0].invoke(bClassAnnotation));
+    }
+
+    public void testAnnotationClassWithStringArrayProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<String>)\n" +
+                 "" +
+                 "A(array(\"239\",\"932\")) class B()");
+        Class aClass = generateClass("A");
+
+        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        RetentionPolicy value = annotation.value();
+        assertEquals(RetentionPolicy.RUNTIME, value);
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+        assertEquals(String[].class, methods[0].getReturnType());
+        assertEquals(0, methods[0].getParameterTypes().length);
+        assertTrue(aClass.isAnnotation());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        Object invoke = methods[0].invoke(bClassAnnotation);
+        assertEquals("239", ((String[])invoke)[0]);
+        assertEquals("932", ((String[])invoke)[1]);
+    }
+
+    public void testAnnotationClassWithIntArrayProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: IntArray)\n" +
+                 "" +
+                 "A(intArray(239,932)) class B()");
+        Class aClass = generateClass("A");
+
+        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        RetentionPolicy value = annotation.value();
+        assertEquals(RetentionPolicy.RUNTIME, value);
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+        assertEquals(int[].class, methods[0].getReturnType());
+        assertEquals(0, methods[0].getParameterTypes().length);
+        assertTrue(aClass.isAnnotation());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        Object invoke = methods[0].invoke(bClassAnnotation);
+        assertEquals(239, ((int[])invoke)[0]);
+        assertEquals(932, ((int[])invoke)[1]);
     }
 }

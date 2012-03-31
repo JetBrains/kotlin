@@ -63,6 +63,9 @@ public class IntrinsicMethods {
     public static final ArraySet ARRAY_SET = new ArraySet();
     public static final ArrayGet ARRAY_GET = new ArrayGet();
     public static final StringPlus STRING_PLUS = new StringPlus();
+    public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
+    public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
+    public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
 
     private Project myProject;
     private JetStandardLibrary myStdLib;
@@ -83,9 +86,9 @@ public class IntrinsicMethods {
 
     @PostConstruct
     public void init() {
-        namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
-        namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
-        namedMethods.put("kotlin.arrays.array", new JavaClassArray());
+        namedMethods.put(KOTLIN_JAVA_CLASS_FUNCTION, new JavaClassFunction());
+        namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
+        namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
@@ -247,6 +250,21 @@ public class IntrinsicMethods {
             typeParameters.add(new TypeProjection(JetStandardClasses.getAnyType()));
         }
         return descriptor.getMemberScope(typeParameters);
+    }
+
+    public IntrinsicMethod isIntrinsicMethod(DeclarationDescriptor descriptor) {
+        List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
+        if (annotations != null) {
+            for (AnnotationDescriptor annotation : annotations) {
+                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                    String value = (String) annotation.getValueArguments().get(0).getValue();
+                    IntrinsicMethod intrinsicMethod = namedMethods.get(value);
+                    if(intrinsicMethod != null)
+                        return intrinsicMethod;
+                }
+            }
+        }
+        return null;
     }
 
     public IntrinsicMethod getIntrinsic(DeclarationDescriptor descriptor) {

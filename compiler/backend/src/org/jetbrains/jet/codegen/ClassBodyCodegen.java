@@ -29,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+
 /**
  * @author max
  * @author yole
@@ -99,27 +102,33 @@ public abstract class ClassBodyCodegen {
         functionCodegen.gen(declaration);
     }
 
-    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, PsiElement origin) {
+    private void generatePrimaryConstructorProperties(PropertyCodegen propertyCodegen, JetClassOrObject origin) {
+        boolean isAnnotation = origin instanceof JetClass && ((JetClass)origin).isAnnotation();
         OwnerKind kind = context.getContextKind();
         for (JetParameter p : getPrimaryConstructorParameters()) {
             if (p.getValOrVarNode() != null) {
                 PropertyDescriptor propertyDescriptor = state.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    propertyCodegen.generateDefaultGetter(propertyDescriptor, Opcodes.ACC_PUBLIC, p);
-                    if (propertyDescriptor.isVar()) {
-                        propertyCodegen.generateDefaultSetter(propertyDescriptor, Opcodes.ACC_PUBLIC, origin);
-                    }
+                    if(!isAnnotation) {
+                        propertyCodegen.generateDefaultGetter(propertyDescriptor, ACC_PUBLIC, p);
+                        if (propertyDescriptor.isVar()) {
+                            propertyCodegen.generateDefaultSetter(propertyDescriptor, ACC_PUBLIC, origin);
+                        }
 
-                    //noinspection ConstantConditions
-                    if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
-                        int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
-                        if (!propertyDescriptor.isVar()) {
-                            modifiers |= Opcodes.ACC_FINAL;
+                        //noinspection ConstantConditions
+                        if (!(kind instanceof OwnerKind.DelegateKind) && state.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor)) {
+                            int modifiers = JetTypeMapper.getAccessModifiers(propertyDescriptor, 0);
+                            if (!propertyDescriptor.isVar()) {
+                                modifiers |= Opcodes.ACC_FINAL;
+                            }
+                            if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
+                                modifiers |= Opcodes.ACC_VOLATILE;
+                            }
+                            v.newField(p, modifiers, p.getName(), state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, null);
                         }
-                        if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
-                            modifiers |= Opcodes.ACC_VOLATILE;
-                        }
-                        v.newField(p, modifiers, p.getName(), state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, null);
+                    }
+                    else {
+                        v.newMethod(p, ACC_PUBLIC|ACC_ABSTRACT, p.getName(), "()" + state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, null);
                     }
                 }
             }
@@ -135,7 +144,7 @@ public abstract class ClassBodyCodegen {
 
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
-            final MethodVisitor mv = v.newMethod(null, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,"<clinit>", "()V", null, null);
+            final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | Opcodes.ACC_STATIC,"<clinit>", "()V", null, null);
             if (v.generateCode() == ClassBuilder.Mode.FULL) {
                 mv.visitCode();
 

@@ -16,7 +16,13 @@
 
 package org.jetbrains.jet.codegen;
 
+import jet.JetObject;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class AnnotationGenTest extends CodegenTestCase {
@@ -69,5 +75,49 @@ public class AnnotationGenTest extends CodegenTestCase {
         Class aClass = generateClass("A");
         Deprecated annotation = (Deprecated) aClass.getAnnotation(Deprecated.class);
         assertNotNull(annotation);
+    }
+
+    public void testSimplestAnnotationClass() throws NoSuchFieldException, NoSuchMethodException {
+        loadText("annotation class A");
+        Class aClass = generateClass("A");
+        Class[] interfaces = aClass.getInterfaces();
+        assertEquals(2, interfaces.length);
+        assertEquals(0, aClass.getDeclaredMethods().length);
+        assertTrue(Annotation.class == interfaces[0] || Annotation.class == interfaces[1]);
+        assertTrue(JetObject.class == interfaces[0] || JetObject.class == interfaces[1]);
+        assertTrue(aClass.isAnnotation());
+    }
+
+    public void testAnnotationClassWithStringProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
+                 "" +
+                 "A(\"239\") class B()");
+        Class aClass = generateClass("A");
+
+        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        RetentionPolicy value = annotation.value();
+        assertEquals(RetentionPolicy.RUNTIME, value);
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+        assertEquals(String.class, methods[0].getReturnType());
+        assertEquals(0, methods[0].getParameterTypes().length);
+        assertTrue(aClass.isAnnotation());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        assertEquals("239", methods[0].invoke(bClassAnnotation));
     }
 }
