@@ -50,9 +50,12 @@ public class CliJetFilesProvider extends JetFilesProvider {
     @Override
     public List<JetFile> allInScope(GlobalSearchScope scope) {
         List<JetFile> answer = new ArrayList<JetFile>();
-        for (JetFile file : environment.getSession().getSourceFiles()) {
-            if (scope.contains(file.getVirtualFile())) {
-                answer.add(file);
+        CompileSession session = environment.getSession();
+        if(session != null) {
+            for (JetFile file : session.getSourceFiles()) {
+                if (scope.contains(file.getVirtualFile())) {
+                    answer.add(file);
+                }
             }
         }
         return answer;
