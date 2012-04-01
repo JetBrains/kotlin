@@ -20,9 +20,7 @@ import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -268,5 +266,56 @@ public class StdlibTest extends CodegenTestCase {
         Object invoke = methods[0].invoke(bClassAnnotation);
         assertEquals(239, ((int[])invoke)[0]);
         assertEquals(932, ((int[])invoke)[1]);
+    }
+
+    public void testAnnotationClassWithEnumArrayProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Target(ElementType.TYPE, ElementType.METHOD) annotation class A");
+        Class aClass = generateClass("A");
+
+        Target annotation = (Target)aClass.getAnnotation(Target.class);
+        ElementType[] value = annotation.value();
+        assertEquals(2, value.length);
+
+        assertEquals(ElementType.TYPE, value[0]);
+        assertEquals(ElementType.METHOD, value[1]);
+    }
+
+    public void testAnnotationClassWithAnnotationArrayProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<Retention>)\n" +
+                 "" +
+                 "A(array(Retention(RetentionPolicy.RUNTIME),Retention(RetentionPolicy.SOURCE))) class B()");
+        Class aClass = generateClass("A");
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        Object invoke = methods[0].invoke(bClassAnnotation);
+        Retention[] invoke1 = (Retention[])invoke;
+        assertEquals(2, invoke1.length);
+        assertEquals(invoke1[0].value(), RetentionPolicy.RUNTIME);
+        assertEquals(invoke1[1].value(), RetentionPolicy.SOURCE);
     }
 }

@@ -154,7 +154,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.visitInnerClass(outerClassInernalName + JvmAbi.CLASS_OBJECT_SUFFIX, outerClassInernalName, JvmAbi.CLASS_OBJECT_CLASS_NAME, innerClassAccess);
         }
 
-        AnnotationCodegen.forClass(v.getVisitor()).genAnnotations(descriptor, typeMapper);
+        AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor);
 
         if (signature.getKotlinGenericSignature() != null) {
             AnnotationVisitor annotationVisitor = v.newAnnotation(myClass, JvmStdlibNames.JET_CLASS.getDescriptor(), true);
@@ -519,7 +519,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         jetConstructorVisitor.visitEnd();
         
-        AnnotationCodegen.forMethod(mv).genAnnotations(constructorDescriptor, typeMapper);
+        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(constructorDescriptor);
 
         if (constructorDescriptor != null) {
             int i = 0;

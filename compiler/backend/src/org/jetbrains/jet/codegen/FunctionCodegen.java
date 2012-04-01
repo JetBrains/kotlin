@@ -118,7 +118,7 @@ public class FunctionCodegen {
             if (isAbstract) flags |= ACC_ABSTRACT;
             
             final MethodVisitor mv = v.newMethod(fun, flags, jvmSignature.getAsmMethod().getName(), jvmSignature.getAsmMethod().getDescriptor(), jvmSignature.getGenericsSignature(), null);
-            AnnotationCodegen.forMethod(mv).genAnnotations(functionDescriptor, state.getInjector().getJetTypeMapper());
+            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(functionDescriptor);
             if(v.generateCode() != ClassBuilder.Mode.SIGNATURES) {
                 int start = 0;
                 if (needJetAnnotations) {

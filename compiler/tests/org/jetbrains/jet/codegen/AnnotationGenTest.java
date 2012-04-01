@@ -18,9 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import jet.JetObject;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -119,5 +117,43 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertNotNull(bClassAnnotation);
 
         assertEquals("239", methods[0].invoke(bClassAnnotation));
+    }
+
+    public void testAnnotationClassWithAnnotationProperty()
+        throws
+        NoSuchFieldException,
+        NoSuchMethodException,
+        ClassNotFoundException,
+        IllegalAccessException,
+        InstantiationException,
+        InvocationTargetException {
+        loadText("import java.lang.annotation.*\n" +
+                 "" +
+                 "annotation class C(val c: String)\n" +
+                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: C)\n" +
+                 "" +
+                 "A(C(\"239\")) class B()");
+        Class aClass = generateClass("A");
+
+        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        RetentionPolicy value = annotation.value();
+        assertEquals(RetentionPolicy.RUNTIME, value);
+
+        Method[] methods = aClass.getDeclaredMethods();
+        assertEquals(1, methods.length);
+        assertEquals("a", methods[0].getName());
+        assertEquals("C", methods[0].getReturnType().getName());
+        assertEquals(0, methods[0].getParameterTypes().length);
+        assertTrue(aClass.isAnnotation());
+
+        Class<?> bClass = aClass.getClassLoader().loadClass("B");
+        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
+        assertNotNull(bClassAnnotation);
+
+        Object invoke = methods[0].invoke(bClassAnnotation);
+        // there is some Proxy here
+        Class<?> cClass = invoke.getClass().getInterfaces()[0];
+        assertEquals("C", cClass.getName());
+        assertEquals("239", cClass.getDeclaredMethod("c").invoke(invoke));
     }
 }

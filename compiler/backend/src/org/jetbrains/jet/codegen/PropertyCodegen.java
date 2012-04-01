@@ -98,7 +98,7 @@ public class PropertyCodegen {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
             FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, value);
-            AnnotationCodegen.forField(fieldVisitor).genAnnotations(propertyDescriptor, state.getInjector().getJetTypeMapper());
+            AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
         }
     }
 
@@ -172,7 +172,7 @@ public class PropertyCodegen {
 
         if(propertyDescriptor.getGetter() != null) {
             assert !propertyDescriptor.getGetter().hasBody();
-            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getGetter(), state.getInjector().getJetTypeMapper());
+            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getGetter());
         }
 
         if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
@@ -246,7 +246,7 @@ public class PropertyCodegen {
 
         if(propertyDescriptor.getSetter() != null) {
             assert !propertyDescriptor.getSetter().hasBody();
-            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getSetter(), state.getInjector().getJetTypeMapper());
+            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getSetter());
         }
 
         if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
