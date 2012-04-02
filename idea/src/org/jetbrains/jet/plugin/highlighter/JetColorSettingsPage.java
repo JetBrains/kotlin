@@ -27,7 +27,9 @@ import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIconProvider;
 
 import javax.swing.*;
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
 
 public class JetColorSettingsPage implements ColorSettingsPage {
@@ -46,41 +48,52 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @Override
     public String getDemoText() {
         return "/* Block comment */\n" +
-               "import kotlin.util.* // line comment\n" +
+               "<KEYWORD>import</KEYWORD> kotlin.util.* // line comment\n" +
                "\n" +
                "               Bad character: \\n\n" +
                "/**\n" +
                " * Doc comment here for `SomeClass`\n" +
                " * @see Iterator#next()\n" +
                " */\n" +
-               "[Deprecated]\n" +
-               "public class MyClass<out T : Iterable<T>>(var prop1 : Int) {\n" +
-               "    fun foo(nullable : String?, r : Runnable, f : () -> Int) {\n" +
-               "        println(\"length is ${nullable?.length} \\e\")\n" +
-               "        val ints = java.util.ArrayList<Int?>(2)\n" +
-               "        ints[0] = 102 + f()\n" +
-               "        var ref = ints.size()\n" +
-               "        if (!ints.empty) {\n" +
-               "            ints.forEach @lit {\n" +
-               "                if (it == null) return @lit\n" +
-               "                println(it + ref)\n" +
-               "            }\n" +
+               "[<ANNOTATION>Deprecated</ANNOTATION>]\n" +
+               "<BUILTIN_ANNOTATION>public</BUILTIN_ANNOTATION> class <CLASS>MyClass</CLASS><<BUILTIN_ANNOTATION>out</BUILTIN_ANNOTATION> <TYPE_PARAMETER>T</TYPE_PARAMETER> : <TRAIT>Iterable</TRAIT><<TYPE_PARAMETER>T</TYPE_PARAMETER>>>(var <INSTANCE_PROPERTY><MUTABLE_VARIABLE>prop1</MUTABLE_VARIABLE></INSTANCE_PROPERTY> : Int) {\n" +
+               "    fun <FUNCTION_DECLARATION>foo</FUNCTION_DECLARATION>(<PARAMETER>nullable</PARAMETER> : String?, <PARAMETER>r</PARAMETER> : <TRAIT>Runnable</TRAIT>, <PARAMETER>f</PARAMETER> : () -> Int) {\n" +
+               "        <NAMESPACE_FUNCTION_CALL>println</NAMESPACE_FUNCTION_CALL>(\"length is ${<PARAMETER>nullable</PARAMETER>?.<INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE>\\e</INVALID_STRING_ESCAPE>\")\n" +
+               "        val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)\n" +
+               "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER>f</PARAMETER>()\n" +
+               "        var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<FUNCTION_CALL>size</FUNCTION_CALL>()\n" +
+               "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY>empty</EXTENSION_PROPERTY>) <FUNCTION_LITERAL_BRACES>{</FUNCTION_LITERAL_BRACES>\n" +
+               "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL>forEach</EXTENSION_FUNCTION_CALL> @lit {\n" +
+               "                if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return @lit\n" +
+               "                println(<FUNCTION_LITERAL_DEFAULT_PARAMETER><AUTO_CASTED_VALUE>it</AUTO_CASTED_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)\n" +
+               "            <FUNCTION_LITERAL_BRACES>}</FUNCTION_LITERAL_BRACES>\n" +
                "        }\n" +
                "    }\n" +
                "}\n" +
                "\n" +
-               "var globalCounter : Int = 5\n" +
-               "get() {\n" +
-               "    return $globalCounter\n" +
+               "var <PROPERTY_WITH_BACKING_FIELD><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5\n" +
+               "<KEYWORD>get</KEYWORD>() {\n" +
+               "    return <BACKING_FIELD_ACCESS><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>$globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></BACKING_FIELD_ACCESS>\n" +
                "}\n" +
                "\n" +
-               "public abstract class Abstract {\n" +
+               "<KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {\n" +
                "}";
     }
 
     @Override
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-        return Collections.emptyMap();
+        Map<String, TextAttributesKey> map = new HashMap<String, TextAttributesKey>();
+        for (Field field : JetHighlightingColors.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                try {
+                    map.put(field.getName(), (TextAttributesKey) field.get(null));
+                }
+                catch (IllegalAccessException e) {
+                    assert false;
+                }
+            }
+        }
+        return map;
     }
 
     @NotNull
