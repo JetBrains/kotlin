@@ -211,6 +211,31 @@ public class JetHighlightingColors {
         new TextAttributes(null, null, null, null, Font.BOLD)
     );
 
+    public static final TextAttributesKey FUNCTION_DECLARATION = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_FUNCTION_DECLARATION",
+        CodeInsightColors.METHOD_DECLARATION_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_FUNCTION_CALL",
+        CodeInsightColors.METHOD_CALL_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey NAMESPACE_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_NAMESPACE_FUNCTION_CALL",
+        CodeInsightColors.STATIC_METHOD_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey EXTENSION_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_EXTENSION_FUNCTION_CALL",
+        CodeInsightColors.STATIC_METHOD_ATTRIBUTES.getDefaultAttributes()
+    );
+
+    public static final TextAttributesKey CONSTRUCTOR_CALL = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_CONSTRUCTOR",
+        CodeInsightColors.CONSTRUCTOR_CALL_ATTRIBUTES.getDefaultAttributes()
+    );
+
     public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_BAD_CHARACTER",
         HighlighterColors.BAD_CHARACTER.getDefaultAttributes()

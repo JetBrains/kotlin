@@ -142,6 +142,11 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Extension property", JetHighlightingColors.EXTENSION_PROPERTY),
 
             new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
+            new AttributesDescriptor("Function declaration", JetHighlightingColors.FUNCTION_DECLARATION),
+            new AttributesDescriptor("Function call", JetHighlightingColors.FUNCTION_CALL),
+            new AttributesDescriptor("Namespace function call", JetHighlightingColors.NAMESPACE_FUNCTION_CALL),
+            new AttributesDescriptor("Extension function call", JetHighlightingColors.EXTENSION_FUNCTION_CALL),
+            new AttributesDescriptor("Constructor call", JetHighlightingColors.CONSTRUCTOR_CALL),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
 
