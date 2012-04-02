@@ -446,6 +446,7 @@ public class JavaDescriptorResolver {
         classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
         classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
         classData.classDescriptor.setModality(Modality.FINAL);
+        classData.classDescriptor.setVisibility(containing.getVisibility());
         classData.classDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
         classData.classDescriptor.createTypeConstructor();
         classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, classObjectPsiClass, semanticServices, false));

@@ -30,5 +30,5 @@ public abstract class Visibility {
         return isPublicAPI;
     }
 
-    public abstract boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from);
+    protected abstract boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from);
 }

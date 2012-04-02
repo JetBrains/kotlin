@@ -222,8 +222,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 if (call == null) return false;
                 D candidateDescriptor = call.getCandidateDescriptor();
                 if (ErrorUtils.isError(candidateDescriptor)) return true;
-                Visibility visibility = candidateDescriptor.getVisibility();
-                return visibility.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
+                return Visibilities.isVisible(candidateDescriptor, context.scope.getContainingDeclaration());
             }
         });
         if (visibleCandidates.isEmpty()) return;

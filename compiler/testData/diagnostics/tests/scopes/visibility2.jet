@@ -1,0 +1,31 @@
+//FILE:a.kt
+package a
+
+private class A {
+    fun bar() {}
+}
+
+private fun foo() {}
+
+fun makeA() = A()
+
+//FILE:b.kt
+package a.b
+
+import a.*
+
+fun test() {
+    val y = makeA()
+    y.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>foo<!>()
+}
+
+class A {
+    class B {
+        fun foo() {
+            val y = makeA() //assure that 'makeA' is visible
+        }
+    }
+}
+
+

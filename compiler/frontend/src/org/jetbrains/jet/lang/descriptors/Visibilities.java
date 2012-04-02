@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Sets;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import java.util.Set;
@@ -27,7 +28,7 @@ import java.util.Set;
 public class Visibilities {
     public static final Visibility PRIVATE = new Visibility(false) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
@@ -41,6 +42,9 @@ public class Visibilities {
                 if (parent == fromParent) {
                     return true;
                 }
+                if (fromParent instanceof NamespaceDescriptor) {
+                    break; //'private' package members are not visible for subpackages, so when we reach a package, we should stop
+                }
                 fromParent = fromParent.getContainingDeclaration();
             }
             return false;
@@ -49,7 +53,7 @@ public class Visibilities {
 
     public static final Visibility PROTECTED = new Visibility(true) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
             if (classDescriptor == null) return false;
 
@@ -64,7 +68,7 @@ public class Visibilities {
 
     public static final Visibility INTERNAL = new Visibility(false) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, ModuleDescriptor.class, false);
             ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, ModuleDescriptor.class, false);
             return parentModule == fromModule;
@@ -73,24 +77,35 @@ public class Visibilities {
 
     public static final Visibility PUBLIC = new Visibility(true) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             return true;
         }
     };
 
     public static final Visibility INTERNAL_PROTECTED = new Visibility(false) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             return PROTECTED.isVisible(what, from) && INTERNAL.isVisible(what, from);
         }
     };
 
     public static final Visibility LOCAL = new Visibility(false) {
         @Override
-        public boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
             return true;
         }
     };
 
     public static final Set<Visibility> INTERNAL_VISIBILITIES = Sets.newHashSet(PRIVATE, INTERNAL, INTERNAL_PROTECTED, LOCAL);
+
+    public static boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        DeclarationDescriptorWithVisibility parent = what;
+        while (parent != null) {
+            if (!parent.getVisibility().isVisible(parent, from)) {
+                return false;
+            }
+            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
+        }
+        return true;
+    }
 }
