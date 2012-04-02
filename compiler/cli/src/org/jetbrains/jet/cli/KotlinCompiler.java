@@ -154,7 +154,15 @@ public class KotlinCompiler {
         // but currently cli-parser we are using does not support that
         // a corresponding patch has been sent to the authors
         // For now, we are using this:
-        target.println("Usage: KotlinCompiler [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime] [-version]");
+
+        PrintStream oldErr = System.err;
+        System.setErr(target);
+        try {
+            // TODO: use proper argv0
+            Args.usage(new CompilerArguments());
+        } finally {
+            System.setErr(oldErr);
+        }
     }
 
     /**
