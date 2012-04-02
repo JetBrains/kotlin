@@ -41,6 +41,7 @@ public open class ArrayList<erased E>() : java.util.List<E> {
     public override fun set(index : Int, element : E) : E = js.noImpl
     public override fun add(e : E) : Boolean = js.noImpl
     public override fun add(index : Int, element : E) : Unit = js.noImpl
+    library("removeByIndex")
     public override fun remove(index : Int) : E = js.noImpl
     public override fun remove(o : Any?) : Boolean = js.noImpl
     public override fun clear() : Unit = js.noImpl

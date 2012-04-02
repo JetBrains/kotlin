@@ -11,17 +11,12 @@ class Context() {
 
 
     fun scale(x : Double, y : Double) : Unit = js.noImpl
-
     fun rotate(angle : Double) : Unit = js.noImpl
 
-    fun translate(x : Double, y : Double) : Unit = js.noImpl
-
-
-    fun clearRect(x : Double, y : Double, w : Double, h : Double) : Unit = js.noImpl
-
-    fun fillRect(x : Double, y : Double, w : Double, h : Double) : Unit = js.noImpl
-
-    fun strokeRect(x : Double, y : Double, w : Double, h : Double) : Unit = js.noImpl
+    fun translate(x : Int, y : Int) : Unit = js.noImpl
+    fun clearRect(x : Int, y : Int, w : Int, h : Int) : Unit = js.noImpl
+    fun fillRect(x : Int, y : Int, w : Int, h : Int) : Unit = js.noImpl
+    fun strokeRect(x : Int, y : Int, w : Int, h : Int) : Unit = js.noImpl
 
 
     var globalAlpha : Double = 1.0;
@@ -35,37 +30,29 @@ class Context() {
     var font : String = ""
 
     fun beginPath() : Unit = js.noImpl
-
-    fun moveTo(x : Double, y : Double) : Unit = js.noImpl
-
     fun closePath() : Unit = js.noImpl
 
-
-    fun lineTo(x : Double, y : Double) : Unit = js.noImpl
+    fun moveTo(x : Int, y : Int) : Unit = js.noImpl
+    fun lineTo(x : Int, y : Int) : Unit = js.noImpl
 
     fun quadraticCurveTo(cpx : Double, cpy : Double, x : Double, y : Double) : Unit = js.noImpl
-
     fun bezierCurveTo(cp1x : Double, cp1y : Double, cp2x : Double, cp2y : Double, x : Double, y : Double) : Unit = js.noImpl
-
     fun arcTo(x1 : Double, y1 : Double, x2 : Double, y2 : Double, radius : Double) : Unit = js.noImpl
 
     fun arc(x : Double, y : Double, radius : Double, startAngle : Double, endAngle : Double, anticlockwise : Boolean) : Unit = js.noImpl
 
 
-    fun rect(x : Double, y : Double, w : Double, h : Double) : Unit = js.noImpl
+    fun rect(x : Int, y : Int, w : Int, h : Int) : Unit = js.noImpl
 
     fun fill() : Unit = js.noImpl
 
     fun stroke() : Unit = js.noImpl
 
 
-    fun fillText(text : String, x : Double, y : Double) : Unit = js.noImpl
-
-    fun fillText(text : String, x : Double, y : Double, maxWidth : Double) : Unit = js.noImpl
-
-    fun strokeText(text : String, x : Double, y : Double) : Unit = js.noImpl
-
-    fun strokeText(text : String, x : Double, y : Double, maxWidth : Double) : Unit = js.noImpl
+    fun fillText(text : String, x : Int, y : Int) : Unit = js.noImpl
+    fun fillText(text : String, x : Int, y : Int, maxWidth : Int) : Unit = js.noImpl
+    fun strokeText(text : String, x : Int, y : Int) : Unit = js.noImpl
+    fun strokeText(text : String, x : Int, y : Int, maxWidth : Int) : Unit = js.noImpl
 
 
     fun measureText(text : String) : TextMetrics = TextMetrics();
@@ -73,7 +60,7 @@ class Context() {
     fun drawImage(image : HTMLImageElement, dx : Int, dy : Int) : Unit = js.noImpl
     fun drawImage(image : HTMLImageElement, dx : Int, dy : Int, dw : Int, dh : Int) : Unit = js.noImpl
     fun drawImage(image : HTMLImageElement, sx : Int, sy : Int,
-            sw : Int, sh : Int, dx : Int, dy : Int, dw : Int, dh : Int) : Unit = js.noImpl
+                  sw : Int, sh : Int, dx : Int, dy : Int, dw : Int, dh : Int) : Unit = js.noImpl
 
 
     fun createLinearGradient(x0 : Double, y0 : Double, x1 : Double, y1 : Double) : CanvasGradient = CanvasGradient()
