@@ -22,6 +22,7 @@ import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -38,8 +39,16 @@ import java.util.List;
 public class IdentityEquals implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        receiver.put(JetTypeMapper.TYPE_OBJECT, v);
-        codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
+        if(element instanceof JetCallExpression) {
+            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.gen(arguments.get(0)).put(JetTypeMapper.TYPE_OBJECT, v);
+        }
+        else {
+            assert element instanceof JetBinaryExpression;
+            JetBinaryExpression e = (JetBinaryExpression)element;
+            codegen.gen(e.getLeft()).put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.gen(e.getRight()).put(JetTypeMapper.TYPE_OBJECT, v);
+        }
         return StackValue.cmp(JetTokens.EQEQEQ, JetTypeMapper.TYPE_OBJECT);
     }
 }
