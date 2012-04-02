@@ -18,10 +18,7 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -78,7 +75,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                     holder.createInfoAnnotation(callee, null).setTextAttributes(
                         JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
-                else if (calleeDescriptor instanceof FunctionDescriptor) {
+                else if (calleeDescriptor instanceof FunctionDescriptor && !(calleeDescriptor instanceof VariableAsFunctionDescriptor)) {
                     FunctionDescriptor fun = (FunctionDescriptor)calleeDescriptor;
                     if (fun.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
                         holder.createInfoAnnotation(callee, null).setTextAttributes(

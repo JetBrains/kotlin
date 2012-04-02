@@ -19,10 +19,7 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.LocalVariableDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
@@ -88,6 +85,11 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof VariableAsFunctionDescriptor) {
+            descriptor = ((VariableAsFunctionDescriptor)descriptor).getVariableDescriptor();
+            //noinspection ConstantConditions
+            if (descriptor == null) return;
+        }
         if (descriptor instanceof VariableDescriptor) {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
             if (variableDescriptor.isVar()) {
