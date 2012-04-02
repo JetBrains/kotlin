@@ -1,14 +1,17 @@
 <component name="libraryTable">
   <library name="js-libs">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dartc.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/args4j-2.0.12.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/json.jar!/" />
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/rhino-1.7R3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dart-r3300.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/closure-compiler.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/js/js.translator/lib/rhino-1.7R3-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/dart-r3300-src.jar!/" />
+      <root url="jar://$PROJECT_DIR$/js/js.translator/lib/closure-compiler.jar!/" />
     </SOURCES>
   </library>
 </component>
