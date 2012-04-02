@@ -1,6 +1,6 @@
 package foo
 
-val a1 = Array<Int>(10)
+val a1 = arrayOfNulls<Int>(10)
 
 fun box() : Boolean {
     var c = 0

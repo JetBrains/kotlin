@@ -32,7 +32,7 @@ val Collection<*>.indices : IntRange
     get() = 0..size-1
 
 public inline fun <T> java.util.Collection<T>.toArray() : Array<T> {
-  val answer = Array<T>(this.size)
+  val answer = arrayOfNulls<T>(this.size)
   var idx = 0
   for (elem in this)
     answer[idx++] = elem

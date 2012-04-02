@@ -5,7 +5,7 @@ public class StockMarketTableModel() {
     }
 
     class object {
-        private val COLUMN_TITLES : Array<Int?> = Array<Int?>(10)
+        private val COLUMN_TITLES : Array<Int?> = arrayOfNulls<Int>(10)
     }
 }
 

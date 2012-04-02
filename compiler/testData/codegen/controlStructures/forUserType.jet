@@ -54,7 +54,7 @@ fun box() : String {
     }
     if(sum != 10) return "a failed"
 
-    val b : Array<Int?> = Array<Int?> (5)
+    val b : Array<Int?> = arrayOfNulls<Int> (5)
     i = 0
     while(i < 5) {
        b[i] = i++

@@ -23,6 +23,6 @@ open class AllEvenNum() {
 }
 
 fun box() : String {
-    AllEvenNum.main(Array<String?>(0))
+    AllEvenNum.main(arrayOfNulls<String>(0))
     return "OK"
 }

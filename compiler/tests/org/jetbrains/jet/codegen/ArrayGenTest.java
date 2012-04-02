@@ -43,7 +43,7 @@ public class ArrayGenTest extends CodegenTestCase {
     }
 
     public void testCreateMultiIntNullable () throws Exception {
-        loadText("fun foo() = Array<Array<Int?>> (5, { Array<Int?>(it) })");
+        loadText("fun foo() = Array<Array<Int?>> (5, { arrayOfNulls<Int>(it) })");
         Method foo = generateFunction();
         Integer[][] invoke = (Integer[][]) foo.invoke(null);
         assertEquals(invoke[2].length, 2);

@@ -1,5 +1,5 @@
 fun t1 () {
-    val a1 = Array<String?>(1)
+    val a1 = arrayOfNulls<String>(1)
     a1[0] = "0" //ok
     val s = a1[0] //ok
 }
@@ -11,7 +11,7 @@ fun t2 () {
 }
 
 fun t3 () {
-    val a3 = Array<Int?>(1)
+    val a3 = arrayOfNulls<Int>(1)
     a3[0] = 0 //verify error
     var j = a3[0] //ok
     var k : Int = a3[0] ?: 5 //ok

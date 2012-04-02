@@ -398,7 +398,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testArrayNewNullable() throws Exception {
-        loadText("fun foo() = Array<Int?>(4)");
+        loadText("fun foo() = arrayOfNulls<Int>(4)");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] result = (Integer[]) main.invoke(null);

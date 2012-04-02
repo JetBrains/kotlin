@@ -132,7 +132,7 @@ public class IntrinsicMethods {
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, IDENTITY_EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, STRING_PLUS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("arrayOfNulls"), 1, new NewArray());
         declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
         declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 2, new StupidSync());
         declareOverload(myStdLib.getLibraryScope().getFunctions("iterator"), 0, new IteratorIterator());

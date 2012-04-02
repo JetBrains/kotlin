@@ -127,7 +127,7 @@ public final class Intrinsics {
     }
 
     private void declareNullConstructorIntrinsic() {
-        FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("Array").iterator().next();
+        FunctionDescriptor nullArrayConstructor = library.getLibraryScope().getFunctions("arrayOfNulls").iterator().next();
         functionIntrinsics.put(nullArrayConstructor, new CallStandardMethodIntrinsic("Kotlin.nullArray", false, 1));
     }
 
