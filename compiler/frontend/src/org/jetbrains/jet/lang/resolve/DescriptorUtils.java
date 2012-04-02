@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -279,20 +278,21 @@ public class DescriptorUtils {
         }
     }
 
-    public static boolean isSubclass(ClassDescriptor subClass, ClassDescriptor superClass) {
-        Set<JetType> allSuperTypes = new THashSet<JetType>();
+    public static boolean isSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
+        DeclarationDescriptor superOriginal = superClass.getOriginal();
+        return hasEqualSuperType(subClass.getDefaultType(), superOriginal);
+    }
 
-        addSuperTypes(subClass.getDefaultType(), allSuperTypes);
-
-        final DeclarationDescriptor superOriginal = superClass.getOriginal();
-
-        for (JetType superType : allSuperTypes) {
-            final DeclarationDescriptor descriptor = superType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
+    private static boolean hasEqualSuperType(@NotNull JetType type, @NotNull DeclarationDescriptor superOriginal) {
+        DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
+            return true;
+        }
+        for (JetType superType : type.getConstructor().getSupertypes()) {
+            if (hasEqualSuperType(superType, superOriginal)) {
                 return true;
             }
         }
-
         return false;
     }
 
