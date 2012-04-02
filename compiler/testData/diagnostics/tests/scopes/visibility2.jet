@@ -1,7 +1,7 @@
 //FILE:a.kt
 package a
 
-private class A {
+private open class A {
     fun bar() {}
 }
 
@@ -9,7 +9,10 @@ private fun foo() {}
 
 fun makeA() = A()
 
+private object PO {}
+
 //FILE:b.kt
+//+JDK
 package a.b
 
 import a.*
@@ -18,14 +21,20 @@ fun test() {
     val y = makeA()
     y.<!UNRESOLVED_REFERENCE!>bar<!>()
     <!UNRESOLVED_REFERENCE!>foo<!>()
+
+    val <!UNUSED_VARIABLE!>u<!> : <!INVISIBLE_MEMBER!>A<!> = <!UNRESOLVED_REFERENCE!>A<!>()
+    val <!UNUSED_VARIABLE!>a<!> : java.util.Arrays.<!INVISIBLE_MEMBER!>ArrayList<!><Int>;
+
+    val <!UNUSED_VARIABLE!>po<!> = <!UNRESOLVED_REFERENCE!>PO<!>()
 }
 
-class A {
-    class B {
+class B : <!INVISIBLE_MEMBER!>A<!>() {}
+
+class Q {
+    class W {
         fun foo() {
-            val y = makeA() //assure that 'makeA' is visible
+            val <!UNUSED_VARIABLE!>y<!> = makeA() //assure that 'makeA' is visible
         }
     }
 }
-
 

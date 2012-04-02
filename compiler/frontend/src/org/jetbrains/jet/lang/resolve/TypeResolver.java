@@ -274,6 +274,11 @@ public class TypeResolver {
             .lookupDescriptorsForUserType(userType, scope, trace);
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor instanceof ClassifierDescriptor) {
+                if (descriptor instanceof ClassDescriptor && !Visibilities.isVisible((ClassDescriptor)descriptor, scope.getContainingDeclaration())) {
+                    JetSimpleNameExpression referenceExpression = userType.getReferenceExpression();
+                    assert referenceExpression != null;
+                    trace.report(INVISIBLE_MEMBER.on(referenceExpression, descriptor, ((ClassDescriptor)descriptor).getContainingDeclaration()));
+                }
                 return (ClassifierDescriptor) descriptor;
             }
         }
