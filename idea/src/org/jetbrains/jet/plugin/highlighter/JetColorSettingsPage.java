@@ -23,6 +23,7 @@ import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIconProvider;
 
 import javax.swing.*;
@@ -95,10 +96,9 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @NotNull
     @Override
     public AttributesDescriptor[] getAttributeDescriptors() {
-        // TODO i18n
         return new AttributesDescriptor[]{
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.keyword"), JetHighlightingColors.KEYWORD),
-            new AttributesDescriptor("Built-in annotation", JetHighlightingColors.BUILTIN_ANNOTATION),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.builtin.annotation"), JetHighlightingColors.BUILTIN_ANNOTATION),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.number"), JetHighlightingColors.NUMBER),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.string"), JetHighlightingColors.STRING),
@@ -109,50 +109,52 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parentheses"), JetHighlightingColors.PARENTHESIS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.braces"), JetHighlightingColors.BRACES),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.brackets"), JetHighlightingColors.BRACKETS),
-            new AttributesDescriptor("Function literal braces", JetHighlightingColors.FUNCTION_LITERAL_BRACES),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.closure.braces"), JetHighlightingColors.FUNCTION_LITERAL_BRACES),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.comma"), JetHighlightingColors.COMMA),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.semicolon"), JetHighlightingColors.SEMICOLON),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.dot"), JetHighlightingColors.DOT),
-            new AttributesDescriptor("Safe access dot", JetHighlightingColors.SAFE_ACCESS),
-            new AttributesDescriptor("Arrow", JetHighlightingColors.ARROW),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.safe.access"), JetHighlightingColors.SAFE_ACCESS),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.arrow"), JetHighlightingColors.ARROW),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
-            new AttributesDescriptor("KDoc comment", JetHighlightingColors.DOC_COMMENT),
-            new AttributesDescriptor("KDoc tag", JetHighlightingColors.DOC_COMMENT_TAG),
-            new AttributesDescriptor("KDoc tag value", JetHighlightingColors.DOC_COMMENT_TAG_VALUE),
-            new AttributesDescriptor("KDoc markup", JetHighlightingColors.DOC_COMMENT_MARKUP),
+
+            // KDoc highlighting options are temporarily disabled, until actual highlighting and parsing of them is implemented
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.comment"), JetHighlightingColors.DOC_COMMENT),
+            //new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.tag"), JetHighlightingColors.DOC_COMMENT_TAG),
+            //new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.tag.value"), JetHighlightingColors.DOC_COMMENT_TAG_VALUE),
+            //new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.kdoc.markup"), JetHighlightingColors.DOC_COMMENT_MARKUP),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.class"), JetHighlightingColors.CLASS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.type.parameter"), JetHighlightingColors.TYPE_PARAMETER),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.abstract.class"), JetHighlightingColors.ABSTRACT_CLASS),
-            new AttributesDescriptor("Trait", JetHighlightingColors.TRAIT),
-            new AttributesDescriptor("Annotation", JetHighlightingColors.ANNOTATION),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.trait"), JetHighlightingColors.TRAIT),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.annotation"), JetHighlightingColors.ANNOTATION),
 
-            new AttributesDescriptor("Mutable variable, parameter or property", JetHighlightingColors.MUTABLE_VARIABLE),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.var"), JetHighlightingColors.MUTABLE_VARIABLE),
 
-            new AttributesDescriptor("Local variable", JetHighlightingColors.LOCAL_VARIABLE),
-            new AttributesDescriptor("Parameter", JetHighlightingColors.PARAMETER),
-            new AttributesDescriptor("Closure or anonymous object bound variable", JetHighlightingColors.WRAPPED_INTO_REF),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.local.variable"), JetHighlightingColors.LOCAL_VARIABLE),
+            new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parameter"), JetHighlightingColors.PARAMETER),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.bound.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
 
-            new AttributesDescriptor("Instance property", JetHighlightingColors.INSTANCE_PROPERTY),
-            new AttributesDescriptor("Namespace property", JetHighlightingColors.NAMESPACE_PROPERTY),
-            new AttributesDescriptor("Property with backing field", JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
-            new AttributesDescriptor("Property backing field access", JetHighlightingColors.BACKING_FIELD_ACCESS),
-            new AttributesDescriptor("Extension property", JetHighlightingColors.EXTENSION_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.instance.property"), JetHighlightingColors.INSTANCE_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.property"), JetHighlightingColors.NAMESPACE_PROPERTY),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.property.with.backing"), JetHighlightingColors.PROPERTY_WITH_BACKING_FIELD),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.backing.field.access"), JetHighlightingColors.BACKING_FIELD_ACCESS),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.property"), JetHighlightingColors.EXTENSION_PROPERTY),
 
-            new AttributesDescriptor("Function literal default parameter", JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
-            new AttributesDescriptor("Function declaration", JetHighlightingColors.FUNCTION_DECLARATION),
-            new AttributesDescriptor("Function call", JetHighlightingColors.FUNCTION_CALL),
-            new AttributesDescriptor("Namespace function call", JetHighlightingColors.NAMESPACE_FUNCTION_CALL),
-            new AttributesDescriptor("Extension function call", JetHighlightingColors.EXTENSION_FUNCTION_CALL),
-            new AttributesDescriptor("Constructor call", JetHighlightingColors.CONSTRUCTOR_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.it"), JetHighlightingColors.FUNCTION_LITERAL_DEFAULT_PARAMETER),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun"), JetHighlightingColors.FUNCTION_DECLARATION),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.fun.call"), JetHighlightingColors.FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.fun.call"), JetHighlightingColors.NAMESPACE_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.extension.fun.call"), JetHighlightingColors.EXTENSION_FUNCTION_CALL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.constructor.call"), JetHighlightingColors.CONSTRUCTOR_CALL),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.bad.character"), JetHighlightingColors.BAD_CHARACTER),
 
-            new AttributesDescriptor("Automatically casted value", JetHighlightingColors.AUTO_CASTED_VALUE),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.auto.casted"), JetHighlightingColors.AUTO_CASTED_VALUE),
 
-            new AttributesDescriptor("Label", JetHighlightingColors.LABEL),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.label"), JetHighlightingColors.LABEL),
         };
     }
 
