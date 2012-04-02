@@ -38,7 +38,7 @@ public inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
 /**
  * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
  *
- * @includeFunction ../../test/MapTest.kt getOrElse
+ * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
 public inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> V) : V {
     val current = this.get(key)
@@ -52,7 +52,7 @@ public inline fun <K,V> java.util.Map<K,V>.getOrElse(key: K, defaultValue: ()-> 
 /**
  * Returns the value for the given key or the result of the defaultValue function is put into the map for the given value and returned
  *
- * @includeFunction ../../test/MapTest.kt getOrElse
+ * @includeFunctionBody ../../test/MapTest.kt getOrElse
  */
 public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
     val current = this.get(key)

@@ -8,7 +8,7 @@ import java.util.*
 /**
  * Returns *true* if any elements match the given *predicate*
  *
- * @includeFunction ../../test/CollectionTest.kt any
+ * @includeFunctionBody ../../test/CollectionTest.kt any
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (predicate(element)) return true
@@ -18,7 +18,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean) : Boolean {
 /**
  * Returns *true* if all elements match the given *predicate*
  *
- * @includeFunction ../../test/CollectionTest.kt all
+ * @includeFunctionBody ../../test/CollectionTest.kt all
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -28,7 +28,7 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean) : Boolean {
 /**
  * Returns the number of elements which match the given *predicate*
  *
- * @includeFunction ../../test/CollectionTest.kt count
+ * @includeFunctionBody ../../test/CollectionTest.kt count
  */
 public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean) : Int {
     var count = 0
@@ -39,7 +39,7 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean) : Int {
 /**
  * Returns the first element which matches the given *predicate* or *null* if none matched
  *
- * @includeFunction ../../test/CollectionTest.kt find
+ * @includeFunctionBody ../../test/CollectionTest.kt find
  */
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean) : T? {
     for (element in this) if (predicate(element)) return element
@@ -49,7 +49,7 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean) : T? {
 /**
  * Filters all elements which match the given predicate into the given list
  *
- * @includeFunction ../../test/CollectionTest.kt filterIntoLinkedList
+ * @includeFunctionBody ../../test/CollectionTest.kt filterIntoLinkedList
  */
 public inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element)
@@ -59,7 +59,7 @@ public inline fun <T, C: Collection<in T>> Iterable<T>.filterTo(result: C, predi
 /**
  * Returns a list containing all elements which do not match the given *predicate*
  *
- * @includeFunction ../../test/CollectionTest.kt filterNotIntoLinkedList
+ * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
 public inline fun <T, L: List<in T>> Iterable<T>.filterNotTo(result: L, predicate: (T) -> Boolean) : L {
     for (element in this) if (!predicate(element)) result.add(element)
@@ -69,7 +69,7 @@ public inline fun <T, L: List<in T>> Iterable<T>.filterNotTo(result: L, predicat
 /**
  * Filters all non-*null* elements into the given list
  *
- * @includeFunction ../../test/CollectionTest.kt filterNotNullIntoLinkedList
+ * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
 public inline fun <T, L: List<in T>> Iterable<T?>?.filterNotNullTo(result: L) : L {
     if (this != null) {
@@ -81,7 +81,7 @@ public inline fun <T, L: List<in T>> Iterable<T?>?.filterNotNullTo(result: L) : 
 /**
  * Returns the result of transforming each element to one or more values which are concatenated together into a single list
  *
- * @includeFunction ../../test/CollectionTest.kt flatMap
+ * @includeFunctionBody ../../test/CollectionTest.kt flatMap
  */
 public inline fun <T, R> Iterable<T>.flatMapTo(result: Collection<R>, transform: (T) -> Collection<R>) : Collection<R> {
     for (element in this) {
@@ -96,14 +96,14 @@ public inline fun <T, R> Iterable<T>.flatMapTo(result: Collection<R>, transform:
 /**
  * Performs the given *operation* on each element
  *
- * @includeFunction ../../test/CollectionTest.kt forEach
+ * @includeFunctionBody ../../test/CollectionTest.kt forEach
  */
 public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit) : Unit = for (element in this) operation(element)
 
 /**
  * Folds all elements from from left to right with the *initial* value to perform the operation on sequential pairs of elements
  *
- * @includeFunction ../../test/CollectionTest.kt fold
+ * @includeFunctionBody ../../test/CollectionTest.kt fold
  */
 public inline fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {
     var answer = initial
@@ -114,14 +114,14 @@ public inline fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {
 /**
  * Folds all elements from right to left with the *initial* value to perform the operation on sequential pairs of elements
  *
- * @includeFunction ../../test/CollectionTest.kt foldRight
+ * @includeFunctionBody ../../test/CollectionTest.kt foldRight
  */
 public inline fun <T> Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, operation)
 
 /**
  * Transforms each element using the result as the key in a map to group elements by the result
  *
- * @includeFunction ../../test/CollectionTest.kt groupBy
+ * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
 public inline fun <T, K> Iterable<T>.groupBy(result: Map<K, List<T>> = HashMap<K, List<T>>(), toKey: (T) -> K) : Map<K, List<T>> {
     for (element in this) {
@@ -141,7 +141,7 @@ public inline fun <T, L: List<in T>> Iterable<T>.takeWhileTo(result: L, predicat
 /**
  * Reverses the order the elements into a list
  *
- * @includeFunction ../../test/CollectionTest.kt reverse
+ * @includeFunctionBody ../../test/CollectionTest.kt reverse
  */
 public inline fun <T> Iterable<T>.reverse() : List<T> {
     val answer = LinkedList<T>()

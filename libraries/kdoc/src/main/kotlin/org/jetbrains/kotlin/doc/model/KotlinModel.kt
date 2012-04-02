@@ -392,7 +392,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     // lets check for javadoc style @ tags and macros
                     if (text.startsWith("@")) {
                         val remaining = text.substring(1)
-                        val macro = "includeFunction"
+                        val macro = "includeFunctionBody"
                         if (remaining.startsWith(macro)) {
                             val next = remaining.substring(macro.length()).trim()
                             val words = next.split("\\s")

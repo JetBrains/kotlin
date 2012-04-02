@@ -13,7 +13,7 @@ import java.util.*
 /**
  * Returns a new List containing the results of applying the given function to each element in this collection
  *
- * @includeFunction ../../test/CollectionTest.kt map
+ * @includeFunctionBody ../../test/CollectionTest.kt map
  */
 public inline fun <T, R> java.lang.Iterable<T>.map(transform : (T) -> R) : java.util.List<R> {
     return mapTo(java.util.ArrayList<R>(), transform)

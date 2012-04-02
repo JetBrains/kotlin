@@ -47,7 +47,7 @@ public inline fun <T> java.lang.Iterable<T>.first() : T {
  *
  * Will throw an exception if there are no elements.
  *
- * @includeFunction ../../test/CollectionTest.kt last
+ * @includeFunctionBody ../../test/CollectionTest.kt last
  */
 // TODO: Specify type of the exception
 public fun <T> java.lang.Iterable<T>.last() : T {
