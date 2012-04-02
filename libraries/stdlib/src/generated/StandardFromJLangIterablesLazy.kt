@@ -1,4 +1,4 @@
-// NOTE this file is auto-generated from src/kotlin/JavaIterablesLazy.kt
+// NOTE this file is auto-generated from src/kotlin/JLangIterablesLazy.kt
 package kotlin
 
 import kotlin.util.*

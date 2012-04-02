@@ -48,37 +48,37 @@ fun main(args: Array<String>) {
     }
     val outDir = File(srcDir, "../generated")
 
-    // JavaIterables - Generic iterable stuff
-    generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+    // JLangIterables - Generic iterable stuff
+    generateFile(File(outDir, "ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
-    generateFile(File(outDir, "ArraysFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
+    generateFile(File(outDir, "ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
 
-    generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+    generateFile(File(outDir, "StandardFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
-    generateFile(File(outDir, "StandardFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
+    generateFile(File(outDir, "StandardFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
 
-    generateFile(File(outDir, "JavaUtilIteratorsFromJavaIterables.kt"), "package kotlin", File(srcDir, "JavaIterables.kt")) {
+    generateFile(File(outDir, "JUnilIteratorsFromJLangIterables.kt"), "package kotlin", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "java.util.Iterator<T")
     }
 
 
-    // JavaCollections - methods returning a collection of the same input size (if its a collection)
+    // JUtilCollections - methods returning a collection of the same input size (if its a collection)
 
-    generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    generateFile(File(outDir, "ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "Array<T")
     }
 
-    generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    generateFile(File(outDir, "JUnilIterablesFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
     }
 
-    generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    generateFile(File(outDir, "StandardFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
     }
 }
