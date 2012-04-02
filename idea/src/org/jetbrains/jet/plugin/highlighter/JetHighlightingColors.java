@@ -218,7 +218,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey AUTO_CASTED_VALUE = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_AUTO_CASTED_VALUE",
-        new TextAttributes(STRING.getDefaultAttributes().getForegroundColor(), null, null, null, Font.PLAIN)
+        new TextAttributes(null, new Color(0xdbffdb), null, null, Font.PLAIN)
     );
 
     public static final TextAttributesKey LABEL = TextAttributesKey.createTextAttributesKey(
