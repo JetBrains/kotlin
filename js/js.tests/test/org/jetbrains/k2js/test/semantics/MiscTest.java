@@ -117,4 +117,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testWhenReturnedWithoutBlock() throws Exception {
         checkFooBoxIsTrue("whenReturnedWithoutBlock.kt");
     }
+
+    public void testElvis() throws Exception {
+        checkFooBoxIsTrue("elvis.kt");
+    }
 }
