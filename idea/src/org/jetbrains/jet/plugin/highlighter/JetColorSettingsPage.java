@@ -46,45 +46,35 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @Override
     public String getDemoText() {
         return "/* Block comment */\n" +
-               "import kotlin.util.*\n" +
-               "                               Bad characters: \\n #\n" +
-               "val globalConst = 0\n" +
+               "import kotlin.util.* // line comment\n" +
+               "\n" +
+               "               Bad character: \\n\n" +
                "/**\n" +
                " * Doc comment here for `SomeClass`\n" +
                " * @see Iterator#next()\n" +
                " */\n" +
-               "[Annotation]\n" +
-               "public class SomeClass<out T : Runnable>(param : ATrait, reassignedParam : Array<Int>, val paramProperty: String?) { // some comment\n" +
-               "  private field : T {\n" +
-               "    return null\n" +
-               "  }\n" +
-               "  private open unusedField : Double = 12345.67890\n" +
-               "  private anotherString : UnknownType = \"$field Another\\nStrin\\g\";\n" +
+               "[Deprecated]\n" +
+               "public class MyClass<out T : Iterable<T>>(var prop1 : Int) {\n" +
+               "    fun foo(nullable : String?, r : Runnable, f : () -> Int) {\n" +
+               "        println(\"length is ${nullable?.length} \\e\")\n" +
+               "        val ints = java.util.ArrayList<Int?>(2)\n" +
+               "        ints[0] = 102 + f()\n" +
+               "        var ref = ints.size()\n" +
+               "        if (!ints.empty) {\n" +
+               "            ints.forEach @lit {\n" +
+               "                if (it == null) return @lit\n" +
+               "                println(it + ref)\n" +
+               "            }\n" +
+               "        }\n" +
+               "    }\n" +
+               "}\n" +
                "\n" +
-               "  {\n" +
-               "    paramProperty.?length ?: 33\n" +
-               "    val localVal : Int = \"IntelliJ\" // Error, incompatible types\n" +
-               "    println(anotherString + field + localVar + globalConst)\n" +
-               "    val time = Date.parse(\"1.2.3\") // Method is deprecated\n" +
-               "    var reassignedValue = \"\" as Int\n" +
-               "    reassignedValue++\n" +
-               "    object : Runnable {\n" +
-               "      override fun() {\n" +
-               "        val a = localVar\n" +
-               "      }\n" +
-               "    }\n" +
-               "    reassignedParam = Array<Int>(2)\n" +
-               "    reassignedParam[0] = 1\n" +
-               "    reassignedParam.foreach @lit {\n" +
-               "      if (it == 0) return@lit\n" +
-               "      println(it + localVar)\n" +
-               "    }\n" +
-               "  }\n" +
+               "var globalCounter : Int = 5\n" +
+               "get() {\n" +
+               "    return $globalCounter\n" +
                "}\n" +
-               "trait ATrait {\n" +
-               "  fun memberFun(param : (Int) -> Int)\n" +
-               "}\n" +
-               "abstract class SomeAbstractClass {\n" +
+               "\n" +
+               "public abstract class Abstract {\n" +
                "}";
     }
 
