@@ -766,7 +766,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     /** Returns a relative path like ../.. for each path in the name */
     public val nameAsRelativePath: String
     get() {
-        val answer = namePaths.map{ ".." }.join("/")
+        val answer = namePaths.map{ ".." }.makeString("/")
         return if (answer.length == 0) "" else answer + "/"
     }
 
@@ -922,7 +922,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
         var sourceLine: Int = 2): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
-    public val parameterTypeText: String = parameters.map{ it.aType.name }.join(", ")
+    public val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
 
     override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
@@ -946,7 +946,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 
     /** Returns a list of generic type parameter names kinds like "A, I" */
     public val typeParametersText: String
-    get() = typeParameters.map{ it.name }.join(", ")
+    get() = typeParameters.map{ it.name }.makeString(", ")
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,

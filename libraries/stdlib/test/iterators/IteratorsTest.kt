@@ -48,12 +48,12 @@ class IteratorsTest {
     }
 
     Test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
-        assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.join(separator = ", ", limit = 5))
+        assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.makeString(separator = ", ", limit = 5))
     }
 
     Test fun toStringJoinsNoMoreThanTheFirstTenElements() {
-        assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().join(limit = 10))
-        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter {  it > 10 }.join(limit = 10))
-        assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.join())
+        assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().makeString(limit = 10))
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter {  it > 10 }.makeString(limit = 10))
+        assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.makeString())
     }
 }

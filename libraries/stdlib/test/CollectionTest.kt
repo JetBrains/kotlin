@@ -8,6 +8,16 @@ import org.junit.Test
 
 class CollectionTest {
 
+    Test fun all() {
+        val data = arrayList("foo", "bar")
+        assertTrue {
+            data.all{it.length == 3}
+        }
+        assertNot {
+            data.all{s -> s.startsWith("b")}
+        }
+    }
+
     Test fun any() {
         val data = arrayList("foo", "bar")
         assertTrue {
@@ -18,14 +28,12 @@ class CollectionTest {
         }
     }
 
-    Test fun all() {
+
+    Test fun appendString() {
         val data = arrayList("foo", "bar")
-        assertTrue {
-            data.all{it.length == 3}
-        }
-        assertNot {
-            data.all{s -> s.startsWith("b")}
-        }
+        val buffer = StringBuilder()
+        val text = data.appendString(buffer, "-", "{", "}")
+        assertEquals("{foo-bar}", buffer.toString())
     }
 
     Test fun count() {
@@ -157,7 +165,7 @@ class CollectionTest {
         val characters = data.flatMap<String,Character>{ it.toCharList() }
         println("Got list of characters ${characters}")
         assertEquals(7, characters.size())
-        val text = characters.join("")
+        val text = characters.makeString("")
         assertEquals("foobarx", text)
     }
 
@@ -223,9 +231,10 @@ class CollectionTest {
 
     }
 
-    Test fun join() {
+
+    Test fun makeString() {
         val data = arrayList("foo", "bar")
-        val text = data.join("-", "<", ">")
+        val text = data.makeString("-", "<", ">")
         assertEquals("<foo-bar>", text)
     }
 

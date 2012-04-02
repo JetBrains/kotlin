@@ -56,7 +56,7 @@ public fun Node.writeXmlString(writer: Writer, xmlDeclaration: Boolean): Unit {
 /** Converts the collection of nodes to an XML String */
 public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
     // TODO this should work...
-    // return this.map<Node,String>{it.toXmlString()}.join("")
+    // return this.map<Node,String>{it.toXmlString()}.makeString("")
     val builder = StringBuilder()
     for (n in nodes) {
         builder.append(n.toXmlString(xmlDeclaration))

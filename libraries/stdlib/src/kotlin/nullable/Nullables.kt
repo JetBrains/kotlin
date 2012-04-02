@@ -122,7 +122,7 @@ public inline fun <T, K> T?.groupBy(result: Map<K, List<T>> = HashMap<K, List<T>
 
 
 /** Creates a String from the nullable or item with the given prefix and postfix if supplied */
-public inline fun <T> T?.join(separator: String, prefix: String = "", postfix: String = ""): String {
+public inline fun <T> T?.makeString(separator: String = ", ", prefix: String = "", postfix: String = ""): String {
     val buffer = StringBuilder(prefix)
     var first = true
     if (this != null) {

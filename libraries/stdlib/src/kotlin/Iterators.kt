@@ -142,20 +142,3 @@ private class TakeWhileIterator<T>(val iterator: java.util.Iterator<T>, val pred
         done()
     }
 }
-
-/**
- * Creates a string from the first *n (= limit)* elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- *
- * @includeFunctionBody ../../test/iterators/IteratorsTest.kt joinConcatenatesTheFirstNElementsAboveAThreshold
- */
-public inline fun <T> java.util.Iterator<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int? = null) : String {
-    val buffer = StringBuilder(prefix)
-    var first = true; var count = 0
-    for (element in this) {
-        if (first) first = false else buffer.append(separator)
-        if (limit == null || ++count <= limit) buffer.append(element) else break
-    }
-    if (limit != null && count > limit) buffer.append("...")
-    return buffer.append(postfix).toString().sure()
-}
-

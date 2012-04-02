@@ -133,7 +133,7 @@
                             <artifactId>dartc</artifactId>
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/js/dartc.jar</file>
+                            <file>${kotlin-sdk}/lib/js/${dart.name}.jar</file>
                             <createChecksum>true</createChecksum>
                             <generatePom>true</generatePom>
                         </configuration>

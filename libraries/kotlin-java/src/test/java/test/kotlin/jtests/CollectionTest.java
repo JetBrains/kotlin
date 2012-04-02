@@ -17,7 +17,7 @@ public class CollectionTest extends TestCase {
     public void testCollections() throws Exception {
         List<String> list = arrayList("foo", "bar");
 
-        String text = join(list, ",", "(", ")");
+        String text = makeString(list, ",", "(", ")");
         System.out.println("Have text: " + text);
         assertEquals("(foo,bar)", text);
 
@@ -29,6 +29,6 @@ public class CollectionTest extends TestCase {
         });
 
         System.out.println("Filtered list is " + actual);
-        assertEquals("(bar)", join(actual, ",", "(", ")"));
+        assertEquals("(bar)", makeString(actual, ",", "(", ")"));
     }
 }

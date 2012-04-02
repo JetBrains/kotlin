@@ -89,7 +89,7 @@ get() {
     return answer
 }
 set(value) {
-    this.classes = value.join(" ")
+    this.classes = value.makeString(" ")
 }
 
 

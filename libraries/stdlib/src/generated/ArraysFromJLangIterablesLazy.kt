@@ -61,19 +61,3 @@ public inline fun <T> Array<T>.take(n: Int): List<T> {
  * @includeFunctionBody ../../test/CollectionTest.kt takeWhile
  */
 public inline fun <T> Array<T>.takeWhile(predicate: (T) -> Boolean): List<T> = takeWhileTo(ArrayList<T>(), predicate)
-
-/**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
- *
- * @includeFunctionBody ../../test/CollectionTest.kt join
- */
-public inline fun <T> Array<T>.join(separator: String = ", ", prefix: String = "", postfix: String = "") : String {
-    val buffer = StringBuilder(prefix)
-    var first = true
-    for (element in this) {
-        if (first) first = false else buffer.append(separator)
-        buffer.append(element)
-    }
-    buffer.append(postfix)
-    return buffer.toString().sure()
-}

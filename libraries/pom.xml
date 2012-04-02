@@ -12,17 +12,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project-root>${project.basedir}/..</project-root>
+
+        <asm.version>3.3.1</asm.version>
+        <dart.name>dart-r3300</dart.name>
+        <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <project-root>${project.basedir}/..</project-root>
         <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
+        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
-        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
-        <asm.version>3.3.1</asm.version>
-        <guava.version>11.0.2</guava.version>
     </properties>
 
 
