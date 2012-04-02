@@ -25,7 +25,7 @@ public inline fun <T> java.lang.Iterable<T>.any(predicate: (T) -> Boolean) : Boo
 /**
  * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  *
- * @includeFunctionBody ../../test/CollectionTest.kt makeString
+ * @includeFunctionBody ../../test/CollectionTest.kt appendString
  */
 public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): Unit {
     buffer.append(prefix)
