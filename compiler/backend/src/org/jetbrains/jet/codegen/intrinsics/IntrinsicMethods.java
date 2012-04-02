@@ -59,6 +59,7 @@ public class IntrinsicMethods {
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
+    public static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
     public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
     public static final ArraySet ARRAY_SET = new ArraySet();
     public static final ArrayGet ARRAY_GET = new ArrayGet();
@@ -129,7 +130,7 @@ public class IntrinsicMethods {
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, EQUALS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, IDENTITY_EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, STRING_PLUS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
         declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
