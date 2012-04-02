@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
@@ -70,7 +71,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     public void visitExpression(@NotNull JetExpression expression) {
         JetType autoCast = bindingContext.get(AUTOCAST, expression);
         if (autoCast != null) {
-            holder.createInfoAnnotation(expression, "Automatically cast to " + autoCast).setTextAttributes(
+            holder.createInfoAnnotation(expression, "Automatically cast to " + DescriptorRenderer.TEXT.renderType(autoCast)).setTextAttributes(
                 JetHighlightingColors.AUTO_CASTED_VALUE);
         }
         super.visitExpression(expression);
@@ -97,7 +98,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
-                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a ref-object to be modifier when captured in a closure").setTextAttributes(
+                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a reference object to be modified when captured in a closure").setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
 
