@@ -6,6 +6,16 @@ import kotlin.util.*
 import java.util.*
 
 /**
+ * Returns *true* if all elements match the given *predicate*
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt all
+ */
+public inline fun <T> Array<T>.all(predicate: (T) -> Boolean) : Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
  * Returns *true* if any elements match the given *predicate*
  *
  * @includeFunctionBody ../../test/CollectionTest.kt any
@@ -16,13 +26,22 @@ public inline fun <T> Array<T>.any(predicate: (T) -> Boolean) : Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  *
- * @includeFunctionBody ../../test/CollectionTest.kt all
+ * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
-public inline fun <T> Array<T>.all(predicate: (T) -> Boolean) : Boolean {
-    for (element in this) if (!predicate(element)) return false
-    return true
+public inline fun <T> Array<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): Unit {
+    buffer.append(prefix)
+    var count = 0
+    for (element in this) {
+        if (++count > 1) buffer.append(separator)
+        if (limit < 0 || count <= limit) {
+            val text = if (element == null) "null" else element.toString()
+            buffer.append(text)
+        } else break
+    }
+    if (limit >= 0 && count > limit) buffer.append("...")
+    buffer.append(postfix)
 }
 
 /**
@@ -130,6 +149,17 @@ public inline fun <T, K> Array<T>.groupBy(result: Map<K, List<T>> = HashMap<K, L
         list.add(element)
     }
     return result
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt appendString
+ */
+public inline fun <T> Array<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): String {
+    val buffer = StringBuilder()
+    appendString(buffer, separator, prefix, postfix, limit)
+    return buffer.toString().sure()
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
