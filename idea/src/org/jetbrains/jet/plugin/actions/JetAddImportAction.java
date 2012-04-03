@@ -34,6 +34,7 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 import javax.swing.*;
@@ -91,7 +92,7 @@ public class JetAddImportAction implements QuestionAction {
     }
 
     protected BaseListPopupStep getImportSelectionPopup() {
-        return new BaseListPopupStep<FqName>(QuickFixBundle.message("class.to.import.chooser.title"), possibleImports) {
+        return new BaseListPopupStep<FqName>(JetBundle.message("imports.chooser.title"), possibleImports) {
             @Override
             public boolean isAutoSelectionEnabled() {
                 return false;

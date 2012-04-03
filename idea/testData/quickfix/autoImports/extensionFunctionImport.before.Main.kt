@@ -1,4 +1,4 @@
-// "Import Class" "true"
+// "Import" "true"
 package testingExtensionFunctionsImport
 
 fun some() {
