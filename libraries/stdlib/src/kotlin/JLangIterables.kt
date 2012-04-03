@@ -25,9 +25,12 @@ public inline fun <T> java.lang.Iterable<T>.any(predicate: (T) -> Boolean) : Boo
 /**
  * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  *
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
+ *
  * @includeFunctionBody ../../test/CollectionTest.kt appendString
  */
-public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): Unit {
+public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): Unit {
     buffer.append(prefix)
     var count = 0
     for (element in this) {
@@ -37,7 +40,7 @@ public inline fun <T> java.lang.Iterable<T>.appendString(buffer: Appendable, sep
             buffer.append(text)
         } else break
     }
-    if (limit >= 0 && count > limit) buffer.append("...")
+    if (limit >= 0 && count > limit) buffer.append(truncated)
     buffer.append(postfix)
 }
 
@@ -149,13 +152,16 @@ public inline fun <T, K> java.lang.Iterable<T>.groupBy(result: Map<K, List<T>> =
 }
 
 /**
- * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ *
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "..."
  *
  * @includeFunctionBody ../../test/CollectionTest.kt appendString
  */
-public inline fun <T> java.lang.Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): String {
+public inline fun <T> java.lang.Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()
-    appendString(buffer, separator, prefix, postfix, limit)
+    appendString(buffer, separator, prefix, postfix, limit, truncated)
     return buffer.toString().sure()
 }
 

@@ -236,6 +236,10 @@ class CollectionTest {
         val data = arrayList("foo", "bar")
         val text = data.makeString("-", "<", ">")
         assertEquals("<foo-bar>", text)
+
+        val big = arrayList("a", "b", "c", "d" , "e", "f")
+        val text2 = big.makeString(limit = 3, truncated = "*")
+        assertEquals("a, b, c, *", text2)
     }
 
     /*
