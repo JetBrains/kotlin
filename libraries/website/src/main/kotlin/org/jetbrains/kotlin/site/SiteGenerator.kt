@@ -11,7 +11,7 @@ class SiteGenerator(val sourceDir: File, val outputDir: File) : Runnable {
     public var markdownProcessor: PegDownProcessor = PegDownProcessor(Extensions.ALL)
     public var linkRendered: LinkRenderer = LinkRenderer()
 
-    override fun run() {
+    public override fun run() {
         println("Generating the site to $outputDir")
 
         sourceDir.recurse {
