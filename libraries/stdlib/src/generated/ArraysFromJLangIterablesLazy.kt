@@ -43,6 +43,29 @@ public inline fun <T> Array<T?>?.filterNotNull() : List<T> = filterNotNullTo<T, 
 public inline fun <T, R> Array<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> = flatMapTo(ArrayList<R>(), transform)
 
 /**
+ * Creates a copy of this collection as a [[List]] with the element added at the end
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt plus
+ */
+public inline fun <in T> Array<T>.plus(element: T): List<in T> {
+    val list = to(ArrayList<T>())
+    list.add(element)
+    return list
+}
+
+
+/**
+ * Creates a copy of this collection as a [[List]] with all the elements added at the end
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
+ */
+public inline fun <in T> Array<T>.plus(elements: Array<T>): List<T> {
+    val list = to(ArrayList<T>())
+    list.addAll(elements.toCollection())
+    return list
+}
+
+/**
  * Returns a list containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
