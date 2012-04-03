@@ -21,8 +21,6 @@ import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 
 import java.util.Set;
 
@@ -39,12 +37,9 @@ public class JetKeywordInsertHandler implements InsertHandler<LookupElement> {
 
         // Add space after keyword
         if (!NO_SPACE_AFTER.contains(keyword)) {
-            Editor editor = context.getEditor();
-
             context.setAddCompletionChar(false);
             final TailType tailType = TailType.SPACE;
             tailType.processTail(context.getEditor(), context.getTailOffset());
-            editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset());
         }
     }
 }
