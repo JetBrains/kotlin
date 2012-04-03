@@ -99,11 +99,11 @@ class KDocConfig() {
 }
 
 private class LongestFirstStringComparator() : Comparator<String> {
-    override fun compare(s1: String?, s2: String?): Int {
+    public override fun compare(s1: String?, s2: String?): Int {
         return compareBy(s1, s2, { (s: String) -> s.length() }, { (s: String) -> s })
     }
 
-    override fun equals(obj : Any?) : Boolean {
+    public override fun equals(obj : Any?) : Boolean {
         return obj is LongestFirstStringComparator
     }
 }

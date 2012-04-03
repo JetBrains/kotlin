@@ -10,7 +10,7 @@ abstract class KModelCompilerPlugin: CompilerPlugin {
     public open var config: KDocConfig = KDocConfig()
 
 
-    override fun processFiles(context: CompilerPluginContext?) {
+    public override fun processFiles(context: CompilerPluginContext?) {
         if (context != null) {
             val bindingContext = context.getContext()
             val sources = context.getFiles()
@@ -23,5 +23,5 @@ abstract class KModelCompilerPlugin: CompilerPlugin {
         }
     }
 
-    abstract fun processModel(model: KModel): Unit
+    protected abstract fun processModel(model: KModel): Unit
 }

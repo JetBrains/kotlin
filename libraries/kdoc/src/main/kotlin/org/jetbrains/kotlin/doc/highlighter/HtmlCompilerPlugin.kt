@@ -7,7 +7,7 @@ import org.jetbrains.jet.compiler.CompilerPluginContext
 */
 class HtmlCompilerPlugin: CompilerPlugin {
 
-   override fun processFiles(context: CompilerPluginContext?) {
+   public override fun processFiles(context: CompilerPluginContext?) {
         if (context != null) {
             val bindingContext = context.getContext()
             val files = context.getFiles()

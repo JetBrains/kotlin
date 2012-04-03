@@ -8,28 +8,27 @@ import com.intellij.psi.PsiComment
 
 class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
 
-    override fun visitFile(file: PsiFile?) {
+    public override fun visitFile(file: PsiFile?) {
         if (file is JetFile) {
             val data = StringBuilder()
             visitJetFile(file, data)
         }
     }
-    override fun visitJetFile(file: JetFile?, data: StringBuilder?): Void? {
+    public override fun visitJetFile(file: JetFile?, data: StringBuilder?): Void? {
         if (file != null) {
             println("============ Jet File ${file.getName()}")
-            val data = StringBuilder()
             acceptChildren(file, data)
         }
         return null
     }
 
 
-    override fun visitClassObject(classObject: JetClassObject?, data: StringBuilder?): Void? {
+    public override fun visitClassObject(classObject: JetClassObject?, data: StringBuilder?): Void? {
         println("============ class $classObject data $data")
         return super.visitClassObject(classObject, data)
     }
 
-    override fun visitClass(klass: JetClass?, data: StringBuilder?): Void? {
+    public override fun visitClass(klass: JetClass?, data: StringBuilder?): Void? {
         println("============ class $klass")
         if (klass != null) {
             acceptChildren(klass, data)
@@ -40,13 +39,13 @@ class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
     }
 
 
-    override fun visitClassBody(classBody: JetClassBody?, data: StringBuilder?): Void? {
+    public override fun visitClassBody(classBody: JetClassBody?, data: StringBuilder?): Void? {
         println("============ class body $classBody data $data")
         return super.visitClassBody(classBody, data)
     }
 
 
-    override fun visitFunctionType(fnType: JetFunctionType?, data: StringBuilder?): Void? {
+    public override fun visitFunctionType(fnType: JetFunctionType?, data: StringBuilder?): Void? {
         println("======================= function Type $fnType")
         return super.visitFunctionType(fnType, data)
     }

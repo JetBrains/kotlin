@@ -32,22 +32,22 @@ class PegdownTest() : TestCase() {
 
 class CustomLinkRenderer() : LinkRenderer() {
 
-    override fun render(node : WikiLinkNode?) : Rendering? {
+    public override fun render(node : WikiLinkNode?) : Rendering? {
         println("LinkRenderer.render(WikiLinkNode): $node")
         return super.render(node)
     }
 
-    override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
+    public override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
         println("LinkRenderer.render(RefLinkNode): $node url: $url title: $title text: $text")
         return super.render(node, url, title, text)
     }
 
-    override fun render(node : AutoLinkNode?) : Rendering? {
+    public override fun render(node : AutoLinkNode?) : Rendering? {
         println("LinkRenderer.render(AutoLinkNode): $node")
         return super.render(node)
     }
 
-    override fun render(node : ExpLinkNode?, text : String?) : Rendering? {
+    public override fun render(node : ExpLinkNode?, text : String?) : Rendering? {
         println("LinkRenderer.render(ExpLinkNode): $node text: $text")
         return super.render(node, text)
     }

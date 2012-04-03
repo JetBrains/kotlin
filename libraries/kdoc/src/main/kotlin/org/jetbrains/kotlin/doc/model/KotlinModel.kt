@@ -564,7 +564,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
 class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate): LinkRenderer() {
 
-    override fun render(node: WikiLinkNode?): Rendering? {
+    public override fun render(node: WikiLinkNode?): Rendering? {
         val answer = super.render(node)
         if (answer != null) {
             val text = answer.text
@@ -668,15 +668,15 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
         */
     }
 
-    override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
+    public override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
         return super.render(node, url, title, text)
     }
 
-    override fun render(node: AutoLinkNode?): Rendering? {
+    public override fun render(node: AutoLinkNode?): Rendering? {
         return super.render(node)
     }
 
-    override fun render(node: ExpLinkNode?, text: String?): Rendering? {
+    public override fun render(node: ExpLinkNode?, text: String?): Rendering? {
         return super.render(node, text)
     }
 
@@ -706,7 +706,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
 
 abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
 
-    override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
+    public override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
 
     open fun equals(other: KPackage) = name == other.name
 
@@ -718,7 +718,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         val name: String,
         var local: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
 
-    override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
+    public override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
     fun equals(other: KPackage) = name == other.name
 
@@ -839,7 +839,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var nestedClasses: List<KClass> = arrayList<KClass>(),
         var sourceLine: Int = 2): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
 
-    override fun compareTo(other: KClass): Int = name.compareTo(other.name)
+    public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
     fun equals(other: KClass) = name == other.name
 
@@ -924,7 +924,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 
     public val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
 
-    override fun compareTo(other: KFunction): Int {
+    public override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
         if (answer == 0) {
             answer = parameterTypeText.compareTo(other.parameterTypeText)
@@ -952,7 +952,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
         val returnType: KType, val extensionClass: KClass?): KAnnotated(owner.model, descriptor), Comparable<KProperty> {
 
-    override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
+    public override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 
     public val link: String = "$name"
 

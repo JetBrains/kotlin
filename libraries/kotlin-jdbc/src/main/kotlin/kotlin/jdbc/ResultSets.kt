@@ -11,10 +11,10 @@ import java.util.List
 fun ResultSet.iterator() : Iterator<ResultSet> {
     val rs = this
     return object : Iterator<ResultSet>{
-        override val hasNext : Boolean
+        public override val hasNext : Boolean
         get() = rs.next()
 
-        override fun next() : ResultSet = rs
+        public override fun next() : ResultSet = rs
     }
 }
 

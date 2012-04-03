@@ -20,7 +20,7 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : KotlinCompiler() {
 
-    override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?, errStream : PrintStream?) {
+    protected override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?, errStream : PrintStream?) {
         super.configureEnvironment(environment, arguments, errStream)
         val coreEnvironment = environment?.getEnvironment()
         if (coreEnvironment != null) {
@@ -38,11 +38,11 @@ class KDocCompiler() : KotlinCompiler() {
         }
     }
 
-    override fun createArguments() : CompilerArguments? {
+    protected override fun createArguments() : CompilerArguments? {
         return KDocArguments()
     }
 
-    override fun usage(target : PrintStream?) {
+    protected override fun usage(target : PrintStream?) {
         target?.println("Usage: KDocCompiler -docOutput <docOutputDir> [-output <outputDir>|-jar <jarFileName>] [-stdlib <path to runtime.jar>] [-src <filename or dirname>|-module <module file>] [-includeRuntime]");
     }
 }
