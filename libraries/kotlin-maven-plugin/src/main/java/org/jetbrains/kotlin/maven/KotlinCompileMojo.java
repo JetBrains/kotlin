@@ -25,6 +25,7 @@ import org.jetbrains.jet.cli.CompilerArguments;
  * @goal compile
  * @phase compile
  * @requiresDependencyResolution compile
+ * @noinspection UnusedDeclaration
  */
 public class KotlinCompileMojo extends KotlinCompileMojoBase {
     @Override

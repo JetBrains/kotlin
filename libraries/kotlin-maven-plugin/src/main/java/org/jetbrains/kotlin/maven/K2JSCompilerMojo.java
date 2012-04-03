@@ -24,6 +24,7 @@ import org.jetbrains.jet.cli.CompilerArguments;
  *
  * @goal js
  * @phase compile
+ * @noinspection UnusedDeclaration
  */
 public class K2JSCompilerMojo extends KotlinCompileMojo {
     /**

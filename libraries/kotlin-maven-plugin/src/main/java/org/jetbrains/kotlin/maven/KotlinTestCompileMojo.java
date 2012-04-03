@@ -26,6 +26,7 @@ import org.jetbrains.jet.cli.CompilerArguments;
  * @goal test-compile
  * @phase test-compile
  * @requiresDependencyResolution test
+ * @noinspection UnusedDeclaration
  */
 public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
     /**

@@ -36,7 +36,6 @@ import java.util.List;
  * Compiles Kotlin code to JavaScript
  */
 public class K2JSCompilerPlugin implements CompilerPlugin {
-
     private String outFile = "target/js/program.js";
 
     public void processFiles(CompilerPluginContext context) {
@@ -56,22 +55,17 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
 
                 K2JSTranslator translator = new K2JSTranslator(config);
                 final String code = translator.generateProgramCode(sources);
+
                 File file = new File(outFile);
-                File outDir = file.getParentFile();
-                if (outDir != null && !outDir.exists()) {
-                    outDir.mkdirs();
-                }
+
                 try {
+                    Files.createParentDirs(file);
                     Files.write(code, file, Charset.forName("UTF-8"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
         }
-    }
-
-    public String getOutFile() {
-        return outFile;
     }
 
     public void setOutFile(String outFile) {
