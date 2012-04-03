@@ -162,7 +162,7 @@ public class DeclarationsChecker {
             JetFunction function = (JetFunction) member;
             hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
         }
-        if ((memberDescriptor.getVisibility().isPublicAPI()) && hasDeferredType) {
+        if ((memberDescriptor.getVisibility().isPublicAPI()) && memberDescriptor.getOverriddenDescriptors().size() == 0 && hasDeferredType) {
             trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
         }
     }

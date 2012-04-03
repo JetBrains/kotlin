@@ -38,3 +38,7 @@ class Q {
     }
 }
 
+//check that 'toString' can be invoked without specifying 'public' and ': String'
+class NewClass : java.util.ArrayList<Integer>() {
+    override fun toString() = "a"
+}
