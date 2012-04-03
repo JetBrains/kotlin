@@ -4,11 +4,11 @@ import kotlin.test.*
 
 import java.util.*
 
-import org.junit.Test
+import org.junit.Test as test
 
 class CollectionTest {
 
-    Test fun all() {
+    test fun all() {
         val data = arrayList("foo", "bar")
         assertTrue {
             data.all{it.length == 3}
@@ -18,7 +18,7 @@ class CollectionTest {
         }
     }
 
-    Test fun any() {
+    test fun any() {
         val data = arrayList("foo", "bar")
         assertTrue {
             data.any{it.startsWith("f")}
@@ -29,20 +29,20 @@ class CollectionTest {
     }
 
 
-    Test fun appendString() {
+    test fun appendString() {
         val data = arrayList("foo", "bar")
         val buffer = StringBuilder()
         val text = data.appendString(buffer, "-", "{", "}")
         assertEquals("{foo-bar}", buffer.toString())
     }
 
-    Test fun count() {
+    test fun count() {
         val data = arrayList("foo", "bar")
         assertEquals(1, data.count{it.startsWith("b")})
         assertEquals(2, data.count{it.size == 3})
     }
 
-    Test fun filter() {
+    test fun filter() {
         val data = arrayList("foo", "bar")
         val foo = data.filter{it.startsWith("f")}
         assertTrue {
@@ -52,7 +52,7 @@ class CollectionTest {
         assertEquals(arrayList("foo"), foo)
     }
 
-    Test fun filterNot() {
+    test fun filterNot() {
         val data = arrayList("foo", "bar")
         val foo = data.filterNot{it.startsWith("b")}
 
@@ -64,7 +64,7 @@ class CollectionTest {
     }
 
     // TODO would be nice to avoid the <String>
-    Test fun filterIntoLinkedList() {
+    test fun filterIntoLinkedList() {
         val data = arrayList("foo", "bar")
         val foo = data.filterTo(linkedList<String>()){it.startsWith("f")}
 
@@ -80,7 +80,7 @@ class CollectionTest {
     }
 
     // TODO would be nice to avoid the <String>
-    Test fun filterNotIntoLinkedList() {
+    test fun filterNotIntoLinkedList() {
         val data = arrayList("foo", "bar")
         val foo = data.filterNotTo(linkedList<String>()){it.startsWith("f")}
 
@@ -96,7 +96,7 @@ class CollectionTest {
     }
 
     // TODO would be nice to avoid the <String>
-    Test fun filterNotNullIntoLinkedList() {
+    test fun filterNotNullIntoLinkedList() {
         val data = arrayList(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedList<String>())
 
@@ -108,7 +108,7 @@ class CollectionTest {
         }
     }
 
-    Test fun filterNotNull() {
+    test fun filterNotNull() {
         val data = arrayList(null, "foo", null, "bar")
         val foo = data.filterNotNull()
 
@@ -120,7 +120,7 @@ class CollectionTest {
         }
     }
 
-    Test fun filterIntoSet() {
+    test fun filterIntoSet() {
         val data = arrayList("foo", "bar")
         // TODO would be nice to avoid the <String>
         val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
@@ -136,7 +136,7 @@ class CollectionTest {
         }
     }
 
-    Test fun filterIntoSortedSet() {
+    test fun filterIntoSortedSet() {
         val data = arrayList("foo", "bar")
         // TODO would be nice to avoid the <String>
         val sorted = data.filterTo(sortedSet<String>()){it.length == 3}
@@ -147,7 +147,7 @@ class CollectionTest {
         }
     }
 
-    Test fun find() {
+    test fun find() {
         val data = arrayList("foo", "bar")
         val x = data.find{it.startsWith("x")}
         assertNull(x)
@@ -160,7 +160,7 @@ class CollectionTest {
         assertEquals("foo", f)
     }
 
-    Test fun flatMap() {
+    test fun flatMap() {
         val data = arrayList("", "foo", "bar", "x", "")
         val characters = data.flatMap<String,Character>{ it.toCharList() }
         println("Got list of characters ${characters}")
@@ -169,7 +169,7 @@ class CollectionTest {
         assertEquals("foobarx", text)
     }
 
-    Test fun forEach() {
+    test fun forEach() {
         val data = arrayList("foo", "bar")
         var count = 0
         data.forEach{ count += it.length }
@@ -186,7 +186,7 @@ class CollectionTest {
         // numbers.map{it.toString()}.fold(""){it + it2}
         numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
     */
-    Test fun fold() {
+    test fun fold() {
         // lets calculate the sum of some numbers
         expect(10) {
             val numbers = arrayList(1, 2, 3, 4)
@@ -210,7 +210,7 @@ class CollectionTest {
         // numbers.map{it.toString()}.foldRight(""){it + it2}
         numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
     */
-    Test fun foldRight() {
+    test fun foldRight() {
         expect("4321") {
             val numbers = arrayList(1, 2, 3, 4)
             numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
@@ -221,7 +221,7 @@ class CollectionTest {
         TODO inference engine should not need this type info?
         val byLength = words.groupBy<String, Int>{it.length}
     */
-    Test fun groupBy() {
+    test fun groupBy() {
         val words = arrayList("a", "ab", "abc", "def", "abcd")
         val byLength = words.groupBy<String, Int>{it.length}
         assertEquals(4, byLength.size())
@@ -232,7 +232,7 @@ class CollectionTest {
     }
 
 
-    Test fun makeString() {
+    test fun makeString() {
         val data = arrayList("foo", "bar")
         val text = data.makeString("-", "<", ">")
         assertEquals("<foo-bar>", text)
@@ -243,7 +243,7 @@ class CollectionTest {
         we should be able to remove the explicit type <String,Int> on the map function
         http://youtrack.jetbrains.net/issue/KT-1145
     */
-    Test fun map() {
+    test fun map() {
         val data = arrayList("foo", "bar")
         val lengths = data.map<String, Int>{ it.length }
         assertTrue {
@@ -253,13 +253,31 @@ class CollectionTest {
         assertEquals(arrayList(3, 3), lengths)
     }
 
-    Test fun reverse() {
+    test fun plus() {
+        val list = arrayList("foo", "bar")
+        val list2 = list + "cheese"
+        assertEquals(arrayList("foo", "bar"), list)
+        assertEquals(arrayList("foo", "bar", "cheese"), list2)
+    }
+
+    test fun plusAssign() {
+        var list = arrayList("foo", "bar")
+/*
+    TODO should we have plus and plus assign work differently for collections?
+    see KT-1710
+
+        list += "cheese"
+        assertEquals(arrayList("foo", "bar", "cheese"), list)
+*/
+    }
+
+    test fun reverse() {
         val data = arrayList("foo", "bar")
         val rev = data.reverse()
         assertEquals(arrayList("bar", "foo"), rev)
     }
 
-    Test fun sort() {
+    test fun sort() {
         val coll: List<String> = arrayList("foo", "bar", "abc")
 
         // TODO fixme
@@ -272,7 +290,7 @@ class CollectionTest {
         }
     }
 
-    Test fun toArray() {
+    test fun toArray() {
         val data = arrayList("foo", "bar")
         val arr = data.toArray()
         println("Got array ${arr}")
@@ -283,14 +301,14 @@ class CollectionTest {
         }
     }
 
-    Test fun simpleCount() {
+    test fun simpleCount() {
         val data = arrayList("foo", "bar")
         assertEquals(2, data.count())
         assertEquals(3, hashSet(12, 14, 15).count())
         assertEquals(0, ArrayList<Double>().count())
     }
 
-    Test fun last() {
+    test fun last() {
         val data = arrayList("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
@@ -300,13 +318,13 @@ class CollectionTest {
         // assertEquals(19, TreeSet(arrayList(90, 47, 19)).first())
 
 
-    Test fun lastException() {
+    test fun lastException() {
         fails { arrayList<Int>().last() }
         fails { linkedList<String>().last() }
         fails { hashSet<Char>().last() }
     }
 
-    Test fun subscript() {
+    test fun subscript() {
         val list = arrayList("foo", "bar")
         assertEquals("foo", list[0])
         assertEquals("bar", list[1])
@@ -329,7 +347,7 @@ class CollectionTest {
         assertEquals(arrayList("new", "thing", "works"), list)
     }
 
-    Test fun indices() {
+    test fun indices() {
         val data = arrayList("foo", "bar")
         val indices = data.indices
         assertEquals(0, indices.start)
@@ -338,7 +356,7 @@ class CollectionTest {
         assertFalse(indices.isReversed)
     }
 
-    Test fun contains() {
+    test fun contains() {
         val data = arrayList("foo", "bar")
         assertTrue(data.contains("foo"))
         assertTrue(data.contains("bar"))
