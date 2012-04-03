@@ -231,7 +231,6 @@ class CollectionTest {
 
     }
 
-
     test fun makeString() {
         val data = arrayList("foo", "bar")
         val text = data.makeString("-", "<", ">")
