@@ -2,7 +2,7 @@ import java.util.ArrayList
 
 public object SomeObject {
     private val workerThread = object : Thread() {
-        override fun run() {
+        public override fun run() {
             foo()
         }
     }

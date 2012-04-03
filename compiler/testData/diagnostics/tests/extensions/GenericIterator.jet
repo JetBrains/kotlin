@@ -1,10 +1,10 @@
 import java.util.Enumeration
 
 inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
-  override val hasNext: Boolean
+  public override val hasNext: Boolean
     get() = hasMoreElements()
 
-  override fun next() = nextElement()
+  public override fun next() = nextElement()
 }
 
 fun a(e : java.util.Enumeration<Int>) {

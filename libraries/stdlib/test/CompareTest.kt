@@ -43,10 +43,10 @@ class CompareTest {
 
     Test fun sortUsingCustomComparator() {
         val c = object : Comparator<Item>{
-            override fun compare(o1: Item?, o2: Item?): Int {
+            public override fun compare(o1: Item?, o2: Item?): Int {
                 return compareBy(o1, o2, {(it: Item) -> it.name}, {(it: Item) -> it.rating})
             }
-            override fun equals(obj: Any?): Boolean {
+            public override fun equals(obj: Any?): Boolean {
                 return this == obj
             }
         }

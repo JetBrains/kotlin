@@ -59,8 +59,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @Nullable Modality modality,
             @NotNull Visibility visibility,
             boolean isInline) {
-        super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality);
-        setVisibility(visibility);
+        super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality, visibility);
         this.isInline = isInline;
         return this;
     }

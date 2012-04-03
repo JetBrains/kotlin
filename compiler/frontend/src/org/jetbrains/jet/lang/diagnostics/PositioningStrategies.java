@@ -125,6 +125,11 @@ public class PositioningStrategies {
                     result.add(element.getModifierList().getModifierNode(token).getTextRange());
                 }
             }
+            if (result.isEmpty()) {
+                if (element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+                    result.add(element.getModifierList().getModifierNode(JetTokens.OVERRIDE_KEYWORD).getTextRange());
+                }
+            }
             return result;
         }
     };

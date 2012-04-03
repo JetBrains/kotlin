@@ -93,6 +93,9 @@ public class OverridingUtil {
 
     @NotNull
     public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        if (!Visibilities.isVisible(superDescriptor, subDescriptor)) {
+            return OverrideCompatibilityInfo.invisibleMember();
+        }
         if (superDescriptor instanceof FunctionDescriptor) {
             if (subDescriptor instanceof PropertyDescriptor) return OverrideCompatibilityInfo.memberKindMismatch();
         }
@@ -316,6 +319,11 @@ public class OverridingUtil {
         @NotNull
         public static OverrideCompatibilityInfo varOverriddenByVal() {
             return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "varOverriddenByVal"); // TODO
+        }
+
+        @NotNull
+        public static OverrideCompatibilityInfo invisibleMember() {
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "invisibleMember");
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

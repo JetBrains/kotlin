@@ -67,6 +67,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
             @NotNull String name,
@@ -75,6 +76,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.isVar = isVar;
         this.isObject = isObject;
         this.modality = modality;
+        this.visibility = visibility;
         this.original = original == null ? this : original.getOriginal();
         this.kind = kind;
     }
@@ -83,11 +85,12 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
+            @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
             @NotNull String name,
             Kind kind) {
-        this(null, containingDeclaration, annotations, modality, isVar, isObject, name, kind);
+        this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
     }
 
     public PropertyDescriptor(
@@ -103,7 +106,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull JetType outType,
             Kind kind
         ) {
-        this(containingDeclaration, annotations, modality, isVar, isObject, name, kind);
+        this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
         setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
@@ -126,10 +129,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     public void initialize(@Nullable PropertyGetterDescriptor getter, @Nullable PropertySetterDescriptor setter) {
         this.getter = getter;
         this.setter = setter;
-    }
-
-    public void setVisibility(@NotNull Visibility visibility) {
-        this.visibility = visibility;
     }
 
     @NotNull
@@ -207,16 +206,8 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
             DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
-        final PropertyDescriptor thisProperty = this;
         PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(preserveOriginal ? getOriginal() : this, newOwner,
-                getAnnotations(), newModality, isVar(), isObjectDeclaration(), getName(), kind) {
-            @NotNull
-            @Override
-            public Visibility getVisibility() {
-                // visibility of property can be not set yet
-                return thisProperty.getVisibility();
-            }
-        };
+                getAnnotations(), newModality, getVisibility(), isVar(), isObjectDeclaration(), getName(), kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);

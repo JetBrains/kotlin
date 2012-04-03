@@ -163,7 +163,7 @@ fun t11(var x: Int) : Int {
 fun t12(x: Int) : Int {
     var y = x
     val runnable = object : Runnable {
-        override fun run () {
+        public override fun run () {
             y = y + 1
         }
     }

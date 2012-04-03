@@ -3,7 +3,7 @@ package p
 class C(val y : Int) {
   val initChild = { ->
     object : java.lang.Object() {
-      override fun toString(): String {
+      public override fun toString(): String {
           return "child" + y
       }
     }
