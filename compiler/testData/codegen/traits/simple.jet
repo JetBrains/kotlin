@@ -3,7 +3,7 @@ trait SimpleClass : java.lang.Object {
 }
 
 class SimpleClassImpl() : SimpleClass {
-   override fun toString() = "SimpleClassImpl"
+   public override fun toString() = "SimpleClassImpl"
 }
 
 fun box() : String {

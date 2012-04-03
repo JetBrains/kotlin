@@ -2,7 +2,7 @@ public object SomeClass {
     var bug: Any = ""
 
     private val workerThread = object : Thread() {
-        override fun run() {
+        public override fun run() {
             try {
               foo()
               bug = "none"

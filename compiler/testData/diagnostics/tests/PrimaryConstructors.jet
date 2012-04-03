@@ -18,12 +18,12 @@ class Z : Y() {
 
 class MyIterable<T> : Iterable<T>
 {
-    override fun iterator(): Iterator<T>  = MyIterator()
+    public override fun iterator(): Iterator<T>  = MyIterator()
 
     class MyIterator : Iterator<T>
     {
-        override val hasNext: Boolean = false
-        override fun next(): T {
+        public override val hasNext: Boolean = false
+        public override fun next(): T {
             throw UnsupportedOperationException()
         }
     }

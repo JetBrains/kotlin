@@ -35,15 +35,15 @@ abstract class FunctionalList<T>(public val size: Int) {
             return head
         }
 
-        override val hasNext: Boolean
+        public override val hasNext: Boolean
         get() = !cur.empty
     }
 
     class object {
         class Empty<T>() : FunctionalList<T>(0) {
-            override val head: T
+            public override val head: T
             get() = throw java.util.NoSuchElementException()
-            override val tail: FunctionalList<T>
+            public override val tail: FunctionalList<T>
             get() = throw java.util.NoSuchElementException()
         }
 

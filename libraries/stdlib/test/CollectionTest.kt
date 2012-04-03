@@ -406,7 +406,7 @@ class CollectionTest {
     class IterableWrapper<T>(collection : java.lang.Iterable<T>) : java.lang.Iterable<T> {
         private val collection = collection
 
-        override fun iterator(): java.util.Iterator<T> {
+        public override fun iterator(): java.util.Iterator<T> {
             return collection.iterator().sure()
         }
     }

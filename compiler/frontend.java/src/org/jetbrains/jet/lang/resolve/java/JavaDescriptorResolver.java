@@ -1150,11 +1150,11 @@ public class JavaDescriptorResolver {
                     owner,
                     resolveAnnotations(anyMember.getMember().psiMember),
                     modality,
+                    resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember),
                     isVar,
                     false,
                     propertyName,
                     CallableMemberDescriptor.Kind.DECLARATION);
-            propertyDescriptor.setVisibility(resolveVisibilityFromPsiModifiers(anyMember.getMember().psiMember));
 
             PropertyGetterDescriptor getterDescriptor = null;
             PropertySetterDescriptor setterDescriptor = null;

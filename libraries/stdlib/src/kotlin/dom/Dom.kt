@@ -201,7 +201,7 @@ fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
 
 class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
-    override fun computeNext(): Unit {
+    protected override fun computeNext(): Unit {
         val next = node.getNextSibling()
         if (next != null) {
             setNext(next)
@@ -215,7 +215,7 @@ fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
 
 class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
-    override fun computeNext(): Unit {
+    protected override fun computeNext(): Unit {
         val next = node.getPreviousSibling()
         if (next != null) {
             setNext(next)
@@ -323,7 +323,7 @@ fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
 }
 
 class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
-    override fun get(index: Int): Node {
+    public override fun get(index: Int): Node {
         val node = nodeList.item(index)
         if (node == null) {
             throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
@@ -332,11 +332,11 @@ class NodeListAsList(val nodeList: NodeList): AbstractList<Node>() {
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    public override fun size(): Int = nodeList.getLength()
 }
 
 class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
-    override fun get(index: Int): Element {
+    public override fun get(index: Int): Element {
         val node = nodeList.item(index)
         if (node is Element) {
             return node
@@ -349,7 +349,7 @@ class ElementListAsList(val nodeList: NodeList): AbstractList<Element>() {
         }
     }
 
-    override fun size(): Int = nodeList.getLength()
+    public override fun size(): Int = nodeList.getLength()
 
 }
 

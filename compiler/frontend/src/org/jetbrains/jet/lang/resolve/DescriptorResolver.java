@@ -486,12 +486,12 @@ public class DescriptorResolver {
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList, trace),
                 Modality.FINAL,
+                resolveVisibilityFromModifiers(modifierList),
                 false,
                 true,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        propertyDescriptor.setVisibility(resolveVisibilityFromModifiers(modifierList));
         propertyDescriptor.setType(classDescriptor.getDefaultType(), Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(containingDeclaration), ReceiverDescriptor.NO_RECEIVER);
         propertyDescriptor.initialize(createDefaultGetter(propertyDescriptor), null);
         JetObjectDeclarationName nameAsDeclaration = objectDeclaration.getNameAsDeclaration();
@@ -543,12 +543,12 @@ public class DescriptorResolver {
                 containingDeclaration,
                 annotationResolver.resolveAnnotations(scope, modifierList, trace),
                 resolveModalityFromModifiers(property.getModifierList(), defaultModality),
+                resolveVisibilityFromModifiers(property.getModifierList()),
                 isVar,
                 false,
                 JetPsiUtil.safeName(property.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        propertyDescriptor.setVisibility(resolveVisibilityFromModifiers(property.getModifierList()));
 
         List<TypeParameterDescriptor> typeParameterDescriptors;
         JetScope scopeWithTypeParameters;
@@ -861,12 +861,12 @@ public class DescriptorResolver {
                 classDescriptor,
                 annotationResolver.resolveAnnotations(scope, modifierList, trace),
                 resolveModalityFromModifiers(parameter.getModifierList(), Modality.FINAL),
+                resolveVisibilityFromModifiers(parameter.getModifierList()),
                 isMutable,
                 false,
                 name == null ? "<no name>" : name,
                 CallableMemberDescriptor.Kind.DECLARATION
         );
-        propertyDescriptor.setVisibility(resolveVisibilityFromModifiers(parameter.getModifierList()));
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor), ReceiverDescriptor.NO_RECEIVER);
 
         PropertyGetterDescriptor getter = createDefaultGetter(propertyDescriptor);

@@ -10,7 +10,7 @@ import junit.framework.TestCase
 import junit.framework.Assert
 
 class Serial(val a : String) : java.lang.Object(), Serializable {
-    override fun toString() = a
+    public override fun toString() = a
 }
 
 class SerialTest() : TestCase() {
