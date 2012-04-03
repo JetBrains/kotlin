@@ -17,31 +17,37 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.jetbrains.jet.cli.CompilerArguments;
 
 /**
- * Converts Kotlin to JavaScript code
+ * Compiles Kotlin test sources
  *
- * @goal js
- * @phase compile
+ * @goal test-compile
+ * @phase test-compile
+ * @requiresDependencyResolution test
  */
-public class K2JSCompilerMojo extends KotlinCompileMojo {
+public class KotlinTestCompileMojo extends KotlinCompileMojoBase {
     /**
-     * The output JS file name
+     * Flag to allow test compilation to be skipped.
      *
-     * @required
-     * @parameter default-value="${project.build.directory}/js/${project.artifactId}.js"
+     * @parameter expression="${maven.test.skip}" default-value="false"
+     * @noinspection UnusedDeclaration
      */
-    private String outFile;
+    private boolean skip;
+
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("Test compilation is skipped");
+        } else {
+            super.execute();
+        }
+    }
 
     @Override
     protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
-        super.configureCompilerArguments(arguments);
-
-        K2JSCompilerPlugin plugin = new K2JSCompilerPlugin();
-        plugin.setOutFile(outFile);
-        arguments.getCompilerPlugins().add(plugin);
-
-        getLog().info("Compiling Kotlin src from " + arguments.getSrc() + " to JavaScript at: " + outFile);
+        configureBaseCompilerArguments(
+                getLog(), arguments,
+                testModule, testSources, testClasspath, testOutput);
     }
 }

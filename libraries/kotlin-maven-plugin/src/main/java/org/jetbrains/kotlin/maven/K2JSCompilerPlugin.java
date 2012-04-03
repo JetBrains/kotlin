@@ -1,7 +1,23 @@
+/*
+ * Copyright 2010-2012 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.jetbrains.kotlin.maven;
 
+import com.google.common.io.Files;
 import com.intellij.openapi.project.Project;
-import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.compiler.CompilerPluginContext;
@@ -11,12 +27,10 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import static kotlin.io.namespace.use;
 
 /**
  * Compiles Kotlin code to JavaScript
@@ -30,6 +44,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
             Project project = context.getProject();
             BindingContext bindingContext = context.getContext();
             List<JetFile> sources = context.getFiles();
+
             if (bindingContext != null && sources != null && project != null) {
                 Config config = new Config(project) {
                     @NotNull
@@ -38,6 +53,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                         return new ArrayList<JetFile>();
                     }
                 };
+
                 K2JSTranslator translator = new K2JSTranslator(config);
                 final String code = translator.generateProgramCode(sources);
                 File file = new File(outFile);
@@ -46,20 +62,9 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                     outDir.mkdirs();
                 }
                 try {
-                    use(new FileWriter(file), new Function1<FileWriter, Object>() {
-                        @Override
-                        public Object invoke(FileWriter writer) {
-                            try {
-                                writer.write(code);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            return null;
-                        }
-                    });
+                    Files.write(code, file, Charset.forName("UTF-8"));
                 } catch (IOException e) {
-                    System.out.println("Error: " + e);
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         }

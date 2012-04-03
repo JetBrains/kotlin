@@ -20,28 +20,16 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.jetbrains.jet.cli.CompilerArguments;
 
 /**
- * Converts Kotlin to JavaScript code
+ * Compiles kotlin sources
  *
- * @goal js
+ * @goal compile
  * @phase compile
+ * @requiresDependencyResolution compile
  */
-public class K2JSCompilerMojo extends KotlinCompileMojo {
-    /**
-     * The output JS file name
-     *
-     * @required
-     * @parameter default-value="${project.build.directory}/js/${project.artifactId}.js"
-     */
-    private String outFile;
-
+public class KotlinCompileMojo extends KotlinCompileMojoBase {
     @Override
     protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
-        super.configureCompilerArguments(arguments);
-
-        K2JSCompilerPlugin plugin = new K2JSCompilerPlugin();
-        plugin.setOutFile(outFile);
-        arguments.getCompilerPlugins().add(plugin);
-
-        getLog().info("Compiling Kotlin src from " + arguments.getSrc() + " to JavaScript at: " + outFile);
+        configureBaseCompilerArguments(getLog(), arguments, module, sources, classpath, output);
     }
 }
+
