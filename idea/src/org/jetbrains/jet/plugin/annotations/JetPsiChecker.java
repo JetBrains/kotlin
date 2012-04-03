@@ -201,6 +201,9 @@ public class JetPsiChecker implements Annotator {
             for (TextRange textRange : textRanges) {
                 Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getMessage(diagnostic));
                 registerQuickFix(errorAnnotation, diagnostic);
+                if (diagnostic.getFactory() == Errors.INVISIBLE_MEMBER) {
+                    errorAnnotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
+                }
             }
         }
         else if (diagnostic.getSeverity() == Severity.WARNING) {
