@@ -17,11 +17,10 @@
 package org.jetbrains.jet.plugin.completion.handlers;
 
 import com.google.common.collect.Sets;
+import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 
 import java.util.Set;
 
@@ -38,13 +37,9 @@ public class JetKeywordInsertHandler implements InsertHandler<LookupElement> {
 
         // Add space after keyword
         if (!NO_SPACE_AFTER.contains(keyword)) {
-            Editor editor = context.getEditor();
-            Document document = editor.getDocument();
-
-            int offset = context.getStartOffset() + keyword.length();
             context.setAddCompletionChar(false);
-            document.insertString(offset, " ");
-            editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 1);
+            final TailType tailType = TailType.SPACE;
+            tailType.processTail(context.getEditor(), context.getTailOffset());
         }
     }
 }
