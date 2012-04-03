@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -32,15 +33,11 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
-import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Renderers.*;
+import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
+import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 
 /**
  * @author abreslav
@@ -374,7 +371,9 @@ public interface Errors {
         }
     }, TO_STRING, TO_STRING);
 
-    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR, "{0} in {1} is final and cannot be overridden", NAME, NAME);
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
+    DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE = DiagnosticFactory3.create(ERROR, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", PositioningStrategies.POSITION_VISIBILITY_MODIFIER, TO_STRING, NAME, NAME);
+    DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_CHANGE_ACCESS_PRIVILEGE = DiagnosticFactory3.create(ERROR, "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''", PositioningStrategies.POSITION_VISIBILITY_MODIFIER, TO_STRING, NAME, NAME);
 
     DiagnosticFactory2<JetNamedDeclaration, CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE =
             DiagnosticFactory2.create(ERROR, "Return type of {0} is not a subtype of the return type overridden member {1}", PositioningStrategies.POSITION_DECLARATION, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);

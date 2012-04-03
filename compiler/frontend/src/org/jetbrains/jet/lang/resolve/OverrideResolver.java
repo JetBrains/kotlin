@@ -69,6 +69,9 @@ public class OverrideResolver {
     public void process() {
         generateOverrides();
         checkOverrides();
+        //functions and properties visibility can be inherited when overriding, so it can be resolved only after overrides resolve is finished
+        //also invisible overridden descriptors are removed here
+        resolveVisibilityForFunctionsAndProperties();
     }
 
     /**
@@ -416,5 +419,74 @@ public class OverrideResolver {
             return propertyDescriptor.isVar() == isVar;
         }
         return false;
+    }
+
+    private void resolveVisibilityForFunctionsAndProperties() {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : context.getFunctions().entrySet()) {
+            JetNamedFunction function = entry.getKey();
+            SimpleFunctionDescriptor functionDescriptor = entry.getValue();
+
+            Visibility visibility = resolveVisibilityForMember(function, functionDescriptor);
+            ((SimpleFunctionDescriptorImpl) functionDescriptor).setVisibility(visibility);
+        }
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : context.getProperties().entrySet()) {
+            JetProperty property = entry.getKey();
+            PropertyDescriptor propertyDescriptor = entry.getValue();
+
+            Visibility visibility = resolveVisibilityForMember(property, propertyDescriptor);
+            propertyDescriptor.setVisibility(visibility);
+        }
+    }
+
+    private Visibility resolveVisibilityForMember(JetDeclaration member, CallableMemberDescriptor memberDescriptor) {
+        removeInvisibleOverriddenDescriptors(memberDescriptor);
+        Visibility defaultVisibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
+        Visibility visibility = DescriptorResolver.resolveVisibilityFromModifiers(member.getModifierList(), defaultVisibility);
+        checkMaxVisibility(visibility, member, memberDescriptor.getOverriddenDescriptors());
+        return visibility;
+    }
+
+    private void removeInvisibleOverriddenDescriptors(@NotNull CallableDescriptor descriptor) {
+        Set<? extends CallableDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
+        for (Iterator<? extends CallableDescriptor> iterator = overriddenDescriptors.iterator(); iterator.hasNext(); ) {
+            CallableDescriptor superDescriptor = iterator.next();
+            if (!Visibilities.isVisible(superDescriptor, descriptor)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private Visibility findMaxVisibility(@NotNull Collection<? extends DeclarationDescriptorWithVisibility> descriptors) {
+        Visibility maxVisibility = null;
+        for (DeclarationDescriptorWithVisibility descriptor : descriptors) {
+            Visibility visibility = descriptor.getVisibility();
+            if (maxVisibility == null) {
+                maxVisibility = visibility;
+                continue;
+            }
+            Integer compare = Visibilities.compare(visibility, maxVisibility);
+            if (compare == null) {
+                maxVisibility = Visibilities.PUBLIC; //todo error or warning when inference only from incomparable visibilities
+                continue;
+            }
+            if (compare > 0) {
+                maxVisibility = visibility;
+            }
+        }
+        return maxVisibility != null ? maxVisibility : Visibilities.INTERNAL;
+    }
+    
+    private void checkMaxVisibility(@NotNull Visibility visibility, @NotNull JetModifierListOwner modifierListOwner, @NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            Integer compare = Visibilities.compare(visibility, descriptor.getVisibility());
+            if (compare == null) {
+                trace.report(CANNOT_CHANGE_ACCESS_PRIVILEGE.on(modifierListOwner, descriptor.getVisibility(), descriptor, descriptor.getContainingDeclaration()));
+                return;
+            }
+            else if (compare < 0) {
+                trace.report(CANNOT_WEAKEN_ACCESS_PRIVILEGE.on(modifierListOwner, descriptor.getVisibility(), descriptor, descriptor.getContainingDeclaration()));
+                return;
+            }
+        }
     }
 }

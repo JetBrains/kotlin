@@ -1,5 +1,5 @@
 public abstract class BaseClass() {
-    protected open val kind : String = "BaseClass "
+    open val kind : String = "BaseClass "
 
     fun getKindValue() : String {
         return kind

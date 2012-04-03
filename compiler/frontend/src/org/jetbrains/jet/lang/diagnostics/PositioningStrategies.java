@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -109,6 +110,22 @@ public class PositioningStrategies {
         @Override
         public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
             return markElement(element.getIndicesNode());
+        }
+    };
+
+    public static PositioningStrategy<JetModifierListOwner> POSITION_VISIBILITY_MODIFIER = new PositioningStrategy<JetModifierListOwner>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetModifierListOwner element) {
+            List<JetKeywordToken> visibilityTokens = Lists
+                .newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD);
+            List<TextRange> result = Lists.newArrayList();
+            for (JetKeywordToken token : visibilityTokens) {
+                if (element.hasModifier(token)) {
+                    result.add(element.getModifierList().getModifierNode(token).getTextRange());
+                }
+            }
+            return result;
         }
     };
 }
