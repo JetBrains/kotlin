@@ -16,19 +16,35 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author svtk
  */
 public abstract class Visibility {
     private final boolean isPublicAPI;
+    private final String name;
 
-    protected Visibility(boolean api) {
-        isPublicAPI = api;
+    protected Visibility(@NotNull String name, boolean isPublicAPI) {
+        this.isPublicAPI = isPublicAPI;
+        this.name = name;
     }
 
     public boolean isPublicAPI() {
         return isPublicAPI;
     }
 
-    protected abstract boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from);
+    /**
+    * @return null if the answer is unknown
+    */
+    protected Integer compareTo(@NotNull Visibility visibility) {
+        return Visibilities.compareLocal(this, visibility);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    protected abstract boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from);
 }

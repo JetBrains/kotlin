@@ -16,19 +16,25 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * @author svtk
  */
 public class Visibilities {
-    public static final Visibility PRIVATE = new Visibility(false) {
+    public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
@@ -51,9 +57,9 @@ public class Visibilities {
         }
     };
 
-    public static final Visibility PROTECTED = new Visibility(true) {
+    public static final Visibility PROTECTED = new Visibility("protected", true) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
             if (classDescriptor == null) return false;
 
@@ -66,32 +72,32 @@ public class Visibilities {
         }
     };
 
-    public static final Visibility INTERNAL = new Visibility(false) {
+    public static final Visibility INTERNAL = new Visibility("internal", false) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, ModuleDescriptor.class, false);
             ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, ModuleDescriptor.class, false);
             return parentModule == fromModule;
         }
     };
 
-    public static final Visibility PUBLIC = new Visibility(true) {
+    public static final Visibility PUBLIC = new Visibility("public", true) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return true;
         }
     };
 
-    public static final Visibility INTERNAL_PROTECTED = new Visibility(false) {
+    public static final Visibility INTERNAL_PROTECTED = new Visibility("internal protected", false) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return PROTECTED.isVisible(what, from) && INTERNAL.isVisible(what, from);
         }
     };
 
-    public static final Visibility LOCAL = new Visibility(false) {
+    public static final Visibility LOCAL = new Visibility("local", false) {
         @Override
-        protected boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return true;
         }
     };
@@ -107,5 +113,36 @@ public class Visibilities {
             parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility.class);
         }
         return true;
+    }
+
+    private static final Map<Visibility, Integer> ORDERED_VISIBILITIES = Maps.newHashMap();
+    static {
+        ORDERED_VISIBILITIES.put(PRIVATE, 0);
+        ORDERED_VISIBILITIES.put(INTERNAL_PROTECTED, 1);
+        ORDERED_VISIBILITIES.put(INTERNAL, 2);
+        ORDERED_VISIBILITIES.put(PROTECTED, 2);
+        ORDERED_VISIBILITIES.put(PUBLIC, 3);
+    }
+
+    /*package*/ static Integer compareLocal(@NotNull Visibility first, @NotNull Visibility second) {
+        if (first == second) return 0;
+        Integer firstIndex = ORDERED_VISIBILITIES.get(first);
+        Integer secondIndex = ORDERED_VISIBILITIES.get(second);
+        if (firstIndex == null || secondIndex == null || firstIndex.equals(secondIndex)) {
+            return null;
+        }
+        return firstIndex - secondIndex;
+    }
+
+    public static Integer compare(@NotNull Visibility first, @NotNull Visibility second) {
+        Integer result = first.compareTo(second);
+        if (result != null) {
+            return result;
+        }
+        Integer oppositeResult = second.compareTo(first);
+        if (oppositeResult != null) {
+            return -oppositeResult;
+        }
+        return null;
     }
 }
