@@ -26,7 +26,7 @@ public inline fun <T> java.util.Iterator<T>.any(predicate: (T) -> Boolean) : Boo
 /**
  * Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
  *
- * @includeFunctionBody ../../test/CollectionTest.kt makeString
+ * @includeFunctionBody ../../test/CollectionTest.kt appendString
  */
 public inline fun <T> java.util.Iterator<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1): Unit {
     buffer.append(prefix)
@@ -178,22 +178,25 @@ public inline fun <T> java.util.Iterator<T>.reverse() : List<T> {
 }
 
 /** Copies all elements into the given collection */
-public inline fun <T, C: Collection<T>> java.util.Iterator<T>.to(result: C) : C {
+public inline fun <in T, C: Collection<in T>> java.util.Iterator<T>.to(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
 
-/** Copies all elements into a [[LinkedList]] */
-public inline fun <T> java.util.Iterator<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
+/** Copies all elements into a [[LinkedList]]  */
+public inline fun <in T> java.util.Iterator<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
 
 /** Copies all elements into a [[List]] */
-public inline fun <T> java.util.Iterator<T>.toList() : List<T> = to(ArrayList<T>())
+public inline fun <in T> java.util.Iterator<T>.toList() : List<T> = to(ArrayList<T>())
+
+/** Copies all elements into a [[List] */
+public inline fun <in T> java.util.Iterator<T>.toCollection() : Collection<T> = to(ArrayList<T>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun <T> java.util.Iterator<T>.toSet() : Set<T> = to(HashSet<T>())
+public inline fun <in T> java.util.Iterator<T>.toSet() : Set<T> = to(HashSet<T>())
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun <T> java.util.Iterator<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
+public inline fun <in T> java.util.Iterator<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

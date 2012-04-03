@@ -271,6 +271,18 @@ class CollectionTest {
 */
     }
 
+    test fun requireNoNulls() {
+        val data = arrayList<String?>("foo", "bar")
+        val notNull = data.requireNoNulls()
+        assertEquals(arrayList("foo", "bar"), notNull)
+
+        val hasNulls = arrayList("foo", null, "bar")
+        failsWith<IllegalArgumentException> {
+            // should throw an exception as we have a null
+            hasNulls.requireNoNulls()
+        }
+    }
+
     test fun reverse() {
         val data = arrayList("foo", "bar")
         val rev = data.reverse()

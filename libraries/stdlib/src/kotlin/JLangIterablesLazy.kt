@@ -40,6 +40,23 @@ public inline fun <T> java.lang.Iterable<T?>?.filterNotNull() : List<T> = filter
 public inline fun <T, R> java.lang.Iterable<T>.flatMap(transform: (T)-> Collection<R>) : Collection<R> = flatMapTo(ArrayList<R>(), transform)
 
 /**
+ * Returns a list containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt requireNoNulls
+ */
+public inline fun <in T> java.lang.Iterable<T?>?.requireNoNulls() : List<T> {
+    val list = ArrayList<T>()
+    for (element in this) {
+        if (element == null) {
+            throw IllegalArgumentException("null element found in $this")
+        } else {
+            list.add(element)
+        }
+    }
+    return list
+}
+
+/**
  * Returns a list containing the first *n* elements
  *
  * @includeFunctionBody ../../test/CollectionTest.kt take

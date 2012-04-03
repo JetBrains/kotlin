@@ -111,6 +111,19 @@ private class FlatMapIterator<T, R>(val iterator : java.util.Iterator<T>, val tr
 }
 
 /**
+ * Returns an iterator containing all the non-*null* elements, lazily throwing an [[IllegalArgumentException]]
+ if there are any null elements
+ *
+ * @includeFunctionBody ../../test/iterators/IteratorsTest.kt requireNoNulls
+ */
+public inline fun <in T> java.util.Iterator<T?>.requireNoNulls(): java.util.Iterator<T> {
+    return map<T?, T>{
+        if (it == null) throw IllegalArgumentException("null element in iterator $this") else it
+    }
+}
+
+
+/**
  * Returns an iterator restricted to the first *n* elements
  *
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt takeExtractsTheFirstNElements

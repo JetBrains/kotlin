@@ -182,20 +182,20 @@ public inline fun <in T, C: Collection<in T>> java.lang.Iterable<T>.to(result: C
     return result
 }
 
-/** Copies all elements into a [[LinkedList]] if its not already a [[LinkedList]]  */
-public inline fun <in T> java.lang.Iterable<T>.toLinkedList() : LinkedList<T> = if (this is LinkedList<T>) this else to(LinkedList<T>())
+/** Copies all elements into a [[LinkedList]]  */
+public inline fun <in T> java.lang.Iterable<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
 
-/** Copies all elements into a [[List]] if its not already a [[List]] */
-public inline fun <in T> java.lang.Iterable<T>.toList() : List<T> = if (this is List<T>) this else to(ArrayList<T>())
+/** Copies all elements into a [[List]] */
+public inline fun <in T> java.lang.Iterable<T>.toList() : List<T> = to(ArrayList<T>())
 
-/** Copies all elements into a [[List]] if it is not already a [[Collection]] */
-public inline fun <in T> java.lang.Iterable<T>.toCollection() : Collection<T> = if (this is Collection<T>) this else to(ArrayList<T>())
+/** Copies all elements into a [[List] */
+public inline fun <in T> java.lang.Iterable<T>.toCollection() : Collection<T> = to(ArrayList<T>())
 
-/** Copies all elements into a [[Set]] if its not already a [[Set]] */
-public inline fun <in T> java.lang.Iterable<T>.toSet() : Set<T> = if (this is Set<T>) this else to(HashSet<T>())
+/** Copies all elements into a [[Set]] */
+public inline fun <in T> java.lang.Iterable<T>.toSet() : Set<T> = to(HashSet<T>())
 
-/** Copies all elements into a [[SortedSet]] if its not already a [[SortedSet]] */
-public inline fun <in T> java.lang.Iterable<T>.toSortedSet() : SortedSet<T> = if (this is SortedSet<T>) this else to(TreeSet<T>())
+/** Copies all elements into a [[SortedSet]] */
+public inline fun <in T> java.lang.Iterable<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
 
-    generateFile(File(outDir, "JUnilIteratorsFromJLangIterables.kt"), "package kotlin", File(srcDir, "JLangIterables.kt")) {
+    generateFile(File(outDir, "JUtilIteratorsFromJLangIterables.kt"), "package kotlin", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "java.util.Iterator<T")
     }
 
@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
         it.replaceAll("java.util.Collection<T", "Array<T")
     }
 
-    generateFile(File(outDir, "JUnilIterablesFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
+    generateFile(File(outDir, "JUtilIterablesFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
     }
 
