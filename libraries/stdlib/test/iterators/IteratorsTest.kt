@@ -52,6 +52,32 @@ class IteratorsTest {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.makeString(separator = ", ", limit = 5))
     }
 
+    test fun plus() {
+        val iter = arrayList("foo", "bar").iterator()
+        val iter2 = iter + "cheese"
+        assertEquals(arrayList("foo", "bar", "cheese"), iter2.toList())
+
+        // lets use a mutable variable
+        var mi = arrayList("a", "b").iterator()
+        mi += "c"
+        assertEquals(arrayList("a", "b", "c"), mi.toList())
+    }
+
+    test fun plusCollection() {
+        val a = arrayList("foo", "bar")
+        val b = arrayList("cheese", "wine")
+        val iter = a.iterator() + b.iterator()
+        assertEquals(arrayList("foo", "bar", "cheese", "wine"), iter.toList())
+
+        // lets use a mutable variable
+        var ml = arrayList("a").iterator()
+        ml += a.iterator()
+        ml += "beer"
+        ml += b
+        ml += "z"
+        assertEquals(arrayList("a", "foo", "bar", "beer", "cheese", "wine", "z"), ml.toList())
+    }
+
     test fun requireNoNulls() {
         val iter = arrayList<String?>("foo", "bar").iterator()
         val notNull = iter.requireNoNulls()

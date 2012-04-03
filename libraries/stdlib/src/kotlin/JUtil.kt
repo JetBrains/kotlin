@@ -53,45 +53,6 @@ public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSorted
 public inline fun <in T: java.lang.Comparable<T>> java.lang.Iterable<T>.toSortedList(comparator: java.util.Comparator<T>) : List<T> = toList().sort(comparator)
 
 
-/**
- * Creates a new [[List]] with the element added at the end
- *
- * @includeFunctionBody ../../test/CollectionTest.kt plus
- */
-public inline fun <in T> java.util.Collection<T>.plus(element: T): List<in T> {
-    val list = to(ArrayList<T>())
-    list.add(element)
-    return list
-}
-
-/**
- * Adds the element to this collection
- *
- * @includeFunctionBody ../../test/CollectionTest.kt plusAssign
- */
-public inline fun <in T, C: java.util.Collection<in T>> C.plusAssign(element: T): C {
-    add(element)
-    return this
-}
-
-/**
- * Creates a new [[List]] with the element added at the end
- */
-/*
-public inline fun <in T> java.util.Collection<T>.plus(elements: java.lang.Iterable<T>): List<T> = toList().plusAssign(elements)
-*/
-
-/**
- * Adds all the elements to this collection
- */
-/*
-public inline fun <in T, C: Collection<in T>> C.plusAssign(elements: java.lang.Iterable<T>): C {
-    addAll(elements.toCollection())
-    return this
-}
-*/
-
-
 // List APIs
 
 public inline fun <in T: java.lang.Comparable<T>> List<T>.sort() : List<T> {

@@ -258,17 +258,30 @@ class CollectionTest {
         val list2 = list + "cheese"
         assertEquals(arrayList("foo", "bar"), list)
         assertEquals(arrayList("foo", "bar", "cheese"), list2)
+
+        // lets use a mutable variable
+        var list3 = arrayList("a", "b")
+        list3 += "c"
+        assertEquals(arrayList("a", "b", "c"), list3)
     }
 
-    test fun plusAssign() {
-        var list = arrayList("foo", "bar")
-/*
-    TODO should we have plus and plus assign work differently for collections?
-    see KT-1710
+    /*
+     TODO compiler fails on this one
 
-        list += "cheese"
-        assertEquals(arrayList("foo", "bar", "cheese"), list)
-*/
+     val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
+    */
+    test fun plusCollection() {
+        val a = arrayList("foo", "bar")
+        val b = arrayList("cheese", "wine")
+        val list = a + b
+        assertEquals(arrayList("foo", "bar", "cheese", "wine"), list)
+
+        // lets use a mutable variable
+        var ml = a
+        ml += "beer"
+        ml += b
+        ml += "z"
+        assertEquals(arrayList("foo", "bar", "beer", "cheese", "wine", "z"), ml)
     }
 
     test fun requireNoNulls() {

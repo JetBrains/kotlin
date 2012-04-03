@@ -32,7 +32,9 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
         return next.sure()
     }
 
-    override fun remove() { throw UnsupportedOperationException() }
+    override fun remove() {
+        throw UnsupportedOperationException()
+    }
 
     /** Returns the next element in the iteration without advancing the iteration */
     fun peek(): T {
@@ -75,7 +77,7 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
 }
 
 /** An [[Iterator]] which invokes a function to calculate the next value in the iteration until the function returns *null* */
-class FunctionIterator<T>(val nextFunction : () -> T?) : AbstractIterator<T>() {
+class FunctionIterator<T>(val nextFunction: () -> T?): AbstractIterator<T>() {
 
     override protected fun computeNext(): Unit {
         val next = (nextFunction)()
@@ -86,3 +88,47 @@ class FunctionIterator<T>(val nextFunction : () -> T?) : AbstractIterator<T>() {
         }
     }
 }
+
+/** An [[Iterator]] which iterates over a number of iterators in sequence */
+class CompositeIterator<T>(vararg iterators: java.util.Iterator<T>): AbstractIterator<T>() {
+
+    val iteratorsIter = iterators.iterator()
+    var currentIter: java.util.Iterator<T>? = null
+
+    override protected fun computeNext(): Unit {
+        while (true) {
+            if (currentIter == null) {
+                if (iteratorsIter.hasNext) {
+                    currentIter = iteratorsIter.next()
+                } else {
+                    done()
+                    return
+                }
+            }
+            val iter = currentIter
+            if (iter != null) {
+                if (iter.hasNext()) {
+                    setNext(iter.next())
+                    return
+                } else {
+                    currentIter = null
+                }
+            }
+        }
+    }
+}
+
+/** A singleton [[Iterator]] which invokes once over a value */
+class SingleIterator<T>(val value: T): AbstractIterator<T>() {
+    var first = true
+
+    override protected fun computeNext(): Unit {
+        if (first) {
+            first = false
+            setNext(value)
+        } else {
+            done()
+        }
+    }
+}
+

@@ -1,7 +1,7 @@
 package kotlin
 
-import kotlin.support.AbstractIterator
-import kotlin.support.FunctionIterator
+import kotlin.support.*
+import java.util.Collections
 
 /**
  * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
@@ -109,6 +109,32 @@ private class FlatMapIterator<T, R>(val iterator : java.util.Iterator<T>, val tr
         }
     }
 }
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
+ *
+ * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plus
+ */
+public inline fun <in T> java.util.Iterator<T>.plus(element: T): java.util.Iterator<T> {
+    return CompositeIterator<T>(this, SingleIterator(element))
+}
+
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following iterator
+ *
+ * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plusCollection
+ */
+public inline fun <in T> java.util.Iterator<T>.plus(iterator: java.util.Iterator<T>): java.util.Iterator<T> {
+    return CompositeIterator<T>(this, iterator)
+}
+
+/**
+ * Creates an [[Iterator]] which iterates over this iterator then the following collection
+ *
+ * @includeFunctionBody ../../test/iterators/IteratorsTest.kt plusCollection
+ */
+public inline fun <in T> java.util.Iterator<T>.plus(collection: java.lang.Iterable<T>): java.util.Iterator<T> = plus(collection.iterator())
 
 /**
  * Returns an iterator containing all the non-*null* elements, lazily throwing an [[IllegalArgumentException]]
