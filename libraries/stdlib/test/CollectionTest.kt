@@ -267,9 +267,13 @@ class CollectionTest {
 
     /*
      TODO compiler fails on this one
-
-     val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
+     KT-1718
+    test fun plusCollectionBug() {
+        val list = arrayList("foo", "bar") + arrayList("cheese", "wine")
+        assertEquals(arrayList("foo", "bar", "cheese", "wine"), list)
+    }
     */
+
     test fun plusCollection() {
         val a = arrayList("foo", "bar")
         val b = arrayList("cheese", "wine")
