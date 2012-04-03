@@ -16,11 +16,17 @@
 
 package org.jetbrains.jet.cli;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.sampullara.cli.Args;
-import org.jetbrains.jet.compiler.*;
+import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.compiler.CompilerPlugin;
+import org.jetbrains.jet.compiler.MessageRenderer;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -191,7 +197,8 @@ public class KotlinCompiler {
         }
 
         if (arguments.classpath != null) {
-            environment.addToClasspath(arguments.classpath);
+            final Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
+            environment.addToClasspath(Iterables.toArray(classpath, String.class));
         }
     }
 }
