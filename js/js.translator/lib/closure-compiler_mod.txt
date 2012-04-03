@@ -1,0 +1,1 @@
+Deleted package com.google.javascript.jscomp.ant to avoid dependency on ant.jar. 
