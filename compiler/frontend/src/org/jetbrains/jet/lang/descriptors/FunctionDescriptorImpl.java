@@ -78,13 +78,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
             @NotNull List<TypeParameterDescriptor> typeParameters,
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable JetType unsubstitutedReturnType,
-            @Nullable Modality modality,
-            @NotNull Visibility visibility) {
+            @Nullable Modality modality) {
         this.typeParameters = typeParameters;
         this.unsubstitutedValueParameters = unsubstitutedValueParameters;
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
-        this.visibility = visibility;
         this.receiver = receiverType == null ? NO_RECEIVER : new ExtensionReceiver(this, receiverType);
         this.expectedThisObject = expectedThisObject;
         
@@ -104,6 +102,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         }
 
         return this;
+    }
+
+    public void setVisibility(@NotNull Visibility visibility) {
+        this.visibility = visibility;
     }
 
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
@@ -221,9 +223,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
                 substitutedTypeParameters,
                 substitutedValueParameters,
                 substitutedReturnType,
-                newModality, 
-                visibility
-        );
+                newModality);
+        substitutedDescriptor.setVisibility(visibility);
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
                 substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));

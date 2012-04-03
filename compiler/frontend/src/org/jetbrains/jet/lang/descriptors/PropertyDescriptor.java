@@ -39,7 +39,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 public class PropertyDescriptor extends VariableDescriptorImpl implements CallableMemberDescriptor {
 
     private final Modality modality;
-    private final Visibility visibility;
+    private Visibility visibility;
     private final boolean isVar;
     private final boolean isObject;
     private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
@@ -48,7 +48,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     private ReceiverDescriptor expectedThisObject;
     private ReceiverDescriptor receiver;
-    private List<TypeParameterDescriptor> typeParemeters;
+    private List<TypeParameterDescriptor> typeParameters;
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
     
@@ -67,7 +67,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
             @NotNull String name,
@@ -76,7 +75,6 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.isVar = isVar;
         this.isObject = isObject;
         this.modality = modality;
-        this.visibility = visibility;
         this.original = original == null ? this : original.getOriginal();
         this.kind = kind;
     }
@@ -85,12 +83,11 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
             @NotNull String name,
             Kind kind) {
-        this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
+        this(null, containingDeclaration, annotations, modality, isVar, isObject, name, kind);
     }
 
     public PropertyDescriptor(
@@ -106,7 +103,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull JetType outType,
             Kind kind
         ) {
-        this(containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
+        this(containingDeclaration, annotations, modality, isVar, isObject, name, kind);
         setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
     }
 
@@ -120,7 +117,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     public void setType(@NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @NotNull ReceiverDescriptor receiver) {
         setOutType(outType);
 
-        this.typeParemeters = typeParameters;
+        this.typeParameters = typeParameters;
 
         this.receiver = receiver;
         this.expectedThisObject = expectedThisObject;
@@ -131,10 +128,14 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.setter = setter;
     }
 
+    public void setVisibility(@NotNull Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
-        return typeParemeters;
+        return typeParameters;
     }
 
     @NotNull
@@ -206,8 +207,16 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
     private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
             DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
+        final PropertyDescriptor thisProperty = this;
         PropertyDescriptor substitutedDescriptor = new PropertyDescriptor(preserveOriginal ? getOriginal() : this, newOwner,
-                getAnnotations(), newModality, getVisibility(), isVar(), isObjectDeclaration(), getName(), kind);
+                getAnnotations(), newModality, isVar(), isObjectDeclaration(), getName(), kind) {
+            @NotNull
+            @Override
+            public Visibility getVisibility() {
+                // visibility of property can be not set yet
+                return thisProperty.getVisibility();
+            }
+        };
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);

@@ -251,12 +251,12 @@ public abstract class CodegenContext {
             PropertyDescriptor myAccessor = new PropertyDescriptor(contextType,
                     Collections.<AnnotationDescriptor>emptyList(),
                     pd.getModality(),
-                    pd.getVisibility(),
                     pd.isVar(),
                     pd.isObjectDeclaration(),
                     pd.getName()  + "$bridge$" + accessors.size(),
                     CallableMemberDescriptor.Kind.DECLARATION
             );
+            myAccessor.setVisibility(pd.getVisibility());
             JetType receiverType = pd.getReceiverParameter().exists() ? pd.getReceiverParameter().getType() : null;
             myAccessor.setType(pd.getType(), Collections.<TypeParameterDescriptor>emptyList(), pd.getExpectedThisObject(), receiverType);
 

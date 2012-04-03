@@ -50,18 +50,19 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         super(containingDeclaration, original, annotations, name, kind);
     }
 
-    public SimpleFunctionDescriptorImpl initialize(@Nullable JetType receiverType,
-                                             @NotNull ReceiverDescriptor expectedThisObject,
-                                             @NotNull List<TypeParameterDescriptor> typeParameters,
-                                             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
-                                             @Nullable JetType unsubstitutedReturnType,
-                                             @Nullable Modality modality,
-                                             @NotNull Visibility visibility,
-                                             boolean isInline) {
-        SimpleFunctionDescriptorImpl result = (SimpleFunctionDescriptorImpl)super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters,
-                                                             unsubstitutedReturnType, modality, visibility);
-        result.isInline = isInline;
-        return result;
+    public SimpleFunctionDescriptorImpl initialize(
+            @Nullable JetType receiverType,
+            @NotNull ReceiverDescriptor expectedThisObject,
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @Nullable JetType unsubstitutedReturnType,
+            @Nullable Modality modality,
+            @NotNull Visibility visibility,
+            boolean isInline) {
+        super.initialize(receiverType, expectedThisObject, typeParameters, unsubstitutedValueParameters, unsubstitutedReturnType, modality);
+        setVisibility(visibility);
+        this.isInline = isInline;
+        return this;
     }
 
     @NotNull
