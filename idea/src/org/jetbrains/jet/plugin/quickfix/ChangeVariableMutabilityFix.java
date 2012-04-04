@@ -34,6 +34,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
+
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 /**
  * @author svtk
@@ -74,9 +77,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
         if (property != null) return property;
         JetSimpleNameExpression simpleNameExpression = PsiTreeUtil.getParentOfType(elementAtCaret, JetSimpleNameExpression.class);
         if (simpleNameExpression != null) {
-            BindingContext bindingContext =
-                AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-                    .getBindingContext();
+            BindingContext bindingContext = getContextForSingleFile(file);
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
                 PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);

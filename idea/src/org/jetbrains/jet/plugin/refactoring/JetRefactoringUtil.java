@@ -44,6 +44,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
+
 /**
  * User: Alefas
  * Date: 25.01.12
@@ -106,9 +108,7 @@ public class JetRefactoringUtil {
                 }
                 if (addExpression) {
                     JetExpression expression = (JetExpression)element;
-                    BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile)expression.getContainingFile(),
-                                                                                              AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-                        .getBindingContext();
+                    BindingContext bindingContext = getContextForSingleFile((JetFile)expression.getContainingFile());
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.

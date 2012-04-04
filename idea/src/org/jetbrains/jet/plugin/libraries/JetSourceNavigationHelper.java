@@ -32,15 +32,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -67,9 +66,7 @@ public class JetSourceNavigationHelper {
         }
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
         for (JetFile libraryFile : libraryFiles) {
-            BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(libraryFile,
-                                                                                      AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-                .getBindingContext();
+            BindingContext bindingContext = AnalyzeSingleFileUtil.analyzeSingleFileWithCache(libraryFile).getBindingContext();
             D descriptor = bindingContext.get(slice, fqName);
             if (descriptor != null) {
                 return new Tuple2<BindingContext, D>(bindingContext, descriptor);

@@ -34,9 +34,12 @@ import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 /**
  * @author svtk
@@ -55,8 +58,7 @@ public class ImportInsertHelper {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-            .getBindingContext();
+        BindingContext bindingContext = getContextForSingleFile(file);
         PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getMemberScope().getContainingDeclaration());
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;

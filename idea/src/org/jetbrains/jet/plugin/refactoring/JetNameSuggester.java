@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
+
 /**
  * User: Alefas
  * Date: 31.01.12
@@ -68,9 +70,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile)expression.getContainingFile(),
-                                                                                  AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-            .getBindingContext();
+        BindingContext bindingContext = getContextForSingleFile((JetFile) expression.getContainingFile());
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

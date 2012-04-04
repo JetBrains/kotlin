@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.awt.*;
@@ -196,9 +197,7 @@ public class JetFunctionParameterInfoHandler implements
             JetValueArgumentList argumentList = (JetValueArgumentList)parameterOwner;
             if (descriptor instanceof FunctionDescriptor) {
                 JetFile file = (JetFile)argumentList.getContainingFile();
-                BindingContext bindingContext =
-                    AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-                        .getBindingContext();
+                BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
@@ -357,10 +356,7 @@ public class JetFunctionParameterInfoHandler implements
         else {
             return null;
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
-            (JetFile)file,
-            AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
-            .getBindingContext();
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)file);
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;
