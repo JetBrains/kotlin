@@ -28,13 +28,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -66,15 +67,16 @@ public class JetRefactoringUtil {
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
             callback.run(findExpression(editor, file, selectionStart, selectionEnd));
-        } else {
+        }
+        else {
             int offset = editor.getCaretModel().getOffset();
             smartSelectExpression(editor, file, offset, callback);
         }
     }
 
     private static void smartSelectExpression(@NotNull Editor editor, @NotNull PsiFile file, int offset,
-                                             @NotNull final SelectExpressionCallback callback)
-            throws IntroduceRefactoringException {
+                                              @NotNull final SelectExpressionCallback callback)
+        throws IntroduceRefactoringException {
         if (offset < 0) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
         PsiElement element = file.findElementAt(offset);
         if (element == null) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
@@ -88,34 +90,38 @@ public class JetRefactoringUtil {
             if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
                 boolean addExpression = true;
                 if (element.getParent() instanceof JetQualifiedExpression) {
-                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) element.getParent();
+                    JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression)element.getParent();
                     if (qualifiedExpression.getReceiverExpression() != element) {
                         addExpression = false;
                     }
-                } else if (element.getParent() instanceof JetCallElement) {
+                }
+                else if (element.getParent() instanceof JetCallElement) {
                     addExpression = false;
-                } else if (element.getParent() instanceof JetOperationExpression) {
-                    JetOperationExpression operationExpression = (JetOperationExpression) element.getParent();
+                }
+                else if (element.getParent() instanceof JetOperationExpression) {
+                    JetOperationExpression operationExpression = (JetOperationExpression)element.getParent();
                     if (operationExpression.getOperationReference() == element) {
                         addExpression = false;
                     }
                 }
                 if (addExpression) {
-                    JetExpression expression = (JetExpression) element;
-                    BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                            AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
-                                .getBindingContext();
+                    JetExpression expression = (JetExpression)element;
+                    BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile)expression.getContainingFile(),
+                                                                                              AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
+                        .getBindingContext();
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.
-                                                          getInstance().getTuple0Type(), expressionType)) {
+                                                      getInstance().getTuple0Type(), expressionType)) {
                         expressions.add(expression);
                     }
                 }
             }
             element = element.getParent();
         }
-        if (expressions.size() == 0) throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
+        if (expressions.size() == 0) {
+            throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
+        }
 
         final DefaultListModel model = new DefaultListModel();
         for (JetExpression expression : expressions) {
@@ -125,13 +131,13 @@ public class JetRefactoringUtil {
         final ScopeHighlighter highlighter = new ScopeHighlighter(editor);
 
         final JList list = new JBList(model);
-        
+
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component rendererComponent = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 StringBuilder buffer = new StringBuilder();
-                JetExpression element = (JetExpression) value;
+                JetExpression element = (JetExpression)value;
                 if (element.isValid()) {
                     setText(getExpressionShortText(element));
                 }
@@ -145,7 +151,7 @@ public class JetRefactoringUtil {
                 highlighter.dropHighlight();
                 int selectedIndex = list.getSelectedIndex();
                 if (selectedIndex < 0) return;
-                JetExpression expression = (JetExpression) model.get(selectedIndex);
+                JetExpression expression = (JetExpression)model.get(selectedIndex);
                 ArrayList<PsiElement> toExtract = new ArrayList<PsiElement>();
                 toExtract.add(expression);
                 highlighter.highlight(expression, toExtract);
@@ -153,11 +159,11 @@ public class JetRefactoringUtil {
         });
 
         JBPopupFactory.getInstance().createListPopupBuilder(list).
-                setTitle(JetRefactoringBundle.message("expressions.title")).setMovable(false).setResizable(false).
-                setRequestFocus(true).setItemChoosenCallback(new Runnable() {
+            setTitle(JetRefactoringBundle.message("expressions.title")).setMovable(false).setResizable(false).
+            setRequestFocus(true).setItemChoosenCallback(new Runnable() {
             @Override
             public void run() {
-                callback.run((JetExpression) list.getSelectedValue());
+                callback.run((JetExpression)list.getSelectedValue());
             }
         }).addListener(new JBPopupAdapter() {
             @Override
@@ -165,7 +171,6 @@ public class JetRefactoringUtil {
                 highlighter.dropHighlight();
             }
         }).createPopup().showInBestPositionFor(editor);
-        
     }
 
     public static String getExpressionShortText(@NotNull JetExpression expression) { //todo: write appropriate implementation
@@ -178,24 +183,26 @@ public class JetRefactoringUtil {
 
     @Nullable
     private static JetExpression findExpression(@NotNull Editor editor, @NotNull PsiFile file,
-                                               int startOffset, int endOffset) throws IntroduceRefactoringException{
+                                                int startOffset, int endOffset) throws IntroduceRefactoringException {
         PsiElement element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, JetExpression.class);
         if (element == null || element.getTextRange().getStartOffset() != startOffset ||
             element.getTextRange().getEndOffset() != endOffset) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (!(element instanceof JetExpression)) {
+        }
+        else if (!(element instanceof JetExpression)) {
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (element instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) element).getStatements();
+        }
+        else if (element instanceof JetBlockExpression) {
+            List<JetElement> statements = ((JetBlockExpression)element).getStatements();
             if (statements.size() == 1) {
                 JetElement elem = statements.get(0);
                 if (elem.getText().equals(element.getText()) && elem instanceof JetExpression) {
-                    return (JetExpression) elem;
+                    return (JetExpression)elem;
                 }
             }
         }
-        return (JetExpression) element;
+        return (JetExpression)element;
     }
 
     public static class IntroduceRefactoringException extends Exception {
@@ -209,5 +216,4 @@ public class JetRefactoringUtil {
             return myMessage;
         }
     }
-
 }

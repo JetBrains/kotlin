@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -57,13 +57,14 @@ public class QuickFixUtil {
     public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+        BindingContext bindingContext =
+            AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile)file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
                 .getBindingContext();
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
-        JetType type = ((CallableDescriptor) descriptor).getReturnType();
+        JetType type = ((CallableDescriptor)descriptor).getReturnType();
         if (type instanceof DeferredType) {
-            type = ((DeferredType) type).getActualType();
+            type = ((DeferredType)type).getActualType();
         }
         return type;
     }

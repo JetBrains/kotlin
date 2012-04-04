@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.quickfix;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
@@ -54,8 +55,8 @@ public class ImportInsertHelper {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
-                .getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
+            .getBindingContext();
         PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getMemberScope().getContainingDeclaration());
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
@@ -67,7 +68,7 @@ public class ImportInsertHelper {
      * Add import directive into the PSI tree for the given namespace.
      *
      * @param importFqn full name of the import
-     * @param file File where directive should be added.
+     * @param file      File where directive should be added.
      */
     public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
         addImportDirective(new ImportPath(importFqn, false), null, file);

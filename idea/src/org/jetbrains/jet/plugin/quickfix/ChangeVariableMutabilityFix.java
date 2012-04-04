@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -39,7 +40,7 @@ import org.jetbrains.jet.plugin.JetBundle;
  */
 public class ChangeVariableMutabilityFix implements IntentionAction {
     private boolean isVar;
-    
+
     public ChangeVariableMutabilityFix(boolean isVar) {
         this.isVar = isVar;
     }
@@ -47,7 +48,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     public ChangeVariableMutabilityFix() {
         this(false);
     }
-    
+
     @NotNull
     @Override
     public String getText() {
@@ -63,7 +64,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!(file instanceof JetFile)) return false;
-        JetProperty property = getCorrespondingProperty(editor, (JetFile) file);
+        JetProperty property = getCorrespondingProperty(editor, (JetFile)file);
         return property != null && !property.isVar();
     }
 
@@ -73,13 +74,14 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
         if (property != null) return property;
         JetSimpleNameExpression simpleNameExpression = PsiTreeUtil.getParentOfType(elementAtCaret, JetSimpleNameExpression.class);
         if (simpleNameExpression != null) {
-            BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+            BindingContext bindingContext =
+                AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
                     .getBindingContext();
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
                 PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
                 if (declaration instanceof JetProperty) {
-                    return (JetProperty) declaration;
+                    return (JetProperty)declaration;
                 }
             }
         }
@@ -92,7 +94,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
         assert property != null && !property.isVar();
 
         JetProperty newElement = JetPsiFactory.createProperty(project, property.getText().replaceFirst(
-                property.isVar() ? "var" : "val", property.isVar() ? "val" : "var"));
+            property.isVar() ? "var" : "val", property.isVar() ? "val" : "var"));
         property.replace(newElement);
     }
 

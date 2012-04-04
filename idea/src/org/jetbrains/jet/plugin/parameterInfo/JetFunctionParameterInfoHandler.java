@@ -26,6 +26,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -47,7 +48,7 @@ import java.util.List;
  * Date: 17.01.12
  */
 public class JetFunctionParameterInfoHandler implements
-        ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Object, JetValueArgument> {
+                                             ParameterInfoHandlerWithTabActionSupport<JetValueArgumentList, Object, JetValueArgument> {
     public final static Color GREEN_BACKGROUND = new Color(231, 254, 234);
 
     @NotNull
@@ -72,7 +73,7 @@ public class JetFunctionParameterInfoHandler implements
     @NotNull
     @Override
     public Set<Class> getArgumentListAllowedParentClasses() {
-        return Collections.singleton((Class) JetCallElement.class);
+        return Collections.singleton((Class)JetCallElement.class);
     }
 
     @NotNull
@@ -139,7 +140,7 @@ public class JetFunctionParameterInfoHandler implements
     public boolean tracksParameterIndex() {
         return true;
     }
-    
+
     private static String renderParameter(ValueParameterDescriptor descriptor, boolean named, BindingContext bindingContext) {
         StringBuilder builder = new StringBuilder();
         if (named) builder.append("[");
@@ -147,21 +148,27 @@ public class JetFunctionParameterInfoHandler implements
             builder.append("vararg ");
         }
         builder.append(descriptor.getName()).append(": ").
-                append(DescriptorRenderer.TEXT.renderType(getActualParameterType(descriptor)));
+            append(DescriptorRenderer.TEXT.renderType(getActualParameterType(descriptor)));
         if (descriptor.hasDefaultValue()) {
             PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             String defaultExpression = "?";
             if (element instanceof JetParameter) {
-                JetParameter parameter = (JetParameter) element;
+                JetParameter parameter = (JetParameter)element;
                 JetExpression defaultValue = parameter.getDefaultValue();
                 if (defaultValue != null) {
                     if (defaultValue instanceof JetConstantExpression) {
-                        JetConstantExpression constantExpression = (JetConstantExpression) defaultValue;
+                        JetConstantExpression constantExpression = (JetConstantExpression)defaultValue;
                         defaultExpression = constantExpression.getText();
                         if (defaultExpression.length() > 10) {
-                            if (defaultExpression.startsWith("\"")) defaultExpression = "\"...\"";
-                            else if (defaultExpression.startsWith("\'")) defaultExpression = "\'...\'";
-                            else defaultExpression = defaultExpression.substring(0, 7) + "...";
+                            if (defaultExpression.startsWith("\"")) {
+                                defaultExpression = "\"...\"";
+                            }
+                            else if (defaultExpression.startsWith("\'")) {
+                                defaultExpression = "\'...\'";
+                            }
+                            else {
+                                defaultExpression = defaultExpression.substring(0, 7) + "...";
+                            }
                         }
                     }
                 }
@@ -171,7 +178,7 @@ public class JetFunctionParameterInfoHandler implements
         if (named) builder.append("]");
         return builder.toString();
     }
-    
+
     private static JetType getActualParameterType(ValueParameterDescriptor descriptor) {
         JetType paramType = descriptor.getType();
         if (descriptor.getVarargElementType() != null) paramType = descriptor.getVarargElementType();
@@ -186,13 +193,13 @@ public class JetFunctionParameterInfoHandler implements
         }
         PsiElement parameterOwner = context.getParameterOwner();
         if (parameterOwner instanceof JetValueArgumentList) {
-            JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
+            JetValueArgumentList argumentList = (JetValueArgumentList)parameterOwner;
             if (descriptor instanceof FunctionDescriptor) {
-                JetFile file = (JetFile) argumentList.getContainingFile();
+                JetFile file = (JetFile)argumentList.getContainingFile();
                 BindingContext bindingContext =
-                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
-                            .getBindingContext();
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                    AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
+                        .getBindingContext();
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
                 List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -204,27 +211,28 @@ public class JetFunctionParameterInfoHandler implements
                 Color color = context.getDefaultParameterColor();
                 PsiElement parent = argumentList.getParent();
                 if (parent instanceof JetCallElement) {
-                    JetCallElement callExpression = (JetCallElement) parent;
+                    JetCallElement callExpression = (JetCallElement)parent;
                     JetExpression calleeExpression = callExpression.getCalleeExpression();
                     JetSimpleNameExpression refExpression = null;
                     if (calleeExpression instanceof JetSimpleNameExpression) {
-                        refExpression = (JetSimpleNameExpression) calleeExpression; 
-                    } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-                        JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
+                        refExpression = (JetSimpleNameExpression)calleeExpression;
+                    }
+                    else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+                        JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression)calleeExpression;
                         if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
-                            refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
+                            refExpression = (JetSimpleNameExpression)constructorCalleeExpression.getConstructorReferenceExpression();
                         }
                     }
                     if (refExpression != null) {
                         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, refExpression);
                         if (declarationDescriptor != null) {
                             if (declarationDescriptor == functionDescriptor) {
-                               color = GREEN_BACKGROUND;
+                                color = GREEN_BACKGROUND;
                             }
                         }
                     }
                 }
-                
+
                 boolean[] usedIndexes = new boolean[valueParameters.size()];
                 boolean namedMode = false;
                 Arrays.fill(usedIndexes, false);
@@ -236,35 +244,40 @@ public class JetFunctionParameterInfoHandler implements
                 if (valueParameters.size() == 0) builder.append(CodeInsightBundle.message("parameter.info.no.parameters"));
                 for (int i = 0; i < valueParameters.size(); ++i) {
                     if (i != 0) builder.append(", ");
-                    boolean highlightParameter = 
-                            i == currentParameterIndex || (!namedMode && i < currentParameterIndex &&
-                                                           valueParameters.get(valueParameters.size() - 1).
-                                                                   getVarargElementType() != null);
+                    boolean highlightParameter =
+                        i == currentParameterIndex || (!namedMode && i < currentParameterIndex &&
+                                                       valueParameters.get(valueParameters.size() - 1).
+                                                           getVarargElementType() != null);
                     if (highlightParameter) boldStartOffset = builder.length();
                     if (!namedMode) {
                         if (valueArguments.size() > i) {
                             JetValueArgument argument = valueArguments.get(i);
                             if (argument.isNamed()) {
                                 namedMode = true;
-                            } else {
+                            }
+                            else {
                                 ValueParameterDescriptor param = valueParameters.get(i);
                                 builder.append(renderParameter(param, false, bindingContext));
                                 if (i < currentParameterIndex) {
                                     if (argument.getArgumentExpression() != null) {
                                         //check type
                                         JetType paramType = getActualParameterType(param);
-                                        JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+                                        JetType exprType =
+                                            bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
                                         if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) isGrey = true;
                                     }
-                                    else isGrey = true;
+                                    else {
+                                        isGrey = true;
+                                    }
                                 }
                                 usedIndexes[i] = true;
                             }
-                        } else {
+                        }
+                        else {
                             ValueParameterDescriptor param = valueParameters.get(i);
                             builder.append(renderParameter(param, false, bindingContext));
                         }
-                    } 
+                    }
                     if (namedMode) {
                         boolean takeAnyArgument = true;
                         if (valueArguments.size() > i) {
@@ -282,20 +295,25 @@ public class JetFunctionParameterInfoHandler implements
                                             if (argument.getArgumentExpression() != null) {
                                                 //check type
                                                 JetType paramType = getActualParameterType(param);
-                                                JetType exprType = bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-                                                if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) isGrey = true;
+                                                JetType exprType =
+                                                    bindingContext.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
+                                                if (exprType != null && !JetTypeChecker.INSTANCE.isSubtypeOf(exprType, paramType)) {
+                                                    isGrey = true;
+                                                }
                                             }
-                                            else isGrey = true;
+                                            else {
+                                                isGrey = true;
+                                            }
                                         }
                                         break;
                                     }
                                 }
                             }
                         }
-                        
+
                         if (takeAnyArgument) {
                             if (i < currentParameterIndex) isGrey = true;
-                            
+
                             for (int j = 0; j < valueParameters.size(); ++j) {
                                 ValueParameterDescriptor param = valueParameters.get(j);
                                 if (!usedIndexes[j]) {
@@ -308,10 +326,17 @@ public class JetFunctionParameterInfoHandler implements
                     }
                     if (highlightParameter) boldEndOffset = builder.length();
                 }
-                if (builder.toString().isEmpty()) context.setUIComponentEnabled(false);
-                else context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
-                                                          isDeprecated, false, color);
-            } else context.setUIComponentEnabled(false);
+                if (builder.toString().isEmpty()) {
+                    context.setUIComponentEnabled(false);
+                }
+                else {
+                    context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
+                                                         isDeprecated, false, color);
+                }
+            }
+            else {
+                context.setUIComponentEnabled(false);
+            }
         }
     }
 
@@ -324,24 +349,28 @@ public class JetFunctionParameterInfoHandler implements
             element = element.getParent();
         }
         if (element == null) return null;
-        JetValueArgumentList argumentList = (JetValueArgumentList) element;
+        JetValueArgumentList argumentList = (JetValueArgumentList)element;
         JetCallElement callExpression;
         if (element.getParent() instanceof JetCallElement) {
-            callExpression = (JetCallElement) element.getParent();
-        } else return null;
+            callExpression = (JetCallElement)element.getParent();
+        }
+        else {
+            return null;
+        }
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
-                (JetFile) file,
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
-                    .getBindingContext();
+            (JetFile)file,
+            AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER)
+            .getBindingContext();
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;
         if (calleeExpression instanceof JetSimpleNameExpression) {
-            refExpression = (JetSimpleNameExpression) calleeExpression;
-        } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-            JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
+            refExpression = (JetSimpleNameExpression)calleeExpression;
+        }
+        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+            JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression)calleeExpression;
             if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
-                refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
+                refExpression = (JetSimpleNameExpression)constructorCalleeExpression.getConstructorReferenceExpression();
             }
         }
         if (refExpression != null) {
@@ -357,18 +386,21 @@ public class JetFunctionParameterInfoHandler implements
             ArrayList<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();
             for (DeclarationDescriptor variant : variants) {
                 if (variant instanceof FunctionDescriptor) {
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) variant;
+                    FunctionDescriptor functionDescriptor = (FunctionDescriptor)variant;
                     if (functionDescriptor.getName().equals(refName)) {
                         //todo: renamed functions?
                         if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) continue;
                         itemsToShow.add(functionDescriptor);
                     }
-                } else if (variant instanceof ClassDescriptor) {
-                   ClassDescriptor classDescriptor = (ClassDescriptor) variant;
+                }
+                else if (variant instanceof ClassDescriptor) {
+                    ClassDescriptor classDescriptor = (ClassDescriptor)variant;
                     if (classDescriptor.getName().equals(refName)) {
                         //todo: renamed classes?
                         for (ConstructorDescriptor constructorDescriptor : classDescriptor.getConstructors()) {
-                            if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) continue;
+                            if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, constructorDescriptor)) {
+                                continue;
+                            }
                             itemsToShow.add(constructorDescriptor);
                         }
                     }
@@ -390,9 +422,9 @@ public class JetFunctionParameterInfoHandler implements
             parent = parent.getParent();
         }
         if (parent == null) return null;
-        JetValueArgumentList argumentList = (JetValueArgumentList) parent;
+        JetValueArgumentList argumentList = (JetValueArgumentList)parent;
         if (element instanceof JetValueArgument) {
-            JetValueArgument arg = (JetValueArgument) element;
+            JetValueArgument arg = (JetValueArgument)element;
             int i = argumentList.getArguments().indexOf(arg);
             context.setCurrentParameter(i);
             context.setHighlightedParameter(arg);

@@ -18,23 +18,16 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
+import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -48,106 +41,20 @@ import java.util.Collections;
 /**
  * @author abreslav
  */
-public class AnalyzerFacadeForJVM {
+public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
-    private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM");
-
-    public static final Function<JetFile, Collection<JetFile>> SINGLE_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
-        @Override
-        public Collection<JetFile> fun(JetFile file) {
-            return Collections.singleton(file);
-        }
-    };
-
-    private final static Key<CachedValue<AnalyzeExhaust>> BINDING_CONTEXT = Key.create("BINDING_CONTEXT");
-    private static final Object lock = new Object();
+    INSTANCE;
 
     private AnalyzerFacadeForJVM() {
     }
 
-    /**
-     * Analyze project with string cache for given file. Given file will be fully analyzed.
-     *
-     * @param file
-     * @param declarationProvider
-     * @return
-     */
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
-                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
-        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
-        synchronized (lock) {
-            CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
-            if (bindingContextCachedValue == null) {
-                bindingContextCachedValue =
-                    CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                        @Override
-                        public Result<AnalyzeExhaust> compute() {
-                            try {
-                                AnalyzeExhaust bindingContext = analyzeFilesWithJavaIntegration(
-                                    file.getProject(),
-                                    declarationProvider.fun(file),
-                                    Predicates.<PsiFile>equalTo(file),
-                                    JetControlFlowDataTraceFactory.EMPTY,
-                                    CompilerSpecialMode.REGULAR);
-                                return new Result<AnalyzeExhaust>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                            catch (ProcessCanceledException e) {
-                                throw e;
-                            }
-                            catch (Throwable e) {
-                                DiagnosticUtils.throwIfRunningOnServer(e);
-                                LOG.error(e);
-                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                                bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                                AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
-                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                        }
-                    }, false);
-                file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
-            }
-            return bindingContextCachedValue.getValue();
-        }
-    }
-
-    /**
-     * Analyze project with string cache for the whole project. All given files will be analyzed only for descriptors.
-     */
-    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project,
-                                                         @NotNull final Collection<JetFile> files) {
-        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
-        synchronized (lock) {
-            CachedValue<AnalyzeExhaust> bindingContextCachedValue = project.getUserData(BINDING_CONTEXT);
-            if (bindingContextCachedValue == null) {
-                bindingContextCachedValue =
-                    CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                        @Override
-                        public Result<AnalyzeExhaust> compute() {
-                            try {
-                                AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
-                                    project,
-                                    files,
-                                    Predicates.<PsiFile>alwaysFalse(),
-                                    JetControlFlowDataTraceFactory.EMPTY,
-                                    CompilerSpecialMode.REGULAR);
-                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                            catch (ProcessCanceledException e) {
-                                throw e;
-                            }
-                            catch (Throwable e) {
-                                DiagnosticUtils.throwIfRunningOnServer(e);
-                                LOG.error(e);
-                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                                AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
-                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                        }
-                    }, false);
-                project.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
-            }
-            return bindingContextCachedValue.getValue();
-        }
+    @Override
+    @NotNull
+    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
+                                       @NotNull Collection<JetFile> files,
+                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+                                       @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        return analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely, flowDataTraceFactory, CompilerSpecialMode.REGULAR);
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
@@ -195,5 +102,16 @@ public class AnalyzerFacadeForJVM {
 
         return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(),
                                                JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
+                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
+        return AnalyzerFacadeWithCache.getInstance(INSTANCE).analyzeFileWithCache(file, declarationProvider);
+    }
+
+    @NotNull
+    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project, @NotNull final Collection<JetFile> files) {
+        return AnalyzerFacadeWithCache.getInstance(INSTANCE).analyzeProjectWithCache(project, files);
     }
 }
