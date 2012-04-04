@@ -2,7 +2,7 @@ import foo.A
 
 class C : A() {
 
-    override fun getAnswer(array : Array<String?>?, number : Int, value : Any?) : Int {
+    public override fun getAnswer(array : Array<String?>?, number : Int, value : Any?) : Int {
         return super<A>.getAnswer(array, number, value)
     }
 }
