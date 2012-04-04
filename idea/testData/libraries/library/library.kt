@@ -2,16 +2,16 @@ package testData.libraries
 
 import java.util.*
 
-trait SimpleTrait {
+public trait SimpleTrait {
 }
 
-class SimpleClass {
+public class SimpleClass {
 }
 
-class SimpleTraitImpl : SimpleTrait {
+public class SimpleTraitImpl : SimpleTrait {
 }
 
-class WithInnerAndObject {
+public class WithInnerAndObject {
     class object {
         fun foo() {
         }
@@ -24,34 +24,34 @@ class WithInnerAndObject {
     }
 }
 
-class WithTraitClassObject {
+public class WithTraitClassObject {
     class object : SimpleTrait
 }
 
-abstract class AbstractClass {
+public abstract class AbstractClass {
 }
 
-enum class Color(val rgb : Int) {
+public enum class Color(val rgb : Int) {
     RED : Color(0xFF0000)
     GREEN : Color(0x00FF00)
     BLUE : Color(0x0000FF)
 }
 
-abstract class ClassWithAbstractAndOpenMembers {
-    abstract fun abstractFun()
-    open fun openFun() {
+public abstract class ClassWithAbstractAndOpenMembers {
+    public abstract fun abstractFun()
+    public open fun openFun() {
     }
 
-    abstract val abstractVal : String
-    open val openVal : String = ""
-    open val openValWithGetter : String
+    public abstract val abstractVal : String
+    public open val openVal : String = ""
+    public open val openValWithGetter : String
     get() {
         return "239"
     }
 
     public abstract var abstractVar : String
-    open var openVar : String = ""
-    open var openVarWithGetter : String
+    public open var openVar : String = ""
+    public open var openVarWithGetter : String
     get() {
         return "239"
     }
@@ -59,38 +59,38 @@ abstract class ClassWithAbstractAndOpenMembers {
     }
 }
 
-fun main(args : Array<String>) {
+public fun main(args : Array<String>) {
 }
 
 public val globalVal : #(Int, String) = #(239, "239")
 
-val globalValWithGetter : Long
+public val globalValWithGetter : Long
 get() {
     return System.currentTimeMillis()
 }
 
-val String.exProp : String
+public val String.exProp : String
 get() {
     return this
 }
 
-val Int.exProp : Int
+public val Int.exProp : Int
 get() {
     return this
 }
 
-val <T> #(T, T).exProp : String
+public val <T> #(T, T).exProp : String
 get() {
     return "${this._1} : ${this._2}"
 }
 
-fun func(a : Int, b : String = "55") {
+public fun func(a : Int, b : String = "55") {
 }
 
-fun func(a : Int, b : Int) {
+public fun func(a : Int, b : Int) {
 }
 
-fun func() {
+public fun func() {
 }
 
-inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this
+public inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this
