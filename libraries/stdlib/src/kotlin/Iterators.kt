@@ -155,11 +155,8 @@ public inline fun <in T> java.util.Iterator<T?>.requireNoNulls(): java.util.Iter
  * @includeFunctionBody ../../test/iterators/IteratorsTest.kt takeExtractsTheFirstNElements
  */
 public inline fun <T> java.util.Iterator<T>.take(n: Int): java.util.Iterator<T> {
-    fun countTo(n: Int): (T) -> Boolean {
-        var count = 0
-        return { ++count; count <= n }
-    }
-    return takeWhile(countTo(n))
+    var count = n
+    return takeWhile{ --count >= 0 }
 }
 
 /**
