@@ -1,0 +1,24 @@
+//FILE: a/MyJavaClass.java
+package a;
+
+class MyJavaClass {
+}
+
+//FILE:a.kt
+package a
+
+val mc = MyJavaClass()
+
+//FILE: b.kt
+package b
+
+import a.MyJavaClass
+
+val mc1 = <!UNRESOLVED_REFERENCE!>MyJavaClass<!>()
+
+//FILE: c.kt
+package a.c
+
+import a.MyJavaClass
+
+val mc1 = <!UNRESOLVED_REFERENCE!>MyJavaClass<!>()

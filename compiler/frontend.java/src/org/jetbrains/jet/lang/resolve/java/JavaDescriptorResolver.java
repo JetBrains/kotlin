@@ -76,7 +76,24 @@ public class JavaDescriptorResolver {
             return visitor.visitDeclarationDescriptor(this, data);
         }
     };
-    
+
+    private static Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
+        @Override
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            NamespaceDescriptor parentPackage = DescriptorUtils.getParentOfType(what, NamespaceDescriptor.class);
+            NamespaceDescriptor fromPackage = DescriptorUtils.getParentOfType(from, NamespaceDescriptor.class, false);
+            assert parentPackage != null;
+            return parentPackage.equals(fromPackage);
+        }
+
+        @Override
+        protected Integer compareTo(@NotNull Visibility visibility) {
+            if (this == visibility) return 0;
+            if (visibility == Visibilities.PRIVATE) return 1;
+            return -1;
+        }
+    };
+
     private enum TypeParameterDescriptorOrigin {
         JAVA,
         KOTLIN,
@@ -1561,7 +1578,7 @@ public class JavaDescriptorResolver {
 
     private TypeSubstitutor typeSubstitutorForGenericSupertypes(ResolverScopeData scopeData) {
         if (scopeData instanceof ResolverClassData) {
-            return createSubstitutorForGenericSupertypes(((ResolverClassData) scopeData).getClassDescriptor());
+            return createSubstitutorForGenericSupertypes(((ResolverClassData)scopeData).getClassDescriptor());
         } else {
             return TypeSubstitutor.EMPTY;
         }
@@ -1625,10 +1642,11 @@ public class JavaDescriptorResolver {
     }
 
     private static Visibility resolveVisibilityFromPsiModifiers(PsiModifierListOwner modifierListOwner) {
-        //TODO report error
         return modifierListOwner.hasModifierProperty(PsiModifier.PUBLIC) ? Visibilities.PUBLIC :
-                                        (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibilities.PRIVATE :
-                                        (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibilities.PROTECTED : Visibilities.PUBLIC));//todo
+               (modifierListOwner.hasModifierProperty(PsiModifier.PRIVATE) ? Visibilities.PRIVATE :
+                (modifierListOwner.hasModifierProperty(PsiModifier.PROTECTED) ? Visibilities.PROTECTED :
+                 //Visibilities.PUBLIC));
+                 PACKAGE_VISIBILITY));
     }
 
     public List<ClassDescriptor> resolveInnerClasses(DeclarationDescriptor owner, PsiClass psiClass, boolean staticMembers) {
