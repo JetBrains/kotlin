@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
-import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
@@ -51,11 +50,13 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
     private void visitNameExpression(JetExpression expression) {
         PsiReference ref = expression.getReference();
         if (ref == null) return;
-        PsiElement target = ref.resolve();
-        if (target instanceof JetClass) {
-            highlightClassByKind((JetClass)target, expression);
-        } else if (target instanceof JetTypeParameter) {
-            holder.createInfoAnnotation(expression, null).setTextAttributes(JetHighlightingColors.TYPE_PARAMETER);
+        if (JetPsiChecker.isNamesHighlightingEnabled()) {
+            PsiElement target = ref.resolve();
+            if (target instanceof JetClass) {
+                highlightClassByKind((JetClass)target, expression);
+            } else if (target instanceof JetTypeParameter) {
+                JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.TYPE_PARAMETER);
+            }
         }
     }
 
@@ -73,7 +74,7 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
     public void visitTypeParameter(JetTypeParameter parameter) {
         PsiElement identifier = parameter.getNameIdentifier();
         if (identifier != null) {
-            holder.createInfoAnnotation(identifier, null).setTextAttributes(JetHighlightingColors.TYPE_PARAMETER);
+            JetPsiChecker.highlightName(holder, identifier, JetHighlightingColors.TYPE_PARAMETER);
         }
     }
 
@@ -99,7 +100,6 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
                 }
             }
         }
-        Annotation annotation = holder.createInfoAnnotation(whatToHighlight, null);
-        annotation.setTextAttributes(textAttributes);
+        JetPsiChecker.highlightName(holder, whatToHighlight, textAttributes);
     }
 }

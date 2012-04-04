@@ -41,14 +41,13 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         }
 
         if (((PropertyDescriptor)target).getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
-            holder.createInfoAnnotation(expression, null).setTextAttributes(
-                JetHighlightingColors.EXTENSION_PROPERTY);
+            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.EXTENSION_PROPERTY);
         }
 
         boolean namespace = target.getContainingDeclaration() instanceof NamespaceDescriptor;
         putPropertyAnnotation(expression, namespace, false);
         if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            holder.createInfoAnnotation(expression, null).setTextAttributes(JetHighlightingColors.BACKING_FIELD_ACCESS);
+            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
         }
     }
 
@@ -83,10 +82,8 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void putPropertyAnnotation(@NotNull PsiElement elementToHighlight, boolean namespace, boolean withBackingField) {
-        holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(
-            namespace
-            ? JetHighlightingColors.NAMESPACE_PROPERTY
-            : JetHighlightingColors.INSTANCE_PROPERTY
+        JetPsiChecker.highlightName(holder, elementToHighlight,
+                                    namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
         );
         if (withBackingField) {
             holder.createInfoAnnotation(

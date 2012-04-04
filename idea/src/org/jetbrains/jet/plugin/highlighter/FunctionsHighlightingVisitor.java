@@ -41,8 +41,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     public void visitNamedFunction(JetNamedFunction function) {
         PsiElement nameIdentifier = function.getNameIdentifier();
         if (nameIdentifier != null) {
-            holder.createInfoAnnotation(nameIdentifier, null).setTextAttributes(
-                JetHighlightingColors.FUNCTION_DECLARATION);
+            JetPsiChecker.highlightName(holder, nameIdentifier, JetHighlightingColors.FUNCTION_DECLARATION);
         }
 
         super.visitNamedFunction(function);
@@ -57,8 +56,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             if (typeElement instanceof JetUserType) {
                 JetSimpleNameExpression nameExpression = ((JetUserType)typeElement).getReferenceExpression();
                 if (nameExpression != null) {
-                    holder.createInfoAnnotation(nameExpression, null).setTextAttributes(
-                        JetHighlightingColors.CONSTRUCTOR_CALL);
+                    JetPsiChecker.highlightName(holder, nameExpression, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
             }
         }
@@ -72,20 +70,18 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
             DeclarationDescriptor calleeDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression)callee);
             if (calleeDescriptor != null) {
                 if (calleeDescriptor instanceof ConstructorDescriptor) {
-                    holder.createInfoAnnotation(callee, null).setTextAttributes(
-                        JetHighlightingColors.CONSTRUCTOR_CALL);
+                    JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
                 else if (calleeDescriptor instanceof FunctionDescriptor && !(calleeDescriptor instanceof VariableAsFunctionDescriptor)) {
                     FunctionDescriptor fun = (FunctionDescriptor)calleeDescriptor;
                     if (fun.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
-                        holder.createInfoAnnotation(callee, null).setTextAttributes(
-                            JetHighlightingColors.EXTENSION_FUNCTION_CALL);
+                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.EXTENSION_FUNCTION_CALL);
                     }
                     else if (fun.getContainingDeclaration() instanceof NamespaceDescriptor) {
-                        holder.createInfoAnnotation(callee, null).setTextAttributes(JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
+                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.NAMESPACE_FUNCTION_CALL);
                     }
                     else {
-                        holder.createInfoAnnotation(callee, null).setTextAttributes(JetHighlightingColors.FUNCTION_CALL);
+                        JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
                     }
                 }
             }

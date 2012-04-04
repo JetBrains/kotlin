@@ -94,7 +94,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         if (descriptor instanceof VariableDescriptor) {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
             if (variableDescriptor.isVar()) {
-                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.MUTABLE_VARIABLE);
+                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
             if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
@@ -103,11 +103,11 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (descriptor instanceof LocalVariableDescriptor) {
-                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.LOCAL_VARIABLE);
+                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.LOCAL_VARIABLE);
             }
 
             if (descriptor instanceof ValueParameterDescriptor) {
-                holder.createInfoAnnotation(elementToHighlight, null).setTextAttributes(JetHighlightingColors.PARAMETER);
+                JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.PARAMETER);
             }
         }
     }

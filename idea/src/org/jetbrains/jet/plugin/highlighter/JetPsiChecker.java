@@ -23,6 +23,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
@@ -53,6 +54,18 @@ public class JetPsiChecker implements Annotator {
 
     public static boolean isErrorReportingEnabled() {
         return errorReportingEnabled;
+    }
+
+    static boolean isNamesHighlightingEnabled() {
+        return !ApplicationManager.getApplication().isUnitTestMode();
+    }
+
+    static void highlightName(@NotNull AnnotationHolder holder,
+                              @NotNull PsiElement psiElement,
+                              @NotNull TextAttributesKey attributesKey) {
+        if (isNamesHighlightingEnabled()) {
+            holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey);
+        }
     }
 
     private static HighlightingVisitor[] getBeforeAnalysisVisitors(AnnotationHolder holder) {

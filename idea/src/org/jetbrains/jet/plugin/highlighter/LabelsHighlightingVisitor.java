@@ -20,13 +20,9 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetLabelQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lexer.JetTokens;
 
 class LabelsHighlightingVisitor extends HighlightingVisitor {
@@ -38,7 +34,7 @@ class LabelsHighlightingVisitor extends HighlightingVisitor {
     public void visitPrefixExpression(JetPrefixExpression expression) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
-            holder.createInfoAnnotation(operationSign, null).setTextAttributes(JetHighlightingColors.LABEL);
+            JetPsiChecker.highlightName(holder, operationSign, JetHighlightingColors.LABEL);
         }
     }
 
@@ -46,7 +42,7 @@ class LabelsHighlightingVisitor extends HighlightingVisitor {
     public void visitLabelQualifiedExpression(JetLabelQualifiedExpression expression) {
         JetSimpleNameExpression targetLabel = expression.getTargetLabel();
         if (targetLabel != null) {
-            holder.createInfoAnnotation(targetLabel, null).setTextAttributes(JetHighlightingColors.LABEL);
+            JetPsiChecker.highlightName(holder, targetLabel, JetHighlightingColors.LABEL);
         }
     }
 }
