@@ -17,7 +17,7 @@
 package foo;
 
 class A {
-    int getAnswer(String[] array, int number, Object value) {
+    public int getAnswer(String[] array, int number, Object value) {
         return 42;
     }
 }
