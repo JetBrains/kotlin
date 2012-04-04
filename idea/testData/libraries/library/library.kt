@@ -1,5 +1,7 @@
 package testData.libraries
 
+import java.util.*
+
 trait SimpleTrait {
 }
 
@@ -90,3 +92,5 @@ fun func(a : Int, b : Int) {
 
 fun func() {
 }
+
+inline fun <T> T.filter(predicate: (T)-> Boolean) : T? = this

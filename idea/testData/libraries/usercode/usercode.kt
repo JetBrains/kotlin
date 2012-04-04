@@ -21,4 +21,5 @@ fun main(args : Array<String>) : Unit {
     func()
 
     WithInnerAndObject.foo()
+    5.filter { it % 2 == 1 }
 }
