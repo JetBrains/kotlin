@@ -35,6 +35,10 @@ import java.util.Arrays;
  * Date: 07.02.12
  */
 public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
+    public void testGetterSure() {
+        doTest();
+    }
+
     public void testNameArrayOfClasses() {
         doTest();
     }
