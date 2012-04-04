@@ -47,8 +47,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "        return 0\n" +
                         "    }\n" +
                         "    private fun foo2():Int {\n" +
-                        "        return foo1(\n" +
-                        "                12,\n" +
+                        "        return foo1(12,\n" +
                         "                13,\n" +
                         "                14\n" +
                         "        )\n" +

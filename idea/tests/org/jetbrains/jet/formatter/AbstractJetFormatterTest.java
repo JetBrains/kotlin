@@ -161,7 +161,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         return doc.getText();
     }
 
-    public static String loadFile(String name) throws Exception {
+    protected static String loadFile(String name) throws Exception {
         String text = FileUtil.loadFile(new File(BASE_PATH, name));
         text = StringUtil.convertLineSeparators(text);
         return text;

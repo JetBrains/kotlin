@@ -1,3 +1,2 @@
-fun testParam(
-        <caret>) {
+fun testParam(<caret>) {
 }

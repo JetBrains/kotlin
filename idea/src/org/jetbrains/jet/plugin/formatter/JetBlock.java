@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.formatter;
 
 import com.intellij.formatting.*;
-import com.intellij.formatting.alignment.AlignmentStrategy;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -152,6 +151,15 @@ public class JetBlock extends AbstractBlock {
         else if (type == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
             return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
         }
+        else if (type == JetNodeTypes.VALUE_PARAMETER_LIST || type == JetNodeTypes.VALUE_ARGUMENT_LIST) {
+            // Child index 1 - cursor is after ( - parameter alignment should be recreated
+            // Child index 0 - before expression - know nothing about it
+            if (newChildIndex != 1 && newChildIndex != 0 && newChildIndex < getSubBlocks().size()) {
+                Block block = getSubBlocks().get(newChildIndex);
+                return new ChildAttributes(block.getIndent(), block.getAlignment());
+            }
+            return new ChildAttributes(Indent.getContinuationIndent(), null);
+        }
 
         return new ChildAttributes(Indent.getNoneIndent(), null);
     }
@@ -165,18 +173,18 @@ public class JetBlock extends AbstractBlock {
     protected Map<ASTNode, Alignment> createChildrenAlignments() {
         CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
 
-        // Prepare strategies for setting up alignments - no alignment should be set by default
-        AlignmentStrategy[] strategies = new AlignmentStrategy[] { AlignmentStrategy.getNullStrategy() };
+        // Prepare default null strategy
+        ASTAlignmentStrategy strategy = ASTAlignmentStrategy.getNullStrategy();
 
         // Redefine list of strategies for some special elements
         IElementType parentType = myNode.getElementType();
         if (parentType == JetNodeTypes.VALUE_PARAMETER_LIST) {
-            strategies = getAlignmentForChildInParenthesis(
+            strategy = getAlignmentForChildInParenthesis(
                     jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, JetNodeTypes.VALUE_PARAMETER, JetTokens.COMMA,
                     jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, JetTokens.LPAR, JetTokens.RPAR);
         }
         else if (parentType == JetNodeTypes.VALUE_ARGUMENT_LIST) {
-            strategies = getAlignmentForChildInParenthesis(
+            strategy = getAlignmentForChildInParenthesis(
                     jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, JetNodeTypes.VALUE_ARGUMENT, JetTokens.COMMA,
                     jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, JetTokens.LPAR, JetTokens.RPAR);
         }
@@ -193,32 +201,57 @@ public class JetBlock extends AbstractBlock {
                 continue;
             }
 
-            for (AlignmentStrategy strategy : strategies) {
-                Alignment childAlignment = strategy.getAlignment(parentType, child.getElementType());
-                if (childAlignment != null) {
-                    result.put(child, childAlignment);
-                    break;
-                }
+            Alignment childAlignment = strategy.getAlignment(child);
+            if (childAlignment != null) {
+                result.put(child, childAlignment);
             }
         }
 
         return result;
     }
 
-    private static AlignmentStrategy[] getAlignmentForChildInParenthesis(
-            boolean shouldAlignChild, IElementType parameter, IElementType delimiter,
-            boolean shouldAlignParenthesis, IElementType openParenth, IElementType closeParenth
+    private static ASTAlignmentStrategy getAlignmentForChildInParenthesis(
+            boolean shouldAlignChild, final IElementType parameter, final IElementType delimiter,
+            boolean shouldAlignParenthesis, final IElementType openParenth, final IElementType closeParenth
     ) {
-        return new AlignmentStrategy[] {
-                AlignmentStrategy.wrap(shouldAlignChild ? Alignment.createAlignment() : null, false, parameter),
-                AlignmentStrategy.wrap(shouldAlignChild ? Alignment.createAlignment() : null, false, delimiter),
-                AlignmentStrategy.wrap(shouldAlignParenthesis ? Alignment.createAlignment() : null, false, openParenth, closeParenth)
+        // TODO: Check this approach in other situations and refactor
+        final Alignment parameterAlignment = shouldAlignChild ? Alignment.createAlignment() : null;
+        final Alignment parenthesisAlignment = shouldAlignParenthesis ? Alignment.createAlignment() : null;
+
+        return new ASTAlignmentStrategy() {
+            @Override
+            public Alignment getAlignment(ASTNode node) {
+                IElementType childNodeType = node.getElementType();
+
+                ASTNode prev = getPrevWithoutWhitespace(node);
+                if ((prev != null && prev.getElementType() == TokenType.ERROR_ELEMENT) || childNodeType == TokenType.ERROR_ELEMENT) {
+                    return parameterAlignment;
+                }
+
+                if (childNodeType == openParenth || childNodeType == closeParenth) {
+                    return parenthesisAlignment;
+                }
+
+                if (childNodeType == parameter || childNodeType == delimiter) {
+                    return parameterAlignment;
+                }
+
+                return null;
+            }
         };
+    }
+
+    @Override
+    protected Indent getChildIndent() {
+        return super.getChildIndent();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     @Nullable
     protected Indent createChildIndent(@NotNull ASTNode child) {
+        CommonCodeStyleSettings commonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+
         ASTNode childParent = child.getTreeParent();
+        IElementType childType = child.getElementType();
 
         if (CODE_BLOCKS.contains(myNode.getElementType())) {
             return indentIfNotBrace(child);
@@ -226,13 +259,13 @@ public class JetBlock extends AbstractBlock {
 
         if (childParent != null &&
                  childParent.getElementType() == JetNodeTypes.BODY &&
-                 child.getElementType() != JetNodeTypes.BLOCK) {
+                 childType != JetNodeTypes.BLOCK) {
 
             // For a single statement if 'for'
             return Indent.getNormalIndent();
         }
 
-        if (child.getElementType() == JetNodeTypes.WHEN_ENTRY) {
+        if (childType == JetNodeTypes.WHEN_ENTRY) {
             // For the entry in when
             // TODO: Add an option for configuration?
             return Indent.getNormalIndent();
@@ -245,7 +278,7 @@ public class JetBlock extends AbstractBlock {
             }
         }
 
-        if (STATEMENT_PARTS.contains(myNode.getElementType()) && child.getElementType() != JetNodeTypes.BLOCK) {
+        if (STATEMENT_PARTS.contains(myNode.getElementType()) && childType != JetNodeTypes.BLOCK) {
             return Indent.getNormalIndent();
         }
 
@@ -255,16 +288,21 @@ public class JetBlock extends AbstractBlock {
             }
         }
 
-        if (childParent != null &&
-                 (childParent.getElementType() == JetNodeTypes.VALUE_PARAMETER_LIST ||
-                  childParent.getElementType() == JetNodeTypes.TYPE_PARAMETER_LIST ||
-                  childParent.getElementType() == JetNodeTypes.VALUE_ARGUMENT_LIST ||
-                  childParent.getElementType() == JetNodeTypes.TYPE_ARGUMENT_LIST)) {
-            if (child.getElementType() == JetTokens.RPAR) {
-                return Indent.getNoneIndent();
+        if (childParent != null) {
+            IElementType parentType = childParent.getElementType();
+
+            if (parentType == JetNodeTypes.VALUE_PARAMETER_LIST || parentType == JetNodeTypes.VALUE_ARGUMENT_LIST) {
+                ASTNode prev = getPrevWithoutWhitespace(child);
+                if (childType == JetTokens.RPAR && (prev == null || prev.getElementType() != TokenType.ERROR_ELEMENT)) {
+                    return Indent.getNoneIndent();
+                }
+
+                return Indent.getContinuationWithoutFirstIndent();
             }
 
-            return Indent.getContinuationWithoutFirstIndent(false);
+            if (parentType == JetNodeTypes.TYPE_PARAMETER_LIST || parentType == JetNodeTypes.TYPE_ARGUMENT_LIST) {
+                return Indent.getContinuationWithoutFirstIndent();
+            }
         }
 
         return Indent.getNoneIndent();

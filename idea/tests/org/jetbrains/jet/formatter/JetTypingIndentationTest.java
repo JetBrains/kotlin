@@ -16,8 +16,12 @@
 
 package org.jetbrains.jet.formatter;
 
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.io.File;
 
@@ -38,8 +42,7 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         doFileNewlineTest();
     }
 
-    // TODO
-    public void enabletestEmptyParameters() {
+    public void testEmptyParameters() {
         doFileNewlineTest();
     }
 
@@ -56,9 +59,12 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         doFileNewlineTest();
     }
 
-    // TODO
-    public void enabletestNotFirstParameter() {
+    public void testNotFirstParameter() {
         doFileNewlineTest();
+    }
+
+    public void testSettingAlignMultilineParametersInCalls() throws Exception {
+        doFileSettingNewLineTest();
     }
 
     public void testWhile() {
@@ -66,9 +72,46 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
     }
 
     public void doFileNewlineTest() {
-        configureByFile(getTestName(false) + ".kt");
+        doNewlineTest(getBeforeFileName(), getAfterFileName());
+    }
+
+    public String getBeforeFileName() {
+        return getTestName(false) + ".kt";
+    }
+
+    public String getAfterFileName() {
+        return getTestName(false) + "_after.kt";
+    }
+
+    public String getInvertedAfterFileName() {
+        return getTestName(false) + "_after_inv.kt";
+    }
+
+    public void doFileSettingNewLineTest() throws Exception {
+        String originalFileText = FileUtil.loadFile(new File(getTestDataPath(), getBeforeFileName()));
+        FormattingSettingsConfigurator configurator = new FormattingSettingsConfigurator(originalFileText);
+
+        configurator.configureSettings(getSettings());
+        doNewlineTest(getBeforeFileName(), getAfterFileName());
+
+        configurator.configureInvertedSettings(getSettings());
+        doNewlineTest(getBeforeFileName(), getInvertedAfterFileName());
+
+        getSettings().clearCodeStyleSettings();
+    }
+
+    private void doNewlineTest(String beforeFileName, String afterFileName) {
+        configureByFile(beforeFileName);
         type('\n');
-        checkResultByFile(getTestName(false) + ".after.kt");
+        checkResultByFile(afterFileName);
+    }
+
+    public static JetCodeStyleSettings getJetSettings() {
+        return getSettings().getCustomSettings(JetCodeStyleSettings.class);
+    }
+
+    public static CodeStyleSettings getSettings() {
+        return CodeStyleSettingsManager.getSettings(getProject());
     }
 
     @Override
