@@ -4,7 +4,7 @@ trait A {
 }
 
 fun some() : A {
-    return object A {
+    return object : A {
         override val method : () -> Unit? = ?
     }
 }
