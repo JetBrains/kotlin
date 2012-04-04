@@ -432,6 +432,12 @@ public class OverrideResolver {
 
             checkVisibilityForMember(propertyDescriptor.getVisibility(), property, propertyDescriptor.getOverriddenDescriptors());
         }
+        for (PropertyDescriptor propertyDescriptor : context.getPrimaryConstructorParameterProperties()) {
+            PsiElement parameter = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
+            if (parameter instanceof JetParameter) {
+                checkVisibilityForMember(propertyDescriptor.getVisibility(), (JetParameter)parameter, propertyDescriptor.getOverriddenDescriptors());
+            }
+        }
     }
 
     private void checkVisibilityForMember(@NotNull Visibility visibility,
