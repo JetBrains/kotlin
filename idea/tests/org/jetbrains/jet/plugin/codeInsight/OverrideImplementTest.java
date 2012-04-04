@@ -122,6 +122,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doOverrideDirectoryTest();
     }
 
+    public void testInheritVisibilities() {
+        doMultiOverrideFileTest();
+    }
+
     private void doImplementFileTest() {
         doFileTest(new ImplementMethodsHandler());
     }
