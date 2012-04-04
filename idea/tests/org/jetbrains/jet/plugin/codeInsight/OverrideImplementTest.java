@@ -35,6 +35,7 @@ import java.util.Set;
 
 /**
  * @author yole
+ * @author slukjanov aka Frostman
  */
 public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     @NotNull
@@ -50,69 +51,125 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testFunctionMethod() {
-        doFileTest();
+        doImplementFileTest();
     }
 
     public void testFunctionProperty() {
-        doFileTest();
+        doImplementFileTest();
     }
 
     public void testJavaInterfaceMethod() {
-        doDirectoryTest();
+        doImplementDirectoryTest();
     }
 
     public void testJavaParameters() {
-        doDirectoryTest();
+        doImplementDirectoryTest();
     }
     
     public void testGenericMethod() {
-        doFileTest();
+        doImplementFileTest();
     }
 
     public void testProperty() {
-        doFileTest();
+        doImplementFileTest();
     }
 
-    public void testTraitGenericOverride() {
-        doFileTest();
+    public void testTraitGenericImplement() {
+        doImplementFileTest();
     }
 
     public void testRespectCaretPosition() {
-        doMultiFileTest();
+        doMultiImplementFileTest();
     }
 
     public void testGenerateMulti() {
-        doMultiFileTest();
+        doMultiImplementFileTest();
     }
 
     public void testTraitNullableFunction() {
-        doFileTest();
+        doImplementFileTest();
     }
 
-    private void doFileTest() {
+    public void testOverrideUnitFunction() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideNonUnitFunction() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideFunctionProperty() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideGenericFunction() {
+        doOverrideFileTest();
+    }
+
+    public void testMultiOverride() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testComplexMultiOverride() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideRespectCaretPosition() {
+        doMultiOverrideFileTest();
+    }
+
+    public void testOverrideJavaMethod() {
+        doOverrideDirectoryTest();
+    }
+
+    private void doImplementFileTest() {
+        doFileTest(new ImplementMethodsHandler());
+    }
+
+    private void doOverrideFileTest() {
+        doFileTest(new OverrideMethodsHandler());
+    }
+
+    private void doMultiImplementFileTest() {
+        doMultiFileTest(new ImplementMethodsHandler());
+    }
+
+    private void doMultiOverrideFileTest() {
+        doMultiFileTest(new OverrideMethodsHandler());
+    }
+
+    private void doImplementDirectoryTest() {
+        doDirectoryTest(new ImplementMethodsHandler());
+    }
+
+    private void doOverrideDirectoryTest() {
+        doDirectoryTest(new OverrideMethodsHandler());
+    }
+
+    private void doFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        doImplement();
+        doOverrideImplement(handler);
         myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 
-    private void doMultiFileTest() {
+    private void doMultiFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        doMultiImplement();
+        doMultiOverrideImplement(handler);
         myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 
-    private void doDirectoryTest() {
+    private void doDirectoryTest(OverrideImplementMethodsHandler handler) {
         myFixture.copyDirectoryToProject(getTestName(true), "");
         myFixture.configureFromTempProjectFile("foo/Impl.kt");
-        doImplement();
+        doOverrideImplement(handler);
         myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
     }
 
-    private void doImplement() {
+    private void doOverrideImplement(OverrideImplementMethodsHandler handler) {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
-        final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
+        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
         assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
@@ -124,11 +181,11 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         }.execute();
     }
 
-    private void doMultiImplement() {
+    private void doMultiOverrideImplement(OverrideImplementMethodsHandler handler) {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
-        final Set<CallableMemberDescriptor> descriptors = new ImplementMethodsHandler().collectMethodsToGenerate(classOrObject);
+        final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
 
         final ArrayList<CallableMemberDescriptor> descriptorsList = new ArrayList<CallableMemberDescriptor>(descriptors);
         Collections.sort(descriptorsList, new Comparator<CallableMemberDescriptor>() {

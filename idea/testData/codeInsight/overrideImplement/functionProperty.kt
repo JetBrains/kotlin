@@ -4,5 +4,5 @@ trait A {
 }
 
 fun some() : A {
-    return object A {<caret>}
+    return object : A {<caret>}
 }
