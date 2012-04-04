@@ -29,6 +29,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -71,36 +72,38 @@ public class AnalyzerFacadeForJVM {
      * @param declarationProvider
      * @return
      */
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file, @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
+    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
+                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(BINDING_CONTEXT);
             if (bindingContextCachedValue == null) {
-                bindingContextCachedValue = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                    @Override
-                    public Result<AnalyzeExhaust> compute() {
-                        try {
-                            AnalyzeExhaust bindingContext = analyzeFilesWithJavaIntegration(
+                bindingContextCachedValue =
+                    CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
+                        @Override
+                        public Result<AnalyzeExhaust> compute() {
+                            try {
+                                AnalyzeExhaust bindingContext = analyzeFilesWithJavaIntegration(
                                     file.getProject(),
                                     declarationProvider.fun(file),
                                     Predicates.<PsiFile>equalTo(file),
                                     JetControlFlowDataTraceFactory.EMPTY,
                                     CompilerSpecialMode.REGULAR);
-                            return new Result<AnalyzeExhaust>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                                return new Result<AnalyzeExhaust>(bindingContext, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
+                            catch (ProcessCanceledException e) {
+                                throw e;
+                            }
+                            catch (Throwable e) {
+                                DiagnosticUtils.throwIfRunningOnServer(e);
+                                LOG.error(e);
+                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                                bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
+                                AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
+                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
                         }
-                        catch (ProcessCanceledException e) {
-                            throw e;
-                        }
-                        catch (Throwable e) {
-                            DiagnosticUtils.throwIfRunningOnServer(e);
-                            LOG.error(e);
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                            AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
-                            return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }
-                }, false);
+                    }, false);
                 file.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
             }
             return bindingContextCachedValue.getValue();
@@ -111,35 +114,36 @@ public class AnalyzerFacadeForJVM {
      * Analyze project with string cache for the whole project. All given files will be analyzed only for descriptors.
      */
     public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project,
-            @NotNull final Collection<JetFile> files) {
+                                                         @NotNull final Collection<JetFile> files) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             CachedValue<AnalyzeExhaust> bindingContextCachedValue = project.getUserData(BINDING_CONTEXT);
             if (bindingContextCachedValue == null) {
-                bindingContextCachedValue = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                    @Override
-                    public Result<AnalyzeExhaust> compute() {
-                        try {
-                            AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
+                bindingContextCachedValue =
+                    CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
+                        @Override
+                        public Result<AnalyzeExhaust> compute() {
+                            try {
+                                AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
                                     project,
                                     files,
                                     Predicates.<PsiFile>alwaysFalse(),
                                     JetControlFlowDataTraceFactory.EMPTY,
                                     CompilerSpecialMode.REGULAR);
-                            return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
+                            catch (ProcessCanceledException e) {
+                                throw e;
+                            }
+                            catch (Throwable e) {
+                                DiagnosticUtils.throwIfRunningOnServer(e);
+                                LOG.error(e);
+                                BindingTraceContext bindingTraceContext = new BindingTraceContext();
+                                AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
+                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
+                            }
                         }
-                        catch (ProcessCanceledException e) {
-                            throw e;
-                        }
-                        catch (Throwable e) {
-                            DiagnosticUtils.throwIfRunningOnServer(e);
-                            LOG.error(e);
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
-                            return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }
-                }, false);
+                    }, false);
                 project.putUserData(BINDING_CONTEXT, bindingContextCachedValue);
             }
             return bindingContextCachedValue.getValue();
@@ -147,7 +151,7 @@ public class AnalyzerFacadeForJVM {
     }
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-            JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
         AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, flowDataTraceFactory);
@@ -159,25 +163,25 @@ public class AnalyzerFacadeForJVM {
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
-                Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory, CompilerSpecialMode.REGULAR);
+                                               Predicates.<PsiFile>alwaysTrue(), flowDataTraceFactory, CompilerSpecialMode.REGULAR);
     }
 
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
-            JetControlFlowDataTraceFactory flowDataTraceFactory,
-            CompilerSpecialMode compilerSpecialMode) {
+        Project project, Collection<JetFile> files, Predicate<PsiFile> filesToAnalyzeCompletely,
+        JetControlFlowDataTraceFactory flowDataTraceFactory,
+        CompilerSpecialMode compilerSpecialMode) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                filesToAnalyzeCompletely, false, false);
+            filesToAnalyzeCompletely, false, false);
 
 
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
-                project, topDownAnalysisParameters,
-                new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory,
-                compilerSpecialMode);
+            project, topDownAnalysisParameters,
+            new ObservableBindingTrace(bindingTraceContext), owner, flowDataTraceFactory,
+            compilerSpecialMode);
 
 
         injector.getTopDownAnalyzer().analyzeFiles(files);
@@ -190,6 +194,6 @@ public class AnalyzerFacadeForJVM {
         Project project = files.iterator().next().getProject();
 
         return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(),
-                JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
+                                               JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
     }
 }

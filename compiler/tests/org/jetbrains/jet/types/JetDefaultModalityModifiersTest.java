@@ -18,12 +18,12 @@ package org.jetbrains.jet.types;
 
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTests;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -45,7 +45,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.setUp();
     }
 
-    public class JetDefaultModalityModifiersTestCase  {
+    public class JetDefaultModalityModifiersTestCase {
         private ModuleDescriptor root = new ModuleDescriptor("test_root");
         private DescriptorResolver descriptorResolver;
         private JetScope scope;
@@ -62,11 +62,13 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
-            AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
-            DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
+            AnalyzeExhaust bindingContext =
+                AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+            DeclarationDescriptor classDescriptor =
+                bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
             assert classDescriptor instanceof ClassifierDescriptor;
-            scope.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);
+            scope.addClassifierDescriptor((ClassifierDescriptor)classDescriptor);
             scope.changeLockLevel(WritableScope.LockLevel.READING);
             return scope;
         }
@@ -90,8 +92,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             MutableClassDescriptor classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetNamedFunction function = (JetNamedFunction) declarations.get(0);
-            SimpleFunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function, JetTestUtils.DUMMY_TRACE);
+            JetNamedFunction function = (JetNamedFunction)declarations.get(0);
+            SimpleFunctionDescriptor functionDescriptor =
+                descriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function, JetTestUtils.DUMMY_TRACE);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }
@@ -101,20 +104,25 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             MutableClassDescriptor classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
+            JetProperty property = (JetProperty)declarations.get(0);
+            PropertyDescriptor propertyDescriptor =
+                descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
 
 
-        private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
+        private void testPropertyAccessorModality(String classWithPropertyWithAccessor,
+                                                  ClassKind kind,
+                                                  Modality expectedPropertyAccessorModality,
+                                                  boolean isGetter) {
             JetClass aClass = JetPsiFactory.createClass(getProject(), classWithPropertyWithAccessor);
             MutableClassDescriptor classDescriptor = createClassDescriptor(kind, aClass);
 
             List<JetDeclaration> declarations = aClass.getDeclarations();
-            JetProperty property = (JetProperty) declarations.get(0);
-            PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
+            JetProperty property = (JetProperty)declarations.get(0);
+            PropertyDescriptor propertyDescriptor =
+                descriptorResolver.resolvePropertyDescriptor(classDescriptor, scope, property, JetTestUtils.DUMMY_TRACE);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();
@@ -382,13 +390,15 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; open get }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; final get }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; override get() = 2 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; final override get() = 2 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("open class A : C { open override val a: Int = 0; final override get() = 2 }",
+                                               Modality.FINAL);
 
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0 }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; get }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; final get }", Modality.FINAL);
         tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; override get() = 2 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; final override get() = 2 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("open class A : C { final override val a: Int = 0; final override get() = 2 }",
+                                               Modality.FINAL);
 
         tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int }", Modality.ABSTRACT);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { abstract override val a: Int get }", Modality.ABSTRACT);
@@ -401,10 +411,12 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int }", Modality.ABSTRACT);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int get }", Modality.ABSTRACT);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int open get }", Modality.ABSTRACT);
-        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int abstract get }", Modality.ABSTRACT);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open abstract override val a: Int abstract get }",
+                                               Modality.ABSTRACT);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int override get() = 10 }", Modality.OPEN);
         tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int open override get() = 10 }", Modality.OPEN);
-        tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int final override  get() = 10 }", Modality.FINAL);
+        tc.testPropertyAccessorModalityInClass("abstract class A : C { open override val a: Int final override  get() = 10 }",
+                                               Modality.FINAL);
 
         tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int }", Modality.ABSTRACT);
         tc.testPropertyAccessorModalityInTrait("trait A : C { override val a: Int get }", Modality.ABSTRACT);

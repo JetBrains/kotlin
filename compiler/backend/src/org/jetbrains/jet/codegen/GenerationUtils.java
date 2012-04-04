@@ -17,9 +17,9 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.util.Collections;
@@ -34,10 +34,11 @@ public class GenerationUtils {
     }
 
     public static GenerationState compileFileGetGenerationState(JetFile psiFile) {
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, JetControlFlowDataTraceFactory.EMPTY);
-        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
+        final AnalyzeExhaust analyzeExhaust =
+            AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, JetControlFlowDataTraceFactory.EMPTY);
+        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust,
+                                                    Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }
-
 }

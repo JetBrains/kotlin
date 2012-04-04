@@ -41,6 +41,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
@@ -48,7 +49,6 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
@@ -100,8 +100,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     private static PsiClass findClass(FqName fqn, StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass) stub.getPsi();
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub)stub).getQualifiedName())) {
+            return (PsiClass)stub.getPsi();
         }
 
         for (StubElement child : stub.getChildrenStubs()) {
@@ -128,14 +128,14 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             }, false);
             file.putUserData(JAVA_API_STUB, answer);
         }
-        
+
         return answer.getValue();
     }
-    
+
     private PsiJavaFileStub calcStub() {
         final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file).getFqName(), true);
         final Project project = getProject();
-        
+
         final Stack<StubElement> stubStack = new Stack<StubElement>();
 
         final ClassBuilderFactory builderFactory = new ClassBuilderFactory() {
@@ -168,13 +168,14 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 stubStack.push(answer);
 
                 answer.setPsiFactory(new ClsWrapperStubPsiFactory());
-                final ClsFileImpl fakeFile = new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, file.getVirtualFile())) {
-                    @NotNull
-                    @Override
-                    public PsiClassHolderFileStub getStub() {
-                        return answer;
-                    }
-                };
+                final ClsFileImpl fakeFile =
+                    new ClsFileImpl((PsiManagerImpl)manager, new ClassFileViewProvider(manager, file.getVirtualFile())) {
+                        @NotNull
+                        @Override
+                        public PsiClassHolderFileStub getStub() {
+                            return answer;
+                        }
+                    };
 
                 fakeFile.setPhysical(false);
                 answer.setPsi(fakeFile);
@@ -205,7 +206,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public boolean isEquivalentTo(PsiElement another) {
-        return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+        return another instanceof PsiClass && Comparing.equal(((PsiClass)another).getQualifiedName(), getQualifiedName());
     }
 
     @Override
@@ -217,7 +218,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     public String toString() {
         try {
             return JetLightClass.class.getSimpleName() + ":" + getQualifiedName();
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             return JetLightClass.class.getSimpleName() + ":" + e.toString();
         }
     }

@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -41,7 +42,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -71,7 +71,11 @@ public class CompileSession {
     private final CompilerSpecialMode compilerSpecialMode;
     private AnalyzeExhaust bindingContext;
 
-    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose, CompilerSpecialMode mode) {
+    public CompileSession(JetCoreEnvironment environment,
+                          MessageRenderer messageRenderer,
+                          PrintStream errorStream,
+                          boolean verbose,
+                          CompilerSpecialMode mode) {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
@@ -90,8 +94,9 @@ public class CompileSession {
     }
 
     public void addSources(String path) {
-        if(path == null)
+        if (path == null) {
             return;
+        }
 
         VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
@@ -107,7 +112,7 @@ public class CompileSession {
     }
 
     private void addSources(File file) {
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
                 for (File child : files) {
@@ -119,7 +124,7 @@ public class CompileSession {
             VirtualFile fileByPath = environment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
                 PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(fileByPath);
-                if(psiFile instanceof JetFile) {
+                if (psiFile instanceof JetFile) {
                     sourceFiles.add((JetFile)psiFile);
                 }
             }
@@ -127,7 +132,7 @@ public class CompileSession {
     }
 
     public void addSources(VirtualFile vFile) {
-        if  (vFile.isDirectory())  {
+        if (vFile.isDirectory()) {
             for (VirtualFile virtualFile : vFile.getChildren()) {
                 addSources(virtualFile);
             }
@@ -161,22 +166,25 @@ public class CompileSession {
 
     /**
      * @see JetTypeMapper#getFQName(DeclarationDescriptor)
-     * TODO possibly duplicates DescriptorUtils#getFQName(DeclarationDescriptor)
+     *      TODO possibly duplicates DescriptorUtils#getFQName(DeclarationDescriptor)
      */
     private static String fqName(ClassOrNamespaceDescriptor descriptor) {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration == null || containingDeclaration instanceof ModuleDescriptor || containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
+        if (containingDeclaration == null ||
+            containingDeclaration instanceof ModuleDescriptor ||
+            containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
             return descriptor.getName();
-        } else {
-            return fqName((ClassOrNamespaceDescriptor) containingDeclaration) + "." + descriptor.getName();
+        }
+        else {
+            return fqName((ClassOrNamespaceDescriptor)containingDeclaration) + "." + descriptor.getName();
         }
     }
 
     private void analyzeAndReportSemanticErrors() {
         Predicate<PsiFile> filesToAnalyzeCompletely =
-                stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
+            stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
+            environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollector, diagnostic);
@@ -221,7 +229,8 @@ public class CompileSession {
     public GenerationState generate(boolean module) {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
-                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles);
+                                                              isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext,
+                                                              sourceFiles);
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();

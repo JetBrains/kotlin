@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.project;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 
@@ -29,8 +29,11 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
  */
 public final class WholeProjectAnalyzerFacade {
 
-    /** Forbid creating */
-    private WholeProjectAnalyzerFacade() {}
+    /**
+     * Forbid creating
+     */
+    private WholeProjectAnalyzerFacade() {
+    }
 
 
     @NotNull

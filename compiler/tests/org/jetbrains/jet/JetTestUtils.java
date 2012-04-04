@@ -22,6 +22,7 @@ import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -30,7 +31,6 @@ import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
@@ -86,7 +86,7 @@ public class JetTestUtils {
 
         @Override
         public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
+            if (slice == BindingContext.PROCESSED) return (V)Boolean.FALSE;
             return SlicedMap.DO_NOTHING.get(slice, key);
         }
 
@@ -100,61 +100,61 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
+                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
                 throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getPsiElement().getText());
             }
         }
     };
 
     public static BindingTrace DUMMY_EXCEPTION_ON_ERROR_TRACE = new BindingTrace() {
-            @Override
-            public BindingContext getBindingContext() {
-                return new BindingContext() {
-                    @Override
-                    public Collection<Diagnostic> getDiagnostics() {
-                        throw new UnsupportedOperationException();
-                    }
+        @Override
+        public BindingContext getBindingContext() {
+            return new BindingContext() {
+                @Override
+                public Collection<Diagnostic> getDiagnostics() {
+                    throw new UnsupportedOperationException();
+                }
 
-                    @Override
-                    public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                        return DUMMY_EXCEPTION_ON_ERROR_TRACE.get(slice, key);
-                    }
+                @Override
+                public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.get(slice, key);
+                }
 
-                    @NotNull
-                    @Override
-                    public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                        return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
-                    }
-                };
-            }
-
-            @Override
-            public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-            }
-
-            @Override
-            public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-            }
-
-            @Override
-            public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                return null;
-            }
-
-            @NotNull
-            @Override
-            public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                assert slice.isCollective();
-                return Collections.emptySet();
-            }
-
-            @Override
-                public void report(@NotNull Diagnostic diagnostic) {
-                    if (diagnostic.getSeverity() == Severity.ERROR) {
-                        throw new IllegalStateException(diagnostic.getMessage());
-                    }
+                @NotNull
+                @Override
+                public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
                 }
             };
+        }
+
+        @Override
+        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
+        }
+
+        @Override
+        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
+        }
+
+        @Override
+        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
+            return null;
+        }
+
+        @NotNull
+        @Override
+        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
+            assert slice.isCollective();
+            return Collections.emptySet();
+        }
+
+        @Override
+        public void report(@NotNull Diagnostic diagnostic) {
+            if (diagnostic.getSeverity() == Severity.ERROR) {
+                throw new IllegalStateException(diagnostic.getMessage());
+            }
+        }
+    };
 
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory);
@@ -202,24 +202,25 @@ public class JetTestUtils {
     public static void deleteOnShutdown(File file) {
         if (filesToDelete.isEmpty()) {
             ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
-                  @Override
-                  public void run() {
+                @Override
+                public void run() {
                     ShutDownTracker.invokeAndWait(true, true, new Runnable() {
-                      @Override
-                      public void run() {
-                          for (File victim : filesToDelete) {
-                              FileUtil.delete(victim);
-                          }
-                      }
+                        @Override
+                        public void run() {
+                            for (File victim : filesToDelete) {
+                                FileUtil.delete(victim);
+                            }
+                        }
                     });
-                  }
-                });
+                }
+            });
         }
 
         filesToDelete.add(file);
     }
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+
     public interface TestFileFactory<F> {
         F create(String fileName, String text);
     }
@@ -254,7 +255,10 @@ public class JetTestUtils {
 
                 if (!nextFileExists) break;
             }
-            assert processedChars == expectedText.length() : "Characters skipped from " + processedChars + " to " + (expectedText.length() - 1);
+            assert processedChars == expectedText.length() : "Characters skipped from " +
+                                                             processedChars +
+                                                             " to " +
+                                                             (expectedText.length() - 1);
         }
         return testFileFiles;
     }

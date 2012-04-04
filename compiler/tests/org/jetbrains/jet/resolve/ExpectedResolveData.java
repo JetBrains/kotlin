@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -31,13 +32,12 @@ import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 import java.util.Map;
@@ -139,11 +139,13 @@ public abstract class ExpectedResolveData {
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
-                Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
+                                                                                             Predicates.<PsiFile>alwaysTrue(),
+                                                                                             JetControlFlowDataTraceFactory.EMPTY,
+                                                                                             CompilerSpecialMode.REGULAR);
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
+                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
                 unresolvedReferences.add(unresolvedReferenceDiagnostic.getPsiElement());
             }
         }
@@ -174,35 +176,35 @@ public abstract class ExpectedResolveData {
             JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(element, JetReferenceExpression.class);
             if ("!".equals(name)) {
                 assertTrue(
-                        "Must have been unresolved: " +
-                        renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
-                        unresolvedReferences.contains(referenceExpression));
+                    "Must have been unresolved: " +
+                    renderReferenceInContext(referenceExpression) +
+                    " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                    unresolvedReferences.contains(referenceExpression));
                 continue;
             }
             if ("!!".equals(name)) {
                 assertTrue(
-                        "Must have been resolved to multiple descriptors: " +
-                        renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
-                        bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
+                    "Must have been resolved to multiple descriptors: " +
+                    renderReferenceInContext(referenceExpression) +
+                    " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                    bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
                 continue;
             }
             else if ("!null".equals(name)) {
                 assertTrue(
-                       "Must have been resolved to null: " +
-                        renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
-                        bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
+                    "Must have been resolved to null: " +
+                    renderReferenceInContext(referenceExpression) +
+                    " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                    bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
                 );
                 continue;
             }
             else if ("!error".equals(name)) {
                 assertTrue(
-                       "Must have been resolved to error: " +
-                        renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
-                       ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
+                    "Must have been resolved to error: " +
+                    renderReferenceInContext(referenceExpression) +
+                    " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                    ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
             }
@@ -250,30 +252,30 @@ public abstract class ExpectedResolveData {
             if (expected instanceof JetParameter || actual instanceof JetParameter) {
                 DeclarationDescriptor expectedDescriptor;
                 if (name.startsWith("$")) {
-                    expectedDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, (JetParameter) expected);
+                    expectedDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, (JetParameter)expected);
                 }
                 else {
                     expectedDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expected);
                     if (expectedDescriptor == null) {
-                        expectedDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, (JetElement) expected);
+                        expectedDescriptor = bindingContext.get(BindingContext.CONSTRUCTOR, (JetElement)expected);
                     }
                 }
 
 
                 DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
                 if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
-                    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
+                    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor)actualDescriptor;
                     actualDescriptor = descriptor.getVariableDescriptor();
                 }
 
                 assertEquals(
-                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                        expectedDescriptor, actualDescriptor);
+                    "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
+                    expectedDescriptor, actualDescriptor);
             }
             else {
                 assertEquals(
-                        "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
-                        expected, actual);
+                    "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
+                    expected, actual);
             }
         }
 
@@ -305,7 +307,8 @@ public abstract class ExpectedResolveData {
                     expectedTypeConstructor = classDescriptor.getTypeConstructor();
                 }
                 else if (declaration instanceof JetTypeParameter) {
-                    TypeParameterDescriptor typeParameterDescriptor = bindingContext.get(BindingContext.TYPE_PARAMETER, (JetTypeParameter) declaration);
+                    TypeParameterDescriptor typeParameterDescriptor =
+                        bindingContext.get(BindingContext.TYPE_PARAMETER, (JetTypeParameter)declaration);
                     expectedTypeConstructor = typeParameterDescriptor.getTypeConstructor();
                 }
                 else {
@@ -325,14 +328,13 @@ public abstract class ExpectedResolveData {
             PsiElement parent = statement.getParent();
             if (!(parent instanceof JetExpression)) break;
             if (parent instanceof JetBlockExpression) break;
-            statement = (JetExpression) parent;
+            statement = (JetExpression)parent;
         }
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(referenceExpression, JetDeclaration.class);
 
 
-
         return referenceExpression.getText() + " at " + DiagnosticUtils.atLocation(referenceExpression) +
-                                    " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
+               " in " + statement.getText() + (declaration == null ? "" : " in " + declaration.getText());
     }
 
     private static <T> T getAncestorOfType(Class<T> type, PsiElement element) {
@@ -340,7 +342,7 @@ public abstract class ExpectedResolveData {
             element = element.getParent();
         }
         @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
-        T result = (T) element;
+        T result = (T)element;
         return result;
     }
 }
