@@ -52,7 +52,8 @@ public final class K2JSTranslator {
     public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
                                                             @NotNull String outputPath,
                                                             @NotNull Project project) throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new IDEAConfig(project));
+        K2JSTranslator translator = new K2JSTranslator(new IDEAConfig(project,
+                                                                      "C:\\Dev\\Projects\\Kotlin\\clean_jet\\js\\js.libraries\\src\\k2jslib.zip"));
         String programCode = translator.generateProgramCode(files) + "\n";
         JetFile fileWithMain = JetMainDetector.getFileWithMain(files);
         if (fileWithMain == null) {
@@ -62,7 +63,8 @@ public final class K2JSTranslator {
         FileWriter writer = new FileWriter(new File(outputPath));
         try {
             writer.write(programCode + callToMain);
-        } finally {
+        }
+        finally {
             writer.close();
         }
     }
@@ -109,7 +111,6 @@ public final class K2JSTranslator {
         return Translation.generateAst(bindingContext, AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config));
     }
 
-
     @NotNull
     public static String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
         String namespaceName = getNamespaceName(file);
@@ -132,5 +133,4 @@ public final class K2JSTranslator {
     private Project getProject() {
         return config.getProject();
     }
-
 }
