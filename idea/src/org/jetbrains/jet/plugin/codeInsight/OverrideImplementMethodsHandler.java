@@ -145,10 +145,22 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         StringBuilder bodyBuilder = new StringBuilder("override fun ");
         bodyBuilder.append(descriptor.getName());
         bodyBuilder.append("(");
+        boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
+        StringBuilder delegationBuilder = new StringBuilder();
+        if (isAbstractFun) {
+            delegationBuilder.append("throw UnsupportedOperationException()");
+        }
+        else {
+            delegationBuilder.append("super<").append(descriptor.getContainingDeclaration().getName());
+            delegationBuilder.append(">.").append(descriptor.getName()).append("(");
+        }
         boolean first = true;
         for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
             if (!first) {
                 bodyBuilder.append(",");
+                if (!isAbstractFun) {
+                    delegationBuilder.append(",");
+                }
             }
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
@@ -156,17 +168,25 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(parameterDescriptor.getType()));
 
             ImportInsertHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
+
+            if (!isAbstractFun) {
+                delegationBuilder.append(parameterDescriptor.getName());
+            }
         }
         bodyBuilder.append(")");
+        if (!isAbstractFun) {
+            delegationBuilder.append(")");
+        }
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
 
-        if (returnType != null && !stdlib.getTuple0Type().equals(returnType)) {
+        boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
+        if (returnsNotUnit) {
             bodyBuilder.append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(returnType));
             ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
         }
 
-        bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
+        bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");
 
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
     }
