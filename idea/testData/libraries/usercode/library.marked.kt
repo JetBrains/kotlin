@@ -49,7 +49,7 @@ abstract class <1>ClassWithAbstractAndOpenMembers {
         return "239"
     }
 
-    abstract var <2><3>abstractVar : String
+    public abstract var <2><3>abstractVar : String
     open var openVar : String = ""
     open var openVarWithGetter : String
     get() {
@@ -62,7 +62,7 @@ abstract class <1>ClassWithAbstractAndOpenMembers {
 fun main(args : Array<String>) {
 }
 
-val <7>globalVal : #(Int, String) = #(239, "239")
+public val <7>globalVal : #(Int, String) = #(239, "239")
 
 val <8>globalValWithGetter : Long
 get() {
