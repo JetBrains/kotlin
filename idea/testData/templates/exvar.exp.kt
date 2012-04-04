@@ -1,7 +1,7 @@
 var Int.v : Int
-get() {
-    <caret>
-}
-set(value) {
+    get() {
+        <caret>
+    }
+    set(value) {
 
-}
+    }

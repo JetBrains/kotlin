@@ -48,10 +48,6 @@ public class JetBlock extends AbstractBlock {
             JetNodeTypes.CLASS_BODY,
             JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
 
-    private static final TokenSet STATEMENT_PARTS = TokenSet.create(
-            JetNodeTypes.THEN,
-            JetNodeTypes.ELSE);
-
     // private static final List<IndentWhitespaceRule>
 
     public JetBlock(@NotNull ASTNode node,
@@ -241,45 +237,56 @@ public class JetBlock extends AbstractBlock {
         };
     }
 
-    @Override
-    protected Indent getChildIndent() {
-        return super.getChildIndent();    //To change body of overridden methods use File | Settings | File Templates.
-    }
+    static ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
+            ASTIndentStrategy.forNode("No indent for braces in blocks")
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
+                    .forType(JetTokens.RBRACE, JetTokens.LBRACE)
+                    .set(Indent.getNoneIndent()),
+
+            ASTIndentStrategy.forNode("Indent for block content")
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
+                    .notForType(JetTokens.RBRACE, JetTokens.LBRACE)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("Indent for property accessors")
+                    .in(JetNodeTypes.PROPERTY)
+                    .forType(JetNodeTypes.PROPERTY_ACCESSOR)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For a single statement if 'for'")
+                    .in(JetNodeTypes.BODY)
+                    .notForType(JetNodeTypes.BLOCK)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For the entry in when")
+                    .forType(JetNodeTypes.WHEN_ENTRY)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For single statement in THEN and ELSE")
+                    .in(JetNodeTypes.THEN, JetNodeTypes.ELSE)
+                    .notForType(JetNodeTypes.BLOCK)
+                    .set(Indent.getNormalIndent())
+    };
 
     @Nullable
-    protected Indent createChildIndent(@NotNull ASTNode child) {
-        CommonCodeStyleSettings commonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
-
+    protected static Indent createChildIndent(@NotNull ASTNode child) {
         ASTNode childParent = child.getTreeParent();
         IElementType childType = child.getElementType();
 
-        if (CODE_BLOCKS.contains(myNode.getElementType())) {
-            return indentIfNotBrace(child);
+        for (ASTIndentStrategy strategy : INDENT_RULES) {
+            Indent indent = strategy.getIndent(child);
+            if (indent != null) {
+                return indent;
+            }
         }
 
-        if (childParent != null &&
-                 childParent.getElementType() == JetNodeTypes.BODY &&
-                 childType != JetNodeTypes.BLOCK) {
-
-            // For a single statement if 'for'
-            return Indent.getNormalIndent();
-        }
-
-        if (childType == JetNodeTypes.WHEN_ENTRY) {
-            // For the entry in when
-            // TODO: Add an option for configuration?
-            return Indent.getNormalIndent();
-        }
+        // TODO: Try to rewrite other rules to declarative style
 
         if (childParent != null && childParent.getElementType() == JetNodeTypes.WHEN_ENTRY) {
             ASTNode prev = getPrevWithoutWhitespace(child);
             if (prev != null && prev.getText().equals("->")) {
                 return indentIfNotBrace(child);
             }
-        }
-
-        if (STATEMENT_PARTS.contains(myNode.getElementType()) && childType != JetNodeTypes.BLOCK) {
-            return Indent.getNormalIndent();
         }
 
         if (childParent != null && childParent.getElementType() == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {

@@ -21,7 +21,6 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.formatter.JetCodeStyleSettings;
 
 import java.io.File;
 
@@ -104,10 +103,6 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
         configureByFile(beforeFileName);
         type('\n');
         checkResultByFile(afterFileName);
-    }
-
-    public static JetCodeStyleSettings getJetSettings() {
-        return getSettings().getCustomSettings(JetCodeStyleSettings.class);
     }
 
     public static CodeStyleSettings getSettings() {
