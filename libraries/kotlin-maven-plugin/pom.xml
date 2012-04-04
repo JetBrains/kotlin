@@ -24,6 +24,7 @@
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
         </dependency>
+
         <!--
                 <dependency>
                     <groupId>org.apache.maven</groupId>
@@ -34,17 +35,12 @@
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>stdlib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-build-tools</artifactId>
+            <artifactId>runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -58,6 +54,14 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- TODO Req. only for K2JSTranslator, move it to compiler -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-build-tools</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Shall be transitive dependencies of Kotlin compiler -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -132,6 +136,7 @@
                 <version>2.9</version>
             </plugin>
 
+            <!-- Get rid of it right after compiler careful packaging -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

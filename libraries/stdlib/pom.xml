@@ -16,46 +16,23 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>runtime</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kunit</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
-
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
 
         <plugins>
-
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-            <!-- Unpacking "kotlin-runtime.jar" to ${project.build.outputDirectory} -->
-            <!-- so that its content is packed together with our jar                -->
-            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>copy-maven-plugin</artifactId>
-                <version>0.2.3.8</version>
-                <executions>
-                    <execution>
-                        <id>unpack-kotlin-runtime</id>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <resource>
-                                <targetPath>${project.build.outputDirectory}</targetPath>
-                                <file>${kotlin-sdk}/lib/kotlin-runtime.jar</file>
-                                <unpack>true</unpack>
-                            </resource>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -71,6 +48,22 @@
                     <mainClass>org.jetbrains.kotlin.tools.namespace</mainClass>
                     <classpathScope>test</classpathScope>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${project.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
