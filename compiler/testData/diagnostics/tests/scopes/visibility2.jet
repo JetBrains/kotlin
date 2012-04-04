@@ -13,7 +13,7 @@ private object PO {}
 
 //FILE:b.kt
 //+JDK
-package a.b
+package b
 
 import a.*
 

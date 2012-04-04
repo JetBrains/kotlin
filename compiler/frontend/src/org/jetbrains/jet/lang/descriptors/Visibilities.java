@@ -48,9 +48,6 @@ public class Visibilities {
                 if (parent == fromParent) {
                     return true;
                 }
-                if (fromParent instanceof NamespaceDescriptor) {
-                    break; //'private' package members are not visible for subpackages, so when we reach a package, we should stop
-                }
                 fromParent = fromParent.getContainingDeclaration();
             }
             return false;
@@ -77,7 +74,8 @@ public class Visibilities {
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             ModuleDescriptor parentModule = DescriptorUtils.getParentOfType(what, ModuleDescriptor.class, false);
             ModuleDescriptor fromModule = DescriptorUtils.getParentOfType(from, ModuleDescriptor.class, false);
-            return parentModule == fromModule;
+            assert parentModule != null && fromModule != null;
+            return parentModule.equals(fromModule);
         }
     };
 
