@@ -2,7 +2,7 @@ import foo.Intf
 
 class Impl(): Intf {
 
-    override fun getFooBar() : String? {
+    public override fun getFooBar() : String? {
         throw UnsupportedOperationException()
     }
 }

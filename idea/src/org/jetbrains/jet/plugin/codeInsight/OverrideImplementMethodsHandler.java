@@ -121,7 +121,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor) {
-        StringBuilder bodyBuilder = new StringBuilder("override ");
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
         if (descriptor.isVar()) {
             bodyBuilder.append("var ");
         }
@@ -142,9 +143,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     }
 
     private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor) {
-        StringBuilder bodyBuilder = new StringBuilder("override fun ");
-        bodyBuilder.append(descriptor.getName());
-        bodyBuilder.append("(");
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor));
+        bodyBuilder.append("override fun ").append(descriptor.getName()).append("(");
         boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
         StringBuilder delegationBuilder = new StringBuilder();
         if (isAbstractFun) {
@@ -205,6 +206,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
 
         return null;
+    }
+
+    private static String displayableVisibility(MemberDescriptor descriptor) {
+        Visibility visibility = descriptor.getVisibility();
+        return visibility != Visibilities.INTERNAL ? visibility.toString() + " ": "";
     }
 
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,
