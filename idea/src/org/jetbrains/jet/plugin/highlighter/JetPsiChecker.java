@@ -31,6 +31,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -48,6 +49,7 @@ import java.util.Set;
  */
 public class JetPsiChecker implements Annotator {
     private static volatile boolean errorReportingEnabled = true;
+    private static boolean namesHighlightingTest;
 
     public static void setErrorReportingEnabled(boolean value) {
         errorReportingEnabled = value;
@@ -57,8 +59,13 @@ public class JetPsiChecker implements Annotator {
         return errorReportingEnabled;
     }
 
+    @TestOnly
+    public static void setNamesHighlightingTest(boolean namesHighlightingTest) {
+        JetPsiChecker.namesHighlightingTest = namesHighlightingTest;
+    }
+
     static boolean isNamesHighlightingEnabled() {
-        return !ApplicationManager.getApplication().isUnitTestMode();
+        return !ApplicationManager.getApplication().isUnitTestMode() || namesHighlightingTest;
     }
 
     static void highlightName(@NotNull AnnotationHolder holder,
