@@ -23,7 +23,7 @@ import org.jetbrains.jet.plugin.highlighter.JetPsiChecker;
  * @author Evgeny Gerashchenko
  * @since 4/4/12
  */
-public class JetNamesHighlightingTest extends LightDaemonAnalyzerTestCase {
+public class NamesHighlightingTest extends LightDaemonAnalyzerTestCase {
     public void testTypesAndAnnotations() throws Exception {
         doTest();
     }
@@ -41,8 +41,19 @@ public class JetNamesHighlightingTest extends LightDaemonAnalyzerTestCase {
     }
 
     private void doTest() throws Exception {
-        JetPsiChecker.setNamesHighlightingTest(true);
         doTest(getTestName(false) + ".kt", false, true);
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        JetPsiChecker.setNamesHighlightingTest(true);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        JetPsiChecker.setNamesHighlightingTest(false);
+        super.tearDown();
     }
 
     @Override
