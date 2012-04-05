@@ -43,10 +43,20 @@ public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLo
     return thread
 }
 
+/**
+ * Executes the given block on the [[Executor]]
+ */
 public inline fun Executor.execute(action: ()->Unit) {
-    execute(object: Runnable{
+    execute(runnable(action))
+}
+
+/**
+ * A helper method for creating a [[Runnable]] from a block
+ */
+public inline fun runnable(action: ()-> Unit): Runnable {
+    return object: Runnable {
         public override fun run() {
             action()
         }
-    })
+    }
 }
