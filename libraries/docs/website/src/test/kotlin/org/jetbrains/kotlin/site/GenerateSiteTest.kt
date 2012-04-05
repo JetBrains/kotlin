@@ -1,9 +1,8 @@
 package org.jetbrains.kotlin.site
 
+import kotlin.test.*
 import junit.framework.TestCase
 import java.io.File
-import org.jetbrains.kotlin.doc.KDocArguments
-import org.jetbrains.kotlin.doc.KDocCompiler
 
 class GenerateSiteTest : TestCase() {
     val srcDir = findTemplateDir()
@@ -17,6 +16,20 @@ class GenerateSiteTest : TestCase() {
         generator.run()
     }
 
+    fun testCopyApiDocs(): Unit {
+        val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
+        println("Generating library KDocs to $outDir")
+
+        copyDocResources(outDir)
+
+        val apidocDir = File(siteOutputDir, "../../../apidoc/target/site/apidocs")
+        assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
+
+
+        copyRecursive(apidocDir, outDir)
+    }
+
+    /*
     fun testGenerateStdlibKDoc(): Unit {
         val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
         println("Generating library KDocs to $outDir")
@@ -64,9 +77,16 @@ class GenerateSiteTest : TestCase() {
         val compiler = KDocCompiler()
         compiler.exec(System.out, args)
     }
+    */
 
     fun copyDocResources(outDir: File): Unit {
         val sourceDir = File(srcDir, "../apidocs")
+        copyRecursive(sourceDir, outDir)
+    }
+
+
+    // TODO this would make a handy extension function on File :)
+    fun copyRecursive(sourceDir: File, outDir: File): Unit {
         sourceDir.recurse {
             if (it.isFile()) {
                 var relativePath = sourceDir.relativePath(it)
@@ -76,7 +96,6 @@ class GenerateSiteTest : TestCase() {
             }
         }
     }
-
 
     fun findTemplateDir(): File {
         val path = "src/main/templates"

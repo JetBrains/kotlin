@@ -11,7 +11,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kotlin-java</artifactId>
+    <artifactId>kotlin-java-example</artifactId>
+
+    <description>This example shows how the standard kotlin API can be easily used from Java code;
+        its maybe more verbose and not as kool, but still very functional</description>
 
     <dependencies>
         <dependency>

@@ -6,8 +6,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-project</artifactId>
+        <groupId>org.jetbrains.kotlin.docs</groupId>
+        <artifactId>docs</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -23,26 +23,6 @@
             <groupId>org.pegdown</groupId>
             <artifactId>pegdown</artifactId>
             <version>${pegdown.version}</version>
-        </dependency>
-        <!-- add the kdoc dependency for generating kdoc -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kdoc</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- TODO not sure why we have to list transitive dependendcies on compiler... -->
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-util</artifactId>
-            <version>3.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>3.3</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

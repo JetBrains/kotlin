@@ -11,8 +11,8 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jetbrains.kotlin.examples</groupId>
-    <artifactId>examples</artifactId>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>tools</artifactId>
     <packaging>pom</packaging>
 
     <properties>
@@ -20,7 +20,10 @@
     </properties>
 
     <modules>
-        <module>kotlin-java-example</module>
-        <module>js-example</module>
+        <module>kotlin-install</module>
+        <module>runtime</module>
+        <module>kotlin-maven-plugin</module>
+        <module>kdoc</module>
+        <module>kdoc-maven-plugin</module>
     </modules>
 </project>
