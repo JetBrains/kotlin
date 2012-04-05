@@ -20,11 +20,15 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.util.containers.MultiMap;
 import jet.Tuple2;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.util.*;
@@ -36,8 +40,6 @@ import java.util.*;
  * @since 3/23/12
  */
 public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
-
-    private VirtualFile librarySourceFile;
     private VirtualFile userFile;
 
     public void testEnum() {
@@ -69,8 +71,6 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
     }
 
     private void doTest() {
-        librarySourceFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library/library.kt");
-        assertNotNull(librarySourceFile);
         userFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
         assertNotNull(userFile);
 
@@ -87,14 +87,12 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
             PsiReference ref = psiFile.findReferenceAt(offset);
             if (ref instanceof JetPsiReference && !referenceContainersToReferences.containsKey(ref.getElement())) {
                 PsiElement target = ref.resolve();
-                if (target == null) {
-                    continue;
-                }
+                if (target == null) continue;
                 PsiFile targetNavPsiFile = target.getNavigationElement().getContainingFile();
-                if (targetNavPsiFile == null) {
-                    continue;
-                }
-                if (librarySourceFile.equals(targetNavPsiFile.getVirtualFile())) {
+                if (targetNavPsiFile == null) continue;
+                VirtualFile targetNavFile = targetNavPsiFile.getVirtualFile();
+                if (targetNavFile == null) continue;
+                if (VfsUtilCore.isAncestor(librarySourceDir, targetNavFile, true)) {
                     referenceContainersToReferences.put(ref.getElement(), (JetPsiReference)ref);
                 }
             }
@@ -102,44 +100,69 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
         return referenceContainersToReferences.values();
     }
 
+    @NotNull
+    private String getRelativePath(@NotNull PsiFile librarySourceFile) {
+        VirtualFile virtualFile = librarySourceFile.getVirtualFile();
+        if (virtualFile == null) {
+            return "";
+        }
+        String relativePath = VfsUtilCore.getRelativePath(virtualFile, librarySourceDir, '/');
+        return relativePath == null ? "" : relativePath;
+    }
+
     private String getActualAnnotatedLibraryCode() {
-        List<Tuple2<Integer, Integer>> numbersAndOffsets = new ArrayList<Tuple2<Integer, Integer>>();
+        MultiMap<PsiFile, Tuple2<Integer, Integer>> filesToNumbersAndOffsets = new MultiMap<PsiFile, Tuple2<Integer, Integer>>();
+        int refNumber = 1;
         for (JetPsiReference ref : collectInterestingReferences()) {
             PsiElement target = ref.resolve();
             assertNotNull(target);
             PsiElement navigationElement = target.getNavigationElement();
-            numbersAndOffsets.add(new Tuple2<Integer, Integer>(numbersAndOffsets.size() + 1, navigationElement.getTextOffset()));
+            Tuple2<Integer, Integer> numberAndOffset = new Tuple2<Integer, Integer>(refNumber++, navigationElement.getTextOffset());
+            filesToNumbersAndOffsets.putValue(navigationElement.getContainingFile(), numberAndOffset);
         }
 
-        Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Tuple2<Integer, Integer>>() {
+        List<PsiFile> files = new ArrayList<PsiFile>(filesToNumbersAndOffsets.keySet());
+        Collections.sort(files, new Comparator<PsiFile>() {
             @Override
-            public int compare(Tuple2<Integer, Integer> t1, Tuple2<Integer, Integer> t2) {
-                int offsets = t1._2.compareTo(t2._2);
-                return offsets == 0 ? t1._1.compareTo(t2._1) : offsets;
+            public int compare(PsiFile o1, PsiFile o2) {
+                return getRelativePath(o1).compareTo(getRelativePath(o2));
             }
-        }));
+        });
 
-        Document document = FileDocumentManager.getInstance().getDocument(librarySourceFile);
-        assertNotNull(document);
-        StringBuilder result = new StringBuilder(document.getText());
-        for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
-            result.insert(numberOffset._2, String.format("<%d>", numberOffset._1));
-        }
+        StringBuilder result = new StringBuilder();
+        for (PsiFile file : files) {
+            List<Tuple2<Integer, Integer>> numbersAndOffsets = new ArrayList<Tuple2<Integer, Integer>>(filesToNumbersAndOffsets.get(file));
 
-        if (numbersAndOffsets.isEmpty()) {
-            return "";
-        }
-        int minLine = Integer.MAX_VALUE;
-        int maxLine = Integer.MIN_VALUE;
-        for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
-            int lineNumber = document.getLineNumber(numberOffset._2);
-            minLine = Math.min(minLine, lineNumber);
-            maxLine = Math.max(maxLine, lineNumber);
-        }
+            Collections.sort(numbersAndOffsets, Collections.reverseOrder(new Comparator<Tuple2<Integer, Integer>>() {
+                @Override
+                public int compare(Tuple2<Integer, Integer> t1, Tuple2<Integer, Integer> t2) {
+                    int offsets = t1._2.compareTo(t2._2);
+                    return offsets == 0 ? t1._1.compareTo(t2._1) : offsets;
+                }
+            }));
 
-        Document annotated = EditorFactory.getInstance().createDocument(result);
-        return annotated.getText().substring(annotated.getLineStartOffset(minLine),
-                                             annotated.getLineEndOffset(maxLine));
+            Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
+            assertNotNull(document);
+            StringBuilder resultForFile = new StringBuilder(document.getText());
+            for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
+                resultForFile.insert(numberOffset._2, String.format("<%d>", numberOffset._1));
+            }
+
+            int minLine = Integer.MAX_VALUE;
+            int maxLine = Integer.MIN_VALUE;
+            for (Tuple2<Integer, Integer> numberOffset : numbersAndOffsets) {
+                int lineNumber = document.getLineNumber(numberOffset._2);
+                minLine = Math.min(minLine, lineNumber);
+                maxLine = Math.max(maxLine, lineNumber);
+            }
+
+            Document annotated = EditorFactory.getInstance().createDocument(resultForFile);
+            String filePart = annotated.getText().substring(annotated.getLineStartOffset(minLine),
+                                                             annotated.getLineEndOffset(maxLine));
+            result.append(" ").append(getRelativePath(file)).append("\n");
+            result.append(filePart).append("\n");
+        }
+        return result.toString();
     }
 
     private String getExpectedAnnotatedLibraryCode() {

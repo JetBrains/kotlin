@@ -35,18 +35,21 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 public abstract class AbstractLibrariesTest extends PlatformTestCase {
     protected static final String PACKAGE = "testData.libraries";
     protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
-    protected VirtualFile myLibraryDir;
+    protected VirtualFile libraryDir;
+    protected VirtualFile librarySourceDir;
 
     protected abstract boolean isWithSources();
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        String libraryDir = FileUtil.getTempDirectory();
-        KotlinCompiler.ExitCode compilerExec = new KotlinCompiler().exec("-src", TEST_DATA_PATH + "/library", "-output", libraryDir);
+        String libraryPath = FileUtil.getTempDirectory();
+        librarySourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
+        assertNotNull(librarySourceDir);
+        KotlinCompiler.ExitCode compilerExec = new KotlinCompiler().exec("-src", librarySourceDir.getPath(), "-output", libraryPath);
         assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
-        myLibraryDir = LocalFileSystem.getInstance().findFileByPath(libraryDir);
-        assertNotNull(myLibraryDir);
+        libraryDir = LocalFileSystem.getInstance().findFileByPath(libraryPath);
+        assertNotNull(libraryDir);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
@@ -54,11 +57,9 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
                 ModifiableRootModel moduleModel = ModuleRootManager.getInstance(myModule).getModifiableModel();
 
                 Library.ModifiableModel libraryModel = moduleModel.getModuleLibraryTable().getModifiableModel().createLibrary("myKotlinLib").getModifiableModel();
-                libraryModel.addRoot(myLibraryDir, OrderRootType.CLASSES);
+                libraryModel.addRoot(libraryDir, OrderRootType.CLASSES);
                 if (isWithSources()) {
-                    VirtualFile sourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
-                    assert sourceDir != null;
-                    libraryModel.addRoot(sourceDir, OrderRootType.SOURCES);
+                    libraryModel.addRoot(librarySourceDir, OrderRootType.SOURCES);
                 }
                 libraryModel.commit();
 

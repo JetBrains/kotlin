@@ -125,7 +125,7 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
     }
 
     private VirtualFile getClassFile() {
-        VirtualFile packageDir = myLibraryDir.findFileByRelativePath(PACKAGE.replace(".", "/"));
+        VirtualFile packageDir = libraryDir.findFileByRelativePath(PACKAGE.replace(".", "/"));
         assertNotNull(packageDir);
         VirtualFile classFile = packageDir.findChild(getTestName(false) + ".class");
         assertNotNull(classFile);

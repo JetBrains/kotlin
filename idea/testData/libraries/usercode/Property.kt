@@ -5,6 +5,7 @@ fun foo(a : ClassWithAbstractAndOpenMembers) {
     println(a.abstractVar)
 }
 
+// library.kt
 //public abstract class <1>ClassWithAbstractAndOpenMembers {
 //    public abstract fun abstractFun()
 //    public open fun openFun() {
