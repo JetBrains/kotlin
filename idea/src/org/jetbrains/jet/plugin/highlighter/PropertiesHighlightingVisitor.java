@@ -32,6 +32,9 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitSimpleNameExpression(JetSimpleNameExpression expression) {
+        if (expression.getParent() instanceof JetThisExpression) {
+            return;
+        }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         if (target instanceof VariableAsFunctionDescriptor) {
             target = ((VariableAsFunctionDescriptor)target).getVariableDescriptor();
@@ -40,12 +43,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             return;
         }
 
-        if (((PropertyDescriptor)target).getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
-            JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.EXTENSION_PROPERTY);
-        }
-
-        boolean namespace = target.getContainingDeclaration() instanceof NamespaceDescriptor;
-        putPropertyAnnotation(expression, namespace, false);
+        highlightProperty(expression, (PropertyDescriptor) target, false);
         if (expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
             JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.BACKING_FIELD_ACCESS);
         }
@@ -58,8 +56,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         VariableDescriptor propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         if (propertyDescriptor instanceof PropertyDescriptor) {
             Boolean backingFieldRequired = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor)propertyDescriptor);
-            boolean namespace = propertyDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
-            putPropertyAnnotation(nameIdentifier, namespace, Boolean.TRUE.equals(backingFieldRequired));
+            highlightProperty(nameIdentifier, (PropertyDescriptor) propertyDescriptor, Boolean.TRUE.equals(backingFieldRequired));
         }
 
         super.visitProperty(property);
@@ -72,7 +69,7 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
         if (propertyDescriptor != null) {
             Boolean backingFieldRequired = bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
-            putPropertyAnnotation(nameIdentifier, false, Boolean.TRUE.equals(backingFieldRequired));
+            highlightProperty(nameIdentifier, propertyDescriptor, Boolean.TRUE.equals(backingFieldRequired));
         }
     }
 
@@ -81,10 +78,17 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         element.acceptChildren(this);
     }
 
-    private void putPropertyAnnotation(@NotNull PsiElement elementToHighlight, boolean namespace, boolean withBackingField) {
-        JetPsiChecker.highlightName(holder, elementToHighlight,
-                                    namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
-        );
+    private void highlightProperty(@NotNull PsiElement elementToHighlight,
+            @NotNull PropertyDescriptor descriptor,
+            boolean withBackingField) {
+        boolean namespace = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
+        if (descriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+            JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
+        } else {
+            JetPsiChecker.highlightName(holder, elementToHighlight,
+                                        namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
+            );
+        }
         if (withBackingField) {
             holder.createInfoAnnotation(
                 elementToHighlight,
