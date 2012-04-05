@@ -405,6 +405,21 @@ public class CompileEnvironment {
 
         session.addSources(sourceFileOrDir);
 
+        return compileBunchOfSources(jar, outputDir, includeRuntime, session);
+    }
+
+    public boolean compileBunchOfSourceDirectories(List<String> sources, String jar, String outputDir, boolean includeRuntime) {
+        CompileSession session = newCompileSession();
+        session.setStubs(mode != CompilerSpecialMode.REGULAR);
+
+        for (String source : sources) {
+            session.addSources(source);
+        }
+
+        return compileBunchOfSources(jar, outputDir, includeRuntime, session);
+    }
+
+    private boolean compileBunchOfSources(String jar, String outputDir, boolean includeRuntime, CompileSession session) {
         FqName mainClass = null;
         for (JetFile file : session.getSourceFiles()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {

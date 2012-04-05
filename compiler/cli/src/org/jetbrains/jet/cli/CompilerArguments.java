@@ -29,6 +29,17 @@ import java.util.List;
 public class CompilerArguments {
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
 
+    // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
+    private List<String> sourceDirs;
+
+    public List<String> getSourceDirs() {
+        return sourceDirs;
+    }
+
+    public void setSourceDirs(List<String> sourceDirs) {
+        this.sourceDirs = sourceDirs;
+    }
+
     @Argument(value = "output", description = "output directory")
     public String outputDir;
 

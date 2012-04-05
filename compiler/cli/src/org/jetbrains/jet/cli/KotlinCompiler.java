@@ -123,7 +123,12 @@ public class KotlinCompiler {
                 noErrors = environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
             }
             else {
-                noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
+                if (arguments.getSourceDirs() != null) {
+                    noErrors = environment.compileBunchOfSourceDirectories(arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                } else {
+                    noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                }
             }
             return noErrors ? OK : COMPILATION_ERROR;
         }
