@@ -32,6 +32,7 @@
         <module>kotlin-install</module>
         <module>runtime</module>
         <module>kotlin-maven-plugin</module>
+        <module>kdoc-maven-plugin</module>
         <module>kunit</module>
         <module>stdlib</module>
         <module>kdoc</module>
@@ -39,6 +40,7 @@
         <module>kotlin-java</module>
         <module>kotlin-swing</module>
         <module>website</module>
+        <module>apidoc</module>
         <module>examples</module>
     </modules>
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>apidoc</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${junit-version}</version>
+      </dependency>
+    </dependencies>
+
+    <build>
+      <plugins>
+          <plugin>
+              <groupId>org.jetbrains.kotlin</groupId>
+              <artifactId>kdoc-maven-plugin</artifactId>
+              <version>${project.version}</version>
+              <configuration>
+                  <sources>
+                      <source>${basedir}/../stdlib/src</source>
+                      <source>${basedir}/../kunit/src/main/kotlin</source>
+                      <source>${basedir}/../kotlin-jdbc/src/main/kotlin</source>
+                      <source>${basedir}/../kotlin-swing/src/main/kotlin</source>
+                  </sources>
+                  <title>Kotlin API (${project.version})</title>
+                  <ignorePackages>
+                      <ignorePackage>com</ignorePackage>
+                      <ignorePackage>sun</ignorePackage>
+                      <ignorePackage>java</ignorePackage>
+                      <ignorePackage>jet</ignorePackage>
+                      <ignorePackage>junit</ignorePackage>
+                      <ignorePackage>org</ignorePackage>
+                  </ignorePackages>
+
+              </configuration>
+
+              <executions>
+                  <execution>
+                      <id>apidoc</id>
+                      <phase>install</phase>
+                      <goals>
+                          <goal>apidoc</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+      </plugins>
+    </build>
+</project>

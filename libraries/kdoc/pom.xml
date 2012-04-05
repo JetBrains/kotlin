@@ -20,7 +20,6 @@
             <version>${pegdown.version}</version>
         </dependency>
 
-        <!-- TODO Replace with compiler dependency -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
