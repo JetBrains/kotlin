@@ -25,6 +25,7 @@
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
+        <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
     </properties>
 
     <modules>
@@ -36,6 +37,7 @@
         <module>kdoc</module>
         <module>kotlin-jdbc</module>
         <module>kotlin-java</module>
+        <module>kotlin-swing</module>
         <module>website</module>
         <module>examples</module>
     </modules>

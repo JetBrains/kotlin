@@ -7,5 +7,6 @@ fun project() {
         addSourceFiles("../stdlib/src")
         addSourceFiles("../kunit/src/main/kotlin")
         addSourceFiles("../kotlin-jdbc/src/main/kotlin")
+        //addSourceFiles("../kotlin-swing/src/main/kotlin")
     }
 }
