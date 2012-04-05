@@ -70,6 +70,10 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
         doTest();
     }
 
+    public void testSameNameInDifferentSources() {
+        doTest();
+    }
+
     private void doTest() {
         userFile = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/usercode/" + getTestName(false) + ".kt");
         assertNotNull(userFile);
