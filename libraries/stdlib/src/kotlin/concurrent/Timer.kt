@@ -5,37 +5,37 @@ import java.util.TimerTask
 import java.util.Date
 
 public fun Timer.schedule(delay: Long, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     schedule(task, delay)
     return task
 }
 
 public fun Timer.schedule(time: Date, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     schedule(task, time)
     return task
 }
 
 public fun Timer.schedule(delay: Long, period: Long, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     schedule(task, delay, period)
     return task
 }
 
 public fun Timer.schedule(time: Date, period: Long, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     schedule(task, time, period)
     return task
 }
 
 public fun Timer.scheduleAtFixedRate(delay: Long, period: Long, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     scheduleAtFixedRate(task, delay, period)
     return task
 }
 
 public fun Timer.scheduleAtFixedRate(time: Date, period: Long, action: TimerTask.()->Unit) : TimerTask {
-    val task = createTask(action)
+    val task = timerTask(action)
     scheduleAtFixedRate(task, time, period)
     return task
 }
@@ -64,7 +64,7 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt
     return timer
 }
 
-private fun createTask(action: TimerTask.()->Unit) : TimerTask = object: TimerTask() {
+public fun timerTask(action: TimerTask.()->Unit) : TimerTask = object: TimerTask() {
     public override fun run() {
         action()
     }
