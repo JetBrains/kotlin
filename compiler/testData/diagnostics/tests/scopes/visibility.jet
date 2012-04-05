@@ -35,8 +35,8 @@ class B {
 }
 
 fun test3(a: A) {
-    a.<!UNRESOLVED_REFERENCE!>v<!> //todo .bMethod()
-    a.<!UNRESOLVED_REFERENCE!>f<!>(0, 1) //todo .bMethod()
+    a.<!INVISIBLE_MEMBER!>v<!> //todo .bMethod()
+    a.<!INVISIBLE_MEMBER!>f<!>(0, 1) //todo .bMethod()
 }
 
 trait T
@@ -49,7 +49,7 @@ open class C : T {
 }
 
 fun test4(c: C) {
-    c.<!UNRESOLVED_REFERENCE!>i<!>++
+    c.<!INVISIBLE_MEMBER!>i<!>++
 }
 
 class D : C() {
@@ -73,7 +73,7 @@ class F : C() {
 
 class G : T {
     fun test8(c: C) {
-        doSmth(c.<!UNRESOLVED_REFERENCE!>i<!>)
+        doSmth(c.<!INVISIBLE_MEMBER!>i<!>)
     }
 }
 
@@ -86,5 +86,5 @@ import test_visibility.*
 
 fun test() {
     internal_fun()
-    <!UNRESOLVED_REFERENCE!>private_fun<!>()
+    <!INVISIBLE_MEMBER!>private_fun<!>()
 }

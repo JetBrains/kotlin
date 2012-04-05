@@ -352,6 +352,12 @@ public class CallResolver {
                 continue;
             }
 
+            if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
+                candidateCall.setStatus(OTHER_ERROR);
+                context.tracing.invisibleMember(context.trace, candidate);
+                continue;
+            }
+
             boolean errorInArgumentMapping = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing, candidateCall);
             if (errorInArgumentMapping) {
                 candidateCall.setStatus(OTHER_ERROR);

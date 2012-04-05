@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -223,6 +224,12 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
             for (JetExpression functionLiteralArgument : functionLiteralArguments) {
                 trace.report(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED.on(functionLiteralArgument));
             }
+        }
+
+        @Override
+        public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {
+            JetExpression expression = call.getCalleeExpression();
+            trace.report(INVISIBLE_MEMBER.on(expression != null ? expression : call.getCallElement(), descriptor, descriptor.getContainingDeclaration()));
         }
     };
 }

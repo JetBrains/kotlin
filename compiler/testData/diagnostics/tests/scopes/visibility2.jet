@@ -15,20 +15,23 @@ private object PO {}
 //+JDK
 package b
 
-import a.*
+import a.<!INVISIBLE_REFERENCE!>A<!>
+import a.<!INVISIBLE_REFERENCE!>foo<!>
+import a.makeA
+import a.<!INVISIBLE_REFERENCE!>PO<!>
 
 fun test() {
     val y = makeA()
-    y.<!UNRESOLVED_REFERENCE!>bar<!>()
-    <!UNRESOLVED_REFERENCE!>foo<!>()
+    y.<!INVISIBLE_MEMBER!>bar<!>()
+    <!INVISIBLE_MEMBER!>foo<!>()
 
-    val <!UNUSED_VARIABLE!>u<!> : <!INVISIBLE_MEMBER!>A<!> = <!UNRESOLVED_REFERENCE!>A<!>()
-    val <!UNUSED_VARIABLE!>a<!> : java.util.Arrays.<!INVISIBLE_MEMBER!>ArrayList<!><Int>;
+    val <!UNUSED_VARIABLE!>u<!> : <!INVISIBLE_REFERENCE!>A<!> = <!INVISIBLE_MEMBER!>A<!>()
+    val <!UNUSED_VARIABLE!>a<!> : java.util.Arrays.<!INVISIBLE_REFERENCE!>ArrayList<!><Int>;
 
-    val <!UNUSED_VARIABLE!>po<!> = <!UNRESOLVED_REFERENCE!>PO<!>()
+    val <!UNUSED_VARIABLE!>po<!> = <!INVISIBLE_MEMBER!>PO<!>
 }
 
-class B : <!INVISIBLE_MEMBER!>A<!>() {}
+class B : <!INVISIBLE_REFERENCE, INVISIBLE_MEMBER!>A<!>() {}
 
 class Q {
     class W {

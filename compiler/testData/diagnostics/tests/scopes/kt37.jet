@@ -11,6 +11,6 @@ class C() {
 
 fun box(): String {
     val c = C()
-    if (c.<!UNRESOLVED_REFERENCE!>f<!> != 610) return "fail"
+    if (c.<!INVISIBLE_MEMBER!>f<!> != 610) return "fail"
     return "OK"
 }

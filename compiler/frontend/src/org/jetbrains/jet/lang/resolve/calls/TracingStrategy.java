@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -77,6 +78,9 @@ import java.util.List;
 
         @Override
         public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments) {}
+
+        @Override
+        public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {}
     };
 
     <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall);
@@ -108,4 +112,6 @@ import java.util.List;
     void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
 
     void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetExpression> functionLiteralArguments);
+
+    void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor);
 }

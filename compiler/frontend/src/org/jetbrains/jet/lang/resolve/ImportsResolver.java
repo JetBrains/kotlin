@@ -20,10 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -91,13 +88,13 @@ public class ImportsResolver {
             Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
             configuration.addDefaultImports(defaultImportDirectives);
             for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
-                qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, delayedImporter, temporaryTrace, onlyClasses);
+                qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
             }
 
             List<JetImportDirective> importDirectives = file.getImportDirectives();
             for (JetImportDirective importDirective : importDirectives) {
                 Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, rootScope, delayedImporter, trace, onlyClasses);
+                    qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
                 if (descriptors.size() == 1) {
                     resolvedDirectives.put(importDirective, descriptors.iterator().next());
                 }
