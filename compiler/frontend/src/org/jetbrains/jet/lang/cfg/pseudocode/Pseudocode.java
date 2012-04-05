@@ -277,10 +277,11 @@ public class Pseudocode {
         return visited;
     }
     
-    private void traverseNextInstructions(Instruction instruction, Set<Instruction> visited) {
+    private void traverseNextInstructions(@NotNull Instruction instruction, @NotNull Set<Instruction> visited) {
         if (visited.contains(instruction)) return;
         visited.add(instruction);
         for (Instruction nextInstruction : instruction.getNextInstructions()) {
+            if (nextInstruction == null) continue; //todo it might be null on incomplete code
             traverseNextInstructions(nextInstruction, visited);
         }
     }
