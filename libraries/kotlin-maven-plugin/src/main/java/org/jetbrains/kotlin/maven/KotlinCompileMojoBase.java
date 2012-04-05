@@ -142,13 +142,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             if (sources.size() <= 0)
                 throw new MojoExecutionException("No source roots to compile");
 
-            if (sources.size() > 1)
-                throw new MojoExecutionException("Multiple source roots are not supported yet");
-
-            final String src = sources.get(0);
-
-            log.info("Compiling Kotlin sources from " + src);
-            arguments.setSrc(src);
+            arguments.setSourceDirs(sources);
+            log.info("Compiling Kotlin sources from " + arguments.getSourceDirs());
         }
 
         final ArrayList<String> classpathList = new ArrayList<String>(classpath);
