@@ -19,6 +19,8 @@ package testData.libraries
 
 [final fun func(val a : jet.Int, val b : jet.String) : Unit { /* compiled code */ }]
 
+[final fun func(val str : jet.String) : Unit { /* compiled code */ }]
+
 [final fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
 
 [final fun <T : jet.Any?>T.filter(val predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]

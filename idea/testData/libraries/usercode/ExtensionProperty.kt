@@ -5,7 +5,7 @@ fun foo() {
     println(#(1, 2).exProp)
 }
 
-// library.kt
+// main.kt
 //public val String.<1>exProp : String
 //get() {
 //    return this

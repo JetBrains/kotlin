@@ -1,7 +1,5 @@
 package testData.libraries
 
-import java.util.*
-
 public trait SimpleTrait {
 }
 

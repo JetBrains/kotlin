@@ -7,7 +7,7 @@ fun foo() {
     func()
 }
 
-// library.kt
+// main.kt
 //public fun <1><2>func(a : Int, b : String = "55") {
 //}
 //
