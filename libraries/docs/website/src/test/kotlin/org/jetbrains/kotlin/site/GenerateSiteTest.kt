@@ -17,67 +17,31 @@ class GenerateSiteTest : TestCase() {
     }
 
     fun testCopyApiDocs(): Unit {
-        val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
-        println("Generating library KDocs to $outDir")
-
-        copyDocResources(outDir)
-
         val apidocDir = File(siteOutputDir, "../../../apidoc/target/site/apidocs")
         assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
 
+        val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
+        println("Copying API docs to $outDir")
 
+        copyDocResources(outDir)
         copyRecursive(apidocDir, outDir)
     }
 
-    /*
-    fun testGenerateStdlibKDoc(): Unit {
-        val outDir = File(siteOutputDir, "versions/$versionDir/apidocs")
-        println("Generating library KDocs to $outDir")
+    fun testCopyJSApiDocs(): Unit {
+        val apidocDir = File(siteOutputDir, "../../../jsdoc/target/site/apidocs")
+        //assertTrue(apidocDir.exists(), "Directory does not exist ${apidocDir.getCanonicalPath()}")
+        if (!apidocDir.exists()) {
+            println("WARNING - no JS API docs available. Though they don't work right now so are optional :)")
+            return
+        }
 
-        copyDocResources(outDir)
-        val args = KDocArguments()
-        args.setModule("../kdoc/ApiDocsModule.kt")
-        args.setOutputDir("target/classes-stdlib")
-
-        val config = args.docConfig
-        config.docOutputDir = outDir.getCanonicalPath()!!
-        config.title = "Kotlin API ($version)"
-        config.version = version
-        config.ignorePackages.add("kotlin.support")
-        config.ignorePackages.add("org.jetbrains.kotlin")
-        config.ignorePackages.add("java")
-        config.ignorePackages.add("jet")
-        config.ignorePackages.add("junit")
-        config.ignorePackages.add("sun")
-        config.ignorePackages.add("org")
-
-        val compiler = KDocCompiler()
-        compiler.exec(System.out, args)
-    }
-
-    fun testGenerateJsKDoc(): Unit {
         val outDir = File(siteOutputDir, "versions/$versionDir/jsdocs")
-        println("Generating JS KDocs to $outDir")
+        println("Copying JavaScript API docs to $outDir")
 
         copyDocResources(outDir)
-        val args = KDocArguments()
-        args.setModule("../../js/js.libraries/module.kt")
-        args.setOutputDir("target/classes-js")
 
-        val config = args.docConfig
-        config.docOutputDir = outDir.getCanonicalPath()!!
-        config.title = "Kotlin JS API ($version)"
-        config.version = version
-        config.ignorePackages.add("java")
-        config.ignorePackages.add("jet")
-        config.ignorePackages.add("junit")
-        config.ignorePackages.add("org")
-        config.ignorePackages.add("sun")
-
-        val compiler = KDocCompiler()
-        compiler.exec(System.out, args)
+        copyRecursive(apidocDir, outDir)
     }
-    */
 
     fun copyDocResources(outDir: File): Unit {
         val sourceDir = File(srcDir, "../apidocs")
