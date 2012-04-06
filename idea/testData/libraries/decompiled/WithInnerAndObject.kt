@@ -3,14 +3,14 @@
 
 package testData.libraries
 
-[final class WithInnerAndObject {
+[public final class WithInnerAndObject {
     class object {
-        [final fun foo() : Unit { /* compiled code */ }]
+        [public final fun foo() : Unit { /* compiled code */ }]
     }
 
-    [final class MyInner {
-        [trait MyInnerInner {
-            [abstract fun innerInnerMethod() : Unit]
+    [public final class MyInner {
+        [public trait MyInnerInner {
+            [public abstract fun innerInnerMethod() : Unit]
         }]
     }]
 }]

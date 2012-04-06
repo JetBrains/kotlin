@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-[final class SimpleClass {
+[public final class SimpleClass {
 }]

@@ -297,6 +297,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitPropertyDescriptor(PropertyDescriptor descriptor, StringBuilder builder) {
+            renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder,
@@ -307,6 +308,10 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return null;
+        }
+
+        private void renderVisibility(Visibility visibility, StringBuilder builder) {
+            builder.append(visibility).append(" ");
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
@@ -326,6 +331,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitFunctionDescriptor(FunctionDescriptor descriptor, StringBuilder builder) {
+            renderVisibility(descriptor.getVisibility(), builder);
             renderModality(descriptor.getModality(), builder);
             builder.append(renderKeyword("fun")).append(" ");
             if (renderTypeParameters(descriptor.getTypeParameters(), builder)) {
@@ -420,7 +426,20 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return super.visitClassDescriptor(descriptor, builder);
         }
 
+        private boolean isClassObjectDescriptor(ClassDescriptor descriptor) {
+            if (descriptor.getKind() == ClassKind.OBJECT) {
+                DeclarationDescriptor containing = descriptor.getContainingDeclaration();
+                if (containing instanceof ClassDescriptor) {
+                    return ((ClassDescriptor)containing).getClassObjectDescriptor() == descriptor;
+                }
+            }
+            return false;
+        }
+
         public void renderClassDescriptor(ClassDescriptor descriptor, StringBuilder builder, String keyword) {
+            if (!isClassObjectDescriptor(descriptor)) {
+                renderVisibility(descriptor.getVisibility(), builder);
+            }
             if (descriptor.getKind() != ClassKind.TRAIT && descriptor.getKind() != ClassKind.OBJECT) {
                 renderModality(descriptor.getModality(), builder);
             }
