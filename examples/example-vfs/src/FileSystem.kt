@@ -82,19 +82,19 @@ public object FileSystem {
 
     /* Scans file recursively and adds info about it to fileToInfo map */
     private fun scanAndAddRecursivelyNoEvents(file : VirtualFile) {
-        assert(FileSystem.fileToInfo[file.path] == null)
+        require(FileSystem.fileToInfo[file.path] == null)
 
         val fileInfo = VirtualFileInfo(file)
         FileSystem.fileToInfo[file.path] = fileInfo
-        fileInfo.children.foreach{ scanAndAddRecursivelyNoEvents(it) }
+        fileInfo.children.forEach{ scanAndAddRecursivelyNoEvents(it) }
     }
 
     internal inline fun assertCanRead() {
-        assert(lock.getReadHoldCount() != 0 || lock.isWriteLockedByCurrentThread())
+        check(lock.getReadHoldCount() != 0 || lock.isWriteLockedByCurrentThread())
     }
 
     internal inline fun assertCanWrite() {
-        assert(lock.isWriteLockedByCurrentThread())
+        check(lock.isWriteLockedByCurrentThread())
     }
 
     /**
@@ -107,12 +107,8 @@ public object FileSystem {
     /**
      * Adds file system listener which should be notified about changing of file system.
      */
-    public fun addVirtualFileListener(listener : VirtualFileListener.(VirtualFileEvent)->Unit) : VirtualFileListener {
-        val vfl = object: VirtualFileListener{
-            override fun eventHappened(event: VirtualFileEvent) {
-                listener(event)
-            }
-        }
+    public fun addVirtualFileListener(listener : (VirtualFileEvent)->Unit) : VirtualFileListener {
+        val vfl = SimpleVirtualFileListener(listener)
         addVirtualFileListener(vfl)
         return vfl
     }

@@ -12,7 +12,6 @@ import java.util.Timer
 import java.util.TimerTask
 
 import org.jetbrains.jet.samples.vfs.utils.*
-import org.jetbrains.jet.samples.vfs.utils.listDifference
 
 /**
  * Singleton which creates thread for periodically checking if there are changes in
@@ -37,13 +36,13 @@ internal object RefreshQueue {
     }
 
     private fun takeAndRefreshFiles() {
-        refreshFiles(taskQueue.take())
+        refreshFiles(taskQueue.take()!!)
     }
 
     /* Acquires write lock and refreshes file system */
     private fun refreshFiles(files : List<VirtualFile>) {
         FileSystem.write {
-            files.foreach{ refreshFile(it) }
+            files.forEach{ refreshFile(it) }
         }
     }
 
@@ -51,7 +50,7 @@ internal object RefreshQueue {
     private fun refreshFile(file : VirtualFile) {
         FileSystem.assertCanWrite()
         val fileInfo = FileSystem.fileToInfo[file.path]
-        assert(fileInfo != null)
+        check(fileInfo != null)
         if (fileInfo == null) {
             return
         }
@@ -64,13 +63,13 @@ internal object RefreshQueue {
             val deletedChildren = listDifference(oldChildren, newChildren)
             val commonChildren = listIntersection(oldChildren, newChildren)
 
-            addedChildren.foreach{ addRecursively(it) }
-            deletedChildren.foreach{ deleteRecursively(it) }
+            addedChildren.forEach{ addRecursively(it) }
+            deletedChildren.forEach{ deleteRecursively(it) }
 
             fileInfo.children.clear()
             fileInfo.children.addAll(newChildren)
 
-            commonChildren.foreach{ refreshFile(it) }
+            commonChildren.forEach{ refreshFile(it) }
         } else {
             val newModificationTime = file.modificationTime()
             if (fileInfo.lastModified != newModificationTime) {
@@ -83,21 +82,21 @@ internal object RefreshQueue {
 
     /* Adds file to file system recursively, notifying listeners */
     private fun addRecursively(file : VirtualFile) {
-        assert(FileSystem.fileToInfo[file] == null)
+        require(FileSystem.fileToInfo[file] == null)
 
         val fileInfo = VirtualFileInfo(file)
 
         FileSystem.fileToInfo[file.path] = fileInfo
         FileSystem.notifyEventHappened(VirtualFileCreateEvent(file))
 
-        fileInfo.children.foreach{ addRecursively(it) }
+        fileInfo.children.forEach{ addRecursively(it) }
     }
 
     /* Deletes file from file system recursively, notifying listeners */
     private fun deleteRecursively(file : VirtualFile) {
         val fileInfoMaybe : VirtualFileInfo? = FileSystem.fileToInfo[file.path]
         val fileInfo = fileInfoMaybe.sure()
-        fileInfo.children.foreach{ deleteRecursively(it) }
+        fileInfo.children.forEach{ deleteRecursively(it) }
         FileSystem.notifyEventHappened(VirtualFileDeletedEvent(file))
         FileSystem.fileToInfo.remove(file)
     }
@@ -115,7 +114,7 @@ internal object RefreshQueue {
     public fun scheduleRefresh(vararg files : VirtualFile) {
         // FIXME This could be written more concise, using map() & toList() (KT-1164 & KT-1172)
         val filesList = ArrayList<VirtualFile>()
-        files.foreach{ filesList.add(it) }
+        files.forEach{ filesList.add(it) }
         taskQueue.put(filesList)
 
         // taskQueue.put(ArrayList<VirtualFile>(files.map{ it }))

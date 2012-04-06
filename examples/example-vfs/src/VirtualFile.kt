@@ -63,38 +63,38 @@ public abstract class VirtualFile(public val path : String) {
  * Type of virtual file which corresponds to real file in file system of OS.
  */
 public class PhysicalVirtualFile(path : String) : VirtualFile(path) {
-    override fun kind() : String = "Physical"
+    override public fun kind() : String = "Physical"
 
     private val ioFile : File
         get() = File(this.path.toSystemDependentPath())
 
-    override fun exists(): Boolean {
+    override public fun exists(): Boolean {
         FileSystem.assertCanRead()
         return ioFile.exists()
     }
 
-    override fun size(): Long {
+    override public fun size(): Long {
         FileSystem.assertCanRead()
         return ioFile.length()
     }
 
-    override fun modificationTime(): Long {
+    override public fun modificationTime(): Long {
         FileSystem.assertCanRead()
         return ioFile.lastModified()
     }
 
-    override fun isDirectory(): Boolean {
+    override public fun isDirectory(): Boolean {
         FileSystem.assertCanRead()
         return ioFile.isDirectory()
     }
 
-    override fun children(): List<VirtualFile> {
+    override public fun children(): List<VirtualFile> {
         FileSystem.assertCanRead()
-        return (ioFile.listFiles() ?: Array<File>(0)).
+        return (ioFile.listFiles() ?: array<File?>()).
                 map{ FileSystem.getFileByIoFile(it.sure()) }?.toList()
     }
 
-    override fun openInputStream(): InputStream {
+    override public fun openInputStream(): InputStream {
         FileSystem.assertCanRead()
         if (isDirectory()) {
             throw IllegalArgumentException("Can't open directory for reading");
@@ -117,47 +117,47 @@ private fun String.toSystemIndependentPath() : String {
  * InputStream wrapper which checks that file system read lock is acquired on each operation.
  */
 private class CheckedInputStream(private val wrapped : InputStream) : InputStream() {
-    override fun read(): Int {
+    override public fun read(): Int {
         FileSystem.assertCanRead()
         return wrapped.read()
     }
 
-    override fun read(b: ByteArray?, off: Int, len: Int) : Int {
+    override public fun read(b: ByteArray?, off: Int, len: Int) : Int {
         FileSystem.assertCanRead()
         return wrapped.read(b, off, len)
     }
 
-    override fun markSupported(): Boolean {
+    override public fun markSupported(): Boolean {
         FileSystem.assertCanRead()
         return wrapped.markSupported()
     }
 
-    override fun skip(n: Long): Long {
+    override public fun skip(n: Long): Long {
         FileSystem.assertCanRead()
         return wrapped.skip(n)
     }
 
-    override fun close() {
+    override public fun close() {
         FileSystem.assertCanRead()
         return wrapped.close()
     }
 
-    override fun mark(readlimit: Int) {
+    override public fun mark(readlimit: Int) {
         FileSystem.assertCanRead()
         return wrapped.mark(readlimit)
     }
 
-    override fun read(b: ByteArray?): Int {
+    override public fun read(b: ByteArray?): Int {
         FileSystem.assertCanRead()
         return wrapped.read(b)
     }
 
-    override fun reset() {
+    override public fun reset() {
         FileSystem.assertCanRead()
         return wrapped.reset()
     }
 
-    override fun available(): Int {
+    override public fun available(): Int {
         FileSystem.assertCanRead()
         return wrapped.available()
     }
