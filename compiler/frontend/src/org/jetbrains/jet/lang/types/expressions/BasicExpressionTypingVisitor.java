@@ -1084,14 +1084,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 arrayAccessExpression,
                 isGet ? "get" : "set");
         if (!functionResults.isSuccess()) {
-            traceForResolveResult.report(isGet
-                                         ? NO_GET_METHOD.on(arrayAccessExpression)
-                                         : NO_SET_METHOD.on(arrayAccessExpression));
+            traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return null;
         }
-        traceForResolveResult.record(isGet
-                                     ? INDEXED_LVALUE_GET
-                                     : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
+        traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
         return functionResults.getResultingDescriptor().getReturnType();
     }
 }
