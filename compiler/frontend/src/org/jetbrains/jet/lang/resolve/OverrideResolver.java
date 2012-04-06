@@ -156,6 +156,9 @@ public class OverrideResolver {
         List<CallableMemberDescriptor> fakeOverrides = Lists.newArrayList();
 
         for (CallableMemberDescriptor functionFromSupertype : functionsFromSupertypes) {
+            if (!Visibilities.isVisible(functionFromSupertype, current)) {
+                continue;
+            }
 
             boolean overrides = false;
             
