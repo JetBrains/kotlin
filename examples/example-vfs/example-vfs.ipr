@@ -154,7 +154,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/example-vfs.iml" filepath="$PROJECT_DIR$/example-vfs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../stdlib/stdlib.iml" filepath="$PROJECT_DIR$/../../stdlib/stdlib.iml" />
     </modules>
   </component>
   <component name="ProjectResources">
@@ -165,6 +164,17 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
+  </component>
+  <component name="libraryTable">
+    <library name="KotlinRuntime">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/../../dist/kotlinc/lib/kotlin-runtime.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="jar://$PROJECT_DIR$/../../dist/kotlinc/lib/kotlin-runtime.jar!/src" />
+      </SOURCES>
+    </library>
   </component>
 </project>
 
