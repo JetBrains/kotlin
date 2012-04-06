@@ -60,7 +60,7 @@ public class Visibilities {
             ClassDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
             if (classDescriptor == null) return false;
 
-            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class);
+            ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
             if (fromClass == null) return false;
             if (DescriptorUtils.isSubclass(fromClass, classDescriptor)) {
                 return true;
