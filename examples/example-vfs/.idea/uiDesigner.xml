@@ -1,35 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AntConfiguration">
-    <defaultAnt bundledAnt="true" />
-  </component>
-  <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="Javac" />
-    <resourceExtensions />
-    <wildcardResourcePatterns>
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.ftl" />
-    </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
-  </component>
-  <component name="CopyrightManager" default="">
-    <module2copyright />
-  </component>
-  <component name="DependencyValidationManager">
-    <option name="SKIP_IMPORT_STATEMENTS" value="false" />
-  </component>
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
-  <component name="EntryPointsManager">
-    <entry_points version="2.0" />
-  </component>
   <component name="Palette2">
     <group name="Swing">
       <item class="com.intellij.uiDesigner.HSpacer" tooltip-text="Horizontal Spacer" icon="/com/intellij/uiDesigner/icons/hspacer.png" removable="false" auto-create-binding="false" can-attach-label="false">
@@ -150,31 +120,6 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
     </group>
-  </component>
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/example-vfs.iml" filepath="$PROJECT_DIR$/example-vfs.iml" />
-    </modules>
-  </component>
-  <component name="ProjectResources">
-    <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
-  </component>
-  <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
-  </component>
-  <component name="libraryTable">
-    <library name="KotlinRuntime">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../../dist/kotlinc/lib/kotlin-runtime.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES>
-        <root url="jar://$PROJECT_DIR$/../../dist/kotlinc/lib/kotlin-runtime.jar!/src" />
-      </SOURCES>
-    </library>
   </component>
 </project>
 
