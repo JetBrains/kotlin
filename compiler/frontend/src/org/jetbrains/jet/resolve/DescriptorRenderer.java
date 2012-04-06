@@ -410,6 +410,9 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 case OBJECT:
                     keyword = "object";
                     break;
+                case ANNOTATION_CLASS:
+                    keyword = "annotation class";
+                    break;
                 default:
                     keyword = "class";
             }
