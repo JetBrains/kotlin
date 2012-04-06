@@ -20,11 +20,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -102,16 +100,5 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
         return analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysFalse(),
                                                JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
-                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
-        return AnalyzerFacadeWithCache.getInstance(INSTANCE).analyzeFileWithCache(file, declarationProvider);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project, @NotNull final Collection<JetFile> files) {
-        return AnalyzerFacadeWithCache.getInstance(INSTANCE).analyzeProjectWithCache(project, files);
     }
 }

@@ -23,6 +23,8 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 
+import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.analyzeFileWithCache;
+
 /**
  * @author abreslav
  */
@@ -36,13 +38,11 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacadeProvider.getAnalyzerFacadeWithCacheForFile(file)
-            .analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
+        return analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacadeProvider.getAnalyzerFacadeWithCacheForProject(project)
-            .analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope));
+        return AnalyzerFacadeWithCache.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope));
     }
 }

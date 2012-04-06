@@ -22,6 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -34,7 +36,9 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.IDEAConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,9 +48,21 @@ import java.util.List;
 /**
  * @author Pavel Talanov
  */
-public final class AnalyzerFacadeForJS {
+public enum AnalyzerFacadeForJS implements AnalyzerFacade {
+
+    INSTANCE;
 
     private AnalyzerFacadeForJS() {
+    }
+
+    @NotNull
+    @Override
+    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
+                                       @NotNull Collection<JetFile> files,
+                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
+                                       @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
+        BindingContext context = analyzeFiles(files, new IDEAConfig(project));
+        return new AnalyzeExhaust(context, JetStandardLibrary.getInstance());
     }
 
     @NotNull
@@ -58,7 +74,7 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
+    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
                                               @NotNull Config config) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
@@ -76,7 +92,7 @@ public final class AnalyzerFacadeForJS {
         return bindingTraceContext.getBindingContext();
     }
 
-    private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+    private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
@@ -84,7 +100,7 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static List<JetFile> withJsLibAdded(@NotNull List<JetFile> files, @NotNull Config config) {
+    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
         List<JetFile> allFiles = new ArrayList<JetFile>();
         allFiles.addAll(files);
         allFiles.addAll(config.getLibFiles());
@@ -103,6 +119,8 @@ public final class AnalyzerFacadeForJS {
         };
     }
 
+    //TODO: exclude?
+    @NotNull
     public static BindingContext analyzeNamespace(@NotNull JetFile file) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         Project project = file.getProject();

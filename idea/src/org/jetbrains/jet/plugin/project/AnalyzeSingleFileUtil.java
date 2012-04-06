@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -32,8 +31,7 @@ public final class AnalyzeSingleFileUtil {
 
     @NotNull
     public static AnalyzeExhaust analyzeSingleFileWithCache(@NotNull JetFile file) {
-        return AnalyzerFacadeProvider.getAnalyzerFacadeWithCacheForFile(file)
-            .analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER);
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER);
     }
 
     @NotNull

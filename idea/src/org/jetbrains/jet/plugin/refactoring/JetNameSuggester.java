@@ -19,11 +19,9 @@ package org.jetbrains.jet.plugin.refactoring;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -70,7 +68,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = getContextForSingleFile((JetFile) expression.getContainingFile());
+        BindingContext bindingContext = getContextForSingleFile((JetFile)expression.getContainingFile());
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

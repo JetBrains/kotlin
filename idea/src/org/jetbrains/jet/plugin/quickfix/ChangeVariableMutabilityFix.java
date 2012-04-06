@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -32,9 +31,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
 import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 

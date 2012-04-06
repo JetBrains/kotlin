@@ -45,6 +45,11 @@ public final class IDEAConfig extends Config {
         this.pathToLibZip = pathToLibZip;
     }
 
+    public IDEAConfig(@NotNull Project project) {
+        //TODO: testing purposes. Should not get anywhere near production
+        this(project, "C:\\Dev\\Projects\\Kotlin\\clean_jet\\js\\js.libraries\\src\\k2jslib.zip");
+    }
+
     @NotNull
     @Override
     public List<JetFile> getLibFiles() {

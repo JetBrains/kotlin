@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.facade;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +34,7 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNamespaceName;
 
@@ -108,7 +106,8 @@ public final class K2JSTranslator {
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config));
+        Collection<JetFile> files = AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config);
+        return Translation.generateAst(bindingContext, Lists.newArrayList(files));
     }
 
     @NotNull

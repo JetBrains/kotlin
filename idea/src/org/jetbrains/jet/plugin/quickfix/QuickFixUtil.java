@@ -22,14 +22,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -59,7 +57,7 @@ public class QuickFixUtil {
     public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        BindingContext bindingContext = getContextForSingleFile((JetFile) file);
+        BindingContext bindingContext = getContextForSingleFile((JetFile)file);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         JetType type = ((CallableDescriptor)descriptor).getReturnType();

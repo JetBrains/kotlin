@@ -19,9 +19,9 @@ package org.jetbrains.jet.plugin.project;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 /**
  * @author Pavel Talanov
@@ -33,21 +33,17 @@ public final class AnalyzerFacadeProvider {
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
+        if (JsModuleDetector.isJsProject(file.getProject())) {
+            return AnalyzerFacadeForJS.INSTANCE;
+        }
         return AnalyzerFacadeForJVM.INSTANCE;
-    }
-
-    @NotNull
-    public static AnalyzerFacadeWithCache getAnalyzerFacadeWithCacheForFile(@NotNull JetFile file) {
-        return AnalyzerFacadeWithCache.getInstance(getAnalyzerFacadeForFile(file));
     }
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForProject(@NotNull Project project) {
+        if (JsModuleDetector.isJsProject(project)) {
+            return AnalyzerFacadeForJS.INSTANCE;
+        }
         return AnalyzerFacadeForJVM.INSTANCE;
-    }
-
-    @NotNull
-    public static AnalyzerFacadeWithCache getAnalyzerFacadeWithCacheForProject(@NotNull Project project) {
-        return AnalyzerFacadeWithCache.getInstance(getAnalyzerFacadeForProject(project));
     }
 }

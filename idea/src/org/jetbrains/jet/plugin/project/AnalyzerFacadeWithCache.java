@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.analyzer;
+package org.jetbrains.jet.plugin.project;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -29,6 +28,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -41,9 +41,9 @@ import java.util.Collections;
 /**
  * @author Pavel Talanov
  */
-public class AnalyzerFacadeWithCache implements AnalyzerFacade {
+public final class AnalyzerFacadeWithCache {
 
-    private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.analyzer.AnalyzerFacadeWithCache");
+    private static final Logger LOG = Logger.getInstance("org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache");
 
     private final static Key<CachedValue<AnalyzeExhaust>> ANALYZE_EXHAUST = Key.create("ANALYZE_EXHAUST");
     private static final Object lock = new Object();
@@ -54,16 +54,9 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
         }
     };
 
-    public static AnalyzerFacadeWithCache getInstance(@NotNull AnalyzerFacade facade) {
-        return new AnalyzerFacadeWithCache(facade);
+    private AnalyzerFacadeWithCache() {
     }
 
-    @NotNull
-    private final AnalyzerFacade facade;
-
-    private AnalyzerFacadeWithCache(@NotNull AnalyzerFacade facade) {
-        this.facade = facade;
-    }
 
     /**
      * Analyze project with string cache for given file. Given file will be fully analyzed.
@@ -73,8 +66,8 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
      * @return
      */
     @NotNull
-    public AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
-                                               @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
+    public static AnalyzeExhaust analyzeFileWithCache(@NotNull final JetFile file,
+                                                      @NotNull final Function<JetFile, Collection<JetFile>> declarationProvider) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             CachedValue<AnalyzeExhaust> bindingContextCachedValue = file.getUserData(ANALYZE_EXHAUST);
@@ -84,10 +77,11 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
                         @Override
                         public Result<AnalyzeExhaust> compute() {
                             try {
-                                AnalyzeExhaust exhaust = facade.analyzeFiles(file.getProject(),
-                                                                             declarationProvider.fun(file),
-                                                                             Predicates.<PsiFile>equalTo(file),
-                                                                             JetControlFlowDataTraceFactory.EMPTY);
+                                AnalyzeExhaust exhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file)
+                                    .analyzeFiles(file.getProject(),
+                                                  declarationProvider.fun(file),
+                                                  Predicates.<PsiFile>equalTo(file),
+                                                  JetControlFlowDataTraceFactory.EMPTY);
                                 return new Result<AnalyzeExhaust>(exhaust, PsiModificationTracker.MODIFICATION_COUNT);
                             }
                             catch (ProcessCanceledException e) {
@@ -122,7 +116,7 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
      * Analyze project with string cache for the whole project. All given files will be analyzed only for descriptors.
      */
     @NotNull
-    public AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project, @NotNull final Collection<JetFile> files) {
+    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project, @NotNull final Collection<JetFile> files) {
         // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
         synchronized (lock) {
             CachedValue<AnalyzeExhaust> bindingContextCachedValue = project.getUserData(ANALYZE_EXHAUST);
@@ -132,10 +126,11 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
                         @Override
                         public Result<AnalyzeExhaust> compute() {
                             try {
-                                AnalyzeExhaust analyzeExhaust = facade.analyzeFiles(project,
-                                                                                    files,
-                                                                                    Predicates.<PsiFile>alwaysFalse(),
-                                                                                    JetControlFlowDataTraceFactory.EMPTY);
+                                AnalyzeExhaust analyzeExhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project)
+                                    .analyzeFiles(project,
+                                                  files,
+                                                  Predicates.<PsiFile>alwaysFalse(),
+                                                  JetControlFlowDataTraceFactory.EMPTY);
                                 return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
                             }
                             catch (ProcessCanceledException e) {
@@ -158,14 +153,5 @@ public class AnalyzerFacadeWithCache implements AnalyzerFacade {
             }
             return bindingContextCachedValue.getValue();
         }
-    }
-
-    @NotNull
-    @Override
-    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
-                                       @NotNull Collection<JetFile> files,
-                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-                                       @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        return facade.analyzeFiles(project, files, filesToAnalyzeCompletely, flowDataTraceFactory);
     }
 }
