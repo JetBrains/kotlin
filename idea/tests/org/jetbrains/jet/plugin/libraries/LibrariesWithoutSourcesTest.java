@@ -33,7 +33,7 @@ import java.util.Map;
  * @since 3/11/12
  */
 public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
-    private VirtualFile myClassFile;
+    private VirtualFile classFile;
 
     public void testAbstractClass() {
         doTest();
@@ -72,9 +72,9 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
     }
 
     private void doTest() {
-        myClassFile = getClassFile();
+        classFile = getClassFile();
 
-        Map<ClsElementImpl, JetDeclaration> map = getDecompiledData(myClassFile).getClsElementsToJetElements();
+        Map<ClsElementImpl, JetDeclaration> map = getDecompiledData(classFile).getClsElementsToJetElements();
         checkNavigationElements(map);
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
@@ -104,7 +104,7 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
     }
 
     private String getDecompiledText() {
-        Document document = FileDocumentManager.getInstance().getDocument(myClassFile);
+        Document document = FileDocumentManager.getInstance().getDocument(classFile);
         assertNotNull(document);
         return document.getText();
     }
@@ -117,7 +117,7 @@ public class LibrariesWithoutSourcesTest extends AbstractLibrariesTest {
     }
 
     private void checkNavigationElements(Map<ClsElementImpl, JetDeclaration> map) {
-        PsiFile classPsiFile = getPsiManager().findFile(myClassFile);
+        PsiFile classPsiFile = getPsiManager().findFile(classFile);
         for (Map.Entry<ClsElementImpl, JetDeclaration> clsToJet : map.entrySet()) {
             assertSame(classPsiFile, clsToJet.getKey().getContainingFile());
             assertSame(clsToJet.getValue(), clsToJet.getKey().getNavigationElement());
