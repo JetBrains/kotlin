@@ -24,7 +24,6 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
@@ -38,7 +37,15 @@ public class JetNamespaceHeader extends JetReferenceExpression {
 
     @NotNull
     public List<JetSimpleNameExpression> getParentNamespaceNames() {
-        return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        List<JetSimpleNameExpression> parentParts = findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        parentParts.remove(lastPart);
+        return parentParts;
+    }
+
+    @Nullable
+    public JetSimpleNameExpression getLastPartExpression() {
+        return (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @NotNull
@@ -56,7 +63,12 @@ public class JetNamespaceHeader extends JetReferenceExpression {
 
     @Nullable
     public PsiElement getNameIdentifier() {
-        return findChildByType(JetTokens.IDENTIFIER);
+        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        if (lastPart == null) {
+            return null;
+        }
+
+        return lastPart.getIdentifier();
     }
 
     @Override

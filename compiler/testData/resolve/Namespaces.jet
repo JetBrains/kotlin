@@ -1,5 +1,5 @@
 // FILE: f.kt
-~a~package a
+package ~a~a
     import java.*
 
     ~a.a~val a : util.List<Int>? = null

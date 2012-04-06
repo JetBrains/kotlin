@@ -5,7 +5,8 @@ JetFile: RootNamespace.jet
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
     PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('bar')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('bar')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   CLASS

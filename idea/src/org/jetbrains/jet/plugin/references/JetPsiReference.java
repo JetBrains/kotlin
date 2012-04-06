@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -37,6 +39,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_
 import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
+
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.references.JetPsiReference");
 
     @NotNull
     protected final JetReferenceExpression myExpression;
@@ -99,14 +103,20 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @Nullable
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
-                .getBindingContext();
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
         PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, myExpression);
         if (psiElement != null) {
             return psiElement;
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
+
+
+        VirtualFile elementFile = file.getVirtualFile();
+        if (elementFile != null && elementFile.getNameWithoutExtension().equals(getElement().getText())) {
+            LOG.warn("Possible problem with file rename: " + elementFile.getNameWithoutExtension() +
+                     ", element: " + getElement());
+        }
 
         // TODO: Need a better resolution for Intrinsic function (KT-975)
         return file;

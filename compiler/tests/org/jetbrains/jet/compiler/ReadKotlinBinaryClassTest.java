@@ -22,11 +22,14 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
+import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.ClassFileFactory;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.GenerationUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -35,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.junit.Assert;
 
 import java.io.File;
 
@@ -73,7 +75,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
         
-        NamespaceDescriptor namespaceFromSource = (NamespaceDescriptor) state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiFile);
+        NamespaceDescriptor namespaceFromSource = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, psiFile);
 
         Assert.assertEquals("test", namespaceFromSource.getName());
 

@@ -24,9 +24,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
-import org.jetbrains.jet.plugin.references.JetPackageReference;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
@@ -60,28 +62,26 @@ public class JetPackagesContributor extends CompletionContributor {
                        if (ref != null) {
 
                            // For package there will be a wrong prefix matcher with the whole package directive as prefix
-                           if (ref instanceof JetPackageReference) {
-                               JetPackageReference packageRef = (JetPackageReference) ref;
-                               PsiElement nameIdentifier = packageRef.getExpression().getNameIdentifier();
-                               if (nameIdentifier == null) {
-                                   return;
-                               }
-
-                               if (!(nameIdentifier.getTextOffset() <= parameters.getOffset())) {
-                                   return;
-                               }
-
-                               int prefixLength = parameters.getOffset() - nameIdentifier.getTextOffset();
-                               result = result.withPrefixMatcher(new PlainPrefixMatcher(nameIdentifier.getText().substring(0, prefixLength)));
+                           PsiElement nameIdentifier = namespaceHeader.getNameIdentifier();
+                           if (nameIdentifier == null) {
+                               return;
                            }
 
-                           Object[] variants = ref.getVariants();
-                           for (Object variant : variants) {
-                               if (variant instanceof LookupElement) {
-                                   LookupElement lookupElement = (LookupElement) variant;
-                                   if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
-                                       result.addElement((LookupElement) variant);
-                                   }
+                           if (!(nameIdentifier.getTextOffset() <= parameters.getOffset())) {
+                               return;
+                           }
+
+                           int prefixLength = parameters.getOffset() - nameIdentifier.getTextOffset();
+                           result = result.withPrefixMatcher(new PlainPrefixMatcher(nameIdentifier.getText().substring(0, prefixLength)));
+
+                           BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
+                                   (JetFile)namespaceHeader.getContainingFile())
+                                   .getBindingContext();
+
+                           for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(
+                                   bindingContext, TipsManager.getReferenceVariants(namespaceHeader, bindingContext))) {
+                               if (!variant.getLookupString().contains(DUMMY_IDENTIFIER)) {
+                                   result.addElement(variant);
                                }
                            }
 

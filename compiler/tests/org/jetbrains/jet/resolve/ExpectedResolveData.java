@@ -35,9 +35,9 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 import java.util.Map;
@@ -160,7 +160,7 @@ public abstract class ExpectedResolveData {
             if (ancestorOfType == null) {
                 JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
                 assert header != null : "Not a declaration: " + name;
-                ancestorOfType = header.getContainingFile();
+                ancestorOfType = element;
             }
             nameToDeclaration.put(name, ancestorOfType);
             declarationToName.put(ancestorOfType, name);
@@ -237,6 +237,9 @@ public abstract class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             PsiElement actual = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, reference);
+            if (actual instanceof JetSimpleNameExpression) {
+                actual = ((JetSimpleNameExpression)actual).getIdentifier();
+            }
 
             String actualName = null;
             if (actual != null) {

@@ -15,4 +15,5 @@ JetFile: NamespaceModifiers.jet
     PsiWhiteSpace(' ')
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('name')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('name')
