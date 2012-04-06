@@ -29,6 +29,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.util.containers.MultiMap;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.references.JetPsiReference;
 
 import java.util.*;
@@ -172,27 +173,7 @@ public class LibrariesWithSourcesTest extends AbstractLibrariesTest {
     private String getExpectedAnnotatedLibraryCode() {
         Document document = FileDocumentManager.getInstance().getDocument(userFile);
         assertNotNull(document);
-        List<CharSequence> resultLines = new ArrayList<CharSequence>();
-        for (int i = document.getLineCount() - 1; i >= 0; i--) {
-            int lineStart = document.getLineStartOffset(i);
-            int lineEnd = document.getLineEndOffset(i);
-            if (document.getCharsSequence().subSequence(lineStart, lineEnd).toString().trim().isEmpty()) {
-                continue;
-            }
-
-            if ("//".equals(document.getCharsSequence().subSequence(lineStart, lineStart + 2).toString())) {
-                resultLines.add(document.getCharsSequence().subSequence(lineStart + 2, lineEnd));
-            } else {
-                break;
-            }
-        }
-        Collections.reverse(resultLines);
-        StringBuilder result = new StringBuilder();
-        for (CharSequence line : resultLines) {
-            result.append(line).append("\n");
-        }
-        result.delete(result.length() - 1, result.length());
-        return result.toString();
+        return JetTestUtils.getLastCommentedLines(document);
     }
 
     @Override
