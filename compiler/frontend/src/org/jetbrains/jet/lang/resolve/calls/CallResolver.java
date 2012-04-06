@@ -262,10 +262,12 @@ public class CallResolver {
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
             OverloadResolutionResultsImpl<D> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.withTrace(temporaryTrace));
-            if (results.isSuccess()) {
+            if (results.isSuccess() || results.isAmbiguity()) {
                 temporaryTrace.commit();
 
-                debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
+                if (results.isSuccess()) {
+                    debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
+                }
 
                 return results;
             }
