@@ -68,7 +68,6 @@ public final class IDEAConfig extends Config {
                 return pathToIndicationFileUri.resolve(pathToLibFileUri).toString();
             }
             catch (URISyntaxException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 return null;
             }
         }
