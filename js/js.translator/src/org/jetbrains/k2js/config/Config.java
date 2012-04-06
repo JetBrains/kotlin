@@ -18,6 +18,7 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Arrays;
@@ -52,6 +53,8 @@ public abstract class Config {
 
     @NotNull
     private final Project project;
+    @Nullable
+    private List<JetFile> libFiles = null;
 
     public Config(@NotNull Project project) {
         this.project = project;
@@ -63,5 +66,13 @@ public abstract class Config {
     }
 
     @NotNull
-    public abstract List<JetFile> getLibFiles();
+    protected abstract List<JetFile> generateLibFiles();
+
+    @NotNull
+    public final List<JetFile> getLibFiles() {
+        if (libFiles == null) {
+            libFiles = generateLibFiles();
+        }
+        return libFiles;
+    }
 }

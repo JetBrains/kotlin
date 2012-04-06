@@ -18,6 +18,8 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -37,13 +39,10 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.jet.plugin.project.IDEAConfig;
 import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.IDEAConfig;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
@@ -101,9 +100,9 @@ public enum AnalyzerFacadeForJS implements AnalyzerFacade {
 
     @NotNull
     public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
-        List<JetFile> allFiles = new ArrayList<JetFile>();
-        allFiles.addAll(files);
-        allFiles.addAll(config.getLibFiles());
+        Set<JetFile> allFiles = Sets.newHashSet();
+        allFiles.addAll(toOriginal(files));
+        allFiles.addAll(toOriginal(config.getLibFiles()));
         return allFiles;
     }
 
@@ -113,10 +112,19 @@ public enum AnalyzerFacadeForJS implements AnalyzerFacade {
             @Override
             public boolean apply(@Nullable PsiFile file) {
                 assert file instanceof JetFile;
-                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file);
+                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file.getOriginalFile());
                 return notLibFile;
             }
         };
+    }
+
+    @NotNull
+    private static Collection<JetFile> toOriginal(@NotNull Collection<JetFile> files) {
+        Collection<JetFile> result = Lists.newArrayList();
+        for (JetFile file : files) {
+            result.add(file);
+        }
+        return result;
     }
 
     //TODO: exclude?

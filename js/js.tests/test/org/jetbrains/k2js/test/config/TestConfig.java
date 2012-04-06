@@ -71,7 +71,7 @@ public final class TestConfig extends Config {
     }
 
     @NotNull
-    public List<JetFile> getLibFiles() {
+    public List<JetFile> generateLibFiles() {
         if (jsLibFiles == null) {
             jsLibFiles = initLibFiles(getProject());
         }

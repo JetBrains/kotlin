@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.jet.plugin.project;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -37,22 +40,62 @@ import java.util.zip.ZipFile;
  */
 public final class IDEAConfig extends Config {
 
-    @NotNull
+    @Nullable
     private final String pathToLibZip;
 
-    public IDEAConfig(@NotNull Project project, @NotNull String pathToLibZip) {
+    public IDEAConfig(@NotNull Project project) {
         super(project);
-        this.pathToLibZip = pathToLibZip;
+        this.pathToLibZip = getLibLocationForProject(project);
     }
 
-    public IDEAConfig(@NotNull Project project) {
-        //TODO: testing purposes. Should not get anywhere near production
-        this(project, "C:\\Dev\\Projects\\Kotlin\\clean_jet\\js\\js.libraries\\src\\k2jslib.zip");
+    //TODO: refactor
+    @Nullable
+    private static String getLibLocationForProject(@NotNull Project project) {
+        VirtualFile indicationFile = JsModuleDetector.findIndicationFileInContextRoots(project);
+        if (indicationFile == null) {
+            return null;
+        }
+        try {
+            InputStream stream = indicationFile.getInputStream();
+            String path = FileUtil.loadTextAndClose(stream);
+            String pathToLibFile = getFirstLine(path);
+            if (pathToLibFile == null) {
+                return null;
+            }
+            try {
+                URI pathToLibFileUri = new URI(pathToLibFile);
+                URI pathToIndicationFileUri = new URI(indicationFile.getPath());
+                return pathToIndicationFileUri.resolve(pathToLibFileUri).toString();
+            }
+            catch (URISyntaxException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                return null;
+            }
+        }
+        catch (IOException e) {
+            return null;
+        }
+    }
+
+    //TODO: util
+    @Nullable
+    private static String getFirstLine(@NotNull String path) throws IOException {
+        BufferedReader reader = new BufferedReader(new StringReader(path));
+        try {
+            return reader.readLine();
+        }
+
+        finally {
+            reader.close();
+        }
     }
 
     @NotNull
     @Override
-    public List<JetFile> getLibFiles() {
+    public List<JetFile> generateLibFiles() {
+        if (pathToLibZip == null) {
+            return Collections.emptyList();
+        }
         try {
             File file = new File(pathToLibZip);
             ZipFile zipFile = new ZipFile(file);
