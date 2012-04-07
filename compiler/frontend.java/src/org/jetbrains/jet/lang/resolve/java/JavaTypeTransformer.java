@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.google.common.collect.Lists;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -237,7 +238,7 @@ public class JavaTypeTransformer {
         return classTypesMap;
     }
 
-    public Map<FqName, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
+    private Map<FqName, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
         if (classDescriptorMap == null) {
             classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
@@ -249,6 +250,11 @@ public class JavaTypeTransformer {
             classDescriptorMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getThrowable());
         }
         return classDescriptorMap;
+    }
+
+    @Nullable
+    public ClassDescriptor unwrapPrimitive(@NotNull FqName fqName) {
+        return getPrimitiveWrappersClassDescriptorMap().get(fqName);
     }
 
     /**
