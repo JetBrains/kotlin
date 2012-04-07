@@ -96,6 +96,10 @@ public abstract class WritableScopeWithImports extends JetScopeAdapter implement
 
     @Override
     public void importScope(@NotNull JetScope imported) {
+        if (imported == this) {
+            throw new IllegalStateException("cannot import scope into self");
+        }
+
         checkMayWrite();
 
         getImports().add(0, imported);
