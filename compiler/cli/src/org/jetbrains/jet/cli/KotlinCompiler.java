@@ -106,12 +106,19 @@ public class KotlinCompiler {
         CompilerSpecialMode mode;
         if (arguments.mode == null) {
             mode = CompilerSpecialMode.REGULAR;
-        } else if (arguments.mode.equals("jdkHeaders")) {
-            mode = CompilerSpecialMode.JDK_HEADERS;
-        } else if (arguments.mode.equals("builtins")) {
-            mode = CompilerSpecialMode.BUILTINS;
-        } else {
-            throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
+        }
+        else {
+            computeMode:
+            {
+                for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
+                    if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
+                        mode = variant;
+                        break computeMode;
+                    }
+                }
+                // TODO: report properly
+                throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
+            }
         }
 
         CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose, mode);
