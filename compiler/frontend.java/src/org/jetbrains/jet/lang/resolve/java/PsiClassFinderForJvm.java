@@ -24,12 +24,12 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.utils.PathUtil;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -51,7 +51,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     @PostConstruct
     public void initialize() {
-        this.altClassFinder = new AltClassFinder(project);
+        this.altClassFinder = new AltClassFinder(project, PathUtil.getAltHeadersRoots());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {
