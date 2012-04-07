@@ -183,6 +183,11 @@ public class DependencyInjectorGenerator {
         return addField(false, type, null, null);
     }
 
+    public Field addField(Enum<?> enu) {
+        Class<? extends Enum> clazz = enu.getClass();
+        return addField(false, clazz, null, new GivenExpression(clazz.getSimpleName() + "." + enu.name()));
+    }
+
     public Field addField(boolean isPublic, Class<?> type, @Nullable String name, @Nullable Expression init) {
         return addField(isPublic, new DiType(type), name, init);
     }

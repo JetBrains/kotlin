@@ -132,8 +132,7 @@ public class AllInjectorsGenerator {
         generator.addPublicField(PsiClassFinderForJvm.class);
         generator.addField(false, ModuleDescriptor.class, null,
                 new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
-        generator.addField(false, CompilerSpecialMode.class, null,
-                new GivenExpression("CompilerSpecialMode.REGULAR"));
+        generator.addField(CompilerSpecialMode.REGULAR);
 
         // Parameters
         generator.addPublicParameter(Project.class);
