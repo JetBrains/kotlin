@@ -763,7 +763,7 @@ public class JavaDescriptorResolver {
     private void transformSupertypeList(List<JetType> result, PsiClassType[] extendsListTypes, TypeVariableResolver typeVariableResolver, boolean annotation) {
         for (PsiClassType type : extendsListTypes) {
             PsiClass resolved = type.resolve();
-            if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName())) {
+            if (resolved != null && resolved.getQualifiedName().equals(JvmStdlibNames.JET_OBJECT.getFqName().getFqName())) {
                 continue;
             }
             if (annotation && resolved.getQualifiedName().equals("java.lang.annotation.Annotation")) {
@@ -961,7 +961,7 @@ public class JavaDescriptorResolver {
             JetType transformedType;
             if (parameter.getJetValueParameter().nullable()) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, parameter.getJetValueParameter().nullable());
-            } else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+            } else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
             } else {
                 transformedType = outType;
@@ -1208,7 +1208,7 @@ public class JavaDescriptorResolver {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
             } else {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
-                if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+                if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                     propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
                 }
             }
@@ -1507,7 +1507,7 @@ public class JavaDescriptorResolver {
         AnnotationDescriptor annotation = new AnnotationDescriptor();
 
         String qname = psiAnnotation.getQualifiedName();
-        if (qname.startsWith("java.lang.annotation.") || qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName())) {
+        if (qname.startsWith("java.lang.annotation.") || qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName())) {
             // TODO
             return null;
         }
@@ -1634,7 +1634,7 @@ public class JavaDescriptorResolver {
         }
         if (method.getJetMethod().returnTypeNullable()) {
             return TypeUtils.makeNullableAsSpecified(transformedType, true);
-        } else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName()) != null) {
+        } else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
         } else {
             return transformedType;
