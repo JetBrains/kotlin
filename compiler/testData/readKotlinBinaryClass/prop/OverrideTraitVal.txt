@@ -1,0 +1,9 @@
+namespace test
+
+open class test.Subclass : test.Trait {
+    final /*constructor*/ fun <init>(): test.Subclass
+    open val shape: jet.String
+}
+abstract trait test.Trait : jet.Any {
+    abstract val shape: jet.String
+}

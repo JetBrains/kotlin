@@ -1,0 +1,10 @@
+namespace test
+
+open class test.Subclass : test.BaseClass {
+    final /*constructor*/ fun <init>(): test.Subclass
+    open val shape: jet.String
+}
+open class test.BaseClass : jet.Any {
+    final /*constructor*/ fun <init>(): test.BaseClass
+    open val shape: jet.String
+}
