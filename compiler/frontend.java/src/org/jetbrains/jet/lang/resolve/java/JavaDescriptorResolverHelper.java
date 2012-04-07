@@ -106,6 +106,11 @@ class JavaDescriptorResolverHelper {
             
             for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
                 getNamedMembers(method.getName());
+
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+                if (propertyParseResult != null) {
+                    getNamedMembers(propertyParseResult.getPropertyName());
+                }
             }
 
             

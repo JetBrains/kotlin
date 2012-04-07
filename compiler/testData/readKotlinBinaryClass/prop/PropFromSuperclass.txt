@@ -1,0 +1,10 @@
+namespace test
+
+final class test.Subclass : test.BaseClass {
+    final /*constructor*/ fun <init>(): test.Subclass
+    final val exactly: jet.Int
+}
+open class test.BaseClass : jet.Any {
+    final /*constructor*/ fun <init>(): test.BaseClass
+    final val exactly: jet.Int
+}
