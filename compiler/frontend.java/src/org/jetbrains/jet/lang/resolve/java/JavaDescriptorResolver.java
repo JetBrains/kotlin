@@ -946,16 +946,13 @@ public class JavaDescriptorResolver {
         return scope;
     }
 
+    @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        // TODO: move this check outside
-        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
-        // Kotlin functions are already there
-        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
-        if (kotlinNamespaceDescriptor != null) {
+        PsiClass psiClass = psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
+        if (psiClass instanceof JetJavaMirrorMarker) {
             return null;
         } else {
-            // TODO: what is GlobalSearchScope
-            return semanticServices.getPsiClassFinder().findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
+            return psiClass;
         }
     }
 
@@ -1387,7 +1384,8 @@ public class JavaDescriptorResolver {
         namedMembers.propertyDescriptors = properties;
     }
 
-    private void resolveNamedGroupFunctions(ClassOrNamespaceDescriptor owner, PsiClass psiClass, TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
+    private void resolveNamedGroupFunctions(@NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
+            TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
@@ -1396,7 +1394,7 @@ public class JavaDescriptorResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
-            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass, method, scopeData);
+            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(psiClass, method, scopeData);
             if (function != null) {
                 functionsFromCurrent.add((SimpleFunctionDescriptor) function);
             }
@@ -1512,7 +1510,7 @@ public class JavaDescriptorResolver {
 
     @Nullable
     private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(
-            ClassOrNamespaceDescriptor owner, final PsiClass psiClass, final PsiMethodWrapper method,
+            @NotNull final PsiClass psiClass, final PsiMethodWrapper method,
             @NotNull ResolverScopeData scopeData) {
 
         getResolverScopeData(scopeData);
@@ -1522,28 +1520,12 @@ public class JavaDescriptorResolver {
             return null;
         }
 
-        boolean kotlin;
-        if (owner instanceof JavaNamespaceDescriptor) {
-            JavaNamespaceDescriptor javaNamespaceDescriptor = (JavaNamespaceDescriptor) owner;
-            ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(javaNamespaceDescriptor.getQualifiedName());
-            if (namespaceData == null) {
-                throw new IllegalStateException("namespaceData not found by name " + javaNamespaceDescriptor.getQualifiedName());
-            }
-            kotlin = namespaceData.kotlin;
-        } else {
-            ResolverBinaryClassData classData = classDescriptorCache.get(new FqName(psiClass.getQualifiedName()));
-            if (classData == null) {
-                throw new IllegalStateException("classData not found by name " + psiClass.getQualifiedName());
-            }
-            kotlin = classData.kotlin;
-        }
-
         // TODO: ugly
         if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
             return null;
         }
 
-        if (kotlin) {
+        if (scopeData.kotlin) {
             // TODO: unless maybe class explicitly extends Object
             String ownerClassName = method.getPsiMethod().getContainingClass().getQualifiedName();
             if (ownerClassName.equals("java.lang.Object")) {
@@ -1551,21 +1533,8 @@ public class JavaDescriptorResolver {
             }
         }
 
-        ClassOrNamespaceDescriptor classDescriptor;
-        if (scopeData instanceof ResolverBinaryClassData) {
-            ClassDescriptor classClassDescriptor = resolveClass(new FqName(method.getPsiMethod().getContainingClass().getQualifiedName()),
-                    DescriptorSearchRule.INCLUDE_KOTLIN);
-            classDescriptor = classClassDescriptor;
-        }
-        else {
-            classDescriptor = resolveNamespace(method.getPsiMethod().getContainingClass());
-        }
-        if (classDescriptor == null) {
-            return null;
-        }
-
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
-                owner,
+                scopeData.classOrNamespaceDescriptor,
                 resolveAnnotations(method.getPsiMethod()),
                 method.getName(),
                 CallableMemberDescriptor.Kind.DECLARATION
@@ -1573,7 +1542,7 @@ public class JavaDescriptorResolver {
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
 
-        final TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(classDescriptor, context);
+        final TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(scopeData.classOrNamespaceDescriptor, context);
 
         final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
 
@@ -1583,7 +1552,7 @@ public class JavaDescriptorResolver {
         ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(functionDescriptorImpl, method.getParameters(), methodTypeVariableResolver);
         functionDescriptorImpl.initialize(
                 valueParameterDescriptors.receiverType,
-                DescriptorUtils.getExpectedThisObjectIfNeeded(classDescriptor),
+                DescriptorUtils.getExpectedThisObjectIfNeeded(scopeData.classOrNamespaceDescriptor),
                 methodTypeParameters,
                 valueParameterDescriptors.descriptors,
                 makeReturnType(returnType, method, methodTypeVariableResolver),
