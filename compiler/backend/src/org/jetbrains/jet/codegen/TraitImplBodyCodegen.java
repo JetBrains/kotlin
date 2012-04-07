@@ -74,6 +74,6 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
     }
 
     private String jvmName() {
-        return state.getInjector().getJetTypeMapper().mapType(descriptor.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName();
+        return state.getInjector().getJetTypeMapper().mapType(descriptor.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName();
     }
 }

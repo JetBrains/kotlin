@@ -63,6 +63,7 @@ public class JetTypeMapper {
     private JetStandardLibrary standardLibrary;
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
+    private CompilerSpecialMode compilerSpecialMode;
 
 
     @Inject
@@ -78,6 +79,11 @@ public class JetTypeMapper {
     @Inject
     public void setClosureAnnotator(ClosureAnnotator closureAnnotator) {
         this.closureAnnotator = closureAnnotator;
+    }
+
+    @Inject
+    public void setCompilerSpecialMode(CompilerSpecialMode compilerSpecialMode) {
+        this.compilerSpecialMode = compilerSpecialMode;
     }
 
     @PostConstruct
@@ -129,6 +135,8 @@ public class JetTypeMapper {
     }
 
     public String getOwner(DeclarationDescriptor descriptor, OwnerKind kind) {
+        MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
+
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
@@ -137,14 +145,14 @@ public class JetTypeMapper {
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
             if (kind instanceof OwnerKind.DelegateKind) {
-                kind = OwnerKind.IMPLEMENTATION;
+                mapTypeMode = MapTypeMode.IMPL;
             }
             else {
                 if (classDescriptor.getKind() == ClassKind.OBJECT) {
-                    kind = OwnerKind.IMPLEMENTATION;
+                    mapTypeMode = MapTypeMode.IMPL;
                 }
             }
-            Type asmType = mapType(classDescriptor.getDefaultType(), kind);
+            Type asmType = mapType(classDescriptor.getDefaultType(), mapTypeMode);
             if (asmType.getSort() != Type.OBJECT) {
                 throw new IllegalStateException();
             }
@@ -154,6 +162,18 @@ public class JetTypeMapper {
             throw new UnsupportedOperationException("don't know how to generate owner for parent " + containingDeclaration);
         }
         return owner;
+    }
+
+    public static MapTypeMode ownerKindToMapTypeMode(OwnerKind kind) {
+        if (kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.NAMESPACE) {
+            return MapTypeMode.IMPL;
+        }
+        else if (kind == OwnerKind.TRAIT_IMPL) {
+            return MapTypeMode.TRAIT_IMPL;
+        }
+        else {
+            throw new IllegalStateException("must not call this method with kind = " + kind);
+        }
     }
 
     private String jvmClassNameForNamespace(NamespaceDescriptor namespace) {
@@ -202,7 +222,7 @@ public class JetTypeMapper {
             }
             return TYPE_OBJECT;
         }
-        return mapType(jetType, OwnerKind.IMPLEMENTATION, signatureVisitor);
+        return mapType(jetType, signatureVisitor, MapTypeMode.VALUE);
     }
 
     private String getStableNameForObject(JetObjectDeclaration object, DeclarationDescriptor descriptor) {
@@ -278,26 +298,33 @@ public class JetTypeMapper {
         return getContainingNamespace(parent);
     }
 
-    @NotNull public Type mapType(final JetType jetType) {
-        return mapType(jetType, (BothSignatureWriter) null);
+    @NotNull
+    public Type mapType(@NotNull final JetType jetType, @NotNull MapTypeMode kind) {
+        return mapType(jetType, null, kind);
     }
 
-    @NotNull private Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, OwnerKind.IMPLEMENTATION, signatureVisitor);
-    }
-
-    @NotNull public Type mapType(@NotNull final JetType jetType, OwnerKind kind) {
-        return mapType(jetType, kind, null);
-    }
-
-    @NotNull private Type mapType(JetType jetType, OwnerKind kind, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, kind, signatureVisitor, false);
-    }
-
-    @NotNull public Type mapType(JetType jetType, OwnerKind kind, @Nullable BothSignatureWriter signatureVisitor, boolean boxPrimitive) {
+    @NotNull
+    public Type mapType(JetType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull MapTypeMode kind) {
         Type known = knowTypes.get(jetType);
         if (known != null) {
-            return mapKnownAsmType(jetType, known, signatureVisitor, boxPrimitive);
+            if (kind == MapTypeMode.VALUE) {
+                return mapKnownAsmType(jetType, known, signatureVisitor, false);
+            }
+            else if (kind == MapTypeMode.TYPE_PARAMETER) {
+                return mapKnownAsmType(jetType, known, signatureVisitor, true);
+            }
+            else if (kind == MapTypeMode.TRAIT_IMPL) {
+                throw new IllegalStateException("TRAIT_IMPL is not possible for " + jetType);
+            }
+            else if (kind == MapTypeMode.IMPL) {
+                if (compilerSpecialMode != CompilerSpecialMode.BUILTINS) {
+                    throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
+                }
+                // fall through
+            }
+            else {
+                throw new IllegalStateException("unknown kind: " + kind);
+            }
         }
 
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
@@ -318,7 +345,7 @@ public class JetTypeMapper {
             
             if (signatureVisitor != null) {
                 signatureVisitor.writeArrayType(jetType.isNullable());
-                mapType(memberType, kind, signatureVisitor, true);
+                mapType(memberType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                 signatureVisitor.writeArrayEnd();
             }
             
@@ -350,7 +377,7 @@ public class JetTypeMapper {
                 forceReal = false;
             } else {
                 JvmClassName name = getClassFQName((ClassDescriptor) descriptor);
-                asmType = Type.getObjectType(name.getInternalName() + (kind == OwnerKind.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
+                asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
                 forceReal = isForceReal(name);
             }
 
@@ -359,7 +386,7 @@ public class JetTypeMapper {
                 for (TypeProjection proj : jetType.getArguments()) {
                     // TODO: +-
                     signatureVisitor.writeTypeArgument(proj.getProjectionKind());
-                    mapType(proj.getType(), kind, signatureVisitor, true);
+                    mapType(proj.getType(), signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                     signatureVisitor.writeTypeArgumentEnd();
                 }
                 signatureVisitor.writeClassEnd();
@@ -381,15 +408,19 @@ public class JetTypeMapper {
         throw new UnsupportedOperationException("Unknown type " + jetType);
     }
     
-    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor, boolean genericTypeParameter) {
-        if (signatureVisitor != null) {
-            if (genericTypeParameter) {
-                visitAsmType(signatureVisitor, boxType(asmType), jetType.isNullable());
-            } else {
+    private Type mapKnownAsmType(JetType jetType, Type asmType, @Nullable BothSignatureWriter signatureVisitor, boolean boxPrimitive) {
+        if (boxPrimitive) {
+            Type boxed = boxType(asmType);
+            if (signatureVisitor != null) {
+                visitAsmType(signatureVisitor, boxed, jetType.isNullable());
+            }
+            return boxed;
+        } else {
+            if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, asmType, jetType.isNullable());
             }
+            return asmType;
         }
-        return asmType;
     }
 
     public static void visitAsmType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
@@ -435,7 +466,7 @@ public class JetTypeMapper {
         else if (functionDescriptor instanceof ConstructorDescriptor) {
             assert !superCall;
             ClassDescriptor containingClass = (ClassDescriptor) functionParent;
-            owner = mapType(containingClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            owner = mapType(containingClass.getDefaultType(), MapTypeMode.IMPL).getInternalName();
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESPECIAL;
             thisClass = null;
@@ -457,12 +488,12 @@ public class JetTypeMapper {
                 receiver = currentOwner;
             }
 
-            ClassDescriptor containingClass = (ClassDescriptor) functionParent;
+            // TODO: TYPE_PARAMETER is hack here
+
             boolean isInterface = originalIsInterface && currentIsInterface;
-            OwnerKind kind1 = isInterface && superCall ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
-            Type type = mapType(receiver.getDefaultType(), OwnerKind.IMPLEMENTATION);
+            Type type = mapType(receiver.getDefaultType(), MapTypeMode.TYPE_PARAMETER);
             owner = type.getInternalName();
-            ownerForDefaultParam = mapType(((ClassDescriptor) declarationOwner).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
+            ownerForDefaultParam = mapType(declarationOwner.getDefaultType(), MapTypeMode.TYPE_PARAMETER).getInternalName();
             ownerForDefaultImpl = ownerForDefaultParam
                     + (originalIsInterface ? JvmAbi.TRAIT_IMPL_SUFFIX : "");
 
@@ -518,10 +549,10 @@ public class JetTypeMapper {
         if(kind == OwnerKind.TRAIT_IMPL) {
             ClassDescriptor containingDeclaration = (ClassDescriptor) f.getContainingDeclaration();
             JetType jetType = TraitImplBodyCodegen.getSuperClass(containingDeclaration, bindingContext);
-            Type type = mapType(jetType);
+            Type type = mapType(jetType, MapTypeMode.VALUE);
             if(type.getInternalName().equals("java/lang/Object")) {
                 jetType = containingDeclaration.getDefaultType();
-                type = mapType(jetType);
+                type = mapType(jetType, MapTypeMode.VALUE);
             }
             
             signatureVisitor.writeParameterType(JvmMethodParameterKind.THIS);
@@ -531,13 +562,13 @@ public class JetTypeMapper {
 
         if (receiverType != null) {
             signatureVisitor.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(receiverType, signatureVisitor);
+            mapType(receiverType, signatureVisitor, MapTypeMode.VALUE);
             signatureVisitor.writeParameterTypeEnd();
         }
 
         for (ValueParameterDescriptor parameter : parameters) {
             signatureVisitor.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getType(), signatureVisitor);
+            mapType(parameter.getType(), signatureVisitor, MapTypeMode.VALUE);
             signatureVisitor.writeParameterTypeEnd();
         }
 
@@ -576,7 +607,7 @@ public class JetTypeMapper {
             for (JetType jetType : typeParameterDescriptor.getUpperBounds()) {
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!CodegenUtil.isInterface(jetType)) {
-                        mapType(jetType, signatureVisitor);
+                        mapType(jetType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                         break classBound;
                     }
                 }
@@ -593,13 +624,13 @@ public class JetTypeMapper {
             if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                 if (CodegenUtil.isInterface(jetType)) {
                     signatureVisitor.writeInterfaceBound();
-                    mapType(jetType, signatureVisitor);
+                    mapType(jetType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                     signatureVisitor.writeInterfaceBoundEnd();
                 }
             }
             if (jetType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
                 signatureVisitor.writeInterfaceBound();
-                mapType(jetType, signatureVisitor);
+                mapType(jetType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                 signatureVisitor.writeInterfaceBoundEnd();
             }
         }
@@ -620,12 +651,12 @@ public class JetTypeMapper {
         final List<ValueParameterDescriptor> parameters = f.getValueParameters();
         if (receiver.exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(receiver.getType(), signatureWriter);
+            mapType(receiver.getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
         for (ValueParameterDescriptor parameter : parameters) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getType(), signatureWriter);
+            mapType(parameter.getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
@@ -653,20 +684,20 @@ public class JetTypeMapper {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(containingDeclaration.getDefaultType(), signatureWriter);
+            mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.IMPL);
             signatureWriter.writeParameterTypeEnd();
         }
 
         if(descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(descriptor.getReceiverParameter().getType(), signatureWriter);
+            mapType(descriptor.getReceiverParameter().getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
         signatureWriter.writeParametersEnd();
 
         signatureWriter.writeReturnType();
-        mapType(descriptor.getType(), signatureWriter);
+        mapType(descriptor.getType(), signatureWriter, MapTypeMode.VALUE);
         signatureWriter.writeReturnTypeEnd();
 
         JvmMethodSignature jvmMethodSignature = signatureWriter.makeJvmMethodSignature(name);
@@ -694,18 +725,18 @@ public class JetTypeMapper {
             ClassDescriptor containingDeclaration = (ClassDescriptor) descriptor.getContainingDeclaration();
             assert containingDeclaration != null;
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS);
-            mapType(containingDeclaration.getDefaultType(), signatureWriter);
+            mapType(containingDeclaration.getDefaultType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
         if(descriptor.getReceiverParameter().exists()) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.RECEIVER);
-            mapType(descriptor.getReceiverParameter().getType(), signatureWriter);
+            mapType(descriptor.getReceiverParameter().getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
         signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-        mapType(outType, signatureWriter);
+        mapType(outType, signatureWriter, MapTypeMode.VALUE);
         signatureWriter.writeParameterTypeEnd();
         
         signatureWriter.writeParametersEnd();
@@ -729,13 +760,13 @@ public class JetTypeMapper {
 
         if (hasThis0) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.THIS0);
-            mapType(closureAnnotator.getEclosingClassDescriptor(descriptor.getContainingDeclaration()).getDefaultType(), OwnerKind.IMPLEMENTATION, signatureWriter);
+            mapType(closureAnnotator.getEclosingClassDescriptor(descriptor.getContainingDeclaration()).getDefaultType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
 
         for (ValueParameterDescriptor parameter : parameters) {
             signatureWriter.writeParameterType(JvmMethodParameterKind.VALUE);
-            mapType(parameter.getType(), signatureWriter);
+            mapType(parameter.getType(), signatureWriter, MapTypeMode.VALUE);
             signatureWriter.writeParameterTypeEnd();
         }
         
@@ -748,7 +779,8 @@ public class JetTypeMapper {
 
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
-        String owner = mapType(descriptor.getContainingDeclaration().getDefaultType(), kind).getInternalName();
+        MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
+        String owner = mapType(descriptor.getContainingDeclaration().getDefaultType(), mapTypeMode).getInternalName();
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
 
@@ -778,7 +810,7 @@ public class JetTypeMapper {
         Set<String> result = new HashSet<String>();
         final ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, jetClass);
         if (classDescriptor != null) {
-            result.add(mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName());
+            result.add(mapType(classDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName());
         }
         return result;
     }
@@ -851,20 +883,20 @@ public class JetTypeMapper {
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
         if(descriptor instanceof PropertyDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType()));
+            return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
             return Type.getObjectType(closureAnnotator.classNameForAnonymousClass((JetElement) psiElement));
         }
         else if (descriptor instanceof FunctionDescriptor) {
-            return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType()));
+            return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof VariableDescriptor) {
             Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
             if (aBoolean != null && aBoolean) {
                 JetType outType = ((VariableDescriptor) descriptor).getType();
-                return StackValue.sharedTypeForType(mapType(outType));
+                return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
             }
             else {
                 return null;

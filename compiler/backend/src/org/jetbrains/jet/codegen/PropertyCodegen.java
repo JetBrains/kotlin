@@ -97,7 +97,8 @@ public class PropertyCodegen {
             if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
-            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, value);
+            Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, value);
             AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
         }
     }
@@ -189,7 +190,7 @@ public class PropertyCodegen {
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     }
-                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType());
+                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
 
                     if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
                         throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
@@ -269,7 +270,7 @@ public class PropertyCodegen {
                     StubCodegen.generateStubThrow(mv);
                 } else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType());
+                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);

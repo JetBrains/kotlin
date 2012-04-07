@@ -188,7 +188,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private Type asmType(JetType type) {
-        return typeMapper.mapType(type);
+        return typeMapper.mapType(type, MapTypeMode.VALUE);
     }
 
     @Override
@@ -801,7 +801,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             if(entry.getKey() instanceof VariableDescriptor && !(entry.getKey() instanceof PropertyDescriptor)) {
                 Type sharedVarType = typeMapper.getSharedVarType(entry.getKey());
                 if(sharedVarType == null)
-                    sharedVarType = state.getInjector().getJetTypeMapper().mapType(((VariableDescriptor) entry.getKey()).getType());
+                    sharedVarType = state.getInjector().getJetTypeMapper().mapType(((VariableDescriptor) entry.getKey()).getType(), MapTypeMode.VALUE);
                 consArgTypes.add(sharedVarType);
                 entry.getValue().getOuterValue().put(sharedVarType, v);
             }
@@ -1003,15 +1003,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 ClassDescriptor classDescriptor = (ClassDescriptor) propertyDescriptor.getReturnType().getConstructor().getDeclarationDescriptor();
                 if(classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
                     ClassDescriptor containing = (ClassDescriptor) classDescriptor.getContainingDeclaration().getContainingDeclaration();
-                    Type type = typeMapper.mapType(containing.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    Type type = typeMapper.mapType(containing.getDefaultType(), MapTypeMode.VALUE);
                     StackValue.field(type, type.getInternalName(), classDescriptor.getName(), true).put(TYPE_OBJECT, v);
 
                     // todo: for now we don't generate classes for enum entries, so we need this hack
-                    type = typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
                     return StackValue.onStack(type);
                 }
                 else {
-                    Type type = typeMapper.mapType(classDescriptor.getDefaultType(), OwnerKind.IMPLEMENTATION);
+                    Type type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
                     return StackValue.field(type, type.getInternalName(), "$instance", true);
                 }
             }
@@ -1074,9 +1074,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 }
                 final ClassDescriptor descriptor1 = bindingContext.get(BindingContext.CLASS, classObject.getObjectDeclaration());
                 assert descriptor1 != null;
-                final String type = typeMapper.mapType(descriptor1.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName();
-                return StackValue.field(Type.getObjectType(type),
-                                        typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(),
+                final Type type = typeMapper.mapType(descriptor1.getDefaultType(), MapTypeMode.VALUE);
+                return StackValue.field(type,
+                                        typeMapper.mapType(((ClassDescriptor) descriptor).getDefaultType(), MapTypeMode.IMPL).getInternalName(),
                                               "$classobj",
                                               true);
             }
@@ -1375,7 +1375,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             ClassDescriptor classReceiverDeclarationDescriptor = (ClassDescriptor) classReceiver.getDeclarationDescriptor();
             if(CodegenUtil.isClassObject(classReceiverDeclarationDescriptor)) {
                 ClassDescriptor containingDeclaration = (ClassDescriptor) classReceiverDeclarationDescriptor.getContainingDeclaration();
-                Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType());
+                Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), MapTypeMode.IMPL);
                 v.getstatic(classObjType.getInternalName(), "$classobj", exprType.getDescriptor());
             }
             else {
@@ -2244,7 +2244,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             //noinspection ConstantConditions
             JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
             assert expressionType != null;
-            type = typeMapper.mapType(expressionType, OwnerKind.IMPLEMENTATION);
+            type = typeMapper.mapType(expressionType, MapTypeMode.VALUE);
             if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, expressionType);
             } else {
@@ -2322,7 +2322,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 */
         }
         else {
-            Type type = typeMapper.mapType(arrayType, OwnerKind.IMPLEMENTATION);
+            Type type = typeMapper.mapType(arrayType, MapTypeMode.VALUE);
             gen(args.get(0), Type.INT_TYPE);
             v.newarray(correctElementType(type));
         }

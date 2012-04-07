@@ -19,10 +19,7 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ExpressionCodegen;
-import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
-import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -43,7 +40,8 @@ public class JavaClassFunction implements IntrinsicMethod {
         JetCallExpression call = (JetCallExpression) element;
         ResolvedCall<? extends CallableDescriptor> resolvedCall = codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-        Type type = state.getInjector().getJetTypeMapper().mapType(resultingDescriptor.getReturnType().getArguments().get(0).getType());
+        Type type = state.getInjector().getJetTypeMapper().mapType(
+                resultingDescriptor.getReturnType().getArguments().get(0).getType(), MapTypeMode.VALUE);
         v.aconst(type);
         return StackValue.onStack(JetTypeMapper.JL_CLASS_TYPE);
     }

@@ -112,9 +112,9 @@ public class TestlibTest extends CodegenTestCase {
                             DescriptorUtils.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
 
                             for(JetType type : allSuperTypes) {
-                                String internalName = typeMapper.mapType(type).getInternalName();
+                                String internalName = typeMapper.mapType(type, MapTypeMode.IMPL).getInternalName();
                                 if(internalName.equals("junit/framework/Test")) {
-                                    String name = typeMapper.mapType(descriptor.getDefaultType()).getInternalName();
+                                    String name = typeMapper.mapType(descriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName();
                                     System.out.println(name);
                                     Class<TestCase> aClass = (Class<TestCase>) loader.loadClass(name.replace('/', '.'));
                                     if((aClass.getModifiers() & Modifier.ABSTRACT) == 0

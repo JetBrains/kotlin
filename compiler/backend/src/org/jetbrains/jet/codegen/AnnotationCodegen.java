@@ -85,7 +85,7 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        String internalName = typeMapper.mapType(type).getDescriptor();
+        String internalName = typeMapper.mapType(type, MapTypeMode.VALUE).getDescriptor();
         AnnotationVisitor annotationVisitor = visitAnnotation(internalName, rp == RetentionPolicy.RUNTIME);
 
         getAnnotation(resolvedCall, annotationVisitor);
@@ -138,7 +138,7 @@ public abstract class AnnotationCodegen {
             if(call != null) {
                 if(call.getResultingDescriptor() instanceof PropertyDescriptor) {
                     PropertyDescriptor descriptor = (PropertyDescriptor)call.getResultingDescriptor();
-                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType()).getDescriptor(),descriptor.getName());
+                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType(), MapTypeMode.VALUE).getDescriptor(), descriptor.getName());
                     return;
                 }
             }
@@ -160,7 +160,7 @@ public abstract class AnnotationCodegen {
                         }
                     }
                     if(IntrinsicMethods.KOTLIN_JAVA_CLASS_FUNCTION.equals(value)) {
-                        annotationVisitor.visit(keyName, typeMapper.mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType()));
+                        annotationVisitor.visit(keyName, typeMapper.mapType(call.getResultingDescriptor().getReturnType().getArguments().get(0).getType(), MapTypeMode.VALUE));
                         return;
                     }
                     else if(IntrinsicMethods.KOTLIN_ARRAYS_ARRAY.equals(value)) {
@@ -175,7 +175,7 @@ public abstract class AnnotationCodegen {
                     else if(call.getResultingDescriptor() instanceof ConstructorDescriptor) {
                         ConstructorDescriptor descriptor = (ConstructorDescriptor)call.getResultingDescriptor();
                         AnnotationVisitor visitor = annotationVisitor.visitAnnotation(keyName, typeMapper
-                            .mapType(descriptor.getContainingDeclaration().getDefaultType()).getDescriptor());
+                            .mapType(descriptor.getContainingDeclaration().getDefaultType(), MapTypeMode.VALUE).getDescriptor());
                         getAnnotation(call, visitor);
                         visitor.visitEnd();
                         return;

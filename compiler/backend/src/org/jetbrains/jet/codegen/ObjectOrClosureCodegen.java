@@ -61,7 +61,7 @@ public class ObjectOrClosureCodegen {
             if (idx < 0) return null;
 
             final Type sharedVarType = state.getInjector().getJetTypeMapper().getSharedVarType(vd);
-            Type localType = state.getInjector().getJetTypeMapper().mapType(vd.getType());
+            Type localType = state.getInjector().getJetTypeMapper().mapType(vd.getType(), MapTypeMode.VALUE);
             final Type type = sharedVarType != null ? sharedVarType : localType;
 
             StackValue outerValue = StackValue.local(idx, type);
@@ -110,7 +110,7 @@ public class ObjectOrClosureCodegen {
             if(fcontext.getReceiverDescriptor() != fd)
                 return null;
 
-            Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType());
+            Type type = state.getInjector().getJetTypeMapper().mapType(fcontext.getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
             boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
             StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
             final String fieldName = "receiver$0";

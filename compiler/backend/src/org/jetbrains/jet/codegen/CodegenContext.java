@@ -157,7 +157,7 @@ public abstract class CodegenContext {
 
         CallableDescriptor receiverDescriptor = getReceiverDescriptor();
         if (receiverDescriptor != null) {
-            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType());
+            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
             frameMap.enterTemp(type.getSize());  // Next slot for fake this
         }
 
@@ -171,7 +171,7 @@ public abstract class CodegenContext {
 
     public Type jvmType(JetTypeMapper mapper) {
         if (contextType instanceof ClassDescriptor) {
-            return mapper.mapType(((ClassDescriptor) contextType).getDefaultType(), contextKind);
+            return mapper.mapType(((ClassDescriptor) contextType).getDefaultType(), JetTypeMapper.ownerKindToMapTypeMode(contextKind));
         }
         else if (closure != null) {
             return Type.getObjectType(closure.name);
@@ -200,7 +200,7 @@ public abstract class CodegenContext {
         while(cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor))
             cur = cur.getParentContext();
 
-        return cur == null ? null : typeMapper.mapType(((ClassDescriptor)cur.getContextDescriptor()).getDefaultType());
+        return cur == null ? null : typeMapper.mapType(((ClassDescriptor) cur.getContextDescriptor()).getDefaultType(), MapTypeMode.IMPL);
     }
     
     public int getTypeInfoConstantIndex(JetType type) {
@@ -282,7 +282,7 @@ public abstract class CodegenContext {
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getReceiverDescriptor() != null;
-        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType());
+        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
         return getThisDescriptor() != null ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
@@ -390,8 +390,9 @@ public abstract class CodegenContext {
             super(contextType, contextKind, parentContext, closure);
             
             final Type type = enclosingClassType(typeMapper);
+            Type owner = closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), MapTypeMode.IMPL);
             outerExpression = type != null
-                        ? StackValue.field(type, closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "this$0", false)
+                        ? StackValue.field(type, owner.getInternalName(), "this$0", false)
                         : null;
         }
 

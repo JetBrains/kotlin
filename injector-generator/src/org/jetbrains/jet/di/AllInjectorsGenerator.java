@@ -146,6 +146,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(Project.class);
+        generator.addParameter(CompilerSpecialMode.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicField(JetTypeMapper.class);
@@ -160,6 +161,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(BindingContext.class);
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addPublicField(JetTypeMapper.class);
+        generator.addField(CompilerSpecialMode.REGULAR);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJetTypeMapper");
     }
 

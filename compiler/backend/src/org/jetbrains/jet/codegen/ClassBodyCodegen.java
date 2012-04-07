@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
@@ -124,11 +125,13 @@ public abstract class ClassBodyCodegen {
                             if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
                                 modifiers |= Opcodes.ACC_VOLATILE;
                             }
-                            v.newField(p, modifiers, p.getName(), state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, null);
+                            Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+                            v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, null);
                         }
                     }
                     else {
-                        v.newMethod(p, ACC_PUBLIC|ACC_ABSTRACT, p.getName(), "()" + state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, null);
+                        Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+                        v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, p.getName(), "()" + type.getDescriptor(), null, null);
                     }
                 }
             }

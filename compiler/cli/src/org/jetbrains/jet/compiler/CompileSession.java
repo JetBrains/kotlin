@@ -221,7 +221,7 @@ public class CompileSession {
     public GenerationState generate(boolean module) {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
-                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles);
+                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles, compilerSpecialMode);
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();

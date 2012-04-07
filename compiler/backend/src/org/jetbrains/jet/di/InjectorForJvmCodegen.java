@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +53,7 @@ public class InjectorForJvmCodegen {
         @NotNull BindingContext bindingContext,
         @NotNull List<JetFile> listOfJetFile,
         @NotNull Project project,
+        @NotNull CompilerSpecialMode compilerSpecialMode,
         @NotNull GenerationState generationState,
         @NotNull ClassBuilderFactory classBuilderFactory
     ) {
@@ -63,6 +66,7 @@ public class InjectorForJvmCodegen {
 
         this.jetTypeMapper.setBindingContext(bindingContext);
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
+        this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
         this.jetTypeMapper.setStandardLibrary(jetStandardLibrary);
 
         this.intrinsics.setMyProject(project);

@@ -597,7 +597,7 @@ public abstract class StackValue {
                 List<ValueParameterDescriptor> valueParameters = resolvedGetCall.getResultingDescriptor().getValueParameters();
                 int firstParamIndex = -1;
                 for(int i = valueParameters.size()-1; i >= 0; --i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
                     frame.enterTemp(sz);
                     lastIndex += sz;
@@ -619,7 +619,7 @@ public abstract class StackValue {
                 ReceiverDescriptor receiverParameter = resolvedGetCall.getReceiverArgument();
                 int receiverIndex = -1;
                 if(receiverParameter.exists()) {
-                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                    Type type = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
                     frame.enterTemp(sz);
                     lastIndex += sz;
@@ -643,7 +643,7 @@ public abstract class StackValue {
                 if(thisIndex != -1) {
                     if(receiverIndex != -1) {
                         realReceiverIndex = receiverIndex;
-                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType());
+                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     }
                     else {
                         realReceiverIndex = thisIndex;
@@ -652,7 +652,7 @@ public abstract class StackValue {
                 }
                 else {
                     if(receiverIndex != -1) {
-                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType());
+                        realReceiverType =  codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                         realReceiverIndex = receiverIndex;
                     }
                     else {
@@ -677,7 +677,7 @@ public abstract class StackValue {
 
                 int index = firstParamIndex;
                 for(int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
                     v.load(index-sz, type);
                     index -= sz;
@@ -689,7 +689,7 @@ public abstract class StackValue {
                 }
                 
                 if(receiverIndex != -1) {
-                    Type type = codegen.typeMapper.mapType(receiverParameter.getType());
+                    Type type = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     v.load(receiverIndex-type.getSize(), type);
                 }
 
@@ -705,7 +705,7 @@ public abstract class StackValue {
                 
                 index = firstParamIndex;
                 for(int i = 0; i != valueParameters.size(); ++i) {
-                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType());
+                    Type type = codegen.typeMapper.mapType(valueParameters.get(i).getType(), MapTypeMode.VALUE);
                     int sz = type.getSize();
                     v.load(index-sz, type);
                     index -= sz;
@@ -729,7 +729,7 @@ public abstract class StackValue {
                 return false;
 
             for (ValueParameterDescriptor valueParameter : valueParameters) {
-                if (codegen.typeMapper.mapType(valueParameter.getType()).getSize() != 1)
+                if (codegen.typeMapper.mapType(valueParameter.getType(), MapTypeMode.VALUE).getSize() != 1)
                     return false;
             }
 
@@ -738,7 +738,7 @@ public abstract class StackValue {
                     return false;
             }
             else {
-                if(codegen.typeMapper.mapType(call.getResultingDescriptor().getReceiverParameter().getType()).getSize() != 1)
+                if(codegen.typeMapper.mapType(call.getResultingDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE).getSize() != 1)
                     return false;
             }
 
@@ -1084,27 +1084,27 @@ public abstract class StackValue {
             if (thisObject.exists()) {
                 if(callableMethod != null) {
                     if(receiverArgument.exists()) {
-                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
+                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass(), MapTypeMode.VALUE);
                     }
                     else {
-                        return codegen.typeMapper.mapType(callableMethod.getThisType());
+                        return codegen.typeMapper.mapType(callableMethod.getThisType(), MapTypeMode.VALUE);
                     }
                 }
                 else {
                     if(receiverArgument.exists()) {
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
+                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
                     }
                     else {
-                        return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
+                        return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE);
                     }
                 }
             }
             else {
                 if (receiverArgument.exists()) {
                     if(callableMethod != null)
-                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass());
+                        return codegen.typeMapper.mapType(callableMethod.getReceiverClass(), MapTypeMode.VALUE);
                     else
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
+                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
                 }
                 else {
                     return Type.VOID_TYPE;
@@ -1120,7 +1120,12 @@ public abstract class StackValue {
             ReceiverDescriptor receiverArgument = resolvedCall.getReceiverArgument();
             if (thisObject.exists()) {
                 if(receiverArgument.exists()) {
-                    codegen.generateFromResolvedCall(thisObject, callableMethod != null ? Type.getObjectType(callableMethod.getOwner()) : codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType()));
+                    if (callableMethod != null) {
+                        codegen.generateFromResolvedCall(thisObject, Type.getObjectType(callableMethod.getOwner()));
+                    }
+                    else {
+                        codegen.generateFromResolvedCall(thisObject, codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType(), MapTypeMode.VALUE));
+                    }
                     genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter());
                 }
                 else {
@@ -1137,7 +1142,7 @@ public abstract class StackValue {
         private void genReceiver(InstructionAdapter v, ReceiverDescriptor receiverArgument, Type type, ReceiverDescriptor receiverParameter) {
             if(receiver == StackValue.none()) {
                 if(receiverParameter != null) {
-                    Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType());
+                    Type receiverType = codegen.typeMapper.mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     codegen.generateFromResolvedCall(receiverArgument, receiverType);
                     StackValue.onStack(receiverType).put(type, v);
                 }
