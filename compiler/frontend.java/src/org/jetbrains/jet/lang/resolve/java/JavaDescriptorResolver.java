@@ -200,7 +200,6 @@ public class JavaDescriptorResolver {
 
     protected final Map<FqName, ResolverBinaryClassData> classDescriptorCache = Maps.newHashMap();
     protected final Map<FqName, ResolverNamespaceData> namespaceDescriptorCacheByFqn = Maps.newHashMap();
-    protected final Map<PsiElement, ResolverNamespaceData> namespaceDescriptorCache = Maps.newHashMap();
 
     protected Project project;
     protected JavaSemanticServices semanticServices;
@@ -803,21 +802,21 @@ public class JavaDescriptorResolver {
     }
 
     private NamespaceDescriptor resolveNamespace(@NotNull PsiPackage psiPackage) {
-        ResolverNamespaceData namespaceData = namespaceDescriptorCache.get(psiPackage);
+        FqName fqName = new FqName(psiPackage.getQualifiedName());
+        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(fqName);
         if (namespaceData == null) {
             namespaceData = createJavaNamespaceDescriptor(psiPackage);
-            namespaceDescriptorCache.put(psiPackage, namespaceData);
-            namespaceDescriptorCacheByFqn.put(new FqName(psiPackage.getQualifiedName()), namespaceData);
+            namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
         }
         return namespaceData.namespaceDescriptor;
     }
 
     private NamespaceDescriptor resolveNamespace(@NotNull PsiClass psiClass) {
-        ResolverNamespaceData namespaceData = namespaceDescriptorCache.get(psiClass);
+        FqName fqName = new FqName(psiClass.getQualifiedName());
+        ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(fqName);
         if (namespaceData == null) {
             namespaceData = createJavaNamespaceDescriptor(psiClass);
-            namespaceDescriptorCache.put(psiClass, namespaceData);
-            namespaceDescriptorCacheByFqn.put(new FqName(psiClass.getQualifiedName()), namespaceData);
+            namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
         }
         return namespaceData.namespaceDescriptor;
     }
