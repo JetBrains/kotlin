@@ -138,20 +138,8 @@ public class JavaDescriptorResolver {
         public abstract List<TypeParameterDescriptor> getTypeParameters();
     }
 
-    static abstract class ResolverClassData extends ResolverScopeData {
-
-        @NotNull
-        public abstract ClassDescriptor getClassDescriptor();
-
-        @NotNull
-        @Override
-        public List<TypeParameterDescriptor> getTypeParameters() {
-            return getClassDescriptor().getTypeConstructor().getParameters();
-        }
-    }
-
     /** Class with instance members */
-    static class ResolverBinaryClassData extends ResolverClassData {
+    static class ResolverBinaryClassData extends ResolverScopeData {
 
         ResolverBinaryClassData() {
         }
@@ -160,26 +148,17 @@ public class JavaDescriptorResolver {
 
         List<TypeParameterDescriptorInitialization> typeParameters;
 
-        @Override
         @NotNull
         public ClassDescriptor getClassDescriptor() {
             return classDescriptor;
         }
-    }
 
-    static class ResolverSrcClassData extends ResolverClassData {
         @NotNull
-        private final ClassDescriptor classDescriptor;
-
-        ResolverSrcClassData(@NotNull ClassDescriptor classDescriptor) {
-            this.classDescriptor = classDescriptor;
-        }
-
         @Override
-        @NotNull
-        public ClassDescriptor getClassDescriptor() {
-            return classDescriptor;
+        public List<TypeParameterDescriptor> getTypeParameters() {
+            return getClassDescriptor().getTypeConstructor().getParameters();
         }
+
     }
 
     /** Either package or class with static members */
