@@ -780,7 +780,12 @@ public class JetTypeMapper {
     public CallableMethod mapToCallableMethod(ConstructorDescriptor descriptor, OwnerKind kind, boolean hasThis0) {
         final JvmMethodSignature method = mapConstructorSignature(descriptor, hasThis0);
         MapTypeMode mapTypeMode = ownerKindToMapTypeMode(kind);
-        String owner = mapType(descriptor.getContainingDeclaration().getDefaultType(), mapTypeMode).getInternalName();
+        JetType defaultType = descriptor.getContainingDeclaration().getDefaultType();
+        Type mapped = mapType(defaultType, mapTypeMode);
+        if (mapped.getSort() != Type.OBJECT) {
+            throw new IllegalStateException("type must have been mapped to object: " + defaultType + ", actual: " + mapped);
+        }
+        String owner = mapped.getInternalName();
         return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL);
     }
 
