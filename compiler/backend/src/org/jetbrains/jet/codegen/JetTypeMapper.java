@@ -335,6 +335,7 @@ public class JetTypeMapper {
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, asmType, true);
             }
+            checkValidType(asmType);
             return asmType;
         }
 
@@ -349,18 +350,22 @@ public class JetTypeMapper {
                 mapType(memberType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
                 signatureVisitor.writeArrayEnd();
             }
-            
+
+            Type r;
             if (!isGenericsArray(jetType)) {
-                return Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
+                r = Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
             } else {
-                return ARRAY_GENERIC_TYPE;
+                r = ARRAY_GENERIC_TYPE;
             }
+            checkValidType(r);
+            return r;
         }
 
         if (JetStandardClasses.getAny().equals(descriptor)) {
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, TYPE_OBJECT, jetType.isNullable());
             }
+            checkValidType(TYPE_OBJECT);
             return TYPE_OBJECT;
         }
 
@@ -393,6 +398,7 @@ public class JetTypeMapper {
                 signatureVisitor.writeClassEnd();
             }
 
+            checkValidType(asmType);
             return asmType;
         }
 
@@ -403,6 +409,7 @@ public class JetTypeMapper {
                 TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) jetType.getConstructor().getDeclarationDescriptor();
                 signatureVisitor.writeTypeVariable(typeParameterDescriptor.getName(), jetType.isNullable(), type);
             }
+            checkValidType(type);
             return type;
         }
 
@@ -415,17 +422,31 @@ public class JetTypeMapper {
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, boxed, jetType.isNullable());
             }
+            checkValidType(boxed);
             return boxed;
         } else {
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, asmType, jetType.isNullable());
             }
+            checkValidType(asmType);
             return asmType;
         }
     }
 
     public static void visitAsmType(BothSignatureWriter visitor, Type asmType, boolean nullable) {
         visitor.writeAsmType(asmType, nullable);
+    }
+
+    private void checkValidType(@NotNull Type type) {
+        if (compilerSpecialMode == CompilerSpecialMode.BUILTINS) {
+            String descriptor = type.getDescriptor();
+            if (descriptor.equals("Ljava/lang/Object;")) {
+                return;
+            }
+            else if (descriptor.startsWith("Ljava/")) {
+                throw new IllegalStateException("builtins must not reference java.* classes: " + descriptor);
+            }
+        }
     }
 
     public static Type unboxType(final Type type) {
