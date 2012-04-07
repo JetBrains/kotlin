@@ -22,6 +22,8 @@ import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
+import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,11 +116,12 @@ class JavaDescriptorResolverHelper {
                     continue;
                 }
 
-                // TODO: "is" prefix
-                // TODO: remove getJavaClass
-                if (method.getName().startsWith(JvmAbi.GETTER_PREFIX) && method.getName().length() > JvmAbi.GETTER_PREFIX.length()) {
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
 
-                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
+                // TODO: remove getJavaClass
+                if (propertyParseResult != null && propertyParseResult.isGetter()) {
+
+                    String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(propertyName);
 
                     // TODO: some java properties too
@@ -156,9 +159,10 @@ class JavaDescriptorResolverHelper {
                         }
                     }
 
-                } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX) && method.getName().length() > JvmAbi.SETTER_PREFIX.length()) {
+                }
+                else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
 
-                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
+                    String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(propertyName);
 
                     if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
