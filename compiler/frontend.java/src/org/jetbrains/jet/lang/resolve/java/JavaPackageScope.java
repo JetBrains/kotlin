@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
@@ -46,11 +45,11 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     public JavaPackageScope(
             @NotNull FqName packageFQN,
-            @NotNull NamespaceDescriptor containingDescriptor,
             @NotNull JavaSemanticServices semanticServices,
             @Nullable PsiPackage psiPackage,
-            @Nullable PsiClass psiClass) {
-        super(containingDescriptor, semanticServices, psiClass);
+            @Nullable PsiClass psiClass,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverNamespaceData) {
+        super(semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
         this.psiPackage = psiPackage;
 
@@ -61,7 +60,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
             // TODO: this is a big hack against several things that I barely understand myself and cannot explain
             // 1. We should not return objects from this method, and maybe JDR.resolveClass should not return too
@@ -79,12 +78,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(packageFQN, name), DescriptorSearchRule.INCLUDE_KOTLIN);
-    }
-
-    @Override
-    protected boolean staticMembers() {
-        return true;
+        return semanticServices.getDescriptorResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 
     /**
@@ -96,10 +90,10 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
 
-            if (psiClass != null) {
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
+            if (resolverScopeData.psiClass != null) {
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
 
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
             }
 
             if (psiPackage != null) {
@@ -107,7 +101,8 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
                 for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
-                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
+                            new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                     if (childNs != null) {
                         allDescriptors.add(childNs);
                     }
@@ -139,10 +134,5 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
         }
 
         return allDescriptors;
-    }
-
-    @NotNull
-    static FqName getQualifiedName(@NotNull FqName packageFQN, @NotNull String name) {
-        return packageFQN.child(name);
     }
 }

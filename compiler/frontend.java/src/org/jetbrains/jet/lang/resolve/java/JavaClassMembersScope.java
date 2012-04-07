@@ -33,25 +33,17 @@ import java.util.*;
  * @author abreslav
  */
 public class JavaClassMembersScope extends JavaClassOrPackageScope {
-    @NotNull
-    protected final PsiClass psiClass;
-    private final boolean staticMembers;
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
     private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaClassMembersScope(
-            @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor,
-            @NotNull PsiClass psiClass,
             @NotNull JavaSemanticServices semanticServices,
-            boolean staticMembers) {
-        super(classOrNamespaceDescriptor, semanticServices, psiClass);
-        this.psiClass = psiClass;
-        this.staticMembers = staticMembers;
-    }
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+        super(semanticServices, resolverScopeData);
 
-    @Override
-    protected boolean staticMembers() {
-        return staticMembers;
+        if (resolverScopeData.psiClass == null) {
+            throw new IllegalArgumentException("must pass PsiClass here");
+        }
     }
 
     @NotNull
@@ -90,20 +82,21 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         if (allDescriptors == null) {
             allDescriptors = Sets.newHashSet();
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
 
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass, staticMembers));
+            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                    resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, resolverScopeData.staticMembers));
         }
         return allDescriptors;
     }
 
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {
         // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
+        for (PsiClass innerClass : resolverScopeData.psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
+                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.staticMembers) return null;
                 ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
                         .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {

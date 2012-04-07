@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -34,50 +33,33 @@ import java.util.Set;
 public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
-    protected final ClassOrNamespaceDescriptor descriptor;
-    @NotNull
     protected final JavaSemanticServices semanticServices;
-    @Nullable
-    protected final PsiClass psiClass;
+    @NotNull
+    protected final JavaDescriptorResolver.ResolverScopeData resolverScopeData;
 
-    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices,
-                                      @Nullable PsiClass psiClass) {
-        this.descriptor = descriptor;
+    protected JavaClassOrPackageScope(
+            @NotNull JavaSemanticServices semanticServices,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
         this.semanticServices = semanticServices;
-        this.psiClass = psiClass;
-
-        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+        this.resolverScopeData = resolverScopeData;
     }
 
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return descriptor;
+        return resolverScopeData.classOrNamespaceDescriptor;
     }
-
-    protected abstract boolean staticMembers();
 
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        // TODO: cache
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(
-                descriptor, psiClass, name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
     }
 
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClass, name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
     }
 
 }

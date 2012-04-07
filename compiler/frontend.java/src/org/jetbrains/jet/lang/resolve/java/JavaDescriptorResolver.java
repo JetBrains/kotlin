@@ -21,17 +21,80 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiAnnotation;
+import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.PsiAnnotationMethod;
+import com.intellij.psi.PsiAnnotationParameterList;
+import com.intellij.psi.PsiArrayType;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiEllipsisType;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.PsiNameValuePair;
+import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiPrimitiveType;
+import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypeParameter;
+import com.intellij.psi.PsiTypeParameterListOwner;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassKind;
+import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.NamespaceFactory;
+import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.constants.ByteValue;
+import org.jetbrains.jet.lang.resolve.constants.CharValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.DoubleValue;
+import org.jetbrains.jet.lang.resolve.constants.FloatValue;
+import org.jetbrains.jet.lang.resolve.constants.IntValue;
+import org.jetbrains.jet.lang.resolve.constants.LongValue;
+import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.jet.lang.resolve.constants.ShortValue;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeSubstitutor;
+import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
@@ -40,7 +103,14 @@ import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -129,9 +199,23 @@ public class JavaDescriptorResolver {
     }
 
 
-    private static abstract class ResolverScopeData {
+    static abstract class ResolverScopeData {
         protected boolean kotlin;
-        
+
+        @Nullable
+        final PsiClass psiClass;
+        final boolean staticMembers;
+        @NotNull
+        final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
+
+        protected ResolverScopeData(@Nullable PsiClass psiClass, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
+            checkPsiClassIsNotJet(psiClass);
+
+            this.psiClass = psiClass;
+            this.staticMembers = staticMembers;
+            classOrNamespaceDescriptor = descriptor;
+        }
+
         private Map<String, NamedMembers> namedMembersMap;
         
         @NotNull
@@ -140,11 +224,12 @@ public class JavaDescriptorResolver {
 
     /** Class with instance members */
     static class ResolverBinaryClassData extends ResolverScopeData {
+        private final MutableClassDescriptorLite classDescriptor;
 
-        ResolverBinaryClassData() {
+        ResolverBinaryClassData(@NotNull PsiClass psiClass, @NotNull MutableClassDescriptorLite classDescriptor) {
+            super(psiClass, false, classDescriptor);
+            this.classDescriptor = classDescriptor;
         }
-
-        private MutableClassDescriptorLite classDescriptor;
 
         List<TypeParameterDescriptorInitialization> typeParameters;
 
@@ -162,14 +247,15 @@ public class JavaDescriptorResolver {
     }
 
     /** Either package or class with static members */
-    private static class ResolverNamespaceData extends ResolverScopeData {
-        private NamespaceDescriptor namespaceDescriptor;
-        private JavaPackageScope memberScope;
+    static class ResolverNamespaceData extends ResolverScopeData {
+        private final NamespaceDescriptor namespaceDescriptor;
 
-        @NotNull
-        public NamespaceDescriptor getNamespaceDescriptor() {
-            return namespaceDescriptor;
+        ResolverNamespaceData(@Nullable PsiClass psiClass, @NotNull NamespaceDescriptor namespaceDescriptor) {
+            super(psiClass, true, namespaceDescriptor);
+            this.namespaceDescriptor = namespaceDescriptor;
         }
+
+        private JavaPackageScope memberScope;
 
         @NotNull
         @Override
@@ -261,11 +347,10 @@ public class JavaDescriptorResolver {
         checkPsiClassIsNotJet(psiClass);
 
         String name = psiClass.getName();
-        ResolverBinaryClassData classData = new ResolverBinaryClassData();
-        classDescriptorCache.put(new FqName(psiClass.getQualifiedName()), classData);
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        classData.classDescriptor = new MutableClassDescriptorLite(containingDeclaration, kind);
+        ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, new MutableClassDescriptorLite(containingDeclaration, kind));
+        classDescriptorCache.put(new FqName(psiClass.getQualifiedName()), classData);
         classData.classDescriptor.setName(name);
         classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass));
 
@@ -296,7 +381,7 @@ public class JavaDescriptorResolver {
         }
         classData.classDescriptor.setModality(modality);
         classData.classDescriptor.createTypeConstructor();
-        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, psiClass, semanticServices, false));
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
 
         initializeTypeParameters(classData.typeParameters, classData.classDescriptor, "class " + psiClass.getQualifiedName());
 
@@ -433,19 +518,18 @@ public class JavaDescriptorResolver {
 
         checkPsiClassIsNotJet(psiClass);
 
-        ResolverBinaryClassData classData = new ResolverBinaryClassData();
-        classData.kotlin = true;
-        classData.classDescriptor = new MutableClassDescriptorLite(containing, ClassKind.OBJECT);
+        ResolverBinaryClassData classData = new ResolverBinaryClassData(classObjectPsiClass, new MutableClassDescriptorLite(containing, ClassKind.OBJECT));
 
         classDescriptorCache.put(new FqName(classObjectPsiClass.getQualifiedName()), classData);
 
+        classData.kotlin = true;
         classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
         classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
         classData.classDescriptor.setModality(Modality.FINAL);
         classData.classDescriptor.setVisibility(containing.getVisibility());
         classData.classDescriptor.setTypeParameterDescriptors(new ArrayList<TypeParameterDescriptor>(0));
         classData.classDescriptor.createTypeConstructor();
-        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(classData.classDescriptor, classObjectPsiClass, semanticServices, false));
+        classData.classDescriptor.setScopeForMemberLookup(new JavaClassMembersScope(semanticServices, classData));
 
         // TODO: wrong: class objects do not need visible constructors
         ConstructorDescriptorImpl constructor = new ConstructorDescriptorImpl(classData.classDescriptor, new ArrayList<AnnotationDescriptor>(0), true);
@@ -829,10 +913,10 @@ public class JavaDescriptorResolver {
             trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, ns, false);
         }
 
-        JavaPackageScope scope = new JavaPackageScope(fqName, ns, semanticServices, psiPackage, psiClass);
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, ns);
 
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
-        namespaceData.namespaceDescriptor = ns;
+        JavaPackageScope scope = new JavaPackageScope(fqName, semanticServices, psiPackage, psiClass, namespaceData);
+
         // TODO: hack
         namespaceData.kotlin = true;
 
@@ -871,7 +955,7 @@ public class JavaDescriptorResolver {
             return null;
         } else {
             // TODO: what is GlobalSearchScope
-            return semanticServices.getPsiClassFinder().findPsiClass(JavaPackageScope.getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
+            return semanticServices.getPsiClassFinder().findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
         }
     }
 
@@ -892,7 +976,6 @@ public class JavaDescriptorResolver {
 
         checkPsiClassIsNotJet(psiClass);
 
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
         JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
                 (NamespaceDescriptorParent) resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
@@ -900,10 +983,10 @@ public class JavaDescriptorResolver {
                 new FqName(psiClass.getQualifiedName()),
                 false
         );
-        namespaceData.namespaceDescriptor = ns;
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, ns);
         trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, true);
 
-        ns.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
+        ns.setMemberScope(new JavaClassMembersScope(semanticServices, namespaceData));
         trace.record(BindingContext.NAMESPACE, psiClass, namespaceData.namespaceDescriptor);
         return namespaceData;
     }
@@ -1010,8 +1093,13 @@ public class JavaDescriptorResolver {
         }
     }
 
-    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass, String fieldName, boolean staticMembers) {
-        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
+    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull String fieldName, @NotNull ResolverScopeData scopeData) {
+
+        if (scopeData.psiClass == null) {
+            return Collections.emptySet();
+        }
+
+        getResolverScopeData(scopeData);
 
         NamedMembers namedMembers = scopeData.namedMembersMap.get(fieldName);
         if (namedMembers == null) {
@@ -1019,7 +1107,8 @@ public class JavaDescriptorResolver {
         }
         Set<VariableDescriptor> r = new HashSet<VariableDescriptor>();
 
-        resolveNamedGroupProperties(owner, scopeData, staticMembers, namedMembers, fieldName, "class or namespace " + psiClass.getQualifiedName());
+        resolveNamedGroupProperties(scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, fieldName,
+                "class or namespace " + scopeData.psiClass.getQualifiedName());
 
         r.addAll(namedMembers.propertyDescriptors);
 
@@ -1031,17 +1120,17 @@ public class JavaDescriptorResolver {
     }
     
     @NotNull
-    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ClassOrNamespaceDescriptor owner, @NotNull PsiClass psiClass, boolean staticMembers) {
+    public Set<VariableDescriptor> resolveFieldGroup(@NotNull ResolverScopeData scopeData) {
 
-        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
-        
+        getResolverScopeData(scopeData);
+
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
         Map<String, NamedMembers> membersForProperties = scopeData.namedMembersMap;
         for (Map.Entry<String, NamedMembers> entry : membersForProperties.entrySet()) {
             NamedMembers namedMembers = entry.getValue();
             String propertyName = entry.getKey();
 
-            resolveNamedGroupProperties(owner, scopeData, staticMembers, namedMembers, propertyName, "class or namespace " + psiClass.getQualifiedName());
+            resolveNamedGroupProperties(scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, propertyName, "class or namespace " + scopeData.psiClass.getQualifiedName());
             descriptors.addAll(namedMembers.propertyDescriptors);
         }
 
@@ -1079,9 +1168,10 @@ public class JavaDescriptorResolver {
     private void resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ResolverScopeData scopeData,
-            boolean staticMembers, @NotNull NamedMembers namedMembers, @NotNull String propertyName,
-            @NotNull String context
-            ) {
+            @NotNull NamedMembers namedMembers, @NotNull String propertyName,
+            @NotNull String context) {
+        getResolverScopeData(scopeData);
+
         if (namedMembers.propertyDescriptors != null) {
             return;
         }
@@ -1306,8 +1396,7 @@ public class JavaDescriptorResolver {
 
         Set<SimpleFunctionDescriptor> functionsFromCurrent = Sets.newHashSet();
         for (PsiMethodWrapper method : namedMembers.methods) {
-            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass,
-                    method);
+            FunctionDescriptorImpl function = resolveMethodToFunctionDescriptor(owner, psiClass, method, scopeData);
             if (function != null) {
                 functionsFromCurrent.add((SimpleFunctionDescriptor) function);
             }
@@ -1357,42 +1446,28 @@ public class JavaDescriptorResolver {
         return r;
     }
 
-    private ResolverScopeData getResolverScopeData(@NotNull ClassOrNamespaceDescriptor owner, PsiClassWrapper psiClass) {
-        // TODO: store scopeData in Java*Scope
-        ResolverScopeData scopeData;
-        boolean staticMembers;
-        if (owner instanceof JavaNamespaceDescriptor) {
-            scopeData = namespaceDescriptorCacheByFqn.get(((JavaNamespaceDescriptor) owner).getQualifiedName());
-            staticMembers = true;
-        } else if (owner instanceof ClassDescriptor) {
-            scopeData = classDescriptorCache.get(new FqName(psiClass.getQualifiedName()));
-            staticMembers = false;
-        } else {
-            throw new IllegalStateException("unknown owner: " + owner.getClass().getName());
-        }
-        if (scopeData == null) {
-            throw new IllegalStateException();
-        }
-        
+    private void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
         if (scopeData.namedMembersMap == null) {
-            scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(psiClass, staticMembers, scopeData.kotlin);
+            if (scopeData.psiClass != null) {
+                scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(new PsiClassWrapper(scopeData.psiClass), scopeData.staticMembers, scopeData.kotlin);
+            } else {
+                scopeData.namedMembersMap = Collections.emptyMap();
+            }
         }
-        
-        return scopeData;
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull PsiClass psiClass, @NotNull String methodName, boolean staticMembers) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull String methodName, @NotNull ResolverScopeData scopeData) {
 
-        ResolverScopeData resolverScopeData = getResolverScopeData(descriptor, new PsiClassWrapper(psiClass));
+        getResolverScopeData(scopeData);
 
-        Map<String, NamedMembers> namedMembersMap = resolverScopeData.namedMembersMap;
+        Map<String, NamedMembers> namedMembersMap = scopeData.namedMembersMap;
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null && namedMembers.methods != null) {
-            TypeSubstitutor typeSubstitutor = typeSubstitutorForGenericSupertypes(resolverScopeData);
+            TypeSubstitutor typeSubstitutor = typeSubstitutorForGenericSupertypes(scopeData);
 
-            resolveNamedGroupFunctions(descriptor, psiClass, typeSubstitutor, namedMembers, methodName, resolverScopeData);
+            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, typeSubstitutor, namedMembers, methodName, scopeData);
 
             return namedMembers.functionDescriptors;
         } else {
@@ -1436,13 +1511,16 @@ public class JavaDescriptorResolver {
     }
 
     @Nullable
-    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(ClassOrNamespaceDescriptor owner, final PsiClass psiClass, final PsiMethodWrapper method) {
+    private FunctionDescriptorImpl resolveMethodToFunctionDescriptor(
+            ClassOrNamespaceDescriptor owner, final PsiClass psiClass, final PsiMethodWrapper method,
+            @NotNull ResolverScopeData scopeData) {
+
+        getResolverScopeData(scopeData);
 
         PsiType returnType = method.getReturnType();
         if (returnType == null) {
             return null;
         }
-        ResolverScopeData scopeData = getResolverScopeData(owner, new PsiClassWrapper(psiClass));
 
         boolean kotlin;
         if (owner instanceof JavaNamespaceDescriptor) {
@@ -1580,8 +1658,9 @@ public class JavaDescriptorResolver {
         return annotation;
     }
 
-    public List<FunctionDescriptor> resolveMethods(@NotNull PsiClass psiClass, @NotNull ClassOrNamespaceDescriptor containingDeclaration) {
-        ResolverScopeData scopeData = getResolverScopeData(containingDeclaration, new PsiClassWrapper(psiClass));
+    public List<FunctionDescriptor> resolveMethods(@NotNull ResolverScopeData scopeData) {
+
+        getResolverScopeData(scopeData);
 
         TypeSubstitutor substitutorForGenericSupertypes = typeSubstitutorForGenericSupertypes(scopeData);
 
@@ -1590,7 +1669,7 @@ public class JavaDescriptorResolver {
         for (Map.Entry<String, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
             String methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
-            resolveNamedGroupFunctions(containingDeclaration, psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
+            resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.functionDescriptors);
         }
 
@@ -1608,8 +1687,8 @@ public class JavaDescriptorResolver {
     }
 
     private TypeSubstitutor typeSubstitutorForGenericSupertypes(ResolverScopeData scopeData) {
-        if (scopeData instanceof ResolverClassData) {
-            return createSubstitutorForGenericSupertypes(((ResolverClassData)scopeData).getClassDescriptor());
+        if (scopeData instanceof ResolverBinaryClassData) {
+            return createSubstitutorForGenericSupertypes(((ResolverBinaryClassData) scopeData).getClassDescriptor());
         } else {
             return TypeSubstitutor.EMPTY;
         }
