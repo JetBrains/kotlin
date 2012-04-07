@@ -85,7 +85,7 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        JetScope javaPackageScope = javaSemanticServices.getDescriptorResolver().createJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor);
+        JetScope javaPackageScope = javaSemanticServices.getDescriptorResolver().getJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor);
         if (javaPackageScope != null) {
             namespaceMemberScope.importScope(javaPackageScope);
         }

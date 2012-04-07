@@ -184,7 +184,8 @@ public class JavaDescriptorResolver {
 
     /** Either package or class with static members */
     private static class ResolverNamespaceData extends ResolverScopeData {
-        private JavaNamespaceDescriptor namespaceDescriptor;
+        private NamespaceDescriptor namespaceDescriptor;
+        private JavaPackageScope memberScope;
 
         @NotNull
         public NamespaceDescriptor getNamespaceDescriptor() {
@@ -805,8 +806,7 @@ public class JavaDescriptorResolver {
         FqName fqName = new FqName(psiPackage.getQualifiedName());
         ResolverNamespaceData namespaceData = namespaceDescriptorCacheByFqn.get(fqName);
         if (namespaceData == null) {
-            namespaceData = createJavaNamespaceDescriptor(psiPackage);
-            namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
+            return createJavaNamespaceDescriptor(psiPackage);
         }
         return namespaceData.namespaceDescriptor;
     }
@@ -821,33 +821,66 @@ public class JavaDescriptorResolver {
         return namespaceData.namespaceDescriptor;
     }
 
-    private ResolverNamespaceData createJavaNamespaceDescriptor(@NotNull PsiPackage psiPackage) {
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
+    private JavaNamespaceDescriptor createJavaNamespaceDescriptor(@NotNull PsiPackage psiPackage) {
+        FqName fqName = new FqName(psiPackage.getQualifiedName());
         String name = psiPackage.getName();
-        namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
+        JavaNamespaceDescriptor namespaceDescriptor = new JavaNamespaceDescriptor(
                 (NamespaceDescriptorParent) resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 name == null ? JAVA_ROOT : name,
-                name == null ? FqName.ROOT : new FqName(psiPackage.getQualifiedName()),
+                fqName,
                 true
         );
-        trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, false);
+        trace.record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
 
-        namespaceData.namespaceDescriptor.setMemberScope(createJavaPackageScope(new FqName(psiPackage.getQualifiedName()), namespaceData.namespaceDescriptor));
-        trace.record(BindingContext.NAMESPACE, psiPackage, namespaceData.namespaceDescriptor);
-        // TODO: hack
-        namespaceData.kotlin = true;
-        return namespaceData;
+        ResolverNamespaceData scopeData = createNamespaceResolverScopeData(fqName, namespaceDescriptor);
+        namespaceDescriptor.setMemberScope(scopeData.memberScope);
+        return namespaceDescriptor;
     }
 
     @Nullable
-    public JavaPackageScope createJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
+    private ResolverNamespaceData createNamespaceResolverScopeData(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
         PsiPackage psiPackage = semanticServices.getPsiClassFinder().findPsiPackage(fqName);
         PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
         if (psiClass == null && psiPackage == null) {
             return null;
         }
-        return new JavaPackageScope(fqName, ns, semanticServices, psiPackage, psiClass);
+
+        if (psiPackage != null) {
+            trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, ns, false);
+        }
+
+        JavaPackageScope scope = new JavaPackageScope(fqName, ns, semanticServices, psiPackage, psiClass);
+
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData();
+        namespaceData.namespaceDescriptor = ns;
+        // TODO: hack
+        namespaceData.kotlin = true;
+
+        namespaceData.memberScope = scope;
+
+        ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, namespaceData);
+        if (oldValue != null) {
+            throw new IllegalStateException("rewrite at "  + fqName);
+        }
+
+        return namespaceData;
+    }
+
+    @Nullable
+    public JavaPackageScope getJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
+        ResolverNamespaceData resolverNamespaceData = namespaceDescriptorCacheByFqn.get(fqName);
+        if (resolverNamespaceData == null) {
+            resolverNamespaceData = createNamespaceResolverScopeData(fqName, ns);
+        }
+        if (resolverNamespaceData == null) {
+            return null;
+        }
+        JavaPackageScope scope = resolverNamespaceData.memberScope;
+        if (scope == null) {
+            throw new IllegalStateException("fqn: " + fqName);
+        }
+        return scope;
     }
 
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
@@ -881,16 +914,17 @@ public class JavaDescriptorResolver {
         checkPsiClassIsNotJet(psiClass);
 
         ResolverNamespaceData namespaceData = new ResolverNamespaceData();
-        namespaceData.namespaceDescriptor = new JavaNamespaceDescriptor(
+        JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
                 (NamespaceDescriptorParent) resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
                 new FqName(psiClass.getQualifiedName()),
                 false
         );
+        namespaceData.namespaceDescriptor = ns;
         trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, true);
 
-        namespaceData.namespaceDescriptor.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
+        ns.setMemberScope(new JavaClassMembersScope(namespaceData.namespaceDescriptor, psiClass, semanticServices, true));
         trace.record(BindingContext.NAMESPACE, psiClass, namespaceData.namespaceDescriptor);
         return namespaceData;
     }
