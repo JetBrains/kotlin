@@ -33,25 +33,36 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
  */
 public class PsiClassFinderForJvm implements PsiClassFinder {
 
+    @NotNull
     private Project project;
+    @NotNull
+    private CompilerSpecialMode compilerSpecialMode;
+
     private AltClassFinder altClassFinder;
     private GlobalSearchScope javaSearchScope;
     private JavaPsiFacade javaFacade;
 
     @Inject
-    public void setProject(Project project) {
+    public void setProject(@NotNull Project project) {
         this.project = project;
+    }
+
+    @Inject
+    public void setCompilerSpecialMode(@NotNull CompilerSpecialMode compilerSpecialMode) {
+        this.compilerSpecialMode = compilerSpecialMode;
     }
 
     @PostConstruct
     public void initialize() {
-        this.altClassFinder = new AltClassFinder(project, PathUtil.getAltHeadersRoots());
+        this.altClassFinder = new AltClassFinder(project,
+                compilerSpecialMode == CompilerSpecialMode.REGULAR ? PathUtil.getAltHeadersRoots() : Collections.<VirtualFile>emptyList());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {

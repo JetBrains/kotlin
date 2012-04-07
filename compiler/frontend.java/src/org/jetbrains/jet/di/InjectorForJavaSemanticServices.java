@@ -68,6 +68,7 @@ public class InjectorForJavaSemanticServices {
         javaBridgeConfiguration.setMode(compilerSpecialMode);
         javaBridgeConfiguration.setProject(project);
 
+        this.psiClassFinderForJvm.setCompilerSpecialMode(compilerSpecialMode);
         this.psiClassFinderForJvm.setProject(project);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);

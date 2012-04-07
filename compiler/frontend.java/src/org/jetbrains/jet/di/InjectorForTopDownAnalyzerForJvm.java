@@ -144,6 +144,7 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.javaBridgeConfiguration.setMode(compilerSpecialMode);
         this.javaBridgeConfiguration.setProject(project);
 
+        psiClassFinderForJvm.setCompilerSpecialMode(compilerSpecialMode);
         psiClassFinderForJvm.setProject(project);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
