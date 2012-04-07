@@ -1102,18 +1102,11 @@ public class JavaDescriptorResolver {
         if (namedMembers == null) {
             return Collections.emptySet();
         }
-        Set<VariableDescriptor> r = new HashSet<VariableDescriptor>();
 
         resolveNamedGroupProperties(scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, fieldName,
                 "class or namespace " + scopeData.psiClass.getQualifiedName());
 
-        r.addAll(namedMembers.propertyDescriptors);
-
-        for (JetType supertype : getSupertypes(scopeData)) {
-            r.addAll(supertype.getMemberScope().getProperties(fieldName));
-        }
-
-        return r;
+        return namedMembers.propertyDescriptors;
     }
     
     @NotNull
