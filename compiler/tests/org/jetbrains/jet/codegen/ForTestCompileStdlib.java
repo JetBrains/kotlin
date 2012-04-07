@@ -98,7 +98,11 @@ public class ForTestCompileStdlib {
     }
 
     private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
-        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(System.err, "-output", destdir.getPath(), "-src", "./libraries/stdlib/src", "-stdlib", destdir.getAbsolutePath());
+        KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(System.err,
+                "-output", destdir.getPath(),
+                "-src", "./libraries/stdlib/src",
+                "-mode", "stdlib",
+                "-classpath", "out/production/runtime");
         if (exitCode != KotlinCompiler.ExitCode.OK) {
             throw new IllegalStateException("stdlib for test compilation failed: " + exitCode);
         }

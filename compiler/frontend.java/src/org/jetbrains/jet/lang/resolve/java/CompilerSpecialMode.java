@@ -23,4 +23,10 @@ public enum CompilerSpecialMode {
     REGULAR,
     BUILTINS,
     JDK_HEADERS,
+    STDLIB,
+    ;
+
+    public boolean includeJdkHeaders() {
+        return this == REGULAR || this == STDLIB;
+    }
 }

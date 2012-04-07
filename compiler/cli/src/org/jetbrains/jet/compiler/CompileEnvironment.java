@@ -125,6 +125,8 @@ public class CompileEnvironment {
             ensureRuntime(environment);
         } else if (mode == CompilerSpecialMode.JDK_HEADERS) {
             ensureJdkRuntime(environment);
+        } else if (mode == CompilerSpecialMode.STDLIB) {
+            ensureJdkRuntime(environment);
         } else if (mode == CompilerSpecialMode.BUILTINS) {
             // nop
         } else {

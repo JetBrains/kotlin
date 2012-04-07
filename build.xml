@@ -52,7 +52,7 @@
         </javac>
     </target>
 
-    <target name="compileStdlib" depends="jar,jarLang">
+    <target name="compileStdlib" depends="jar,jarLang,compileRT">
         <mkdir dir="${output}/classes/stdlib"/>
         <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
             <classpath>
@@ -63,6 +63,10 @@
             <arg value="${basedir}/libraries/stdlib/src"/>
             <arg value="-output"/>
             <arg value="${output}/classes/stdlib"/>
+            <arg value="-mode"/>
+            <arg value="stdlib"/>
+            <arg value="-classpath"/>
+            <arg value="${output}/classes/runtime"/>
         </java>
     </target>
 
