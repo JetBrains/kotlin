@@ -81,6 +81,10 @@ public class FunctionCodegen {
             JetDeclarationWithBody fun
     )
     {
+        if (functionDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            throw new IllegalStateException("must not generate code for fake overrides");
+        }
+
         List<ValueParameterDescriptor> paramDescrs = functionDescriptor.getValueParameters();
         List<TypeParameterDescriptor> typeParameters = (functionDescriptor instanceof PropertyAccessorDescriptor ? ((PropertyAccessorDescriptor)functionDescriptor).getCorrespondingProperty(): functionDescriptor).getTypeParameters();
 
@@ -189,6 +193,10 @@ public class FunctionCodegen {
                 for (int i = 0; i < paramDescrs.size(); i++) {
                     ValueParameterDescriptor parameter = paramDescrs.get(i);
                     frameMap.enter(parameter, argTypes[i+add].getSize());
+                }
+
+                if ((kind instanceof OwnerKind.DelegateKind) != (functionDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                    throw new IllegalStateException("mismatching kind in " + functionDescriptor);
                 }
 
                 if (kind instanceof OwnerKind.DelegateKind) {

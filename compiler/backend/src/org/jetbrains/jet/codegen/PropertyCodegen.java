@@ -147,6 +147,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            throw new IllegalStateException("must not generate code for fake overrides");
+        }
+
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;
         }
@@ -186,6 +190,11 @@ public class PropertyCodegen {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     }
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType());
+
+                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
+                    }
+
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                         dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
@@ -222,6 +231,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            throw new IllegalStateException("must not generate code for fake overrides");
+        }
+
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;
         }
@@ -261,6 +274,10 @@ public class PropertyCodegen {
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         paramCode = 1;
+                    }
+
+                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
                     }
 
                     if (kind instanceof OwnerKind.DelegateKind) {
