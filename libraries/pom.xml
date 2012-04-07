@@ -28,6 +28,23 @@
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jetbrains-kotlin-release</id>
+            <name>jetbrains-kotlin-release</name>
+            <url>http://repository.jetbrains.com/kotlin-release</url>
+            <layout>default</layout>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jetbrains-kotlin-snapshots</id>
+            <name>jetbrains-kotlin-snapshots</name>
+            <url>http://repository.jetbrains.com/kotlin-snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
+
     <modules>
         <module>tools</module>
 
