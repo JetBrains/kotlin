@@ -36,8 +36,6 @@ import java.util.Collection;
  */
 public class JavaPackageScope extends JavaClassOrPackageScope {
 
-    private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.migration.PsiMigrationImpl");
-
     @NotNull
     private final FqName packageFQN;
 
