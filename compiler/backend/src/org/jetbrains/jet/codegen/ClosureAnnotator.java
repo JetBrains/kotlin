@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -257,9 +258,16 @@ public class ClosureAnnotator {
             classStack.pop();
         }
 
-        private void recordName(ClassDescriptor classDescriptor, String name) {
+        // TODO: please insert either @NotNull or @Nullable here
+        // stepan.koltsov@ 2012-04-08
+        private void recordName(ClassDescriptor classDescriptor, @NotNull String name) {
             String old = classNamesForClassDescriptor.put(classDescriptor, name);
-            assert old == null;
+            if (old == null) {
+                // TODO: fix this assertion
+                // previosly here was incorrect assert that was ignored without -ea
+                // stepan.koltsov@ 2012-04-08
+                //throw new IllegalStateException("rewrite at key " + classDescriptor);
+            }
         }
 
         @Override
