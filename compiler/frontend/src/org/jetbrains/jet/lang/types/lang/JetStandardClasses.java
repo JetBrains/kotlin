@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.types.JetTypeImpl;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
 
 import java.lang.reflect.Field;
@@ -124,9 +123,9 @@ public class JetStandardClasses {
             return "Scope for Any";
         }
     });
-    private static final JetType NULLABLE_ANY_TYPE = TypeUtils.makeNullable(ANY_TYPE);
+    private static final JetType NULLABLE_ANY_TYPE = new JetTypeImpl(ANY_TYPE.getAnnotations(), ANY_TYPE.getConstructor(), true, ANY_TYPE.getArguments(), ANY_TYPE.getMemberScope());
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private static final JetType DEFAULT_BOUND = getNullableAnyType();
 
