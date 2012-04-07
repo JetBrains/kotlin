@@ -57,7 +57,7 @@ public class JavaTypeTransformer {
 
 
     private Map<String, JetType> primitiveTypesMap;
-    private Map<String, JetType> classTypesMap;
+    private Map<FqName, JetType> classTypesMap;
     private HashMap<FqName, ClassDescriptor> classDescriptorMap;
 
 
@@ -139,7 +139,7 @@ public class JavaTypeTransformer {
                     }
                 }
                 else {
-                    JetType jetAnalog = getClassTypesMap().get(psiClass.getQualifiedName());
+                    JetType jetAnalog = getKotlinAnalog(new FqName(psiClass.getQualifiedName()));
                     if (jetAnalog != null) {
                         return jetAnalog;
                     }
@@ -223,19 +223,24 @@ public class JavaTypeTransformer {
         return primitiveTypesMap;
     }
 
-    public Map<String, JetType> getClassTypesMap() {
+    public Map<FqName, JetType> getClassTypesMap() {
         if (classTypesMap == null) {
-            classTypesMap = new HashMap<String, JetType>();
+            classTypesMap = new HashMap<FqName, JetType>();
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
+                classTypesMap.put(jvmPrimitiveType.getWrapper().getFqName(), JetStandardLibrary.getInstance().getNullablePrimitiveJetType(primitiveType));
             }
-            classTypesMap.put("java.lang.Object", JetStandardClasses.getNullableAnyType());
-            classTypesMap.put("java.lang.String", JetStandardLibrary.getInstance().getNullableStringType());
-            classTypesMap.put("java.lang.CharSequence", JetStandardLibrary.getInstance().getNullableCharSequenceType());
-            classTypesMap.put("java.lang.Throwable", JetStandardLibrary.getInstance().getNullableThrowableType());
+            classTypesMap.put(new FqName("java.lang.Object"), JetStandardClasses.getNullableAnyType());
+            classTypesMap.put(new FqName("java.lang.String"), JetStandardLibrary.getInstance().getNullableStringType());
+            classTypesMap.put(new FqName("java.lang.CharSequence"), JetStandardLibrary.getInstance().getNullableCharSequenceType());
+            classTypesMap.put(new FqName("java.lang.Throwable"), JetStandardLibrary.getInstance().getNullableThrowableType());
         }
         return classTypesMap;
+    }
+
+    @Nullable
+    public JetType getKotlinAnalog(@NotNull FqName fqName) {
+        return getClassTypesMap().get(fqName);
     }
 
     private Map<FqName, ClassDescriptor> getPrimitiveWrappersClassDescriptorMap() {
