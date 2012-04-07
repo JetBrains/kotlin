@@ -22,6 +22,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -38,27 +39,23 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @NotNull
     private final FqName packageFQN;
+    @Nullable
+    private final PsiPackage psiPackage;
 
     private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaPackageScope(
             @NotNull FqName packageFQN,
             @NotNull NamespaceDescriptor containingDescriptor,
-            @NotNull JavaSemanticServices semanticServices) {
-        super(containingDescriptor, semanticServices, getPiClass(packageFQN, semanticServices));
+            @NotNull JavaSemanticServices semanticServices,
+            @Nullable PsiPackage psiPackage,
+            @Nullable PsiClass psiClass) {
+        super(containingDescriptor, semanticServices, psiClass);
         this.packageFQN = packageFQN;
-    }
+        this.psiPackage = psiPackage;
 
-    private static PsiClass getPiClass(FqName packageFQN, JavaSemanticServices semanticServices) {
-        // TODO: move this check outside
-        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
-        // Kotlin functions are already there
-        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
-        if (kotlinNamespaceDescriptor != null) {
-            return null;
-        } else {
-            // TODO: what is GlobalSearchScope
-            return semanticServices.getPsiClassFinder().findPsiClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
+        if (psiClass == null && psiPackage == null) {
+            throw new IllegalStateException("both class and package cannot be null for " + packageFQN);
         }
     }
 
@@ -105,20 +102,18 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
                 allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
             }
 
-            final PsiPackage javaPackage = semanticServices.getPsiClassFinder().findPsiPackage(packageFQN);
-
-            if (javaPackage != null) {
-                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(new FqName(javaPackage.getQualifiedName())) != null;
+            if (psiPackage != null) {
+                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(packageFQN) != null;
                 final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
 
-                for (PsiPackage psiSubPackage : javaPackage.getSubPackages()) {
+                for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
                     NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                     if (childNs != null) {
                         allDescriptors.add(childNs);
                     }
                 }
 
-                for (PsiClass psiClass : javaPackage.getClasses()) {
+                for (PsiClass psiClass : psiPackage.getClasses()) {
                     if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
                         continue;
                     }
@@ -147,7 +142,7 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     }
 
     @NotNull
-    private static FqName getQualifiedName(@NotNull FqName packageFQN, @NotNull String name) {
+    static FqName getQualifiedName(@NotNull FqName packageFQN, @NotNull String name) {
         return packageFQN.child(name);
     }
 }

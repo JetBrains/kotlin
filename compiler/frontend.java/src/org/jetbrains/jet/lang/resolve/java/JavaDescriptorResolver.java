@@ -841,8 +841,27 @@ public class JavaDescriptorResolver {
         return namespaceData;
     }
 
+    @Nullable
     public JavaPackageScope createJavaPackageScope(@NotNull FqName fqName, @NotNull NamespaceDescriptor ns) {
-        return new JavaPackageScope(fqName, ns, semanticServices);
+        PsiPackage psiPackage = semanticServices.getPsiClassFinder().findPsiPackage(fqName);
+        PsiClass psiClass = getPsiClassForJavaPackageScope(fqName);
+        if (psiClass == null && psiPackage == null) {
+            return null;
+        }
+        return new JavaPackageScope(fqName, ns, semanticServices, psiPackage, psiClass);
+    }
+
+    private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
+        // TODO: move this check outside
+        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
+        // Kotlin functions are already there
+        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
+        if (kotlinNamespaceDescriptor != null) {
+            return null;
+        } else {
+            // TODO: what is GlobalSearchScope
+            return semanticServices.getPsiClassFinder().findPsiClass(JavaPackageScope.getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
+        }
     }
 
     @NotNull
