@@ -169,18 +169,6 @@ public abstract class CodegenContext {
         return parentContext;
     }
 
-    public Type jvmType(JetTypeMapper mapper) {
-        if (contextType instanceof ClassDescriptor) {
-            return mapper.mapType(((ClassDescriptor) contextType).getDefaultType(), JetTypeMapper.ownerKindToMapTypeMode(contextKind));
-        }
-        else if (closure != null) {
-            return Type.getObjectType(closure.name);
-        }
-        else {
-            return parentContext != null ? parentContext.jvmType(mapper) : JetTypeMapper.TYPE_OBJECT;
-        }
-    }
-
     public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
         final ObjectOrClosureCodegen top = closure;
         if (top != null) {
