@@ -85,7 +85,7 @@ public class CompileEnvironment {
             public void dispose() {
             }
         };
-        environment = new JetCoreEnvironment(rootDisposable, mode == CompilerSpecialMode.REGULAR);
+        environment = new JetCoreEnvironment(rootDisposable, mode.includeJdkHeaders());
         this.messageRenderer = messageRenderer;
     }
 
@@ -282,7 +282,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = newCompileSession();
-        moduleCompileSession.setStubs(mode != CompilerSpecialMode.REGULAR);
+        moduleCompileSession.setStubs(mode.isStubs());
 
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
@@ -403,7 +403,7 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = newCompileSession();
-        session.setStubs(mode != CompilerSpecialMode.REGULAR);
+        session.setStubs(mode.isStubs());
 
         session.addSources(sourceFileOrDir);
 
@@ -412,7 +412,7 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSourceDirectories(List<String> sources, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = newCompileSession();
-        session.setStubs(mode != CompilerSpecialMode.REGULAR);
+        session.setStubs(mode.isStubs());
 
         for (String source : sources) {
             session.addSources(source);

@@ -29,4 +29,8 @@ public enum CompilerSpecialMode {
     public boolean includeJdkHeaders() {
         return this == REGULAR || this == STDLIB;
     }
+
+    public boolean isStubs() {
+        return this == BUILTINS || this == JDK_HEADERS;
+    }
 }
