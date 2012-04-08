@@ -1427,11 +1427,7 @@ public class JavaDescriptorResolver {
 
     private void getResolverScopeData(@NotNull ResolverScopeData scopeData) {
         if (scopeData.namedMembersMap == null) {
-            if (scopeData.psiClass != null) {
-                scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(new PsiClassWrapper(scopeData.psiClass), scopeData.staticMembers, scopeData.kotlin);
-            } else {
-                scopeData.namedMembersMap = Collections.emptyMap();
-            }
+            scopeData.namedMembersMap = JavaDescriptorResolverHelper.getNamedMembers(scopeData);
         }
     }
 

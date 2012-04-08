@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -211,10 +212,15 @@ class JavaDescriptorResolverHelper {
     }
 
 
-    static Map<String, NamedMembers> getNamedMembers(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
-        Builder builder = new Builder(psiClass, staticMembers, kotlin);
-        builder.run();
-        return builder.namedMembersMap;
+    @NotNull
+    static Map<String, NamedMembers> getNamedMembers(@NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+        if (resolverScopeData.psiClass != null) {
+            Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
+            builder.run();
+            return builder.namedMembersMap;
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
 
