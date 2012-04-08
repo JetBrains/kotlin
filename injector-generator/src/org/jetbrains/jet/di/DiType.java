@@ -142,4 +142,13 @@ class DiType {
     public static DiType listOf(@NotNull DiType type) {
         return new DiType(List.class, Lists.newArrayList(type));
     }
+
+    @Override
+    public String toString() {
+        if (typeParameters.size() > 0) {
+            return clazz + "<...>";
+        } else {
+            return clazz.toString();
+        }
+    }
 }
