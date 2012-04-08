@@ -907,8 +907,7 @@ public class JavaDescriptorResolver {
                 (NamespaceDescriptorParent) resolveParentDescriptor(psiPackage),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 name == null ? JAVA_ROOT : name,
-                fqName,
-                true
+                fqName
         );
         trace.record(BindingContext.NAMESPACE, psiPackage, namespaceDescriptor);
 
@@ -997,8 +996,7 @@ public class JavaDescriptorResolver {
                 resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
-                fqName,
-                false
+                fqName
         );
 
         ResolverNamespaceData scopeData = createNamespaceResolverScopeData(fqName, ns);
