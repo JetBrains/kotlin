@@ -216,6 +216,22 @@ public class FqNameUnsafe {
         }
     }
 
+    public boolean firstSegmentIs(@NotNull String segment) {
+        if (isRoot()) {
+            return false;
+        }
+        List<String> pathSegments = pathSegments();
+        return pathSegments.get(0).equals(segment);
+    }
+
+    public boolean lastSegmentIs(@NotNull String segment) {
+        if (isRoot()) {
+            return false;
+        }
+        List<String> pathSegments = pathSegments();
+        return pathSegments.get(pathSegments.size() - 1).equals(segment);
+    }
+
 
 
     @NotNull
