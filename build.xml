@@ -133,7 +133,7 @@
     </target>
 
     <target name="generateInjectors" depends="compileInjectorsGenerator">
-        <java classname="org.jetbrains.jet.di.AllInjectorsGenerator">
+        <java classname="org.jetbrains.jet.di.AllInjectorsGenerator" failonerror="true">
             <classpath refid="classpath"/>
             <classpath path="${output}/classes/injectorsGenerator"/>
         </java>
