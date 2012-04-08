@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -33,7 +32,10 @@ import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Renderers.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
@@ -61,7 +63,8 @@ public interface Errors {
     RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.REDECLARATION;
     RedeclarationDiagnosticFactory NAME_SHADOWING = RedeclarationDiagnosticFactory.NAME_SHADOWING;
 
-    DiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected");
+    DiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR, "Type mismatch: inferred type is {1} but {0} was expected",
+                                                                                               RENDER_TYPE, RENDER_TYPE);
     DiagnosticFactory1<PsiElement, Collection<JetKeywordToken>> INCOMPATIBLE_MODIFIERS =
             DiagnosticFactory1.create(ERROR, "Incompatible modifiers: ''{0}''",
                                       new Renderer<Collection<JetKeywordToken>>() {
@@ -217,8 +220,8 @@ public interface Errors {
     DiagnosticFactory<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = DiagnosticFactory.create(WARNING, "No cast needed, use ':' instead");
     DiagnosticFactory<JetSimpleNameExpression> USELESS_CAST = DiagnosticFactory.create(WARNING, "No cast needed");
     DiagnosticFactory<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = DiagnosticFactory.create(WARNING, "This cast can never succeed");
-    DiagnosticFactory1<JetTypeReference, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}");//, DiagnosticParameters.TYPE);
-    DiagnosticFactory1<JetTypeReference, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory1.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}");//, DiagnosticParameters.TYPE);
+    DiagnosticFactory1<JetTypeReference, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR, "Setter parameter type must be equal to the type of the property, i.e. {0}", RENDER_TYPE);//, DiagnosticParameters.TYPE);
+    DiagnosticFactory1<JetTypeReference, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory1.create(ERROR, "Getter return type must be equal to the type of the property, i.e. {0}", RENDER_TYPE);//, DiagnosticParameters.TYPE);
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR, "Please specify constructor invocation; classifier {0} does not have a class object", NAME);
     DiagnosticFactory<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = DiagnosticFactory.create(ERROR, "Generic arguments of the base type must be specified");
 
@@ -226,15 +229,15 @@ public interface Errors {
     DiagnosticFactory<JetExpression> HAS_NEXT_MISSING = DiagnosticFactory.create(ERROR, "Loop range must have an 'iterator().hasNext()' function or an 'iterator().hasNext' property");
     DiagnosticFactory<JetExpression> HAS_NEXT_FUNCTION_AMBIGUITY = DiagnosticFactory.create(ERROR, "Function 'iterator().hasNext()' is ambiguous for this expression");
     DiagnosticFactory<JetExpression> HAS_NEXT_MUST_BE_READABLE = DiagnosticFactory.create(ERROR, "The 'iterator().hasNext' property of the loop range must be readable");
-    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_PROPERTY_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "The 'iterator().hasNext' property of the loop range must return Boolean, but returns {0}");
-    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "The 'iterator().hasNext()' function of the loop range must return Boolean, but returns {0}");
+    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_PROPERTY_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "The 'iterator().hasNext' property of the loop range must return Boolean, but returns {0}", RENDER_TYPE);
+    DiagnosticFactory1<JetExpression, JetType> HAS_NEXT_FUNCTION_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "The 'iterator().hasNext()' function of the loop range must return Boolean, but returns {0}", RENDER_TYPE);
     DiagnosticFactory<JetExpression> NEXT_AMBIGUITY = DiagnosticFactory.create(ERROR, "Function 'iterator().next()' is ambiguous for this expression");
     DiagnosticFactory<JetExpression> NEXT_MISSING = DiagnosticFactory.create(ERROR, "Loop range must have an 'iterator().next()' function");
     DiagnosticFactory<JetExpression> ITERATOR_MISSING = DiagnosticFactory.create(ERROR, "For-loop range must have an iterator() method");
     AmbiguousDescriptorDiagnosticFactory ITERATOR_AMBIGUITY = AmbiguousDescriptorDiagnosticFactory.create("Method 'iterator()' is ambiguous for this expression: {0}");
 
-    DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "compareTo() must return Int, but returns {0}");
-    DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR, "Expecting a function type, but found {0}");
+    DiagnosticFactory1<JetSimpleNameExpression, JetType> COMPARE_TO_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "compareTo() must return Int, but returns {0}", RENDER_TYPE);
+    DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR, "Expecting a function type, but found {0}", RENDER_TYPE);
 
     DiagnosticFactory<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = DiagnosticFactory.create(ERROR, "Returns are not allowed for functions with expression body. Use block body in '{...}'");
     DiagnosticFactory<JetDeclarationWithBody> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = DiagnosticFactory.create(ERROR, "A 'return' expression required in a function with a block body ('{...}')", new PositioningStrategy<JetDeclarationWithBody>() {
@@ -249,10 +252,10 @@ public interface Errors {
             return markRange(lastBracketRange);
         }
     });
-    DiagnosticFactory1<JetExpression, JetType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "This function must return a value of type {0}");
-    DiagnosticFactory1<JetExpression, JetType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}");
-    DiagnosticFactory1<JetBinaryExpression, JetType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value");
-    DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING, "Type was casted to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast");
+    DiagnosticFactory1<JetExpression, JetType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "This function must return a value of type {0}", RENDER_TYPE);
+    DiagnosticFactory1<JetExpression, JetType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}", RENDER_TYPE);
+    DiagnosticFactory1<JetBinaryExpression, JetType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR, "Expected a value of type {0}. Assignment operation is not an expression, so it does not return any value", RENDER_TYPE);
+    DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING, "Type was casted to ''{0}''. Please specify ''{0}'' as expected type, if you mean such cast", RENDER_TYPE);
     DiagnosticFactory1<JetExpression, JetExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR, "{0} is not an expression, and only expression are allowed here", new Renderer<JetExpression>() {
         @NotNull
         @Override
@@ -263,10 +266,10 @@ public interface Errors {
         }
     });
 
-    DiagnosticFactory1<JetTypeReference, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR, "An upper bound {0} is violated"); // TODO : Message
-    DiagnosticFactory1<JetTypeReference, JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR, "{0} is a final type, and thus a class object cannot extend it");
-    DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING, "{0} is a final type, and thus a value of the type parameter is predetermined");
-    DiagnosticFactory1<JetExpression, JetType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, "Elvis operator (?:) always returns the left operand of non-nullable type {0}");
+    DiagnosticFactory1<JetTypeReference, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR, "An upper bound {0} is violated", RENDER_TYPE); // TODO : Message
+    DiagnosticFactory1<JetTypeReference, JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR, "{0} is a final type, and thus a class object cannot extend it", RENDER_TYPE);
+    DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING, "{0} is a final type, and thus a value of the type parameter is predetermined", RENDER_TYPE);
+    DiagnosticFactory1<JetExpression, JetType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS = DiagnosticFactory1.create(ERROR, "Upper bounds of {0} have empty intersection", NAME);
     DiagnosticFactory1<PsiElement, TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS = DiagnosticFactory1.create(ERROR, "Class object upper bounds of {0} have empty intersection", NAME);
 
@@ -324,11 +327,11 @@ public interface Errors {
             return markNode(element.getQuestionMarkNode());
         }
     });
-    DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR, "Only safe calls (?.) are allowed on a nullable receiver of type {0}");
+    DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR, "Only safe calls (?.) are allowed on a nullable receiver of type {0}", RENDER_TYPE);
     DiagnosticFactory<JetSimpleNameExpression> AMBIGUOUS_LABEL = DiagnosticFactory.create(ERROR, "Ambiguous label");
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED = DiagnosticFactory1.create(ERROR, "Unsupported [{0}]");
-    DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}");
-    DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}");
+    DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
+    DiagnosticFactory1<PsiElement, JetType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE);
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER = DiagnosticFactory2.create(ERROR, "{0} does not refer to a type parameter of {1}", new Renderer<JetTypeConstraint>() {
         @NotNull
         @Override
@@ -337,17 +340,17 @@ public interface Errors {
             return typeConstraint.getSubjectTypeParameterName().getReferencedName();
         }
     }, NAME);
-    DiagnosticFactory2<JetExpression, JetType, String> AUTOCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because {1} could have changed since the is-check");
+    DiagnosticFactory2<JetExpression, JetType, String> AUTOCAST_IMPOSSIBLE = DiagnosticFactory2.create(ERROR, "Automatic cast to {0} is impossible, because {1} could have changed since the is-check", RENDER_TYPE, NAME);
 
-    DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR, "The loop iterates over values of type {0} but the parameter is declared to be {1}");
-    DiagnosticFactory1<JetElement, JetType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}");
-    DiagnosticFactory2<JetTuplePattern, JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = DiagnosticFactory2.create(ERROR, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}"); // TODO: message
-    DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = DiagnosticFactory2.create(ERROR, "{0} must be a supertype of {1}. Use 'is' to match against {0}");
-    DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR, "Incompatible types: {0} and {1}");
+    DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_FOR_LOOP = DiagnosticFactory2.create(ERROR, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE, RENDER_TYPE);
+    DiagnosticFactory1<JetElement, JetType> TYPE_MISMATCH_IN_CONDITION = DiagnosticFactory1.create(ERROR, "Condition must be of type Boolean, but was of type {0}", RENDER_TYPE);
+    DiagnosticFactory2<JetTuplePattern, JetType, Integer> TYPE_MISMATCH_IN_TUPLE_PATTERN = DiagnosticFactory2.create(ERROR, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}", RENDER_TYPE, TO_STRING); // TODO: message
+    DiagnosticFactory2<JetTypeReference, JetType, JetType> TYPE_MISMATCH_IN_BINDING_PATTERN = DiagnosticFactory2.create(ERROR, "{0} must be a supertype of {1}. Use 'is' to match against {0}", RENDER_TYPE, RENDER_TYPE);
+    DiagnosticFactory2<JetElement, JetType, JetType> INCOMPATIBLE_TYPES = DiagnosticFactory2.create(ERROR, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
     DiagnosticFactory<JetWhenCondition> EXPECTED_CONDITION = DiagnosticFactory.create(ERROR, "Expected condition of Boolean type");
 
-    DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR, "Cannot check for instance of erased type: {0}");
-    DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING, "Unchecked cast: {0} to {1}");
+    DiagnosticFactory1<JetElement, JetType> CANNOT_CHECK_FOR_ERASED = DiagnosticFactory1.create(ERROR, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
+    DiagnosticFactory2<JetBinaryExpressionWithTypeRHS, JetType, JetType> UNCHECKED_CAST = DiagnosticFactory2.create(WARNING, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);
 
     DiagnosticFactory3<JetDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<JetType>> INCONSISTENT_TYPE_PARAMETER_VALUES =
             DiagnosticFactory3.create(ERROR, "Type parameter {0} of {1} has inconsistent values: {2}", NAME, DescriptorRenderer.TEXT, new Renderer<Collection<JetType>>() {
@@ -428,13 +431,13 @@ public interface Errors {
     }, DescriptorRenderer.TEXT, TO_STRING);
 
 
-    DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}");
+    DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, "{0} must return {1} but returns {2}", TO_STRING, RENDER_TYPE, RENDER_TYPE);
     DiagnosticFactory3<JetReferenceExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR, "Infix call corresponds to a dot-qualified call ''{0}.{1}({2})'' which is not allowed on a nullable receiver ''{0}''. Use '?.'-qualified call instead");
 
     AmbiguousDescriptorDiagnosticFactory OVERLOAD_RESOLUTION_AMBIGUITY = new AmbiguousDescriptorDiagnosticFactory("Overload resolution ambiguity: {0}");
     AmbiguousDescriptorDiagnosticFactory NONE_APPLICABLE = new AmbiguousDescriptorDiagnosticFactory("None of the following functions can be called with the arguments supplied: {0}");
     DiagnosticFactory1<PsiElement, ValueParameterDescriptor> NO_VALUE_FOR_PARAMETER = DiagnosticFactory1.create(ERROR, "No value passed for parameter {0}", DescriptorRenderer.TEXT);
-    DiagnosticFactory1<JetReferenceExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR, "A receiver of type {0} is required");
+    DiagnosticFactory1<JetReferenceExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR, "A receiver of type {0} is required", RENDER_TYPE);
     DiagnosticFactory<JetReferenceExpression> NO_RECEIVER_ADMITTED = DiagnosticFactory.create(ERROR, "No receiver can be passed to this function or property");
 
     DiagnosticFactory<PsiElement> CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS = DiagnosticFactory.create(ERROR, "Can not create an instance of an abstract class");

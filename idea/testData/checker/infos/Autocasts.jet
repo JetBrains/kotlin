@@ -153,13 +153,13 @@ fun getStringLength(obj : Any) : Char? {
 fun toInt(i: Int?): Int = if (i != null) <info descr="Automatically cast to jet.Int">i</info> else 0
 fun illegalWhenBody(a: Any): Int = when(a) {
     is Int -> <info descr="Automatically cast to jet.Int">a</info>
-    is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+    is String -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any but jet.Int was expected">a</error>
     else -> 1
 }
 fun illegalWhenBlock(a: Any): Int {
     when(a) {
         is Int -> return <info descr="Automatically cast to jet.Int">a</info>
-        is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but Int was expected">a</error>
+        is String -> return <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any but jet.Int was expected">a</error>
         else -> return 1
     }
 }
@@ -186,17 +186,17 @@ fun vars(a: Any?) {
 }
 fun tuples(a: Any?) {
     if (a != null) {
-        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
+        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.String was expected">a</error>)
     }
     if (a is String) {
         val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <info descr="Automatically cast to jet.String">a</info>)
     }
-    fun illegalTupleReturnType(): #(Any, String) = #(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but String was expected">a</error>)
+    fun illegalTupleReturnType(): #(Any, String) = #(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.String was expected">a</error>)
     if (a is String) {
         fun legalTupleReturnType(): #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <info descr="Automatically cast to jet.String">a</info>)
     }
-    val <warning>illegalFunctionLiteral</warning>: Function0<Int> = <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Function0<Any?> but Function0<Int> was expected">{ <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }</error>
-    val <warning>illegalReturnValueInFunctionLiteral</warning>: Function0<Int> = { (): Int -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any? but Int was expected">a</error> }
+    val <warning>illegalFunctionLiteral</warning>: Function0<Int> = <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is () -> jet.Any? but () -> jet.Int was expected">{ <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Int was expected">a</error> }</error>
+    val <warning>illegalReturnValueInFunctionLiteral</warning>: Function0<Int> = { (): Int -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Int was expected">a</error> }
 
     if (a is Int) {
         val <warning>legalFunctionLiteral</warning>: Function0<Int> = { <info descr="Automatically cast to jet.Int">a</info> }
@@ -211,7 +211,7 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
     if (a is Int) { (): Int -> <info descr="Automatically cast to jet.Int">a</info> }
     else { () -> 1 }
 
-fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is Any but String was expected">a</error>)
+fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any but jet.String was expected">a</error>)
 
 fun declarationInsidePattern(x: #(Any, Any)): String = when(x) { is #(val a is String, *) -> <info descr="Automatically cast to jet.String">a</info>; else -> "something" }
 
@@ -237,17 +237,17 @@ fun mergeAutocasts(a: Any?) {
 fun f(): String {
     var <info>a</info>: Any = 11
     if (<info>a</info> is String) {
-        val <warning>i</warning>: String = <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error>
-        <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error>.compareTo("f")
-        val <warning>f</warning>: Function0<String> = { <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error> }
-        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to String is impossible, because a could have changed since the is-check">a</error>
+        val <warning>i</warning>: String = <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>
+        <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>.compareTo("f")
+        val <warning>f</warning>: Function0<String> = { <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error> }
+        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>
     }
     return ""
 }
 
 fun foo(var a: Any): Int {
     if (a is Int) {
-        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to Int is impossible, because a could have changed since the is-check">a</error>
+        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.Int is impossible, because a could have changed since the is-check">a</error>
     }
     return 1
 }

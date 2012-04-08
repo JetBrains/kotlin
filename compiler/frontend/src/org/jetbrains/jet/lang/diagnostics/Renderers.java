@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
  * @author svtk
@@ -72,6 +74,15 @@ public class Renderers {
             }
             return "Object" + name;
 
+        }
+    };
+
+    public static final Renderer<JetType> RENDER_TYPE = new Renderer<JetType>() {
+        @NotNull
+        @Override
+        public String render(@Nullable JetType type) {
+            assert type != null;
+            return DescriptorRenderer.TEXT.renderType(type);
         }
     };
 }
