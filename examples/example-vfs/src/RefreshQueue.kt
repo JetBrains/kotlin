@@ -54,9 +54,9 @@ internal object RefreshQueue {
         if (fileInfo == null) {
             return
         }
-        if (file.isDirectory()) {
+        if (file.isDirectory) {
             val oldChildren = fileInfo.children
-            val newChildren = file.children()
+            val newChildren = file.children
 
 
             val addedChildren = listDifference(newChildren, oldChildren)
@@ -71,7 +71,7 @@ internal object RefreshQueue {
 
             commonChildren.forEach{ refreshFile(it) }
         } else {
-            val newModificationTime = file.modificationTime()
+            val newModificationTime = file.modificationTime
             if (fileInfo.lastModified != newModificationTime) {
                 fileInfo.lastModified = newModificationTime
 

@@ -72,7 +72,7 @@ public object FileSystem {
      */
     public fun addWatchedDirectory(dir : VirtualFile) {
         assertCanRead()
-        if (dir.isDirectory()) {
+        if (dir.isDirectory) {
             watchedDirectories.add(dir)
             scanAndAddRecursivelyNoEvents(dir)
 
@@ -135,7 +135,7 @@ private class VirtualFileInfo(file : VirtualFile) {
     val children : List<VirtualFile> = ArrayList<VirtualFile>;
 
     {
-        children.addAll(file.children())
-        lastModified = file.modificationTime()
+        children.addAll(file.children)
+        lastModified = file.modificationTime
     }
 }
