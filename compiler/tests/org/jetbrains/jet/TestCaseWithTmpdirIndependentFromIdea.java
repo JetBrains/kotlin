@@ -30,7 +30,7 @@ public abstract class TestCaseWithTmpdirIndependentFromIdea {
 
     @Before
     public void before() throws Exception {
-        tmpdir = JetTestUtils.tmpDir(CompileJdkHeadersTest.class.getName());
+        tmpdir = JetTestUtils.tmpDir(TestCaseWithTmpdirIndependentFromIdea.class.getName());
     }
 
     @After

@@ -16,16 +16,28 @@
 
 package org.jetbrains.jet;
 
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.junit.Test;
 
 /**
  * @author Stepan Koltsov
  */
-public class CompileStdlibTest {
+public class CompileCompilerDependenciesTest {
 
     @Test
-    public void compile() {
+    public void compileBuiltins() {
+        ForTestCompileBuiltins.builtinsJarForTests();
+    }
+
+    @Test
+    public void compileJdkHeaders() {
+        ForTestCompileJdkHeaders.jdkHeadersForTests();
+    }
+
+    @Test
+    public void compileRuntime() {
         ForTestCompileRuntime.runtimeJarForTests();
     }
 

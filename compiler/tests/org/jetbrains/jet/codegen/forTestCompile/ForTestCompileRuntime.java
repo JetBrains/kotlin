@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen.forTestCompile;
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.junit.Assert;
@@ -43,57 +44,21 @@ import java.util.jar.JarOutputStream;
  * @author Stepan Koltsov
  */
 public class ForTestCompileRuntime {
-    private static File runtimeJarFile;
 
     private ForTestCompileRuntime() {
     }
 
-    private static File doCompile() throws Exception {
-        File tmpDir = JetTestUtils.tmpDir("runtimejar");
-
-        File jarFile = new File(tmpDir, "runtime.jar");
-        
-        File classesDir = new File(tmpDir, "classes");
-
-        FileUtil.createParentDirs(new File(classesDir, "dummy"));
-        compileJavaPartOfBuiltins(classesDir);
-        compileStdlib(classesDir);
-
-        FileOutputStream stdlibJar = new FileOutputStream(jarFile);
-        try {
-            JarOutputStream jarOutputStream = new JarOutputStream(stdlibJar);
-            try {
-                copyToJar(classesDir, jarOutputStream);
-            }
-            finally {
-                jarOutputStream.close();
-            }
+    private static class Runtime extends ForTestCompileSomething {
+        private Runtime() {
+            super("runtime");
         }
-        finally {
-            stdlibJar.close();
-        }
-        
-        FileUtil.delete(classesDir);
-        return jarFile;
 
-    }
-    private static void copyToJar(File root, JarOutputStream os) throws IOException {
-        Stack<Pair<String, File>> toCopy = new Stack<Pair<String, File>>();
-        toCopy.add(new Pair<String, File>("", root));
-        while (!toCopy.empty()) {
-            Pair<String, File> pop = toCopy.pop();
-            File file = pop.getSecond();
-            if (file.isFile()) {
-                os.putNextEntry(new JarEntry(pop.getFirst()));
-                Files.copy(file, os);
-            } else if (file.isDirectory()) {
-                for (File child : file.listFiles()) {
-                    String path = pop.getFirst().isEmpty() ? child.getName() : pop.getFirst() + "/" + child.getName();
-                    toCopy.add(new Pair<String, File>(path, child));
-                }
-            } else {
-                throw new IllegalStateException();
-            }
+        private static final Runtime runtime = new Runtime();
+
+        @Override
+        protected void doCompile(@NotNull File classesDir) throws Exception {
+            compileJavaPartOfBuiltins(classesDir);
+            compileStdlib(classesDir);
         }
     }
 
@@ -142,24 +107,9 @@ public class ForTestCompileRuntime {
     }
 
 
-    private static Throwable compilationException;
-    
+    @NotNull
     public static File runtimeJarForTests() {
-        synchronized (ForTestCompileRuntime.class) {
-            if (compilationException != null) {
-                throw new RuntimeException("runtime compilation failed in previous tests: " + compilationException, compilationException);
-            }
-            if (runtimeJarFile == null || !runtimeJarFile.exists()) {
-                try {
-                    runtimeJarFile = doCompile();
-                } catch (Throwable e) {
-                    compilationException = e;
-                    throw new RuntimeException(e);
-                }
-            }
-            return runtimeJarFile;
-        }
-
+        return Runtime.runtime.getJarFile();
     }
 
 }
