@@ -43,7 +43,7 @@ import java.util.jar.JarOutputStream;
  * @author Stepan Koltsov
  */
 public class ForTestCompileRuntime {
-    private static File stdlibJarFile;
+    private static File runtimeJarFile;
 
     private ForTestCompileRuntime() {
     }
@@ -149,15 +149,15 @@ public class ForTestCompileRuntime {
             if (compilationException != null) {
                 throw new RuntimeException("runtime compilation failed in previous tests: " + compilationException, compilationException);
             }
-            if (stdlibJarFile == null || !stdlibJarFile.exists()) {
+            if (runtimeJarFile == null || !runtimeJarFile.exists()) {
                 try {
-                    stdlibJarFile = doCompile();
+                    runtimeJarFile = doCompile();
                 } catch (Throwable e) {
                     compilationException = e;
                     throw new RuntimeException(e);
                 }
             }
-            return stdlibJarFile;
+            return runtimeJarFile;
         }
 
     }
