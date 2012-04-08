@@ -55,8 +55,16 @@ public abstract class JetTemplateContextType extends TemplateContextType {
             }
             else if (element instanceof LeafPsiElement) {
                 IElementType elementType = ((LeafPsiElement) element).getElementType();
-                if (elementType == JetTokens.IDENTIFIER && !(element.getParent() instanceof JetReferenceExpression)) {
-                    return false;
+                if (elementType == JetTokens.IDENTIFIER) {
+                    if (element.getParent() instanceof JetReferenceExpression) {
+                        PsiElement parentOfParent = element.getParent().getParent();
+                        JetQualifiedExpression qualifiedExpression = PsiTreeUtil.getParentOfType(element, JetQualifiedExpression.class);
+                        if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == parentOfParent) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
                 }
             }
             return element != null && isInContext(element);
