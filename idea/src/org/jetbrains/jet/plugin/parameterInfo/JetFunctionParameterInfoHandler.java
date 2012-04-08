@@ -32,6 +32,8 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -190,7 +192,8 @@ public class JetFunctionParameterInfoHandler implements
             if (descriptor instanceof FunctionDescriptor) {
                 JetFile file = (JetFile) argumentList.getContainingFile();
                 BindingContext bindingContext =
-                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
+                                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                             .getBindingContext();
                 FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                 StringBuilder builder = new StringBuilder();
@@ -331,7 +334,7 @@ public class JetFunctionParameterInfoHandler implements
         } else return null;
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
                 (JetFile) file,
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                     .getBindingContext();
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;

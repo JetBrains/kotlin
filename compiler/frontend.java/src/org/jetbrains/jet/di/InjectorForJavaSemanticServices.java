@@ -23,10 +23,12 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.PsiClassFinderForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer;
 import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +42,7 @@ public class InjectorForJavaSemanticServices {
     private final Project project;
 
     public InjectorForJavaSemanticServices(
+        @NotNull CompilerDependencies compilerDependencies,
         @NotNull Project project
     ) {
         this.javaSemanticServices = new JavaSemanticServices();
@@ -48,7 +51,7 @@ public class InjectorForJavaSemanticServices {
         JavaBridgeConfiguration javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinderForJvm = new PsiClassFinderForJvm();
         ModuleDescriptor moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
-        CompilerSpecialMode compilerSpecialMode = CompilerSpecialMode.REGULAR;
+        CompilerSpecialMode compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.project = project;
         JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
         NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
@@ -68,7 +71,7 @@ public class InjectorForJavaSemanticServices {
         javaBridgeConfiguration.setMode(compilerSpecialMode);
         javaBridgeConfiguration.setProject(project);
 
-        this.psiClassFinderForJvm.setCompilerSpecialMode(compilerSpecialMode);
+        this.psiClassFinderForJvm.setCompilerDependencies(compilerDependencies);
         this.psiClassFinderForJvm.setProject(project);
 
         javaTypeTransformer.setJavaSemanticServices(javaSemanticServices);

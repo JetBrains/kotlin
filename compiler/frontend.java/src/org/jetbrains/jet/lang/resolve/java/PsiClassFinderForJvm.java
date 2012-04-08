@@ -43,7 +43,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
     @NotNull
     private Project project;
     @NotNull
-    private CompilerSpecialMode compilerSpecialMode;
+    private CompilerDependencies compilerDependencies;
 
     private AltClassFinder altClassFinder;
     private GlobalSearchScope javaSearchScope;
@@ -55,14 +55,13 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
     }
 
     @Inject
-    public void setCompilerSpecialMode(@NotNull CompilerSpecialMode compilerSpecialMode) {
-        this.compilerSpecialMode = compilerSpecialMode;
+    public void setCompilerDependencies(@NotNull CompilerDependencies compilerDependencies) {
+        this.compilerDependencies = compilerDependencies;
     }
 
     @PostConstruct
     public void initialize() {
-        this.altClassFinder = new AltClassFinder(project,
-                compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersRoots() : Collections.<VirtualFile>emptyList());
+        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkHeaderRoots());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {

@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class BytecodeCompiler {
      * @return compile environment instance
      */
     private CompileEnvironment env( String stdlib, String[] classpath ) {
-        CompileEnvironment env = new CompileEnvironment();
+        CompileEnvironment env = new CompileEnvironment(CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             env.setStdlib( stdlib );

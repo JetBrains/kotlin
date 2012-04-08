@@ -38,6 +38,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
@@ -96,7 +98,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             }
         }
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                 .getBindingContext();
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         if (expressionType instanceof NamespaceType) {
@@ -350,7 +352,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         final ArrayList<JetExpression> result = new ArrayList<JetExpression>();
 
         final BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                     .getBindingContext();
 
         JetVisitorVoid visitor = new JetVisitorVoid() {

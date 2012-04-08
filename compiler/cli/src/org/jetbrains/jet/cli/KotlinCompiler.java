@@ -24,7 +24,9 @@ import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.compiler.MessageRenderer;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -121,7 +123,32 @@ public class KotlinCompiler {
             }
         }
 
-        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose, mode);
+        File jdkHeadersJar;
+        if (mode.includeJdkHeaders()) {
+            if (arguments.jdkHeaders != null) {
+                jdkHeadersJar = new File(arguments.jdkHeaders);
+            } else {
+                jdkHeadersJar = PathUtil.getAltHeadersPath();
+            }
+        }
+        else {
+            jdkHeadersJar = null;
+        }
+        File runtimeJar;
+
+        if (mode.includeKotlinRuntime()) {
+            if (arguments.stdlib != null) {
+                runtimeJar = new File(arguments.stdlib);
+            } else {
+                runtimeJar = PathUtil.getDefaultRuntimePath();
+            }
+        }
+        else {
+            runtimeJar = null;
+        }
+
+        CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar,runtimeJar);
+        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose, dependencies);
         try {
             configureEnvironment(environment, arguments, errStream);
 
@@ -204,8 +231,8 @@ public class KotlinCompiler {
             environment.getEnvironment().getCompilerPlugins().addAll(plugins);
         }
 
-        if (arguments.stdlib != null) {
-            environment.setStdlib(arguments.stdlib);
+        if (environment.getCompilerDependencies().getRuntimeJar() != null) {
+            environment.addToClasspath(environment.getCompilerDependencies().getRuntimeJar());
         }
 
         if (arguments.classpath != null) {

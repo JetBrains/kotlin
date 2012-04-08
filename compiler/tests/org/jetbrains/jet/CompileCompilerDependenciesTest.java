@@ -16,9 +16,13 @@
 
 package org.jetbrains.jet;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileBuiltins;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
 
 /**
@@ -41,4 +45,14 @@ public class CompileCompilerDependenciesTest {
         ForTestCompileRuntime.runtimeJarForTests();
     }
 
+    /**
+     * @see CompilerDependencies#compilerDependenciesForProduction(org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode)
+     */
+    @NotNull
+    public static CompilerDependencies compilerDependenciesForTests(@NotNull CompilerSpecialMode compilerSpecialMode) {
+        return new CompilerDependencies(
+                compilerSpecialMode,
+                compilerSpecialMode.includeJdkHeaders() ? ForTestCompileJdkHeaders.jdkHeadersForTests() : null,
+                compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
+    }
 }

@@ -25,6 +25,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -69,7 +71,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        GenerationState state = GenerationUtils.compileFileGetGenerationState(psiFile);
+        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile);
 
         ClassFileFactory classFileFactory = state.getFactory();
 
@@ -87,7 +89,9 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject()).getJavaDescriptorResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), jetCoreEnvironment.getProject());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         
         NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false, txtFile);

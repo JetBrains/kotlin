@@ -61,6 +61,9 @@ public class CompilerArguments {
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
+    @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
+    public String jdkHeaders;
+
     @Argument(value = "help", alias = "h", description = "show help")
     public boolean help;
 

@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -54,7 +56,9 @@ public class ImportInsertHelper {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
+                file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                 .getBindingContext();
         PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getMemberScope().getContainingDeclaration());
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed

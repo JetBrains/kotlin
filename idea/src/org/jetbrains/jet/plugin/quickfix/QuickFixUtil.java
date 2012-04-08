@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.JetType;
 
@@ -57,7 +59,9 @@ public class QuickFixUtil {
     public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
+                (JetFile) file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                 .getBindingContext();
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;

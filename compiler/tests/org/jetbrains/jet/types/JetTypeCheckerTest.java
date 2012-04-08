@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -585,7 +586,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(getProject()).getJavaDescriptorResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), getProject());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),

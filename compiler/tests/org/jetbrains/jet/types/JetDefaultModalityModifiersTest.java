@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.types;
 
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForTests;
@@ -25,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -62,7 +64,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
-            AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+            AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
+                    file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
+                    CompilerSpecialMode.REGULAR, CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
             DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
             assert classDescriptor instanceof ClassifierDescriptor;

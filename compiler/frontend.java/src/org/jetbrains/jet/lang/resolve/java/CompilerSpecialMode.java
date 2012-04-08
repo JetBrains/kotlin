@@ -30,6 +30,10 @@ public enum CompilerSpecialMode {
         return this == REGULAR || this == STDLIB;
     }
 
+    public boolean includeKotlinRuntime() {
+        return this == REGULAR;
+    }
+
     public boolean isStubs() {
         return this == BUILTINS || this == JDK_HEADERS;
     }

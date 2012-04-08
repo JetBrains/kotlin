@@ -43,7 +43,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.Progress;
@@ -68,15 +68,16 @@ public class CompileSession {
     private final MessageRenderer messageRenderer;
     private final PrintStream errorStream;
     private final boolean isVerbose;
-    private final CompilerSpecialMode compilerSpecialMode;
+    private final CompilerDependencies compilerDependencies;
     private AnalyzeExhaust bindingContext;
 
-    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose, CompilerSpecialMode mode) {
+    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose,
+            @NotNull CompilerDependencies compilerDependencies) {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
         isVerbose = verbose;
-        this.compilerSpecialMode = mode;
+        this.compilerDependencies = compilerDependencies;
         messageCollector = new MessageCollector(this.messageRenderer);
     }
 
@@ -176,7 +177,8 @@ public class CompileSession {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
+                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
+                compilerDependencies);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollector, diagnostic);
@@ -221,7 +223,7 @@ public class CompileSession {
     public GenerationState generate(boolean module) {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
-                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles, compilerSpecialMode);
+                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles, compilerDependencies.getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();

@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -139,7 +140,8 @@ public abstract class ExpectedResolveData {
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
-                Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY, CompilerSpecialMode.REGULAR);
+                Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic instanceof UnresolvedReferenceDiagnostic) {

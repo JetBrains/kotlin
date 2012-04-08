@@ -23,6 +23,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
@@ -34,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaSemanticServices;
@@ -86,7 +88,8 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, JetControlFlowDataTraceFactory.EMPTY)
+                psiFile, JetControlFlowDataTraceFactory.EMPTY,
+                CompilerSpecialMode.REGULAR, CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR))
                     .getBindingContext();
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
     }
@@ -113,7 +116,9 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(jetCoreEnvironment.getProject()).getJavaDescriptorResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), jetCoreEnvironment.getProject());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         return javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 

@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
@@ -67,7 +69,8 @@ public class JetNameSuggester {
         ArrayList<String> result = new ArrayList<String>();
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER)
+                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
                     .getBindingContext();
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {

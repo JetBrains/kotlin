@@ -89,7 +89,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactory(psiFile);
+        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, aDir.getPath());
         
@@ -107,7 +107,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactory(psiFile);
+        ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
         CompileEnvironment.writeToOutputDirectory(classFileFactory, bDir.getPath());
 

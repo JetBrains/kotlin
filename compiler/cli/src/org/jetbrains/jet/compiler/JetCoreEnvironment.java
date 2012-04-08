@@ -23,8 +23,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -43,7 +46,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
     private CompileSession session;
 
-    public JetCoreEnvironment(Disposable parentDisposable, boolean includeJdkHeaders) {
+    public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
         super(parentDisposable);
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
@@ -58,8 +61,15 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
                 .registerExtension(new JavaElementFinder(myProject));
 
-        if (includeJdkHeaders) {
-            for (VirtualFile root : PathUtil.getAltHeadersRoots()) {
+        CompilerSpecialMode compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
+
+        if (compilerSpecialMode.includeJdkHeaders()) {
+            for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
+                addLibraryRoot(root);
+            }
+        }
+        if (compilerSpecialMode.includeKotlinRuntime()) {
+            for (VirtualFile root : compilerDependencies.getRuntimeRoots()) {
                 addLibraryRoot(root);
             }
         }

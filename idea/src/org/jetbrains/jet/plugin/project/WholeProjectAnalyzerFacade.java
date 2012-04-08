@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 
 /**
@@ -35,11 +37,13 @@ public final class WholeProjectAnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
+        return AnalyzerFacadeForJVM.analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule(),
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacadeForJVM.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope));
+        return AnalyzerFacadeForJVM.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope),
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
     }
 }

@@ -21,6 +21,7 @@ import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.compiler.MessageRenderer;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -72,9 +74,9 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false, CompilerSpecialMode.REGULAR);
-
-            myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
+            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false,
+                    compilerDependencies);
 
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
@@ -83,6 +85,8 @@ public class TestlibTest extends CodegenTestCase {
             }
 
             myEnvironment.addToClasspath(junitJar);
+
+            myEnvironment.addToClasspath(compilerDependencies.getRuntimeJar());
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
             session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));

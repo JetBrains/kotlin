@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -74,7 +75,7 @@ public class JetSourceNavigationHelper {
                 libraryFiles,
                 Predicates.<PsiFile>alwaysTrue(),
                 JetControlFlowDataTraceFactory.EMPTY,
-                CompilerSpecialMode.REGULAR).getBindingContext();
+                CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR)).getBindingContext();
         D descriptor = bindingContext.get(slice, fqName);
         if (descriptor != null) {
             return new Tuple2<BindingContext, D>(bindingContext, descriptor);

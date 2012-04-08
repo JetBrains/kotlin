@@ -17,10 +17,12 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.util.Collections;
 
@@ -29,12 +31,14 @@ import java.util.Collections;
  */
 public class GenerationUtils {
 
-    public static ClassFileFactory compileFileGetClassFileFactory(@NotNull JetFile psiFile) {
-        return compileFileGetGenerationState(psiFile).getFactory();
+    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile) {
+        return compileFileGetGenerationStateForTest(psiFile).getFactory();
     }
 
-    public static GenerationState compileFileGetGenerationState(JetFile psiFile) {
-        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, JetControlFlowDataTraceFactory.EMPTY);
+    public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile) {
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+                psiFile, JetControlFlowDataTraceFactory.EMPTY,
+                CompilerSpecialMode.REGULAR, CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;

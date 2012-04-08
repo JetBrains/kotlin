@@ -17,7 +17,6 @@
 package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.JavaPsiFacade;
@@ -34,20 +33,31 @@ import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 /**
  * The environment for compiling a bunch of source files or
@@ -60,32 +70,28 @@ public class CompileEnvironment {
     private final MessageRenderer messageRenderer;
     private PrintStream errorStream = System.err;
 
-    private URL stdlibUrl;
-
     private boolean ignoreErrors = false;
-    private final CompilerSpecialMode mode;
+    @NotNull
+    private final CompilerDependencies compilerDependencies;
     private final boolean verbose;
 
-    public CompileEnvironment() {
-        this(MessageRenderer.PLAIN, false, CompilerSpecialMode.REGULAR);
+    public CompileEnvironment(CompilerDependencies compilerDependencies) {
+        this(MessageRenderer.PLAIN, false, compilerDependencies);
     }
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      * @see Disposer
-     *
-     * @param messageRenderer
-     * @param verbose
      */
-    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose, CompilerSpecialMode mode) {
-        this.mode = mode;
+    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose, @NotNull CompilerDependencies compilerDependencies) {
+        this.compilerDependencies = compilerDependencies;
         this.verbose = verbose;
         rootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
-        environment = new JetCoreEnvironment(rootDisposable, mode.includeJdkHeaders());
+        environment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
         this.messageRenderer = messageRenderer;
     }
 
@@ -121,22 +127,21 @@ public class CompileEnvironment {
     }
 
     public void ensureRuntime() {
-        if (mode == CompilerSpecialMode.REGULAR) {
+        if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.REGULAR) {
             ensureRuntime(environment);
-        } else if (mode == CompilerSpecialMode.JDK_HEADERS) {
+        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.JDK_HEADERS) {
             ensureJdkRuntime(environment);
-        } else if (mode == CompilerSpecialMode.STDLIB) {
+        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.STDLIB) {
             ensureJdkRuntime(environment);
-        } else if (mode == CompilerSpecialMode.BUILTINS) {
+        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
             // nop
         } else {
-            throw new IllegalStateException("unknown mode: " + mode);
+            throw new IllegalStateException("unknown mode: " + compilerDependencies.getCompilerSpecialMode());
         }
     }
 
     public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
         ensureJdkRuntime(env);
-        ensureKotlinRuntime(env);
     }
 
     private static void ensureKotlinRuntime(JetCoreEnvironment env) {
@@ -192,8 +197,6 @@ public class CompileEnvironment {
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
         CompileEnvironment moduleCompilationEnvironment = copyEnvironment(false);
         try {
-            moduleCompilationEnvironment.stdlibUrl = stdlibUrl;
-
             List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
 
             if (modules == null) {
@@ -207,6 +210,9 @@ public class CompileEnvironment {
             final String directory = new File(moduleScriptFile).getParent();
             for (Module moduleBuilder : modules) {
                 CompileEnvironment compileEnvironment = copyEnvironment(verbose);
+                if (compilerDependencies.getRuntimeJar() != null) {
+                    compileEnvironment.addToClasspath(compilerDependencies.getRuntimeJar());
+                }
                 try {
                     ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
                     if (moduleFactory == null) {
@@ -234,7 +240,7 @@ public class CompileEnvironment {
     }
 
     private CompileEnvironment copyEnvironment(boolean verbose) {
-        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose, mode);
+        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose, compilerDependencies);
         compileEnvironment.setIgnoreErrors(ignoreErrors);
         compileEnvironment.setErrorStream(errorStream);
         // copy across any compiler plugins
@@ -247,6 +253,10 @@ public class CompileEnvironment {
         scriptCompileSession.addSources(moduleFile);
         ensureRuntime();
 
+        if (compilerDependencies.getRuntimeJar() != null) {
+            addToClasspath(compilerDependencies.getRuntimeJar());
+        }
+
         if (!scriptCompileSession.analyze()) {
             return null;
         }
@@ -256,8 +266,18 @@ public class CompileEnvironment {
     }
 
     private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        GeneratedClassLoader loader = stdlibUrl != null ? new GeneratedClassLoader(factory, new URLClassLoader(new URL[] {stdlibUrl}, AllModules.class.getClassLoader()))
-                                                       : new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
+        File stdlibJar = compilerDependencies.getRuntimeJar();
+        GeneratedClassLoader loader;
+        if (stdlibJar != null) {
+            try {
+                loader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{stdlibJar.toURI().toURL()}, AllModules.class.getClassLoader()));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        else {
+            loader = new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
+        }
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
             final Method method = namespaceClass.getDeclaredMethod("project");
@@ -282,7 +302,7 @@ public class CompileEnvironment {
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
         CompileSession moduleCompileSession = newCompileSession();
-        moduleCompileSession.setStubs(mode.isStubs());
+        moduleCompileSession.setStubs(compilerDependencies.getCompilerSpecialMode().isStubs());
 
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
@@ -403,7 +423,7 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSources(String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = newCompileSession();
-        session.setStubs(mode.isStubs());
+        session.setStubs(compilerDependencies.getCompilerSpecialMode().isStubs());
 
         session.addSources(sourceFileOrDir);
 
@@ -412,7 +432,7 @@ public class CompileEnvironment {
 
     public boolean compileBunchOfSourceDirectories(List<String> sources, String jar, String outputDir, boolean includeRuntime) {
         CompileSession session = newCompileSession();
-        session.setStubs(mode.isStubs());
+        session.setStubs(compilerDependencies.getCompilerSpecialMode().isStubs());
 
         for (String source : sources) {
             session.addSources(source);
@@ -455,7 +475,7 @@ public class CompileEnvironment {
     }
 
     private CompileSession newCompileSession() {
-        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose, mode);
+        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose, compilerDependencies);
         environment.setSession(answer);
         return answer;
     }
@@ -499,16 +519,14 @@ public class CompileEnvironment {
     public void setStdlib(String stdlib) {
         File file = new File(stdlib);
         addToClasspath(file);
-
-        try {
-            stdlibUrl = file.toURL();
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public JetCoreEnvironment getEnvironment() {
         return environment;
+    }
+
+    @NotNull
+    public CompilerDependencies getCompilerDependencies() {
+        return compilerDependencies;
     }
 }

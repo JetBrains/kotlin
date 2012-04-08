@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -74,7 +75,8 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createEnvironmentWithFullJdk() {
-        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(), true);
+        myEnvironment = new JetCoreEnvironment(getTestRootDisposable(),
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
         final File rtJar = CompileEnvironment.findRtJar();
         myEnvironment.addToClasspath(rtJar);
     }

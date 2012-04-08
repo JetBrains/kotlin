@@ -32,6 +32,8 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -59,7 +61,8 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         myClsFile = clsFile;
         Project project = myClsFile.getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), project);
         myBindingContext = injector.getBindingTrace().getBindingContext();
         myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
     }

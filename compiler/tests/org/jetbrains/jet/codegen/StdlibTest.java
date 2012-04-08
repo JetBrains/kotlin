@@ -46,7 +46,6 @@ public class StdlibTest extends CodegenTestCase {
         }
 
         myEnvironment.addToClasspath(junitJar);
-        CompileEnvironment.ensureRuntime(myEnvironment);
     }
 
     @Override
