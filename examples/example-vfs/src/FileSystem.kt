@@ -23,12 +23,10 @@ public object FileSystem {
     private val lock = ReentrantReadWriteLock()
     internal val watchedDirectories = ArrayList<VirtualFile>
 
-    // FIXME VirtualFiles should be used as hashmap keys themselves,
-    // but overriden hashCode() method fails in runtime with ClassCastException (KT-1134)
     /**
      * Mapping from virtual files to metainformation
      */
-    internal val fileToInfo = HashMap<String, VirtualFileInfo>()
+    internal val fileToInfo = HashMap<VirtualFile, VirtualFileInfo>()
     private val listeners = ArrayList<VirtualFileListener>()
 
     /**
@@ -85,7 +83,7 @@ public object FileSystem {
         require(FileSystem.fileToInfo[file.path] == null)
 
         val fileInfo = VirtualFileInfo(file)
-        FileSystem.fileToInfo[file.path] = fileInfo
+        FileSystem.fileToInfo[file] = fileInfo
         fileInfo.children.forEach{ scanAndAddRecursivelyNoEvents(it) }
     }
 

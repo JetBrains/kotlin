@@ -86,7 +86,7 @@ internal object RefreshQueue {
 
         val fileInfo = VirtualFileInfo(file)
 
-        FileSystem.fileToInfo[file.path] = fileInfo
+        FileSystem.fileToInfo[file] = fileInfo
         FileSystem.notifyEventHappened(VirtualFileCreateEvent(file))
 
         fileInfo.children.forEach{ addRecursively(it) }
