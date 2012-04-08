@@ -16,18 +16,14 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
 import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

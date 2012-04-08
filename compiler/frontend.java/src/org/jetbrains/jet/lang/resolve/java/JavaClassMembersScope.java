@@ -49,6 +49,9 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         if (resolverScopeData.psiClass == null) {
             throw new IllegalArgumentException("must pass PsiClass here");
         }
+        if (resolverScopeData.staticMembers) {
+            throw new IllegalArgumentException("static members should be resolved using " + JavaPackageScope.class);
+        }
     }
 
     @NotNull
