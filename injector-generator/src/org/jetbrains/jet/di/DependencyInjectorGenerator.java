@@ -444,6 +444,9 @@ public class DependencyInjectorGenerator {
         if (constructors.length == 0 || !Modifier.isPublic(constructors[0].getModifiers())) {
             throw new IllegalArgumentException("No constructor: " + type.getClazz().getName() + " needed for " + neededFor);
         }
+        if (constructors.length > 1) {
+            throw new IllegalArgumentException("Too many constructors in " + type.getClazz().getName() + " needed for " + neededFor);
+        }
         Constructor<?> constructor = constructors[0];
 
         // Find arguments
