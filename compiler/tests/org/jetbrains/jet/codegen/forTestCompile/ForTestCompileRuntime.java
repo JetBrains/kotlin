@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.google.common.io.Files;
 import com.intellij.openapi.util.Pair;

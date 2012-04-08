@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet;
 
-import org.jetbrains.jet.codegen.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.junit.Test;
 
 /**

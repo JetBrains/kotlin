@@ -29,7 +29,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 
 /**
 * @author Evgeny Gerashchenko

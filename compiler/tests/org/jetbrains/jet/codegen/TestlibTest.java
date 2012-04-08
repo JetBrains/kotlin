@@ -21,6 +21,7 @@ import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.compiler.CompileSession;
 import org.jetbrains.jet.compiler.MessageRenderer;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;

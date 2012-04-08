@@ -19,7 +19,7 @@ package org.jetbrains.jet.compiler;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
-import org.jetbrains.jet.codegen.ForTestCompileRuntime;
+import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
 
