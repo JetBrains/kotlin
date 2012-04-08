@@ -16,22 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.util.slicedmap.Slices;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
-
 /**
  * @author Stepan Koltsov
- *
- * @see BindingContext
  */
-public class JavaBindingContext {
-
-    /**
-     * @see BindingContext#NAMESPACE_IS_SRC
-     */
-    public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
-            Slices.createSimpleSlice();
-
+public enum JavaNamespaceKind {
+    PROPER,
+    CLASS_STATICS,
 }

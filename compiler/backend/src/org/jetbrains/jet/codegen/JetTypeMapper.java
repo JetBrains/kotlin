@@ -178,20 +178,20 @@ public class JetTypeMapper {
 
     private String jvmClassNameForNamespace(NamespaceDescriptor namespace) {
         FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
-        Boolean javaClassStatics = bindingContext.get(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespace);
+        JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, namespace);
         Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, namespace);
 
-        if (javaClassStatics == null && src == null) {
+        if (javaNamespaceKind == null && src == null) {
             throw new IllegalStateException("unknown namespace origin: " + fqName);
         }
 
         boolean classStatics;
-        if (javaClassStatics != null) {
-            if (javaClassStatics.booleanValue() && src != null) {
+        if (javaNamespaceKind != null) {
+            if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS && src != null) {
                 throw new IllegalStateException(
                         "conflicting namespace " + fqName + ": it is both java statics and from src");
             }
-            classStatics = javaClassStatics.booleanValue();
+            classStatics = javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS;
         } else {
             classStatics = false;
         }
