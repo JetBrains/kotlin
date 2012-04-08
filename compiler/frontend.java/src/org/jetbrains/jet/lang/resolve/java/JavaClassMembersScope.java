@@ -17,15 +17,21 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class static of instance members.
@@ -34,7 +40,6 @@ import java.util.*;
  */
 public class JavaClassMembersScope extends JavaClassOrPackageScope {
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
-    private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaClassMembersScope(
             @NotNull JavaSemanticServices semanticServices,
@@ -71,25 +76,6 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     @Override
     public Set<ClassDescriptor> getObjectDescriptors() {
         return Collections.emptySet();
-    }
-
-    /**
-     * @see JavaPackageScope#getAllDescriptors()
-     */
-    @NotNull
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
-                    resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, resolverScopeData.staticMembers));
-        }
-        return allDescriptors;
     }
 
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {

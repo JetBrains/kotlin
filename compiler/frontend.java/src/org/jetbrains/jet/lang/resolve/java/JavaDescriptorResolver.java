@@ -204,14 +204,29 @@ public class JavaDescriptorResolver {
 
         @Nullable
         final PsiClass psiClass;
+        @Nullable
+        final PsiPackage psiPackage;
+        @NotNull
+        final FqName fqName;
         final boolean staticMembers;
         @NotNull
         final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
 
-        protected ResolverScopeData(@Nullable PsiClass psiClass, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
+        protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
             checkPsiClassIsNotJet(psiClass);
 
             this.psiClass = psiClass;
+            this.psiPackage = psiPackage;
+            this.fqName = fqName;
+
+            if (psiClass == null && psiPackage == null) {
+                throw new IllegalStateException("both psiClass and psiPackage cannot be null");
+            }
+
+            if (fqName.lastSegmentIs(JvmAbi.PACKAGE_CLASS)) {
+                throw new IllegalStateException("identified cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
+            }
+
             this.staticMembers = staticMembers;
             classOrNamespaceDescriptor = descriptor;
         }
@@ -226,8 +241,8 @@ public class JavaDescriptorResolver {
     static class ResolverBinaryClassData extends ResolverScopeData {
         private final MutableClassDescriptorLite classDescriptor;
 
-        ResolverBinaryClassData(@NotNull PsiClass psiClass, @NotNull MutableClassDescriptorLite classDescriptor) {
-            super(psiClass, false, classDescriptor);
+        ResolverBinaryClassData(@NotNull PsiClass psiClass, @NotNull FqName fqName, @NotNull MutableClassDescriptorLite classDescriptor) {
+            super(psiClass, null, fqName, false, classDescriptor);
             this.classDescriptor = classDescriptor;
         }
 
@@ -250,8 +265,8 @@ public class JavaDescriptorResolver {
     static class ResolverNamespaceData extends ResolverScopeData {
         private final NamespaceDescriptor namespaceDescriptor;
 
-        ResolverNamespaceData(@Nullable PsiClass psiClass, @NotNull NamespaceDescriptor namespaceDescriptor) {
-            super(psiClass, true, namespaceDescriptor);
+        ResolverNamespaceData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, @NotNull NamespaceDescriptor namespaceDescriptor) {
+            super(psiClass, psiPackage, fqName, true, namespaceDescriptor);
             this.namespaceDescriptor = namespaceDescriptor;
         }
 
@@ -340,7 +355,8 @@ public class JavaDescriptorResolver {
     }
 
     private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
-        if (classDescriptorCache.containsKey(new FqName(psiClass.getQualifiedName()))) {
+        FqName fqName = new FqName(psiClass.getQualifiedName());
+        if (classDescriptorCache.containsKey(fqName)) {
             throw new IllegalStateException(psiClass.getQualifiedName());
         }
 
@@ -349,8 +365,8 @@ public class JavaDescriptorResolver {
         String name = psiClass.getName();
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, new MutableClassDescriptorLite(containingDeclaration, kind));
-        classDescriptorCache.put(new FqName(psiClass.getQualifiedName()), classData);
+        ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
+        classDescriptorCache.put(fqName, classData);
         classData.classDescriptor.setName(name);
         classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass));
 
@@ -518,9 +534,10 @@ public class JavaDescriptorResolver {
 
         checkPsiClassIsNotJet(psiClass);
 
-        ResolverBinaryClassData classData = new ResolverBinaryClassData(classObjectPsiClass, new MutableClassDescriptorLite(containing, ClassKind.OBJECT));
+        FqName fqName = new FqName(classObjectPsiClass.getQualifiedName());
+        ResolverBinaryClassData classData = new ResolverBinaryClassData(classObjectPsiClass, fqName, new MutableClassDescriptorLite(containing, ClassKind.OBJECT));
 
-        classDescriptorCache.put(new FqName(classObjectPsiClass.getQualifiedName()), classData);
+        classDescriptorCache.put(fqName, classData);
 
         classData.kotlin = true;
         classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
@@ -913,9 +930,9 @@ public class JavaDescriptorResolver {
             trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, ns, false);
         }
 
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, ns);
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, psiPackage, fqName, ns);
 
-        JavaPackageScope scope = new JavaPackageScope(fqName, semanticServices, psiPackage, psiClass, namespaceData);
+        JavaPackageScope scope = new JavaPackageScope(fqName, semanticServices, namespaceData);
 
         // TODO: hack
         namespaceData.kotlin = true;
@@ -973,14 +990,15 @@ public class JavaDescriptorResolver {
 
         checkPsiClassIsNotJet(psiClass);
 
+        FqName fqName = new FqName(psiClass.getQualifiedName());
         JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
                 (NamespaceDescriptorParent) resolveParentDescriptor(psiClass),
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 psiClass.getName(),
-                new FqName(psiClass.getQualifiedName()),
+                fqName,
                 false
         );
-        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, ns);
+        ResolverNamespaceData namespaceData = new ResolverNamespaceData(psiClass, null, fqName, ns);
         trace.record(JavaBindingContext.NAMESPACE_IS_CLASS_STATICS, namespaceData.namespaceDescriptor, true);
 
         ns.setMemberScope(new JavaClassMembersScope(semanticServices, namespaceData));

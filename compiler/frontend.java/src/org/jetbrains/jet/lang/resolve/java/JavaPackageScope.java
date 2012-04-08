@@ -38,24 +38,13 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @NotNull
     private final FqName packageFQN;
-    @Nullable
-    private final PsiPackage psiPackage;
-
-    private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaPackageScope(
             @NotNull FqName packageFQN,
             @NotNull JavaSemanticServices semanticServices,
-            @Nullable PsiPackage psiPackage,
-            @Nullable PsiClass psiClass,
             @NotNull JavaDescriptorResolver.ResolverScopeData resolverNamespaceData) {
         super(semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
-        this.psiPackage = psiPackage;
-
-        if (psiClass == null && psiPackage == null) {
-            throw new IllegalStateException("both class and package cannot be null for " + packageFQN);
-        }
     }
 
     @Override
@@ -79,60 +68,5 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
         return semanticServices.getDescriptorResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
-    }
-
-    /**
-     * @see JavaClassMembersScope#getAllDescriptors()
-     */
-    @NotNull
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
-
-            if (resolverScopeData.psiClass != null) {
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
-
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
-            }
-
-            if (psiPackage != null) {
-                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(packageFQN) != null;
-                final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
-
-                for (PsiPackage psiSubPackage : psiPackage.getSubPackages()) {
-                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
-                            new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                    if (childNs != null) {
-                        allDescriptors.add(childNs);
-                    }
-                }
-
-                for (PsiClass psiClass : psiPackage.getClasses()) {
-                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-                    
-                    if (psiClass instanceof JetJavaMirrorMarker) {
-                        continue;
-                    }
-
-                    // TODO: Temp hack for collection function descriptors from java
-                    if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-
-                    if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        ClassDescriptor classDescriptor = descriptorResolver
-                                .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                        if (classDescriptor != null) {
-                            allDescriptors.add(classDescriptor);
-                        }
-                    }
-                }
-            }
-        }
-
-        return allDescriptors;
     }
 }
