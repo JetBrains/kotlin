@@ -38,26 +38,26 @@ import java.util.jar.JarOutputStream;
 /**
  * Compile stdlib.jar that can be used in tests
  *
- * @see #stdlibJarForTests()
+ * @see #runtimeJarForTests
  *
  * @author Stepan Koltsov
  */
-public class ForTestCompileStdlib {
+public class ForTestCompileRuntime {
     private static File stdlibJarFile;
 
-    private ForTestCompileStdlib() {
+    private ForTestCompileRuntime() {
     }
 
     private static File doCompile() throws Exception {
-        File tmpDir = JetTestUtils.tmpDir("stdlibjar");
+        File tmpDir = JetTestUtils.tmpDir("runtimejar");
 
-        File jarFile = new File(tmpDir, "stdlib.jar");
+        File jarFile = new File(tmpDir, "runtime.jar");
         
         File classesDir = new File(tmpDir, "classes");
 
         FileUtil.createParentDirs(new File(classesDir, "dummy"));
-        compileJavaPartOfStdlib(classesDir);
-        compileKotlinPartOfStdlib(classesDir);
+        compileJavaPartOfBuiltins(classesDir);
+        compileStdlib(classesDir);
 
         FileOutputStream stdlibJar = new FileOutputStream(jarFile);
         try {
@@ -97,7 +97,7 @@ public class ForTestCompileStdlib {
         }
     }
 
-    private static void compileKotlinPartOfStdlib(File destdir) throws IOException {
+    private static void compileStdlib(File destdir) throws IOException {
         KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(System.err,
                 "-output", destdir.getPath(),
                 "-src", "./libraries/stdlib/src",
@@ -123,7 +123,7 @@ public class ForTestCompileStdlib {
         return r;
     }
     
-    private static void compileJavaPartOfStdlib(File destdir) throws IOException {
+    private static void compileJavaPartOfBuiltins(File destdir) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
@@ -144,10 +144,10 @@ public class ForTestCompileStdlib {
 
     private static Throwable compilationException;
     
-    public static File stdlibJarForTests() {
-        synchronized (ForTestCompileStdlib.class) {
+    public static File runtimeJarForTests() {
+        synchronized (ForTestCompileRuntime.class) {
             if (compilationException != null) {
-                throw new RuntimeException("stdlib compilation failed in previous tests: " + compilationException, compilationException);
+                throw new RuntimeException("runtime compilation failed in previous tests: " + compilationException, compilationException);
             }
             if (stdlibJarFile == null || !stdlibJarFile.exists()) {
                 try {

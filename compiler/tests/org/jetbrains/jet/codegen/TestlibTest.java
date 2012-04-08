@@ -73,7 +73,7 @@ public class TestlibTest extends CodegenTestCase {
         try {
             CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false, CompilerSpecialMode.REGULAR);
 
-            myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
+            myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
 
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
@@ -96,7 +96,7 @@ public class TestlibTest extends CodegenTestCase {
 
             final GeneratedClassLoader loader = new GeneratedClassLoader(
                     classFileFactory,
-                    new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
+                    new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
             JetTypeMapper typeMapper = state.getInjector().getJetTypeMapper();

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet;
 
-import org.jetbrains.jet.codegen.ForTestCompileStdlib;
+import org.jetbrains.jet.codegen.ForTestCompileRuntime;
 import org.junit.Test;
 
 /**
@@ -26,7 +26,7 @@ public class CompileStdlibTest {
 
     @Test
     public void compile() {
-        ForTestCompileStdlib.stdlibJarForTests();
+        ForTestCompileRuntime.runtimeJarForTests();
     }
 
 }

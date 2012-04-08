@@ -19,7 +19,7 @@ package org.jetbrains.jet.compiler;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.jet.cli.KotlinCompiler;
-import org.jetbrains.jet.codegen.ForTestCompileStdlib;
+import org.jetbrains.jet.codegen.ForTestCompileRuntime;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
 
@@ -53,7 +53,7 @@ public class CompileEnvironmentTest extends TestCase {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
 
         try {
-            File stdlib = ForTestCompileStdlib.stdlibJarForTests();
+            File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File resultJar = new File(tempDir, "result.jar");
             KotlinCompiler.ExitCode rv = new KotlinCompiler().exec("-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                                                    "-jar", resultJar.getAbsolutePath(),
@@ -84,7 +84,7 @@ public class CompileEnvironmentTest extends TestCase {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
         try {
             File out = new File(tempDir, "out");
-            File stdlib = ForTestCompileStdlib.stdlibJarForTests();
+            File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec("-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
                                                                      "-output", out.getAbsolutePath(),
                                                                      "-stdlib", stdlib.getAbsolutePath());

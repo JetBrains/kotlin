@@ -37,7 +37,7 @@ public class StdlibTest extends CodegenTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithFullJdk();
-        myEnvironment.addToClasspath(ForTestCompileStdlib.stdlibJarForTests());
+        myEnvironment.addToClasspath(ForTestCompileRuntime.runtimeJarForTests());
         File junitJar = new File("libraries/lib/junit-4.9.jar");
 
         if (!junitJar.exists()) {
@@ -52,7 +52,7 @@ public class StdlibTest extends CodegenTestCase {
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
         return new GeneratedClassLoader(
                 codegens,
-                new URLClassLoader(new URL[]{ForTestCompileStdlib.stdlibJarForTests().toURI().toURL()},
+                new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL()},
                                    getClass().getClassLoader()));
     }
 

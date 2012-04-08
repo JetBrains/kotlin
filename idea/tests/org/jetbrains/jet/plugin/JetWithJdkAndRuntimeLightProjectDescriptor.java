@@ -29,7 +29,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.ForTestCompileStdlib;
+import org.jetbrains.jet.codegen.ForTestCompileRuntime;
 
 /**
 * @author Evgeny Gerashchenko
@@ -54,7 +54,7 @@ public class JetWithJdkAndRuntimeLightProjectDescriptor implements LightProjectD
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @Nullable ContentEntry contentEntry) {
         Library.ModifiableModel modifiableModel = model.getModuleLibraryTable().createLibrary("ktl").getModifiableModel();
-        VirtualFile cd = JarFileSystem.getInstance().findFileByPath(ForTestCompileStdlib.stdlibJarForTests() + "!/");
+        VirtualFile cd = JarFileSystem.getInstance().findFileByPath(ForTestCompileRuntime.runtimeJarForTests() + "!/");
         assert cd != null;
         modifiableModel.addRoot(cd, OrderRootType.CLASSES);
         modifiableModel.commit();
