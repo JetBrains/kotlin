@@ -80,9 +80,10 @@ public class JetDecompiledData {
 
     public static boolean isKotlinFile(@NotNull Project project, @NotNull VirtualFile vFile) {
         ClsFileImpl clsFile = getClsFile(project, vFile);
-        if (clsFile == null) {
-            return false;
-        }
+        return clsFile != null && isKotlinFile(clsFile);
+    }
+
+    public static boolean isKotlinFile(@NotNull ClsFileImpl clsFile) {
         PsiClass psiClass = clsFile.getClasses()[0];
         return DecompiledDataFactory.isKotlinNamespaceClass(psiClass) || DecompiledDataFactory.isKotlinClass(psiClass);
     }
