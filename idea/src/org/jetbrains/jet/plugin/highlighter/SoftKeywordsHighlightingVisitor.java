@@ -22,8 +22,10 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -35,8 +37,13 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
     @Override
     public void visitElement(PsiElement element) {
         if (element instanceof LeafPsiElement) {
-            if (JetTokens.SOFT_KEYWORDS.contains(((LeafPsiElement) element).getElementType())) {
-                holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.KEYWORD);
+            IElementType elementType = ((LeafPsiElement)element).getElementType();
+            if (JetTokens.SOFT_KEYWORDS.contains(elementType)) {
+                TextAttributesKey attributes = JetHighlightingColors.KEYWORD;
+                if (JetTokens.MODIFIER_KEYWORDS.contains(elementType)) {
+                    attributes = JetHighlightingColors.BUILTIN_ANNOTATION;
+                }
+                holder.createInfoAnnotation(element, null).setTextAttributes(attributes);
             }
         }
     }
