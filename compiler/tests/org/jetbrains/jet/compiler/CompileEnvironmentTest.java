@@ -36,18 +36,6 @@ import java.util.jar.JarInputStream;
  * @author alex.tkachman
  */
 public class CompileEnvironmentTest extends TestCase {
-    private CompileEnvironment environment;
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        environment = new CompileEnvironment();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        environment.dispose();
-        super.tearDown();
-    }
 
     public void testSmokeWithCompilerJar() throws IOException {
         File tempDir = FileUtil.createTempDirectory("compilerTest", "compilerTest");
