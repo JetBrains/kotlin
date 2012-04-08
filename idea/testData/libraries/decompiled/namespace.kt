@@ -17,7 +17,7 @@ package testData.libraries
 
 [public final fun func(val a : jet.Int, val b : jet.Int) : Unit { /* compiled code */ }]
 
-[public final fun func(val a : jet.Int, val b : jet.String) : Unit { /* compiled code */ }]
+[public final fun func(val a : jet.Int, val b : jet.String = /* compiled code */) : Unit { /* compiled code */ }]
 
 [public final fun func(val str : jet.String) : Unit { /* compiled code */ }]
 

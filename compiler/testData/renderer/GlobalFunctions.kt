@@ -15,7 +15,7 @@ public fun Int.ext() : Int {}
 //internal final fun int() : jet.String defined in <module>.<root>.rendererTest
 //internal final fun int2(val ints : jet.IntArray) : jet.Int defined in <module>.<root>.rendererTest
 //value-parameter vararg val ints : jet.IntArray defined in <module>.<root>.rendererTest.int2
-//private final fun prv(val a : jet.String, val b : jet.Int) : jet.Int defined in <module>.<root>.rendererTest
+//private final fun prv(val a : jet.String, val b : jet.Int = ...) : jet.Int defined in <module>.<root>.rendererTest
 //value-parameter val a : jet.String defined in <module>.<root>.rendererTest.prv
 //value-parameter val b : jet.Int defined in <module>.<root>.rendererTest.prv
 //public final fun jet.Int.ext() : jet.Int defined in <module>.<root>.rendererTest

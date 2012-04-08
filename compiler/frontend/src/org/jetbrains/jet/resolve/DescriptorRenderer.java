@@ -79,7 +79,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            return super.visitVariableDescriptor(descriptor, builder);
+            super.visitVariableDescriptor(descriptor, builder);
+            if (descriptor.hasDefaultValue()) {
+                builder.append(" = ...");
+            }
+            return null;
         }
     };
 
