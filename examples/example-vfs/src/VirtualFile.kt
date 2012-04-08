@@ -106,14 +106,15 @@ public class PhysicalVirtualFile(path : String) : VirtualFile(path) {
     }
 }
 
+private val OS_SEPARATOR = java.io.File.separator.sure()
+private val VFS_SEPARATOR = "/"
+
 private fun String.toSystemDependentPath() : String {
-    // FIXME constants should be extracted (NPE in compiler, KT-1111)
-    return this.replaceAll("/", java.io.File.separator.sure())
+    return this.replaceAll(VFS_SEPARATOR, OS_SEPARATOR)
 }
 
 private fun String.toSystemIndependentPath() : String {
-    // FIXME constants should be extracted (NPE in compiler, KT-1111)
-    return this.replaceAll(java.io.File.separator.sure(), "/")
+    return this.replaceAll(OS_SEPARATOR, VFS_SEPARATOR)
 }
 
 /**
