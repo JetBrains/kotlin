@@ -965,12 +965,7 @@ public class JavaDescriptorResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        PsiClass psiClass = psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
-        if (psiClass instanceof JetJavaMirrorMarker) {
-            return null;
-        } else {
-            return psiClass;
-        }
+        return psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
     }
 
     @NotNull

@@ -94,6 +94,10 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
             }
         }
 
+        if (result instanceof JetJavaMirrorMarker) {
+            return null;
+        }
+
         return result;
     }
 
