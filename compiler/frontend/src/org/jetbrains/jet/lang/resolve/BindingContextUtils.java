@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 /**
  * @author abreslav
@@ -39,7 +40,18 @@ public class BindingContextUtils {
         if (declarationDescriptor == null) {
             return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
         }
-        return bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+
+        PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+        if (element != null) {
+            return element;
+        }
+
+        // TODO: Need to have a valid stubs for standard classes
+        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
+            return referenceExpression.getContainingFile();
+        }
+
+        return null;
     }
 
     @Nullable

@@ -156,11 +156,18 @@ public abstract class ExpectedResolveData {
             Position position = entry.getValue();
             PsiElement element = position.getElement();
 
-            PsiElement ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
-            if (ancestorOfType == null) {
-                JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
-                assert header != null : "Not a declaration: " + name;
-                ancestorOfType = element;
+            PsiElement ancestorOfType;
+
+            if (name.equals("file")) {
+                ancestorOfType = element.getContainingFile();
+            }
+            else {
+                ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
+                if (ancestorOfType == null) {
+                    JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
+                    assert header != null : "Not a declaration: " + name;
+                    ancestorOfType = element;
+                }
             }
             nameToDeclaration.put(name, ancestorOfType);
             declarationToName.put(ancestorOfType, name);

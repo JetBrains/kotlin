@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.references;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -110,13 +109,6 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
-
-
-        VirtualFile elementFile = file.getVirtualFile();
-        if (elementFile != null && elementFile.getNameWithoutExtension().equals(getElement().getText())) {
-            LOG.warn("Possible problem with file rename: " + elementFile.getNameWithoutExtension() +
-                     ", element: " + getElement());
-        }
 
         // TODO: Need a better resolution for Intrinsic function (KT-975)
         return file;
