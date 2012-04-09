@@ -23,7 +23,6 @@ import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,23 +49,11 @@ public class BytecodeCompiler {
      * @return compile environment instance
      */
     private CompileEnvironment env( String stdlib, String[] classpath ) {
-        CompilerSpecialMode compilerSpecialMode = CompilerSpecialMode.REGULAR;
-        File runtimeJar;
-        if (compilerSpecialMode.includeKotlinRuntime()) {
-            if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
-                runtimeJar = new File( stdlib );
-            }
-            else {
-                runtimeJar = PathUtil.getDefaultRuntimePath();
-            }
+        CompileEnvironment env = new CompileEnvironment(CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+
+        if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
+            env.setStdlib( stdlib );
         }
-        else {
-            runtimeJar = null;
-        }
-        CompileEnvironment env = new CompileEnvironment( new CompilerDependencies(
-                compilerSpecialMode,
-                compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersPath() : null,
-                runtimeJar ) );
 
         if (( classpath != null ) && ( classpath.length > 0 )) {
             env.addToClasspath( classpath );

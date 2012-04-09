@@ -516,6 +516,11 @@ public class CompileEnvironment {
         }
     }
 
+    public void setStdlib(String stdlib) {
+        File file = new File(stdlib);
+        addToClasspath(file);
+    }
+
     public JetCoreEnvironment getEnvironment() {
         return environment;
     }
