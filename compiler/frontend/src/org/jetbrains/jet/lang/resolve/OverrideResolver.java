@@ -124,9 +124,11 @@ public class OverrideResolver {
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                             if (fakeOverride instanceof PropertyDescriptor) {
                                 classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
-                            } else if (fakeOverride instanceof SimpleFunctionDescriptor) {
+                            }
+                            else if (fakeOverride instanceof SimpleFunctionDescriptor) {
                                 classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
-                            } else {
+                            }
+                            else {
                                 throw new IllegalStateException(fakeOverride.getClass().getName());
                             }
                         }
@@ -313,16 +315,19 @@ public class OverrideResolver {
             if (descriptor.getModality() == Modality.ABSTRACT) {
                 //abstractNoImpl.add(descriptor);
             }
-        } else {
+        }
+        else {
             Collection<CallableMemberDescriptor> overridenDeclarations = OverridingUtil.getOverridenDeclarations(descriptor);
             if (overridenDeclarations.size() == 0) {
                 throw new IllegalStateException();
-            } else if (overridenDeclarations.size() == 1) {
+            }
+            else if (overridenDeclarations.size() == 1) {
                 CallableMemberDescriptor single = overridenDeclarations.iterator().next();
                 if (single.getModality() == Modality.ABSTRACT) {
                     abstractNoImpl.add(single);
                 }
-            } else {
+            }
+            else {
                 List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
                 for (CallableMemberDescriptor overriden : overridenDeclarations) {
                     if (overriden.getModality() != Modality.ABSTRACT) {

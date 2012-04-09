@@ -136,7 +136,8 @@ class JavaDescriptorResolverHelper {
                             PsiParameterWrapper receiverParameter = method.getParameter(i);
                             receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
                             ++i;
-                        } else {
+                        }
+                        else {
                             receiverType = null;
                         }
 
@@ -154,7 +155,8 @@ class JavaDescriptorResolverHelper {
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType(), method.getPsiMethod());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
-                    } else if (!kotlin && false) {
+                    }
+                    else if (!kotlin && false) {
                         if (method.getParameters().size() == 0) {
                             TypeSource propertyType = new TypeSource("", method.getReturnType(), method.getPsiMethod());
                             members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, null));
@@ -194,7 +196,8 @@ class JavaDescriptorResolverHelper {
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
-                    } else if (!kotlin && false) {
+                    }
+                    else if (!kotlin && false) {
                         if (method.getParameters().size() == 1) {
                             PsiParameter psiParameter = method.getParameters().get(0).getPsiParameter();
                             TypeSource propertyType = new TypeSource("", psiParameter.getType(), psiParameter);
@@ -218,7 +221,8 @@ class JavaDescriptorResolverHelper {
             Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
             builder.run();
             return builder.namedMembersMap;
-        } else {
+        }
+        else {
             return Collections.emptyMap();
         }
     }

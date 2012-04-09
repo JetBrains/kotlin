@@ -46,7 +46,8 @@ public class JetSignatureReader {
             while (pos < len) {
                 pos = parseType(signature, pos + 1, v.visitExceptionType());
             }
-        } else {
+        }
+        else {
             pos = parseType(signature, pos, v.visitSuperclass());
             while (pos < len) {
                 pos = parseType(signature, pos, v.visitInterface());
@@ -74,10 +75,12 @@ public class JetSignatureReader {
                 if (signature.substring(pos).startsWith("in ")) {
                     variance = TypeInfoVariance.IN;
                     pos += "in ".length();
-                } else if (signature.substring(pos).startsWith("out ")) {
+                }
+                else if (signature.substring(pos).startsWith("out ")) {
                     variance = TypeInfoVariance.OUT;
                     pos += "out ".length();
-                } else {
+                }
+                else {
                     variance = TypeInfoVariance.INVARIANT;
                     pos += "".length();
                 }
@@ -105,7 +108,8 @@ public class JetSignatureReader {
                 parameterVisitor.visitFormalTypeParameterEnd();
             } while (c != '>');
             ++pos;
-        } else {
+        }
+        else {
             pos = 0;
         }
         return pos;
@@ -185,7 +189,8 @@ public class JetSignatureReader {
                                 name = signature.substring(start, pos - 1);
                                 if (inner) {
                                     v.visitInnerClassType(name, nullable);
-                                } else {
+                                }
+                                else {
                                     v.visitClassType(name, nullable, forceReal);
                                 }
                             }
@@ -202,7 +207,8 @@ public class JetSignatureReader {
                             name = signature.substring(start, pos - 1);
                             if (inner) {
                                 v.visitInnerClassType(name, nullable);
-                            } else {
+                            }
+                            else {
                                 v.visitClassType(name, nullable, forceReal);
                             }
                             visited = true;

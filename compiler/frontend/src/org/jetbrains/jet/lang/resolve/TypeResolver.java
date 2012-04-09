@@ -102,7 +102,8 @@ public class TypeResolver {
                         JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor, checkBounds);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
                             result[0] = ErrorUtils.createErrorType("?");
-                        } else {
+                        }
+                        else {
                             result[0] = new JetTypeImpl(
                                     annotations,
                                     typeParameterDescriptor.getTypeConstructor(),
@@ -130,10 +131,12 @@ public class TypeResolver {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
-                                } else {
+                                }
+                                else {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
-                            } else {
+                            }
+                            else {
                                 result[0] = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,

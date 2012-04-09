@@ -216,7 +216,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             if (!JetStandardClasses.isUnit(assignmentOperationType)) {
                 context.trace.report(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT.on(operationSign, assignmentOperationDescriptors.getResultingDescriptor(), operationSign));
             }
-        } else {
+        }
+        else {
             binaryOperationTrace.commit();
             context.trace.record(VARIABLE_REASSIGNMENT, expression);
             if (left instanceof JetArrayAccessExpression) {

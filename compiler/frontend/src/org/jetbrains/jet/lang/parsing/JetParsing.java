@@ -149,7 +149,8 @@ public class JetParsing extends AbstractJetParsing {
             firstEntry.drop();
 
             consumeIf(SEMICOLON);
-        } else {
+        }
+        else {
             firstEntry.rollbackTo();
         }
         namespaceHeader.done(NAMESPACE_HEADER);
@@ -323,7 +324,8 @@ public class JetParsing extends AbstractJetParsing {
         }
         if (empty) {
             list.drop();
-        } else {
+        }
+        else {
             list.done(nodeType);
         }
         return !empty;
@@ -634,7 +636,8 @@ public class JetParsing extends AbstractJetParsing {
         else if (keywordToken == OBJECT_KEYWORD) {
             parseObject(true, true);
             declType = OBJECT_DECLARATION;
-        } else if (keywordToken == LBRACE) {
+        }
+        else if (keywordToken == LBRACE) {
             parseBlock();
             declType = ANONYMOUS_INITIALIZER;
         }
@@ -749,7 +752,8 @@ public class JetParsing extends AbstractJetParsing {
             parseTypeRef();
             reference.done(CONSTRUCTOR_CALLEE);
             type = DELEGATOR_SUPER_CALL;
-        } else {
+        }
+        else {
             errorWithRecovery("Expecting constructor call (this(...)) or supertype initializer", TokenSet.create(LBRACE, COMMA));
             initializer.drop();
             return;
@@ -818,7 +822,8 @@ public class JetParsing extends AbstractJetParsing {
     public JetNodeType parseProperty(boolean local) {
         if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
             advance(); // VAL_KEYWORD or VAR_KEYWORD
-        } else {
+        }
+        else {
             errorAndAdvance("Expecting 'val' or 'var'");
         }
 
@@ -1034,7 +1039,8 @@ public class JetParsing extends AbstractJetParsing {
             if (!parseIdeTemplate()) {
                 expect(IDENTIFIER, "Expecting " + title + " name or receiver type", nameFollow);
             }
-        } else {
+        }
+        else {
             if (parseIdeTemplate()) {
                 expect(DOT, "Expecting '.' after receiver template");
             }
@@ -1244,7 +1250,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker reference = mark();
         if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST))) {
             reference.done(REFERENCE_EXPRESSION);
-        } else {
+        }
+        else {
             reference.drop();
         }
 
@@ -1621,7 +1628,8 @@ public class JetParsing extends AbstractJetParsing {
                             parseTypeRef();
                             valueParameter.done(VALUE_PARAMETER);
                         }
-                    } else {
+                    }
+                    else {
                         parseValueParameter();
                     }
                     if (!at(COMMA)) break;
@@ -1708,7 +1716,8 @@ public class JetParsing extends AbstractJetParsing {
                 mark.done(nodeType);
             }
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }

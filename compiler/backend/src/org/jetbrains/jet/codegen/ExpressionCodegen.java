@@ -2247,7 +2247,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             type = typeMapper.mapType(expressionType, MapTypeMode.VALUE);
             if (type.getSort() == Type.ARRAY) {
                 generateNewArray(expression, expressionType);
-            } else {
+            }
+            else {
                 ClassDescriptor classDecl = (ClassDescriptor) constructorDescriptor.getContainingDeclaration();
 
                 v.anew(type);

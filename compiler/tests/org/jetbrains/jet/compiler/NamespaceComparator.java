@@ -86,11 +86,14 @@ class NamespaceComparator {
         for (DeclarationDescriptor ad : nsa.getMemberScope().getAllDescriptors()) {
             if (ad instanceof ClassifierDescriptor) {
                 classifierNames.add(ad.getName());
-            } else if (ad instanceof PropertyDescriptor) {
+            }
+            else if (ad instanceof PropertyDescriptor) {
                 propertyNames.add(ad.getName());
-            } else if (ad instanceof FunctionDescriptor) {
+            }
+            else if (ad instanceof FunctionDescriptor) {
                 functionNames.add(ad.getName());
-            } else {
+            }
+            else {
                 throw new AssertionError("unknown member: " + ad);
             }
         }
@@ -269,7 +272,8 @@ class NamespaceComparator {
 
             if (prop.isVar()) {
                 sb.append("var ");
-            } else {
+            }
+            else {
                 sb.append("val ");
             }
             if (!prop.getTypeParameters().isEmpty()) {
@@ -297,7 +301,8 @@ class NamespaceComparator {
             sb.append(": ");
             if (valueParameter.getVarargElementType() != null) {
                 new TypeSerializer(sb).serialize(valueParameter.getVarargElementType());
-            } else {
+            }
+            else {
                 new TypeSerializer(sb).serialize(valueParameter.getType());
             }
             if (valueParameter.hasDefaultValue()) {
@@ -308,7 +313,8 @@ class NamespaceComparator {
         public void serialize(Variance variance) {
             if (variance == Variance.INVARIANT) {
 
-            } else {
+            }
+            else {
                 sb.append(variance);
                 sb.append(' ');
             }

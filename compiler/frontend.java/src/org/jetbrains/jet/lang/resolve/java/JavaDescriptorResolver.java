@@ -345,11 +345,14 @@ public class JavaDescriptorResolver {
         if (kotlinClassDescriptor != null) {
             if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
                 throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            } else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
+            }
+            else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
                 return null;
-            } else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
+            }
+            else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
                 return kotlinClassDescriptor;
-            } else {
+            }
+            else {
                 throw new IllegalStateException("unknown searchRule: " + searchRule);
             }
         }
@@ -767,14 +770,16 @@ public class JavaDescriptorResolver {
             List<?> upperBounds = typeParameter.upperBoundsForKotlin;
             if (upperBounds.size() == 0){
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
-            } else {
+            }
+            else {
                 for (JetType upperBound : typeParameter.upperBoundsForKotlin) {
                     typeParameterDescriptor.addUpperBound(upperBound);
                 }
             }
 
             // TODO: lower bounds
-        } else {
+        }
+        else {
             PsiClassType[] referencedTypes = typeParameter.psiTypeParameter.getExtendsList().getReferencedTypes();
             if (referencedTypes.length == 0){
                 typeParameterDescriptor.addUpperBound(JetStandardClasses.getNullableAnyType());
@@ -832,7 +837,8 @@ public class JavaDescriptorResolver {
                     return visitSuperclass();
                 }
             });
-        } else {
+        }
+        else {
             TypeVariableResolver typeVariableResolverForSupertypes = TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, classDescriptor, context);
             transformSupertypeList(result, psiClass.getPsiClass().getExtendsListTypes(), typeVariableResolverForSupertypes, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
             transformSupertypeList(result, psiClass.getPsiClass().getImplementsListTypes(), typeVariableResolverForSupertypes, classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS);
@@ -873,12 +879,15 @@ public class JavaDescriptorResolver {
         if (kotlinNamespaceDescriptor != null) {
             if (searchRule == DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN) {
                 throw new IllegalStateException("class must not be found in kotlin: " + qualifiedName);
-            } else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
+            }
+            else if (searchRule == DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN) {
                 return null;
-            } else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
+            }
+            else if (searchRule == DescriptorSearchRule.INCLUDE_KOTLIN) {
                 // TODO: probably this is evil
                 return kotlinNamespaceDescriptor;
-            } else {
+            }
+            else {
                 throw new IllegalStateException("unknown searchRule: " + searchRule);
             }
         }
@@ -915,7 +924,8 @@ public class JavaDescriptorResolver {
     private NamespaceDescriptorParent resolveParentNamespace(FqName fqName) {
         if (fqName.isRoot()) {
             return FAKE_ROOT_MODULE;
-        } else {
+        }
+        else {
             return resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
         }
     }
@@ -1042,27 +1052,32 @@ public class JavaDescriptorResolver {
         JetType outType;
         if (typeFromAnnotation.length() > 0) {
             outType = semanticServices.getTypeTransformer().transformToType(typeFromAnnotation, typeVariableResolver);
-        } else {
+        }
+        else {
             outType = semanticServices.getTypeTransformer().transformToType(psiType, typeVariableResolver);
         }
 
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
             varargElementType = JetStandardLibrary.getInstance().getArrayElementType(outType);
-        } else {
+        }
+        else {
             varargElementType = null;
         }
 
         if (receiver) {
             return JvmMethodParameterMeaning.receiver(outType);
-        } else {
+        }
+        else {
 
             JetType transformedType;
             if (parameter.getJetValueParameter().nullable()) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, parameter.getJetValueParameter().nullable());
-            } else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+            }
+            else if (parameter.getPsiParameter().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                 transformedType = TypeUtils.makeNullableAsSpecified(outType, false);
-            } else {
+            }
+            else {
                 transformedType = outType;
             }
             return JvmMethodParameterMeaning.regular(new ValueParameterDescriptorImpl(
@@ -1118,9 +1133,11 @@ public class JavaDescriptorResolver {
     private Object key(TypeSource typeSource) {
         if (typeSource == null) {
             return "";
-        } else if (typeSource.getTypeString().length() > 0) {
+        }
+        else if (typeSource.getTypeString().length() > 0) {
             return typeSource.getTypeString();
-        } else {
+        }
+        else {
             return psiTypeToKey(typeSource.getPsiType());
         }
     }
@@ -1128,11 +1145,14 @@ public class JavaDescriptorResolver {
     private Object psiTypeToKey(PsiType psiType) {
         if (psiType instanceof PsiClassType) {
             return ((PsiClassType) psiType).getClassName();
-        } else if (psiType instanceof PsiPrimitiveType) {
+        }
+        else if (psiType instanceof PsiPrimitiveType) {
             return psiType.getPresentableText();
-        } else if (psiType instanceof PsiArrayType) {
+        }
+        else if (psiType instanceof PsiArrayType) {
             return Pair.create("[", psiTypeToKey(((PsiArrayType) psiType).getComponentType()));
-        } else {
+        }
+        else {
             throw new IllegalStateException("" + psiType.getClass());
         }
     }
@@ -1189,17 +1209,20 @@ public class JavaDescriptorResolver {
                     throw new IllegalStateException("oops, duplicate key");
                 }
                 value.getter = propertyAccessor;
-            } else if (propertyAccessor.isSetter()) {
+            }
+            else if (propertyAccessor.isSetter()) {
                 if (value.setter != null) {
                     throw new IllegalStateException("oops, duplicate key");
                 }
                 value.setter = propertyAccessor;
-            } else if (propertyAccessor.isField()) {
+            }
+            else if (propertyAccessor.isField()) {
                 if (value.field != null) {
                     throw new IllegalStateException("oops, duplicate key");
                 }
                 value.field = propertyAccessor;
-            } else {
+            }
+            else {
                 throw new IllegalStateException();
             }
         }
@@ -1225,31 +1248,39 @@ public class JavaDescriptorResolver {
             boolean isFinal;
             if (!scopeData.kotlin) {
                 isFinal = true;
-            } else if (members.setter == null && members.getter == null) {
+            }
+            else if (members.setter == null && members.getter == null) {
                 isFinal = false;
-            } else if (members.getter != null) {
+            }
+            else if (members.getter != null) {
                 isFinal = members.getter.getMember().isFinal();
-            } else if (members.setter != null) {
+            }
+            else if (members.setter != null) {
                 isFinal = members.setter.getMember().isFinal();
-            } else {
+            }
+            else {
                 isFinal = false;
             }
 
             PropertyAccessorData anyMember;
             if (members.getter != null) {
                 anyMember = members.getter;
-            } else if (members.field != null) {
+            }
+            else if (members.field != null) {
                 anyMember = members.field;
-            } else if (members.setter != null) {
+            }
+            else if (members.setter != null) {
                 anyMember = members.setter;
-            } else {
+            }
+            else {
                 throw new IllegalStateException();
             }
 
             boolean isVar;
             if (members.getter == null && members.setter == null) {
                 isVar = !members.field.getMember().isFinal();
-            } else {
+            }
+            else {
                 isVar = members.setter != null;
             }
 
@@ -1305,7 +1336,8 @@ public class JavaDescriptorResolver {
             JetType propertyType;
             if (anyMember.getType().getTypeString().length() > 0) {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getTypeString(), typeVariableResolverForPropertyInternals);
-            } else {
+            }
+            else {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
                 if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                     propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
@@ -1315,9 +1347,11 @@ public class JavaDescriptorResolver {
             JetType receiverType;
             if (anyMember.getReceiverType() == null) {
                 receiverType = null;
-            } else if (anyMember.getReceiverType().getTypeString().length() > 0) {
+            }
+            else if (anyMember.getReceiverType().getTypeString().length() > 0) {
                 receiverType = semanticServices.getTypeTransformer().transformToType(anyMember.getReceiverType().getTypeString(), typeVariableResolverForPropertyInternals);
-            } else {
+            }
+            else {
                 receiverType = semanticServices.getTypeTransformer().transformToType(anyMember.getReceiverType().getPsiType(), typeVariableResolverForPropertyInternals);
             }
 
@@ -1445,7 +1479,8 @@ public class JavaDescriptorResolver {
             resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, typeSubstitutor, namedMembers, methodName, scopeData);
 
             return namedMembers.functionDescriptors;
-        } else {
+        }
+        else {
             return Collections.emptySet();
         }
     }
@@ -1472,9 +1507,11 @@ public class JavaDescriptorResolver {
             if (meaning.kind == JvmMethodParameterKind.TYPE_INFO) {
                 // TODO
                 --indexDelta;
-            } else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
+            }
+            else if (meaning.kind == JvmMethodParameterKind.REGULAR) {
                 result.add(meaning.valueParameterDescriptor);
-            } else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
+            }
+            else if (meaning.kind == JvmMethodParameterKind.RECEIVER) {
                 if (receiverType != null) {
                     throw new IllegalStateException("more then one receiver");
                 }
@@ -1625,9 +1662,11 @@ public class JavaDescriptorResolver {
     private Collection<JetType> getSupertypes(ResolverScopeData scope) {
         if (scope instanceof ResolverBinaryClassData) {
             return ((ResolverBinaryClassData) scope).classDescriptor.getSupertypes();
-        } else if (scope instanceof ResolverNamespaceData) {
+        }
+        else if (scope instanceof ResolverNamespaceData) {
             return Collections.emptyList();
-        } else {
+        }
+        else {
             throw new IllegalStateException();
         }
     }
@@ -1635,7 +1674,8 @@ public class JavaDescriptorResolver {
     private TypeSubstitutor typeSubstitutorForGenericSupertypes(ResolverScopeData scopeData) {
         if (scopeData instanceof ResolverBinaryClassData) {
             return createSubstitutorForGenericSupertypes(((ResolverBinaryClassData) scopeData).getClassDescriptor());
-        } else {
+        }
+        else {
             return TypeSubstitutor.EMPTY;
         }
     }
@@ -1649,7 +1689,8 @@ public class JavaDescriptorResolver {
         if (method.getJetMethod().typeParameters().length() > 0) {
             typeParametersIntialization = resolveMethodTypeParametersFromJetSignature(
                     method.getJetMethod().typeParameters(), method.getPsiMethod(), functionDescriptor);
-        } else {
+        }
+        else {
             typeParametersIntialization = makeUninitializedTypeParameters(functionDescriptor, method.getPsiMethod().getTypeParameters());
         }
 
@@ -1685,14 +1726,17 @@ public class JavaDescriptorResolver {
         JetType transformedType;
         if (returnTypeFromAnnotation.length() > 0) {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnTypeFromAnnotation, typeVariableResolver);
-        } else {
+        }
+        else {
             transformedType = semanticServices.getTypeTransformer().transformToType(returnType, typeVariableResolver);
         }
         if (method.getJetMethod().returnTypeNullable()) {
             return TypeUtils.makeNullableAsSpecified(transformedType, true);
-        } else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
+        }
+        else if (method.getPsiMethod().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
             return TypeUtils.makeNullableAsSpecified(transformedType, false);
-        } else {
+        }
+        else {
             return transformedType;
         }
     }

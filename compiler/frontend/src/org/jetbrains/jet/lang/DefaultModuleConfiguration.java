@@ -62,7 +62,8 @@ public class DefaultModuleConfiguration implements ModuleConfiguration {
         if (DescriptorUtils.getFQName(namespaceDescriptor).equals(JetStandardClasses.STANDARD_CLASSES_FQNAME.toUnsafe())) {
             if (!extendBuiltins) {
                 namespaceMemberScope.importScope(JetStandardClasses.STANDARD_CLASSES);
-            } else {
+            }
+            else {
                 namespaceMemberScope.importScope(JetStandardLibrary.getInstance().getLibraryScope());
             }
 

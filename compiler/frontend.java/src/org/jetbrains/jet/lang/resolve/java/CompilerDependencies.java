@@ -73,7 +73,8 @@ public class CompilerDependencies {
     public List<VirtualFile> getJdkHeaderRoots() {
         if (compilerSpecialMode.includeJdkHeaders()) {
             return Collections.singletonList(PathUtil.jarFileToVirtualFile(jdkHeadersJar));
-        } else {
+        }
+        else {
             return Collections.emptyList();
         }
     }
@@ -82,7 +83,8 @@ public class CompilerDependencies {
     public List<VirtualFile> getRuntimeRoots() {
         if (compilerSpecialMode.includeKotlinRuntime()) {
             return Collections.singletonList(PathUtil.jarFileToVirtualFile(runtimeJar));
-        } else {
+        }
+        else {
             return Collections.emptyList();
         }
     }

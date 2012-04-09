@@ -114,17 +114,20 @@ public class ThreadRing {
 //                            System.out.println("last one");
                             executor.shutdown();
                             cdl.countDown();
-                        } else {
+                        }
+                        else {
                             m.value = nextValue;
                             nextNode.sendMessage(m);
                         }
                         isActive = false;
 //                        System.out.println("ending node "+nodeId);
-                    } else {
+                    }
+                    else {
                         if (m.value == N) {
                             System.out.println(nodeId);
                             nextNode.sendMessage(new TokenMessage(nodeId, 0, true));
-                        } else {
+                        }
+                        else {
                             m.value = m.value + 1;
                             nextNode.sendMessage(m);
                         }

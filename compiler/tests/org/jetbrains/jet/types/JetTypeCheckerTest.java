@@ -718,7 +718,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     public void visitProperty(JetProperty property) {
                         if (property.getPropertyTypeRef() != null) {
                             memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property, JetTestUtils.DUMMY_TRACE));
-                        } else {
+                        }
+                        else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
                         }
@@ -728,7 +729,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     public void visitNamedFunction(JetNamedFunction function) {
                         if (function.getReturnTypeRef() != null) {
                             memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function, JetTestUtils.DUMMY_TRACE));
-                        } else {
+                        }
+                        else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
                         }

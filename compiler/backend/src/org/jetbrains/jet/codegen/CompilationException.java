@@ -64,7 +64,8 @@ public class CompilationException extends RuntimeException {
         Throwable cause = getCause();
         if (cause != null && cause.getStackTrace().length > 0) {
             return cause.getStackTrace()[0].getFileName() + ":" + cause.getStackTrace()[0].getLineNumber();
-        } else {
+        }
+        else {
             return "far away in cyberspace";
         }
     }

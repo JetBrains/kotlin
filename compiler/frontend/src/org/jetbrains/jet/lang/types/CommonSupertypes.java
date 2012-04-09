@@ -209,7 +209,8 @@ public class CommonSupertypes {
                 if (ins != null) {
                     ins.add(projection.getType());
                 }
-            } else {
+            }
+            else {
                 ins = null;
             }
 
@@ -217,7 +218,8 @@ public class CommonSupertypes {
                 if (outs != null) {
                     outs.add(projection.getType());
                 }
-            } else {
+            }
+            else {
                 outs = null;
             }
         }
@@ -232,10 +234,12 @@ public class CommonSupertypes {
             }
             Variance projectionKind = variance == IN_VARIANCE ? Variance.INVARIANT : IN_VARIANCE;
             return new TypeProjection(projectionKind, intersection);
-        } else if (outs != null) {
+        }
+        else if (outs != null) {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(outs));
-        } else {
+        }
+        else {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
             return new TypeProjection(projectionKind, commonSupertype(parameterDescriptor.getUpperBounds()));
         }

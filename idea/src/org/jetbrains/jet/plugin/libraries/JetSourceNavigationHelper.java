@@ -163,7 +163,8 @@ public class JetSourceNavigationHelper {
                         }
                     }
                 }
-            } else {
+            }
+            else {
                 // extension property
                 String expectedTypeString = receiverType.getText();
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {

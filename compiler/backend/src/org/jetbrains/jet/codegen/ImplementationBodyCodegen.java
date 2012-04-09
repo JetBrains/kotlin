@@ -134,7 +134,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int innerClassAccess = ACC_PUBLIC;
             if (innerClass.getModality() == Modality.FINAL) {
                 innerClassAccess |= ACC_FINAL;
-            } else if (innerClass.getModality() == Modality.ABSTRACT) {
+            }
+            else if (innerClass.getModality() == Modality.ABSTRACT) {
                 innerClassAccess |= ACC_ABSTRACT;
             }
 
@@ -193,7 +194,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (superClassType == null) {
                 signatureVisitor.writeClassBegin(superClass, false, false);
                 signatureVisitor.writeClassEnd();
-            } else {
+            }
+            else {
                 typeMapper.mapType(superClassType, signatureVisitor, MapTypeMode.TYPE_PARAMETER);
             }
             signatureVisitor.writeSuperclassEnd();
@@ -706,7 +708,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             CallableMemberDescriptor callableDescriptor = needDelegates.first;
             if (needDelegates.second instanceof SimpleFunctionDescriptor) {
                 generateDelegationToTraitImpl(codegen, (FunctionDescriptor) needDelegates.second);
-            } else if (needDelegates.second instanceof PropertyDescriptor) {
+            }
+            else if (needDelegates.second instanceof PropertyDescriptor) {
                 PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
                 for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
                     generateDelegationToTraitImpl(codegen, accessor);

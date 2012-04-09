@@ -51,7 +51,8 @@ public abstract class StackValue {
         }
         if (type == Type.VOID_TYPE) {
             instructionAdapter.aconst(null);
-        } else {
+        }
+        else {
             Type boxed = JetTypeMapper.boxType(type);
             instructionAdapter.invokestatic(boxed.getInternalName(), "valueOf", "(" + type.getDescriptor() + ")" + boxed.getDescriptor());
         }

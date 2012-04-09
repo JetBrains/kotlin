@@ -264,13 +264,15 @@ public class JetControlFlowProcessor {
                 else if (left instanceof JetArrayAccessExpression) {
                     JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
                     visitAssignToArrayAccess(expression, arrayAccessExpression);
-                } else if (left instanceof JetQualifiedExpression) {
+                }
+                else if (left instanceof JetQualifiedExpression) {
                     assert !(left instanceof JetHashQualifiedExpression) : left; // TODO
                     JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) left;
                     value(qualifiedExpression.getReceiverExpression(), false);
                     value(expression.getOperationReference(), false);
                     builder.write(expression, left);
-                } else {
+                }
+                else {
                     builder.unsupported(expression); // TODO
                 }
             }

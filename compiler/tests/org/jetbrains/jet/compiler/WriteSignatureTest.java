@@ -141,7 +141,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                         public void visit(String name, Object value) {
                                             if (name.equals(JvmStdlibNames.JET_METHOD_TYPE_PARAMETERS_FIELD)) {
                                                 typeParameters = (String) value;
-                                            } else if (name.equals(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD)) {
+                                            }
+                                            else if (name.equals(JvmStdlibNames.JET_METHOD_RETURN_TYPE_FIELD)) {
                                                 returnType = (String) value;
                                             }
                                         }
@@ -156,7 +157,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                             return new EmptyVisitor();
                                         }
                                     };
-                                } else {
+                                }
+                                else {
                                     return new EmptyVisitor();
                                 }
                             }
@@ -182,7 +184,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                             return new EmptyVisitor();
                                         }
                                     };
-                                } else {
+                                }
+                                else {
                                     return new EmptyVisitor();
                                 }
                             }
@@ -215,7 +218,8 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
                                 }
                                 if (allNulls) {
                                     return null;
-                                } else {
+                                }
+                                else {
                                     return sb.toString();
                                 }
                             }

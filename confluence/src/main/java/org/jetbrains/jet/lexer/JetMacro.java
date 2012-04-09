@@ -288,7 +288,8 @@ public class JetMacro extends BaseMacro {
                 String style = null;
                 if (token instanceof JetKeywordToken) {
                     style = "keyword";
-                } else if (token == JetTokens.IDENTIFIER) {
+                }
+                else if (token == JetTokens.IDENTIFIER) {
                     for (IElementType softKeyword : JetTokens.SOFT_KEYWORDS.asSet()) {
                         if (((JetKeywordToken) softKeyword).getValue().equals(yytext.toString())) {
                             style = "softkeyword";
@@ -296,9 +297,11 @@ public class JetMacro extends BaseMacro {
                         }
                     }
                     style = style == null ? "plain" : style;
-                } else if (styleMap.containsKey(token)) {
+                }
+                else if (styleMap.containsKey(token)) {
                     style = styleMap.get(token);
-                } else {
+                }
+                else {
                     style = "plain";
                 }
                 result.append("<code class=\"jet ").append(style).append("\">");

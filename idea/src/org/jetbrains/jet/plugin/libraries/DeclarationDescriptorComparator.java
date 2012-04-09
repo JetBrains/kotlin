@@ -30,13 +30,16 @@ class DeclarationDescriptorComparator implements Comparator<DeclarationDescripto
     private static int getDeclarationPriority(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             return 4;
-        } else if (descriptor instanceof PropertyDescriptor) {
+        }
+        else if (descriptor instanceof PropertyDescriptor) {
             return 3;
-        } else if (descriptor instanceof FunctionDescriptor) {
+        }
+        else if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor fun = (FunctionDescriptor)descriptor;
             if (fun.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
                 return 2;
-            } else {
+            }
+            else {
                 return 1;
             }
         }

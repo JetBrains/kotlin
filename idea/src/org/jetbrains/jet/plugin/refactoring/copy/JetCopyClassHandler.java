@@ -44,7 +44,8 @@ public class JetCopyClassHandler extends CopyHandlerDelegateBase {
         if (element instanceof JetClassOrObject &&
             JetMoveFilesOrDirectoriesHandler.isMovableClass((JetClassOrObject) element)) {
             return element.getContainingFile();
-        } else {
+        }
+        else {
             return element;
         }
     }

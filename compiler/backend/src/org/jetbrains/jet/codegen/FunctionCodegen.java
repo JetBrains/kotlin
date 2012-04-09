@@ -128,7 +128,8 @@ public class FunctionCodegen {
                 if (needJetAnnotations) {
                     if (functionDescriptor instanceof PropertyAccessorDescriptor) {
                         PropertyCodegen.generateJetPropertyAnnotation(mv, propertyTypeSignature, jvmSignature.getKotlinTypeParameter());
-                    } else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
+                    }
+                    else if (functionDescriptor instanceof SimpleFunctionDescriptor) {
                         if (propertyTypeSignature != null) {
                             throw new IllegalStateException();
                         }
@@ -138,7 +139,8 @@ public class FunctionCodegen {
                         aw.writeTypeParameters(jvmSignature.getKotlinTypeParameter());
                         aw.writeReturnType(jvmSignature.getKotlinReturnType());
                         aw.visitEnd();
-                    } else {
+                    }
+                    else {
                         throw new IllegalStateException();
                     }
 

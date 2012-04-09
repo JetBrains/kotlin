@@ -185,7 +185,8 @@ public class PropertyCodegen {
                 mv.visitCode();
                 if (v.generateCode() == ClassBuilder.Mode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
-                } else {
+                }
+                else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
@@ -268,7 +269,8 @@ public class PropertyCodegen {
                 mv.visitCode();
                 if (v.generateCode() == ClassBuilder.Mode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
-                } else {
+                }
+                else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                     int paramCode = 0;

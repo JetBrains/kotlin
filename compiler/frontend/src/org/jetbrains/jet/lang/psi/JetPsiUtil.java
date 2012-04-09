@@ -268,7 +268,8 @@ public class JetPsiUtil {
         List<JetDeclaration> declarations = file.getDeclarations();
         if (declarations.size() == 1) {
             file.delete();
-        } else {
+        }
+        else {
             PsiElement parent = clazz.getParent();
             CodeEditUtil.removeChild(parent.getNode(), clazz.getNode());
         }

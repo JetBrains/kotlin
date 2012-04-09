@@ -90,7 +90,8 @@ public class JavaSemanticServices {
     public ClassDescriptor getKotlinBuiltinClassDescriptor(@NotNull FqName qualifiedName) {
         if (qualifiedName.getFqName().startsWith("jet.")) {
             return (ClassDescriptor) JetStandardLibrary.getInstance().getLibraryScope().getClassifier(qualifiedName.getFqName().substring("jet.".length()));
-        } else {
+        }
+        else {
             return null;
         }
     }

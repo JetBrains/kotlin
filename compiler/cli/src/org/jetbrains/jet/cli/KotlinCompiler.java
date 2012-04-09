@@ -112,7 +112,8 @@ public class KotlinCompiler {
         if (mode.includeJdkHeaders()) {
             if (arguments.jdkHeaders != null) {
                 jdkHeadersJar = new File(arguments.jdkHeaders);
-            } else {
+            }
+            else {
                 jdkHeadersJar = PathUtil.getAltHeadersPath();
             }
         }
@@ -124,7 +125,8 @@ public class KotlinCompiler {
         if (mode.includeKotlinRuntime()) {
             if (arguments.stdlib != null) {
                 runtimeJar = new File(arguments.stdlib);
-            } else {
+            }
+            else {
                 runtimeJar = PathUtil.getDefaultRuntimePath();
             }
         }
@@ -145,7 +147,8 @@ public class KotlinCompiler {
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
                     noErrors = environment.compileBunchOfSourceDirectories(arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
-                } else {
+                }
+                else {
                     noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
                 }
             }

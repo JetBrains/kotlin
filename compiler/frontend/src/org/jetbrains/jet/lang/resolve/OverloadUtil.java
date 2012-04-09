@@ -52,11 +52,14 @@ public class OverloadUtil {
     private static int braceCount(CallableDescriptor a) {
         if (a instanceof PropertyDescriptor) {
             return 0;
-        } else if (a instanceof SimpleFunctionDescriptor) {
+        }
+        else if (a instanceof SimpleFunctionDescriptor) {
             return 1;
-        } else if (a instanceof ConstructorDescriptor) {
+        }
+        else if (a instanceof ConstructorDescriptor) {
             return 1;
-        } else {
+        }
+        else {
             throw new IllegalStateException();
         }
     }

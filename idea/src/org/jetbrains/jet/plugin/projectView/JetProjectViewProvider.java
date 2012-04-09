@@ -68,10 +68,12 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
                 if (classDeclarations.size() == 1 && (!settings.isShowMembers() || declarations.size() == 1) &&
                     nameWithoutExtension.equals(classDeclarations.get(0).getName())) {
                     result.add(new JetClassOrObjectTreeNode(file.getProject(), classDeclarations.get(0), settings));
-                } else {
+                }
+                else {
                     result.add(new JetFileTreeNode(file.getProject(), file, settings));
                 }
-            } else {
+            }
+            else {
                 result.add(child);
             }
 
@@ -117,13 +119,17 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
             PsiElement parent = element.getParent();
             if (parent instanceof JetFile) {
                 return true;
-            } else if (parent instanceof JetClassBody) {
+            }
+            else if (parent instanceof JetClassBody) {
                 parent = parent.getParent();
                 if (parent instanceof JetClassOrObject) {
                     return isSelectable(parent);
-                } else return false;
-            } else return false;
-        } else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
+        else return false;
     }
 
     private boolean fileInRoots(VirtualFile file) {

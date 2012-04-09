@@ -68,7 +68,8 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                     text = "<class initializer>";
                 }
                 data.setPresentableText(text);
-            } else {
+            }
+            else {
                 String text = declaration.getName();
                 if (declaration instanceof JetClassInitializer) {
                     text = "<class initializer>";

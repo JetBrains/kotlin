@@ -62,7 +62,8 @@ public abstract class JetTemplateContextType extends TemplateContextType {
                         if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == parentOfParent) {
                             return false;
                         }
-                    } else {
+                    }
+                    else {
                         return false;
                     }
                 }

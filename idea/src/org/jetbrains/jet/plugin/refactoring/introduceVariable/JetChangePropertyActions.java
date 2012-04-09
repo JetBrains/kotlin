@@ -22,7 +22,8 @@ public class JetChangePropertyActions {
         ASTNode node;
         if (isVariable) {
             node = JetPsiFactory.createVarNode(project);
-        } else {
+        }
+        else {
             node = JetPsiFactory.createValNode(project);
         }
         property.getValOrVarNode().getPsi().replace(node.getPsi());

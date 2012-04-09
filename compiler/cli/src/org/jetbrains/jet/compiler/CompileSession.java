@@ -168,7 +168,8 @@ public class CompileSession {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration == null || containingDeclaration instanceof ModuleDescriptor || containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
             return descriptor.getName();
-        } else {
+        }
+        else {
             return fqName((ClassOrNamespaceDescriptor) containingDeclaration) + "." + descriptor.getName();
         }
     }

@@ -62,7 +62,8 @@ public class JetMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHand
         for (PsiElement element : sourceElements) {
             if (element instanceof JetClassOrObject) {
                 result.add(element.getContainingFile());
-            } else {
+            }
+            else {
                 result.add(element);
             }
         }

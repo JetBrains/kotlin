@@ -259,7 +259,8 @@ public class DescriptorResolver {
             if (typeReference == null) {
                 trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter));
                 type = ErrorUtils.createErrorType("Type annotation was missing");
-            } else {
+            }
+            else {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true);
             }
 
@@ -297,7 +298,8 @@ public class DescriptorResolver {
         JetType arrayType = JetStandardLibrary.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(type);
         if (arrayType != null) {
             return arrayType;
-        } else {
+        }
+        else {
             return JetStandardLibrary.getInstance().getArrayType(type);
         }
     }
@@ -472,7 +474,8 @@ public class DescriptorResolver {
                     || (containingDeclaration instanceof ClassDescriptor);
         if (isProperty) {
             return resolveObjectDeclarationAsPropertyDescriptor(containingDeclaration, objectDeclaration, classDescriptor, trace);
-        } else {
+        }
+        else {
             return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor, trace);
         }
     }
@@ -621,7 +624,8 @@ public class DescriptorResolver {
                     trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier));
                 }
                 return ErrorUtils.createErrorType("No type, no body");
-            } else {
+            }
+            else {
                 // TODO : a risk of a memory leak
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
@@ -636,7 +640,8 @@ public class DescriptorResolver {
                     return lazyValue.get();
                 }
             }
-        } else {
+        }
+        else {
             return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
         }
     }

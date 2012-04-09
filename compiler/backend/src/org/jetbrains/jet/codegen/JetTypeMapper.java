@@ -192,7 +192,8 @@ public class JetTypeMapper {
                         "conflicting namespace " + fqName + ": it is both java statics and from src");
             }
             classStatics = javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS;
-        } else {
+        }
+        else {
             classStatics = false;
         }
 
@@ -356,7 +357,8 @@ public class JetTypeMapper {
             Type r;
             if (!isGenericsArray(jetType)) {
                 r = Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
-            } else {
+            }
+            else {
                 r = ARRAY_GENERIC_TYPE;
             }
             checkValidType(r);
@@ -383,7 +385,8 @@ public class JetTypeMapper {
 
                 asmType = JL_COMPARABLE_TYPE;
                 forceReal = false;
-            } else {
+            }
+            else {
                 JvmClassName name = getClassFQName((ClassDescriptor) descriptor);
                 asmType = Type.getObjectType(name.getInternalName() + (kind == MapTypeMode.TRAIT_IMPL ? JvmAbi.TRAIT_IMPL_SUFFIX : ""));
                 forceReal = isForceReal(name);
@@ -426,7 +429,8 @@ public class JetTypeMapper {
             }
             checkValidType(boxed);
             return boxed;
-        } else {
+        }
+        else {
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, asmType, jetType.isNullable());
             }
@@ -455,7 +459,8 @@ public class JetTypeMapper {
         JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByWrapperAsmType(type);
         if (jvmPrimitiveType != null) {
             return jvmPrimitiveType.getAsmType();
-        } else {
+        }
+        else {
             throw new UnsupportedOperationException("Unboxing: " + type);
         }
     }
@@ -464,7 +469,8 @@ public class JetTypeMapper {
         JvmPrimitiveType jvmPrimitiveType = JvmPrimitiveType.getByAsmType(asmType);
         if (jvmPrimitiveType != null) {
             return jvmPrimitiveType.getWrapper().getAsmType();
-        } else {
+        }
+        else {
             return asmType;
         }
     }
@@ -508,7 +514,8 @@ public class JetTypeMapper {
             ClassDescriptor receiver;
             if (currentIsInterface && !originalIsInterface) {
                 receiver = declarationOwner;
-            } else {
+            }
+            else {
                 receiver = currentOwner;
             }
 
@@ -548,7 +555,8 @@ public class JetTypeMapper {
         //if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
         if (function.getOverriddenDescriptors().isEmpty()) {
             return function;
-        } else {
+        }
+        else {
             // TODO: prefer class to interface
             return findAnyDeclaration(function.getOverriddenDescriptors().iterator().next());
         }
@@ -600,7 +608,8 @@ public class JetTypeMapper {
 
         if (f instanceof ConstructorDescriptor) {
             signatureVisitor.writeVoidReturn();
-        } else {
+        }
+        else {
             signatureVisitor.writeReturnType();
             mapReturnType(f.getReturnType(), signatureVisitor);
             signatureVisitor.writeReturnTypeEnd();

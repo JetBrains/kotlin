@@ -52,7 +52,8 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             if (!isFirstPartInQualifiedExpression(qualifiedExpression)) {
                 return qualifiedExpression.getReceiverExpression();
             }
-        } else if (parent instanceof JetCallExpression) {
+        }
+        else if (parent instanceof JetCallExpression) {
             //This is in case `a().b()`
             JetCallExpression callExpression = (JetCallExpression) parent;
             parent = callExpression.getParent();

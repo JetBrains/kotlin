@@ -78,7 +78,8 @@ public final class DescriptorLookupConverter {
             // TODO: Support omitting brackets for one argument functions
             if (functionDescriptor.getValueParameters().isEmpty()) {
                 element = element.setInsertHandler(EMPTY_FUNCTION_HANDLER);
-            } else {
+            }
+            else {
                 element = element.setInsertHandler(PARAMS_FUNCTION_HANDLER);
             }
         }

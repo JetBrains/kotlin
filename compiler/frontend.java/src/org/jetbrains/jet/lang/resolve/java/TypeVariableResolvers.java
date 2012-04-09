@@ -36,7 +36,8 @@ public class TypeVariableResolvers {
     public static List<TypeParameterDescriptor> getTypeParameterDescriptors(@NotNull ClassOrNamespaceDescriptor clazz) {
         if (clazz instanceof ClassDescriptor) {
             return ((ClassDescriptor) clazz).getTypeConstructor().getParameters();
-        } else {
+        }
+        else {
             return new ArrayList<TypeParameterDescriptor>(0);
         }
     }

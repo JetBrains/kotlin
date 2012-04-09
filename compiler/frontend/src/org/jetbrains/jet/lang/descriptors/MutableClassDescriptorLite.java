@@ -69,10 +69,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor instanceof NamespaceDescriptor) {
             return true;
-        } else if (declarationDescriptor instanceof ClassDescriptor) {
+        }
+        else if (declarationDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
             return classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
-        } else {
+        }
+        else {
             return false;
         }
     }

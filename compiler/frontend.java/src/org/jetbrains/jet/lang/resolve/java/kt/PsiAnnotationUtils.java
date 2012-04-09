@@ -47,7 +47,8 @@ public class PsiAnnotationUtils {
     private static <T> T getAttribute(@Nullable PsiAnnotation annotation, @NotNull String field, @NotNull T defaultValue) {
         if (annotation == null) {
             return defaultValue;
-        } else {
+        }
+        else {
             PsiAnnotationMemberValue value = annotation.findAttributeValue(field);
             if (value instanceof PsiLiteralExpression) {
                 PsiLiteralExpression attributeValue = (PsiLiteralExpression) value;

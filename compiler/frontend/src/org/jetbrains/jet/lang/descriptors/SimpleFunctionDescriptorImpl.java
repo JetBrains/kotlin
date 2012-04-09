@@ -80,7 +80,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
                     getAnnotations(),
                     getName(),
                     kind);
-        } else {
+        }
+        else {
             return new SimpleFunctionDescriptorImpl(
                     newOwner,
                     // TODO : safeSubstitute

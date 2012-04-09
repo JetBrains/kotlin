@@ -73,7 +73,8 @@ public class JetDiagnosticsTest extends JetLiteFixture {
                 // TODO: check there's not syntax errors
                 this.jetFile = null;
                 this.expectedText = this.clearText = textWithMarkers;
-            } else {
+            }
+            else {
                 expectedText = textWithMarkers;
                 clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
                 this.javaFile = null;

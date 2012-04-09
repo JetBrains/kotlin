@@ -39,7 +39,8 @@ public class LockPerf {
                                 if (counter.get() == 100000000) {
                                     cdl.countDown();
                                     break;
-                                } else {
+                                }
+                                else {
                                     counter.incrementAndGet();
                                 }
                             } finally {

@@ -123,7 +123,8 @@ public class OverridingUtil {
     private static int compiledValueParameterCount(CallableDescriptor callableDescriptor) {
         if (callableDescriptor.getReceiverParameter().exists()) {
             return 1 + callableDescriptor.getValueParameters().size();
-        } else {
+        }
+        else {
             return callableDescriptor.getValueParameters().size();
         }
     }
@@ -186,7 +187,8 @@ public class OverridingUtil {
                 }
             }
 
-        } else {
+        }
+        else {
 
             for (int i = 0; i < superValueParameters.size(); ++i) {
                 JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
@@ -209,9 +211,11 @@ public class OverridingUtil {
     private static JetType getUpperBound(JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
-        } else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        }
+        else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return ((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor()).getUpperBoundsAsType();
-        } else {
+        }
+        else {
             throw new IllegalStateException("unknown type constructor: " + type.getConstructor().getClass().getName());
         }
     }
@@ -253,7 +257,8 @@ public class OverridingUtil {
     private static void getOverridenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
         if (descriptor.getKind().isReal()) {
             r.put((ClassDescriptor) descriptor.getContainingDeclaration(), descriptor);
-        } else {
+        }
+        else {
             if (descriptor.getOverriddenDescriptors().isEmpty()) {
                 throw new IllegalStateException();
             }

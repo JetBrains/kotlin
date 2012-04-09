@@ -147,7 +147,8 @@ class DiType {
     public String toString() {
         if (typeParameters.size() > 0) {
             return clazz + "<...>";
-        } else {
+        }
+        else {
             return clazz.toString();
         }
     }

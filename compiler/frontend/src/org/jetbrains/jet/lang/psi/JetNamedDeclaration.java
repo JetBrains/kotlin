@@ -38,7 +38,8 @@ public abstract class JetNamedDeclaration extends JetDeclaration implements PsiN
         if (identifier != null) {
             String text = identifier.getText();
             return text != null ? JetPsiUtil.unquoteIdentifier(text) : null;
-        } else {
+        }
+        else {
             return null;
         }
     }

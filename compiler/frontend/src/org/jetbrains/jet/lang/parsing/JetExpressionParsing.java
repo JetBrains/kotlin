@@ -483,7 +483,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             if (!at(LBRACE)) {
                 assert _atSet(LABELS);
                 parsePrefixExpression();
-            } else {
+            }
+            else {
                 parseFunctionLiteral();
             }
             success = true;
@@ -704,7 +705,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(NULL_KEYWORD)) {
             parseOneTokenExpression(NULL);
-        } else {
+        }
+        else {
             return false;
         }
         return true;
@@ -735,7 +737,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 myJetParsing.parseModifierList(MODIFIER_LIST, true);
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
-            } else {
+            }
+            else {
                 parseExpression();
             }
 
@@ -780,13 +783,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
                     error("Expecting an element");
-                } else {
+                }
+                else {
                     parseExpressionPreferringBlocks();
                 }
-            } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
+            }
+            else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
                  errorAndAdvance("Expecting '->'");
             }
-        } else {
+        }
+        else {
             parseWhenEntryNotElse();
         }
 
@@ -809,7 +815,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
-        } else {
+        }
+        else {
             parseExpressionPreferringBlocks();
         }
         // SEMI is consumed in parseWhenEntry
@@ -833,24 +840,29 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an element");
-            } else {
+            }
+            else {
                 parseExpression();
             }
             condition.done(WHEN_CONDITION_IN_RANGE);
-        } else if (at(IS_KEYWORD) || at(NOT_IS)) {
+        }
+        else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting a type or a decomposer pattern");
-            } else {
+            }
+            else {
                 parsePattern();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
-        } else {
+        }
+        else {
             PsiBuilder.Marker expressionPattern = mark();
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an expression, is-condition or in-condition");
-            } else {
+            }
+            else {
                 parseExpression();
             }
             expressionPattern.done(EXPRESSION_PATTERN);
@@ -899,27 +911,33 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     rollbackMarker.rollbackTo();
                     parseBinaryExpression(Precedence.ELVIS);
                     pattern.done(DECOMPOSER_PATTERN);
-                } else {
+                }
+                else {
                     rollbackMarker.drop();
                     pattern.done(TYPE_PATTERN);
                 }
             }
-        } else if (at(HASH)) {
+        }
+        else if (at(HASH)) {
             parseTuplePattern(TUPLE_PATTERN_ENTRY);
             pattern.done(TUPLE_PATTERN);
         }
         else if (at(MUL)) {
             advance(); // MUL
             pattern.done(WILDCARD_PATTERN);
-        } else if (at(VAL_KEYWORD)) {
+        }
+        else if (at(VAL_KEYWORD)) {
             parseBindingPattern();
             pattern.done(BINDING_PATTERN);
-        } else if (at(OPEN_QUOTE)) {
+        }
+        else if (at(OPEN_QUOTE)) {
             parseStringTemplate();
             pattern.done(EXPRESSION_PATTERN);
-        } else if (parseLiteralConstant()) {
+        }
+        else if (parseLiteralConstant()) {
             pattern.done(EXPRESSION_PATTERN);
-        } else {
+        }
+        else {
             errorUntil("Pattern expected", TokenSet.create(RBRACE, ARROW));
             pattern.drop();
         }
@@ -997,14 +1015,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 parsePattern();
                 subCondition.done(WHEN_CONDITION_IS_PATTERN);
-            } else if (at(IN_KEYWORD) || at(NOT_IN)) {
+            }
+            else if (at(IN_KEYWORD) || at(NOT_IN)) {
                 PsiBuilder.Marker mark = mark();
                 advance(); // IN_KEYWORD ot NOT_IN
                 mark.done(OPERATION_REFERENCE);
 
                 parseExpression();
                 subCondition.done(WHEN_CONDITION_IN_RANGE);
-            } else {
+            }
+            else {
                 subCondition.drop();
             }
         }
@@ -1047,7 +1067,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker simpleName = mark();
         if (at(FIELD_IDENTIFIER)) {
             advance(); //
-        } else {
+        }
+        else {
             expect(IDENTIFIER, "Expecting an identifier");
         }
         simpleName.done(REFERENCE_EXPRESSION);
@@ -1066,7 +1087,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (declType != null) {
             decl.done(declType);
             return true;
-        } else {
+        }
+        else {
             decl.rollbackTo();
             return false;
         }
@@ -1343,9 +1365,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             if (at(SEMICOLON)) {
                 while (at(SEMICOLON)) advance(); // SEMICOLON
-            } else if (at(RBRACE)) {
+            }
+            else if (at(RBRACE)) {
                 break;
-            } else if (!myBuilder.newlineBeforeCurrentToken()) {
+            }
+            else if (!myBuilder.newlineBeforeCurrentToken()) {
                 errorUntil("Unexpected tokens (use ';' to separate expressions on the same line)", TokenSet.create(EOL_OR_SEMICOLON));
             }
         }
@@ -1740,7 +1764,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     advance(); // EQ
                     parseExpression();
                     entry.done(LABELED_TUPLE_ENTRY);
-                } else {
+                }
+                else {
                     parseExpression();
                 }
 

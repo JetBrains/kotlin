@@ -50,7 +50,8 @@ public class ArrayIterator implements IntrinsicMethod {
         if(containingDeclaration.equals(standardLibrary.getArray())) {
             v.invokestatic("jet/runtime/ArrayIterator", "iterator", "([Ljava/lang/Object;)Ljet/Iterator;");
             return StackValue.onStack(JetTypeMapper.TYPE_ITERATOR);
-        } else {
+        }
+        else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
                 ClassDescriptor arrayClass = standardLibrary.getPrimitiveArrayClassDescriptor(primitiveType);

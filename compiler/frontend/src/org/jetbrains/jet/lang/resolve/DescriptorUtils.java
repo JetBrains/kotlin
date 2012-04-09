@@ -271,9 +271,11 @@ public class DescriptorUtils {
         if (classifier instanceof ClassDescriptor) {
             ClassDescriptor clazz = (ClassDescriptor) classifier;
             return clazz.getKind() == ClassKind.OBJECT || clazz.getKind() == ClassKind.ENUM_ENTRY;
-        } else if (classifier instanceof TypeParameterDescriptor) {
+        }
+        else if (classifier instanceof TypeParameterDescriptor) {
             return false;
-        } else {
+        }
+        else {
             throw new IllegalStateException("unknown classifier: " + classifier);
         }
     }

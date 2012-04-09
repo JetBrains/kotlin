@@ -97,7 +97,8 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                             PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
                             if (myExprTypeCheckbox.isSelected()) {
                                 JetChangePropertyActions.addTypeAnnotation(myProject, myProperty, myExprType);
-                            } else {
+                            }
+                            else {
                                 JetChangePropertyActions.removeTypeAnnotation(myProject, myProperty);
                             }
                         }
@@ -132,13 +133,15 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
     protected void moveOffsetAfter(boolean success) {
         if (!myReplaceOccurrence || myExprMarker == null) {
             myEditor.getCaretModel().moveToOffset(myProperty.getTextRange().getEndOffset());
-        } else {
+        }
+        else {
             int startOffset = myExprMarker.getStartOffset();
             PsiFile file = myProperty.getContainingFile();
             PsiElement elementAt = file.findElementAt(startOffset);
             if (elementAt != null) {
                 myEditor.getCaretModel().moveToOffset(elementAt.getTextRange().getEndOffset());
-            } else {
+            }
+            else {
                 myEditor.getCaretModel().moveToOffset(myExprMarker.getEndOffset());
             }
         }

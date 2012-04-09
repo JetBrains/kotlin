@@ -54,7 +54,8 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
             PsiElement target = ref.resolve();
             if (target instanceof JetClass) {
                 highlightClassByKind((JetClass)target, expression);
-            } else if (target instanceof JetTypeParameter) {
+            }
+            else if (target instanceof JetTypeParameter) {
                 JetPsiChecker.highlightName(holder, expression, JetHighlightingColors.TYPE_PARAMETER);
             }
         }
@@ -90,12 +91,14 @@ class TypeKindHighlightingVisitor extends HighlightingVisitor {
         TextAttributesKey textAttributes = JetHighlightingColors.CLASS;
         if (klass.isTrait()) {
             textAttributes = JetHighlightingColors.TRAIT;
-        } else {
+        }
+        else {
             JetModifierList modifierList = klass.getModifierList();
             if (modifierList != null) {
                 if (modifierList.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
                     textAttributes = JetHighlightingColors.ANNOTATION;
-                } else if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+                }
+                else if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
                     textAttributes = JetHighlightingColors.ABSTRACT_CLASS;
                 }
             }

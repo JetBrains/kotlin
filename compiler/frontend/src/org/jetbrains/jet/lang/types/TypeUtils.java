@@ -324,7 +324,8 @@ public class TypeUtils {
                         if (lowerThanBound(typeChecker, argument, parameterDescriptor)) {
                             return true;
                         }
-                    } else {
+                    }
+                    else {
                         if (canHaveSubtypes(typeChecker, argument)) {
                             return true;
                         }
@@ -335,7 +336,8 @@ public class TypeUtils {
                         if (canHaveSubtypes(typeChecker, argument)) {
                             return true;
                         }
-                    } else {
+                    }
+                    else {
                         if (lowerThanBound(typeChecker, argument, parameterDescriptor)) {
                             return true;
                         }

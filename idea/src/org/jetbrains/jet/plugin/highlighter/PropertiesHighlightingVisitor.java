@@ -84,7 +84,8 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         boolean namespace = descriptor.getContainingDeclaration() instanceof NamespaceDescriptor;
         if (descriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
             JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.EXTENSION_PROPERTY);
-        } else {
+        }
+        else {
             JetPsiChecker.highlightName(holder, elementToHighlight,
                                         namespace ? JetHighlightingColors.NAMESPACE_PROPERTY : JetHighlightingColors.INSTANCE_PROPERTY
             );

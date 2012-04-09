@@ -155,7 +155,8 @@ public class KDocMojo extends KotlinCompileMojoBase {
             getLog().info("title: " + title);
             getLog().info("sources: " + sources);
             getLog().info("API docs ignore packages: " + ignorePackages);
-        } else {
+        }
+        else {
             getLog().warn("No KDocArguments available!");
         }
 

@@ -339,7 +339,8 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         if (notIdentifier) {
             return PlatformPatterns.psiElement().and(
                     new FilterPattern(new AndFilter(GENERAL_FILTER, NOT_IDENTIFIER_FILTER, placeFilter)));
-        } else {
+        }
+        else {
             return PlatformPatterns.psiElement().and(
                     new FilterPattern(new AndFilter(GENERAL_FILTER, placeFilter)));
         }

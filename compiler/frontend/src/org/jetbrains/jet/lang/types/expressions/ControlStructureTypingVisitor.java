@@ -201,7 +201,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 conditionScope = writableScope;
                 context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
-            } else {
+            }
+            else {
                 facade.getType(body, context.replaceScope(context.scope));
             }
         }
@@ -327,9 +328,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
-            } else if (nextResolutionResults.isNothing()) {
+            }
+            else if (nextResolutionResults.isNothing()) {
                 context.trace.report(NEXT_MISSING.on(loopRangeExpression));
-            } else {
+            }
+            else {
                 FunctionDescriptor nextFunction = nextResolutionResults.getResultingCall().getResultingDescriptor();
                 context.trace.record(LOOP_RANGE_NEXT, loopRange.getExpression(), nextFunction);
                 return nextFunction.getReturnType();
@@ -364,9 +367,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
-        } else if (hasNextResolutionResults.isNothing()) {
+        }
+        else if (hasNextResolutionResults.isNothing()) {
             return null;
-        } else {
+        }
+        else {
             assert hasNextResolutionResults.isSuccess();
             JetType hasNextReturnType = hasNextResolutionResults.getResultingDescriptor().getReturnType();
             if (!isBoolean(hasNextReturnType)) {
@@ -381,7 +386,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties("hasNext"));
         if (hasNextProperty == null) {
             return null;
-        } else {
+        }
+        else {
             JetType hasNextReturnType = hasNextProperty.getType();
             if (hasNextReturnType == null) {
                 // TODO : accessibility

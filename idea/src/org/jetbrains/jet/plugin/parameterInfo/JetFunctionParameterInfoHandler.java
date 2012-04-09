@@ -207,7 +207,8 @@ public class JetFunctionParameterInfoHandler implements
                     JetSimpleNameExpression refExpression = null;
                     if (calleeExpression instanceof JetSimpleNameExpression) {
                         refExpression = (JetSimpleNameExpression) calleeExpression; 
-                    } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+                    }
+                    else if (calleeExpression instanceof JetConstructorCalleeExpression) {
                         JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
                         if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
                             refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
@@ -244,7 +245,8 @@ public class JetFunctionParameterInfoHandler implements
                             JetValueArgument argument = valueArguments.get(i);
                             if (argument.isNamed()) {
                                 namedMode = true;
-                            } else {
+                            }
+                            else {
                                 ValueParameterDescriptor param = valueParameters.get(i);
                                 builder.append(renderParameter(param, false, bindingContext));
                                 if (i < currentParameterIndex) {
@@ -258,7 +260,8 @@ public class JetFunctionParameterInfoHandler implements
                                 }
                                 usedIndexes[i] = true;
                             }
-                        } else {
+                        }
+                        else {
                             ValueParameterDescriptor param = valueParameters.get(i);
                             builder.append(renderParameter(param, false, bindingContext));
                         }
@@ -309,7 +312,8 @@ public class JetFunctionParameterInfoHandler implements
                 if (builder.toString().isEmpty()) context.setUIComponentEnabled(false);
                 else context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
                                                           isDeprecated, false, color);
-            } else context.setUIComponentEnabled(false);
+            }
+            else context.setUIComponentEnabled(false);
         }
     }
 
@@ -336,7 +340,8 @@ public class JetFunctionParameterInfoHandler implements
         JetSimpleNameExpression refExpression = null;
         if (calleeExpression instanceof JetSimpleNameExpression) {
             refExpression = (JetSimpleNameExpression) calleeExpression;
-        } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+        }
+        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
             JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
             if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
                 refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
@@ -361,7 +366,8 @@ public class JetFunctionParameterInfoHandler implements
                         if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) continue;
                         itemsToShow.add(functionDescriptor);
                     }
-                } else if (variant instanceof ClassDescriptor) {
+                }
+                else if (variant instanceof ClassDescriptor) {
                    ClassDescriptor classDescriptor = (ClassDescriptor) variant;
                     if (classDescriptor.getName().equals(refName)) {
                         //todo: renamed classes?

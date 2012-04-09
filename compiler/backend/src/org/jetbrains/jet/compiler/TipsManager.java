@@ -62,7 +62,8 @@ public final class TipsManager {
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
             }
             return Collections.emptyList();
-        } else {
+        }
+        else {
             return getVariantsNoReceiver(expression, context);
         }
     }
@@ -72,7 +73,8 @@ public final class TipsManager {
         if (resolutionScope != null) {
             if (expression.getParent() instanceof JetImportDirective || expression.getParent() instanceof JetNamespaceHeader) {
                 return excludeNonPackageDescriptors(resolutionScope.getAllDescriptors());
-            } else {
+            }
+            else {
                 HashSet<DeclarationDescriptor> descriptorsSet = Sets.newHashSet();
 
                 ArrayList<ReceiverDescriptor> result = new ArrayList<ReceiverDescriptor>();

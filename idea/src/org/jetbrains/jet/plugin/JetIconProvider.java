@@ -49,7 +49,8 @@ public class JetIconProvider extends IconProvider {
             for (JetDeclaration declaration : declarations) {
                 if (mostImportantClass == null && declaration instanceof JetClassOrObject) {
                     mostImportantClass = (JetClassOrObject) declaration;
-                } else if (declaration instanceof JetClassOrObject) {
+                }
+                else if (declaration instanceof JetClassOrObject) {
                     JetClassOrObject object = (JetClassOrObject) declaration;
                     if (nameWithoutExtension.equals(object.getName())) {
                         mostImportantClass = object;

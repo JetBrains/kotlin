@@ -50,7 +50,8 @@ public class JetFileTreeNode extends PsiFileNode {
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetClassOrObject) {
                 result.add(new JetClassOrObjectTreeNode(file.getProject(), (JetClassOrObject) declaration, getSettings()));
-            } else if (getSettings().isShowMembers()) {
+            }
+            else if (getSettings().isShowMembers()) {
                 result.add(new JetDeclarationTreeNode(getProject(), declaration, getSettings()));
             }
         }

@@ -114,7 +114,8 @@ public class JvmMethodSignature {
         checkGenericsAvailable();
         if (kotlinParameterTypes == null) {
             return "";
-        } else {
+        }
+        else {
             return kotlinParameterTypes.get(i).getKotlinSignature();
         }
     }

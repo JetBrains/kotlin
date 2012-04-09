@@ -81,7 +81,8 @@ public class ForTestCompileRuntime {
             File file = stack.pop();
             if (file.isDirectory()) {
                 stack.addAll(Arrays.asList(file.listFiles()));
-            } else if (file.getName().endsWith(".java")) {
+            }
+            else if (file.getName().endsWith(".java")) {
                 r.add(file);
             }
         }

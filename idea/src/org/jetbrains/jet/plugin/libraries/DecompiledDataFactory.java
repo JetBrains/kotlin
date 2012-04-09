@@ -96,7 +96,8 @@ class DecompiledDataFactory {
                     myBuilder.append("\n");
                 }
             }
-        } else {
+        }
+        else {
             ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
             if (cd != null) {
                 appendDescriptor(cd, "");
@@ -135,13 +136,15 @@ class DecompiledDataFactory {
                 if (descriptor instanceof FunctionDescriptor) {
                     myBuilder.append(" { ").append(DECOMPILED_COMMENT).append(" }");
                     endOffset = myBuilder.length();
-                } else { // descriptor instanceof PropertyDescriptor
+                }
+                else { // descriptor instanceof PropertyDescriptor
                     if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
                         myBuilder.append(" ").append(DECOMPILED_COMMENT);
                     }
                 }
             }
-        } else if (descriptor instanceof ClassDescriptor) {
+        }
+        else if (descriptor instanceof ClassDescriptor) {
             myBuilder.append(" {\n");
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             boolean firstPassed = false;
@@ -161,7 +164,8 @@ class DecompiledDataFactory {
 
                 if (firstPassed) {
                     myBuilder.append("\n");
-                } else {
+                }
+                else {
                     firstPassed = true;
                 }
                 myBuilder.append(subindent);

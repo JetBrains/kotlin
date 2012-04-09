@@ -277,7 +277,8 @@ public class JetTestUtils {
 
             if ("//".equals(document.getCharsSequence().subSequence(lineStart, lineStart + 2).toString())) {
                 resultLines.add(document.getCharsSequence().subSequence(lineStart + 2, lineEnd));
-            } else {
+            }
+            else {
                 break;
             }
         }

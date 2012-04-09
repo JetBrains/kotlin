@@ -72,7 +72,8 @@ public class JetNameValidatorImpl implements JetNameValidator {
         PsiElement sibling;
         if (myAnchor != null) {
             sibling = myAnchor;
-        } else {
+        }
+        else {
             if (myContainer instanceof JetExpression) {
                 return checkElement(name, myContainer);
             }

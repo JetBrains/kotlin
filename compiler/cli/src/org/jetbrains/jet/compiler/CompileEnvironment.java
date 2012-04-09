@@ -129,13 +129,17 @@ public class CompileEnvironment {
     public void ensureRuntime() {
         if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.REGULAR) {
             ensureRuntime(environment);
-        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.JDK_HEADERS) {
+        }
+        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.JDK_HEADERS) {
             ensureJdkRuntime(environment);
-        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.STDLIB) {
+        }
+        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.STDLIB) {
             ensureJdkRuntime(environment);
-        } else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
+        }
+        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
             // nop
-        } else {
+        }
+        else {
             throw new IllegalStateException("unknown mode: " + compilerDependencies.getCompilerSpecialMode());
         }
     }

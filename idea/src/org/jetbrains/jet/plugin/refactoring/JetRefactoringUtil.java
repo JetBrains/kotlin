@@ -67,7 +67,8 @@ public class JetRefactoringUtil {
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
             callback.run(findExpression(editor, file, selectionStart, selectionEnd));
-        } else {
+        }
+        else {
             int offset = editor.getCaretModel().getOffset();
             smartSelectExpression(editor, file, offset, callback);
         }
@@ -93,9 +94,11 @@ public class JetRefactoringUtil {
                     if (qualifiedExpression.getReceiverExpression() != element) {
                         addExpression = false;
                     }
-                } else if (element.getParent() instanceof JetCallElement) {
+                }
+                else if (element.getParent() instanceof JetCallElement) {
                     addExpression = false;
-                } else if (element.getParent() instanceof JetOperationExpression) {
+                }
+                else if (element.getParent() instanceof JetOperationExpression) {
                     JetOperationExpression operationExpression = (JetOperationExpression) element.getParent();
                     if (operationExpression.getOperationReference() == element) {
                         addExpression = false;
@@ -183,9 +186,11 @@ public class JetRefactoringUtil {
             element.getTextRange().getEndOffset() != endOffset) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (!(element instanceof JetExpression)) {
+        }
+        else if (!(element instanceof JetExpression)) {
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (element instanceof JetBlockExpression) {
+        }
+        else if (element instanceof JetBlockExpression) {
             List<JetElement> statements = ((JetBlockExpression) element).getStatements();
             if (statements.size() == 1) {
                 JetElement elem = statements.get(0);

@@ -224,7 +224,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
         
         if (allBases.size() == 1) {
             return allBases.iterator().next();
-        } else {
+        }
+        else {
             // TODO remove parameter names and parameter default values
             return descriptor;
         }
@@ -233,7 +234,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
     private static <D extends CallableDescriptor> void getAllDescriptorsForValueArgumentsResolving(D descriptor, Set<D> dest) {
         if (descriptor.getOverriddenDescriptors().isEmpty()) {
             dest.add(descriptor);
-        } else {
+        }
+        else {
             for (CallableDescriptor overriden : descriptor.getOverriddenDescriptors()) {
                 getAllDescriptorsForValueArgumentsResolving((D) overriden, dest);
             }

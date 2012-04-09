@@ -35,7 +35,8 @@ public class KotlinQuoteHandler implements QuoteHandler {
             int start = iterator.getStart();
             int end = iterator.getEnd();
             return end - start >= 1 && offset == end - 1;
-        } else if (tokenType == JetTokens.CLOSING_QUOTE) {
+        }
+        else if (tokenType == JetTokens.CLOSING_QUOTE) {
             return true;
         }
         return false;

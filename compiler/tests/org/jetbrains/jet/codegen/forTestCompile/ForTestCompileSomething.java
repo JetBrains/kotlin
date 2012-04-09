@@ -81,12 +81,14 @@ abstract class ForTestCompileSomething {
             if (file.isFile()) {
                 os.putNextEntry(new JarEntry(pop.getFirst()));
                 Files.copy(file, os);
-            } else if (file.isDirectory()) {
+            }
+            else if (file.isDirectory()) {
                 for (File child : file.listFiles()) {
                     String path = pop.getFirst().isEmpty() ? child.getName() : pop.getFirst() + "/" + child.getName();
                     toCopy.add(new Pair<String, File>(path, child));
                 }
-            } else {
+            }
+            else {
                 throw new IllegalStateException();
             }
         }

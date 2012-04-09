@@ -256,7 +256,8 @@ public class JetStandardClasses {
                 } catch (IllegalAccessException e) {
                     throw new IllegalStateException(e);
                 }
-            } else if (type.isArray() && type.getComponentType() == ClassDescriptor.class) {
+            }
+            else if (type.isArray() && type.getComponentType() == ClassDescriptor.class) {
                 try {
                     ClassDescriptor[] array = (ClassDescriptor[]) field.get(null);
                     for (ClassDescriptor descriptor : array) {
