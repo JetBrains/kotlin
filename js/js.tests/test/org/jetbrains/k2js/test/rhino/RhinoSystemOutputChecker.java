@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.utils.GenerationUtils;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -58,7 +59,7 @@ public final class RhinoSystemOutputChecker implements RhinoResultChecker {
     }
 
     private void runMain(Context context, Scriptable scope) {
-        String callToMain = GenerationUtils.generateCallToMain("Anonymous", arguments);
+        String callToMain = GenerationUtils.generateCallToMain(Namer.getRootNamespaceName(), arguments);
         context.evaluateString(scope, callToMain, "function call", 0, null);
     }
 

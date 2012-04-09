@@ -41,7 +41,7 @@ public final class Namer {
     private static final String BACKING_FIELD_PREFIX = "$";
     private static final String SUPER_METHOD_NAME = "super_init";
     private static final String KOTLIN_OBJECT_NAME = "Kotlin";
-    private static final String ANONYMOUS_NAMESPACE = "Anonymous";
+    private static final String ROOT_NAMESPACE = "Root";
     private static final String RECEIVER_PARAMETER_NAME = "receiver";
     private static final String CLASSES_OBJECT_NAME = "classes";
 
@@ -51,8 +51,8 @@ public final class Namer {
     }
 
     @NotNull
-    public static String getAnonymousNamespaceName() {
-        return ANONYMOUS_NAMESPACE;
+    public static String getRootNamespaceName() {
+        return ROOT_NAMESPACE;
     }
 
     @NotNull

@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
@@ -45,7 +46,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", "Anonymous", "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {

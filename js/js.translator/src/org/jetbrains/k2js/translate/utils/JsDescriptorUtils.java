@@ -153,7 +153,7 @@ public final class JsDescriptorUtils {
     @NotNull
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
         if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
-            return Namer.getAnonymousNamespaceName();
+            return Namer.getRootNamespaceName();
         }
         else {
             return descriptor.getName();
