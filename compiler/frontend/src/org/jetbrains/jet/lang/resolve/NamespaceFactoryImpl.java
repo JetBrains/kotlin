@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -85,12 +86,20 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             currentOwner = namespaceDescriptor;
         }
 
-        String name = JetPsiUtil.safeName(namespaceHeader.getName());
-        NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, currentOwner, name, false,
-                                                                                        namespaceHeader.getLastPartExpression());
+        NamespaceDescriptorImpl namespaceDescriptor;
+        String name;
+        if (namespaceHeader.isRoot()) {
+            // again to register file in trace
+            namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, moduleDescriptor, "<root>", true, null);
+        }
+        else {
+            name = namespaceHeader.getName();
+            namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, currentOwner, name, namespaceHeader.isRoot(),
+                    namespaceHeader.getLastPartExpression());
 
-        trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
-        trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
+            trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
+            trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
+        }
 
         return namespaceDescriptor;
     }

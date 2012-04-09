@@ -263,6 +263,14 @@ public class JetTypeMapper {
             return getFQName(descriptor.getContainingDeclaration());
         }
 
+        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
+            return "";
+        }
+
+        if (descriptor instanceof ModuleDescriptor) {
+            throw new IllegalStateException("missed something");
+        }
+
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
@@ -271,12 +279,6 @@ public class JetTypeMapper {
         if(name.contains("/"))
             return name;
         if (container != null) {
-            if (container.getContainingDeclaration() instanceof ModuleDescriptor) {
-                return name;
-            }
-            if (container instanceof ModuleDescriptor) {
-                throw new IllegalStateException("missed something");
-            }
             String baseName = getFQName(container);
             if (!baseName.isEmpty()) { 
                 return baseName + (container instanceof NamespaceDescriptor ? "/" : "$") + name;

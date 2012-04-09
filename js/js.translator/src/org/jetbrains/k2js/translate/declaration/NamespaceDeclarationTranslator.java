@@ -95,7 +95,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     @NotNull
     private List<NamespaceTranslator> getTranslatorsForNonEmptyNamespaces() {
         List<NamespaceTranslator> namespaceTranslators = Lists.newArrayList();
-        for (NamespaceDescriptor descriptor : filterNonEmptyNamespaces(filterTopLevelNamespaces(namespaceDescriptors))) {
+        for (NamespaceDescriptor descriptor : filterNonEmptyNamespaces(filterTopLevelAndRootNamespaces(namespaceDescriptors))) {
             namespaceTranslators.add(new NamespaceTranslator(descriptor, classDeclarationTranslator, context()));
         }
         return namespaceTranslators;
@@ -123,10 +123,10 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static List<NamespaceDescriptor> filterTopLevelNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
+    private static List<NamespaceDescriptor> filterTopLevelAndRootNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
         List<NamespaceDescriptor> result = Lists.newArrayList();
         for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            if (JsDescriptorUtils.isTopLevelNamespace(descriptor)) {
+            if (JsDescriptorUtils.isTopLevelNamespace(descriptor) || JsDescriptorUtils.isRootNamespace(descriptor)) {
                 result.add(descriptor);
             }
         }

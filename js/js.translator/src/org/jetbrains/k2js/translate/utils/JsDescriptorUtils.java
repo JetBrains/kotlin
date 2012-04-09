@@ -152,10 +152,7 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static String getNameForNamespace(@NotNull NamespaceDescriptor descriptor) {
-        //if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
-        //    return Namer.getAnonymousNamespaceName();
-        //} else
-        if (descriptor.getName().isEmpty()) {
+        if (descriptor.getContainingDeclaration() instanceof ModuleDescriptor) {
             return Namer.getAnonymousNamespaceName();
         }
         else {
@@ -240,12 +237,12 @@ public final class JsDescriptorUtils {
     }
 
     public static boolean isTopLevelNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        NamespaceDescriptorParent containingDeclaration = namespaceDescriptor.getContainingDeclaration();
-        boolean containedInModule = !(containingDeclaration instanceof NamespaceDescriptor);
-        if (containedInModule) {
-            return true;
-        }
-        return containingDeclaration.getContainingDeclaration() instanceof ModuleDescriptor;
+        return namespaceDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor
+                && namespaceDescriptor.getContainingDeclaration().getContainingDeclaration() instanceof ModuleDescriptor;
+    }
+
+    public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
+        return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
     @NotNull
