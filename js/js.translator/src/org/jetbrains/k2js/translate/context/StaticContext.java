@@ -22,12 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
@@ -437,7 +437,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    if (JsDescriptorUtils.isTopLevelNamespace((NamespaceDescriptor) descriptor)) {
+                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor) descriptor)) {
                         return true;
                     }
                     return null;

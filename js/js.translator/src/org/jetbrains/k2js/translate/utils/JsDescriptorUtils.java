@@ -236,15 +236,6 @@ public final class JsDescriptorUtils {
         }
     }
 
-    public static boolean isTopLevelNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceDescriptor.getContainingDeclaration() instanceof NamespaceDescriptor
-                && namespaceDescriptor.getContainingDeclaration().getContainingDeclaration() instanceof ModuleDescriptor;
-    }
-
-    public static boolean isRootNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
-    }
-
     @NotNull
     public static List<DeclarationDescriptor> getContainedDescriptorsWhichAreNotPredefined(@NotNull NamespaceDescriptor namespace) {
         List<DeclarationDescriptor> result = Lists.newArrayList();

@@ -97,7 +97,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsPropertyInitializer> getNestedNamespaceDeclarations() {
-        if (JsDescriptorUtils.isRootNamespace(descriptor)) {
+        if (DescriptorUtils.isRootNamespace(descriptor)) {
             return Lists.newArrayList();
         }
         List<JsPropertyInitializer> result = Lists.newArrayList();
