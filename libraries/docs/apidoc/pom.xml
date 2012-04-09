@@ -16,51 +16,52 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>stdlib</artifactId>
+            <artifactId>runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>${junit-version}</version>
-      </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+        </dependency>
     </dependencies>
 
     <build>
-      <plugins>
-          <plugin>
-              <groupId>org.jetbrains.kotlin</groupId>
-              <artifactId>kdoc-maven-plugin</artifactId>
-              <version>${project.version}</version>
-              <configuration>
-                  <sources>
-                      <source>${basedir}/../../stdlib/src</source>
-                      <source>${basedir}/../../kunit/src/main/kotlin</source>
-                      <source>${basedir}/../../kotlin-jdbc/src/main/kotlin</source>
-                      <source>${basedir}/../../kotlin-swing/src/main/kotlin</source>
-                  </sources>
-                  <title>Kotlin API (${project.version})</title>
-                  <ignorePackages>
-                      <ignorePackage>com</ignorePackage>
-                      <ignorePackage>sun</ignorePackage>
-                      <ignorePackage>java</ignorePackage>
-                      <ignorePackage>jet</ignorePackage>
-                      <ignorePackage>junit</ignorePackage>
-                      <ignorePackage>org</ignorePackage>
-                  </ignorePackages>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kdoc-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <sources>
+                        <source>${basedir}/../../stdlib/src</source>
+                        <source>${basedir}/../../kunit/src/main/kotlin</source>
+                        <source>${basedir}/../../kotlin-jdbc/src/main/kotlin</source>
+                        <source>${basedir}/../../kotlin-swing/src/main/kotlin</source>
+                    </sources>
+                    <title>Kotlin API (${project.version})</title>
+                    <ignorePackages>
+                        <ignorePackage>com</ignorePackage>
+                        <ignorePackage>sun</ignorePackage>
+                        <ignorePackage>java</ignorePackage>
+                        <ignorePackage>jet</ignorePackage>
+                        <ignorePackage>junit</ignorePackage>
+                        <ignorePackage>org</ignorePackage>
+                    </ignorePackages>
 
-              </configuration>
+                </configuration>
 
-              <executions>
-                  <execution>
-                      <id>apidoc</id>
-                      <phase>install</phase>
-                      <goals>
-                          <goal>apidoc</goal>
-                      </goals>
-                  </execution>
-              </executions>
-          </plugin>
-      </plugins>
+                <executions>
+                    <execution>
+                        <id>apidoc</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>apidoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
