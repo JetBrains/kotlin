@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetMainDetector;
-import org.jetbrains.jet.plugin.project.IDEAConfig;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.generate.CodeGenerator;
@@ -49,8 +48,9 @@ public final class K2JSTranslator {
 
     public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
                                                             @NotNull String outputPath,
+                                                            @NotNull Config config,
                                                             @NotNull Project project) throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new IDEAConfig(project));
+        K2JSTranslator translator = new K2JSTranslator(config);
         String programCode = translator.generateProgramCode(files) + "\n";
         JetFile fileWithMain = JetMainDetector.getFileWithMain(files);
         if (fileWithMain == null) {

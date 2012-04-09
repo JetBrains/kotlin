@@ -24,8 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -38,30 +36,19 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.project.IDEAConfig;
 import org.jetbrains.k2js.config.Config;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
  */
-public enum AnalyzerFacadeForJS implements AnalyzerFacade {
-
-    INSTANCE;
+public final class AnalyzerFacadeForJS {
 
     private AnalyzerFacadeForJS() {
-    }
-
-    @NotNull
-    @Override
-    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
-                                       @NotNull Collection<JetFile> files,
-                                       @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-                                       @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
-        BindingContext context = analyzeFiles(files, new IDEAConfig(project));
-        return new AnalyzeExhaust(context, JetStandardLibrary.getInstance());
     }
 
     @NotNull
@@ -112,7 +99,7 @@ public enum AnalyzerFacadeForJS implements AnalyzerFacade {
             @Override
             public boolean apply(@Nullable PsiFile file) {
                 assert file instanceof JetFile;
-                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file.getOriginalFile());
+                @SuppressWarnings("UnnecessaryLocalVariable") boolean notLibFile = !jsLibFiles.contains(file);
                 return notLibFile;
             }
         };

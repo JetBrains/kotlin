@@ -33,16 +33,13 @@ public final class AnalyzerFacadeProvider {
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForFile(@NotNull JetFile file) {
-        if (JsModuleDetector.isJsProject(file.getProject())) {
-            return AnalyzerFacadeForJS.INSTANCE;
-        }
-        return AnalyzerFacadeForJVM.INSTANCE;
+        return getAnalyzerFacadeForProject(file.getProject());
     }
 
     @NotNull
     public static AnalyzerFacade getAnalyzerFacadeForProject(@NotNull Project project) {
         if (JsModuleDetector.isJsProject(project)) {
-            return AnalyzerFacadeForJS.INSTANCE;
+            return JSAnalyzerFacadeForIDEA.INSTANCE;
         }
         return AnalyzerFacadeForJVM.INSTANCE;
     }
