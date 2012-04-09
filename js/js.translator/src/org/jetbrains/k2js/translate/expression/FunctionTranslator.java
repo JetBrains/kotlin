@@ -85,6 +85,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         this.descriptor = getFunctionDescriptor(context.bindingContext(), functionDeclaration);
         this.functionDeclaration = functionDeclaration;
         this.functionObject = context().getFunctionObject(descriptor);
+        assert this.functionObject.getParameters().isEmpty();
         this.functionBody = functionObject.getBody();
         //NOTE: it's important we compute the context before we start the computation
         this.functionBodyContext = getFunctionBodyContext();
