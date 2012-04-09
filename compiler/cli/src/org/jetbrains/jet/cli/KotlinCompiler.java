@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.sampullara.cli.Args;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
@@ -105,23 +106,7 @@ public class KotlinCompiler {
             errStream.println(messageRenderer.render(Severity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, null, -1, -1));
         }
 
-        CompilerSpecialMode mode;
-        if (arguments.mode == null) {
-            mode = CompilerSpecialMode.REGULAR;
-        }
-        else {
-            computeMode:
-            {
-                for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
-                    if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
-                        mode = variant;
-                        break computeMode;
-                    }
-                }
-                // TODO: report properly
-                throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
-            }
-        }
+        CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
 
         File jdkHeadersJar;
         if (mode.includeJdkHeaders()) {
@@ -173,6 +158,22 @@ public class KotlinCompiler {
         finally {
             environment.dispose();
         }
+    }
+
+    @NotNull
+    private CompilerSpecialMode parseCompilerSpecialMode(@NotNull CompilerArguments arguments) {
+        if (arguments.mode == null) {
+            return CompilerSpecialMode.REGULAR;
+        }
+        else {
+            for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
+                if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
+                    return variant;
+                }
+            }
+        }
+        // TODO: report properly
+        throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
     }
 
     /**
