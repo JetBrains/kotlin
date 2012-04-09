@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.google.common.base.Predicates;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
@@ -32,17 +33,22 @@ import com.intellij.psi.util.PsiTreeUtil;
 import jet.Tuple2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,19 +65,22 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static<D extends ClassOrNamespaceDescriptor> Tuple2<BindingContext, D>
-            getBindingContextAndClassOrNamespaceDescriptor(@NotNull WritableSlice<FqName, D> slice,
+            getBindingContextAndClassOrNamespaceDescriptor(@NotNull ReadOnlySlice<FqName, D> slice,
                                                            @NotNull JetDeclaration declaration,
                                                            @Nullable FqName fqName) {
         if (fqName == null || DumbService.isDumb(declaration.getProject())) {
             return null;
         }
+        final Project project = declaration.getProject();
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
-        for (JetFile libraryFile : libraryFiles) {
-            BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(libraryFile);
-            D descriptor = bindingContext.get(slice, fqName);
-            if (descriptor != null) {
-                return new Tuple2<BindingContext, D>(bindingContext, descriptor);
-            }
+        BindingContext bindingContext = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project).analyzeFiles(
+                project,
+                libraryFiles,
+                Predicates.<PsiFile>alwaysTrue(),
+                JetControlFlowDataTraceFactory.EMPTY).getBindingContext();
+        D descriptor = bindingContext.get(slice, fqName);
+        if (descriptor != null) {
+            return new Tuple2<BindingContext, D>(bindingContext, descriptor);
         }
         return null;
     }

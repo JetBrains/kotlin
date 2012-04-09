@@ -37,6 +37,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
 /**
  * @author svtk
@@ -73,8 +74,7 @@ public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierL
     }
 
     private JetKeywordToken findVisibilityChangeTo(JetFile file) {
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
-                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR)).getBindingContext();
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
         DeclarationDescriptor descriptor;
         if (element instanceof JetParameter) {
             descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, element);

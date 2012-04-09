@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -245,6 +246,9 @@ public abstract class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             PsiElement actual = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, reference);
+            if (actual instanceof JetSimpleNameExpression) {
+                actual = ((JetSimpleNameExpression)actual).getIdentifier();
+            }
 
             String actualName = null;
             if (actual != null) {

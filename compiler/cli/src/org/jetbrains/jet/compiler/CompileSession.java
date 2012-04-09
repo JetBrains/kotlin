@@ -71,11 +71,8 @@ public class CompileSession {
     private final CompilerDependencies compilerDependencies;
     private AnalyzeExhaust bindingContext;
 
-    public CompileSession(JetCoreEnvironment environment,
-                          MessageRenderer messageRenderer,
-                          PrintStream errorStream,
-                          boolean verbose,
-                          CompilerSpecialMode mode) {
+    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose,
+            @NotNull CompilerDependencies compilerDependencies) {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
@@ -180,7 +177,8 @@ public class CompileSession {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-            environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
+                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
+                compilerDependencies);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollector, diagnostic);
