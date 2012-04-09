@@ -19,6 +19,7 @@ package org.jetbrains.k2js.facade;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -57,7 +58,9 @@ public final class K2JSTranslator {
             throw new RuntimeException("No file with main detected.");
         }
         String callToMain = generateCallToMain(fileWithMain, "");
-        FileWriter writer = new FileWriter(new File(outputPath));
+        File file = new File(outputPath);
+        FileUtil.createParentDirs(file);
+        FileWriter writer = new FileWriter(file);
         try {
             writer.write(programCode + callToMain);
         }
