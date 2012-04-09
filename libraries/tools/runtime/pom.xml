@@ -15,22 +15,34 @@
     <packaging>jar</packaging>
 
     <build>
+        <sourceDirectory>${project.basedir}/../../../runtime/src</sourceDirectory>
+
         <plugins>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                </configuration>
                 <executions>
-                    <!-- Use precompiled class files -->
                     <execution>
-                        <phase>compile</phase>
-                        <configuration>
-                            <tasks>
-                                <unzip src="${kotlin-sdk}/lib/kotlin-runtime.jar"
-                                       dest="${project.build.outputDirectory}"/>
-                            </tasks>
-                        </configuration>
+                        <phase>package</phase>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>run</goal>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
