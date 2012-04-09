@@ -60,7 +60,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
             JetFile file, JetControlFlowDataTraceFactory flowDataTraceFactory,
-            @NotNull CompilerSpecialMode compilerSpecialMode, @NotNull CompilerDependencies compilerDependencies) {
+            @NotNull CompilerDependencies compilerDependencies) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
         AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, flowDataTraceFactory, compilerDependencies);
