@@ -7,12 +7,6 @@ inline fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
   public override fun next() = nextElement()
 }
 
-fun a(e : java.util.Enumeration<Int>) {
-    for (i in e) {
-        i : Int
-    }
-}
-
 fun <T : Any> T?.iterator() = object {
     var hasNext = this@iterator != null
       private set
