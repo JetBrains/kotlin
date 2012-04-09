@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.NameUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 /**
@@ -54,6 +55,7 @@ public final class NamingScope {
 
     @NotNull
         /*package*/ JsName declareUnobfuscatableName(@NotNull String name) {
+        NameUtils.requireIdentifier(name);
         JsName declaredName = scope.declareName(name);
         declaredName.setObfuscatable(false);
         return declaredName;
