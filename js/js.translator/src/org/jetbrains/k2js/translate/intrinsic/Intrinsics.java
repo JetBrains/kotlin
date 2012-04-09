@@ -34,15 +34,15 @@ import org.jetbrains.k2js.translate.intrinsic.primitive.*;
 import org.jetbrains.k2js.translate.intrinsic.string.CharAtIntrinsic;
 import org.jetbrains.k2js.translate.intrinsic.tuple.TupleAccessIntrinsic;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getFunctionByName;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getPropertyByName;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getFunctionByName;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getPropertyByName;
 
 //TODO: class is monstrous, should be refactored.
 
@@ -288,7 +288,7 @@ public final class Intrinsics {
         }
 
         private boolean isUnaryOperation(@NotNull FunctionDescriptor descriptor) {
-            return !DescriptorUtils.hasParameters(descriptor);
+            return !JsDescriptorUtils.hasParameters(descriptor);
         }
     }
 }

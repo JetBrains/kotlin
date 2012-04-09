@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +97,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private List<JsPropertyInitializer> getNestedNamespaceDeclarations() {
         List<JsPropertyInitializer> result = Lists.newArrayList();
-        List<NamespaceDescriptor> nestedNamespaces = DescriptorUtils.getNestedNamespaces(descriptor);
+        List<NamespaceDescriptor> nestedNamespaces = JsDescriptorUtils.getNestedNamespaces(descriptor);
         for (NamespaceDescriptor nestedNamespace : nestedNamespaces) {
             NamespaceTranslator nestedNamespaceTranslator = new NamespaceTranslator(nestedNamespace, classDeclarationTranslator, context());
             result.add(nestedNamespaceTranslator.getDeclarationAsInitializer());

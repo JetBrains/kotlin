@@ -39,7 +39,7 @@ import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssi
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isEquals;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isEquals;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.*;

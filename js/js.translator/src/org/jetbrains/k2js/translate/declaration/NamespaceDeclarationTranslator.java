@@ -27,14 +27,14 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getAllNonNativeNamespaceDescriptors;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getAllClassesDefinedInNamespace;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 
 /**
@@ -126,7 +126,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private static List<NamespaceDescriptor> filterTopLevelNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
         List<NamespaceDescriptor> result = Lists.newArrayList();
         for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            if (DescriptorUtils.isTopLevelNamespace(descriptor)) {
+            if (JsDescriptorUtils.isTopLevelNamespace(descriptor)) {
                 result.add(descriptor);
             }
         }
@@ -137,7 +137,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private static List<NamespaceDescriptor> filterNonEmptyNamespaces(@NotNull List<NamespaceDescriptor> namespaceDescriptors) {
         List<NamespaceDescriptor> result = Lists.newArrayList();
         for (NamespaceDescriptor descriptor : namespaceDescriptors) {
-            if (!DescriptorUtils.isNamespaceEmpty(descriptor)) {
+            if (!JsDescriptorUtils.isNamespaceEmpty(descriptor)) {
                 result.add(descriptor);
             }
         }

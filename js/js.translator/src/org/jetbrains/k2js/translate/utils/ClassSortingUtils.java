@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getSuperclassDescriptors;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSuperclassDescriptors;
 
 
 //TODO: can optimise using less dumb implementation

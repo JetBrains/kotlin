@@ -34,7 +34,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_GET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.INDEXED_LVALUE_SET;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -140,7 +140,7 @@ public final class BindingUtils {
     public static boolean hasAncestorClass(@NotNull BindingContext context, @NotNull JetClassOrObject classDeclaration) {
         ClassDescriptor classDescriptor = getClassDescriptor(context, classDeclaration);
         List<ClassDescriptor> superclassDescriptors = getSuperclassDescriptors(classDescriptor);
-        return (DescriptorUtils.findAncestorClass(superclassDescriptors) != null);
+        return (JsDescriptorUtils.findAncestorClass(superclassDescriptors) != null);
     }
 
     public static boolean isStatement(@NotNull BindingContext context, @NotNull JetExpression expression) {

@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isConstructorDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**

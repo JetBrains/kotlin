@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
  * @author Pavel Talanov

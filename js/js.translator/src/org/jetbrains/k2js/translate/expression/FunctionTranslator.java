@@ -26,30 +26,23 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
-import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 import org.jetbrains.k2js.translate.utils.closure.ClosureContext;
 import org.jetbrains.k2js.translate.utils.closure.ClosureUtils;
-import org.jetbrains.k2js.translate.utils.mutator.Mutator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToBlock;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
-import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
 
 /**
@@ -228,7 +221,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return DescriptorUtils.isExtensionFunction(descriptor) && !isLiteral();
+        return JsDescriptorUtils.isExtensionFunction(descriptor) && !isLiteral();
     }
 
     private boolean isLiteral() {

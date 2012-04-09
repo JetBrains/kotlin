@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.intrinsic.CompareToIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.isCompareTo;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isCompareTo;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.applyIntrinsicToBinaryExpression;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.isIntrinsicOperation;

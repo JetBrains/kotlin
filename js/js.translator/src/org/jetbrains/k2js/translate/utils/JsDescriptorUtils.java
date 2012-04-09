@@ -36,9 +36,9 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.isNotAny;
 /**
  * @author Pavel Talanov
  */
-public final class DescriptorUtils {
+public final class JsDescriptorUtils {
 
-    private DescriptorUtils() {
+    private JsDescriptorUtils() {
     }
 
     private static int valueParametersCount(@NotNull FunctionDescriptor functionDescriptor) {

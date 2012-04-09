@@ -27,14 +27,14 @@ import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -437,7 +437,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor)descriptor)) {
+                    if (JsDescriptorUtils.isTopLevelNamespace((NamespaceDescriptor) descriptor)) {
                         return true;
                     }
                     return null;

@@ -43,8 +43,8 @@ import java.util.Map;
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForCallExpression;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedReceiverDescriptor;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 
 /**
