@@ -48,8 +48,8 @@
     <modules>
         <module>tools</module>
 
-        <module>kunit</module>
         <module>stdlib</module>
+        <module>kunit</module>
         <module>kotlin-jdbc</module>
         <module>kotlin-swing</module>
 

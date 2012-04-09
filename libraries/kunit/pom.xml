@@ -18,7 +18,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>runtime</artifactId>
             <version>${project.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>stdlib</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
