@@ -135,6 +135,9 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
     protected static void configureBaseCompilerArguments(Log log, CompilerArguments arguments, String module,
                                                          List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
+        // don't include runtime, it should be in maven dependencies
+        arguments.mode = "stdlib";
+
         if (module != null) {
             log.info("Compiling Kotlin module " + module);
             arguments.setModule(module);
