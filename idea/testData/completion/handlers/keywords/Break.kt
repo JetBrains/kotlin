@@ -1,0 +1,3 @@
+fun t() {
+    brea<caret>
+}

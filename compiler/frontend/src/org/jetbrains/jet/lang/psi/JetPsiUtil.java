@@ -299,4 +299,12 @@ public class JetPsiUtil {
         }
         return null;
     }
+
+    public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
+        if (typeReference == null) {
+            return false;
+        }
+
+        return "Unit".equals(typeReference.getText());
+    }
 }

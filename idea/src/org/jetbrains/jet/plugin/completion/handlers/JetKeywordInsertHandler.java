@@ -21,6 +21,11 @@ import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
@@ -29,17 +34,40 @@ import java.util.Set;
  */
 public class JetKeywordInsertHandler implements InsertHandler<LookupElement> {
 
-    private final static Set<String> NO_SPACE_AFTER = Sets.newHashSet("this", "super", "This", "true", "false", "null");
+    private final static Set<String> NO_SPACE_AFTER = Sets.newHashSet(
+            JetTokens.THIS_KEYWORD.toString(),
+            JetTokens.SUPER_KEYWORD.toString(),
+            JetTokens.CAPITALIZED_THIS_KEYWORD.toString(),
+            JetTokens.THIS_KEYWORD.toString(),
+            JetTokens.FALSE_KEYWORD.toString(),
+            JetTokens.NULL_KEYWORD.toString(),
+            JetTokens.BREAK_KEYWORD.toString(),
+            JetTokens.CONTINUE_KEYWORD.toString());
 
     @Override
     public void handleInsert(InsertionContext context, LookupElement item) {
         String keyword = item.getLookupString();
 
-        // Add space after keyword
-        if (!NO_SPACE_AFTER.contains(keyword)) {
-            context.setAddCompletionChar(false);
-            final TailType tailType = TailType.SPACE;
-            tailType.processTail(context.getEditor(), context.getTailOffset());
+        if (NO_SPACE_AFTER.contains(keyword)) {
+            return;
         }
+
+        if (keyword.equals(JetTokens.RETURN_KEYWORD.toString())) {
+            PsiElement element = context.getFile().findElementAt(context.getStartOffset());
+            if (element != null) {
+                JetFunction jetFunction = PsiTreeUtil.getParentOfType(element, JetFunction.class);
+                if (jetFunction != null) {
+                    if (!jetFunction.hasDeclaredReturnType() || JetPsiUtil.isVoidType(jetFunction.getReturnTypeRef())) {
+                        // No space for void function
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Add space after keyword
+        context.setAddCompletionChar(false);
+        final TailType tailType = TailType.SPACE;
+        tailType.processTail(context.getEditor(), context.getTailOffset());
     }
 }

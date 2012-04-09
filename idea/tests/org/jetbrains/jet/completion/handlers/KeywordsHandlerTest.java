@@ -39,9 +39,35 @@ public class KeywordsHandlerTest extends LightCompletionTestCase {
         checkResultByText("fun test() { null<caret> }");
     }
 
+    public void testBreak() {
+        doFileTest();
+    }
+
+    public void testReturnInEmptyType() {
+        doFileTest();
+    }
+
+    public void testReturnInProperty() {
+        doFileTest();
+    }
+
+    public void testReturnInTypeFunction() {
+        doFileTest();
+    }
+
+    public void testReturnInUnit() {
+        doFileTest();
+    }
+
+    protected void doFileTest() {
+        configureByFile(getTestName(false) + ".kt");
+        complete();
+        checkResultByFile(getTestName(false) + "_after.kt");
+    }
+
     @Override
     protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/").getPath() +
+        return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/handlers/keywords").getPath() +
                File.separator;
     }
 }
