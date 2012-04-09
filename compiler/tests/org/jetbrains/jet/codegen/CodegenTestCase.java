@@ -37,13 +37,12 @@ import java.util.Collections;
  */
 public abstract class CodegenTestCase extends JetLiteFixture {
 
-    protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args)
-        throws IllegalAccessException {
+    protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
         boolean caught = false;
         try {
             foo.invoke(instance, args);
         }
-        catch (InvocationTargetException ex) {
+        catch(InvocationTargetException ex) {
             caught = exceptionClass.isInstance(ex.getTargetException());
         }
         assertTrue(caught);
@@ -61,17 +60,16 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected void loadText(final String text) {
-        myFile = (JetFile)createFile("a.jet", text);
+        myFile = (JetFile) createFile("a.jet", text);
     }
 
     @Override
     protected String loadFile(final String name) {
         try {
             final String content = doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
-            myFile = (JetFile)createFile(name, content);
+            myFile = (JetFile) createFile(name, content);
             return content;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -89,12 +87,10 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         String actual;
         try {
             actual = blackBox();
-        }
-        catch (NoClassDefFoundError e) {
+        } catch (NoClassDefFoundError e) {
             System.out.println(generateToText());
             throw e;
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             System.out.println(generateToText());
             throw new RuntimeException(e);
         }
@@ -112,10 +108,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
             String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
             Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box");
-            return (String)method.invoke(null);
-        }
-        finally {
-            loader.dispose();
+            return (String) method.invoke(null);
+        } finally {
+           loader.dispose();
         }
     }
 
@@ -128,8 +123,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
-        final AnalyzeExhaust analyzeExhaust =
-            AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(myFile, JetControlFlowDataTraceFactory.EMPTY);
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(myFile, JetControlFlowDataTraceFactory.EMPTY);
         GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
@@ -149,11 +143,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
         try {
             return createClassLoader(state).loadClass(fqName);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return null;
@@ -162,10 +154,8 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     protected Class loadClass(String fqName, @NotNull ClassFileFactory state) {
         try {
             return createClassLoader(state).loadClass(fqName);
-        }
-        catch (ClassNotFoundException e) {
-        }
-        catch (MalformedURLException e) {
+        } catch (ClassNotFoundException e) {
+        } catch (MalformedURLException e) {
         }
 
         fail("No classfile was generated for: " + fqName);
@@ -178,8 +168,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
             ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
 
             return generateCommon(classBuilderFactory).getFactory();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
         }
@@ -200,12 +189,10 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
                 r = method;
             }
-            if (r == null) {
+            if (r == null)
                 throw new AssertionError();
-            }
             return r;
-        }
-        catch (Error e) {
+        } catch (Error e) {
             System.out.println(generateToText());
             throw e;
         }
@@ -233,11 +220,11 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     protected static void assertIsCurrentTime(long returnValue) {
         long currentTime = System.currentTimeMillis();
         long diff = Math.abs(returnValue - currentTime);
-        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
-                   diff <= 1L);
+        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)", diff <= 1L);
     }
 
     protected Class loadImplementationClass(@NotNull ClassFileFactory codegens, final String name) {
         return loadClass(name, codegens);
     }
+
 }

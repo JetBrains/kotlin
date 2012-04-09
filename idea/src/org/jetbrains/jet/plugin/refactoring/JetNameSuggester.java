@@ -22,6 +22,7 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -29,12 +30,11 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 /**
  * User: Alefas
@@ -68,7 +68,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = getContextForSingleFile((JetFile)expression.getContainingFile());
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)expression.getContainingFile());
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);

@@ -34,11 +34,11 @@ public class GenerationUtils {
     }
 
     public static GenerationState compileFileGetGenerationState(JetFile psiFile) {
-        final AnalyzeExhaust analyzeExhaust =
-            AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, JetControlFlowDataTraceFactory.EMPTY);
-        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust,
-                                                    Collections.singletonList(psiFile));
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile, JetControlFlowDataTraceFactory.EMPTY);
+        GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false),
+                                                    analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }
+
 }

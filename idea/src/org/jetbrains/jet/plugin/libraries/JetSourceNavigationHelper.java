@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -66,7 +67,7 @@ public class JetSourceNavigationHelper {
         }
         final List<JetFile> libraryFiles = findAllSourceFilesWhichContainIdentifier(declaration);
         for (JetFile libraryFile : libraryFiles) {
-            BindingContext bindingContext = AnalyzeSingleFileUtil.analyzeSingleFileWithCache(libraryFile).getBindingContext();
+            BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(libraryFile);
             D descriptor = bindingContext.get(slice, fqName);
             if (descriptor != null) {
                 return new Tuple2<BindingContext, D>(bindingContext, descriptor);
