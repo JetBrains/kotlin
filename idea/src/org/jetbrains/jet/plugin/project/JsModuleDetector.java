@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class JsModuleDetector {
 
-    public static final String INDICATION_FILE_NAME = "k2js.txt";
+    public static final String INDICATION_FILE_NAME = ".kotlin-js";
 
     private JsModuleDetector() {
     }
