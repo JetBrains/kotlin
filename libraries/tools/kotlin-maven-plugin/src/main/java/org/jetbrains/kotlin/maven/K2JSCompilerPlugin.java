@@ -48,7 +48,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                 Config config = new Config(project) {
                     @NotNull
                     @Override
-                    public List<JetFile> getLibFiles() {
+                    protected List<JetFile> generateLibFiles() {
                         return new ArrayList<JetFile>();
                     }
                 };
