@@ -34,13 +34,13 @@ import com.sun.jdi.ReferenceType;
 import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.NamespaceCodegen;
 import org.jetbrains.jet.di.InjectorForJetTypeMapper;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.*;
@@ -67,7 +67,8 @@ public class JetPositionManager implements PositionManager {
         int lineNumber;
         try {
             lineNumber = location.lineNumber() - 1;
-        } catch (InternalError e) {
+        }
+        catch (InternalError e) {
             lineNumber = -1;
         }
 
@@ -86,8 +87,8 @@ public class JetPositionManager implements PositionManager {
             if (files.length == 1 && files[0] instanceof JetFile) {
                 return files[0];
             }
-
-        } catch (AbsentInformationException e) {
+        }
+        catch (AbsentInformationException e) {
             throw new NoDataException();
         }
 
@@ -126,7 +127,7 @@ public class JetPositionManager implements PositionManager {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-                final JetFile file = (JetFile) sourcePosition.getFile();
+                final JetFile file = (JetFile)sourcePosition.getFile();
                 JetTypeMapper typeMapper = prepareTypeMapper(file);
 
                 JetClassOrObject jetClass = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class);
@@ -155,7 +156,7 @@ public class JetPositionManager implements PositionManager {
         }
         final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
         JetTypeMapper typeMapper = new InjectorForJetTypeMapper(
-                analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), Collections.singletonList(file)).getJetTypeMapper();
+            analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), Collections.singletonList(file)).getJetTypeMapper();
         myTypeMappers.put(file, typeMapper);
         return typeMapper;
     }
@@ -167,15 +168,15 @@ public class JetPositionManager implements PositionManager {
             throw new NoDataException();
         }
         try {
-          int line = position.getLine() + 1;
-          List<Location> locations = myDebugProcess.getVirtualMachineProxy().versionHigher("1.4")
-                                     ? type.locationsOfLine(DebugProcess.JAVA_STRATUM, null, line)
-                                     : type.locationsOfLine(line);
-          if (locations == null || locations.isEmpty()) throw new NoDataException();
-          return locations;
+            int line = position.getLine() + 1;
+            List<Location> locations = myDebugProcess.getVirtualMachineProxy().versionHigher("1.4")
+                                       ? type.locationsOfLine(DebugProcess.JAVA_STRATUM, null, line)
+                                       : type.locationsOfLine(line);
+            if (locations == null || locations.isEmpty()) throw new NoDataException();
+            return locations;
         }
         catch (AbsentInformationException e) {
-          throw new NoDataException();
+            throw new NoDataException();
         }
     }
 

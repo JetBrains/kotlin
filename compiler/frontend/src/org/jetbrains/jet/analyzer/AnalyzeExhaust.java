@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.analyzer;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,8 @@ public class AnalyzeExhaust {
         this.standardLibrary = standardLibrary;
     }
 
-    @NotNull public BindingContext getBindingContext() {
+    @NotNull
+    public BindingContext getBindingContext() {
         return bindingContext;
     }
 

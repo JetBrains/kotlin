@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForJvmCodegen;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
@@ -34,8 +35,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.Progress;
 
 import java.util.List;
@@ -52,18 +51,15 @@ public class GenerationState {
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
-        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files, CompilerSpecialMode.REGULAR);
+        this(project, builderFactory, Progress.DEAF, analyzeExhaust, files);
     }
 
-    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress,
-            @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files, @NotNull CompilerSpecialMode compilerSpecialMode) {
+    public GenerationState(Project project, ClassBuilderFactory builderFactory, Progress progress, @NotNull AnalyzeExhaust exhaust, @NotNull List<JetFile> files) {
         this.project = project;
         this.progress = progress;
         this.analyzeExhaust = exhaust;
         this.files = files;
-        this.injector = new InjectorForJvmCodegen(
-                analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(),
-                this.files, project, compilerSpecialMode, this, builderFactory);
+        this.injector = new InjectorForJvmCodegen(analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), this.files, project, this, builderFactory);
     }
 
     @NotNull
@@ -88,11 +84,11 @@ public class GenerationState {
     }
 
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
-        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
+        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName() + ".class");
     }
 
     public ClassBuilder forTraitImplementation(ClassDescriptor aClass) {
-        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
+        return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), OwnerKind.TRAIT_IMPL).getInternalName() + ".class");
     }
 
     public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {

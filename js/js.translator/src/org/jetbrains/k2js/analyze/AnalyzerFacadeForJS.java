@@ -18,6 +18,8 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -36,10 +38,10 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -58,7 +60,7 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
+    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
                                               @NotNull Config config) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
@@ -76,7 +78,7 @@ public final class AnalyzerFacadeForJS {
         return bindingTraceContext.getBindingContext();
     }
 
-    private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+    private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
@@ -84,10 +86,10 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static List<JetFile> withJsLibAdded(@NotNull List<JetFile> files, @NotNull Config config) {
-        List<JetFile> allFiles = new ArrayList<JetFile>();
-        allFiles.addAll(files);
-        allFiles.addAll(config.getLibFiles());
+    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        Set<JetFile> allFiles = Sets.newHashSet();
+        allFiles.addAll(toOriginal(files));
+        allFiles.addAll(toOriginal(config.getLibFiles()));
         return allFiles;
     }
 
@@ -103,6 +105,17 @@ public final class AnalyzerFacadeForJS {
         };
     }
 
+    @NotNull
+    private static Collection<JetFile> toOriginal(@NotNull Collection<JetFile> files) {
+        Collection<JetFile> result = Lists.newArrayList();
+        for (JetFile file : files) {
+            result.add(file);
+        }
+        return result;
+    }
+
+    //TODO: exclude?
+    @NotNull
     public static BindingContext analyzeNamespace(@NotNull JetFile file) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
         Project project = file.getProject();

@@ -31,13 +31,11 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.awt.*;
@@ -190,12 +188,9 @@ public class JetFunctionParameterInfoHandler implements
         if (parameterOwner instanceof JetValueArgumentList) {
             JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
             if (descriptor instanceof FunctionDescriptor) {
-                JetFile file = (JetFile) argumentList.getContainingFile();
-                BindingContext bindingContext =
-                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
-                                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
-                            .getBindingContext();
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                JetFile file = (JetFile)argumentList.getContainingFile();
+                BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
                 List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -330,12 +325,12 @@ public class JetFunctionParameterInfoHandler implements
         JetValueArgumentList argumentList = (JetValueArgumentList) element;
         JetCallElement callExpression;
         if (element.getParent() instanceof JetCallElement) {
-            callExpression = (JetCallElement) element.getParent();
-        } else return null;
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(
-                (JetFile) file,
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
-                    .getBindingContext();
+            callExpression = (JetCallElement)element.getParent();
+        }
+        else {
+            return null;
+        }
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)file);
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;

@@ -38,13 +38,12 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.refactoring.*;
 
 import java.util.*;
@@ -67,7 +66,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         };
         try {
             JetRefactoringUtil.selectExpression(editor, file, callback);
-        } catch (JetRefactoringUtil.IntroduceRefactoringException e) {
+        }
+        catch (JetRefactoringUtil.IntroduceRefactoringException e) {
             showErrorHint(project, editor, e.getMessage());
         }
     }
@@ -78,34 +78,35 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             return;
         }
         if (_expression.getParent() instanceof JetParenthesizedExpression) {
-            _expression = (JetExpression) _expression.getParent();
+            _expression = (JetExpression)_expression.getParent();
         }
         final JetExpression expression = _expression;
         if (expression.getParent() instanceof JetQualifiedExpression) {
-            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression.getParent();
+            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression)expression.getParent();
             if (qualifiedExpression.getReceiverExpression() != expression) {
                 showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
                 return;
             }
-        } else if (expression.getParent() instanceof JetCallElement || expression instanceof JetStatementExpression) {
+        }
+        else if (expression.getParent() instanceof JetCallElement || expression instanceof JetStatementExpression) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
-        } else if (expression.getParent() instanceof JetOperationExpression) {
-            JetOperationExpression operationExpression = (JetOperationExpression) expression.getParent();
+        }
+        else if (expression.getParent() instanceof JetOperationExpression) {
+            JetOperationExpression operationExpression = (JetOperationExpression)expression.getParent();
             if (operationExpression.getOperationReference() == expression) {
                 showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
                 return;
             }
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
-                .getBindingContext();
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)expression.getContainingFile());
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         if (expressionType instanceof NamespaceType) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.namespace.expression"));
             return;
-        } if (expressionType != null &&
-              JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getInstance().getTuple0Type(), expressionType)) {
+        }
+        if (expressionType != null &&
+            JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.getInstance().getTuple0Type(), expressionType)) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.expression.has.unit.type"));
             return;
         }
@@ -116,8 +117,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             return;
         }
         final boolean isInplaceAvailableOnDataContext =
-                editor.getSettings().isVariableInplaceRenameEnabled() &&
-                !ApplicationManager.getApplication().isUnitTestMode();
+            editor.getSettings().isVariableInplaceRenameEnabled() &&
+            !ApplicationManager.getApplication().isUnitTestMode();
         final ArrayList<JetExpression> allOccurrences = findOccurrences(occurrenceContainer, expression);
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
             @Override
@@ -127,10 +128,11 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 if (OccurrencesChooser.ReplaceChoice.ALL == replaceChoice) {
                     if (allOccurrences.size() > 1) replaceOccurrence = true;
                     allReplaces = allOccurrences;
-                } else {
+                }
+                else {
                     allReplaces = Collections.singletonList(expression);
                 }
-                
+
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
                 JetNameValidatorImpl validator = new JetNameValidatorImpl(commonContainer,
@@ -144,8 +146,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
                 final Runnable introduceRunnable = introduceVariable(project, expression, suggestedNames, allReplaces, commonContainer,
-                                                               commonParent, replaceOccurrence, propertyRef, references,
-                                                               reference);
+                                                                     commonParent, replaceOccurrence, propertyRef, references,
+                                                                     reference);
                 final boolean finalReplaceOccurrence = replaceOccurrence;
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                     @Override
@@ -158,13 +160,13 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                             if (isInplaceAvailableOnDataContext) {
                                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                                 PsiDocumentManager.getInstance(project).
-                                        doPostponedOperationsAndUnblockDocument(editor.getDocument());
+                                    doPostponedOperationsAndUnblockDocument(editor.getDocument());
                                 JetInplaceVariableIntroducer variableIntroducer =
-                                        new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
-                                                                         references.toArray(new JetExpression[references.size()]),
-                                                                         reference.get(), finalReplaceOccurrence,
-                                                                         property, /*todo*/false, /*todo*/false,
-                                                                         expressionType);
+                                    new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
+                                                                     references.toArray(new JetExpression[references.size()]),
+                                                                     reference.get(), finalReplaceOccurrence,
+                                                                     property, /*todo*/false, /*todo*/false,
+                                                                     expressionType);
                                 variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
                             }
                         }
@@ -174,147 +176,163 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         };
         if (isInplaceAvailableOnDataContext) {
             OccurrencesChooser.<JetExpression>simpleChooser(editor).
-                    showChooser(expression, allOccurrences, callback);
-        } else {
+                showChooser(expression, allOccurrences, callback);
+        }
+        else {
             callback.pass(OccurrencesChooser.ReplaceChoice.ALL);
         }
     }
-    
-    private static Runnable introduceVariable(final @NotNull Project project, final JetExpression expression, 
+
+    private static Runnable introduceVariable(final @NotNull Project project, final JetExpression expression,
                                               final String[] suggestedNames,
                                               final List<JetExpression> allReplaces, final PsiElement commonContainer,
                                               final PsiElement commonParent, final boolean replaceOccurrence,
                                               final Ref<JetProperty> propertyRef,
-                                              final ArrayList<JetExpression> references, 
+                                              final ArrayList<JetExpression> references,
                                               final Ref<JetExpression> reference) {
-       return new Runnable() {
-           @Override
-           public void run() {
-               String variableText = "val " + suggestedNames[0] + " = ";
-               if (expression instanceof JetParenthesizedExpression) {
-                   JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
-                   JetExpression innerExpression = parenthesizedExpression.getExpression();
-                   if (innerExpression != null) variableText += innerExpression.getText();
-                   else variableText += expression.getText();
-               } else variableText += expression.getText();
-               JetProperty property = JetPsiFactory.createProperty(project, variableText);
-               if (property == null) return;
-               PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
-               if (anchor == null) return;
-               boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
-                           commonContainer instanceof JetClassBody ||
-                           commonContainer instanceof JetClassInitializer);
-               if (!needBraces) {
-                   property = (JetProperty) commonContainer.addBefore(property, anchor);
-                   commonContainer.addBefore(JetPsiFactory.createWhiteSpace(project, "\n"), anchor);
-               } else {
-                   JetExpression emptyBody = JetPsiFactory.createEmptyBody(project);
-                   PsiElement firstChild = emptyBody.getFirstChild();
-                   emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                   if (replaceOccurrence && commonContainer != null) {
-                       for (JetExpression replace : allReplaces) {
-                           boolean isActualExpression = expression == replace;
-                           JetExpression element = (JetExpression) replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
-                           if (isActualExpression) reference.set(element);
-                       }
-                       PsiElement oldElement = commonContainer;
-                       if (commonContainer instanceof JetWhenEntry) {
-                           JetExpression body = ((JetWhenEntry) commonContainer).getExpression();
-                           if (body != null) {
-                               oldElement = body;
-                           }
-                       } else if (commonContainer instanceof JetNamedFunction) {
-                           JetExpression body = ((JetNamedFunction) commonContainer).getBodyExpression();
-                           if (body != null) {
-                               oldElement = body;
-                           }
-                       } else if (commonContainer instanceof JetSecondaryConstructor) {
-                           JetExpression body = ((JetSecondaryConstructor) commonContainer).getBodyExpression();
-                           if (body != null) {
-                               oldElement = body;
-                           }
-                       } else if (commonContainer instanceof JetContainerNode) {
-                           JetContainerNode container = (JetContainerNode) commonContainer;
-                           PsiElement[] children = container.getChildren();
-                           for (PsiElement child : children) {
-                               if (child instanceof JetExpression) {
-                                   oldElement = child;
-                               }
-                           }
-                       }
-                       //ugly logic to make sure we are working with right actual expression
-                       JetExpression actualExpression = reference.get();
-                       int diff = actualExpression.getTextRange().getStartOffset() - oldElement.getTextRange().getStartOffset();
-                       String actualExpressionText = actualExpression.getText();
-                       PsiElement newElement = emptyBody.addAfter(oldElement, firstChild);
-                       PsiElement elem = newElement.findElementAt(diff);
-                       while (elem != null && !(elem instanceof JetExpression &&
-                              actualExpressionText.equals(elem.getText()))) {
-                           elem = elem.getParent();
-                       }
-                       if (elem != null) {
-                           reference.set((JetExpression) elem);
-                       }
-                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                       property = (JetProperty) emptyBody.addAfter(property, firstChild);
-                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                       actualExpression = reference.get();
-                       diff = actualExpression.getTextRange().getStartOffset() - emptyBody.getTextRange().getStartOffset();
-                       actualExpressionText = actualExpression.getText();
-                       emptyBody = (JetExpression) anchor.replace(emptyBody);
-                       elem = emptyBody.findElementAt(diff);
-                       while (elem != null && !(elem instanceof JetExpression &&
-                                                actualExpressionText.equals(elem.getText()))) {
-                           elem = elem.getParent();
-                       }
-                       if (elem != null) {
-                           reference.set((JetExpression) elem);
-                       }
-                   } else {
-                       property = (JetProperty) emptyBody.addAfter(property, firstChild);
-                       emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
-                       emptyBody = (JetExpression) anchor.replace(emptyBody);
-                   }
-                   for (PsiElement child : emptyBody.getChildren()) {
-                       if (child instanceof JetProperty) {
-                           property = (JetProperty) child;
-                       }
-                   }
-                   if (commonContainer instanceof JetNamedFunction) {
-                       //we should remove equals sign
-                       JetNamedFunction function = (JetNamedFunction) commonContainer;
-                       if (!function.hasDeclaredReturnType()) {
-                           //todo: add return type
-                       }
-                       function.getEqualsToken().delete();
-                   } else if (commonContainer instanceof  JetContainerNode) {
-                       JetContainerNode node = (JetContainerNode) commonContainer;
-                       if (node.getParent() instanceof JetIfExpression) {
-                           PsiElement next = node.getNextSibling();
-                           if (next != null) {
-                               PsiElement nextnext = next.getNextSibling();
-                               if (nextnext != null && nextnext.getNode().getElementType() == JetTokens.ELSE_KEYWORD) {
-                                   if (next instanceof PsiWhiteSpace) {
-                                       next.replace(JetPsiFactory.createWhiteSpace(project, " ")) ;
-                                   }
-                               }
-                           }
-                       }
-                   }
-               }
-               for (JetExpression replace : allReplaces) {
-                   if (replaceOccurrence && !needBraces) {
-                       boolean isActualExpression = expression == replace;
-                       JetExpression element = (JetExpression) replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
-                       references.add(element);
-                       if (isActualExpression) reference.set(element);
-                   } else if (!needBraces) {
-                       replace.delete();
-                   }
-               }
-               propertyRef.set(property);
-           }
-       };
+        return new Runnable() {
+            @Override
+            public void run() {
+                String variableText = "val " + suggestedNames[0] + " = ";
+                if (expression instanceof JetParenthesizedExpression) {
+                    JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression)expression;
+                    JetExpression innerExpression = parenthesizedExpression.getExpression();
+                    if (innerExpression != null) {
+                        variableText += innerExpression.getText();
+                    }
+                    else {
+                        variableText += expression.getText();
+                    }
+                }
+                else {
+                    variableText += expression.getText();
+                }
+                JetProperty property = JetPsiFactory.createProperty(project, variableText);
+                if (property == null) return;
+                PsiElement anchor = calculateAnchor(commonParent, commonContainer, allReplaces);
+                if (anchor == null) return;
+                boolean needBraces = !(commonContainer instanceof JetBlockExpression ||
+                                       commonContainer instanceof JetClassBody ||
+                                       commonContainer instanceof JetClassInitializer);
+                if (!needBraces) {
+                    property = (JetProperty)commonContainer.addBefore(property, anchor);
+                    commonContainer.addBefore(JetPsiFactory.createWhiteSpace(project, "\n"), anchor);
+                }
+                else {
+                    JetExpression emptyBody = JetPsiFactory.createEmptyBody(project);
+                    PsiElement firstChild = emptyBody.getFirstChild();
+                    emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                    if (replaceOccurrence && commonContainer != null) {
+                        for (JetExpression replace : allReplaces) {
+                            boolean isActualExpression = expression == replace;
+                            JetExpression element =
+                                (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
+                            if (isActualExpression) reference.set(element);
+                        }
+                        PsiElement oldElement = commonContainer;
+                        if (commonContainer instanceof JetWhenEntry) {
+                            JetExpression body = ((JetWhenEntry)commonContainer).getExpression();
+                            if (body != null) {
+                                oldElement = body;
+                            }
+                        }
+                        else if (commonContainer instanceof JetNamedFunction) {
+                            JetExpression body = ((JetNamedFunction)commonContainer).getBodyExpression();
+                            if (body != null) {
+                                oldElement = body;
+                            }
+                        }
+                        else if (commonContainer instanceof JetSecondaryConstructor) {
+                            JetExpression body = ((JetSecondaryConstructor)commonContainer).getBodyExpression();
+                            if (body != null) {
+                                oldElement = body;
+                            }
+                        }
+                        else if (commonContainer instanceof JetContainerNode) {
+                            JetContainerNode container = (JetContainerNode)commonContainer;
+                            PsiElement[] children = container.getChildren();
+                            for (PsiElement child : children) {
+                                if (child instanceof JetExpression) {
+                                    oldElement = child;
+                                }
+                            }
+                        }
+                        //ugly logic to make sure we are working with right actual expression
+                        JetExpression actualExpression = reference.get();
+                        int diff = actualExpression.getTextRange().getStartOffset() - oldElement.getTextRange().getStartOffset();
+                        String actualExpressionText = actualExpression.getText();
+                        PsiElement newElement = emptyBody.addAfter(oldElement, firstChild);
+                        PsiElement elem = newElement.findElementAt(diff);
+                        while (elem != null && !(elem instanceof JetExpression &&
+                                                 actualExpressionText.equals(elem.getText()))) {
+                            elem = elem.getParent();
+                        }
+                        if (elem != null) {
+                            reference.set((JetExpression)elem);
+                        }
+                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        property = (JetProperty)emptyBody.addAfter(property, firstChild);
+                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        actualExpression = reference.get();
+                        diff = actualExpression.getTextRange().getStartOffset() - emptyBody.getTextRange().getStartOffset();
+                        actualExpressionText = actualExpression.getText();
+                        emptyBody = (JetExpression)anchor.replace(emptyBody);
+                        elem = emptyBody.findElementAt(diff);
+                        while (elem != null && !(elem instanceof JetExpression &&
+                                                 actualExpressionText.equals(elem.getText()))) {
+                            elem = elem.getParent();
+                        }
+                        if (elem != null) {
+                            reference.set((JetExpression)elem);
+                        }
+                    }
+                    else {
+                        property = (JetProperty)emptyBody.addAfter(property, firstChild);
+                        emptyBody.addAfter(JetPsiFactory.createWhiteSpace(project, "\n"), firstChild);
+                        emptyBody = (JetExpression)anchor.replace(emptyBody);
+                    }
+                    for (PsiElement child : emptyBody.getChildren()) {
+                        if (child instanceof JetProperty) {
+                            property = (JetProperty)child;
+                        }
+                    }
+                    if (commonContainer instanceof JetNamedFunction) {
+                        //we should remove equals sign
+                        JetNamedFunction function = (JetNamedFunction)commonContainer;
+                        if (!function.hasDeclaredReturnType()) {
+                            //todo: add return type
+                        }
+                        function.getEqualsToken().delete();
+                    }
+                    else if (commonContainer instanceof JetContainerNode) {
+                        JetContainerNode node = (JetContainerNode)commonContainer;
+                        if (node.getParent() instanceof JetIfExpression) {
+                            PsiElement next = node.getNextSibling();
+                            if (next != null) {
+                                PsiElement nextnext = next.getNextSibling();
+                                if (nextnext != null && nextnext.getNode().getElementType() == JetTokens.ELSE_KEYWORD) {
+                                    if (next instanceof PsiWhiteSpace) {
+                                        next.replace(JetPsiFactory.createWhiteSpace(project, " "));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                for (JetExpression replace : allReplaces) {
+                    if (replaceOccurrence && !needBraces) {
+                        boolean isActualExpression = expression == replace;
+                        JetExpression element = (JetExpression)replace.replace(JetPsiFactory.createExpression(project, suggestedNames[0]));
+                        references.add(element);
+                        if (isActualExpression) reference.set(element);
+                    }
+                    else if (!needBraces) {
+                        replace.delete();
+                    }
+                }
+                propertyRef.set(property);
+            }
+        };
     }
 
     private static PsiElement calculateAnchor(PsiElement commonParent, PsiElement commonContainer,
@@ -324,7 +342,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
             while (anchor.getParent() != commonContainer) {
                 anchor = anchor.getParent();
             }
-        } else {
+        }
+        else {
             anchor = commonContainer.getFirstChild();
             int startOffset = commonContainer.getTextRange().getEndOffset();
             for (JetExpression expr : allReplaces) {
@@ -341,7 +360,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
     private static ArrayList<JetExpression> findOccurrences(PsiElement occurrenceContainer, @NotNull JetExpression expression) {
         if (expression instanceof JetParenthesizedExpression) {
-            JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression) expression;
+            JetParenthesizedExpression parenthesizedExpression = (JetParenthesizedExpression)expression;
             JetExpression innerExpression = parenthesizedExpression.getExpression();
             if (innerExpression != null) {
                 expression = innerExpression;
@@ -351,9 +370,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
 
         final ArrayList<JetExpression> result = new ArrayList<JetExpression>();
 
-        final BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER, CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
-                    .getBindingContext();
+        final BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)expression.getContainingFile());
 
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
@@ -370,26 +387,36 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                         if (element1.getNode().getElementType() == JetTokens.IDENTIFIER &&
                             element2.getNode().getElementType() == JetTokens.IDENTIFIER) {
                             if (element1.getParent() instanceof JetSimpleNameExpression &&
-                                element2.getParent() instanceof  JetSimpleNameExpression) {
-                                JetSimpleNameExpression expr1 = (JetSimpleNameExpression) element1.getParent();
-                                JetSimpleNameExpression expr2 = (JetSimpleNameExpression) element2.getParent();
+                                element2.getParent() instanceof JetSimpleNameExpression) {
+                                JetSimpleNameExpression expr1 = (JetSimpleNameExpression)element1.getParent();
+                                JetSimpleNameExpression expr2 = (JetSimpleNameExpression)element2.getParent();
                                 DeclarationDescriptor descr1 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr1);
                                 DeclarationDescriptor descr2 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr2);
-                                if (descr1 != descr2) return 1;
-                                else return 0;
+                                if (descr1 != descr2) {
+                                    return 1;
+                                }
+                                else {
+                                    return 0;
+                                }
                             }
                         }
-                        if (!element1.textMatches(element2)) return 1;
-                        else return 0;
+                        if (!element1.textMatches(element2)) {
+                            return 1;
+                        }
+                        else {
+                            return 0;
+                        }
                     }
                 }, null, false)) {
                     PsiElement parent = expression.getParent();
                     if (parent instanceof JetParenthesizedExpression) {
-                        result.add((JetParenthesizedExpression) parent);
-                    } else {
+                        result.add((JetParenthesizedExpression)parent);
+                    }
+                    else {
                         result.add(expression);
                     }
-                } else {
+                }
+                else {
                     super.visitExpression(expression);
                 }
             }
@@ -401,25 +428,28 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
     @Nullable
     private static PsiElement getContainer(PsiElement place) {
         if (place instanceof JetBlockExpression || place instanceof JetClassBody ||
-                place instanceof JetClassInitializer) {
+            place instanceof JetClassInitializer) {
             return place;
         }
         while (place != null) {
             PsiElement parent = place.getParent();
             if (parent instanceof JetContainerNode) {
-                if (!isBadContainerNode((JetContainerNode) parent, place)) {
+                if (!isBadContainerNode((JetContainerNode)parent, place)) {
                     return parent;
                 }
-            } if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry ||
+            }
+            if (parent instanceof JetBlockExpression || parent instanceof JetWhenEntry ||
                 parent instanceof JetClassBody || parent instanceof JetClassInitializer) {
                 return parent;
-            } else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction) parent;
+            }
+            else if (parent instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction)parent;
                 if (function.getBodyExpression() == place) {
                     return parent;
                 }
-            } else if (parent instanceof JetSecondaryConstructor) {
-                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor) parent;
+            }
+            else if (parent instanceof JetSecondaryConstructor) {
+                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor)parent;
                 if (secondaryConstructor.getBodyExpression() == place) {
                     return parent;
                 }
@@ -428,13 +458,14 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
         return null;
     }
-    
+
     private static boolean isBadContainerNode(JetContainerNode parent, PsiElement place) {
         if (parent.getParent() instanceof JetIfExpression &&
-            ((JetIfExpression) parent.getParent()).getCondition() == place) {
+            ((JetIfExpression)parent.getParent()).getCondition() == place) {
             return true;
-        } else if (parent.getParent() instanceof JetLoopExpression &&
-                   ((JetLoopExpression) parent.getParent()).getBody() != place) {
+        }
+        else if (parent.getParent() instanceof JetLoopExpression &&
+                 ((JetLoopExpression)parent.getParent()).getBody() != place) {
             return true;
         }
         return false;
@@ -446,27 +477,36 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         while (place != null) {
             PsiElement parent = place.getParent();
             if (parent instanceof JetContainerNode) {
-                if (!(place instanceof JetBlockExpression) && !isBadContainerNode((JetContainerNode) parent, place)) {
+                if (!(place instanceof JetBlockExpression) && !isBadContainerNode((JetContainerNode)parent, place)) {
                     result = parent;
                 }
-            } else if (parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
-                if (result == null) return parent;
-                else return result;
-            } else if (parent instanceof JetBlockExpression) {
+            }
+            else if (parent instanceof JetClassBody || parent instanceof JetFile || parent instanceof JetClassInitializer) {
+                if (result == null) {
+                    return parent;
+                }
+                else {
+                    return result;
+                }
+            }
+            else if (parent instanceof JetBlockExpression) {
                 result = parent;
-            } else if (parent instanceof JetWhenEntry ) {
+            }
+            else if (parent instanceof JetWhenEntry) {
                 if (!(place instanceof JetBlockExpression)) {
                     result = parent;
                 }
-            } else if (parent instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction) parent;
+            }
+            else if (parent instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction)parent;
                 if (function.getBodyExpression() == place) {
                     if (!(place instanceof JetBlockExpression)) {
                         result = parent;
                     }
                 }
-            } else if (parent instanceof JetSecondaryConstructor) {
-                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor) parent;
+            }
+            else if (parent instanceof JetSecondaryConstructor) {
+                JetSecondaryConstructor secondaryConstructor = (JetSecondaryConstructor)parent;
                 if (secondaryConstructor.getBodyExpression() == place) {
                     if (!(place instanceof JetBlockExpression)) {
                         result = parent;

@@ -25,7 +25,6 @@ import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -57,21 +56,22 @@ public final class TestConfig extends Config {
                 try {
                     String text = FileUtil.loadTextAndClose(stream);
                     file = JetFileUtils.createPsiFile(libFileName, text, project);
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     e.printStackTrace();
                 }
                 libFiles.add(file);
-            } catch (FileNotFoundException e) {
-                //TODO: throw generic expception
+            }
+            catch (Exception e) {
+                //TODO: throw generic exception
                 throw new IllegalStateException(e);
             }
-
         }
         return libFiles;
     }
 
     @NotNull
-    public List<JetFile> getLibFiles() {
+    public List<JetFile> generateLibFiles() {
         if (jsLibFiles == null) {
             jsLibFiles = initLibFiles(getProject());
         }

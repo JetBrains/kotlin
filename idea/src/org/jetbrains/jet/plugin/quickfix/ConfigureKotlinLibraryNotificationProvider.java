@@ -50,11 +50,14 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+
+import static org.jetbrains.jet.plugin.project.JsModuleDetector.*;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
@@ -81,6 +84,8 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
             if (module == null) return null;
 
             if (isMavenModule(module)) return null;
+
+            if (isJsProject(myProject)) return null;
 
             GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
             if (JavaPsiFacade.getInstance(myProject).findClass("jet.JetObject", scope) == null) {

@@ -19,31 +19,30 @@ package org.jetbrains.jet.plugin.project;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
+
+import static org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache.analyzeFileWithCache;
 
 /**
  * @author abreslav
  */
 public final class WholeProjectAnalyzerFacade {
 
-    /** Forbid creating */
-    private WholeProjectAnalyzerFacade() {}
-
+    /**
+     * Forbid creating
+     */
+    private WholeProjectAnalyzerFacade() {
+    }
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule(),
-                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+        return analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacadeForJVM.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope),
-                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+        return AnalyzerFacadeWithCache.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope));
     }
 }

@@ -26,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
@@ -41,7 +42,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzeExhaust;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -71,8 +71,11 @@ public class CompileSession {
     private final CompilerDependencies compilerDependencies;
     private AnalyzeExhaust bindingContext;
 
-    public CompileSession(JetCoreEnvironment environment, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose,
-            @NotNull CompilerDependencies compilerDependencies) {
+    public CompileSession(JetCoreEnvironment environment,
+                          MessageRenderer messageRenderer,
+                          PrintStream errorStream,
+                          boolean verbose,
+                          CompilerSpecialMode mode) {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
@@ -177,8 +180,7 @@ public class CompileSession {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
-                compilerDependencies);
+            environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY, compilerSpecialMode);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollector, diagnostic);

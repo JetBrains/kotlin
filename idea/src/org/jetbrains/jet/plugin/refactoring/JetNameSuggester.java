@@ -26,12 +26,13 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -68,10 +69,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER,
-                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR))
-                    .getBindingContext();
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)expression.getContainingFile());
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);
@@ -155,8 +153,8 @@ public class JetNameSuggester {
     private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
         if (name == "") return;
         String s = deleteNonLetterFromString(name);
-        if (s.startsWith("get") || s.startsWith("set")) s = s.substring(3);
-        else if (s.startsWith("is")) s = s.substring(2);
+        if (s.startsWith("get") || s.startsWith("set")) s = s.substring(0, 3);
+        else if (s.startsWith("is")) s = s.substring(0, 2);
         for (int i = 0; i < s.length(); ++i) {
             if (i == 0) {
                 addName(result, StringUtil.decapitalize(s), validator);

@@ -14,27 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.config;
+package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
-
-import java.util.Collections;
-import java.util.List;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 /**
  * @author Pavel Talanov
  */
-public final class IDEAConfig extends Config {
+public final class AnalyzeSingleFileUtil {
 
-    public IDEAConfig(@NotNull Project project) {
-        super(project);
+    private AnalyzeSingleFileUtil() {
     }
 
     @NotNull
-    @Override
-    public List<JetFile> getLibFiles() {
-        return Collections.emptyList();
+    public static AnalyzeExhaust analyzeSingleFileWithCache(@NotNull JetFile file) {
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(file, AnalyzerFacadeWithCache.SINGLE_DECLARATION_PROVIDER);
+    }
+
+    @NotNull
+    public static BindingContext getContextForSingleFile(@NotNull JetFile file) {
+        return analyzeSingleFileWithCache(file).getBindingContext();
     }
 }

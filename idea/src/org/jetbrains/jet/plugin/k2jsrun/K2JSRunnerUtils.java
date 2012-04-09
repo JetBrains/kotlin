@@ -30,6 +30,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.project.IDEAConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.util.Collection;
@@ -64,6 +65,7 @@ public final class K2JSRunnerUtils {
         String outputFilePath = constructPathToGeneratedFile(project, outputDirPath);
         K2JSTranslator.translateWithCallToMainAndSaveToFile(kotlinFiles,
                                                             outputFilePath,
+                                                            new IDEAConfig(project),
                                                             project);
         notifySuccess(outputDirPath);
     }

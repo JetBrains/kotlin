@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.facade;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
-import org.jetbrains.k2js.config.IDEAConfig;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.GenerationUtils;
@@ -33,10 +33,7 @@ import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNamespaceName;
 
@@ -51,8 +48,9 @@ public final class K2JSTranslator {
 
     public static void translateWithCallToMainAndSaveToFile(@NotNull List<JetFile> files,
                                                             @NotNull String outputPath,
+                                                            @NotNull Config config,
                                                             @NotNull Project project) throws Exception {
-        K2JSTranslator translator = new K2JSTranslator(new IDEAConfig(project));
+        K2JSTranslator translator = new K2JSTranslator(config);
         String programCode = translator.generateProgramCode(files) + "\n";
         JetFile fileWithMain = JetMainDetector.getFileWithMain(files);
         if (fileWithMain == null) {
@@ -62,7 +60,8 @@ public final class K2JSTranslator {
         FileWriter writer = new FileWriter(new File(outputPath));
         try {
             writer.write(programCode + callToMain);
-        } finally {
+        }
+        finally {
             writer.close();
         }
     }
@@ -106,9 +105,9 @@ public final class K2JSTranslator {
     public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate) {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config));
+        Collection<JetFile> files = AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config);
+        return Translation.generateAst(bindingContext, Lists.newArrayList(files));
     }
-
 
     @NotNull
     public static String generateCallToMain(@NotNull JetFile file, @NotNull String argumentString) {
@@ -132,5 +131,4 @@ public final class K2JSTranslator {
     private Project getProject() {
         return config.getProject();
     }
-
 }
