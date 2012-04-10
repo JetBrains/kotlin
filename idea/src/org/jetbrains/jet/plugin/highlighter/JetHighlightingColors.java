@@ -203,7 +203,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey EXTENSION_PROPERTY = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_EXTENSION_PROPERTY",
-        CodeInsightColors.STATIC_FIELD_ATTRIBUTES.getDefaultAttributes()
+        new TextAttributes()
     );
 
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = TextAttributesKey.createTextAttributesKey(
@@ -228,7 +228,7 @@ public class JetHighlightingColors {
 
     public static final TextAttributesKey EXTENSION_FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_EXTENSION_FUNCTION_CALL",
-        CodeInsightColors.STATIC_METHOD_ATTRIBUTES.getDefaultAttributes()
+        new TextAttributes()
     );
 
     public static final TextAttributesKey CONSTRUCTOR_CALL = TextAttributesKey.createTextAttributesKey(
