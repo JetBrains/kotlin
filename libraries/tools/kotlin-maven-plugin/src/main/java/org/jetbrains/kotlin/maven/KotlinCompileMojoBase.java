@@ -182,11 +182,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             log.debug("Removed target directory from compiler classpath (" + output + ")");
         }
 
-        final String runtime = getRuntimeFromClassPath(classpath);
-        if (runtime != null) {
-            log.debug("Removed Kotlin runtime from compiler classpath (" + runtime + ")");
-            classpathList.remove(runtime);
-        }
+//        final String runtime = getRuntimeFromClassPath(classpath);
+//        if (runtime != null) {
+//            log.debug("Removed Kotlin runtime from compiler classpath (" + runtime + ")");
+//            classpathList.remove(runtime);
+//        }
 
         if (classpathList.size() > 0) {
             final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
