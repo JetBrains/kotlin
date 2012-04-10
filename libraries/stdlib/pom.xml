@@ -11,12 +11,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>stdlib</artifactId>
+    <artifactId>kotlin-stdlib</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>kotlin-runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

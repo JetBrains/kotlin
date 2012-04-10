@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>kotlin-runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -156,11 +156,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!--
-                                                        <createDependencyReducedPom>true</createDependencyReducedPom>
-                                                        <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
-                                                        <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-                            -->
                             <artifactSet>
                                 <includes>
                                     <include>org.jetbrains.kotlin:*</include>
