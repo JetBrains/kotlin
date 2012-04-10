@@ -25,6 +25,10 @@ class GenerateSiteTest : TestCase() {
 
         copyDocResources(outDir)
         copyRecursive(apidocDir, outDir)
+
+        // now lets assert that the API docs generated everything
+        assertFilesExist(outDir, "Expected generate API docs are missing - API doc generation failure",
+                "kotlin/package.html", "kotlin/dom/package.html")
     }
 
     fun testCopyJSApiDocs(): Unit {
@@ -58,6 +62,14 @@ class GenerateSiteTest : TestCase() {
                 outFile.directory.mkdirs()
                 it.copyTo(outFile)
             }
+        }
+    }
+
+    // TODO this could make a handy test function
+    fun assertFilesExist(dir: File, message: String, vararg names: String): Unit {
+        for (name in names) {
+            val file = File(dir, name)
+            assertTrue(file.exists(), "${file.getPath()} does not exist. $message")
         }
     }
 
