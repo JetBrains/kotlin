@@ -13,3 +13,7 @@ import java.beans.*
 inline fun Component.addPropertyChangeListener(fn: (PropertyChangeEvent) -> Unit): Unit {
     addPropertyChangeListener(propertyChangeListener(fn))
 }
+
+inline fun Component.addPropertyChangeListener(name: String, fn: (PropertyChangeEvent) -> Unit): Unit {
+    addPropertyChangeListener(name, propertyChangeListener(fn))
+}
