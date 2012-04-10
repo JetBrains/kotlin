@@ -58,7 +58,7 @@ public inline fun String.toCharList(): List<Character> = toCharArray().toList()
 
 public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args).sure()
 
-public inline fun String.split(regex : String) : Array<String?>? = (this as java.lang.String).split(regex)
+public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex) as Array<String>
 
 public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex).sure()
 
