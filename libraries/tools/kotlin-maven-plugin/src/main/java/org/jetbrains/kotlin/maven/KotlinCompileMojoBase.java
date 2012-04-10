@@ -28,6 +28,8 @@ import org.jetbrains.jet.cli.KotlinCompiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,6 +111,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
         final KotlinCompiler compiler = createCompiler();
 
+        printCompilerArgumentsIfDebugEnabled(arguments, compiler);
+
         final KotlinCompiler.ExitCode exitCode = compiler.exec(System.err, arguments);
 
         switch (exitCode) {
@@ -117,6 +121,25 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
             case INTERNAL_ERROR:
                 throw new MojoExecutionException("Internal compiler error. See log for more details");
+        }
+    }
+
+    private void printCompilerArgumentsIfDebugEnabled(CompilerArguments arguments, KotlinCompiler compiler) {
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Invoking compiler " + compiler + " with arguments:");
+            try {
+                Field[] fields = arguments.getClass().getFields();
+                for (Field f : fields) {
+                    Object value = f.get(arguments);
+                    if (value != null) {
+                        getLog().debug(f.getName() + "=" + value);
+                    }
+                }
+                getLog().debug("End of arguments");
+            }
+            catch (Exception e) {
+                getLog().warn("Failed to print compiler arguments: " + e, e);
+            }
         }
     }
 
