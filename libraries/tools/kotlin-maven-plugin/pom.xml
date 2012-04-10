@@ -92,25 +92,25 @@
             <artifactId>trove4j</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>net.sf.trove4j</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>3.0.2</version>
-        </dependency>
--->
+        <!--
+                <dependency>
+                    <groupId>net.sf.trove4j</groupId>
+                    <artifactId>trove4j</artifactId>
+                    <version>3.0.2</version>
+                </dependency>
+        -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>picocontainer</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.picocontainer</groupId>
-            <artifactId>picocontainer</artifactId>
-            <version>2.9</version>
-        </dependency>
--->
+        <!--
+                <dependency>
+                    <groupId>org.picocontainer</groupId>
+                    <artifactId>picocontainer</artifactId>
+                    <version>2.9</version>
+                </dependency>
+        -->
 
 
         <!-- for JS generation -->
@@ -123,6 +123,14 @@
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
+
+        <resources>
+            <resource>
+                <!-- jdkHeaders -->
+                <directory>${kotlin-sdk}/lib/alt</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
