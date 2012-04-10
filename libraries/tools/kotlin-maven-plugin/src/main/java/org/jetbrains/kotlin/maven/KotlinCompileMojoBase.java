@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.base.Joiner;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,6 +27,8 @@ import org.jetbrains.jet.cli.CompilerArguments;
 import org.jetbrains.jet.cli.KotlinCompiler;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,8 +137,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      */
     protected abstract void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException;
 
-    protected static void configureBaseCompilerArguments(Log log, CompilerArguments arguments, String module,
-                                                         List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
+    protected void configureBaseCompilerArguments(Log log, CompilerArguments arguments, String module,
+                                                  List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
         // don't include runtime, it should be in maven dependencies
         arguments.mode = "stdlib";
 
@@ -162,5 +166,42 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
+
+        arguments.jdkHeaders = getJdkHeaders().getPath();
+        log.debug("Using jdk headers from " + arguments.jdkHeaders);
+    }
+
+    private File jdkHeadersPath;
+
+    protected File getJdkHeaders() {
+        if (jdkHeadersPath != null)
+            return jdkHeadersPath;
+
+        try {
+            jdkHeadersPath = extractJdkHeaders();
+
+            if (jdkHeadersPath == null)
+                throw new RuntimeException("Can't find kotlin jdk headers in maven plugin resources");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return jdkHeadersPath;
+    }
+
+    private File extractJdkHeaders() throws IOException {
+        final String kotlin_jdk_headers = "kotlin-jdk-headers.jar";
+
+        final URL jdkHeadersResource = Resources.getResource(kotlin_jdk_headers);
+        if (jdkHeadersResource == null)
+            return null;
+
+        final File jdkHeadersTempDir = Files.createTempDir();
+        jdkHeadersTempDir.deleteOnExit();
+
+        final File jdkHeadersFile = new File(jdkHeadersTempDir, kotlin_jdk_headers);
+        Files.copy(Resources.newInputStreamSupplier(jdkHeadersResource), jdkHeadersFile);
+
+        return jdkHeadersFile;
     }
 }
