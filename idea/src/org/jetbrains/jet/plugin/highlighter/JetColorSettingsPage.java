@@ -139,7 +139,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
 
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.local.variable"), JetHighlightingColors.LOCAL_VARIABLE),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parameter"), JetHighlightingColors.PARAMETER),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.bound.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.captured.variable"), JetHighlightingColors.WRAPPED_INTO_REF),
 
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.instance.property"), JetHighlightingColors.INSTANCE_PROPERTY),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.namespace.property"), JetHighlightingColors.NAMESPACE_PROPERTY),
