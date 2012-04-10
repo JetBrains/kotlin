@@ -16,13 +16,3 @@ fun panel(init: JPanel.() -> Unit): JPanel {
     p.init()
     return p
 }
-
-fun button(text: String, action: (ActionEvent) -> Unit): JButton {
-    val result = JButton(text)
-    result.addActionListener(object : ActionListener {
-        public override fun actionPerformed(e: ActionEvent?) {
-            action(e!!)
-        }
-    })
-    return result
-}
