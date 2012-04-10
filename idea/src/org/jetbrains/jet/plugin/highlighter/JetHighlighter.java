@@ -68,7 +68,6 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys.put(JetTokens.COMMA, JetHighlightingColors.COMMA);
         keys.put(JetTokens.SEMICOLON, JetHighlightingColors.SEMICOLON);
         keys.put(JetTokens.DOT, JetHighlightingColors.DOT);
-        keys.put(JetTokens.SAFE_ACCESS, JetHighlightingColors.SAFE_ACCESS);
         keys.put(JetTokens.ARROW, JetHighlightingColors.ARROW);
 
         keys.put(JetTokens.OPEN_QUOTE, JetHighlightingColors.STRING);

@@ -45,6 +45,9 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
                 }
                 holder.createInfoAnnotation(element, null).setTextAttributes(attributes);
             }
+            if (JetTokens.SAFE_ACCESS.equals(elementType)) {
+                holder.createInfoAnnotation(element, null).setTextAttributes(JetHighlightingColors.SAFE_ACCESS);
+            }
         }
     }
 

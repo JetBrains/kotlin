@@ -7,20 +7,20 @@ class B() : A() {
 }
 
 fun f9(a : A?) {
-  a?.foo()
-  a?.<error descr="Unresolved reference: bar">bar</error>()
+  a<info>?.</info>foo()
+  a<info>?.</info><error descr="Unresolved reference: bar">bar</error>()
   if (a is B) {
     <info descr="Automatically cast to B">a</info>.bar()
     <info descr="Automatically cast to B">a</info>.foo()
   }
-  a?.foo()
-  a?.<error descr="Unresolved reference: bar">bar</error>()
+  a<info>?.</info>foo()
+  a<info>?.</info><error descr="Unresolved reference: bar">bar</error>()
   if (!(a is B)) {
-    a?.<error descr="Unresolved reference: bar">bar</error>()
-    a?.foo()
+    a<info>?.</info><error descr="Unresolved reference: bar">bar</error>()
+    a<info>?.</info>foo()
   }
   if (!(a is B) || <info descr="Automatically cast to B">a</info>.bar() == #()) {
-      a?.<error descr="Unresolved reference: bar">bar</error>()
+      a<info>?.</info><error descr="Unresolved reference: bar">bar</error>()
   }
   if (!(a is B)) {
     return;
@@ -56,7 +56,7 @@ fun f11(a : A?) {
     is A -> <info descr="Automatically cast to A">a</info>.foo()
     is Any -> <info descr="Automatically cast to A">a</info>.foo()
     is Any? -> a.<error descr="Unresolved reference: bar">bar</error>()
-    else -> a?.foo()
+    else -> a<info>?.</info>foo()
   }
 }
 
@@ -69,12 +69,12 @@ fun f12(a : A?) {
     is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B must be a supertype of A?. Use is to match against B">B</error> -> c.foo()
     is val c is C -> <info descr="Automatically cast to C">c</info>.bar()
     is val c is C -> <info descr="Automatically cast to C">a</info>.bar()
-    else -> a?.foo()
+    else -> a<info>?.</info>foo()
   }
 
   if (a is val b) {
-    a?.<error descr="Unresolved reference: bar">bar</error>()
-    b?.foo()
+    a<info>?.</info><error descr="Unresolved reference: bar">bar</error>()
+    b<info>?.</info>foo()
   }
   if (a is val b is B) {
     <info descr="Automatically cast to B">b</info>.foo()
@@ -89,13 +89,13 @@ fun f13(a : A?) {
     <info descr="Automatically cast to B">c</info>.bar()
   }
   else {
-    a?.foo()
+    a<info>?.</info>foo()
     <error descr="Unresolved reference: c">c</error>.bar()
   }
 
-  a?.foo()
+  a<info>?.</info>foo()
   if (!(a is val c is B)) {
-    a?.foo()
+    a<info>?.</info>foo()
     <error descr="Unresolved reference: c">c</error>.bar()
   }
   else {
@@ -103,13 +103,13 @@ fun f13(a : A?) {
     <error descr="Unresolved reference: c">c</error>.bar()
   }
 
-  a?.foo()
+  a<info>?.</info>foo()
   if (a is val c is B && <info descr="Automatically cast to B">a</info>.foo() == #() && <info descr="Automatically cast to B">c</info>.bar() == #()) {
     <info descr="Automatically cast to B">c</info>.foo()
     <info descr="Automatically cast to B">c</info>.bar()
   }
   else {
-    a?.foo()
+    a<info>?.</info>foo()
     <error descr="Unresolved reference: c">c</error>.bar()
   }
 
