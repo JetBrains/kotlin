@@ -76,8 +76,8 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.BRACKETS.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey FUNCTION_LITERAL_BRACES = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_FUNCTION_LITERAL_BRACES",
+    public static final TextAttributesKey FUNCTION_LITERAL_BRACES_AND_ARROW = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_FUNCTION_LITERAL_BRACES_AND_ARROW",
         new TextAttributes(null, null, null, null, Font.BOLD)
     );
 

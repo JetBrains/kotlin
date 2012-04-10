@@ -61,12 +61,13 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "        <NAMESPACE_FUNCTION_CALL>println</NAMESPACE_FUNCTION_CALL>(\"length is ${<PARAMETER>nullable</PARAMETER>?.<INSTANCE_PROPERTY>length</INSTANCE_PROPERTY>} <INVALID_STRING_ESCAPE>\\e</INVALID_STRING_ESCAPE>\")\n" +
                "        val <LOCAL_VARIABLE>ints</LOCAL_VARIABLE> = java.util.<CONSTRUCTOR_CALL>ArrayList</CONSTRUCTOR_CALL><Int?>(2)\n" +
                "        <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>[0] = 102 + <PARAMETER>f</PARAMETER>()\n" +
+               "        val <LOCAL_VARIABLE>myFun</LOCAL_VARIABLE> = <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW> <FUNCTION_LITERAL_BRACES_AND_ARROW>-></FUNCTION_LITERAL_BRACES_AND_ARROW> \"\" <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "        var <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE> = <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<FUNCTION_CALL>size</FUNCTION_CALL>()\n" +
-               "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY>empty</EXTENSION_PROPERTY>) <FUNCTION_LITERAL_BRACES>{</FUNCTION_LITERAL_BRACES>\n" +
-               "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL>forEach</EXTENSION_FUNCTION_CALL> @lit {\n" +
+               "        if (!<LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_PROPERTY>empty</EXTENSION_PROPERTY>) {\n" +
+               "            <LOCAL_VARIABLE>ints</LOCAL_VARIABLE>.<EXTENSION_FUNCTION_CALL>forEach</EXTENSION_FUNCTION_CALL> @lit <FUNCTION_LITERAL_BRACES_AND_ARROW>{</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "                if (<FUNCTION_LITERAL_DEFAULT_PARAMETER>it</FUNCTION_LITERAL_DEFAULT_PARAMETER> == null) return @lit\n" +
                "                println(<FUNCTION_LITERAL_DEFAULT_PARAMETER><AUTO_CASTED_VALUE>it</AUTO_CASTED_VALUE></FUNCTION_LITERAL_DEFAULT_PARAMETER> + <LOCAL_VARIABLE><MUTABLE_VARIABLE><WRAPPED_INTO_REF>ref</WRAPPED_INTO_REF></MUTABLE_VARIABLE></LOCAL_VARIABLE>)\n" +
-               "            <FUNCTION_LITERAL_BRACES>}</FUNCTION_LITERAL_BRACES>\n" +
+               "            <FUNCTION_LITERAL_BRACES_AND_ARROW>}</FUNCTION_LITERAL_BRACES_AND_ARROW>\n" +
                "        }\n" +
                "    }\n" +
                "}\n" +
@@ -111,13 +112,13 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.operator.sign"), JetHighlightingColors.OPERATOR_SIGN),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.parentheses"), JetHighlightingColors.PARENTHESIS),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.braces"), JetHighlightingColors.BRACES),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.closure.braces"), JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW),
+            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.arrow"), JetHighlightingColors.ARROW),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.brackets"), JetHighlightingColors.BRACKETS),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.closure.braces"), JetHighlightingColors.FUNCTION_LITERAL_BRACES),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.comma"), JetHighlightingColors.COMMA),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.semicolon"), JetHighlightingColors.SEMICOLON),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.dot"), JetHighlightingColors.DOT),
             new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.safe.access"), JetHighlightingColors.SAFE_ACCESS),
-            new AttributesDescriptor(JetBundle.message("options.jet.attribute.descriptor.arrow"), JetHighlightingColors.ARROW),
 
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.line.comment"), JetHighlightingColors.LINE_COMMENT),
             new AttributesDescriptor(OptionsBundle.message("options.java.attribute.descriptor.block.comment"), JetHighlightingColors.BLOCK_COMMENT),
