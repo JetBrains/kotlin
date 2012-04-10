@@ -29,7 +29,6 @@ import org.jetbrains.jet.cli.KotlinCompiler;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -189,9 +188,11 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             classpathList.remove(runtime);
         }
 
-        final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
-        log.info("Classpath: " + classPathString);
-        arguments.setClasspath(classPathString);
+        if (classpathList.size() > 0) {
+            final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
+            log.info("Classpath: " + classPathString);
+            arguments.setClasspath(classPathString);
+        }
 
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
