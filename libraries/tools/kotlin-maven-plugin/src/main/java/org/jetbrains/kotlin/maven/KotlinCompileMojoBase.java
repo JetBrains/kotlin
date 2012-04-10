@@ -180,7 +180,13 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         final ArrayList<String> classpathList = new ArrayList<String>(classpath);
 
         if (classpathList.remove(output)) {
-            log.debug("Removed target directory from classpath (" + output + ")");
+            log.debug("Removed target directory from compiler classpath (" + output + ")");
+        }
+
+        final String runtime = getRuntimeFromClassPath(classpath);
+        if (runtime != null) {
+            log.debug("Removed Kotlin runtime from compiler classpath (" + runtime + ")");
+            classpathList.remove(runtime);
         }
 
         final String classPathString = Joiner.on(File.pathSeparator).join(classpathList);
@@ -192,6 +198,21 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
         arguments.jdkHeaders = getJdkHeaders().getPath();
         log.debug("Using jdk headers from " + arguments.jdkHeaders);
+    }
+
+    // TODO: Make a better runtime detection or get rid of it entirely
+    private String getRuntimeFromClassPath(List<String> classpath) {
+        for (String item : classpath) {
+            final int lastSeparatorIndex = item.lastIndexOf(File.separator);
+
+            if (lastSeparatorIndex < 0)
+                continue;
+
+            if (item.startsWith("kotlin-runtime-", lastSeparatorIndex + 1) && item.endsWith(".jar"))
+                return item;
+        }
+
+        return null;
     }
 
     private File jdkHeadersPath;
