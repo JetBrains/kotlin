@@ -48,9 +48,9 @@ public class JetColorSettingsPage implements ColorSettingsPage {
     @Override
     public String getDemoText() {
         return "/* Block comment */\n" +
+               "<KEYWORD>package</KEYWORD> hello\n" +
                "<KEYWORD>import</KEYWORD> kotlin.util.* // line comment\n" +
                "\n" +
-               "               Bad character: \\n\n" +
                "/**\n" +
                " * Doc comment here for `SomeClass`\n" +
                " * @see Iterator#next()\n" +
@@ -73,12 +73,13 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "}\n" +
                "\n" +
                "var <PROPERTY_WITH_BACKING_FIELD><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5\n" +
-               "<KEYWORD>get</KEYWORD>() {\n" +
-               "    return <BACKING_FIELD_ACCESS><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>$globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></BACKING_FIELD_ACCESS>\n" +
-               "}\n" +
+               "    <KEYWORD>get</KEYWORD>() {\n" +
+               "        return <BACKING_FIELD_ACCESS><NAMESPACE_PROPERTY><MUTABLE_VARIABLE>$globalCounter</MUTABLE_VARIABLE></NAMESPACE_PROPERTY></BACKING_FIELD_ACCESS>\n" +
+               "    }\n" +
                "\n" +
                "<KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {\n" +
-               "}";
+               "}\n" +
+               "               Bad character: \\n\n";
     }
 
     @Override
