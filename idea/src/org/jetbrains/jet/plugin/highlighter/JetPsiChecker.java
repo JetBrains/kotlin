@@ -25,6 +25,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
@@ -104,7 +105,8 @@ public class JetPsiChecker implements Annotator {
             try {
                 BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
 
-                if (errorReportingEnabled) {
+                boolean isInContent = ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInContent(file.getVirtualFile());
+                if (errorReportingEnabled && isInContent) {
                     Collection<Diagnostic> diagnostics = Sets.newLinkedHashSet(bindingContext.getDiagnostics());
                     Set<PsiElement> redeclarations = Sets.newHashSet();
                     for (Diagnostic diagnostic : diagnostics) {

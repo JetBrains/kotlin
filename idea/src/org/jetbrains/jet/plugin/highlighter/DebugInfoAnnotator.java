@@ -21,6 +21,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -58,6 +59,9 @@ public class DebugInfoAnnotator implements Annotator {
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull final AnnotationHolder holder) {
         if (!isDebugInfoEnabled() || !JetPsiChecker.isErrorReportingEnabled()) {
+            return;
+        }
+        if (!ProjectFileIndex.SERVICE.getInstance(element.getProject()).isInContent(element.getContainingFile().getVirtualFile())) {
             return;
         }
         
