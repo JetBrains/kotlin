@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>stdlib</artifactId>
+            <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
 

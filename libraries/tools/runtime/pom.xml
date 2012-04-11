@@ -11,7 +11,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>runtime</artifactId>
+    <artifactId>kotlin-runtime</artifactId>
     <packaging>jar</packaging>
 
     <build>

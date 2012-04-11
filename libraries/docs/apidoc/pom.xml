@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>runtime</artifactId>
+            <artifactId>kotlin-runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
 
