@@ -194,7 +194,6 @@
             <zipfileset prefix="kotlinc" file="${output}/build.txt"/>
             <zipfileset prefix="kotlinc/license" dir="${basedir}/license"/>
             <zipfileset prefix="kotlinc/bin" filemode="755" dir="${basedir}/compiler/cli/bin"/>
-            <zipfileset prefix="kotlinc/examples" dir="${basedir}/examples/src"/>
         </zip>
     </target>
 </project>
