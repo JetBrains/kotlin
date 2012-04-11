@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -132,6 +129,7 @@ public class Visibilities {
         return firstIndex - secondIndex;
     }
 
+    @Nullable
     public static Integer compare(@NotNull Visibility first, @NotNull Visibility second) {
         Integer result = first.compareTo(second);
         if (result != null) {
