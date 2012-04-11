@@ -46,14 +46,14 @@ public class JetHighlightingColors {
         SyntaxHighlighterColors.STRING.getDefaultAttributes()
     );
 
-    public static final TextAttributesKey VALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
-        "KOTLIN_VALID_STRING_ESCAPE",
+    public static final TextAttributesKey STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
+        "KOTLIN_STRING_ESCAPE",
         SyntaxHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes()
     );
 
     public static final TextAttributesKey INVALID_STRING_ESCAPE = TextAttributesKey.createTextAttributesKey(
         "KOTLIN_INVALID_STRING_ESCAPE",
-        SyntaxHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes()
+        new TextAttributes(null, HighlighterColors.BAD_CHARACTER.getDefaultAttributes().getBackgroundColor(), Color.RED, EffectType.WAVE_UNDERSCORE, 0)
     );
 
     public static final TextAttributesKey OPERATOR_SIGN = TextAttributesKey.createTextAttributesKey(

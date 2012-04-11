@@ -73,11 +73,11 @@ public class JetHighlighter extends SyntaxHighlighterBase {
         keys.put(JetTokens.OPEN_QUOTE, JetHighlightingColors.STRING);
         keys.put(JetTokens.CLOSING_QUOTE, JetHighlightingColors.STRING);
         keys.put(JetTokens.REGULAR_STRING_PART, JetHighlightingColors.STRING);
-        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JetHighlightingColors.VALID_STRING_ESCAPE);
-        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JetHighlightingColors.VALID_STRING_ESCAPE);
-        keys.put(JetTokens.SHORT_TEMPLATE_ENTRY_START, JetHighlightingColors.VALID_STRING_ESCAPE);
+        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_END, JetHighlightingColors.STRING_ESCAPE);
+        keys.put(JetTokens.LONG_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
+        keys.put(JetTokens.SHORT_TEMPLATE_ENTRY_START, JetHighlightingColors.STRING_ESCAPE);
 
-        keys.put(JetTokens.ESCAPE_SEQUENCE, JetHighlightingColors.VALID_STRING_ESCAPE);
+        keys.put(JetTokens.ESCAPE_SEQUENCE, JetHighlightingColors.STRING_ESCAPE);
 
         keys.put(JetTokens.CHARACTER_LITERAL, JetHighlightingColors.STRING);
 
