@@ -79,7 +79,7 @@ public class BindingContextUtils {
 
     @Nullable
     public static NamespaceDescriptor namespaceDescriptor(@NotNull BindingContext context, @NotNull JetFile source) {
-        return context.get(BindingContext.NAMESPACE, source);
+        return context.get(BindingContext.FILE_TO_NAMESPACE, source);
     }
 
     @Nullable
