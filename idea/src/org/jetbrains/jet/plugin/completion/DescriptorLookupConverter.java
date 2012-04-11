@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -48,9 +49,10 @@ public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
 
     @NotNull
-    public static LookupElement createLookupElement(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
+    public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
-        LookupElementBuilder element = LookupElementBuilder.create(new JetLookupObject(descriptor, declaration), descriptor.getName());
+        LookupElementBuilder element = LookupElementBuilder.create(
+                new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName());
         String typeText = "";
         String tailText = "";
         boolean tailTextGrayed = false;
@@ -88,8 +90,11 @@ public final class DescriptorLookupConverter {
             typeText = DescriptorRenderer.TEXT.renderType(outType);
         }
         else if (descriptor instanceof ClassDescriptor) {
-            tailText = " (" + DescriptorUtils.getFQName(descriptor.getContainingDeclaration()) + ")";
+            DeclarationDescriptor declaredIn = descriptor.getContainingDeclaration();
+            assert declaredIn != null;
+            tailText = " (" + DescriptorUtils.getFQName(declaredIn) + ")";
             tailTextGrayed = true;
+            element = element.setInsertHandler(JetClassInsertHandler.INSTANCE);
         }
         else {
             typeText = DescriptorRenderer.TEXT.render(descriptor);
@@ -114,7 +119,7 @@ public final class DescriptorLookupConverter {
             }
             descriptor = callableMemberDescriptor;
         }
-        return createLookupElement(descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
+        return createLookupElement(bindingContext, descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
     }
 
     public static LookupElement[] collectLookupElements(BindingContext bindingContext, Iterable<DeclarationDescriptor> descriptors) {

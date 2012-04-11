@@ -49,11 +49,7 @@ import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
-import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -117,6 +113,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     @Override
     public String getQualifiedName() {
         return qualifiedName.getFqName();
+    }
+
+    public FqName getFqName() {
+        return qualifiedName;
     }
 
     private PsiJavaFileStub getStub() {

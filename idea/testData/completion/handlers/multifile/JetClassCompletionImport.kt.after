@@ -1,0 +1,7 @@
+package classimporttest
+
+import forimport.TTTest
+
+fun test() {
+    TTTest
+}

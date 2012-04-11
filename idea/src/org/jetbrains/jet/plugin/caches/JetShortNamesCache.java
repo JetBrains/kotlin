@@ -130,7 +130,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
     @NotNull
     public Collection<FqName> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
-        BindingContext context = getResolutionContext(scope);
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope).getBindingContext();
         return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
             @Override
             public boolean apply(@Nullable FqName fqName) {
@@ -193,11 +193,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return result;
-    }
-
-    @NotNull
-    public BindingContext getResolutionContext(@NotNull GlobalSearchScope scope) {
-        return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope).getBindingContext();
     }
 
     /**
@@ -277,14 +272,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return resultDescriptors;
-    }
-
-    public Collection<JetNamedFunction> getJetFunctionsByName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope) {
-        return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
-    }
-
-    public Collection<String> getAllJetOnlyTopFunctionsNames() {
-        return JetShortFunctionNameIndex.getInstance().getAllKeys(project);
     }
 
     @NotNull

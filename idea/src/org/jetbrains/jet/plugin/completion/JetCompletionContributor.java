@@ -97,7 +97,7 @@ public class JetCompletionContributor extends CompletionContributor {
 
         if (shouldRunTypeCompletionOnly(position, jetReference)) {
             if (session.customInvocationCount > 0) {
-                addClasses(parameters, result);
+                addClasses(parameters, result, session);
             }
             else {
                 for (Object variant : jetReference.getVariants()) {
@@ -128,7 +128,7 @@ public class JetCompletionContributor extends CompletionContributor {
         }
 
         if (shouldRunTopLevelCompletion(parameters, session)) {
-            addClasses(parameters, result);
+            addClasses(parameters, result, session);
             addJetTopLevelFunctions(jetReference.getExpression(), result, position, session);
         }
 
@@ -200,7 +200,7 @@ public class JetCompletionContributor extends CompletionContributor {
         GlobalSearchScope scope = GlobalSearchScope.allScope(project);
         Collection<String> functionNames = namesCache.getAllTopLevelFunctionNames();
 
-        BindingContext resolutionContext = namesCache.getResolutionContext(scope);
+        BindingContext resolutionContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)position.getContainingFile()).getBindingContext();
 
         for (String name : functionNames) {
             if (name.contains(actualPrefix)) {
@@ -216,12 +216,13 @@ public class JetCompletionContributor extends CompletionContributor {
      */
     private static void addClasses(
             @NotNull CompletionParameters parameters,
-            @NotNull final CompletionResultSet result
+            @NotNull final CompletionResultSet result,
+            @NotNull final CompletionSession session
     ) {
         JetClassCompletionContributor.addClasses(parameters, result, new Consumer<LookupElement>() {
             @Override
             public void consume(@NotNull LookupElement element) {
-                result.addElement(element);
+                addCompletionToResult(result, element, session);
             }
         });
     }
@@ -294,21 +295,6 @@ public class JetCompletionContributor extends CompletionContributor {
             session.isSomethingAdded = true;
         }
     }
-
-    //private static LookupPositionObject getLookupPosition(LookupElement element) {
-    //    Object lookupObject = element.getObject();
-    //    if (lookupObject instanceof PsiElement) {
-    //        return new LookupPositionObject((PsiElement) lookupObject);
-    //    }
-    //    else if (lookupObject instanceof JetLookupObject) {
-    //        PsiElement psiElement = ((JetLookupObject) lookupObject).getPsiElement();
-    //        if (psiElement != null) {
-    //            return new LookupPositionObject(psiElement);
-    //        }
-    //    }
-    //
-    //    return null;
-    //}
 
     @Override
     public void beforeCompletion(@NotNull CompletionInitializationContext context) {

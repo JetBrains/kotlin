@@ -101,6 +101,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testNoCLassNameDuplication() {
+        doTest();
+    }
+
     public void testNoEmptyNamespace() {
         doTest();
     }

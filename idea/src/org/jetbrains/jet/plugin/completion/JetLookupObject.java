@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -27,19 +28,23 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
  *
  * @author Nikolay Krasko
  */
-public class JetLookupObject {
-    @NotNull
+public final class JetLookupObject {
+    @Nullable
     private final DeclarationDescriptor descriptor;
+
+    @Nullable
+    private BindingContext context;
 
     @Nullable
     private final PsiElement psiElement;
 
-    public JetLookupObject(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement psiElement) {
+    public JetLookupObject(@Nullable DeclarationDescriptor descriptor, @NotNull BindingContext context, @Nullable PsiElement psiElement) {
         this.descriptor = descriptor;
+        this.context = context;
         this.psiElement = psiElement;
     }
 
-    @NotNull
+    @Nullable
     public DeclarationDescriptor getDescriptor() {
         return descriptor;
     }
@@ -47,5 +52,44 @@ public class JetLookupObject {
     @Nullable
     public PsiElement getPsiElement() {
         return psiElement;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " " +
+               descriptor + " " +
+               psiElement;
+    }
+
+    @Override
+    public int hashCode() {
+        // Always check with equals
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
+        }
+
+        JetLookupObject other = (JetLookupObject)obj;
+
+        // Same descriptor - same lookup element
+        if (descriptor != null && other.descriptor != null) {
+            assert context == other.context : "Can't compare descriptors from different binding context";
+
+            if (descriptor.equals(other.descriptor)) {
+                return true;
+            }
+        }
+
+        if (psiElement != null && psiElement.equals(other.psiElement)) {
+            // Warning here - why descriptors are not same???
+            return true;
+        }
+
+        return (descriptor == null && other.descriptor == null &&
+                psiElement == null && other.psiElement == null);
     }
 }
