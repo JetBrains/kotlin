@@ -16,28 +16,25 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-
-import java.util.List;
 
 /**
  * @author abreslav
  */
 public class UnresolvedReferenceDiagnosticFactory extends AbstractDiagnosticFactory {
-
     private final String message;
 
     private UnresolvedReferenceDiagnosticFactory(String message) {
         this.message = message;
     }
 
+    String getMessage() {
+        return message;
+    }
+
     public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
-        return new UnresolvedReferenceDiagnostic(reference, message);
+        return new UnresolvedReferenceDiagnostic(reference, this);
     }
 
     public static UnresolvedReferenceDiagnosticFactory create(String message) {

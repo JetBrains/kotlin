@@ -33,9 +33,23 @@ import java.util.List;
  */
 public interface RedeclarationDiagnostic extends Diagnostic {
     class SimpleRedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> implements RedeclarationDiagnostic {
+        private String name;
 
         public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
-            super(psiElement, factory, factory.severity, factory.makeMessage(name));
+            super(psiElement, factory, factory.severity);
+            this.name = name;
+        }
+
+        @NotNull
+        @Override
+        public RedeclarationDiagnosticFactory getFactory() {
+            return (RedeclarationDiagnosticFactory)super.getFactory();
+        }
+
+        @NotNull
+        @Override
+        public String getMessage() {
+            return getFactory().makeMessage(name);
         }
 
         @NotNull

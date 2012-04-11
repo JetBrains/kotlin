@@ -38,8 +38,12 @@ public class DiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWi
         return new DiagnosticFactory<T>(severity, message, positioningStrategy);
     }
 
+    String getMessage() {
+        return message;
+    }
+
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element) {
-        return new DiagnosticWithPsiElement<E>(element, this, severity, message);
+        return new DiagnosticWithPsiElement<E>(element, this, severity);
     }
 }

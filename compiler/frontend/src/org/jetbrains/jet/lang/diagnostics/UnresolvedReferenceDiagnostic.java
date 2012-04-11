@@ -30,15 +30,21 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
  * @author abreslav
  */
 public class UnresolvedReferenceDiagnostic extends AbstractDiagnostic<JetReferenceExpression> {
+    @NotNull
+    @Override
+    public UnresolvedReferenceDiagnosticFactory getFactory() {
+        return (UnresolvedReferenceDiagnosticFactory)super.getFactory();
+    }
 
-    public UnresolvedReferenceDiagnostic(JetReferenceExpression referenceExpression, String message) {
-        super(referenceExpression, Errors.UNRESOLVED_REFERENCE, ERROR, message);
+    public UnresolvedReferenceDiagnostic(@NotNull JetReferenceExpression referenceExpression,
+            @NotNull UnresolvedReferenceDiagnosticFactory factory) {
+        super(referenceExpression, factory, ERROR);
     }
 
     @NotNull
     @Override
     public String getMessage() {
-        return super.getMessage() + ": " + getPsiElement().getText();
+        return getFactory().getMessage() + ": " + getPsiElement().getText();
     }
 
     @NotNull

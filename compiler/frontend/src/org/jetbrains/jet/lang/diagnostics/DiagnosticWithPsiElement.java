@@ -26,14 +26,22 @@ import java.util.List;
  * @author svtk
  */
 public class DiagnosticWithPsiElement<E extends PsiElement> extends AbstractDiagnostic<E> {
-    public DiagnosticWithPsiElement(@NotNull E psiElement, @NotNull DiagnosticFactoryWithPsiElement<E> factory, @NotNull Severity severity, @NotNull String message) {
-        super(psiElement, factory, severity, message);
+    public DiagnosticWithPsiElement(@NotNull E psiElement,
+            @NotNull DiagnosticFactory<E> factory,
+            @NotNull Severity severity) {
+        super(psiElement, factory, severity);
     }
 
     @NotNull
     @Override
-    public DiagnosticFactoryWithPsiElement<E> getFactory() {
-        return (DiagnosticFactoryWithPsiElement<E>)super.getFactory();
+    public DiagnosticFactory<E> getFactory() {
+        return (DiagnosticFactory<E>)super.getFactory();
+    }
+
+    @NotNull
+    @Override
+    public String getMessage() {
+        return getFactory().getMessage();
     }
 
     @Override

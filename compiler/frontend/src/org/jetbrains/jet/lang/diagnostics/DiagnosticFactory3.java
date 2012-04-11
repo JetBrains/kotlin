@@ -50,7 +50,7 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
         return new DiagnosticFactory3<T, A, B, C>(severity, messageStub, positioningStrategy, rendererForA, rendererForB, rendererForC);
     }
 
-    private String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
+    protected String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
         return messageFormat.format(new Object[]{makeMessageForA(a), makeMessageForB(b), makeMessageForC(c)});
     }
 
@@ -67,6 +67,6 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
     }
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity, makeMessage(a, b, c));
+        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity);
     }
 }

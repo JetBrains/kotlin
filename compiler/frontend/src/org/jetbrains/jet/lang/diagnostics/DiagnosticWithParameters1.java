@@ -32,9 +32,8 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
     public DiagnosticWithParameters1(@NotNull E psiElement,
             @NotNull A a,
             @NotNull DiagnosticFactory1<E, A> factory,
-            @NotNull Severity severity,
-            @NotNull String message) {
-        super(psiElement, factory, severity, message);
+            @NotNull Severity severity) {
+        super(psiElement, factory, severity);
         this.a = a;
     }
 
@@ -42,6 +41,12 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
     @Override
     public DiagnosticFactory1<E, A> getFactory() {
         return (DiagnosticFactory1<E, A>)super.getFactory();
+    }
+
+    @NotNull
+    @Override
+    public String getMessage() {
+        return getFactory().makeMessage(a);
     }
 
     @Override

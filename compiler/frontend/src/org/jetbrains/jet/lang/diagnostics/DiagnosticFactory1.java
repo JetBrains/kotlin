@@ -35,7 +35,7 @@ public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFacto
     
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A argument) {
-        return new DiagnosticWithParameters1<E, A>(element, argument, this, severity, makeMessage(argument));
+        return new DiagnosticWithParameters1<E, A>(element, argument, this, severity);
     }
 
     protected DiagnosticFactory1(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> renderer) {

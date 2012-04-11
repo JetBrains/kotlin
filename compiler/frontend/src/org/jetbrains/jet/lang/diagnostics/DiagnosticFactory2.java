@@ -26,7 +26,7 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
     private final Renderer<? super A> rendererForA;
     private final Renderer<? super B> rendererForB;
 
-    private String makeMessage(@NotNull A a, @NotNull B b) {
+    protected String makeMessage(@NotNull A a, @NotNull B b) {
         return messageFormat.format(new Object[] {makeMessageForA(a), makeMessageForB(b)});
     }
 
@@ -40,7 +40,7 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, severity, makeMessage(a, b));
+        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, severity);
     }
 
 

@@ -36,9 +36,8 @@ public class DiagnosticWithParameters3<E extends PsiElement, A, B, C> extends Ab
             @NotNull B b,
             @NotNull C c,
             @NotNull DiagnosticFactory3<E, A, B, C> factory,
-            @NotNull Severity severity,
-            @NotNull String message) {
-        super(psiElement, factory, severity, message);
+            @NotNull Severity severity) {
+        super(psiElement, factory, severity);
         this.a = a;
         this.b = b;
         this.c = c;
@@ -48,6 +47,12 @@ public class DiagnosticWithParameters3<E extends PsiElement, A, B, C> extends Ab
     @Override
     public DiagnosticFactory3<E, A, B, C> getFactory() {
         return (DiagnosticFactory3<E, A, B, C>)super.getFactory();
+    }
+
+    @NotNull
+    @Override
+    public String getMessage() {
+        return getFactory().makeMessage(a, b, c);
     }
 
     @Override
