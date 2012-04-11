@@ -164,6 +164,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         // don't include runtime, it should be in maven dependencies
         arguments.mode = "stdlib";
 
+        final ArrayList<String> classpathList = new ArrayList<String>();
+
         if (module != null) {
             log.info("Compiling Kotlin module " + module);
             arguments.setModule(module);
@@ -174,9 +176,12 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
             arguments.setSourceDirs(sources);
             log.info("Compiling Kotlin sources from " + arguments.getSourceDirs());
+
+            // TODO: Move it compiler
+            classpathList.addAll(sources);
         }
 
-        final ArrayList<String> classpathList = new ArrayList<String>(classpath);
+        classpathList.addAll(classpath);
 
         if (classpathList.remove(output)) {
             log.debug("Removed target directory from compiler classpath (" + output + ")");
