@@ -89,8 +89,8 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addToClasspath(compilerDependencies.getRuntimeJar());
 
             CoreLocalFileSystem localFileSystem = myEnvironment.getLocalFileSystem();
-            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
-            session.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
+            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
+            myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             if (!session.analyze()) {
                 throw new RuntimeException("There were compilation errors");
@@ -107,7 +107,7 @@ public class TestlibTest extends CodegenTestCase {
             JetTypeMapper typeMapper = state.getInjector().getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
-                for(JetFile jetFile : session.getSourceFiles()) {
+                for(JetFile jetFile : myEnvironment.getSourceFiles()) {
                     for(JetDeclaration decl : jetFile.getDeclarations()) {
                         if(decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;

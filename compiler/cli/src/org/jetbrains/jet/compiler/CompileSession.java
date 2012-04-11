@@ -23,7 +23,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -45,12 +44,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.Progress;
 
-import java.io.File;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,12 +58,10 @@ import java.util.List;
 public class CompileSession {
     private final JetCoreEnvironment environment;
     private final MessageCollector messageCollector;
-    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
-    private List<String> errors = new ArrayList<String>();
     private boolean stubs = false;
     private final MessageRenderer messageRenderer;
     private final PrintStream errorStream;
-    private final boolean isVerbose;
+    private final boolean verbose;
     private final CompilerDependencies compilerDependencies;
     private AnalyzeExhaust bindingContext;
 
@@ -76,9 +70,9 @@ public class CompileSession {
         this.environment = environment;
         this.messageRenderer = messageRenderer;
         this.errorStream = errorStream;
-        isVerbose = verbose;
+        this.verbose = verbose;
         this.compilerDependencies = compilerDependencies;
-        messageCollector = new MessageCollector(this.messageRenderer);
+        this.messageCollector = new MessageCollector(this.messageRenderer);
     }
 
     @NotNull
@@ -90,68 +84,7 @@ public class CompileSession {
         this.stubs = stubs;
     }
 
-    public void addSources(String path) {
-        if(path == null)
-            return;
-
-        VirtualFile vFile = environment.getLocalFileSystem().findFileByPath(path);
-        if (vFile == null) {
-            errors.add("File/directory not found: " + path);
-            return;
-        }
-        if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-            errors.add("Not a Kotlin file: " + path);
-            return;
-        }
-
-        addSources(new File(path));
-    }
-
-    private void addSources(File file) {
-        if(file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File child : files) {
-                    addSources(child);
-                }
-            }
-        }
-        else {
-            VirtualFile fileByPath = environment.getLocalFileSystem().findFileByPath(file.getAbsolutePath());
-            if (fileByPath != null) {
-                PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(fileByPath);
-                if(psiFile instanceof JetFile) {
-                    sourceFiles.add((JetFile)psiFile);
-                }
-            }
-        }
-    }
-
-    public void addSources(VirtualFile vFile) {
-        if  (vFile.isDirectory())  {
-            for (VirtualFile virtualFile : vFile.getChildren()) {
-                addSources(virtualFile);
-            }
-        }
-        else {
-            if (vFile.getFileType() == JetFileType.INSTANCE) {
-                PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(vFile);
-                if (psiFile instanceof JetFile) {
-                    sourceFiles.add((JetFile)psiFile);
-                }
-            }
-        }
-    }
-
-    public List<JetFile> getSourceFiles() {
-        return sourceFiles;
-    }
-
     public boolean analyze() {
-        for (String error : errors) {
-            messageCollector.report(Severity.ERROR, error, null, -1, -1);
-        }
-
         reportSyntaxErrors();
         analyzeAndReportSemanticErrors();
 
@@ -178,7 +111,7 @@ public class CompileSession {
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), sourceFiles, filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
+                environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
                 compilerDependencies);
 
         for (Diagnostic diagnostic : bindingContext.getBindingContext().getDiagnostics()) {
@@ -200,7 +133,7 @@ public class CompileSession {
     }
 
     private void reportSyntaxErrors() {
-        for (JetFile file : sourceFiles) {
+        for (JetFile file : environment.getSourceFiles()) {
             file.accept(new PsiRecursiveElementWalkingVisitor() {
                 @Override
                 public void visitErrorElement(PsiErrorElement element) {
@@ -224,13 +157,13 @@ public class CompileSession {
     public GenerationState generate(boolean module) {
         Project project = environment.getProject();
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
-                isVerbose ? new BackendProgress() : Progress.DEAF, bindingContext, sourceFiles, compilerDependencies.getCompilerSpecialMode());
+                verbose ? new BackendProgress() : Progress.DEAF, bindingContext, environment.getSourceFiles(), compilerDependencies.getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();
         if (!module) {
             if (plugins != null) {
-                CompilerPluginContext context = new CompilerPluginContext(project, bindingContext.getBindingContext(), getSourceFiles());
+                CompilerPluginContext context = new CompilerPluginContext(project, bindingContext.getBindingContext(), environment.getSourceFiles());
                 for (CompilerPlugin plugin : plugins) {
                     plugin.processFiles(context);
                 }

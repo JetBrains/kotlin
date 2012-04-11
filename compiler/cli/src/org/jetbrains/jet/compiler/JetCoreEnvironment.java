@@ -23,15 +23,17 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.net.URL;
@@ -43,8 +45,8 @@ import java.util.List;
  * @author yole
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
+    private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
     private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
-    private CompileSession session;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
         super(parentDisposable);
@@ -81,6 +83,61 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         return myApplication;
     }
 
+    private void addSources(File file) {
+        if(file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File child : files) {
+                    addSources(child);
+                }
+            }
+        }
+        else {
+            VirtualFile fileByPath = getLocalFileSystem().findFileByPath(file.getAbsolutePath());
+            if (fileByPath != null) {
+                PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(fileByPath);
+                if(psiFile instanceof JetFile) {
+                    sourceFiles.add((JetFile)psiFile);
+                }
+            }
+        }
+    }
+
+    public void addSources(VirtualFile vFile) {
+        if  (vFile.isDirectory())  {
+            for (VirtualFile virtualFile : vFile.getChildren()) {
+                addSources(virtualFile);
+            }
+        }
+        else {
+            if (vFile.getFileType() == JetFileType.INSTANCE) {
+                PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(vFile);
+                if (psiFile instanceof JetFile) {
+                    sourceFiles.add((JetFile)psiFile);
+                }
+            }
+        }
+    }
+
+    public void addSources(String path) {
+        if(path == null)
+            return;
+
+        VirtualFile vFile = getLocalFileSystem().findFileByPath(path);
+        if (vFile == null) {
+            throw new CompileEnvironmentException("File/directory not found: " + path);
+        }
+        if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
+            throw new CompileEnvironmentException("Not a Kotlin file: " + path);
+        }
+
+        addSources(new File(path));
+    }
+
+    public List<JetFile> getSourceFiles() {
+        return sourceFiles;
+    }
+
     public List<CompilerPlugin> getCompilerPlugins() {
         return compilerPlugins;
     }
@@ -93,7 +150,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         ClassLoader parent = loader.getParent();
         if(parent != null)
             addToClasspathFromClassLoader(parent);
-        
+
         if(loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
                 File file = new File(url.getPath());
@@ -101,13 +158,5 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                     addToClasspath(file);
             }
         }
-    }
-
-    public void setSession(CompileSession session) {
-        this.session = session;
-    }
-
-    public CompileSession getSession() {
-        return session;
     }
 }

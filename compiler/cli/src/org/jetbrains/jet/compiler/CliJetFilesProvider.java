@@ -33,7 +33,7 @@ public class CliJetFilesProvider extends JetFilesProvider {
     private Function<JetFile,Collection<JetFile>> all_files = new Function<JetFile, Collection<JetFile>>() {
         @Override
         public Collection<JetFile> fun(JetFile file) {
-            return environment.getSession().getSourceFiles();
+            return environment.getSourceFiles();
         }
 
     };
@@ -50,12 +50,9 @@ public class CliJetFilesProvider extends JetFilesProvider {
     @Override
     public List<JetFile> allInScope(GlobalSearchScope scope) {
         List<JetFile> answer = new ArrayList<JetFile>();
-        CompileSession session = environment.getSession();
-        if(session != null) {
-            for (JetFile file : session.getSourceFiles()) {
-                if (scope.contains(file.getVirtualFile())) {
-                    answer.add(file);
-                }
+        for (JetFile file : environment.getSourceFiles()) {
+            if (scope.contains(file.getVirtualFile())) {
+                answer.add(file);
             }
         }
         return answer;

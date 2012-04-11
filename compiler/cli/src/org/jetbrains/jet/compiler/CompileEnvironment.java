@@ -254,7 +254,7 @@ public class CompileEnvironment {
 
     public List<Module> loadModuleScript(String moduleFile) {
         CompileSession scriptCompileSession = newCompileSession();
-        scriptCompileSession.addSources(moduleFile);
+        environment.addSources(moduleFile);
         ensureRuntime();
 
         if (compilerDependencies.getRuntimeJar() != null) {
@@ -322,7 +322,7 @@ public class CompileEnvironment {
                 throw new CompileEnvironmentException("'" + source + "' does not exist");
             }
 
-            moduleCompileSession.addSources(source.getPath());
+            environment.addSources(source.getPath());
         }
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
             environment.addToClasspath(new File(classpathRoot));
@@ -415,7 +415,7 @@ public class CompileEnvironment {
 
     public ClassLoader compileText(String code) {
         CompileSession session = newCompileSession();
-        session.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
+        environment.addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
 
         if (!session.analyze() && !ignoreErrors) {
             return null;
@@ -429,7 +429,7 @@ public class CompileEnvironment {
         CompileSession session = newCompileSession();
         session.setStubs(compilerDependencies.getCompilerSpecialMode().isStubs());
 
-        session.addSources(sourceFileOrDir);
+        environment.addSources(sourceFileOrDir);
 
         return compileBunchOfSources(jar, outputDir, includeRuntime, session);
     }
@@ -439,7 +439,7 @@ public class CompileEnvironment {
         session.setStubs(compilerDependencies.getCompilerSpecialMode().isStubs());
 
         for (String source : sources) {
-            session.addSources(source);
+            environment.addSources(source);
         }
 
         return compileBunchOfSources(jar, outputDir, includeRuntime, session);
@@ -447,7 +447,7 @@ public class CompileEnvironment {
 
     private boolean compileBunchOfSources(String jar, String outputDir, boolean includeRuntime, CompileSession session) {
         FqName mainClass = null;
-        for (JetFile file : session.getSourceFiles()) {
+        for (JetFile file : environment.getSourceFiles()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
                 FqName fqName = JetPsiUtil.getFQName(file);
                 mainClass = fqName.child(JvmAbi.PACKAGE_CLASS);
@@ -480,7 +480,6 @@ public class CompileEnvironment {
 
     private CompileSession newCompileSession() {
         CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose, compilerDependencies);
-        environment.setSession(answer);
         return answer;
     }
 
