@@ -1,9 +1,12 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="http://kotlin.jetbrains.com">
+  <id>org.jetbrains.kotlin</id>
+
   <name>Kotlin</name>
   <description>Kotlin language support</description>
   <version>@snapshot@</version>
-  <vendor>JetBrains</vendor>
+  <vendor url="http://www.jetbrains.com">JetBrains Inc.</vendor>
 
+  <idea-version since-build="IC-117.105"/>
 
   <depends optional="true">JUnit</depends>
 
