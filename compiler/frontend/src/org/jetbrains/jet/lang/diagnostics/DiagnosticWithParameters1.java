@@ -23,22 +23,34 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * @author svtk
+ * @author Evgeny Gerashchenko
+ * @since 4/11/12
  */
-public class DiagnosticWithPsiElement<E extends PsiElement> extends AbstractDiagnostic<E> {
-    public DiagnosticWithPsiElement(@NotNull E psiElement, @NotNull DiagnosticFactoryWithPsiElement<E> factory, @NotNull Severity severity, @NotNull String message) {
+public class DiagnosticWithParameters1<E extends PsiElement, A> extends AbstractDiagnostic<E> {
+    private A a;
+
+    public DiagnosticWithParameters1(@NotNull E psiElement,
+            @NotNull A a,
+            @NotNull DiagnosticFactory1<E, A> factory,
+            @NotNull Severity severity,
+            @NotNull String message) {
         super(psiElement, factory, severity, message);
+        this.a = a;
     }
 
     @NotNull
     @Override
-    public DiagnosticFactoryWithPsiElement<E> getFactory() {
-        return (DiagnosticFactoryWithPsiElement<E>)super.getFactory();
+    public DiagnosticFactory1<E, A> getFactory() {
+        return (DiagnosticFactory1<E, A>)super.getFactory();
     }
 
     @Override
     @NotNull
     public List<TextRange> getTextRanges() {
         return getFactory().getTextRanges(this);
+    }
+
+    public A getA() {
+        return a;
     }
 }

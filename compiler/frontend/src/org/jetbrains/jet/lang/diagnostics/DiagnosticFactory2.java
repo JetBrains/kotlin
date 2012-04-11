@@ -40,7 +40,7 @@ public class DiagnosticFactory2<E extends PsiElement, A, B> extends DiagnosticFa
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b) {
-        return new DiagnosticWithPsiElement<E>(element, this, severity, makeMessage(a, b));
+        return new DiagnosticWithParameters2<E, A, B>(element, a, b, this, severity, makeMessage(a, b));
     }
 
 
