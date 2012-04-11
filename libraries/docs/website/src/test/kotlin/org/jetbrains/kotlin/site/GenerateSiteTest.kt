@@ -28,7 +28,7 @@ class GenerateSiteTest : TestCase() {
 
         // now lets assert that the API docs generated everything
         assertFilesExist(outDir, "Expected generate API docs are missing - API doc generation failure",
-                "kotlin/package.html", "kotlin/dom/package.html")
+                "kotlin/package-frame.html", "kotlin/dom/package-frame.html", "kotlin/test/package-frame.html")
     }
 
     fun testCopyJSApiDocs(): Unit {

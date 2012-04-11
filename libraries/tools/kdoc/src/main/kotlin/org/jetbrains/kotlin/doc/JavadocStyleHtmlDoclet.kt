@@ -60,7 +60,7 @@ class JavadocStyleHtmlDoclet() : Doclet {
         }
 
 
-        println("Generating kdoc to $outputDir")
+        println("Generating kdoc to $outputDir excluding packages ${model.config.ignorePackages}")
         run("allclasses-frame.html", AllClassesFrameTemplate(model, " target=\"classFrame\""))
         run("allclasses-noframe.html", AllClassesFrameTemplate(model))
         // run("constant-values.html", ConstantValuesTemplate(model))

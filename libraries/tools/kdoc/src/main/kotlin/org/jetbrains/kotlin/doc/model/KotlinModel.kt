@@ -199,6 +199,8 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                 val namespaceDescriptor = BindingContextUtils.namespaceDescriptor(context, source)
                 if (namespaceDescriptor != null) {
                     allNamespaces.add(namespaceDescriptor);
+                } else {
+                    warning("No NamespaceDescriptor for source $source")
                 }
             }
         }
