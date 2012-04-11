@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -88,7 +89,7 @@ public final class BindingUtils {
     @NotNull
     public static JetClass getClassForDescriptor(@NotNull BindingContext context,
                                                  @NotNull ClassDescriptor descriptor) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
         assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
         return (JetClass)result;
     }
@@ -96,7 +97,7 @@ public final class BindingUtils {
     @NotNull
     public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
                                                        @NotNull SimpleFunctionDescriptor descriptor) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
         assert result instanceof JetFunction : "SimpleFunctionDescriptor should have declaration of type JetFunction";
         return (JetFunction)result;
     }
@@ -120,7 +121,7 @@ public final class BindingUtils {
     @Nullable
     private static JetDeclaration getDeclarationForDescriptor(@NotNull BindingContext context,
                                                               @NotNull DeclarationDescriptor descriptor) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
         if (result == null) {
             //TODO: never get there
             return null;
@@ -132,7 +133,7 @@ public final class BindingUtils {
     @NotNull
     private static JetParameter getParameterForDescriptor(@NotNull BindingContext context,
                                                           @NotNull ValueParameterDescriptor descriptor) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
         assert result instanceof JetParameter : "ValueParameterDescriptor should have corresponding JetParameter.";
         return (JetParameter)result;
     }
@@ -172,7 +173,7 @@ public final class BindingUtils {
     @Nullable
     public static JetProperty getPropertyForDescriptor(@NotNull BindingContext context,
                                                        @NotNull PropertyDescriptor property) {
-        PsiElement result = context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, property);
+        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, property);
         if (!(result instanceof JetProperty)) {
             return null;
         }

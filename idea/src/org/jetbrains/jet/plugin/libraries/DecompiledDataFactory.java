@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -176,7 +177,7 @@ class DecompiledDataFactory {
         }
 
         myBuilder.append("\n");
-        PsiElement clsMember = myBindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(myBindingContext, descriptor);
         if (clsMember != null) {
             myClsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
         }

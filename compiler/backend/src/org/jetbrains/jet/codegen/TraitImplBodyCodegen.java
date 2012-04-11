@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.objectweb.asm.Opcodes;
@@ -34,7 +35,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     //todo not needed when frontend will be able to calculate properly
     static JetType getSuperClass(ClassDescriptor myClassDescr, BindingContext bindingContext) {
-        JetClassOrObject myClass = (JetClassOrObject) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, myClassDescr);
+        JetClassOrObject myClass = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(bindingContext, myClassDescr);
         if(myClass == null)
             return JetStandardClasses.getAnyType();
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
@@ -43,7 +44,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
             if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
+                final PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, superClassDescriptor);
                 if (declaration != null) {
                     if (declaration instanceof PsiClass) {
                         if (!((PsiClass) declaration).isInterface()) {

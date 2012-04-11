@@ -350,7 +350,7 @@ public class TypeHierarchyResolver {
             if (!found) continue;
 
             ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
-            PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
+            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor);
 
             PsiElement elementToMark = null;
             if (psiElement instanceof JetClassOrObject) {
@@ -410,7 +410,7 @@ public class TypeHierarchyResolver {
                     if (conflictingTypes.size() > 1) {
                         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                         assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                        PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, mutableClassDescriptor);
+                        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), mutableClassDescriptor);
                         assert psiElement instanceof JetClassOrObject : psiElement;
                         JetClassOrObject declaration = (JetClassOrObject) psiElement;
                         JetDelegationSpecifierList delegationSpecifierList = declaration.getDelegationSpecifierList();

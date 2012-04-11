@@ -124,7 +124,7 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         ArrayList<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
         
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
-            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             if (element == null) {
                 // TODO: Need a better resolution for Intrinsic function (KT-975)
                 element = file;

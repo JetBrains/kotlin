@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public interface RedeclarationDiagnostic extends Diagnostic {
 
         private PsiElement resolve() {
             if (element == null) {
-                element = contextToResolveToDeclaration.get(BindingContext.DESCRIPTOR_TO_DECLARATION, duplicatingDescriptor);
+                element = BindingContextUtils.descriptorToDeclaration(contextToResolveToDeclaration, duplicatingDescriptor);
                 assert element != null : "No element for descriptor: " + duplicatingDescriptor;
             }
             return element;

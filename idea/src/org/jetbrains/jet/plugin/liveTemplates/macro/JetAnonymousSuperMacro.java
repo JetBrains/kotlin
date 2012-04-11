@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -106,7 +107,7 @@ public class JetAnonymousSuperMacro extends Macro {
             if (!classDescriptor.getModality().isOverridable()) continue;
             ClassKind kind = classDescriptor.getKind();
             if (kind == ClassKind.TRAIT || kind == ClassKind.CLASS) {
-                PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
                 if (declaration != null) {
                     result.add((PsiNamedElement) declaration);
                 }

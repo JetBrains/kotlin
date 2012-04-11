@@ -134,7 +134,7 @@ public class DeclarationsChecker {
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
 
-            JetNamedDeclaration member = (JetNamedDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
+            JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
@@ -179,7 +179,7 @@ public class DeclarationsChecker {
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                PsiElement classElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 assert classElement instanceof JetClass;
                 String name = property.getName();
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, (JetClass) classElement));
@@ -252,7 +252,7 @@ public class DeclarationsChecker {
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                PsiElement classElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 assert classElement instanceof JetClass;
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
             }

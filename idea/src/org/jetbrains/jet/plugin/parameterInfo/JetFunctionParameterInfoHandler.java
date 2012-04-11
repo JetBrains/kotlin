@@ -30,6 +30,7 @@ import org.jetbrains.jet.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
@@ -149,7 +150,7 @@ public class JetFunctionParameterInfoHandler implements
         builder.append(descriptor.getName()).append(": ").
                 append(DescriptorRenderer.TEXT.renderType(getActualParameterType(descriptor)));
         if (descriptor.hasDefaultValue()) {
-            PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             String defaultExpression = "?";
             if (element instanceof JetParameter) {
                 JetParameter parameter = (JetParameter) element;

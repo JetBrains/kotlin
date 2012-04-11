@@ -28,6 +28,7 @@ import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -69,7 +70,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
 
                 assertNotNull(classDescriptor);
 
-                PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
+                PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, classDescriptor);
 
                 assertNotNull(psiElement);
 

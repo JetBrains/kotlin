@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -110,7 +111,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         if (overriddenMembers.isEmpty()) return;
                         final List<PsiElement> list = Lists.newArrayList();
                         for (CallableMemberDescriptor overriddenMember : overriddenMembers) {
-                            PsiElement declarationPsiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, overriddenMember);
+                            PsiElement declarationPsiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, overriddenMember);
                             list.add(declarationPsiElement);
                         }
                         if (list.isEmpty()) {

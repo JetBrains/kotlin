@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
@@ -118,7 +119,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         {
             VariableDescriptor olderVariable = scope.getLocalVariable(propertyDescriptor.getName());
             if (olderVariable != null && DescriptorUtils.isLocal(propertyDescriptor.getContainingDeclaration(), olderVariable)) {
-                PsiElement declaration = context.trace.get(DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), propertyDescriptor);
                 context.trace.report(Errors.NAME_SHADOWING.on(declaration, propertyDescriptor.getName()));
             }
         }

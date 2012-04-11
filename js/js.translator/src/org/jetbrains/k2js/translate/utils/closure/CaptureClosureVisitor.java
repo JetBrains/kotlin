@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTreeVisitor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 /**
@@ -53,7 +54,7 @@ public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
             return null;
         }
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        PsiElement variableDeclaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (variableDeclaration == null) {
             return null;
         }

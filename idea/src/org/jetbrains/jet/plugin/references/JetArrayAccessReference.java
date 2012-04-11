@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetContainerNode;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
@@ -76,9 +77,9 @@ class JetArrayAccessReference extends JetPsiReference implements MultiRangeRefer
         if (getFunction == null || setFunction == null) {
             return new ResolveResult[0];
         }
-        PsiElement getFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, getFunction.getResultingDescriptor());
+        PsiElement getFunctionElement = BindingContextUtils.descriptorToDeclaration(bindingContext, getFunction.getResultingDescriptor());
         assert getFunctionElement != null;
-        PsiElement setFunctionElement = bindingContext.get(DESCRIPTOR_TO_DECLARATION, setFunction.getResultingDescriptor());
+        PsiElement setFunctionElement = BindingContextUtils.descriptorToDeclaration(bindingContext, setFunction.getResultingDescriptor());
         assert setFunctionElement != null;
         return new ResolveResult[] {new PsiElementResolveResult(getFunctionElement, true), new PsiElementResolveResult(setFunctionElement, true)};
     }

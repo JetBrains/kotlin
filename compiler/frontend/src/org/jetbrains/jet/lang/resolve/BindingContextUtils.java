@@ -41,7 +41,7 @@ public class BindingContextUtils {
             return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
         }
 
-        PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+        PsiElement element = descriptorToDeclaration(bindingContext, declarationDescriptor);
         if (element != null) {
             return element;
         }
@@ -77,11 +77,13 @@ public class BindingContextUtils {
 
     // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
 
+    // NOTE this is used by KDoc
     @Nullable
     public static NamespaceDescriptor namespaceDescriptor(@NotNull BindingContext context, @NotNull JetFile source) {
         return context.get(BindingContext.FILE_TO_NAMESPACE, source);
     }
 
+    // NOTE this is also used by KDoc
     @Nullable
     public static PsiElement descriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
         return context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -1066,7 +1067,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             if(declaration instanceof JetClass) {
                 final JetClassObject classObject = ((JetClass) declaration).getClassObject();
                 if (classObject == null) {
@@ -1433,7 +1434,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         CodegenContext cur = context;
 
-        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, calleeContainingClass);
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, calleeContainingClass);
         boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject)psiElement);
         
         cur = context;
@@ -2235,7 +2236,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
 
     private StackValue generateConstructorCall(JetCallExpression expression, JetSimpleNameExpression constructorReference, StackValue receiver) {
         DeclarationDescriptor constructorDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, constructorReference);
-        final PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, constructorDescriptor);
+        final PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, constructorDescriptor);
         Type type;
         if (declaration instanceof PsiMethod) {
             type = generateJavaConstructorCall(expression);

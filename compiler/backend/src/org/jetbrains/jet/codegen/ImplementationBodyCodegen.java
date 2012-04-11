@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWri
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -633,7 +634,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 StackValue field = StackValue.field(fieldType, classname, delegateField, false);
                 field.store(iv);
 
-                JetClass superClass = (JetClass) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, superClassDescriptor);
+                JetClass superClass = (JetClass) BindingContextUtils.descriptorToDeclaration(bindingContext, superClassDescriptor);
                 final CodegenContext delegateContext = context.intoClass(superClassDescriptor,
                         new OwnerKind.DelegateKind(StackValue.field(fieldType, classname, delegateField, false),
                                 typeMapper.mapType(superClassDescriptor.getDefaultType(), MapTypeMode.IMPL).getInternalName()), state.getInjector().getJetTypeMapper());
@@ -722,7 +723,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
         if(containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor declaration = (ClassDescriptor) containingDeclaration;
-            PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declaration);
+            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, declaration);
             if(psiElement instanceof JetClass) {
                 JetClass jetClass = (JetClass) psiElement;
                 if(jetClass.isTrait()) {
@@ -764,7 +765,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             iv.checkcast(function.getReturnType());
                         }
                         iv.areturn(function.getReturnType());
-                        FunctionCodegen.endVisit(iv, "trait method", bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fun));
+                        FunctionCodegen.endVisit(iv, "trait method", BindingContextUtils.descriptorToDeclaration(bindingContext, fun));
                     }
 
                     FunctionCodegen.generateBridgeIfNeeded(context, state, v, function, fun, kind);

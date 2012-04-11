@@ -17,16 +17,15 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collections;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -86,7 +85,7 @@ public class CodegenUtil {
 
 
     public static boolean isNamedFun(DeclarationDescriptor fd, BindingContext bindingContext) {
-        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fd);
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, fd);
         if(psiElement instanceof JetNamedFunction) {
             return true;
         }

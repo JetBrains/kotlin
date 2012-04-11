@@ -291,7 +291,7 @@ public class DeclarationResolver {
             });
         }
         else {
-            declarations = Collections.singletonList(trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor));
+            declarations = Collections.singletonList(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declarationDescriptor));
         }
         return declarations;
     }

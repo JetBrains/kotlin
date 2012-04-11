@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -82,7 +82,7 @@ public class ObjectOrClosureCodegen {
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
-            JetElement expression = (JetElement) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, vd);
+            JetElement expression = (JetElement) BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), vd);
             String cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
             Type localType = Type.getObjectType(cn);
 

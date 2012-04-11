@@ -40,7 +40,7 @@ public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
     }
 
     private void report(DeclarationDescriptor descriptor) {
-        PsiElement firstElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement firstElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
         if (firstElement != null) {
             trace.report(REDECLARATION.on(firstElement, descriptor.getName()));
         }

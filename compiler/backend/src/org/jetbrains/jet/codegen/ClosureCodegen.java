@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -288,7 +289,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
                 argTypes[i++] = type;
             }
             else if(CodegenUtil.isNamedFun(descriptor, state.getBindingContext()) && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-                final Type type = Type.getObjectType(state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor)));
+                final Type type = Type.getObjectType(state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor)));
                 argTypes[i++] = type;
             }
         }

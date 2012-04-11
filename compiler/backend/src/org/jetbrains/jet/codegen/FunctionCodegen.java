@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.signature.kotlin.JetValueParameterAnnotationWri
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -299,7 +300,7 @@ public class FunctionCodegen {
         if(kind != OwnerKind.TRAIT_IMPL) {
             // we don't generate defaults for traits but do for traitImpl
             if(contextClass instanceof ClassDescriptor) {
-                PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, contextClass);
+                PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), contextClass);
                 if(psiElement instanceof JetClass) {
                     JetClass element = (JetClass) psiElement;
                     if(element.isTrait())
@@ -404,7 +405,7 @@ public class FunctionCodegen {
                         Label loadArg = new Label();
                         iv.ifeq(loadArg);
 
-                        JetParameter jetParameter = (JetParameter) state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, parameterDescriptor);
+                        JetParameter jetParameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), parameterDescriptor);
                         assert jetParameter != null;
                         codegen.gen(jetParameter.getDefaultValue(), t);
 
@@ -439,7 +440,7 @@ public class FunctionCodegen {
 
                 iv.areturn(jvmSignature.getReturnType());
 
-                endVisit(mv, "default method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
+                endVisit(mv, "default method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
                 mv.visitEnd();
             }
         }
@@ -499,7 +500,7 @@ public class FunctionCodegen {
                 if(jvmSignature.getReturnType() == Type.VOID_TYPE)
                     iv.aconst(null);
                 iv.areturn(overriden.getReturnType());
-                endVisit(mv, "bridge method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
+                endVisit(mv, "bridge method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
             }
         }
     }
@@ -543,7 +544,7 @@ public class FunctionCodegen {
             else
                 iv.invokevirtual(internalName, method.getName(), method.getDescriptor());
             iv.areturn(method.getReturnType());
-            endVisit(mv, "delegate method", state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, functionDescriptor));
+            endVisit(mv, "delegate method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
         }
     }
 }

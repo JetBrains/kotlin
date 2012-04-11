@@ -194,14 +194,14 @@ public class OverloadResolver {
 
                 OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration jetDeclaration = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, member);
+                    JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member);
                     if (jetDeclaration == null) {
                         assert trace.get(DELEGATED, member);
                         return;
                     }
 
                     if (member instanceof PropertyDescriptor) {
-                        trace.report(Errors.REDECLARATION.on(trace.get(DESCRIPTOR_TO_DECLARATION, member), member.getName()));
+                        trace.report(Errors.REDECLARATION.on(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member), member.getName()));
                     }
                     else {
                         trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, member, functionContainer));

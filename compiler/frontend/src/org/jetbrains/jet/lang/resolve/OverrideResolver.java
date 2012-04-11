@@ -135,7 +135,7 @@ public class OverrideResolver {
 
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                            JetDeclaration jetProperty = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, fromCurrent);
+                            JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
                             trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
                         }
                     });
@@ -372,7 +372,7 @@ public class OverrideResolver {
     }
 
     private void checkOverride(CallableMemberDescriptor declared) {
-        JetNamedDeclaration member = (JetNamedDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declared);
+        JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
         if (member == null) {
             assert trace.get(DELEGATED, declared);
             return;
@@ -441,7 +441,7 @@ public class OverrideResolver {
             checkVisibilityForMember(propertyDescriptor.getVisibility(), property, propertyDescriptor.getOverriddenDescriptors());
         }
         for (PropertyDescriptor propertyDescriptor : context.getPrimaryConstructorParameterProperties()) {
-            PsiElement parameter = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
+            PsiElement parameter = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), propertyDescriptor);
             if (parameter instanceof JetParameter) {
                 checkVisibilityForMember(propertyDescriptor.getVisibility(), (JetParameter)parameter, propertyDescriptor.getOverriddenDescriptors());
             }

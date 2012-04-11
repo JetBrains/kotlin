@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -271,7 +272,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
                 VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
                 if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
-                    PsiElement declaration = context.trace.get(DESCRIPTOR_TO_DECLARATION, variableDescriptor);
+                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
                     context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName()));
                 }
             }
@@ -472,12 +473,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (expression.getTargetLabel() == null) {
             if (containingFunctionDescriptor != null) {
-                PsiElement containingFunction = context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor);
+                PsiElement containingFunction = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
                 assert containingFunction != null;
                 if (containingFunction instanceof JetFunctionLiteralExpression) {
                     do {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-                        containingFunction = containingFunctionDescriptor != null ? context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor) : null;
+                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
                     } while (containingFunction instanceof JetFunctionLiteralExpression);
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }

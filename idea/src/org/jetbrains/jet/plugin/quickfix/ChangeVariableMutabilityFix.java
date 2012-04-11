@@ -77,7 +77,7 @@ public class ChangeVariableMutabilityFix implements IntentionAction {
             BindingContext bindingContext = getContextForSingleFile(file);
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, simpleNameExpression, true);
             if (descriptor != null) {
-                PsiElement declaration = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
                 if (declaration instanceof JetProperty) {
                     return (JetProperty) declaration;
                 }

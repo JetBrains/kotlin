@@ -87,6 +87,7 @@ public interface BindingContext {
             }
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             assert backingFieldRequired != null;
+            // TODO: user BindingContextAccessors
             PsiElement declarationPsiElement = map.get(DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
             if (declarationPsiElement instanceof JetParameter) {
                 JetParameter jetParameter = (JetParameter) declarationPsiElement;

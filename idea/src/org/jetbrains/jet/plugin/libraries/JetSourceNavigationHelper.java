@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
@@ -100,7 +101,8 @@ public class JetSourceNavigationHelper {
     public static JetClass getSourceClass(@NotNull JetClass decompiledClass) {
         Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
         if (bindingContextAndClassDescriptor == null) return null;
-        PsiElement declaration = bindingContextAndClassDescriptor._1.get(BindingContext.DESCRIPTOR_TO_DECLARATION, bindingContextAndClassDescriptor._2);
+        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(
+                bindingContextAndClassDescriptor._1, bindingContextAndClassDescriptor._2);
         assert declaration instanceof JetClass;
         return (JetClass) declaration;
     }
@@ -159,7 +161,7 @@ public class JetSourceNavigationHelper {
                 for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {
                     if (candidate.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
                         if (matcher.areSame(decompiledDeclaration, candidate)) {
-                            return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
+                            return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         }
                     }
                 }
@@ -172,7 +174,7 @@ public class JetSourceNavigationHelper {
                         String thisReceiverType = DescriptorRenderer.TEXT.renderType(candidate.getReceiverParameter().getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
                             if (matcher.areSame(decompiledDeclaration, candidate)) {
-                                return (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
+                                return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                             }
                         }
                     }
@@ -203,7 +205,7 @@ public class JetSourceNavigationHelper {
                 ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
                 for (Descr candidate : matcher.getCandidatesFromScope(memberScope, entityName)) {
                     if (candidate.getContainingDeclaration() == expectedContainer) {
-                        JetDeclaration property = (JetDeclaration) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, candidate);
+                        JetDeclaration property = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         if (property != null) {
                             return property;
                         }

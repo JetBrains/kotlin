@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -275,7 +276,7 @@ public class JetTypeMapper {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            return closureAnnotator.classNameForAnonymousClass((JetElement) bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
+            return closureAnnotator.classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
         }
         if(name.contains("/"))
             return name;
@@ -924,7 +925,7 @@ public class JetTypeMapper {
             return StackValue.sharedTypeForType(mapType(((PropertyDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
-            PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             return Type.getObjectType(closureAnnotator.classNameForAnonymousClass((JetElement) psiElement));
         }
         else if (descriptor instanceof FunctionDescriptor) {

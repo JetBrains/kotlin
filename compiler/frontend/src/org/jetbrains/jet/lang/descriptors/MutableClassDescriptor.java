@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -91,7 +91,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         if (constructorDescriptor.isPrimary()) {
             setUpScopeForInitializers(constructorDescriptor);
             for (ValueParameterDescriptor valueParameterDescriptor : constructorDescriptor.getValueParameters()) {
-                JetParameter parameter = (JetParameter) trace.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, valueParameterDescriptor);
+                JetParameter parameter = (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), valueParameterDescriptor);
                 assert parameter != null;
                 if (parameter.getValOrVarNode() == null || !constructorDescriptor.isPrimary()) {
                     getWritableScopeForInitializers().addVariableDescriptor(valueParameterDescriptor);

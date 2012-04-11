@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
@@ -51,7 +52,7 @@ public abstract class AnnotationCodegen {
         if(!(annotated instanceof DeclarationDescriptor))
             return;
 
-        PsiElement psiElement = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, (DeclarationDescriptor)annotated);
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
 
         JetModifierList modifierList = null;
         if(annotated instanceof ConstructorDescriptor && psiElement instanceof JetClass) {

@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -160,7 +161,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
@@ -245,7 +246,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
@@ -119,7 +120,7 @@ public final class DescriptorLookupConverter {
             }
             descriptor = callableMemberDescriptor;
         }
-        return createLookupElement(bindingContext, descriptor, bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor));
+        return createLookupElement(bindingContext, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
     }
 
     public static LookupElement[] collectLookupElements(BindingContext bindingContext, Iterable<DeclarationDescriptor> descriptors) {
