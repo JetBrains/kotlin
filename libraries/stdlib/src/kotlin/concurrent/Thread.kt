@@ -50,13 +50,3 @@ public inline fun Executor.execute(action: ()->Unit) {
     execute(runnable(action))
 }
 
-/**
- * A helper method for creating a [[Runnable]] from a block
- */
-public inline fun runnable(action: ()-> Unit): Runnable {
-    return object: Runnable {
-        public override fun run() {
-            action()
-        }
-    }
-}

@@ -69,3 +69,14 @@ public inline fun <T> Iterator<T>.toTreeSet() : TreeSet<T> = to(TreeSet<T>())
 Run function f
 */
 public inline fun <T> run(f: () -> T) : T = f()
+
+/**
+ * A helper method for creating a [[Runnable]] from a function
+ */
+public inline fun runnable(action: ()-> Unit): Runnable {
+    return object: Runnable {
+        public override fun run() {
+            action()
+        }
+    }
+}
