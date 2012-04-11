@@ -91,7 +91,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
         
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironment.writeToOutputDirectory(classFileFactory, aDir.getPath());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, aDir.getPath());
         
         Disposer.dispose(myTestRootDisposable);
     }
@@ -109,7 +109,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironment.writeToOutputDirectory(classFileFactory, bDir.getPath());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, bDir.getPath());
 
         Disposer.dispose(myTestRootDisposable);
     }

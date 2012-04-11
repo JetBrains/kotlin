@@ -18,13 +18,8 @@ package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.LocalTimeCounter;
-import com.intellij.util.Processor;
-import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,30 +29,15 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
 
 /**
  * The environment for compiling a bunch of source files or
@@ -65,8 +45,9 @@ import java.util.jar.Manifest;
  * @author yole
  */
 public class CompileEnvironment {
-    private JetCoreEnvironment environment;
     private final Disposable rootDisposable;
+    private JetCoreEnvironment environment;
+
     private final MessageRenderer messageRenderer;
     private PrintStream errorStream = System.err;
 
@@ -86,12 +67,12 @@ public class CompileEnvironment {
     public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose, @NotNull CompilerDependencies compilerDependencies) {
         this.compilerDependencies = compilerDependencies;
         this.verbose = verbose;
-        rootDisposable = new Disposable() {
+        this.rootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
-        environment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
+        this.environment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
         this.messageRenderer = messageRenderer;
     }
 
@@ -107,201 +88,40 @@ public class CompileEnvironment {
         Disposer.dispose(rootDisposable);
     }
 
-    @Nullable
-    public static File getUnpackedRuntimePath() {
-        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("file")) {
-            return new File(url.getPath()).getParentFile().getParentFile();
-        }
-        return null;
-    }
-
-    @Nullable
-    public static File getRuntimeJarPath() {
-        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
-        if (url != null && url.getProtocol().equals("jar")) {
-            String path = url.getPath();
-            return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
-        }
-        return null;
-    }
-
-    public void ensureRuntime() {
-        if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.REGULAR) {
-            ensureRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.JDK_HEADERS) {
-            ensureJdkRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.STDLIB) {
-            ensureJdkRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
-            // nop
-        }
-        else {
-            throw new IllegalStateException("unknown mode: " + compilerDependencies.getCompilerSpecialMode());
-        }
-    }
-
-    public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
-        ensureJdkRuntime(env);
-    }
-
-    private static void ensureKotlinRuntime(JetCoreEnvironment env) {
-        if (JavaPsiFacade.getInstance(env.getProject()).findClass("jet.JetObject", GlobalSearchScope.allScope(env.getProject())) == null) {
-            // TODO: prepend
-            File kotlin = PathUtil.getDefaultRuntimePath();
-            if (kotlin == null || !kotlin.exists()) {
-                kotlin = getUnpackedRuntimePath();
-                if (kotlin == null) kotlin = getRuntimeJarPath();
-            }
-            if (kotlin == null) {
-                throw new IllegalStateException("kotlin runtime not found");
-            }
-            env.addToClasspath(kotlin);
-        }
-    }
-
-    public static void ensureJdkRuntime(JetCoreEnvironment env) {
-        if (JavaPsiFacade.getInstance(env.getProject()).findClass("java.lang.Object", GlobalSearchScope.allScope(env.getProject())) == null) {
-            // TODO: prepend
-            env.addToClasspath(findRtJar());
-        }
-    }
-
-    public static File findRtJar() {
-        String javaHome = System.getProperty("java.home");
-        if ("jre".equals(new File(javaHome).getName())) {
-            javaHome = new File(javaHome).getParent();
-        }
-
-        File rtJar = findRtJar(javaHome);
-
-        if (rtJar == null || !rtJar.exists()) {
-            throw new CompileEnvironmentException("No JDK rt.jar found under " + javaHome);
-        }
-
-        return rtJar;
-    }
-
-    private static File findRtJar(String javaHome) {
-        File rtJar = new File(javaHome, "jre/lib/rt.jar");
-        if (rtJar.exists()) {
-            return rtJar;
-        }
-
-        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
-        if (classesJar.exists()) {
-            return classesJar;
-        }
-        return null;
-    }
-
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        CompileEnvironment moduleCompilationEnvironment = copyEnvironment(false);
-        try {
-            List<Module> modules = moduleCompilationEnvironment.loadModuleScript(moduleScriptFile);
+        List<Module> modules = CompileEnvironmentUtil.loadModuleScript(moduleScriptFile, messageRenderer, errorStream, verbose);
 
-            if (modules == null) {
-                throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
+        if (modules == null) {
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
+        }
+
+        if (modules.isEmpty()) {
+            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
+        }
+
+        final String directory = new File(moduleScriptFile).getParent();
+        for (Module moduleBuilder : modules) {
+            if (compilerDependencies.getRuntimeJar() != null) {
+                addToClasspath(compilerDependencies.getRuntimeJar());
             }
-
-            if (modules.isEmpty()) {
-                throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
+            ClassFileFactory moduleFactory = compileModule(moduleBuilder, directory);
+            if (moduleFactory == null) {
+                return false;
             }
-
-            final String directory = new File(moduleScriptFile).getParent();
-            for (Module moduleBuilder : modules) {
-                CompileEnvironment compileEnvironment = copyEnvironment(verbose);
-                if (compilerDependencies.getRuntimeJar() != null) {
-                    compileEnvironment.addToClasspath(compilerDependencies.getRuntimeJar());
-                }
+            if (outputDir != null) {
+                CompileEnvironmentUtil.writeToOutputDirectory(moduleFactory, outputDir);
+            }
+            else {
+                String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
                 try {
-                    ClassFileFactory moduleFactory = compileEnvironment.compileModule(moduleBuilder, directory);
-                    if (moduleFactory == null) {
-                        return false;
-                    }
-                    if (outputDir != null) {
-                        writeToOutputDirectory(moduleFactory, outputDir);
-                    }
-                    else {
-                        String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
-                        try {
-                            writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
-                        } catch (FileNotFoundException e) {
-                            throw new CompileEnvironmentException("Invalid jar path " + path, e);
-                        }
-                    }
-                } finally {
-                    compileEnvironment.dispose();
+                    CompileEnvironmentUtil.writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                }
+                catch (FileNotFoundException e) {
+                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
                 }
             }
-            return true;
-        } finally {
-            moduleCompilationEnvironment.dispose();
         }
-    }
-
-    private CompileEnvironment copyEnvironment(boolean verbose) {
-        CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose, compilerDependencies);
-        compileEnvironment.setIgnoreErrors(ignoreErrors);
-        compileEnvironment.setErrorStream(errorStream);
-        // copy across any compiler plugins
-        compileEnvironment.getEnvironment().getCompilerPlugins().addAll(environment.getCompilerPlugins());
-        return compileEnvironment;
-    }
-
-    public List<Module> loadModuleScript(String moduleFile) {
-        CompileSession scriptCompileSession = newCompileSession();
-        environment.addSources(moduleFile);
-        ensureRuntime();
-
-        if (compilerDependencies.getRuntimeJar() != null) {
-            addToClasspath(compilerDependencies.getRuntimeJar());
-        }
-
-        if (!scriptCompileSession.analyze()) {
-            return null;
-        }
-        ClassFileFactory factory = scriptCompileSession.generate(true).getFactory();
-
-        return runDefineModules(moduleFile, factory);
-    }
-
-    private List<Module> runDefineModules(String moduleFile, ClassFileFactory factory) {
-        File stdlibJar = compilerDependencies.getRuntimeJar();
-        GeneratedClassLoader loader;
-        if (stdlibJar != null) {
-            try {
-                loader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{stdlibJar.toURI().toURL()}, AllModules.class.getClassLoader()));
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        else {
-            loader = new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
-        }
-        try {
-            Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
-            final Method method = namespaceClass.getDeclaredMethod("project");
-            if (method == null) {
-                throw new CompileEnvironmentException("Module script " + moduleFile + " must define project() function");
-            }
-
-            method.setAccessible(true);
-            method.invoke(null);
-
-            ArrayList<Module> answer = new ArrayList<Module>(AllModules.modules.get());
-            AllModules.modules.get().clear();
-            return answer;
-        }
-        catch (Exception e) {
-            throw new ModuleExecutionException(e);
-        }
-        finally {
-            loader.dispose();
-        }
+        return true;
     }
 
     public ClassFileFactory compileModule(Module moduleBuilder, String directory) {
@@ -328,89 +148,12 @@ public class CompileEnvironment {
             environment.addToClasspath(new File(classpathRoot));
         }
 
-        ensureRuntime();
+        CompileEnvironmentUtil.ensureRuntime(environment, compilerDependencies);
 
         if (!moduleCompileSession.analyze() && !ignoreErrors) {
             return null;
         }
         return moduleCompileSession.generate(false).getFactory();
-    }
-
-    public static void writeToJar(ClassFileFactory factory, final OutputStream fos, @Nullable FqName mainClass, boolean includeRuntime) {
-        try {
-            Manifest manifest = new Manifest();
-            final Attributes mainAttributes = manifest.getMainAttributes();
-            mainAttributes.putValue("Manifest-Version", "1.0");
-            mainAttributes.putValue("Created-By", "JetBrains Kotlin");
-            if (mainClass != null) {
-                mainAttributes.putValue("Main-Class", mainClass.getFqName());
-            }
-            JarOutputStream stream = new JarOutputStream(fos, manifest);
-            try {
-                for (String file : factory.files()) {
-                    stream.putNextEntry(new JarEntry(file));
-                    stream.write(factory.asBytes(file));
-                }
-                if (includeRuntime) {
-                    writeRuntimeToJar(stream);
-                }
-            }
-            finally {
-                stream.close();
-                fos.close();
-            }
-
-        } catch (IOException e) {
-            throw new CompileEnvironmentException("Failed to generate jar file", e);
-        }
-    }
-
-    private static void writeRuntimeToJar(final JarOutputStream stream) throws IOException {
-        final File unpackedRuntimePath = getUnpackedRuntimePath();
-        if (unpackedRuntimePath != null) {
-            FileUtil.processFilesRecursively(unpackedRuntimePath, new Processor<File>() {
-                @Override
-                public boolean process(File file) {
-                    if (file.isDirectory()) return true;
-                    final String relativePath = FileUtil.getRelativePath(unpackedRuntimePath, file);
-                    try {
-                        stream.putNextEntry(new JarEntry(FileUtil.toSystemIndependentName(relativePath)));
-                        FileInputStream fis = new FileInputStream(file);
-                        try {
-                            FileUtil.copy(fis, stream);
-                        } finally {
-                            fis.close();
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return true;
-                }
-            });
-        }
-        else {
-            File runtimeJarPath = getRuntimeJarPath();
-            if (runtimeJarPath != null) {
-                JarInputStream jis = new JarInputStream(new FileInputStream(runtimeJarPath));
-                try {
-                    while (true) {
-                        JarEntry e = jis.getNextJarEntry();
-                        if (e == null) {
-                            break;
-                        }
-                        if (FileUtil.getExtension(e.getName()).equals("class")) {
-                            stream.putNextEntry(e);
-                            FileUtil.copy(jis, stream);
-                        }
-                    }
-                } finally {
-                    jis.close();
-                }
-            }
-            else {
-                throw new CompileEnvironmentException("Couldn't find runtime library");
-            }
-        }
     }
 
     public ClassLoader compileText(String code) {
@@ -455,7 +198,7 @@ public class CompileEnvironment {
             }
         }
 
-        ensureRuntime();
+        CompileEnvironmentUtil.ensureRuntime(environment, compilerDependencies);
 
         if (!session.analyze() && !ignoreErrors) {
             return false;
@@ -464,13 +207,13 @@ public class CompileEnvironment {
         ClassFileFactory factory = session.generate(false).getFactory();
         if (jar != null) {
             try {
-                writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
+                CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
             } catch (FileNotFoundException e) {
                 throw new CompileEnvironmentException("Invalid jar path " + jar, e);
             }
         }
         else if (outputDir != null) {
-            writeToOutputDirectory(factory, outputDir);
+            CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
         }
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
@@ -479,22 +222,8 @@ public class CompileEnvironment {
     }
 
     private CompileSession newCompileSession() {
-        CompileSession answer = new CompileSession(environment, messageRenderer, errorStream, verbose, compilerDependencies);
-        return answer;
+        return new CompileSession(environment, messageRenderer, errorStream, verbose, compilerDependencies);
     }
-
-    public static void writeToOutputDirectory(ClassFileFactory factory, final String outputDir) {
-        List<String> files = factory.files();
-        for (String file : files) {
-            File target = new File(outputDir, file);
-            try {
-                FileUtil.writeToFile(target, factory.asBytes(file));
-            } catch (IOException e) {
-                throw new CompileEnvironmentException(e);
-            }
-        }
-    }
-
 
     /**
      * Add path specified to the compilation environment.
@@ -502,7 +231,7 @@ public class CompileEnvironment {
      */
     public void addToClasspath(File ... paths) {
         for (File path : paths) {
-            if ( ! path.exists()) {
+            if (!path.exists()) {
                 throw new CompileEnvironmentException("'" + path + "' does not exist");
             }
             environment.addToClasspath(path);

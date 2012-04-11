@@ -82,7 +82,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
         ClassFileFactory classFileFactory = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
-        CompileEnvironment.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
+        CompileEnvironmentUtil.writeToOutputDirectory(classFileFactory, tmpdir.getPath());
 
         Disposer.dispose(myTestRootDisposable);
 

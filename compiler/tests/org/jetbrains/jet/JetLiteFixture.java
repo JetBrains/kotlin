@@ -30,7 +30,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -77,7 +77,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     protected void createEnvironmentWithFullJdk() {
         myEnvironment = new JetCoreEnvironment(getTestRootDisposable(),
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
-        final File rtJar = CompileEnvironment.findRtJar();
+        final File rtJar = CompileEnvironmentUtil.findRtJar();
         myEnvironment.addToClasspath(rtJar);
     }
 
