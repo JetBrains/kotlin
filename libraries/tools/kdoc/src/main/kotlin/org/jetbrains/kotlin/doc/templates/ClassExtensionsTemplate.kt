@@ -47,4 +47,8 @@ from package ${link(pkg)}
         return if (f.extensionClass != null) "#${f.link}" else super.href(f)
     }
 
+    override fun href(f: KProperty): String {
+        return if (f.extensionClass != null) "#${f.link}" else super.href(f)
+    }
+
 }
