@@ -35,7 +35,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     //todo not needed when frontend will be able to calculate properly
     static JetType getSuperClass(ClassDescriptor myClassDescr, BindingContext bindingContext) {
-        JetClassOrObject myClass = (JetClassOrObject) BindingContextUtils.descriptorToDeclaration(bindingContext, myClassDescr);
+        JetClassOrObject myClass = (JetClassOrObject) BindingContextUtils.classDescriptorToDeclaration(bindingContext, myClassDescr);
         if(myClass == null)
             return JetStandardClasses.getAnyType();
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
@@ -44,7 +44,7 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
             if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
                 JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
                 ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                final PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bindingContext, superClassDescriptor);
+                final PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(bindingContext, superClassDescriptor);
                 if (declaration != null) {
                     if (declaration instanceof PsiClass) {
                         if (!((PsiClass) declaration).isInterface()) {

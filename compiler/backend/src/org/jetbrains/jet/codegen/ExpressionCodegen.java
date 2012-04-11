@@ -1434,8 +1434,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     public StackValue generateThisOrOuter(ClassDescriptor calleeContainingClass) {
         CodegenContext cur = context;
 
-        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, calleeContainingClass);
-        boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject)psiElement);
+        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, calleeContainingClass);
+        boolean isObject = psiElement instanceof JetClassOrObject && CodegenUtil.isNonLiteralObject((JetClassOrObject) psiElement);
         
         cur = context;
         StackValue result = StackValue.local(0, TYPE_OBJECT);

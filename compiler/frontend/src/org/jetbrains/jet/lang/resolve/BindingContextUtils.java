@@ -19,12 +19,19 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
+import org.jetbrains.jet.util.slicedmap.Slices;
+
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -33,6 +40,28 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 public class BindingContextUtils {
     private BindingContextUtils() {
     }
+
+    private static final Slices.KeyNormalizer<DeclarationDescriptor> DECLARATION_DESCRIPTOR_NORMALIZER = new Slices.KeyNormalizer<DeclarationDescriptor>() {
+        @Override
+        public DeclarationDescriptor normalize(DeclarationDescriptor declarationDescriptor) {
+            if (declarationDescriptor instanceof CallableMemberDescriptor) {
+                CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
+                if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                    throw new IllegalStateException("non-declaration descriptors should be filtered out earler: " + callable);
+                }
+            }
+            if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
+                VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
+                if (descriptor.getOriginal() != descriptor) {
+                    throw new IllegalStateException("original should be resolved earlier: " + descriptor);
+                }
+            }
+            return declarationDescriptor.getOriginal();
+        }
+    };
+
+    static final ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION =
+            Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).build();
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
@@ -83,10 +112,54 @@ public class BindingContextUtils {
         return context.get(BindingContext.FILE_TO_NAMESPACE, source);
     }
 
+    @Nullable
+    private static PsiElement doGetDescriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
+        return context.get(DESCRIPTOR_TO_DECLARATION, descriptor);
+    }
+
     // NOTE this is also used by KDoc
     @Nullable
     public static PsiElement descriptorToDeclaration(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
-        return context.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        if (descriptor instanceof CallableMemberDescriptor) {
+            return callableDescriptorToDeclaration(context, (CallableMemberDescriptor) descriptor);
+        }
+        else if (descriptor instanceof ClassDescriptor) {
+            return classDescriptorToDeclaration(context, (ClassDescriptor) descriptor);
+        }
+        else {
+            return doGetDescriptorToDeclaration(context, descriptor);
+        }
     }
 
+    @Nullable
+    public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
+        if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+            if (overriddenDescriptors.size() != 1) {
+                // TODO evil code
+                throw new IllegalStateException(
+                        "cannot find declaration: fake descriptor" +
+                                " has more then one overriden descriptor: " + callable);
+            }
+
+            return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
+        }
+
+        return doGetDescriptorToDeclaration(context, callable.getOriginal());
+    }
+
+    @Nullable
+    public static PsiElement classDescriptorToDeclaration(@NotNull BindingContext context, @NotNull ClassDescriptor clazz) {
+        return doGetDescriptorToDeclaration(context, clazz);
+    }
+
+    public static void recordFunctionDeclarationToDescriptor(@NotNull BindingTrace trace,
+            @NotNull PsiElement psiElement, @NotNull SimpleFunctionDescriptor function) {
+
+        if (function.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            throw new IllegalArgumentException("function of kind " + function.getKind() + " cannot have declaration");
+        }
+
+        trace.record(BindingContext.FUNCTION, psiElement, function);
+    }
 }

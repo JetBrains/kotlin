@@ -89,15 +89,17 @@ public final class BindingUtils {
     @NotNull
     public static JetClass getClassForDescriptor(@NotNull BindingContext context,
                                                  @NotNull ClassDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
-        assert result instanceof JetClass : "ClassDescriptor should have declaration of type JetClass";
-        return (JetClass)result;
+        JetClass result = (JetClass) BindingContextUtils.classDescriptorToDeclaration(context, descriptor);
+        if (result == null) {
+            throw new IllegalStateException("JetClass not found for " + descriptor);
+        }
+        return result;
     }
 
     @NotNull
     public static JetFunction getFunctionForDescriptor(@NotNull BindingContext context,
                                                        @NotNull SimpleFunctionDescriptor descriptor) {
-        PsiElement result = BindingContextUtils.descriptorToDeclaration(context, descriptor);
+        PsiElement result = BindingContextUtils.callableDescriptorToDeclaration(context, descriptor);
         assert result instanceof JetFunction : "SimpleFunctionDescriptor should have declaration of type JetFunction";
         return (JetFunction)result;
     }

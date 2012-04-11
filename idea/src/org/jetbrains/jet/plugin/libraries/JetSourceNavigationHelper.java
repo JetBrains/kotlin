@@ -39,15 +39,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
-import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
@@ -101,9 +96,11 @@ public class JetSourceNavigationHelper {
     public static JetClass getSourceClass(@NotNull JetClass decompiledClass) {
         Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
         if (bindingContextAndClassDescriptor == null) return null;
-        PsiElement declaration = BindingContextUtils.descriptorToDeclaration(
+        PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(
                 bindingContextAndClassDescriptor._1, bindingContextAndClassDescriptor._2);
-        assert declaration instanceof JetClass;
+        if (declaration == null) {
+            throw new IllegalStateException("class not found by " + bindingContextAndClassDescriptor._2);
+        }
         return (JetClass) declaration;
     }
 

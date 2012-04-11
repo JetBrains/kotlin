@@ -88,7 +88,7 @@ public interface BindingContext {
             backingFieldRequired = valueNotFound ? false : backingFieldRequired;
             assert backingFieldRequired != null;
             // TODO: user BindingContextAccessors
-            PsiElement declarationPsiElement = map.get(DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
+            PsiElement declarationPsiElement = map.get(BindingContextUtils.DESCRIPTOR_TO_DECLARATION, propertyDescriptor);
             if (declarationPsiElement instanceof JetParameter) {
                 JetParameter jetParameter = (JetParameter) declarationPsiElement;
                 return jetParameter.getValOrVarNode() != null ||
@@ -123,43 +123,19 @@ public interface BindingContext {
         }
     };
 
-    Slices.KeyNormalizer<DeclarationDescriptor> DECLARATION_DESCRIPTOR_NORMALIZER = new Slices.KeyNormalizer<DeclarationDescriptor>() {
-        @Override
-        public DeclarationDescriptor normalize(DeclarationDescriptor declarationDescriptor) {
-            if (declarationDescriptor instanceof CallableMemberDescriptor) {
-                CallableMemberDescriptor callable = (CallableMemberDescriptor) declarationDescriptor;
-                if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-                    Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
-                    if (overriddenDescriptors.size() != 1) {
-                        throw new IllegalStateException(
-                                "cannot find declaration: fake descriptor" +
-                                " has more then one overriden descriptor: " + declarationDescriptor);
-                    }
-                    return normalize(overriddenDescriptors.iterator().next());
-                }
-            }
-            if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
-                VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
-                return descriptor.getVariableDescriptor().getOriginal();
-            }
-            return declarationDescriptor.getOriginal();
-        }
-    };
-
-    ReadOnlySlice<DeclarationDescriptor, PsiElement> DESCRIPTOR_TO_DECLARATION = Slices.<DeclarationDescriptor, PsiElement>sliceBuilder().setKeyNormalizer(DECLARATION_DESCRIPTOR_NORMALIZER).build();
-
-    WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, NamespaceDescriptor> NAMESPACE = Slices.<PsiElement, NamespaceDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, ClassDescriptor> CLASS = Slices.<PsiElement, ClassDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<JetTypeParameter, TypeParameterDescriptor> TYPE_PARAMETER = Slices.<JetTypeParameter, TypeParameterDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    /** @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)} */
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.<PsiElement, SimpleFunctionDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.<PsiElement, ConstructorDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, VariableDescriptor> VARIABLE = Slices.<PsiElement, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<JetParameter, VariableDescriptor> VALUE_PARAMETER = Slices.<JetParameter, VariableDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<JetPropertyAccessor, PropertyAccessorDescriptor> PROPERTY_ACCESSOR = Slices.<JetPropertyAccessor, PropertyAccessorDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     // normalize value to getOriginal(value)
-    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
-    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION = Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<PsiElement, PropertyDescriptor> PRIMARY_CONSTRUCTOR_PARAMETER = Slices.<PsiElement, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
+    WritableSlice<JetObjectDeclarationName, PropertyDescriptor> OBJECT_DECLARATION = Slices.<JetObjectDeclarationName, PropertyDescriptor>sliceBuilder().setOpposite((WritableSlice) BindingContextUtils.DESCRIPTOR_TO_DECLARATION).build();
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
         NAMESPACE, CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR, PRIMARY_CONSTRUCTOR_PARAMETER, OBJECT_DECLARATION

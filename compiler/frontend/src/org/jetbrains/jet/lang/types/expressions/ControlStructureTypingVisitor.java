@@ -473,12 +473,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (expression.getTargetLabel() == null) {
             if (containingFunctionDescriptor != null) {
-                PsiElement containingFunction = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
+                PsiElement containingFunction = BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
                 assert containingFunction != null;
                 if (containingFunction instanceof JetFunctionLiteralExpression) {
                     do {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
+                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
                     } while (containingFunction instanceof JetFunctionLiteralExpression);
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }

@@ -82,7 +82,7 @@ public class ObjectOrClosureCodegen {
             final int idx = exprContext.lookupLocal(vd);
             if (idx < 0) return null;
 
-            JetElement expression = (JetElement) BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), vd);
+            JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
             String cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
             Type localType = Type.getObjectType(cn);
 

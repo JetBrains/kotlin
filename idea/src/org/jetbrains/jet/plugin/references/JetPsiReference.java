@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
 

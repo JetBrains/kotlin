@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -155,6 +156,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                       /*isInline = */ false
         );
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, expression, functionDescriptor);
         return functionDescriptor;
     }
 

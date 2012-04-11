@@ -179,10 +179,9 @@ public class DeclarationsChecker {
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                PsiElement classElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-                assert classElement instanceof JetClass;
+                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 String name = property.getName();
-                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, (JetClass) classElement));
+                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, classElement));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
@@ -252,9 +251,8 @@ public class DeclarationsChecker {
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                PsiElement classElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-                assert classElement instanceof JetClass;
-                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
+                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, classElement));
             }
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));

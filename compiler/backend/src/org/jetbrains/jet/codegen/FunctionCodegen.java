@@ -440,7 +440,7 @@ public class FunctionCodegen {
 
                 iv.areturn(jvmSignature.getReturnType());
 
-                endVisit(mv, "default method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+                endVisit(mv, "default method", BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
                 mv.visitEnd();
             }
         }
@@ -500,7 +500,7 @@ public class FunctionCodegen {
                 if(jvmSignature.getReturnType() == Type.VOID_TYPE)
                     iv.aconst(null);
                 iv.areturn(overriden.getReturnType());
-                endVisit(mv, "bridge method", BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+                endVisit(mv, "bridge method", BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
             }
         }
     }

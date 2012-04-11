@@ -230,7 +230,7 @@ public class DescriptorResolver {
                 visibility,
                 isInline);
 
-        trace.record(BindingContext.FUNCTION, function, functionDescriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor);
         return functionDescriptor;
     }
 

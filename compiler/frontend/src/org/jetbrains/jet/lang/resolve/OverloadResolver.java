@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 /**
  * @author Stepan Koltsov

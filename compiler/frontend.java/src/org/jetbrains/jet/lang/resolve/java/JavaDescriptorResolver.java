@@ -74,6 +74,7 @@ import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -1575,6 +1576,7 @@ public class JavaDescriptorResolver {
                 /*isInline = */ false
         );
         trace.record(BindingContext.FUNCTION, method.getPsiMethod(), functionDescriptorImpl);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, method.getPsiMethod(), functionDescriptorImpl);
         FunctionDescriptor substitutedFunctionDescriptor = functionDescriptorImpl;
         if (method.getPsiMethod().getContainingClass() != psiClass && !method.isStatic()) {
             throw new IllegalStateException("non-static method in subclass");
