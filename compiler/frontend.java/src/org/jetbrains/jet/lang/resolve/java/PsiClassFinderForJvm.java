@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
@@ -29,11 +30,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.utils.PathUtil;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.Collections;
 
 /**
  * @author Stepan Koltsov
@@ -74,7 +73,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     @Override
     @Nullable
-    public PsiClass findPsiClass(@NotNull FqName qualifiedName) {
+    public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
         PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
         PsiClass result = original;
@@ -95,6 +94,26 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
         if (result instanceof JetJavaMirrorMarker) {
             return null;
+        }
+
+        if (result == null) {
+            return null;
+        }
+
+        PsiAnnotation assertInvisibleAnnotation = result.getModifierList().findAnnotation(
+                JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+        if (assertInvisibleAnnotation != null) {
+            if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
+                return null;
+            }
+            else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
+                throw new IllegalStateException(
+                        "classpath is configured incorrectly:" +
+                        " class " + qualifiedName + " from runtime must not be loaded by compiler");
+            }
+            else {
+                throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
+            }
         }
 
         return result;

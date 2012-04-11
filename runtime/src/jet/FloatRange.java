@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public final class FloatRange implements Range<Float> {
     private final float start;
     private final float size;

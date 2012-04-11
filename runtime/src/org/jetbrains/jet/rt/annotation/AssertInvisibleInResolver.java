@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package jet;
+package org.jetbrains.jet.rt.annotation;
 
-import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author alex.tkachman
+ * @author Stepan Koltsov
  */
-@AssertInvisibleInResolver
-public abstract class DoubleIterator implements Iterator<Double> {
-    public final Double next() {
-        return nextDouble();
-    }
-
-    public abstract double nextDouble();
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.CLASS)
+public @interface AssertInvisibleInResolver {
 }

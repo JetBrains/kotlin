@@ -26,8 +26,13 @@ import org.jetbrains.jet.lang.resolve.FqName;
  * @author Stepan Koltsov
  */
 public interface PsiClassFinder {
+    enum RuntimeClassesHandleMode {
+        THROW,
+        IGNORE,
+    }
+
     @Nullable
-    PsiClass findPsiClass(@NotNull FqName fqName);
+    PsiClass findPsiClass(@NotNull FqName fqName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode);
     @Nullable
     PsiPackage findPsiPackage(@NotNull FqName fqName);
 }

@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -127,7 +128,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         Project project = getProject();
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR), project);
-        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName));
+        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
     }
 
     @NotNull

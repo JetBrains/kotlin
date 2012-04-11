@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public interface IntIterable extends Iterable<Integer> {
     @Override
     IntIterator iterator();

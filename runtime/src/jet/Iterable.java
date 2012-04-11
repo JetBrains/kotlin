@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public interface Iterable<T> {
     Iterator<T> iterator ();
 }

@@ -135,13 +135,13 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static final int TUPLE_COUNT = 22;
+    public static final int MAX_TUPLE_ORDER = 22;
     
     private static final Set<TypeConstructor> TUPLE_CONSTRUCTORS = Sets.newHashSet();
 
-    private static final ClassDescriptor[] TUPLE = new ClassDescriptor[TUPLE_COUNT];
+    private static final ClassDescriptor[] TUPLE = new ClassDescriptor[MAX_TUPLE_ORDER + 1];
     static {
-        for (int i = 0; i < TUPLE_COUNT; i++) {
+        for (int i = 0; i <= MAX_TUPLE_ORDER; i++) {
             List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
             ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
@@ -175,16 +175,16 @@ public class JetStandardClasses {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static final int FUNCTION_COUNT = 22;
+    public static final int MAX_FUNCTION_ORDER = 22;
 
-    private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
-    private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[FUNCTION_COUNT];
+    private static final ClassDescriptor[] FUNCTION = new ClassDescriptor[MAX_FUNCTION_ORDER + 1];
+    private static final ClassDescriptor[] RECEIVER_FUNCTION = new ClassDescriptor[MAX_FUNCTION_ORDER + 1];
 
     private static final Set<TypeConstructor> FUNCTION_TYPE_CONSTRUCTORS = Sets.newHashSet();
     private static final Set<TypeConstructor> RECEIVER_FUNCTION_TYPE_CONSTRUCTORS = Sets.newHashSet();
 
     static {
-        for (int i = 0; i < FUNCTION_COUNT; i++) {
+        for (int i = 0; i <= MAX_FUNCTION_ORDER; i++) {
             ClassDescriptorImpl function = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),

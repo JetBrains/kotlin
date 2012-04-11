@@ -17,9 +17,10 @@
 package jet;
 
 import jet.runtime.typeinfo.JetMethod;
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
 
+@AssertInvisibleInResolver
 public interface Iterator<T> {
-    @JetMethod(kind = JetMethod.KIND_PROPERTY)
     boolean getHasNext();
     T next ();
 }

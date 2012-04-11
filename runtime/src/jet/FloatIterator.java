@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public abstract class FloatIterator implements Iterator<Float> {
     public final Float next() {
         return nextFloat();

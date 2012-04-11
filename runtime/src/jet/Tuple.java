@@ -15,9 +15,12 @@
  */
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * Represents the common interface of a tuple
  */
+// @AssertInvisibleInResolver // TODO TupleN classes has no Tuple superclass
 public abstract class Tuple extends DefaultJetObject {
 
     /**

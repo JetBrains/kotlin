@@ -360,7 +360,7 @@ public class JavaDescriptorResolver {
         // Not let's take a descriptor of a Java class
         ResolverBinaryClassData classData = classDescriptorCache.get(qualifiedName);
         if (classData == null) {
-            PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName);
+            PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
                 return null;
             }
@@ -944,7 +944,7 @@ public class JavaDescriptorResolver {
                 break lookingForPsi;
             }
 
-            psiClass = psiClassFinder.findPsiClass(fqName);
+            psiClass = psiClassFinder.findPsiClass(fqName, PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
             if (psiClass != null) {
                 trace.record(JavaBindingContext.JAVA_NAMESPACE_KIND, ns, JavaNamespaceKind.CLASS_STATICS);
                 break lookingForPsi;
@@ -983,7 +983,7 @@ public class JavaDescriptorResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS));
+        return psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
     private static class ValueParameterDescriptors {

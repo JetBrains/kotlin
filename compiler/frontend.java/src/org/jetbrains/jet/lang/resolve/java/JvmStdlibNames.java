@@ -64,6 +64,10 @@ public class JvmStdlibNames {
     
 
     public static final JvmClassName JET_OBJECT = new JvmClassName("jet.JetObject");
+
+
+    public static final JvmClassName ASSERT_INVISIBLE_IN_RESOLVER = new JvmClassName("org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver");
+
     
     private JvmStdlibNames() {
     }

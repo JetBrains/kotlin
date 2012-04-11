@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public final class LongRange implements Range<Long>, LongIterable {
     private final long start;
     private final long count;

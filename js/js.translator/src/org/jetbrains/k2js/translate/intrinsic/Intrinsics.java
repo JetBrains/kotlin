@@ -110,7 +110,7 @@ public final class Intrinsics {
     }
 
     private void declareTuplesIntrinsics() {
-        for (int tupleSize = 0; tupleSize < JetStandardClasses.TUPLE_COUNT; ++tupleSize) {
+        for (int tupleSize = 0; tupleSize <= JetStandardClasses.MAX_TUPLE_ORDER; ++tupleSize) {
             declareTupleIntrinsics(tupleSize);
         }
     }

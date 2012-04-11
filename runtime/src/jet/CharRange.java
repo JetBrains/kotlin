@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public final class CharRange implements Range<Character>, CharIterable {
     private final char start;
     private final int count;

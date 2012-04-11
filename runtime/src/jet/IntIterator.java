@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public abstract class IntIterator implements Iterator<Integer> {
     public final Integer next() {
         return nextInt();

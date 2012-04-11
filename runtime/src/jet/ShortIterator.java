@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public abstract class ShortIterator implements Iterator<Short> {
     public final Short next() {
         return nextShort();

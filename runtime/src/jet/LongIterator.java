@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public abstract class LongIterator implements Iterator<Long> {
     public final Long next() {
         return nextLong();

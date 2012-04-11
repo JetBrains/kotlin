@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public final class ShortRange implements Range<Short>, ShortIterable {
     private final short start;
     private final int count;

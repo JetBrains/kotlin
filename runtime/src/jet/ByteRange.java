@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public final class ByteRange implements Range<Byte>, ByteIterable {
     private final byte start;
     private final int count;
