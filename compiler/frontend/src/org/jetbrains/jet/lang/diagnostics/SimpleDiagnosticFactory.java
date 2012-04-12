@@ -22,20 +22,20 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
+public class SimpleDiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
     protected final String message;
 
-    protected DiagnosticFactory(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
+    protected SimpleDiagnosticFactory(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
         this.message = message;
     }
 
-    public static <T extends PsiElement> DiagnosticFactory<T> create(Severity severity, String message) {
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, String message) {
         return create(severity, message, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement> DiagnosticFactory<T> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory<T>(severity, message, positioningStrategy);
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
+        return new SimpleDiagnosticFactory<T>(severity, message, positioningStrategy);
     }
 
     String getMessage() {
@@ -44,6 +44,6 @@ public class DiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWi
 
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element) {
-        return new DiagnosticWithPsiElement<E>(element, this, severity);
+        return new SimpleDiagnostic<E>(element, this, severity);
     }
 }
