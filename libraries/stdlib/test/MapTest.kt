@@ -52,42 +52,31 @@ class MapTest {
         map["location"] = "Mells"
         map["name"] = "James"
 
-        var list = arrayList<String>()
+        val list = arrayList<String>()
         for (e in map) {
             println("key = ${e.getKey()}, value = ${e.getValue()}")
-
             list.add(e.getKey())
             list.add(e.getValue())
-/*
-            // TODO compiler bug
-            list += e.getKey()
-            list += e.getValue()
-*/
         }
 
         assertEquals(6, list.size())
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
 
-    /*
-    TODO compiler bug
-
-    test fun iteratorWithProperties() {
+    test fun iterateWithProperties() {
         val map = TreeMap<String, String>()
         map["beverage"] = "beer"
         map["location"] = "Mells"
         map["name"] = "James"
 
-        var list = arrayList<String>()
+        val list = arrayList<String>()
         for (e in map) {
-            println("got $e")
             println("key = ${e.key}, value = ${e.value}")
-            list += e.key
-            list += e.value
+            list.add(e.key)
+            list.add(e.value)
         }
 
         assertEquals(6, list.size())
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
-    */
 }

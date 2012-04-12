@@ -4,8 +4,7 @@ import java.util.Map as JMap
 import java.util.HashMap
 import java.util.Collections
 
-// Temporary workaround: commenting out
-//import java.util.Map.Entry as JEntry
+import java.util.Map.Entry as JEntry
 
 // Map APIs
 
@@ -26,14 +25,12 @@ public inline fun <K,V> java.util.Map<K,V>?.orEmpty() : java.util.Map<K,V>
 
 
 /** Returns the key of the entry */
-// Temporary workaround: commenting out
-//val <K,V> JEntry<K,V>.key : K
-//    get() = getKey().sure()
+val <K,V> JEntry<K,V>.key : K
+    get() = getKey().sure()
 
 /** Returns the value of the entry */
-// Temporary workaround: commenting out
-//val <K,V> JEntry<K,V>.value : V
-//    get() = getValue().sure()
+val <K,V> JEntry<K,V>.value : V
+    get() = getValue().sure()
 
 /**
  * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
@@ -69,7 +66,7 @@ public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V
 /**
  * Returns an [[Iterator]] over the entries in the [[Map]]
  *
- * @includeFunctionBody ../../test/MapTest.kt iterate
+ * @includeFunctionBody ../../test/MapTest.kt iterateWithProperties
  */
 public inline fun <K,V> java.util.Map<K,V>.iterator(): java.util.Iterator<java.util.Map.Entry<K,V>> {
     val entrySet = this.entrySet()!!
