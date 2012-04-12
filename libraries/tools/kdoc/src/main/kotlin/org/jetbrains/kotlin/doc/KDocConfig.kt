@@ -70,20 +70,15 @@ class KDocConfig() {
      * Resolves a link to the given class name
      */
     fun resolveLink(packageName: String): String {
-        // TODO should be able to do something like
-        // for (e in packageUrls.filterNotNull()) {
-        val entrySet = packagePrefixToUrls.entrySet()
-        if (entrySet != null) {
-            for (e in entrySet) {
-                val p = e?.getKey()
-                val url = e?.getValue()
-                if (p != null && url != null) {
-                    if (packageName.startsWith(p)) {
-                        return url
-                    }
+        for (e in packagePrefixToUrls) {
+            val p = e.key
+            val url = e.value
+            if (p != null && url != null) {
+                if (packageName.startsWith(p)) {
+                    return url
                 }
             }
-        }
+       }
         if (missingPackageUrls.add(packageName)) {
             println("Warning: could not find external link to package: $packageName")
         }

@@ -96,8 +96,8 @@ ${stylesheets()}
 <TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Extensions</FONT>&nbsp;
 <FONT CLASS="FrameItemFont">
 <BR>""")
-            for (e in map.entrySet()) {
-                val c = e?.getKey()
+            for (e in map) {
+                val c = e.key
                 if (c != null) {
                     println("""<A HREF="${extensionsHref(pkg, c)}" title="extensions functions on class ${c.name} from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
 <BR>""")

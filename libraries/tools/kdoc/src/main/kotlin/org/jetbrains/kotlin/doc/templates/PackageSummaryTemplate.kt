@@ -136,9 +136,9 @@ ${pkg.detailedDescription(this)}
 """)
 
         val groupMap = pkg.groupClassMap()
-        for (e in groupMap.entrySet()) {
-            val group = e?.getKey() ?: "Other"
-            val list = e?.getValue()
+        for (e in groupMap) {
+            val group = e.key ?: "Other"
+            val list = e.value
             if (list != null) {
                 println(""" <h3>$group</h3>
 
@@ -275,13 +275,13 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <B>Extensions Summary</B></FONT></TH>
 </TR>""")
 
-            for (e in map.entrySet()) {
-                val c = e?.getKey()
+            for (e in map) {
+                val c = e.key
                 if (c != null) {
                     println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="${extensionsHref(pkg, c)}" title="extensions on ${pkg.name}">${c.name}</A></B></TD>
 <TD>""")
-                    val list = e?.getValue()
+                    val list = e.value
                     if (list != null) {
                         val functions = filterDuplicateNames(list)
                         for (f in functions) {
