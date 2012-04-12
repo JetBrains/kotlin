@@ -6,9 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.jetbrains.kotlin.docs</groupId>
-        <artifactId>docs</artifactId>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>apidoc</artifactId>

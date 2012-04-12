@@ -11,8 +11,9 @@
 
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>tools</artifactId>
+        <artifactId>kotlin-project</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>kotlin-install</artifactId>

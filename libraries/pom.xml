@@ -12,14 +12,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project-root>${project.basedir}/..</project-root>
+        <project-root>${project.parent.basedir}/..</project-root>
 
         <asm.version>3.3.1</asm.version>
         <dart.name>dart-r3300</dart.name>
         <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
+        <kotlin-sdk>${project-root}/dist/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
@@ -46,15 +46,22 @@
     </distributionManagement>
 
     <modules>
-        <module>tools</module>
+        <module>tools/kotlin-install</module>
+        <module>tools/runtime</module>
+        <module>tools/kotlin-maven-plugin</module>
+        <module>tools/kdoc</module>
+        <module>tools/kdoc-maven-plugin</module>
 
         <module>stdlib</module>
         <module>kunit</module>
         <module>kotlin-jdbc</module>
         <module>kotlin-swing</module>
 
-        <module>docs</module>
-        <module>examples</module>
+        <module>docs/apidoc</module>
+        <module>docs/website</module>
+
+        <module>examples/kotlin-java-example</module>
+        <module>examples/js-example</module>
     </modules>
 
     <dependencies>
