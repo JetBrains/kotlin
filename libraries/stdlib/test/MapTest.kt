@@ -79,4 +79,36 @@ class MapTest {
         assertEquals(6, list.size())
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
+
+    /*
+        TODO compiler bug
+        we should be able to remove the explicit type <String,String,String> on the map function
+        http://youtrack.jetbrains.net/issue/KT-1145
+    */
+    test fun map() {
+        val m1 = TreeMap<String, String>()
+        m1["beverage"] = "beer"
+        m1["location"] = "Mells"
+
+        val list = m1.map<String,String,String>{ it.value + " rocks" }
+
+        println("Got new list $list")
+        assertEquals(arrayList("beer rocks", "Mells rocks"), list)
+    }
+
+    /*
+        TODO compiler bug
+        we should be able to remove the explicit type <String,String,String> on the mapValues function
+        http://youtrack.jetbrains.net/issue/KT-1145
+    */
+    test fun mapValues() {
+        val m1 = TreeMap<String, String>()
+        m1["beverage"] = "beer"
+        m1["location"] = "Mells"
+
+        val m2 = m1.mapValues<String,String,String>{ it.value + "2" }
+
+        println("Got new map $m2")
+        assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
+    }
 }
