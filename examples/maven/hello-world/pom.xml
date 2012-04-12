@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.0-SNAPSHOT</kotlin.version>
+        <kotlin.version>0.1-SNAPSHOT</kotlin.version>
         <junit.version>4.10</junit.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
