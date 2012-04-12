@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Evgeny Gerashchenko
  * @since 4/12/12
  */
-public interface DiagnosticRenderer extends Renderer<Diagnostic> {
+public interface DiagnosticRenderer<D extends Diagnostic> extends Renderer<D> {
     @NotNull
     @Override
-    String render(@Nullable Diagnostic diagnostic);
+    String render(@Nullable D diagnostic);
 }

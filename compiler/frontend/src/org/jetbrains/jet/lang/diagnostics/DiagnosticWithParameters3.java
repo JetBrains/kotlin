@@ -61,14 +61,17 @@ public class DiagnosticWithParameters3<E extends PsiElement, A, B, C> extends Ab
         return getFactory().getTextRanges(this);
     }
 
+    @NotNull
     public A getA() {
         return a;
     }
 
+    @NotNull
     public B getB() {
         return b;
     }
 
+    @NotNull
     public C getC() {
         return c;
     }

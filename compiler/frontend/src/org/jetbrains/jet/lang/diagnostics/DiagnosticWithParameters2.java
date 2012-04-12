@@ -58,10 +58,12 @@ public class DiagnosticWithParameters2<E extends PsiElement, A, B> extends Abstr
         return getFactory().getTextRanges(this);
     }
 
+    @NotNull
     public A getA() {
         return a;
     }
 
+    @NotNull
     public B getB() {
         return b;
     }

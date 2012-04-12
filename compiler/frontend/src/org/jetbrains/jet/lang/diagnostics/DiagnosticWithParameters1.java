@@ -55,6 +55,7 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
         return getFactory().getTextRanges(this);
     }
 
+    @NotNull
     public A getA() {
         return a;
     }
