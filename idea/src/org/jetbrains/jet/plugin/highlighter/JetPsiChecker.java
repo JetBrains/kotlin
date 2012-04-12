@@ -33,6 +33,7 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.jet.compiler.DefaultDiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -154,7 +155,7 @@ public class JetPsiChecker implements Annotator {
                     for (TextRange range : mrr.getRanges()) {
                         Annotation annotation = holder.createErrorAnnotation(
                             range.shiftRight(referenceExpression.getTextOffset()),
-                            diagnostic.getMessage());
+                            getMessage(diagnostic));
 
                         registerQuickFix(annotation, diagnostic);
 
@@ -163,7 +164,7 @@ public class JetPsiChecker implements Annotator {
                 }
                 else {
                     for (TextRange textRange : textRanges) {
-                        Annotation annotation = holder.createErrorAnnotation(textRange, diagnostic.getMessage());
+                        Annotation annotation = holder.createErrorAnnotation(textRange, getMessage(diagnostic));
                         registerQuickFix(annotation, diagnostic);
                         annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
@@ -239,10 +240,11 @@ public class JetPsiChecker implements Annotator {
 
     @NotNull
     private static String getMessage(@NotNull Diagnostic diagnostic) {
+        String message = DefaultDiagnosticRenderer.INSTANCE.render(diagnostic);
         if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-            return "[" + diagnostic.getFactory().getName() + "] " + diagnostic.getMessage();
+            return "[" + diagnostic.getFactory().getName() + "] " + message;
         }
-        return diagnostic.getMessage();
+        return message;
     }
 
     @Nullable

@@ -35,10 +35,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.SimpleDiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -150,7 +147,7 @@ public class CompileSession {
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
-        collector.report(diagnostic.getSeverity(), diagnostic.getMessage(), path, lineAndColumn.getLine(), lineAndColumn.getColumn());
+        collector.report(diagnostic.getSeverity(), DefaultDiagnosticRenderer.INSTANCE.render(diagnostic), path, lineAndColumn.getLine(), lineAndColumn.getColumn());
     }
 
     @NotNull
