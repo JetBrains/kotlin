@@ -17,15 +17,17 @@
 package org.jetbrains.jet.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Renderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticWithParameters1Renderer;
-import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.diagnostics.rendering.SimpleDiagnosticRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.EXCEPTION_WHILE_ANALYZING;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -37,7 +39,7 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
     private final Map<AbstractDiagnosticFactory, DiagnosticRenderer<?>> factoryToRenderer = new HashMap<AbstractDiagnosticFactory, DiagnosticRenderer<?>>();
 
     private DefaultDiagnosticRenderer() {
-        factoryToRenderer.put(EXCEPTION_WHILE_ANALYZING, new DiagnosticWithParameters1Renderer<JetFile, Throwable>("{0}", new Renderer<Throwable>() {
+        factoryToRenderer.put(EXCEPTION_WHILE_ANALYZING, new DiagnosticWithParameters1Renderer<Throwable>("{0}", new Renderer<Throwable>() {
             @NotNull
             @Override
             public String render(@NotNull Throwable e) {
