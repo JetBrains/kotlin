@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
@@ -46,7 +45,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
 
     private AltClassFinder altClassFinder;
     private GlobalSearchScope javaSearchScope;
-    private JavaPsiFacade javaFacade;
+    private JavaPsiFacadeKotlinHacks javaFacade;
 
     @Inject
     public void setProject(@NotNull Project project) {
@@ -67,7 +66,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
             }
         };
-        this.javaFacade = JavaPsiFacade.getInstance(project);
+        this.javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }
 
 
