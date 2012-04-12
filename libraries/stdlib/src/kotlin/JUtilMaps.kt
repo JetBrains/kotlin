@@ -64,3 +64,14 @@ public inline fun <K,V> java.util.Map<K,V>.getOrPut(key: K, defaultValue: ()-> V
         return answer
     }
 }
+
+
+/**
+ * Returns an [[Iterator]] over the entries in the [[Map]]
+ *
+ * @includeFunctionBody ../../test/MapTest.kt iterate
+ */
+public inline fun <K,V> java.util.Map<K,V>.iterator(): java.util.Iterator<java.util.Map.Entry<K,V>> {
+    val entrySet = this.entrySet()!!
+    return entrySet.iterator()!!
+}
