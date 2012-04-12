@@ -97,7 +97,7 @@ public inline fun <K,V,R, C: Collection<in R>> java.util.Map<K,V>.mapTo(result: 
 /**
  * Returns a new Map containing the results of applying the given *transform* function to each [[Map.Entry]] in this [[Map]]
  *
- * @includeFunctionBody ../../test/MapTest.kt map
+ * @includeFunctionBody ../../test/MapTest.kt mapValues
  */
 public inline fun <K,V,R> java.util.Map<K,V>.mapValues(transform : (java.util.Map.Entry<K,V>) -> R): java.util.Map<K,R> {
     return mapValuesTo(java.util.HashMap<K,R>(this.size), transform)
