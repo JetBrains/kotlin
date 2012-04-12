@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.compiler;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticWithParameters1Renderer;
 import org.jetbrains.jet.lang.psi.JetFile;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,21 +55,5 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         }
         //noinspection unchecked
         return renderer.render(diagnostic);
-    }
-
-    private class DiagnosticWithParameters1Renderer<E extends PsiElement, A> implements DiagnosticRenderer<DiagnosticWithParameters1<E, A>> {
-        private final MessageFormat messageFormat;
-        private final Renderer<? super A> rendererForA;
-
-        private DiagnosticWithParameters1Renderer(@NotNull String message, @NotNull Renderer<? super A> rendererForA) {
-            this.messageFormat = new MessageFormat(message);
-            this.rendererForA = rendererForA;
-        }
-
-        @NotNull
-        @Override
-        public String render(@NotNull DiagnosticWithParameters1<E, A> diagnostic) {
-            return messageFormat.format(new Object[]{rendererForA.render(diagnostic.getA())});
-        }
     }
 }
