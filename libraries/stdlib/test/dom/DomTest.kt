@@ -4,15 +4,15 @@ import kotlin.*
 import kotlin.dom.*
 import kotlin.test.*
 import org.w3c.dom.*
-import junit.framework.TestCase
+import org.junit.Test as test
 
-class DomTest() : TestCase() {
+class DomTest {
 
-    fun testCreateDocument() {
+    test fun testCreateDocument() {
         var doc = createDocument()
         assertNotNull(doc, "Should have created a document")
 
-        val e = doc.createElement("foo").sure()
+        val e = doc.createElement("foo")!!
         assertCssClass(e, "")
 
         // now lets update the cssClass property
@@ -25,6 +25,19 @@ class DomTest() : TestCase() {
 
         doc += e
         println("document ${doc.toXmlString()}")
+    }
+
+    test fun addText() {
+        var doc = createDocument()
+        assertNotNull(doc, "Should have created a document")
+
+        val e = doc.createElement("foo")!!
+        e + "hello"
+
+        println("element after text ${e.toXmlString()}")
+
+        assertEquals("hello", e.text)
+
     }
 
 
