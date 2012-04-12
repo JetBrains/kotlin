@@ -136,14 +136,14 @@ fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass,
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionFunctions(functions: Collection<KFunction>): Map<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
-    functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    functions.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
     return map
 }
 
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KProperty>> {
     val map = TreeMap<KClass, List<KProperty>>()
-    properties.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    properties.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
     return map
 }
 
@@ -801,7 +801,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     }
 
     fun groupClassMap(): Map<String, List<KClass>> {
-        return classes.groupBy(TreeMap<String, List<KClass>>()){it.group}
+        return classes.groupByTo(TreeMap<String, List<KClass>>()){it.group}
     }
 
     fun packageFunctions() = functions.filter{ it.extensionClass == null }

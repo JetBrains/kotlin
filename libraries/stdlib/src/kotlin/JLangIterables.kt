@@ -138,11 +138,18 @@ public inline fun <T> java.lang.Iterable<T>.fold(initial: T, operation: (T, T) -
 public inline fun <T> java.lang.Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, operation)
 
 /**
- * Transforms each element using the result as the key in a map to group elements by the result
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> java.lang.Iterable<T>.groupBy(result: Map<K, List<T>> = HashMap<K, List<T>>(), toKey: (T) -> K) : Map<K, List<T>> {
+public inline fun <T, K> java.lang.Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
+
+/**
+ * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt groupBy
+ */
+public inline fun <T, K> java.lang.Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<T>() }
