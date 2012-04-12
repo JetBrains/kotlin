@@ -101,7 +101,7 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
-    public void testNoCLassNameDuplication() {
+    public void testNoClassNameDuplication() {
         doTest();
     }
 
