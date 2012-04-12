@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Evgeny Gerashchenko
@@ -26,5 +25,5 @@ import org.jetbrains.annotations.Nullable;
 public interface DiagnosticRenderer<D extends Diagnostic> extends Renderer<D> {
     @NotNull
     @Override
-    String render(@Nullable D diagnostic);
+    String render(@NotNull D diagnostic);
 }

@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author abreslav
  */
-public interface Renderer<P> {
-
+public interface Renderer<O> {
     @NotNull
-    String render(@Nullable P element);
+    String render(@NotNull O object);
 }

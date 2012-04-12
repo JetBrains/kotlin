@@ -41,7 +41,7 @@ public class AmbiguousDescriptorDiagnosticFactory extends DiagnosticFactory1<Psi
             new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
         @NotNull
         @Override
-        public String render(@Nullable Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
+        public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
             StringBuilder stringBuilder = new StringBuilder("\n");
             for (ResolvedCall<? extends CallableDescriptor> call : argument) {
                 stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");

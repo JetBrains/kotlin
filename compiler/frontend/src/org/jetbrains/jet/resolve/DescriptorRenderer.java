@@ -209,8 +209,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     @NotNull
     @Override
-    public String render(DeclarationDescriptor declarationDescriptor) {
-        if (declarationDescriptor == null) return lt() + "null>";
+    public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
         if (shouldRenderDefinedIn()) {

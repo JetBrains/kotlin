@@ -18,7 +18,6 @@ package org.jetbrains.jet.compiler;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 
@@ -41,7 +40,7 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         factoryToRenderer.put(EXCEPTION_WHILE_ANALYZING, new DiagnosticWithParameters1Renderer<JetFile, Throwable>("{0}", new Renderer<Throwable>() {
             @NotNull
             @Override
-            public String render(@Nullable Throwable e) {
+            public String render(@NotNull Throwable e) {
                 return e.getClass().getSimpleName() + ": " + e.getMessage();
             }
         }));
@@ -49,10 +48,7 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
 
     @NotNull
     @Override
-    public String render(@Nullable Diagnostic diagnostic) {
-        if (diagnostic == null) {
-            throw new IllegalArgumentException("Diagnostic passed to diagnostic renderer cannot be null");
-        }
+    public String render(@NotNull Diagnostic diagnostic) {
         DiagnosticRenderer renderer = factoryToRenderer.get(diagnostic.getFactory());
         if (renderer == null) {
             return diagnostic.getMessage(); // TODO throw IllegalArgumentException instead
@@ -72,8 +68,8 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
 
         @NotNull
         @Override
-        public String render(@Nullable DiagnosticWithParameters1<E, A> diagnostic) {
-            return diagnostic == null ? "null" : messageFormat.format(new Object[]{rendererForA.render(diagnostic.getA())});
+        public String render(@NotNull DiagnosticWithParameters1<E, A> diagnostic) {
+            return messageFormat.format(new Object[]{rendererForA.render(diagnostic.getA())});
         }
     }
 }

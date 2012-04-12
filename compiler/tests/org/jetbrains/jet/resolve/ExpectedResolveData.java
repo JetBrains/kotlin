@@ -23,6 +23,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -185,7 +187,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
                 continue;
             }
@@ -193,7 +195,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                         "Must have been resolved to multiple descriptors: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
                 continue;
             }
@@ -201,7 +203,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
                 );
                 continue;
@@ -210,7 +212,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to error: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                        ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
@@ -354,5 +356,10 @@ public abstract class ExpectedResolveData {
         @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
         T result = (T) element;
         return result;
+    }
+
+    @NotNull
+    private static String renderNullableDescriptor(@Nullable DeclarationDescriptor d) {
+        return d == null ? "<null>" : DescriptorRenderer.TEXT.render(d);
     }
 }

@@ -49,7 +49,7 @@ public interface Errors {
     DiagnosticFactory1<JetFile, Throwable> EXCEPTION_WHILE_ANALYZING = DiagnosticFactory1.create(ERROR, "{0}", new Renderer<Throwable>() {
         @NotNull
         @Override
-        public String render(@Nullable Throwable e) {
+        public String render(@NotNull Throwable e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     });
@@ -70,8 +70,7 @@ public interface Errors {
                                       new Renderer<Collection<JetKeywordToken>>() {
                                           @NotNull
                                           @Override
-                                          public String render(@Nullable Collection<JetKeywordToken> element) {
-                                              assert element != null;
+                                          public String render(@NotNull Collection<JetKeywordToken> element) {
                                               StringBuilder sb = new StringBuilder();
                                               for (Iterator<JetKeywordToken> iterator = element.iterator(); iterator.hasNext(); ) {
                                                   JetKeywordToken modifier = iterator.next();
@@ -337,8 +336,7 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR, "{0} is not an expression, and only expression are allowed here", new Renderer<JetExpression>() {
         @NotNull
         @Override
-        public String render(@Nullable JetExpression expression) {
-            assert expression != null;
+        public String render(@NotNull JetExpression expression) {
             String expressionType = expression.toString();
             return expressionType.substring(0, 1) + expressionType.substring(1).toLowerCase();
         }
@@ -424,8 +422,8 @@ public interface Errors {
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER = DiagnosticFactory2.create(ERROR, "{0} does not refer to a type parameter of {1}", new Renderer<JetTypeConstraint>() {
         @NotNull
         @Override
-        public String render(@Nullable JetTypeConstraint typeConstraint) {
-            assert typeConstraint != null;
+        public String render(@NotNull JetTypeConstraint typeConstraint) {
+            //noinspection ConstantConditions
             return typeConstraint.getSubjectTypeParameterName().getReferencedName();
         }
     }, NAME);
@@ -446,7 +444,7 @@ public interface Errors {
             DiagnosticFactory3.create(ERROR, "Type parameter {0} of {1} has inconsistent values: {2}", NAME, DescriptorRenderer.TEXT, new Renderer<Collection<JetType>>() {
                 @NotNull
                 @Override
-                public String render(@Nullable Collection<JetType> types) {
+                public String render(@NotNull Collection<JetType> types) {
                     StringBuilder builder = new StringBuilder();
                     for (Iterator<JetType> iterator = types.iterator(); iterator.hasNext(); ) {
                         JetType jetType = iterator.next();
@@ -462,7 +460,8 @@ public interface Errors {
     DiagnosticFactory3<JetBinaryExpression, JetSimpleNameExpression, JetType, JetType> EQUALITY_NOT_APPLICABLE = DiagnosticFactory3.create(ERROR, "Operator {0} cannot be applied to {1} and {2}", new Renderer<JetSimpleNameExpression>() {
         @NotNull
         @Override
-        public String render(@Nullable JetSimpleNameExpression nameExpression) {
+        public String render(@NotNull JetSimpleNameExpression nameExpression) {
+            //noinspection ConstantConditions
             return nameExpression.getReferencedName();
         }
     }, TO_STRING, TO_STRING);
@@ -537,8 +536,7 @@ public interface Errors {
     DiagnosticFactory1<JetElement, Integer> WRONG_NUMBER_OF_TYPE_ARGUMENTS = DiagnosticFactory1.create(ERROR, "{0} type arguments expected", new Renderer<Integer>() {
         @NotNull
         @Override
-        public String render(@Nullable Integer argument) {
-            assert argument != null;
+        public String render(@NotNull Integer argument) {
             return argument == 0 ? "No" : argument.toString();
         }
     });

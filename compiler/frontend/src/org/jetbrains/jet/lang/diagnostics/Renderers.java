@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -32,8 +31,8 @@ public class Renderers {
     public static final Renderer<Object> TO_STRING = new Renderer<Object>() {
         @NotNull
         @Override
-        public String render(@Nullable Object element) {
-            return element == null ? "null" : element.toString();
+        public String render(@NotNull Object element) {
+            return element.toString();
         }
 
         @Override
@@ -45,8 +44,7 @@ public class Renderers {
     public static final Renderer<Object> NAME = new Renderer<Object>() {
         @NotNull
         @Override
-        public String render(@Nullable Object element) {
-            if (element == null) return "null";
+        public String render(@NotNull Object element) {
             if (element instanceof Named) {
                 return ((Named) element).getName();
             }
@@ -57,8 +55,7 @@ public class Renderers {
     public static final Renderer<PsiElement> ELEMENT_TEXT = new Renderer<PsiElement>() {
         @NotNull
         @Override
-        public String render(@Nullable PsiElement element) {
-            if (element == null) return "null";
+        public String render(@NotNull PsiElement element) {
             return element.getText();
         }
     };
@@ -66,8 +63,7 @@ public class Renderers {
     public static final Renderer<JetClassOrObject> RENDER_CLASS_OR_OBJECT = new Renderer<JetClassOrObject>() {
         @NotNull
         @Override
-        public String render(@Nullable JetClassOrObject classOrObject) {
-            assert classOrObject != null;
+        public String render(@NotNull JetClassOrObject classOrObject) {
             String name = classOrObject.getName() != null ? " '" + classOrObject.getName() + "'" : "";
             if (classOrObject instanceof JetClass) {
                 return "Class" + name;
@@ -80,8 +76,7 @@ public class Renderers {
     public static final Renderer<JetType> RENDER_TYPE = new Renderer<JetType>() {
         @NotNull
         @Override
-        public String render(@Nullable JetType type) {
-            assert type != null;
+        public String render(@NotNull JetType type) {
             return DescriptorRenderer.TEXT.renderType(type);
         }
     };
