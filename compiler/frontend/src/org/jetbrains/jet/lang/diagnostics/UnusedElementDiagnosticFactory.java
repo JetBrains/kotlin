@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
  */
 public class UnusedElementDiagnosticFactory<T extends PsiElement, A> extends DiagnosticFactory1<T, A> {
     private UnusedElementDiagnosticFactory(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {
-        super(severity, message, positioningStrategy, renderer);
+        super(severity, positioningStrategy);
     }
 
     public static <T extends PsiElement, A> UnusedElementDiagnosticFactory<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {

@@ -34,7 +34,7 @@ public class AmbiguousDescriptorDiagnosticFactory extends DiagnosticFactory1<Psi
     }
 
     public AmbiguousDescriptorDiagnosticFactory(String messageTemplate) {
-        super(Severity.ERROR, messageTemplate, PositioningStrategies.DEFAULT, AMBIGUOUS_DESCRIPTOR_RENDERER);
+        super(Severity.ERROR, PositioningStrategies.DEFAULT);
     }
 
     private static Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_DESCRIPTOR_RENDERER =

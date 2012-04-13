@@ -18,32 +18,22 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 
 /**
  * @author svtk
  */
 public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<E> {
 
-    protected DiagnosticFactory3(Severity severity, String messageStub, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        super(severity, messageStub, positioningStrategy);
+    protected DiagnosticFactory3(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
+        super(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub) {
-        return create(severity, messageStub, PositioningStrategies.DEFAULT);
+    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity) {
+        return create(severity, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, PositioningStrategy<? super T> positioningStrategy) {
-        return create(severity, messageStub, positioningStrategy, Renderers.TO_STRING, Renderers.TO_STRING, Renderers.TO_STRING);
-    }
-
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        return create(severity, messageStub, PositioningStrategies.DEFAULT, rendererForA, rendererForB, rendererForC);
-    }
-
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        return new DiagnosticFactory3<T, A, B, C>(severity, messageStub, positioningStrategy, rendererForA, rendererForB, rendererForC);
+    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new DiagnosticFactory3<T, A, B, C>(severity, positioningStrategy);
     }
 
     @NotNull

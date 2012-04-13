@@ -24,7 +24,7 @@ import java.text.MessageFormat;
 * @author abreslav
 */
 public abstract class DiagnosticFactoryWithMessageFormat<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
-    protected DiagnosticFactoryWithMessageFormat(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
+    protected DiagnosticFactoryWithMessageFormat(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
     }
 }
