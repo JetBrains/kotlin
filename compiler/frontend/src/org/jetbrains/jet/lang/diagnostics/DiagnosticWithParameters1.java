@@ -43,12 +43,6 @@ public class DiagnosticWithParameters1<E extends PsiElement, A> extends Abstract
         return (DiagnosticFactory1<E, A>)super.getFactory();
     }
 
-    @NotNull
-    @Override
-    public String getMessage() {
-        return getFactory().makeMessage(a);
-    }
-
     @Override
     @NotNull
     public List<TextRange> getTextRanges() {

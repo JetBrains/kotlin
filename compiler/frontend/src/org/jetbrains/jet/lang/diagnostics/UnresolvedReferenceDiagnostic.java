@@ -43,12 +43,6 @@ public class UnresolvedReferenceDiagnostic extends AbstractDiagnostic<JetReferen
 
     @NotNull
     @Override
-    public String getMessage() {
-        return getFactory().getMessage() + ": " + getPsiElement().getText();
-    }
-
-    @NotNull
-    @Override
     public List<TextRange> getTextRanges() {
         JetReferenceExpression element = getPsiElement();
         if (element instanceof JetArrayAccessExpression) {

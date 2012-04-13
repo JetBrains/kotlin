@@ -322,12 +322,6 @@ public class CheckerTestUtil {
 
         @NotNull
         @Override
-        public String getMessage() {
-            throw new IllegalStateException();
-        }
-
-        @NotNull
-        @Override
         public Severity getSeverity() {
             throw new IllegalStateException();
         }

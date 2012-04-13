@@ -31,10 +31,6 @@ public interface Diagnostic {
     @NotNull
     AbstractDiagnosticFactory getFactory();
 
-    @Deprecated
-    @NotNull
-    String getMessage();
-
     @NotNull
     Severity getSeverity();
 

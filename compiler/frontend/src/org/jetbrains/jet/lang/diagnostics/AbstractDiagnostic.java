@@ -54,7 +54,6 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
         return severity;
     }
 
-
     @Override
     @NotNull
     public E getPsiElement() {

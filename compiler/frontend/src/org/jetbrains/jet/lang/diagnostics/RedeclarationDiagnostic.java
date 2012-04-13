@@ -18,13 +18,9 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 
 import java.util.List;
 
@@ -46,12 +42,6 @@ public interface RedeclarationDiagnostic extends Diagnostic {
         @Override
         public RedeclarationDiagnosticFactory getFactory() {
             return (RedeclarationDiagnosticFactory)super.getFactory();
-        }
-
-        @NotNull
-        @Override
-        public String getMessage() {
-            return getFactory().makeMessage(name);
         }
 
         @Override
