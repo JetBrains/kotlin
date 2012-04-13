@@ -18,11 +18,9 @@ package org.jetbrains.jet.compiler;
 
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.cli.KotlinCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
 import org.junit.Assert;
 
@@ -47,11 +45,11 @@ public class CompileEnvironmentTest extends TestCase {
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File jdkHeaders = ForTestCompileJdkHeaders.jdkHeadersForTests();
             File resultJar = new File(tempDir, "result.jar");
-            KotlinCompiler.ExitCode rv = new KotlinCompiler().exec(
-                    "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
-                    "-jar", resultJar.getAbsolutePath(),
-                    "-stdlib", stdlib.getAbsolutePath(),
-                    "-jdkHeaders", jdkHeaders.getAbsolutePath());
+            KotlinCompiler.ExitCode rv = new KotlinCompiler().exec(System.out,
+                                                                   "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
+                                                                   "-jar", resultJar.getAbsolutePath(),
+                                                                   "-stdlib", stdlib.getAbsolutePath(),
+                                                                   "-jdkHeaders", jdkHeaders.getAbsolutePath());
             Assert.assertEquals("compilation completed with non-zero code", KotlinCompiler.ExitCode.OK, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
@@ -80,11 +78,9 @@ public class CompileEnvironmentTest extends TestCase {
             File out = new File(tempDir, "out");
             File stdlib = ForTestCompileRuntime.runtimeJarForTests();
             File jdkHeaders = ForTestCompileJdkHeaders.jdkHeadersForTests();
-            KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(
-                    "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt",
-                    "-output", out.getAbsolutePath(),
-                    "-stdlib", stdlib.getAbsolutePath(),
-                    "-jdkHeaders", jdkHeaders.getAbsolutePath());
+            KotlinCompiler.ExitCode exitCode = new KotlinCompiler()
+                    .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output",
+                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-jdkHeaders", jdkHeaders.getAbsolutePath());
             Assert.assertEquals(KotlinCompiler.ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(1, out.listFiles()[0].listFiles().length);

@@ -72,7 +72,7 @@ public class KotlinCompiler {
      */
     public static void doMain(KotlinCompiler compiler, String[] args) {
         try {
-            ExitCode rc = compiler.exec(args);
+            ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
                 System.exit(rc.getCode());
@@ -81,10 +81,6 @@ public class KotlinCompiler {
             System.err.println(e.getMessage());
             System.exit(INTERNAL_ERROR.getCode());
         }
-    }
-
-    public ExitCode exec(String... args) {
-        return exec(System.out, args);
     }
 
     public ExitCode exec(PrintStream errStream, String... args) {
