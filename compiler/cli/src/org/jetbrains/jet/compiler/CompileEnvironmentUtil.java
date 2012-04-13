@@ -27,6 +27,7 @@ import jet.modules.Module;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -159,14 +160,13 @@ public class CompileEnvironmentUtil {
         ensureRuntime(scriptEnvironment, dependencies);
         scriptEnvironment.addSources(moduleFile);
 
-        CompileSession scriptCompileSession = new CompileSession(scriptEnvironment, messageRenderer, errorStream, verbose, dependencies);
-
-        if (!scriptCompileSession.analyze()) {
+        GenerationState generationState = KotlinToJVMBytecodeCompiler
+                .analyzeAndGenerate(scriptEnvironment, dependencies, messageRenderer, errorStream, verbose, false);
+        if (generationState == null) {
             return null;
         }
-        ClassFileFactory factory = scriptCompileSession.generate(true).getFactory();
 
-        List<Module> modules = runDefineModules(dependencies, moduleFile, factory);
+        List<Module> modules = runDefineModules(dependencies, moduleFile, generationState.getFactory());
 
         Disposer.dispose(disposable);
         return modules;
