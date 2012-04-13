@@ -119,6 +119,9 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
     }
 
     fun printFunctionDetail(function: KFunction): Unit {
+        println("""<div class="doc-member function">""")
+        println("""<div class="source-detail"><a href="${sourceHref(function)}"${function.sourceTargetAttribute()}>source</a></div>""")
+
         println("""<A NAME="${function.name}{${function.parameterTypeText}}"><!-- --></A><A NAME="${function.link}"><!-- --></A><H3>""")
         println("""${function.name}</H3>""")
         println("""<PRE>""")
@@ -128,7 +131,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
         printTypeParameters(function, " ")
         printReceiverType(function, " ", ".", " ")
-        print("""<A HREF="${sourceHref(function)}"${function.sourceTargetAttribute()}><B>${function.name}</B></A>""")
+        print("""<B>${function.name}</B>""")
         printParameters(function)
         print(": ")
         print(link(function.returnType))
@@ -160,7 +163,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 </DD>
 </DL>
 */
-        println("""<HR>""")
+        println("""</div>""")
     }
 
     fun printPropertySummary(properties: Collection<KProperty>): Unit {
@@ -207,13 +210,17 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         */
         println("""</CODE></FONT></TD>""")
-        print("""<TD><CODE><B><A HREF="${sourceHref(property)}"${property.sourceTargetAttribute()}>${property.name}</A></B>: """)
+        print("""<TD>
+<div class="doc-member property">
+<div class="source-detail"><a HREF="${sourceHref(property)}"${property.sourceTargetAttribute()}>source</a></div>
+        <CODE><B>${property.name}</B>: """)
         print(link(property.returnType))
         //printParameters(property)
         println("""</CODE>""")
         println("""""")
         println("""<BR>""")
-        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription(this)}</TD>""")
+        println("""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${deprecated}&nbsp;${property.detailedDescription(this)}
+</div></TD>""")
         println("""</TR>""")
     }
 
