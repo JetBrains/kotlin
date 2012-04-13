@@ -59,7 +59,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         JetPattern pattern = expression.getPattern();
         if (pattern != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context).setDebugName("Scope extended in 'is'");
-            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext()));
+            DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(leftHandSide, knownType, context.trace.getBindingContext());
+            DataFlowInfo newDataFlowInfo = checkPatternType(pattern, knownType, false, scopeToExtend, context, dataFlowValue);
             context.patternsToDataFlowInfo.put(pattern, newDataFlowInfo);
             context.patternsToBoundVariableLists.put(pattern, scopeToExtend.getDeclaredVariables());
         }
@@ -175,7 +176,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return newDataFlowInfo[0];
     }
 
-    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, final boolean conditionExpected, @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final DataFlowValue... subjectVariables) {
+    private DataFlowInfo checkPatternType(@NotNull JetPattern pattern, @NotNull final JetType subjectType, final boolean conditionExpected,
+            @NotNull final WritableScope scopeToExtend, final ExpressionTypingContext context, @NotNull final DataFlowValue... subjectVariables
+    ) {
         final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(context.dataFlowInfo);
         pattern.accept(new JetVisitorVoid() {
             @Override

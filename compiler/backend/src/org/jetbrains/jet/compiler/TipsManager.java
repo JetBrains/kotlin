@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetNamespaceHeader;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -53,10 +55,31 @@ public final class TipsManager {
         JetExpression receiverExpression = expression.getReceiverExpression();
         if (receiverExpression != null) {
             // Process as call expression
-            final JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, receiverExpression);
+            final JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
             final JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
 
             if (expressionType != null && resolutionScope != null) {
+                if (!(expressionType instanceof NamespaceType)) {
+                    ExpressionReceiver receiverDescriptor = new ExpressionReceiver(receiverExpression, expressionType);
+                    Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
+
+                    DataFlowInfo info = context.get(BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, expression);
+                    if (info == null) {
+                        info = DataFlowInfo.EMPTY;
+                    }
+
+                    AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(info, context);
+                    List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiverDescriptor);
+
+                    for (ReceiverDescriptor descriptor : variantsForExplicitReceiver) {
+                        descriptors.addAll(includeExternalCallableExtensions(
+                                excludePrivateDescriptors(descriptor.getType().getMemberScope().getAllDescriptors()),
+                                resolutionScope, descriptor));
+                    }
+
+                    return descriptors;
+                }
+
                 return includeExternalCallableExtensions(
                         excludePrivateDescriptors(expressionType.getMemberScope().getAllDescriptors()),
                         resolutionScope, new ExpressionReceiver(receiverExpression, expressionType));
@@ -161,7 +184,7 @@ public final class TipsManager {
         });
     }
 
-    private static Collection<DeclarationDescriptor> includeExternalCallableExtensions(
+    private static Set<DeclarationDescriptor> includeExternalCallableExtensions(
             @NotNull Collection<DeclarationDescriptor> descriptors,
             @NotNull final JetScope externalScope,
             @NotNull final ReceiverDescriptor receiverDescriptor
@@ -169,7 +192,7 @@ public final class TipsManager {
         // It's impossible to add extension function for namespace
         JetType receiverType = receiverDescriptor.getType();
         if (receiverType instanceof NamespaceType) {
-            return descriptors;
+            return new HashSet<DeclarationDescriptor>(descriptors);
         }
 
         Set<DeclarationDescriptor> descriptorsSet = Sets.newHashSet(descriptors);

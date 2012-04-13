@@ -25,6 +25,22 @@ import java.io.File;
  */
 public class JetBasicCompletionTest extends JetCompletionTestBase {
 
+    public void testAutoCastAfterIf() {
+        doTest();
+    }
+
+    public void testAutoCastAfterIfMethod() {
+        doTest();
+    }
+
+    public void testAutoCastForThis() {
+        doTest();
+    }
+
+    public void testAutoCastInWhen() {
+        doTest();
+    }
+
     public void testBasicAny() {
         doTest();
     }
@@ -34,6 +50,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void testBeforeDotInCall() {
+        doTest();
+    }
+
+    public void testCallLocalLambda() {
         doTest();
     }
 

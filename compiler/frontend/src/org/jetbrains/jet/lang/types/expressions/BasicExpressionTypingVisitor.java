@@ -617,6 +617,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 temporaryTrace.commit();
                 return null;
             }
+
+            // Uncommitted changes in temp context
+            context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
+            if (context.dataFlowInfo.hasTypeInfoConstraints()) {
+                context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, nameExpression, context.dataFlowInfo);
+            }
+
             ExpressionTypingContext newContext = receiver.exists()
                                                  ? context.replaceScope(receiver.getType().getMemberScope())
                                                  : context;
@@ -624,6 +631,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (jetType == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
             }
+
             return jetType;
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
