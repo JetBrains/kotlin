@@ -23,27 +23,21 @@ import org.jetbrains.annotations.NotNull;
  * @author svtk
  */
 public class SimpleDiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
-    protected final String message;
 
-    protected SimpleDiagnosticFactory(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
+    protected SimpleDiagnosticFactory(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
-        this.message = message;
     }
 
-    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, String message) {
-        return create(severity, message, PositioningStrategies.DEFAULT);
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity) {
+        return create(severity, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
-        return new SimpleDiagnosticFactory<T>(severity, message, positioningStrategy);
-    }
-
-    String getMessage() {
-        return message;
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new SimpleDiagnosticFactory<T>(severity, positioningStrategy);
     }
 
     @NotNull
-    public ParametrizedDiagnostic<E> on(@NotNull E element) {
+    public SimpleDiagnostic<E> on(@NotNull E element) {
         return new SimpleDiagnostic<E>(element, this, severity);
     }
 }
