@@ -60,4 +60,16 @@ class StringTest() : TestCase() {
         assertEquals(s, list[0])
     }
 
+    fun testStartsWithChar() {
+        assertTrue("abcd".startsWith('a'))
+        assertFalse("abcd".startsWith('b'))
+        assertFalse("".startsWith('a'))
+    }
+
+    fun testEndsWithChar() {
+        assertTrue("abcd".endsWith('d'))
+        assertFalse("abcd".endsWith('b'))
+        assertFalse("".endsWith('a'))
+    }
+
 }
