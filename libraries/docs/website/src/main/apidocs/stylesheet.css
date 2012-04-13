@@ -117,3 +117,10 @@ th, table { border-collapse:collapse;border-color: #E6E7E8; }
 
 .NavBarCell2    { background-color:#FFFFFF;}
 .NavBarCell3    { background-color:#FFFFFF;}
+
+div.doc-member.function {
+  border-bottom: 1px solid #E6E7E8;
+}
+div.source-detail {
+  float:right;
+}
