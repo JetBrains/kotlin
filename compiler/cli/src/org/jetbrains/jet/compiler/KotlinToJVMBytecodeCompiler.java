@@ -94,7 +94,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
         };
 
-        //reportSyntaxErrors();
+        // Report syntax errors
         for (JetFile file : environment.getSourceFiles()) {
             file.accept(new PsiRecursiveElementWalkingVisitor() {
                 @Override
@@ -107,7 +107,7 @@ public class KotlinToJVMBytecodeCompiler {
             });
         }
 
-        //analyzeAndReportSemanticErrors();
+        // Analyze and report semantic errors
         Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
