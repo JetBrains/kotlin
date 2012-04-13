@@ -54,6 +54,8 @@ import java.util.List;
  * @author yole
  */
 public class CompileSession {
+    private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
+
     private final JetCoreEnvironment environment;
     private final MessageCollector messageCollector;
     private boolean stubs = false;
@@ -137,7 +139,7 @@ public class CompileSession {
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = SimpleDiagnosticFactory.create(Severity.ERROR, message).on(element);
+                    Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
                     reportDiagnostic(messageCollector, diagnostic);
                 }
             });
@@ -148,7 +150,14 @@ public class CompileSession {
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
-        collector.report(diagnostic.getSeverity(), DefaultDiagnosticRenderer.INSTANCE.render(diagnostic), path, lineAndColumn.getLine(), lineAndColumn.getColumn());
+        String render;
+        if (diagnostic.getFactory() == SYNTAX_ERROR_FACTORY) {
+            render = ((SyntaxErrorDiagnostic)diagnostic).message;
+        }
+        else {
+            render = DefaultDiagnosticRenderer.INSTANCE.render(diagnostic);
+        }
+        collector.report(diagnostic.getSeverity(), render, path, lineAndColumn.getLine(), lineAndColumn.getColumn());
     }
 
     @NotNull
@@ -174,6 +183,15 @@ public class CompileSession {
         @Override
         public void log(String message) {
             errorStream.println(messageRenderer.render(Severity.LOGGING, message, null, -1, -1));
+        }
+    }
+
+    private static class SyntaxErrorDiagnostic extends SimpleDiagnostic<PsiErrorElement> {
+        private String message;
+
+        private SyntaxErrorDiagnostic(@NotNull PsiErrorElement psiElement, @NotNull Severity severity, String message) {
+            super(psiElement, SYNTAX_ERROR_FACTORY, severity);
+            this.message = message;
         }
     }
 }
