@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler;
+package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
