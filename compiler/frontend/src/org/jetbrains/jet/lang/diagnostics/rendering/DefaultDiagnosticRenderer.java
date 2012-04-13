@@ -53,7 +53,7 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
             }
         }));
 
-        map.put(UNRESOLVED_REFERENCE, new UnresolvedReferenceDiagnosticRenderer("Unresolved reference: "));
+        map.put(UNRESOLVED_REFERENCE, new DiagnosticWithParameters1Renderer<String>("Unresolved reference: {0}", TO_STRING));
 
         map.put(INVISIBLE_REFERENCE,
                 new DiagnosticWithParameters2Renderer<DeclarationDescriptor, DeclarationDescriptor>("Cannot access ''{0}'' in ''{1}''",
@@ -124,7 +124,7 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         map.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS,
                 new SimpleDiagnosticRenderer("Mixing named and positioned arguments in not allowed"));
         map.put(ARGUMENT_PASSED_TWICE, new SimpleDiagnosticRenderer("An argument is already passed for this parameter"));
-        map.put(NAMED_PARAMETER_NOT_FOUND, new UnresolvedReferenceDiagnosticRenderer("Cannot find a parameter with this name: "));
+        map.put(NAMED_PARAMETER_NOT_FOUND, new DiagnosticWithParameters1Renderer<String>("Cannot find a parameter with this name: {0}", TO_STRING));
         map.put(VARARG_OUTSIDE_PARENTHESES,
                 new SimpleDiagnosticRenderer("Passing value as a vararg is only allowed inside a parenthesized argument list"));
         map.put(NON_VARARG_SPREAD, new SimpleDiagnosticRenderer("The spread operator (*foo) may only be applied in a vararg position"));
@@ -526,20 +526,6 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         @Override
         public String render(@NotNull RedeclarationDiagnostic diagnostic) {
             return messagePrefix + diagnostic.getName();
-        }
-    }
-
-    private static class UnresolvedReferenceDiagnosticRenderer implements DiagnosticRenderer<UnresolvedReferenceDiagnostic> {
-        private String messagePrefix;
-
-        private UnresolvedReferenceDiagnosticRenderer(@NotNull String messagePrefix) {
-            this.messagePrefix = messagePrefix;
-        }
-
-        @NotNull
-        @Override
-        public String render(@NotNull UnresolvedReferenceDiagnostic diagnostic) {
-            return messagePrefix + diagnostic.getPsiElement().getText();
         }
     }
 
