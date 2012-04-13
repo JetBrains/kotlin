@@ -781,8 +781,13 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 
     fun detailedDescription(template: KDocTemplate): String {
+        val wiki = wikiDescription
+        return wikiConvert(wiki, template)
+    }
+
+    protected fun wikiConvert(wiki: String, template: KDocTemplate): String {
         val file = model.fileFor(declarationDescriptor)
-        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template), file)
+        return model.wikiConvert(wiki, TemplateLinkRenderer(this, template), file)
     }
 
     fun isLinkToSourceRepo(): Boolean {
@@ -895,7 +900,10 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     override fun description(template: KDocTemplate): String {
         // lets see if we can find a custom summary
         val text = model.config.packageSummaryText[name]
-        return if (text != null) text else super<KClassOrPackage>.description(template)
+        return if (text != null)
+            wikiConvert(text, template).trimLeading("<p>").trimTrailing("</p>")
+        else
+            super<KClassOrPackage>.description(template)
     }
 
 
