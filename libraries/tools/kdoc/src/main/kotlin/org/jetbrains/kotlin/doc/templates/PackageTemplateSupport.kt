@@ -128,7 +128,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
         printTypeParameters(function, " ")
         printReceiverType(function, " ", ".", " ")
-        print("""<A HREF="${sourceHref(function)}"><B>${function.name}</B></A>""")
+        print("""<A HREF="${sourceHref(function)}"${function.sourceTargetAttribute()}><B>${function.name}</B></A>""")
         printParameters(function)
         print(": ")
         print(link(function.returnType))
@@ -207,7 +207,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         */
         println("""</CODE></FONT></TD>""")
-        print("""<TD><CODE><B><A HREF="${sourceHref(property)}">${property.name}</A></B>: """)
+        print("""<TD><CODE><B><A HREF="${sourceHref(property)}"${property.sourceTargetAttribute()}>${property.name}</A></B>: """)
         print(link(property.returnType))
         //printParameters(property)
         println("""</CODE>""")

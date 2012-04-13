@@ -761,6 +761,10 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
         return model.config.sourceRootHref != null
     }
 
+    fun sourceTargetAttribute(): String {
+        return if (isLinkToSourceRepo()) " target=\"_top\" class=\"repoSourceCode\"" else ""
+    }
+
     fun sourceLink(): String {
         val file = model.filePath(declarationDescriptor)
         if (file != null) {
