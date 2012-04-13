@@ -184,8 +184,4 @@ public class KotlinToJVMBytecodeCompiler {
             collector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
     }
-
-    public static CompilerMessageLocation create(@Nullable String path, @NotNull DiagnosticUtils.LineAndColumn lineAndColumn) {
-        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn());
-    }
 }
