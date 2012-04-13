@@ -238,7 +238,7 @@ public class JetPsiChecker implements Annotator {
 
     @NotNull
     private static String getMessage(@NotNull Diagnostic diagnostic) {
-        String message = DefaultErrorMessages.RENDERER.render(diagnostic);
+        String message = IdeErrorMessages.RENDERER.render(diagnostic);
         if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
             return "[" + diagnostic.getFactory().getName() + "] " + message;
         }
