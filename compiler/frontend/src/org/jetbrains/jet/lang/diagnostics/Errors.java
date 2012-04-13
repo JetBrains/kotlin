@@ -38,6 +38,8 @@ import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 
 /**
+ * For error messages, see DefaultErrorMessages and IdeErrorMessages.
+ *
  * @author abreslav
  */
 public interface Errors {
@@ -326,7 +328,8 @@ public interface Errors {
                                                                                                      @NotNull
                                                                                                      @Override
                                                                                                      public List<TextRange> mark(@NotNull JetNullableType element) {
-                                                                                                         return markNode(element.getQuestionMarkNode());
+                                                                                                         return markNode(
+                                                                                                                 element.getQuestionMarkNode());
                                                                                                      }
                                                                                                  });
     DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
