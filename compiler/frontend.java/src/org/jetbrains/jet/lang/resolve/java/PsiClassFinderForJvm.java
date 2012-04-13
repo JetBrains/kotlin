@@ -92,7 +92,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
         }
 
         if (result instanceof JetJavaMirrorMarker) {
-            return null;
+            throw new IllegalStateException("JetJavaMirrorMaker is not possible in resolve.java, resolving: " + qualifiedName);
         }
 
         if (result == null) {
