@@ -207,7 +207,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         }
         */
         println("""</CODE></FONT></TD>""")
-        print("""<TD><CODE><B><A HREF="${href(property)}">${property.name}</A></B>: """)
+        print("""<TD><CODE><B><A HREF="${sourceHref(property)}">${property.name}</A></B>: """)
         print(link(property.returnType))
         //printParameters(property)
         println("""</CODE>""")

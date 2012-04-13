@@ -39,6 +39,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
+import com.intellij.psi.PsiFileSystemItem
+import java.io.File
 
 
 /**
@@ -189,6 +193,25 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     public val version: String
     get() = config.version
+
+    private var _projectRootDir: String? = null
+
+    /**
+     * Returns the root project directory for calculating relative source links
+     */
+    fun projectRootDir(): String {
+        if (_projectRootDir == null) {
+            val rootDir = config.projectRootDir
+            _projectRootDir = if (rootDir == null) {
+                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
+                ""
+            } else {
+                File(rootDir).getCanonicalPath() ?: ""
+            }
+        }
+        return _projectRootDir ?: ""
+    }
+
 
     /** Loads the model from the given set of source files */
     fun load(sources: List<JetFile?>): Unit {
@@ -344,11 +367,29 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         return null
     }
 
+    fun locationFor(descriptor: DeclarationDescriptor): LineAndColumn? {
+        val psiElement =  getPsiElement(descriptor)
+        if (psiElement != null) {
+            val document = psiElement.getContainingFile()?.getViewProvider()?.getDocument()
+            if (document != null) {
+                val offset = psiElement.getTextOffset()
+                return DiagnosticUtils.offsetToLineAndColumn(document, offset)
+            }
+        }
+        return null
+    }
 
     fun fileFor(descriptor: DeclarationDescriptor): String? {
         val psiElement = getPsiElement(descriptor)
         return psiElement?.getContainingFile()?.getName()
     }
+
+    fun filePath(descriptor: DeclarationDescriptor): String? {
+        val psiElement = getPsiElement(descriptor)
+        val file = psiElement?.getContainingFile()
+        return filePath(file)
+    }
+
 
     protected fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
         return try {
@@ -441,6 +482,17 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                         return extractBlock(remaining)
                     }
                 }
+            }
+        }
+        return null
+    }
+
+    protected fun filePath(file: PsiFileSystemItem?): String? {
+        if (file != null) {
+            var dir = file.getParent()
+            if (dir != null) {
+                val parentName = filePath(dir) ?: ""
+                return parentName + "/" + file.getName()
             }
         }
         return null
@@ -704,6 +756,39 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
         val file = model.fileFor(declarationDescriptor)
         return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template), file)
     }
+
+    fun isLinkToSourceRepo(): Boolean {
+        return model.config.sourceRootHref != null
+    }
+
+    fun sourceLink(): String {
+        val file = model.filePath(declarationDescriptor)
+        if (file != null) {
+            // lets remove the root project directory
+            val rootDir = model.projectRootDir()
+            val canonicalFile = File(file).getCanonicalPath() ?: ""
+            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
+                canonicalFile.substring(rootDir.length()) else canonicalFile
+            return sourceLinkFor(relativeFile!!)
+        }
+        return ""
+    }
+
+    protected fun sourceLinkFor(filePath: String, lineLinkText: String = "#L"): String {
+        val root = model.config.sourceRootHref!!
+        val cleanRoot = root.trimTrailing("/")
+        val cleanPath = filePath.trimLeading("/")
+        return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
+
+    }
+
+    fun location(): LineAndColumn? = model.locationFor(declarationDescriptor)
+
+    val sourceLine: Int
+    get() {
+        val loc = location()
+        return if (loc != null) loc.getLine() else 1
+    }
 }
 
 abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
@@ -772,6 +857,10 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         return if (answer.length == 0) "" else answer + "/"
     }
 
+
+
+
+
     // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
     //val classes = sortedMap<String,KClass>()
     public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
@@ -838,8 +927,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
         var baseClasses: List<KType> = arrayList<KType>(),
-        var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
+        var nestedClasses: List<KClass> = arrayList<KClass>()): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
 
     public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -921,8 +1009,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var sourceLine: Int = 2): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
+        var annotations: List<KAnnotation> = arrayList<KAnnotation>()): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
     public val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
 

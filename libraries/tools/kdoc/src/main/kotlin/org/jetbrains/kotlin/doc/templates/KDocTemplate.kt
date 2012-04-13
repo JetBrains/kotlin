@@ -54,30 +54,61 @@ abstract class KDocTemplate() : TextTemplate() {
     }
 
     open fun sourceHref(klass: KClass): String {
-        val pkg = klass.pkg
-        return if (pkg.local) {
-            "${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"
+        if (klass.isLinkToSourceRepo()) {
+            return klass.sourceLink()
         } else {
-            href(klass)
+            val pkg = klass.pkg
+            return if (pkg.local) {
+                "${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"
+            } else {
+                href(klass)
+            }
         }
     }
     open fun sourceHref(f: KFunction): String {
-        val owner = f.owner
-        return if (owner is KClass) {
-            val pkg = owner.pkg
-            if (pkg.local) {
-                "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
-            } else {
-                href(f)
-            }
-        } else if (owner is KPackage) {
-            if (owner.local) {
-                // TODO how to find the function in a package???
-                "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
-            } else {
-                href(owner)
-            }
-        } else href(f)
+        if (f.isLinkToSourceRepo()) {
+            return f.sourceLink()
+        } else {
+            val owner = f.owner
+            return if (owner is KClass) {
+                val pkg = owner.pkg
+                if (pkg.local) {
+                    "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+                } else {
+                    href(f)
+                }
+            } else if (owner is KPackage) {
+                if (owner.local) {
+                    // TODO how to find the function in a package???
+                    "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+                } else {
+                    href(owner)
+                }
+            } else href(f)
+        }
+    }
+
+    open fun sourceHref(f: KProperty): String {
+        if (f.isLinkToSourceRepo()) {
+            return f.sourceLink()
+        } else {
+            val owner = f.owner
+            return if (owner is KClass) {
+                val pkg = owner.pkg
+                if (pkg.local) {
+                    "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
+                } else {
+                    href(f)
+                }
+            } else if (owner is KPackage) {
+                if (owner.local) {
+                    // TODO how to find the function in a package???
+                    "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
+                } else {
+                    href(owner)
+                }
+            } else href(f)
+        }
     }
 
     open fun link(c: KClass, fullName: Boolean = false): String {

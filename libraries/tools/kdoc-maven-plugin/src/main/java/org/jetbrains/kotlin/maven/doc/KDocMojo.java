@@ -119,6 +119,20 @@ public class KDocMojo extends KotlinCompileMojoBase {
     private String version;
 
     /**
+     * The HTTP link to source code
+     *
+     * @parameter expression="${sourceRootHref}"
+     */
+    private String sourceRootHref;
+
+    /**
+     * The root project directory used to deduce relative file names when linking to source code
+     *
+     * @parameter expression="${projectRootDir}" default-value="${project.basedir}"
+     */
+    private String projectRootDir;
+
+    /**
      * Whether warnings should be generated if no comments could be found for classes, functions and properties being documented
      *
      * @parameter expression="${warnNoComments}" default-value="true"
@@ -150,10 +164,14 @@ public class KDocMojo extends KotlinCompileMojoBase {
             docConfig.setTitle(title);
             docConfig.setVersion(version);
             docConfig.setWarnNoComments(warnNoComments);
+            docConfig.setSourceRootHref(sourceRootHref);
+            docConfig.setProjectRootDir(projectRootDir);
             getLog().info("API docs output to: " + docConfig.getDocOutputDir());
             getLog().info("classpath: " + classpath);
             getLog().info("title: " + title);
             getLog().info("sources: " + sources);
+            getLog().info("sourceRootHref: " + sourceRootHref);
+            getLog().info("projectRootDir: " + projectRootDir);
             getLog().info("API docs ignore packages: " + ignorePackages);
         }
         else {

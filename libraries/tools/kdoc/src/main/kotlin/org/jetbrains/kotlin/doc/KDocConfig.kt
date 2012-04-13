@@ -42,6 +42,16 @@ class KDocConfig() {
     public var warnNoComments: Boolean = true
 
     /**
+     * Returns the HTTP URL of the root directory of source code that we should link to
+     */
+    public var sourceRootHref: String? = null
+
+    /**
+     * The root project directory used to deduce relative file names when linking to source code
+     */
+    public var projectRootDir: String? = null
+
+    /**
     * Returns true if protected functions and properties should be documented
     */
     public var includeProtected: Boolean = true

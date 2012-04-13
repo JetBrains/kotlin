@@ -50,7 +50,8 @@
                         <ignorePackage>junit</ignorePackage>
                         <ignorePackage>org</ignorePackage>
                     </ignorePackages>
-
+                    <sourceRootHref>https://github.com/JetBrains/kotlin/tree/master</sourceRootHref>
+                    <projectRootDir>${project-root}</projectRootDir>
                 </configuration>
 
                 <executions>
