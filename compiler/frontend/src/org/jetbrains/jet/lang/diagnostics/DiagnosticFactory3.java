@@ -25,15 +25,9 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
  * @author svtk
  */
 public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<E> {
-    private final Renderer<? super A> rendererForA;
-    private final Renderer<? super B> rendererForB;
-    private final Renderer<? super C> rendererForC;
-    
+
     protected DiagnosticFactory3(Severity severity, String messageStub, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
         super(severity, messageStub, positioningStrategy);
-        this.rendererForA = rendererForA;
-        this.rendererForB = rendererForB;
-        this.rendererForC = rendererForC;
     }
 
     public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub) {
@@ -52,21 +46,6 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
         return new DiagnosticFactory3<T, A, B, C>(severity, messageStub, positioningStrategy, rendererForA, rendererForB, rendererForC);
     }
 
-    protected String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
-        return messageFormat.format(new Object[]{makeMessageForA(a), makeMessageForB(b), makeMessageForC(c)});
-    }
-
-    private String makeMessageForA(@NotNull A a) {
-        return rendererForA.render(a);
-    }
-
-    private String makeMessageForB(@NotNull B b) {
-        return rendererForB.render(b);
-    }
-
-    private String makeMessageForC(@NotNull C c) {
-        return rendererForC.render(c);
-    }
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
         return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity);

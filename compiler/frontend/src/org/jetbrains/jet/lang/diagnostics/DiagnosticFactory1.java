@@ -25,16 +25,6 @@ import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
  * @author svtk
  */
 public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithMessageFormat<E> {
-    private final Renderer<? super A> renderer;
-
-    protected String makeMessage(@NotNull A argument) {
-        return messageFormat.format(new Object[]{makeMessageFor(argument)});
-    }
-
-    protected String makeMessageFor(@NotNull A argument) {
-        return renderer.render(argument);
-    }
-    
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A argument) {
         return new DiagnosticWithParameters1<E, A>(element, argument, this, severity);
@@ -42,7 +32,6 @@ public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFacto
 
     protected DiagnosticFactory1(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> renderer) {
         super(severity, message, positioningStrategy);
-        this.renderer = renderer;
     }
 
     public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {
