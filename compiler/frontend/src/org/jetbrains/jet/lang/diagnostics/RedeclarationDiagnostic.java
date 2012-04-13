@@ -66,69 +66,6 @@ public interface RedeclarationDiagnostic extends Diagnostic {
         }
     }
 
-    class RedeclarationDiagnosticWithDeferredResolution implements RedeclarationDiagnostic {
-
-        private final DeclarationDescriptor duplicatingDescriptor;
-        private final BindingContext contextToResolveToDeclaration;
-        private final RedeclarationDiagnosticFactory factory;
-        private PsiElement element;
-
-        public RedeclarationDiagnosticWithDeferredResolution(@NotNull DeclarationDescriptor duplicatingDescriptor, @NotNull BindingContext contextToResolveToDeclaration, RedeclarationDiagnosticFactory factory) {
-            this.duplicatingDescriptor = duplicatingDescriptor;
-            this.contextToResolveToDeclaration = contextToResolveToDeclaration;
-            this.factory = factory;
-        }
-
-        private PsiElement resolve() {
-            if (element == null) {
-                element = BindingContextUtils.descriptorToDeclaration(contextToResolveToDeclaration, duplicatingDescriptor);
-                assert element != null : "No element for descriptor: " + duplicatingDescriptor;
-            }
-            return element;
-        }
-
-        @NotNull
-        @Override
-        public PsiElement getPsiElement() {
-            return resolve();
-        }
-
-        @NotNull
-        @Override
-        public List<TextRange> getTextRanges() {
-            return POSITION_REDECLARATION.mark(getPsiElement());
-        }
-
-        @NotNull
-        @Override
-        public PsiFile getPsiFile() {
-            return resolve().getContainingFile();
-        }
-
-        @NotNull
-        @Override
-        public AbstractDiagnosticFactory getFactory() {
-            return factory;
-        }
-
-        @Override
-        public String getName() {
-            return duplicatingDescriptor.getName();
-        }
-
-        @NotNull
-        @Override
-        public String getMessage() {
-            return factory.makeMessage(getName());
-        }
-
-        @NotNull
-        @Override
-        public Severity getSeverity() {
-            return factory.severity;
-        }
-    }
-
     PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
         @NotNull
         @Override
