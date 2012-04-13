@@ -44,14 +44,14 @@ public interface Errors {
 
     DiagnosticFactory1<JetFile, Throwable> EXCEPTION_WHILE_ANALYZING = DiagnosticFactory1.create(ERROR);
 
-    UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.create("Unresolved reference");
+    UnresolvedReferenceDiagnosticFactory UNRESOLVED_REFERENCE = UnresolvedReferenceDiagnosticFactory.create();
 
     //Elements with "INVISIBLE_REFERENCE" error are marked as unresolved, unlike elements with "INVISIBLE_MEMBER" error
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_REFERENCE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory2.create(ERROR);
 
-    RedeclarationDiagnosticFactory REDECLARATION = RedeclarationDiagnosticFactory.REDECLARATION;
-    RedeclarationDiagnosticFactory NAME_SHADOWING = RedeclarationDiagnosticFactory.NAME_SHADOWING;
+    RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(ERROR);
+    RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(WARNING);
 
     DiagnosticFactory2<PsiElement, JetType, JetType> TYPE_MISMATCH = DiagnosticFactory2.create(ERROR
     );
@@ -107,7 +107,7 @@ public interface Errors {
             .create(ERROR);
     SimpleDiagnosticFactory<JetReferenceExpression>
             ARGUMENT_PASSED_TWICE = SimpleDiagnosticFactory.create(ERROR);
-    UnresolvedReferenceDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = UnresolvedReferenceDiagnosticFactory.create("Cannot find a parameter with this name");
+    UnresolvedReferenceDiagnosticFactory NAMED_PARAMETER_NOT_FOUND = UnresolvedReferenceDiagnosticFactory.create();
     SimpleDiagnosticFactory<JetExpression> VARARG_OUTSIDE_PARENTHESES = SimpleDiagnosticFactory
             .create(ERROR);
     SimpleDiagnosticFactory<LeafPsiElement>

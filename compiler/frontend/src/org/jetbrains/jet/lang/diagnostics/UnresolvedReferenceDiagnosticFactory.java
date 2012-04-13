@@ -23,21 +23,14 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
  * @author abreslav
  */
 public class UnresolvedReferenceDiagnosticFactory extends AbstractDiagnosticFactory {
-    private final String message;
-
-    private UnresolvedReferenceDiagnosticFactory(String message) {
-        this.message = message;
-    }
-
-    String getMessage() {
-        return message;
+    private UnresolvedReferenceDiagnosticFactory() {
     }
 
     public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
         return new UnresolvedReferenceDiagnostic(reference, this);
     }
 
-    public static UnresolvedReferenceDiagnosticFactory create(String message) {
-        return new UnresolvedReferenceDiagnosticFactory(message);
+    public static UnresolvedReferenceDiagnosticFactory create() {
+        return new UnresolvedReferenceDiagnosticFactory();
     }
 }
