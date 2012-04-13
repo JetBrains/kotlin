@@ -52,4 +52,16 @@ class StringTest {
         assertEquals(3, whitespaceCount)
     }
 
+    fun testStartsWithChar() {
+        assertTrue("abcd".startsWith('a'))
+        assertFalse("abcd".startsWith('b'))
+        assertFalse("".startsWith('a'))
+    }
+
+    fun testEndsWithChar() {
+        assertTrue("abcd".endsWith('d'))
+        assertFalse("abcd".endsWith('b'))
+        assertFalse("".endsWith('a'))
+    }
+
 }
