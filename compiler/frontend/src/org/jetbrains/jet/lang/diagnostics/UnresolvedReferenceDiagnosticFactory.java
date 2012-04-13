@@ -41,8 +41,8 @@ public class UnresolvedReferenceDiagnosticFactory extends DiagnosticFactory1<Jet
         });
     }
 
-    public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
-        return new UnresolvedReferenceDiagnostic(reference, this, severity);
+    public DiagnosticWithParameters1<JetReferenceExpression, String> on(@NotNull JetReferenceExpression reference) {
+        return new DiagnosticWithParameters1<JetReferenceExpression, String>(reference, reference.getText(), this, severity);
     }
 
     public static UnresolvedReferenceDiagnosticFactory create() {

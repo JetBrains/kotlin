@@ -146,9 +146,8 @@ public class JetPsiChecker implements Annotator {
             if (diagnostic.getFactory() == Errors.UNRESOLVED_IDE_TEMPLATE) {
                 return;
             }
-            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
-                JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getPsiElement();
+            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
                 PsiReference reference = referenceExpression.getReference();
                 if (reference instanceof MultiRangeReference) {
                     MultiRangeReference mrr = (MultiRangeReference)reference;
