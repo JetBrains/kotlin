@@ -52,8 +52,4 @@ public class RedeclarationDiagnosticFactory extends DiagnosticFactory1<PsiElemen
     public RedeclarationDiagnosticFactory(Severity severity) {
         super(severity, POSITION_REDECLARATION);
     }
-
-    public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
-        return new RedeclarationDiagnostic(duplicatingElement, name, this, severity);
-    }
 }

@@ -182,9 +182,8 @@ public class JetPsiChecker implements Annotator {
                 return;
             }
 
-            if (diagnostic instanceof RedeclarationDiagnostic) {
-                RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic)diagnostic;
-                registerQuickFix(markRedeclaration(redeclarations, redeclarationDiagnostic, holder), diagnostic);
+            if (diagnostic.getFactory() instanceof RedeclarationDiagnosticFactory) {
+                registerQuickFix(markRedeclaration(redeclarations, diagnostic, holder), diagnostic);
                 return;
             }
 
@@ -249,11 +248,11 @@ public class JetPsiChecker implements Annotator {
 
     @Nullable
     private static Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations,
-                                                @NotNull RedeclarationDiagnostic diagnostic,
+                                                @NotNull Diagnostic redeclarationDiagnostic,
                                                 @NotNull AnnotationHolder holder) {
-        if (!redeclarations.add(diagnostic.getPsiElement())) return null;
-        List<TextRange> textRanges = diagnostic.getTextRanges();
+        if (!redeclarations.add(redeclarationDiagnostic.getPsiElement())) return null;
+        List<TextRange> textRanges = redeclarationDiagnostic.getTextRanges();
         if (textRanges.isEmpty()) return null;
-        return holder.createErrorAnnotation(textRanges.get(0), getMessage(diagnostic));
+        return holder.createErrorAnnotation(textRanges.get(0), getMessage(redeclarationDiagnostic));
     }
 }
