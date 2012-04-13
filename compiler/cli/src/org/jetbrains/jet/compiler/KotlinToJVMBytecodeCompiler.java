@@ -31,24 +31,20 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
-import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
 import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.utils.Progress;
 
 import java.util.Collection;
@@ -182,23 +178,10 @@ public class KotlinToJVMBytecodeCompiler {
         if (!incompletes.isEmpty()) {
             StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
             for (ClassDescriptor incomplete : incompletes) {
-                message.append("    ").append(fqName(incomplete)).append("\n");
+                String fqName = DescriptorUtils.getFQName(incomplete).getFqName();
+                message.append("    ").append(fqName).append("\n");
             }
             collector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
-        }
-    }
-
-    /**
-     * @see JetTypeMapper#getFQName(DeclarationDescriptor)
-     * TODO possibly duplicates DescriptorUtils#getFQName(DeclarationDescriptor)
-     */
-    private static String fqName(ClassOrNamespaceDescriptor descriptor) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration == null || containingDeclaration instanceof ModuleDescriptor || containingDeclaration.getName().equals(JavaDescriptorResolver.JAVA_ROOT)) {
-            return descriptor.getName();
-        }
-        else {
-            return fqName((ClassOrNamespaceDescriptor) containingDeclaration) + "." + descriptor.getName();
         }
     }
 
