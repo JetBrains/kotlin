@@ -116,7 +116,6 @@ class MapTest {
     /**
     TODO
     test case for http://youtrack.jetbrains.com/issue/KT-1773
-    */
 
     test fun compilerBug() {
         val map = TreeMap<String, String>()
@@ -135,5 +134,6 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
         println("==== worked! $list")
     }
+    */
 
 }
