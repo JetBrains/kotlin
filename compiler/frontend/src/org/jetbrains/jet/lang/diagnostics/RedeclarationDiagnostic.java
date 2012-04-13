@@ -32,6 +32,8 @@ import java.util.List;
  * @author abreslav
  */
 public interface RedeclarationDiagnostic extends Diagnostic {
+    String getName();
+
     class SimpleRedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> implements RedeclarationDiagnostic {
         private String name;
 
@@ -50,6 +52,11 @@ public interface RedeclarationDiagnostic extends Diagnostic {
         @Override
         public String getMessage() {
             return getFactory().makeMessage(name);
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @NotNull
@@ -104,10 +111,15 @@ public interface RedeclarationDiagnostic extends Diagnostic {
             return factory;
         }
 
+        @Override
+        public String getName() {
+            return duplicatingDescriptor.getName();
+        }
+
         @NotNull
         @Override
         public String getMessage() {
-            return factory.makeMessage(duplicatingDescriptor.getName());
+            return factory.makeMessage(getName());
         }
 
         @NotNull
