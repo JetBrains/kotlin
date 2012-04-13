@@ -192,7 +192,7 @@ ${pkg.detailedDescription(this)}
         printNextPrevPackages()
 
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--

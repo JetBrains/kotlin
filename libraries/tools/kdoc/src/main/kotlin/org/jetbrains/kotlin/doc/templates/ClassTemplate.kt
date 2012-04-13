@@ -134,7 +134,7 @@ DETAIL:&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">FU
         <TR>""")
                 printPrevNextClass()
                 println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${klass.nameAsPath}.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="${klass.simpleName}.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
           <!--
