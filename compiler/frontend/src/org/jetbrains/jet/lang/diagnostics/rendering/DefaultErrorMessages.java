@@ -17,11 +17,9 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
-import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -40,19 +38,6 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
  */
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-
-    private static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
-                    StringBuilder stringBuilder = new StringBuilder("\n");
-                    for (ResolvedCall<? extends CallableDescriptor> call : argument) {
-                        stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
-                    }
-                    return stringBuilder.toString();
-                }
-            };
 
     static {
         MAP.put(EXCEPTION_WHILE_ANALYZING, "{0}", new Renderer<Throwable>() {

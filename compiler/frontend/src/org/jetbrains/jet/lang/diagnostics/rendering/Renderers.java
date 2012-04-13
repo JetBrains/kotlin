@@ -18,11 +18,15 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.Named;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import java.util.Collection;
 
 /**
  * @author svtk
@@ -80,4 +84,20 @@ public class Renderers {
             return DescriptorRenderer.TEXT.renderType(type);
         }
     };
+
+    public static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_CALLS =
+            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+                @NotNull
+                @Override
+                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
+                    StringBuilder stringBuilder = new StringBuilder("\n");
+                    for (ResolvedCall<? extends CallableDescriptor> call : argument) {
+                        stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
+                    }
+                    return stringBuilder.toString();
+                }
+            };
+
+    private Renderers() {
+    }
 }
