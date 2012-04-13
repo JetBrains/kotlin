@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.doc.KDocConfig;
 import org.jetbrains.kotlin.maven.KotlinCompileMojoBase;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generates API docs documentation for kotlin sources
@@ -139,6 +140,29 @@ public class KDocMojo extends KotlinCompileMojoBase {
      */
     private boolean warnNoComments;
 
+    /**
+     * A Map of package name to file names for the description of packages.
+     * This allows you to refer to ReadMe.md files in your project root directory which will then be included in the API Doc.
+     * For packages which are not configured, KDoc will look for package.html or package.md files in the source directory
+     *
+     * @parameter expression="${packageDescriptionFiles}"
+     */
+    private Map<String,String> packageDescriptionFiles;
+
+    /**
+     * A Map of package name prefixxes to HTTP URLs so we can link the API docs to external packages
+     *
+     * @parameter expression="${packagePrefixToUrls}"
+     */
+    private Map<String,String> packagePrefixToUrls;
+
+    /**
+     * A Map of package name to summary text used in the package overview tables to give a brief summary for each package
+     *
+     * @parameter expression="${packagePrefixToUrls}"
+     */
+    private Map<String, String> packageSummaryText;
+
     @Override
     protected KotlinCompiler createCompiler() {
         return new KDocCompiler();
@@ -160,6 +184,15 @@ public class KDocMojo extends KotlinCompileMojoBase {
             if (ignorePackages != null) {
                 docConfig.getIgnorePackages().addAll(ignorePackages);
             }
+            if (packageDescriptionFiles != null) {
+                docConfig.getPackageDescriptionFiles().putAll(packageDescriptionFiles);
+            }
+            if (packagePrefixToUrls != null) {
+                docConfig.getPackagePrefixToUrls().putAll(packagePrefixToUrls);
+            }
+            if (packageSummaryText != null) {
+                docConfig.getPackageSummaryText().putAll(packageSummaryText);
+            }
             docConfig.setIncludeProtected(includeProtected);
             docConfig.setTitle(title);
             docConfig.setVersion(version);
@@ -172,6 +205,8 @@ public class KDocMojo extends KotlinCompileMojoBase {
             getLog().info("sources: " + sources);
             getLog().info("sourceRootHref: " + sourceRootHref);
             getLog().info("projectRootDir: " + projectRootDir);
+            getLog().info("packageDescriptionFiles: " + packageDescriptionFiles);
+            getLog().info("packagePrefixToUrls: " + packagePrefixToUrls);
             getLog().info("API docs ignore packages: " + ignorePackages);
         }
         else {

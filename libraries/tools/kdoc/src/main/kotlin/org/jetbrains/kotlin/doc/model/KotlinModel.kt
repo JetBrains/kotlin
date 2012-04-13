@@ -79,6 +79,10 @@ fun warning(message: String) {
     println("Warning: $message")
 }
 
+fun info(message: String) {
+    // println("info: $message")
+}
+
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, SortedSet<KFunction>> {
     //fun inheritedExtensionFunctions(functions: Collection<KFunction>): SortedMap<KClass, SortedSet<KFunction>> {
@@ -259,6 +263,30 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val scope = descriptor.getMemberScope()
             addFunctions(pkg, scope)
             pkg.local = isLocal(descriptor)
+
+            if (pkg.wikiDescription.isEmpty()) {
+                // lets try find a custom doc
+                var file = config.packageDescriptionFiles[name]
+                if (file == null) {
+                    // lets try find the package.html or package.md file
+                    val srcPath = pkg.filePath()
+                    if (srcPath != null) {
+                        val srcFile = File(srcPath)
+                        val dir = if (srcFile.isDirectory()) srcFile else srcFile.getParentFile()
+                        val f = arrayList(File(dir, "package.html"), File(dir, "package.md")).find{ it.exists() }
+                        if (f != null) file = f.getCanonicalPath() else {
+                            info("package $name has no package.(html|md) in $dir")
+                        }
+                    }
+                }
+                if (file != null) {
+                    try {
+                        pkg.wikiDescription = File(file).readText()
+                    } catch (e: Throwable) {
+                        warning("Failed to load package $name documentation file $file. Reason $e")
+                    }
+                }
+            }
         }
         return pkg;
     }
@@ -742,7 +770,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
 
     public open var deprecated: Boolean = false
 
-    fun description(template: KDocTemplate): String {
+    open fun description(template: KDocTemplate): String {
         val detailedText = detailedDescription(template)
         val idx = detailedText.indexOf("</p>")
         return if (idx > 0) {
@@ -766,7 +794,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 
     fun sourceLink(): String {
-        val file = model.filePath(declarationDescriptor)
+        val file = filePath()
         if (file != null) {
             // lets remove the root project directory
             val rootDir = model.projectRootDir()
@@ -777,6 +805,8 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
         }
         return ""
     }
+
+    fun filePath(): String? = model.filePath(declarationDescriptor)
 
     protected fun sourceLinkFor(filePath: String, lineLinkText: String = "#L"): String {
         val root = model.config.sourceRootHref!!
@@ -862,6 +892,11 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     }
 
 
+    override fun description(template: KDocTemplate): String {
+        // lets see if we can find a custom summary
+        val text = model.config.packageSummaryText[name]
+        return if (text != null) text else super<KClassOrPackage>.description(template)
+    }
 
 
 

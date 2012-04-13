@@ -192,7 +192,7 @@ ${pkg.detailedDescription(this)}
         printNextPrevPackages()
 
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-)  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
@@ -306,10 +306,14 @@ Copyright &#169; 2010-2012. All Rights Reserved.
         val prev = model.previous(pkg)
         if (prev != null) {
             println("""&nbsp;<A HREF="${prev.nameAsRelativePath}${prev.nameAsPath}/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;""")
+        } else {
+            println("""&nbsp;PREV PACKAGE&nbsp;""" )
         }
         val next = model.next(pkg)
         if (next != null) {
             println("""&nbsp;<A HREF="${next.nameAsRelativePath}${next.nameAsPath}/package-summary.html"><B>NEXT PACKAGE</B></A>""")
+        } else {
+            println("""&nbsp;NEXT PACKAGE""" )
         }
         println("""</FONT></TD>""")
 
