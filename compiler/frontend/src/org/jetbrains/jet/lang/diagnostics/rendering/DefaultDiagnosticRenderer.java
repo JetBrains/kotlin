@@ -91,8 +91,8 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         map.put(REDUNDANT_MODIFIER,
                 new DiagnosticWithParameters2Renderer<JetKeywordToken, JetKeywordToken>("Modifier {0} is redundant because {1} is present",
                                                                                         TO_STRING, TO_STRING));
-        map.put(ABSTRACT_MODIFIER_IN_TRAIT, new SimpleDiagnosticRenderer("Modifier ''{0}'' is redundant in trait"));
-        map.put(OPEN_MODIFIER_IN_TRAIT, new SimpleDiagnosticRenderer("Modifier ''{0}'' is redundant in trait"));
+        map.put(ABSTRACT_MODIFIER_IN_TRAIT, new SimpleDiagnosticRenderer("Modifier ''abstract'' is redundant in trait"));
+        map.put(OPEN_MODIFIER_IN_TRAIT, new SimpleDiagnosticRenderer("Modifier ''open'' is redundant in trait"));
         map.put(REDUNDANT_MODIFIER_IN_GETTER, new SimpleDiagnosticRenderer("Visibility modifiers are redundant in getter"));
         map.put(TRAIT_CAN_NOT_BE_FINAL, new SimpleDiagnosticRenderer("Trait can not be final"));
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, new SimpleDiagnosticRenderer(
