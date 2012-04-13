@@ -74,17 +74,17 @@ function windowTitle()
 
         printNextPrevPackages()
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>
 </NOSCRIPT>
 
 
