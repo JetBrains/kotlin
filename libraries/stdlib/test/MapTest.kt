@@ -111,4 +111,29 @@ class MapTest {
         println("Got new map $m2")
         assertEquals(arrayList("beer2", "Mells2"), m2.values().toList())
     }
+
+
+    /**
+    TODO
+    test case for http://youtrack.jetbrains.com/issue/KT-1773
+    */
+
+    test fun compilerBug() {
+        val map = TreeMap<String, String>()
+        map["beverage"] = "beer"
+        map["location"] = "Mells"
+        map["name"] = "James"
+
+        var list = arrayList<String>()
+        for (e in map) {
+            println("key = ${e.getKey()}, value = ${e.getValue()}")
+            list += e.getKey()
+            list += e.getValue()
+        }
+
+        assertEquals(6, list.size())
+        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        println("==== worked! $list")
+    }
+
 }
