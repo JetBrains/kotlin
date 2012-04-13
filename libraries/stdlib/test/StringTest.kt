@@ -46,4 +46,18 @@ class StringTest() : TestCase() {
         assertEquals(77.toLong(), "77".toLong())
     }
 
+    fun testSplitByChar() {
+        val s = "ab\n[|^$&\\]^cd"
+        var list = s.split('b');
+        assertEquals(2, list.size)
+        assertEquals("a", list[0])
+        assertEquals("\n[|^$&\\]^cd", list[1])
+        list = s.split('^')
+        assertEquals(3, list.size)
+        assertEquals("cd", list[2])
+        list = s.split('.')
+        assertEquals(1, list.size)
+        assertEquals(s, list[0])
+    }
+
 }
