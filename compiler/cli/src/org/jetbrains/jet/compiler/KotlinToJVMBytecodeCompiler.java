@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
@@ -31,6 +32,9 @@ import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
+import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
+import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
@@ -47,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.utils.Progress;
 
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -62,31 +65,38 @@ public class KotlinToJVMBytecodeCompiler {
             JetCoreEnvironment environment,
             CompilerDependencies dependencies,
 
-            MessageRenderer messageRenderer,
-            PrintStream errorStream,
-            boolean verbose,
+            final MessageCollector messageCollector,
 
             boolean stubs
     ) {
-        AnalyzeExhaust exhaust = analyze(environment, dependencies, messageRenderer, errorStream, stubs);
+        AnalyzeExhaust exhaust = analyze(environment, dependencies, messageCollector, stubs);
 
         if (exhaust == null) {
             return null;
         }
 
-        return generate(environment, dependencies, messageRenderer, errorStream, verbose, exhaust, stubs);
+        return generate(environment, dependencies, messageCollector, exhaust, stubs);
     }
 
     @Nullable
     private static AnalyzeExhaust analyze(
             JetCoreEnvironment environment,
             CompilerDependencies dependencies,
-
-            MessageRenderer messageRenderer,
-            PrintStream errorStream,
-
+            final MessageCollector messageCollector,
             boolean stubs) {
-        final MessageCollector messageCollector = new MessageCollector(messageRenderer);
+        final Ref<Boolean> hasErrors = new Ref<Boolean>(false);
+        final MessageCollector messageCollectorWrapper = new MessageCollector() {
+
+            @Override
+            public void report(@NotNull CompilerMessageSeverity severity,
+                    @NotNull String message,
+                    @NotNull CompilerMessageLocation location) {
+                if (CompilerMessageSeverity.ERRORS.contains(severity)) {
+                    hasErrors.set(true);
+                }
+                messageCollector.report(severity, message, location);
+            }
+        };
 
         //reportSyntaxErrors();
         for (JetFile file : environment.getSourceFiles()) {
@@ -96,7 +106,7 @@ public class KotlinToJVMBytecodeCompiler {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
                     Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
-                    reportDiagnostic(messageCollector, diagnostic);
+                    reportDiagnostic(messageCollectorWrapper, diagnostic);
                 }
             });
         }
@@ -109,14 +119,12 @@ public class KotlinToJVMBytecodeCompiler {
                 dependencies);
 
         for (Diagnostic diagnostic : exhaust.getBindingContext().getDiagnostics()) {
-            reportDiagnostic(messageCollector, diagnostic);
+            reportDiagnostic(messageCollectorWrapper, diagnostic);
         }
 
-        reportIncompleteHierarchies(messageCollector, exhaust);
+        reportIncompleteHierarchies(messageCollectorWrapper, exhaust);
 
-        messageCollector.printTo(errorStream);
-
-        return messageCollector.hasErrors() ? null : exhaust;
+        return hasErrors.get() ? null : exhaust;
     }
 
     @NotNull
@@ -124,22 +132,20 @@ public class KotlinToJVMBytecodeCompiler {
             JetCoreEnvironment environment,
             CompilerDependencies dependencies,
 
-            final MessageRenderer messageRenderer,
-            final PrintStream errorStream,
-            boolean verbose,
+            final MessageCollector messageCollector,
 
             AnalyzeExhaust exhaust,
 
             boolean stubs) {
         Project project = environment.getProject();
-        class BackendProgress implements Progress {
+        Progress backendProgress = new Progress() {
             @Override
             public void log(String message) {
-                errorStream.println(messageRenderer.render(Severity.LOGGING, message, null, -1, -1));
+                messageCollector.report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
-        }
-        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs),
-                                                              verbose ? new BackendProgress() : Progress.DEAF, exhaust, environment.getSourceFiles(), dependencies.getCompilerSpecialMode());
+        };
+        GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
+                                                              exhaust, environment.getSourceFiles(), dependencies.getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = environment.getCompilerPlugins();
@@ -156,7 +162,19 @@ public class KotlinToJVMBytecodeCompiler {
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
-        collector.report(diagnostic.getSeverity(), diagnostic.getMessage(), path, lineAndColumn.getLine(), lineAndColumn.getColumn());
+        collector.report(convertSeverity(diagnostic.getSeverity()), diagnostic.getMessage(), CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+    }
+
+    private static CompilerMessageSeverity convertSeverity(Severity severity) {
+        switch (severity) {
+            case INFO:
+                return CompilerMessageSeverity.INFO;
+            case ERROR:
+                return CompilerMessageSeverity.ERROR;
+            case WARNING:
+                return CompilerMessageSeverity.WARNING;
+        }
+        throw new IllegalStateException("Unknown severity: " + severity);
     }
 
     private static void reportIncompleteHierarchies(MessageCollector collector, AnalyzeExhaust exhaust) {
@@ -166,7 +184,7 @@ public class KotlinToJVMBytecodeCompiler {
             for (ClassDescriptor incomplete : incompletes) {
                 message.append("    ").append(fqName(incomplete)).append("\n");
             }
-            collector.report(Severity.ERROR, message.toString(), null, -1, -1);
+            collector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
     }
 
@@ -182,5 +200,9 @@ public class KotlinToJVMBytecodeCompiler {
         else {
             return fqName((ClassOrNamespaceDescriptor) containingDeclaration) + "." + descriptor.getName();
         }
+    }
+
+    public static CompilerMessageLocation create(@Nullable String path, @NotNull DiagnosticUtils.LineAndColumn lineAndColumn) {
+        return CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn());
     }
 }

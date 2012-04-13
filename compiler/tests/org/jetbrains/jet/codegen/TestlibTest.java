@@ -24,7 +24,7 @@ import junit.framework.TestSuite;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.compiler.MessageRenderer;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -92,7 +92,7 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(myEnvironment, compilerDependencies, MessageRenderer.PLAIN, err, false, false);
+                    .analyzeAndGenerate(myEnvironment, compilerDependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");

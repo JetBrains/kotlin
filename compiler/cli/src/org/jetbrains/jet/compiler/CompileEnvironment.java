@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -37,7 +38,6 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -49,48 +49,33 @@ public class CompileEnvironment {
     private final Disposable rootDisposable;
     private JetCoreEnvironment environment;
 
-    private final MessageRenderer messageRenderer;
-    private PrintStream errorStream = System.err;
+    private final MessageCollector messageCollector;
 
-    private boolean ignoreErrors = false;
     @NotNull
     private final CompilerDependencies compilerDependencies;
-    private final boolean verbose;
-
-    public CompileEnvironment(CompilerDependencies compilerDependencies) {
-        this(MessageRenderer.PLAIN, false, compilerDependencies);
-    }
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      * @see Disposer
      */
-    public CompileEnvironment(MessageRenderer messageRenderer, boolean verbose, @NotNull CompilerDependencies compilerDependencies) {
+    public CompileEnvironment(@NotNull MessageCollector messageCollector, @NotNull CompilerDependencies compilerDependencies) {
+        this.messageCollector = messageCollector;
         this.compilerDependencies = compilerDependencies;
-        this.verbose = verbose;
         this.rootDisposable = new Disposable() {
             @Override
             public void dispose() {
             }
         };
         this.environment = new JetCoreEnvironment(rootDisposable, compilerDependencies);
-        this.messageRenderer = messageRenderer;
     }
 
-    public void setErrorStream(PrintStream errorStream) {
-        this.errorStream = errorStream;
-    }
-
-    public void setIgnoreErrors(boolean ignoreErrors) {
-        this.ignoreErrors = ignoreErrors;
-    }
 
     public void dispose() {
         Disposer.dispose(rootDisposable);
     }
 
     public boolean compileModuleScript(String moduleScriptFile, @Nullable String jarPath, @Nullable String outputDir, boolean jarRuntime) {
-        List<Module> modules = CompileEnvironmentUtil.loadModuleScript(moduleScriptFile, messageRenderer, errorStream, verbose);
+        List<Module> modules = CompileEnvironmentUtil.loadModuleScript(moduleScriptFile, messageCollector);
 
         if (modules == null) {
             throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
@@ -212,7 +197,7 @@ public class CompileEnvironment {
         boolean stubs = compilerDependencies.getCompilerSpecialMode().isStubs();
         GenerationState generationState =
                 KotlinToJVMBytecodeCompiler
-                        .analyzeAndGenerate(environment, compilerDependencies, messageRenderer, errorStream, verbose, stubs);
+                        .analyzeAndGenerate(environment, compilerDependencies, messageCollector, stubs);
         if (generationState == null) {
             return null;
         }
