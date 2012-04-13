@@ -27,7 +27,7 @@
     <orderEntry type="library" scope="PROVIDED" name="junit-plugin" level="project" />
     <orderEntry type="module" module-name="j2k" />
     <orderEntry type="module" module-name="js.translator" />
-    <orderEntry type="module" module-name="cli" />
+    <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="js.tests" scope="TEST" />
   </component>
 </module>
