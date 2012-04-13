@@ -280,6 +280,9 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
 
     fun stylesheets(): String {
         return """<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}stylesheet.css" TITLE="Style">
-        <LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}kotlin.css" TITLE="Style">"""
+<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}kotlin.css" TITLE="Style">
+<script type="text/javascript" src="${relativePrefix()}js/jquery.js"></script>
+<script type="text/javascript" src="${relativePrefix()}js/apidoc.js"></script>
+"""
     }
 }
