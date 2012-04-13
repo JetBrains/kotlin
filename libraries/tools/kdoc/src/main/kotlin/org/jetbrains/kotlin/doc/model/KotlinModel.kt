@@ -481,7 +481,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                 }
                              }
                         } else {
-                            warning("Uknown kdoc macro @$remaining")
+                            warning("Unknown kdoc macro @$remaining")
                         }
                     }
                     buffer.append(text)
