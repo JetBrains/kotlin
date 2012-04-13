@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<E> {
+public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithPsiElement<E> {
 
     protected DiagnosticFactory3(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
