@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -34,8 +33,6 @@ import java.util.List;
  * @author yole
  */
 public class JetIconProvider extends IconProvider {
-    public static final Icon ICON_FOR_OBJECT = PlatformIcons.ANONYMOUS_CLASS_ICON;
-    public static final Icon KOTLIN_ICON = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
 
     public static JetIconProvider INSTANCE = new JetIconProvider();
 
@@ -60,41 +57,47 @@ public class JetIconProvider extends IconProvider {
             if (mostImportantClass != null) {
                 return getIcon(mostImportantClass, flags);
             }
-            return KOTLIN_ICON;
+            return JetIcons.FILE;
         }
         if (psiElement instanceof JetNamespaceHeader) {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
         }
         if (psiElement instanceof JetNamedFunction) {
             return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
-                   ? PlatformIcons.METHOD_ICON
-                   : PlatformIcons.FUNCTION_ICON;
+                   ? JetIcons.LAMBDA
+                   : JetIcons.FUNCTION;
         }
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
+            if (jetClass.isTrait()) {
+                return JetIcons.TRAIT;
+            }
+
             Icon icon = jetClass.hasModifier(JetTokens.ENUM_KEYWORD) ? PlatformIcons.ENUM_ICON : PlatformIcons.CLASS_ICON;
             if (jetClass instanceof JetEnumEntry) {
                 JetEnumEntry enumEntry = (JetEnumEntry) jetClass;
                 if (enumEntry.getPrimaryConstructorParameterList() == null) {
-                    icon = ICON_FOR_OBJECT;
+                    icon = PlatformIcons.ENUM_ICON;
                 }
             }
             return icon;
         }
         if (psiElement instanceof JetObjectDeclaration || psiElement instanceof JetClassObject) {
-            return ICON_FOR_OBJECT;
+            return JetIcons.OBJECT;
         }
         if (psiElement instanceof JetParameter) {
-            if (((JetParameter) psiElement).getValOrVarNode() != null) {
+            JetParameter parameter = (JetParameter)psiElement;
+            if (parameter.getValOrVarNode() != null) {
                 JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
                 if (parameterList != null && parameterList.getParent() instanceof JetClass) {
-                    return PlatformIcons.PROPERTY_ICON;
+                    return parameter.isVarArg() ? JetIcons.VAR : JetIcons.VAL;
                 }
             }
-            return PlatformIcons.PARAMETER_ICON;
+            return JetIcons.PARAMETER;
         }
         if (psiElement instanceof JetProperty) {
-            return PlatformIcons.PROPERTY_ICON;
+            JetProperty property = (JetProperty)psiElement;
+            return property.isVar() ? JetIcons.VAR : JetIcons.VAL;
         }
         return null;
     }

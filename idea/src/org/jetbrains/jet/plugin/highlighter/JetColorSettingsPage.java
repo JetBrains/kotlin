@@ -24,7 +24,7 @@ import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.JetIconProvider;
+import org.jetbrains.jet.plugin.JetIcons;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
@@ -35,7 +35,7 @@ import java.util.Map;
 public class JetColorSettingsPage implements ColorSettingsPage {
     @Override
     public Icon getIcon() {
-        return JetIconProvider.KOTLIN_ICON;
+        return JetIcons.SMALL_LOGO;
     }
 
     @NotNull
