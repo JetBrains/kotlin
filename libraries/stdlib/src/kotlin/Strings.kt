@@ -70,9 +70,13 @@ public inline fun String.startsWith(prefix: String) : Boolean = (this as java.la
 
 public inline fun String.startsWith(prefix: String, toffset: Int) : Boolean = (this as java.lang.String).startsWith(prefix, toffset)
 
+public inline fun String.startsWith(ch: Char) : Boolean = (this as java.lang.String).startsWith(ch.toString())
+
 public inline fun String.contains(seq: CharSequence) : Boolean = (this as java.lang.String).contains(seq)
 
 public inline fun String.endsWith(suffix: String) : Boolean = (this as java.lang.String).endsWith(suffix)
+
+public inline fun String.endsWith(ch: Char) : Boolean = (this as java.lang.String).endsWith(ch.toString())
 
 inline val String.size : Int
 get() = length()
