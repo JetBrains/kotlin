@@ -27,9 +27,9 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultDiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -153,7 +153,7 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(DefaultDiagnosticRenderer.INSTANCE.render(diagnostic));
+                throw new IllegalStateException(DefaultErrorMessages.RENDERER.render(diagnostic));
             }
         }
     };

@@ -33,8 +33,8 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultDiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -238,7 +238,7 @@ public class JetPsiChecker implements Annotator {
 
     @NotNull
     private static String getMessage(@NotNull Diagnostic diagnostic) {
-        String message = DefaultDiagnosticRenderer.INSTANCE.render(diagnostic);
+        String message = DefaultErrorMessages.RENDERER.render(diagnostic);
         if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
             return "[" + diagnostic.getFactory().getName() + "] " + message;
         }

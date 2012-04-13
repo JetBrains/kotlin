@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
@@ -38,6 +39,7 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
  */
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP);
 
     static {
         MAP.put(EXCEPTION_WHILE_ANALYZING, "{0}", new Renderer<Throwable>() {

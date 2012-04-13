@@ -21,21 +21,25 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
 /**
  * @author Evgeny Gerashchenko
- * @since 4/12/12
+ * @since 4/13/12
  */
-public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
-    public static final DefaultDiagnosticRenderer INSTANCE = new DefaultDiagnosticRenderer();
+public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
+    private final DiagnosticFactoryToRendererMap[] maps;
 
-    private final DiagnosticFactoryToRendererMap map = DefaultErrorMessages.MAP;
+    public DispatchingDiagnosticRenderer(DiagnosticFactoryToRendererMap... maps) {
+        this.maps = maps;
+    }
 
     @NotNull
     @Override
     public String render(@NotNull Diagnostic diagnostic) {
-        DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
-        if (renderer == null) {
-            throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
+        for (DiagnosticFactoryToRendererMap map : maps) {
+            DiagnosticRenderer renderer = map.get(diagnostic.getFactory());
+            if (renderer != null) {
+                //noinspection unchecked
+                return renderer.render(diagnostic);
+            }
         }
-        //noinspection unchecked
-        return renderer.render(diagnostic);
+        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
     }
 }
