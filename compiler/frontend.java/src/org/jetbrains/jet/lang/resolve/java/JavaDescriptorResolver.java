@@ -1616,8 +1616,10 @@ public class JavaDescriptorResolver {
         PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
         for (PsiNameValuePair psiNameValuePair : parameterList.getAttributes()) {
             PsiAnnotationMemberValue value = psiNameValuePair.getValue();
-            // todo
-            assert value instanceof PsiLiteralExpression;
+            if (!(value instanceof PsiLiteralExpression)) {
+                // todo
+                continue;
+            }
             Object literalValue = ((PsiLiteralExpression) value).getValue();
             if(literalValue instanceof String)
                 valueArguments.add(new StringValue((String) literalValue));
