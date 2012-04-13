@@ -30,11 +30,6 @@ public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
     }
 
     public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
-        return new RedeclarationDiagnostic.SimpleRedeclarationDiagnostic(duplicatingElement, name, this);
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+        return new RedeclarationDiagnostic(duplicatingElement, name, this);
     }
 }

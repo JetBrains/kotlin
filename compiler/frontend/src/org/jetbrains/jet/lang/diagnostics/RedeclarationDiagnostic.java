@@ -27,36 +27,31 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public interface RedeclarationDiagnostic extends Diagnostic {
-    String getName();
+public class RedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> {
+    private String name;
 
-    class SimpleRedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> implements RedeclarationDiagnostic {
-        private String name;
-
-        public SimpleRedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
-            super(psiElement, factory, factory.severity);
-            this.name = name;
-        }
-
-        @NotNull
-        @Override
-        public RedeclarationDiagnosticFactory getFactory() {
-            return (RedeclarationDiagnosticFactory)super.getFactory();
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @NotNull
-        @Override
-        public List<TextRange> getTextRanges() {
-            return POSITION_REDECLARATION.mark(getPsiElement());
-        }
+    public RedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
+        super(psiElement, factory, factory.severity);
+        this.name = name;
     }
 
-    PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
+    @NotNull
+    @Override
+    public RedeclarationDiagnosticFactory getFactory() {
+        return (RedeclarationDiagnosticFactory)super.getFactory();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @NotNull
+    @Override
+    public List<TextRange> getTextRanges() {
+        return POSITION_REDECLARATION.mark(getPsiElement());
+    }
+
+    private static final PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiElement element) {
