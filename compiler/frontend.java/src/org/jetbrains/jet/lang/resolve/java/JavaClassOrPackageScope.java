@@ -105,7 +105,7 @@ public abstract class JavaClassOrPackageScope extends JetScopeImpl {
                     }
 
                     if (psiClass instanceof JetJavaMirrorMarker) {
-                        throw new IllegalStateException("JetJavaMirrorMaker is not possible in resolve.java, resolving: " + resolverScopeData.fqName);
+                        continue;
                     }
 
                     // TODO: Temp hack for collection function descriptors from java
