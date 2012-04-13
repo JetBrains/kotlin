@@ -27,48 +27,9 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class RedeclarationDiagnostic extends AbstractDiagnostic<PsiElement> {
-    private String name;
-
-    public RedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name, RedeclarationDiagnosticFactory factory) {
-        super(psiElement, factory, factory.severity);
-        this.name = name;
+public class RedeclarationDiagnostic extends DiagnosticWithParameters1<PsiElement, String> {
+    public RedeclarationDiagnostic(@NotNull PsiElement psiElement, @NotNull String name,
+            @NotNull RedeclarationDiagnosticFactory factory, @NotNull Severity severity) {
+        super(psiElement, name, factory, severity);
     }
-
-    @NotNull
-    @Override
-    public RedeclarationDiagnosticFactory getFactory() {
-        return (RedeclarationDiagnosticFactory)super.getFactory();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @NotNull
-    @Override
-    public List<TextRange> getTextRanges() {
-        return POSITION_REDECLARATION.mark(getPsiElement());
-    }
-
-    private static final PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull PsiElement element) {
-            if (element instanceof JetNamedDeclaration) {
-                PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    return markElement(nameIdentifier);
-                }
-            }
-            else if (element instanceof JetFile) {
-                JetFile file = (JetFile) element;
-                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
-                if (nameIdentifier != null) {
-                    return markElement(nameIdentifier);
-                }
-            }
-            return markElement(element);
-        }
-    };
 }

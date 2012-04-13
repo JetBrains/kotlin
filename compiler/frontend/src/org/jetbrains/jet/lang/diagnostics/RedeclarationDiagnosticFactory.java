@@ -16,20 +16,44 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+
+import java.util.List;
 
 /**
 * @author abreslav
 */
-public class RedeclarationDiagnosticFactory extends AbstractDiagnosticFactory {
-    final Severity severity;
+public class RedeclarationDiagnosticFactory extends DiagnosticFactory1<PsiElement, String> {
+    private static final PositioningStrategy<PsiElement> POSITION_REDECLARATION = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetNamedDeclaration) {
+                PsiElement nameIdentifier = ((JetNamedDeclaration) element).getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            else if (element instanceof JetFile) {
+                JetFile file = (JetFile) element;
+                PsiElement nameIdentifier = file.getNamespaceHeader().getNameIdentifier();
+                if (nameIdentifier != null) {
+                    return markElement(nameIdentifier);
+                }
+            }
+            return markElement(element);
+        }
+    };
 
     public RedeclarationDiagnosticFactory(Severity severity) {
-        this.severity = severity;
+        super(severity, POSITION_REDECLARATION);
     }
 
     public RedeclarationDiagnostic on(@NotNull PsiElement duplicatingElement, @NotNull String name) {
-        return new RedeclarationDiagnostic(duplicatingElement, name, this);
+        return new RedeclarationDiagnostic(duplicatingElement, name, this, severity);
     }
 }

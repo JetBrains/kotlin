@@ -62,8 +62,8 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
                 new DiagnosticWithParameters2Renderer<DeclarationDescriptor, DeclarationDescriptor>("Cannot access ''{0}'' in ''{1}''",
                                                                                                     NAME, NAME));
 
-        map.put(REDECLARATION, new RedeclarationDiagnosticRenderer("Redeclaration: "));
-        map.put(NAME_SHADOWING, new RedeclarationDiagnosticRenderer("Name shadowed: "));
+        map.put(REDECLARATION, new DiagnosticWithParameters1Renderer<String>("Redeclaration: {0}", NAME));
+        map.put(NAME_SHADOWING, new DiagnosticWithParameters1Renderer<String>("Name shadowed: {0}", NAME));
 
         map.put(TYPE_MISMATCH,
                 new DiagnosticWithParameters2Renderer<JetType, JetType>("Type mismatch: inferred type is {1} but {0} was expected",
@@ -513,20 +513,6 @@ public class DefaultDiagnosticRenderer implements DiagnosticRenderer<Diagnostic>
         }
         //noinspection unchecked
         return renderer.render(diagnostic);
-    }
-
-    private static class RedeclarationDiagnosticRenderer implements DiagnosticRenderer<RedeclarationDiagnostic> {
-        private String messagePrefix;
-
-        private RedeclarationDiagnosticRenderer(@NotNull String messagePrefix) {
-            this.messagePrefix = messagePrefix;
-        }
-
-        @NotNull
-        @Override
-        public String render(@NotNull RedeclarationDiagnostic diagnostic) {
-            return messagePrefix + diagnostic.getName();
-        }
     }
 
     private static class AmbiguousDescriptorDiagnosticRenderer
