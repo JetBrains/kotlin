@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;

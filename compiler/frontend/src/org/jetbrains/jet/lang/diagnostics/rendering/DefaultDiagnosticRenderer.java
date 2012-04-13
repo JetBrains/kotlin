@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.Renderers.*;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 
 /**
  * @author Evgeny Gerashchenko

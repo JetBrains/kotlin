@@ -19,7 +19,7 @@ package org.jetbrains.jet.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Renderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;

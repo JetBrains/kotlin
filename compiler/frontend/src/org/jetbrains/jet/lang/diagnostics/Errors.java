@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
 import org.jetbrains.jet.lang.types.JetType;
@@ -37,7 +37,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.diagnostics.Renderers.*;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 

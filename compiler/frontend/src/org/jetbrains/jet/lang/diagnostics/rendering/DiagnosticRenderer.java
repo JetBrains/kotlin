@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.Renderer;
 
 /**
  * @author Evgeny Gerashchenko

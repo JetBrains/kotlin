@@ -17,6 +17,9 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
+
 /**
  * @author svtk
  */

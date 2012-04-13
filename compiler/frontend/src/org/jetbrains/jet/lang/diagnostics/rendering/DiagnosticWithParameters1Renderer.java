@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.jet.lang.diagnostics.Renderer;
 
 import java.text.MessageFormat;
 

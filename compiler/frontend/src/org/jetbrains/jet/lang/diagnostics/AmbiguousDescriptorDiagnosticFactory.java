@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -37,7 +37,7 @@ public class AmbiguousDescriptorDiagnosticFactory extends DiagnosticFactory1<Psi
         super(Severity.ERROR, messageTemplate, PositioningStrategies.DEFAULT, AMBIGUOUS_DESCRIPTOR_RENDERER);
     }
 
-    private static Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_DESCRIPTOR_RENDERER = 
+    private static Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> AMBIGUOUS_DESCRIPTOR_RENDERER =
             new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
         @NotNull
         @Override
