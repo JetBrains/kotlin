@@ -60,6 +60,8 @@ public inline fun String.format(format : String, vararg args : Any?) : String = 
 
 public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex) as Array<String>
 
+public inline fun String.split(ch : Char) : Array<String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString())) as Array<String>
+
 public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex).sure()
 
 public inline fun String.substring(beginIndex : Int, endIndex : Int) : String = (this as java.lang.String).substring(beginIndex, endIndex).sure()
