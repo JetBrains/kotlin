@@ -194,7 +194,7 @@
         <delete file="${output}/kotlin-compiler-tmp.jar"/>
 
         <jar jarfile="${output}/kotlin-compiler-standalone.jar">
-            <fileset dir="${kotlin-home}/lib/kotlin-compiler.exploded">
+            <fileset dir="${output}/kotlin-compiler.exploded">
                 <include name="**/*.class"/>
                 <include name="**/*.jet"/>
                 <include name="**/*.jet.src"/>
