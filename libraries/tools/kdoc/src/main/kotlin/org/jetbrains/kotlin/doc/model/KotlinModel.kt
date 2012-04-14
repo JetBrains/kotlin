@@ -270,6 +270,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val scope = descriptor.getMemberScope()
             addFunctions(pkg, scope)
             pkg.local = isLocal(descriptor)
+            pkg.useExternalLink = pkg.model.config.resolveLink(pkg.name, false).notEmpty()
 
             if (pkg.wikiDescription.isEmpty()) {
                 // lets try find a custom doc
@@ -872,7 +873,18 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 
 class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         val name: String,
-        var local: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+        var local: Boolean = false,
+        var useExternalLink: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+
+
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    //val classes = sortedMap<String,KClass>()
+    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
+
+    public val classes: Collection<KClass>
+    get() = classMap.values().sure().filter{ it.isApi() }
+
+    public val annotations: Collection<KClass> = ArrayList<KClass>()
 
     public override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
@@ -930,7 +942,6 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         return if (answer.length == 0) "" else answer + "/"
     }
 
-
     override fun description(template: KDocTemplate): String {
         // lets see if we can find a custom summary
         val text = model.config.packageSummaryText[name]
@@ -940,17 +951,6 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
             super<KClassOrPackage>.description(template)
     }
 
-
-
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
-    //val classes = sortedMap<String,KClass>()
-    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
-
-    public val classes: Collection<KClass>
-    get() = classMap.values().sure().filter{ it.isApi() }
-
-    public val annotations: Collection<KClass> = ArrayList<KClass>()
-
     fun qualifiedName(simpleName: String): String {
         return if (name.length() > 0) {
             "${name}.${simpleName}"
@@ -958,7 +958,6 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
             simpleName
         }
     }
-
 
     fun previous(pkg: KClass): KClass? {
         // TODO

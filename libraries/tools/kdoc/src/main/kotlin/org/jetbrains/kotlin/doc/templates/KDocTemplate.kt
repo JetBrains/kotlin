@@ -14,7 +14,7 @@ import java.util.List
 
 abstract class KDocTemplate() : TextTemplate() {
     open fun rootHref(pkg: KPackage): String {
-        return if (pkg.local)
+        return if (!pkg.useExternalLink)
             relativePrefix()
         else
             pkg.model.config.resolveLink(pkg.name)
@@ -24,7 +24,7 @@ abstract class KDocTemplate() : TextTemplate() {
     = "${rootHref(p)}${p.nameAsPath}/package-summary.html"
 
     open fun href(c: KClass): String {
-        val postfix = if (c.pkg.local) "" else "?is-external=true"
+        val postfix = if (!c.pkg.useExternalLink) "" else "?is-external=true"
         return "${rootHref(c.pkg)}${c.nameAsPath}.html$postfix"
     }
 
@@ -58,7 +58,7 @@ abstract class KDocTemplate() : TextTemplate() {
             return klass.sourceLink()
         } else {
             val pkg = klass.pkg
-            return if (pkg.local) {
+            return if (!pkg.useExternalLink) {
                 "${pkg.nameAsRelativePath}src-html/${klass.nameAsPath}.html#line.${klass.sourceLine}"
             } else {
                 href(klass)
@@ -72,13 +72,13 @@ abstract class KDocTemplate() : TextTemplate() {
             val owner = f.owner
             return if (owner is KClass) {
                 val pkg = owner.pkg
-                if (pkg.local) {
+                if (!pkg.useExternalLink) {
                     "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
                 } else {
                     href(f)
                 }
             } else if (owner is KPackage) {
-                if (owner.local) {
+                if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
                     "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
                 } else {
@@ -95,13 +95,13 @@ abstract class KDocTemplate() : TextTemplate() {
             val owner = f.owner
             return if (owner is KClass) {
                 val pkg = owner.pkg
-                if (pkg.local) {
+                if (!pkg.useExternalLink) {
                     "${rootHref(pkg)}src-html/${owner.simpleName}.html#line.${f.sourceLine}"
                 } else {
                     href(f)
                 }
             } else if (owner is KPackage) {
-                if (owner.local) {
+                if (!owner.useExternalLink) {
                     // TODO how to find the function in a package???
                     "${rootHref(owner)}src-html/namespace.html#line.${f.sourceLine}"
                 } else {

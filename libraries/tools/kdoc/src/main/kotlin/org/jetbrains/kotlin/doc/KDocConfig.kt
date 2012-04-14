@@ -91,7 +91,7 @@ class KDocConfig() {
     /**
      * Resolves a link to the given class name
      */
-    fun resolveLink(packageName: String): String {
+    fun resolveLink(packageName: String, warn: Boolean = true): String {
         for (e in packagePrefixToUrls) {
             val p = e.key
             val url = e.value
