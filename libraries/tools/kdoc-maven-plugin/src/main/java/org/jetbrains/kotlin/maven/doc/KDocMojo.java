@@ -150,7 +150,7 @@ public class KDocMojo extends KotlinCompileMojoBase {
     private Map<String,String> packageDescriptionFiles;
 
     /**
-     * A Map of package name prefixxes to HTTP URLs so we can link the API docs to external packages
+     * A Map of package name prefixes to HTTP URLs so we can link the API docs to external packages
      *
      * @parameter expression="${packagePrefixToUrls}"
      */
