@@ -143,7 +143,7 @@ public class KDocMojo extends KotlinCompileMojoBase {
     /**
      * A Map of package name to file names for the description of packages.
      * This allows you to refer to ReadMe.md files in your project root directory which will then be included in the API Doc.
-     * For packages which are not configured, KDoc will look for package.html or package.md files in the source directory
+     * For packages which are not configured, KDoc will look for ReadMe.html or ReadMe.md files in the package source directory
      *
      * @parameter expression="${packageDescriptionFiles}"
      */

@@ -201,6 +201,13 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
     private var _projectRootDir: String? = null
 
     /**
+     * File names we look for in a package directory for the overall description of a package for KDoc
+     */
+    val packageDescriptionFiles = arrayList("readme.md", "ReadMe.md, readme.html, ReadMe.html")
+
+    private val readMeDirsScanned = HashSet<String>()
+
+    /**
      * Returns the root project directory for calculating relative source links
      */
     fun projectRootDir(): String {
@@ -267,28 +274,45 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             if (pkg.wikiDescription.isEmpty()) {
                 // lets try find a custom doc
                 var file = config.packageDescriptionFiles[name]
-                if (file == null) {
-                    // lets try find the package.html or package.md file
-                    val srcPath = pkg.filePath()
-                    if (srcPath != null) {
-                        val srcFile = File(srcPath)
-                        val dir = if (srcFile.isDirectory()) srcFile else srcFile.getParentFile()
-                        val f = arrayList(File(dir, "package.html"), File(dir, "package.md")).find{ it.exists() }
-                        if (f != null) file = f.getCanonicalPath() else {
-                            info("package $name has no package.(html|md) in $dir")
-                        }
+                loadWikiDescription(pkg, file)
+            }
+        }
+        return pkg;
+    }
+
+    protected fun loadWikiDescription(pkg: KPackage, file: String?): Unit {
+        if (file != null) {
+            try {
+                pkg.wikiDescription = File(file).readText()
+            } catch (e: Throwable) {
+                warning("Failed to load package ${pkg.name} documentation file $file. Reason $e")
+            }
+        }
+    }
+
+    /**
+     * If a package has no detailed description lets try load it from the descriptors
+     * source directory if we've not checked that directory before
+     */
+    fun tryLoadReadMe(pkg: KPackage, descriptor: DeclarationDescriptor): Unit {
+        if (pkg.wikiDescription.isEmpty()) {
+            // lets try find the package.html or package.md file
+            val srcPath =  pkg.model.filePath(descriptor)
+            if (srcPath != null) {
+                val srcFile = File(srcPath)
+                val dir = if (srcFile.isDirectory()) srcFile else srcFile.getParentFile()
+                if (dir != null && readMeDirsScanned.add(dir.getPath()!!)) {
+                    val f = packageDescriptionFiles.map{ File(dir, it) }.find{ it.exists() }
+                    if (f != null) {
+                        val file = f.getCanonicalPath()
+                        loadWikiDescription(pkg, file)
                     }
-                }
-                if (file != null) {
-                    try {
-                        pkg.wikiDescription = File(file).readText()
-                    } catch (e: Throwable) {
-                        warning("Failed to load package $name documentation file $file. Reason $e")
+                    else {
+                        info("package ${pkg.name} has no ReadMe.(html|md) in $dir")
                     }
                 }
             }
         }
-        return pkg;
     }
 
     fun wikiConvert(text: String, linkRenderer: LinkRenderer, fileName: String?): String {
@@ -623,14 +647,20 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     fun getClass(classElement: ClassDescriptor): KClass? {
         val name = classElement.getName()
-        val container = classElement.getContainingDeclaration()
-        if (name != null && container is NamespaceDescriptor) {
-            val pkg = getPackage(container)
-            return pkg.getClass(name, classElement)
-        } else {
-            warning("no package found for $container and class $name")
-            return null
+        if (name != null) {
+            var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
+            while (dec != null) {
+                val container = dec
+                if (container is NamespaceDescriptor) {
+                    val pkg = getPackage(container)
+                    return pkg.getClass(name, classElement)
+                } else {
+                    dec = dec?.getContainingDeclaration()
+                }
+            }
+            warning("no package found for class $name")
         }
+        return null
     }
 
     fun previous(pkg: KPackage): KPackage? {
@@ -857,6 +887,10 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
             KClass(this, descriptor, name)
         }
         if (created) {
+            // sometimes we may have source files for a package in different source directories
+            // such as the kotlin package in generated directory; so lets always check if we can find
+            // the readme
+            model.tryLoadReadMe(this, descriptor)
             model.configureComments(klass, descriptor)
             val typeConstructor = descriptor.getTypeConstructor()
             val superTypes = typeConstructor.getSupertypes()
