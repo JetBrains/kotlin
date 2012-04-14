@@ -60,7 +60,8 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
         });
         librarySourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
         assertNotNull(librarySourceDir);
-        KotlinCompiler.ExitCode compilerExec = new KotlinCompiler().exec("-src", librarySourceDir.getPath(), "-output", libraryIoDir.getAbsolutePath());
+        KotlinCompiler.ExitCode compilerExec =
+                new KotlinCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryIoDir.getAbsolutePath());
         assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
         libraryDir = LocalFileSystem.getInstance().findFileByIoFile(libraryIoDir);
         assertNotNull(libraryDir);

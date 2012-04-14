@@ -18,19 +18,24 @@ package org.jetbrains.jet.cli;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.CompileEnvironment;
 import org.jetbrains.jet.compiler.CompileEnvironmentException;
 import org.jetbrains.jet.compiler.CompilerPlugin;
-import org.jetbrains.jet.compiler.MessageRenderer;
-import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
+import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.compiler.messages.MessageRenderer;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.KotlinCompiler.ExitCode.*;
@@ -67,7 +72,7 @@ public class KotlinCompiler {
      */
     public static void doMain(KotlinCompiler compiler, String[] args) {
         try {
-            ExitCode rc = compiler.exec(args);
+            ExitCode rc = compiler.exec(System.out, args);
             if (rc != OK) {
                 System.err.println("exec() finished with " + rc + " return code");
                 System.exit(rc.getCode());
@@ -76,10 +81,6 @@ public class KotlinCompiler {
             System.err.println(e.getMessage());
             System.exit(INTERNAL_ERROR.getCode());
         }
-    }
-
-    public ExitCode exec(String... args) {
-        return exec(System.out, args);
     }
 
     public ExitCode exec(PrintStream errStream, String... args) {
@@ -93,17 +94,17 @@ public class KotlinCompiler {
     /**
      * Executes the compiler on the parsed arguments
      */
-    public ExitCode exec(PrintStream errStream, CompilerArguments arguments) {
+    public ExitCode exec(final PrintStream errStream, CompilerArguments arguments) {
         if (arguments.help) {
             usage(errStream);
             return OK;
         }
         System.setProperty("java.awt.headless", "true");
 
-        MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+        final MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
 
         if (arguments.version) {
-            errStream.println(messageRenderer.render(Severity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, null, -1, -1));
+            errStream.println(messageRenderer.render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, CompilerMessageLocation.NO_LOCATION));
         }
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
@@ -135,9 +136,10 @@ public class KotlinCompiler {
         }
 
         CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar,runtimeJar);
-        CompileEnvironment environment = new CompileEnvironment(messageRenderer, arguments.verbose, dependencies);
+        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
+        CompileEnvironment environment = new CompileEnvironment(messageCollector, dependencies);
         try {
-            configureEnvironment(environment, arguments, errStream);
+            configureEnvironment(environment, arguments);
 
             boolean noErrors;
             if (arguments.module != null) {
@@ -160,6 +162,7 @@ public class KotlinCompiler {
         }
         finally {
             environment.dispose();
+            messageCollector.printToErrStream();
         }
     }
 
@@ -225,10 +228,7 @@ public class KotlinCompiler {
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    protected void configureEnvironment(CompileEnvironment environment, CompilerArguments arguments, PrintStream errStream) {
-        environment.setIgnoreErrors(false);
-        environment.setErrorStream(errStream);
-
+    protected void configureEnvironment(CompileEnvironment environment, CompilerArguments arguments) {
         // install any compiler plugins
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
         if (plugins != null) {
@@ -242,6 +242,48 @@ public class KotlinCompiler {
         if (arguments.classpath != null) {
             final Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
             environment.addToClasspath(Iterables.toArray(classpath, String.class));
+        }
+    }
+
+    private static class PrintingMessageCollector implements MessageCollector {
+        private final boolean verbose;
+        private final PrintStream errStream;
+        private final MessageRenderer messageRenderer;
+
+        // File path (nullable) -> error message
+        private final Multimap<String, String> groupedMessages = LinkedHashMultimap.create();
+
+        public PrintingMessageCollector(PrintStream errStream,
+                MessageRenderer messageRenderer,
+                boolean verbose) {
+            this.verbose = verbose;
+            this.errStream = errStream;
+            this.messageRenderer = messageRenderer;
+        }
+
+        @Override
+        public void report(@NotNull CompilerMessageSeverity severity,
+                @NotNull String message,
+                @NotNull CompilerMessageLocation location) {
+            String text = messageRenderer.render(severity, message, location);
+            if (severity == CompilerMessageSeverity.LOGGING) {
+                if (!verbose) {
+                    return;
+                }
+                errStream.println(text);
+            }
+            groupedMessages.put(location.getPath(), text);
+        }
+
+        public void printToErrStream() {
+            if (!groupedMessages.isEmpty()) {
+                for (String path : groupedMessages.keySet()) {
+                    Collection<String> messageTexts = groupedMessages.get(path);
+                    for (String text : messageTexts) {
+                        errStream.println(text);
+                    }
+                }
+            }
         }
     }
 }

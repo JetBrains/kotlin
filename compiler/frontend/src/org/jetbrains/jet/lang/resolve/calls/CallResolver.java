@@ -28,7 +28,10 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.calls.inference.*;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
+import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemWithPriorities;
+import org.jetbrains.jet.lang.resolve.calls.inference.DebugConstraintResolutionListener;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -42,8 +45,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AUTOCAST;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.*;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_CANDIDATE;
 import static org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl.MAP_TO_RESULT;
@@ -254,6 +256,10 @@ public class CallResolver {
         ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
         context.trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement(), debugInfo);
         context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
+
+        if (context.dataFlowInfo.hasTypeInfoConstraints()) {
+            context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, context.call.getCalleeExpression(), context.dataFlowInfo);
+        }
 
         debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
 

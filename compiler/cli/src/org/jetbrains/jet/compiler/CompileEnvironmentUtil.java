@@ -27,13 +27,18 @@ import jet.modules.Module;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GeneratedClassLoader;
+import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.utils.PathUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -147,7 +152,7 @@ public class CompileEnvironmentUtil {
     //    return compileEnvironment;
     //}
     //
-    public static List<Module> loadModuleScript(String moduleFile, MessageRenderer messageRenderer, PrintStream errorStream, boolean verbose) {
+    public static List<Module> loadModuleScript(String moduleFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
             public void dispose() {
@@ -159,14 +164,13 @@ public class CompileEnvironmentUtil {
         ensureRuntime(scriptEnvironment, dependencies);
         scriptEnvironment.addSources(moduleFile);
 
-        CompileSession scriptCompileSession = new CompileSession(scriptEnvironment, messageRenderer, errorStream, verbose, dependencies);
-
-        if (!scriptCompileSession.analyze()) {
+        GenerationState generationState = KotlinToJVMBytecodeCompiler
+                .analyzeAndGenerate(scriptEnvironment, dependencies, messageCollector, false);
+        if (generationState == null) {
             return null;
         }
-        ClassFileFactory factory = scriptCompileSession.generate(true).getFactory();
 
-        List<Module> modules = runDefineModules(dependencies, moduleFile, factory);
+        List<Module> modules = runDefineModules(dependencies, moduleFile, generationState.getFactory());
 
         Disposer.dispose(disposable);
         return modules;

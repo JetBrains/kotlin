@@ -42,7 +42,6 @@ import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -446,15 +445,17 @@ public class JetCompiler implements TranslatingCompiler {
             private String message;
 
             public void setMessageCategoryFromString(String tagName) {
-                boolean exception = "EXCEPTION".equals(tagName);
-                if (Severity.ERROR.toString().equals(tagName) || exception) {
+                if ("ERROR".equals(tagName)) {
                     messageCategory = ERROR;
-                    isException = exception;
                 }
-                else if (Severity.WARNING.toString().equals(tagName)) {
+                else if ("EXCEPTION".equals(tagName)) {
+                    messageCategory = ERROR;
+                    isException = true;
+                }
+                else if ("WARNING".equals(tagName)) {
                     messageCategory = WARNING;
                 }
-                else if (Severity.LOGGING.toString().equals(tagName)) {
+                else if ("LOGGING".equals(tagName)) {
                     messageCategory = STATISTICS;
                 }
                 else {

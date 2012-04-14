@@ -120,9 +120,9 @@ class CollectionTest {
         }
     }
 
+    // TODO would be nice to avoid the <String>
     test fun filterIntoSet() {
         val data = arrayList("foo", "bar")
-        // TODO would be nice to avoid the <String>
         val foo = data.filterTo(hashSet<String>()){it.startsWith("f")}
 
         assertTrue {
@@ -136,9 +136,9 @@ class CollectionTest {
         }
     }
 
+    // TODO would be nice to avoid the <String>
     test fun filterIntoSortedSet() {
         val data = arrayList("foo", "bar")
-        // TODO would be nice to avoid the <String>
         val sorted = data.filterTo(sortedSet<String>()){it.length == 3}
         assertEquals(2, sorted.size)
         assertEquals(sortedSet("bar", "foo"), sorted)
@@ -176,59 +176,39 @@ class CollectionTest {
         assertEquals(6, count)
     }
 
-
-    /*
-        // TODO would be nice to be able to write this as this
-        //numbers.fold(0){it + it2}
-        numbers.fold(0){(it, it2) -> it + it2}
-
-        // TODO would be nice to be able to write this as this
-        // numbers.map{it.toString()}.fold(""){it + it2}
-        numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
-    */
     test fun fold() {
         // lets calculate the sum of some numbers
         expect(10) {
             val numbers = arrayList(1, 2, 3, 4)
-            numbers.fold(0){(it, it2) -> it + it2}
+            numbers.fold(0){ a, b -> a + b}
         }
 
         expect(0) {
             val numbers = arrayList<Int>()
-            numbers.fold(0){(it, it2) -> it + it2}
+            numbers.fold(0){ a, b -> a + b}
         }
 
         // lets concatenate some strings
         expect("1234") {
             val numbers = arrayList(1, 2, 3, 4)
-            numbers.map<Int, String>{it.toString()}.fold(""){(it, it2) -> it + it2}
+            numbers.map<Int, String>{it.toString()}.fold(""){ a, b -> a + b}
         }
     }
 
-    /*
-        // TODO would be nice to be able to write this as this
-        // numbers.map{it.toString()}.foldRight(""){it + it2}
-        numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
-    */
     test fun foldRight() {
         expect("4321") {
             val numbers = arrayList(1, 2, 3, 4)
-            numbers.map<Int, String>{it.toString()}.foldRight(""){(it, it2) -> it + it2}
+            numbers.map<Int, String>{it.toString()}.foldRight(""){ a, b -> a + b}
         }
     }
 
-    /*
-        TODO inference engine should not need this type info?
-        val byLength = words.groupBy<String, Int>{it.length}
-    */
     test fun groupBy() {
         val words = arrayList("a", "ab", "abc", "def", "abcd")
-        val byLength = words.groupBy<String, Int>{it.length}
+        val byLength = words.groupBy{ it.length }
         assertEquals(4, byLength.size())
 
         val l3 = byLength.getOrElse(3, {ArrayList<String>()})
         assertEquals(2, l3.size)
-
     }
 
     test fun makeString() {

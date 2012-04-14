@@ -141,11 +141,18 @@ public inline fun <T> Iterable<T>.fold(initial: T, operation: (T, T) -> T): T {
 public inline fun <T> Iterable<T>.foldRight(initial: T, operation: (T, T) -> T): T = reverse().fold(initial, operation)
 
 /**
- * Transforms each element using the result as the key in a map to group elements by the result
+ * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  *
  * @includeFunctionBody ../../test/CollectionTest.kt groupBy
  */
-public inline fun <T, K> Iterable<T>.groupBy(result: Map<K, List<T>> = HashMap<K, List<T>>(), toKey: (T) -> K) : Map<K, List<T>> {
+public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> = groupByTo<T,K>(HashMap<K, List<T>>(), toKey)
+
+/**
+ * Groups the elements in the collection into the given [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
+ *
+ * @includeFunctionBody ../../test/CollectionTest.kt groupBy
+ */
+public inline fun <T, K> Iterable<T>.groupByTo(result: Map<K, List<T>>, toKey: (T) -> K) : Map<K, List<T>> {
     for (element in this) {
         val key = toKey(element)
         val list = result.getOrPut(key) { ArrayList<T>() }
@@ -160,7 +167,7 @@ public inline fun <T, K> Iterable<T>.groupBy(result: Map<K, List<T>> = HashMap<K
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  *
- * @includeFunctionBody ../../test/CollectionTest.kt appendString
+ * @includeFunctionBody ../../test/CollectionTest.kt makeString
  */
 public inline fun <T> Iterable<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
     val buffer = StringBuilder()

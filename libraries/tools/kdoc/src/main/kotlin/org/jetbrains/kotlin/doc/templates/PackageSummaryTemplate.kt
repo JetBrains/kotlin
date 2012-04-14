@@ -74,17 +74,17 @@ function windowTitle()
 
         printNextPrevPackages()
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>
 </NOSCRIPT>
 
 
@@ -136,9 +136,9 @@ ${pkg.detailedDescription(this)}
 """)
 
         val groupMap = pkg.groupClassMap()
-        for (e in groupMap.entrySet()) {
-            val group = e?.getKey() ?: "Other"
-            val list = e?.getValue()
+        for (e in groupMap) {
+            val group = e.key ?: "Other"
+            val list = e.value
             if (list != null) {
                 println(""" <h3>$group</h3>
 
@@ -192,7 +192,7 @@ ${pkg.detailedDescription(this)}
         printNextPrevPackages()
 
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-)  <A HREF="${pkg.nameAsRelativePath}index.html?${pkg.nameAsPath}/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
@@ -275,13 +275,13 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <B>Extensions Summary</B></FONT></TH>
 </TR>""")
 
-            for (e in map.entrySet()) {
-                val c = e?.getKey()
+            for (e in map) {
+                val c = e.key
                 if (c != null) {
                     println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="${extensionsHref(pkg, c)}" title="extensions on ${pkg.name}">${c.name}</A></B></TD>
 <TD>""")
-                    val list = e?.getValue()
+                    val list = e.value
                     if (list != null) {
                         val functions = filterDuplicateNames(list)
                         for (f in functions) {
@@ -306,10 +306,14 @@ Copyright &#169; 2010-2012. All Rights Reserved.
         val prev = model.previous(pkg)
         if (prev != null) {
             println("""&nbsp;<A HREF="${prev.nameAsRelativePath}${prev.nameAsPath}/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;""")
+        } else {
+            println("""&nbsp;PREV PACKAGE&nbsp;""" )
         }
         val next = model.next(pkg)
         if (next != null) {
             println("""&nbsp;<A HREF="${next.nameAsRelativePath}${next.nameAsPath}/package-summary.html"><B>NEXT PACKAGE</B></A>""")
+        } else {
+            println("""&nbsp;NEXT PACKAGE""" )
         }
         println("""</FONT></TD>""")
 

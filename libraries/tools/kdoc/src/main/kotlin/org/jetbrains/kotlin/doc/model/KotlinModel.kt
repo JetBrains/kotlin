@@ -39,6 +39,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
+import com.intellij.psi.PsiFileSystemItem
+import java.io.File
 
 
 /**
@@ -73,6 +77,10 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
 
 fun warning(message: String) {
     println("Warning: $message")
+}
+
+fun info(message: String) {
+    // println("info: $message")
 }
 
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
@@ -136,14 +144,14 @@ fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass,
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionFunctions(functions: Collection<KFunction>): Map<KClass, List<KFunction>> {
     val map = TreeMap<KClass, List<KFunction>>()
-    functions.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    functions.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
     return map
 }
 
 // TODO for some reason the SortedMap causes kotlin to freak out a little :)
 fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KProperty>> {
     val map = TreeMap<KClass, List<KProperty>>()
-    properties.filter{ it.extensionClass != null }.groupBy(map){ it.extensionClass.sure() }
+    properties.filter{ it.extensionClass != null }.groupByTo(map){ it.extensionClass.sure() }
     return map
 }
 
@@ -189,6 +197,32 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     public val version: String
     get() = config.version
+
+    private var _projectRootDir: String? = null
+
+    /**
+     * File names we look for in a package directory for the overall description of a package for KDoc
+     */
+    val packageDescriptionFiles = arrayList("readme.md", "ReadMe.md, readme.html, ReadMe.html")
+
+    private val readMeDirsScanned = HashSet<String>()
+
+    /**
+     * Returns the root project directory for calculating relative source links
+     */
+    fun projectRootDir(): String {
+        if (_projectRootDir == null) {
+            val rootDir = config.projectRootDir
+            _projectRootDir = if (rootDir == null) {
+                warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
+                ""
+            } else {
+                File(rootDir).getCanonicalPath() ?: ""
+            }
+        }
+        return _projectRootDir ?: ""
+    }
+
 
     /** Loads the model from the given set of source files */
     fun load(sources: List<JetFile?>): Unit {
@@ -236,8 +270,50 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             val scope = descriptor.getMemberScope()
             addFunctions(pkg, scope)
             pkg.local = isLocal(descriptor)
+            pkg.useExternalLink = pkg.model.config.resolveLink(pkg.name, false).notEmpty()
+
+            if (pkg.wikiDescription.isEmpty()) {
+                // lets try find a custom doc
+                var file = config.packageDescriptionFiles[name]
+                loadWikiDescription(pkg, file)
+            }
         }
         return pkg;
+    }
+
+    protected fun loadWikiDescription(pkg: KPackage, file: String?): Unit {
+        if (file != null) {
+            try {
+                pkg.wikiDescription = File(file).readText()
+            } catch (e: Throwable) {
+                warning("Failed to load package ${pkg.name} documentation file $file. Reason $e")
+            }
+        }
+    }
+
+    /**
+     * If a package has no detailed description lets try load it from the descriptors
+     * source directory if we've not checked that directory before
+     */
+    fun tryLoadReadMe(pkg: KPackage, descriptor: DeclarationDescriptor): Unit {
+        if (pkg.wikiDescription.isEmpty()) {
+            // lets try find the package.html or package.md file
+            val srcPath =  pkg.model.filePath(descriptor)
+            if (srcPath != null) {
+                val srcFile = File(srcPath)
+                val dir = if (srcFile.isDirectory()) srcFile else srcFile.getParentFile()
+                if (dir != null && readMeDirsScanned.add(dir.getPath()!!)) {
+                    val f = packageDescriptionFiles.map{ File(dir, it) }.find{ it.exists() }
+                    if (f != null) {
+                        val file = f.getCanonicalPath()
+                        loadWikiDescription(pkg, file)
+                    }
+                    else {
+                        info("package ${pkg.name} has no ReadMe.(html|md) in $dir")
+                    }
+                }
+            }
+        }
     }
 
     fun wikiConvert(text: String, linkRenderer: LinkRenderer, fileName: String?): String {
@@ -344,11 +420,29 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         return null
     }
 
+    fun locationFor(descriptor: DeclarationDescriptor): LineAndColumn? {
+        val psiElement =  getPsiElement(descriptor)
+        if (psiElement != null) {
+            val document = psiElement.getContainingFile()?.getViewProvider()?.getDocument()
+            if (document != null) {
+                val offset = psiElement.getTextOffset()
+                return DiagnosticUtils.offsetToLineAndColumn(document, offset)
+            }
+        }
+        return null
+    }
 
     fun fileFor(descriptor: DeclarationDescriptor): String? {
         val psiElement = getPsiElement(descriptor)
         return psiElement?.getContainingFile()?.getName()
     }
+
+    fun filePath(descriptor: DeclarationDescriptor): String? {
+        val psiElement = getPsiElement(descriptor)
+        val file = psiElement?.getContainingFile()
+        return filePath(file)
+    }
+
 
     protected fun getPsiElement(descriptor: DeclarationDescriptor): PsiElement? {
         return try {
@@ -412,7 +506,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                                 }
                              }
                         } else {
-                            warning("Uknown kdoc macro @$remaining")
+                            warning("Unknown kdoc macro @$remaining")
                         }
                     }
                     buffer.append(text)
@@ -441,6 +535,17 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                         return extractBlock(remaining)
                     }
                 }
+            }
+        }
+        return null
+    }
+
+    protected fun filePath(file: PsiFileSystemItem?): String? {
+        if (file != null) {
+            var dir = file.getParent()
+            if (dir != null) {
+                val parentName = filePath(dir) ?: ""
+                return parentName + "/" + file.getName()
             }
         }
         return null
@@ -543,14 +648,20 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 
     fun getClass(classElement: ClassDescriptor): KClass? {
         val name = classElement.getName()
-        val container = classElement.getContainingDeclaration()
-        if (name != null && container is NamespaceDescriptor) {
-            val pkg = getPackage(container)
-            return pkg.getClass(name, classElement)
-        } else {
-            warning("no package found for $container and class $name")
-            return null
+        if (name != null) {
+            var dec: DeclarationDescriptor? = classElement.getContainingDeclaration()
+            while (dec != null) {
+                val container = dec
+                if (container is NamespaceDescriptor) {
+                    val pkg = getPackage(container)
+                    return pkg.getClass(name, classElement)
+                } else {
+                    dec = dec?.getContainingDeclaration()
+                }
+            }
+            warning("no package found for class $name")
         }
+        return null
     }
 
     fun previous(pkg: KPackage): KPackage? {
@@ -690,7 +801,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
 
     public open var deprecated: Boolean = false
 
-    fun description(template: KDocTemplate): String {
+    open fun description(template: KDocTemplate): String {
         val detailedText = detailedDescription(template)
         val idx = detailedText.indexOf("</p>")
         return if (idx > 0) {
@@ -701,8 +812,52 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 
     fun detailedDescription(template: KDocTemplate): String {
+        val wiki = wikiDescription
+        return wikiConvert(wiki, template)
+    }
+
+    protected fun wikiConvert(wiki: String, template: KDocTemplate): String {
         val file = model.fileFor(declarationDescriptor)
-        return model.wikiConvert(wikiDescription, TemplateLinkRenderer(this, template), file)
+        return model.wikiConvert(wiki, TemplateLinkRenderer(this, template), file)
+    }
+
+    fun isLinkToSourceRepo(): Boolean {
+        return model.config.sourceRootHref != null
+    }
+
+    fun sourceTargetAttribute(): String {
+        return if (isLinkToSourceRepo()) " target=\"_top\" class=\"repoSourceCode\"" else ""
+    }
+
+    fun sourceLink(): String {
+        val file = filePath()
+        if (file != null) {
+            // lets remove the root project directory
+            val rootDir = model.projectRootDir()
+            val canonicalFile = File(file).getCanonicalPath() ?: ""
+            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
+                canonicalFile.substring(rootDir.length()) else canonicalFile
+            return sourceLinkFor(relativeFile!!)
+        }
+        return ""
+    }
+
+    fun filePath(): String? = model.filePath(declarationDescriptor)
+
+    protected fun sourceLinkFor(filePath: String, lineLinkText: String = "#L"): String {
+        val root = model.config.sourceRootHref!!
+        val cleanRoot = root.trimTrailing("/")
+        val cleanPath = filePath.trimLeading("/")
+        return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
+
+    }
+
+    fun location(): LineAndColumn? = model.locationFor(declarationDescriptor)
+
+    val sourceLine: Int
+    get() {
+        val loc = location()
+        return if (loc != null) loc.getLine() else 1
     }
 }
 
@@ -718,7 +873,18 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 
 class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         val name: String,
-        var local: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+        var local: Boolean = false,
+        var useExternalLink: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+
+
+    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
+    //val classes = sortedMap<String,KClass>()
+    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
+
+    public val classes: Collection<KClass>
+    get() = classMap.values().sure().filter{ it.isApi() }
+
+    public val annotations: Collection<KClass> = ArrayList<KClass>()
 
     public override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
@@ -733,6 +899,10 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
             KClass(this, descriptor, name)
         }
         if (created) {
+            // sometimes we may have source files for a package in different source directories
+            // such as the kotlin package in generated directory; so lets always check if we can find
+            // the readme
+            model.tryLoadReadMe(this, descriptor)
             model.configureComments(klass, descriptor)
             val typeConstructor = descriptor.getTypeConstructor()
             val superTypes = typeConstructor.getSupertypes()
@@ -772,14 +942,14 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
         return if (answer.length == 0) "" else answer + "/"
     }
 
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.namespace.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
-    //val classes = sortedMap<String,KClass>()
-    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
-
-    public val classes: Collection<KClass>
-    get() = classMap.values().sure().filter{ it.isApi() }
-
-    public val annotations: Collection<KClass> = ArrayList<KClass>()
+    override fun description(template: KDocTemplate): String {
+        // lets see if we can find a custom summary
+        val text = model.config.packageSummaryText[name]
+        return if (text != null)
+            wikiConvert(text, template).trimLeading("<p>").trimTrailing("</p>")
+        else
+            super<KClassOrPackage>.description(template)
+    }
 
     fun qualifiedName(simpleName: String): String {
         return if (name.length() > 0) {
@@ -788,7 +958,6 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
             simpleName
         }
     }
-
 
     fun previous(pkg: KClass): KClass? {
         // TODO
@@ -801,7 +970,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
     }
 
     fun groupClassMap(): Map<String, List<KClass>> {
-        return classes.groupBy(TreeMap<String, List<KClass>>()){it.group}
+        return classes.groupByTo(TreeMap<String, List<KClass>>()){it.group}
     }
 
     fun packageFunctions() = functions.filter{ it.extensionClass == null }
@@ -838,8 +1007,7 @@ class KClass(val pkg: KPackage, val descriptor: ClassDescriptor,
         var since: String = "",
         var authors: List<String> = arrayList<String>(),
         var baseClasses: List<KType> = arrayList<KType>(),
-        var nestedClasses: List<KClass> = arrayList<KClass>(),
-        var sourceLine: Int = 2): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
+        var nestedClasses: List<KClass> = arrayList<KClass>()): KClassOrPackage(pkg.model, descriptor), Comparable<KClass> {
 
     public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
@@ -921,8 +1089,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var modifiers: List<String> = arrayList<String>(),
         var typeParameters: List<KTypeParameter> = arrayList<KTypeParameter>(),
         var exceptions: List<KClass> = arrayList<KClass>(),
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>(),
-        var sourceLine: Int = 2): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
+        var annotations: List<KAnnotation> = arrayList<KAnnotation>()): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
     public val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
 

@@ -358,7 +358,9 @@ public class BodyResolver {
                     public void visitDelegationToSuperCallSpecifier(JetDelegatorToSuperCall call) {
                         JetTypeReference typeReference = call.getTypeReference();
                         if (typeReference != null) {
-                            callResolver.resolveFunctionCall(trace, scopeForSupertypeInitializers, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call), NO_EXPECTED_TYPE, dataFlowInfo);
+                            callResolver.resolveFunctionCall(trace, scopeForSupertypeInitializers,
+                                                             CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, call),
+                                                             NO_EXPECTED_TYPE, dataFlowInfo);
                         }
                     }
 

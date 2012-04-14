@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.JavaPsiFacadeKotlinHacks;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
@@ -41,7 +42,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public class JavaElementFinder extends PsiElementFinder {
+public class JavaElementFinder extends PsiElementFinder implements JavaPsiFacadeKotlinHacks.KotlinFinderMarker {
     private final Project project;
     private final PsiManager psiManager;
 

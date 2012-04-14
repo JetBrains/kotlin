@@ -44,10 +44,8 @@ abstract class Tag(val name : String) : Element() {
     builder.append("<")
     builder.append(name)
     if (!attributes.isEmpty()) {
-      for (e in attributes.entrySet()) {
-        if (e != null) {
-          builder.append(" ${e.getKey()}=\"${e.getValue()}\"")
-        }
+      for (e in attributes) {
+        builder.append(" ${e.key}=\"${e.value}\"")
       }
     }
     if (children.isEmpty()) {

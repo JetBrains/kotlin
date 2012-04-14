@@ -77,17 +77,17 @@ function windowTitle()
 
         printPrevNextClass()
         println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${klass.nameAsPath}.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="${klass.simpleName}.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
   <!--
   if(window==top) {
-    document.writeln('<A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>');
+    document.writeln('<A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
 </SCRIPT>
 <NOSCRIPT>
-  <A HREF="${pkg.nameAsRelativePath}allclasses-noframe.html"><B>All Classes</B></A>
+  <A HREF="${relativePrefix()}allclasses-noframe.html"><B>All Classes</B></A>
 </NOSCRIPT>
 
 
@@ -134,7 +134,7 @@ DETAIL:&nbsp;PROPERTY&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">FU
         <TR>""")
                 printPrevNextClass()
                 println("""<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="${pkg.nameAsRelativePath}index.html?${klass.nameAsPath}.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+  <A HREF="${relativePrefix()}index.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="${klass.simpleName}.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
 &nbsp;<SCRIPT type="text/javascript">
           <!--
@@ -184,7 +184,7 @@ Class ${klass.simpleName}</H2>
 <DL>
 <DT><PRE><FONT SIZE="-1">""")
         printAnnotations(klass.annotations)
-        print("""</FONT>${klass.visibility} ${klass.kindCode} <A HREF="${sourceHref(klass)}"><B>${klass.simpleName}</B></A><DT>""")
+        print("""</FONT>${klass.visibility} ${klass.kindCode} <A HREF="${sourceHref(klass)}"${klass.sourceTargetAttribute()}><B>${klass.simpleName}</B></A><DT>""")
         if (!klass.baseClasses.isEmpty()) {
             print("""extends """)
             for (bc in klass.baseClasses) {

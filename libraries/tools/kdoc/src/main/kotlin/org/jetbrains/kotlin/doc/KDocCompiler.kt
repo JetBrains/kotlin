@@ -20,8 +20,8 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : KotlinCompiler() {
 
-    protected override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?, errStream : PrintStream?) {
-        super.configureEnvironment(environment, arguments, errStream)
+    protected override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?) {
+        super.configureEnvironment(environment, arguments)
         val coreEnvironment = environment?.getEnvironment()
         if (coreEnvironment != null) {
             val kdoc = KDoc()

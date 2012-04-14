@@ -36,7 +36,10 @@ public class AutoCastUtils {
     /**
      * @return variants @param receiverToCast may be cast to according to @param dataFlowInfo, @param receiverToCast itself is NOT included
      */
-    public static List<ReceiverDescriptor> getAutoCastVariants(@NotNull final BindingContext bindingContext, @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast) {
+    public static List<ReceiverDescriptor> getAutoCastVariants(
+            @NotNull final BindingContext bindingContext,
+            @NotNull final DataFlowInfo dataFlowInfo, @NotNull ReceiverDescriptor receiverToCast
+    ) {
         return receiverToCast.accept(new ReceiverDescriptorVisitor<List<ReceiverDescriptor>, Object>() {
             @Override
             public List<ReceiverDescriptor> visitNoReceiver(ReceiverDescriptor noReceiver, Object data) {
@@ -72,7 +75,8 @@ public class AutoCastUtils {
 //                else if (expression instanceof JetThisExpression) {
 //                    return castThis(dataFlowInfo, receiver);
 //                }
-                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(),receiver.getType(), bindingContext);
+                DataFlowValue dataFlowValue = DataFlowValueFactory.INSTANCE.createDataFlowValue(receiver.getExpression(),receiver.getType(),
+                                                                                                bindingContext);
                 List<ReceiverDescriptor> result = Lists.newArrayList();
                 for (JetType possibleType : dataFlowInfo.getPossibleTypes(dataFlowValue)) {
                     result.add(new AutoCastReceiver(receiver, possibleType, dataFlowValue.isStableIdentifier()));

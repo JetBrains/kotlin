@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.compiler;
+package org.jetbrains.jet.compiler.messages;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Severity;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,48 +27,46 @@ import java.io.StringWriter;
 public interface MessageRenderer {
 
     MessageRenderer TAGS = new MessageRenderer() {
-        private String renderWithStringSeverity(String severityString, String message, String path, int line, int column) {
+        @Override
+        public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
             StringBuilder out = new StringBuilder();
-            out.append("<").append(severityString);
-            if (path != null) {
-                out.append(" path=\"").append(path).append("\"");
-                out.append(" line=\"").append(line).append("\"");
-                out.append(" column=\"").append(column).append("\"");
+            out.append("<").append(severity.toString());
+            if (location.getPath() != null) {
+                out.append(" path=\"").append(location.getPath()).append("\"");
+                out.append(" line=\"").append(location.getLine()).append("\"");
+                out.append(" column=\"").append(location.getColumn()).append("\"");
             }
             out.append(">\n");
 
             out.append(message);
 
-            out.append("</").append(severityString).append(">\n");
+            out.append("</").append(severity.toString()).append(">\n");
             return out.toString();
         }
 
         @Override
-        public String render(@NotNull Severity severity, @NotNull String message, @Nullable String path, int line, int column) {
-            return renderWithStringSeverity(severity.toString(), message, path, line, column);
-        }
-
-        @Override
         public String renderException(@NotNull Throwable e) {
-            return renderWithStringSeverity("EXCEPTION", PLAIN.renderException(e), null, -1, -1);
+            return render(CompilerMessageSeverity.EXCEPTION, PLAIN.renderException(e), CompilerMessageLocation.NO_LOCATION);
         }
     };
 
     MessageRenderer PLAIN = new MessageRenderer() {
         @Override
-        public String render(@NotNull Severity severity, @NotNull String message, @Nullable String path, int line, int column) {
-            String position = path == null ? "" : path + ": (" + (line + ", " + column) + ") ";
+        public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
+            String path = location.getPath();
+            String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
             return severity + ": " + position + message;
         }
 
         @Override
         public String renderException(@NotNull Throwable e) {
             StringWriter out = new StringWriter();
+            //noinspection IOResourceOpenedButNotSafelyClosed
             e.printStackTrace(new PrintWriter(out));
             return out.toString();
         }
     };
 
-    String render(@NotNull Severity severity, @NotNull String message, @Nullable String path, int line, int column);
+    String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
     String renderException(@NotNull Throwable e);
 }

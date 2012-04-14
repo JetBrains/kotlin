@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.compiler.CompileSession;
-import org.jetbrains.jet.compiler.MessageRenderer;
+import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -74,10 +75,8 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
+            PrintStream err = System.err;
             CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
-            CompileSession session = new CompileSession(myEnvironment, MessageRenderer.PLAIN, System.err, false,
-                    compilerDependencies);
-
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
             if (!junitJar.exists()) {
@@ -92,19 +91,21 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/stdlib/test"));
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
-            if (!session.analyze()) {
+            GenerationState generationState = KotlinToJVMBytecodeCompiler
+                    .analyzeAndGenerate(myEnvironment, compilerDependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
+
+            if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");
             }
 
-            GenerationState state = session.generate(false);
-            ClassFileFactory classFileFactory = state.getFactory();
+            ClassFileFactory classFileFactory = generationState.getFactory();
 
             final GeneratedClassLoader loader = new GeneratedClassLoader(
                     classFileFactory,
                     new URLClassLoader(new URL[]{ForTestCompileRuntime.runtimeJarForTests().toURI().toURL(), junitJar.toURI().toURL()},
                                        TestCase.class.getClassLoader()));
 
-            JetTypeMapper typeMapper = state.getInjector().getJetTypeMapper();
+            JetTypeMapper typeMapper = generationState.getInjector().getJetTypeMapper();
             TestSuite suite = new TestSuite("stdlib_test");
             try {
                 for(JetFile jetFile : myEnvironment.getSourceFiles()) {
@@ -112,7 +113,7 @@ public class TestlibTest extends CodegenTestCase {
                         if(decl instanceof JetClass) {
                             JetClass jetClass = (JetClass) decl;
 
-                            ClassDescriptor descriptor = (ClassDescriptor) session.getBindingContext().getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
+                            ClassDescriptor descriptor = (ClassDescriptor) generationState.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, jetClass);
                             Set<JetType> allSuperTypes = new THashSet<JetType>();
                             DescriptorUtils.addSuperTypes(descriptor.getDefaultType(), allSuperTypes);
 

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package org.jetbrains.jet.compiler.messages;
+
+import java.util.EnumSet;
 
 /**
  * @author abreslav
  */
-public enum Severity {
+public enum CompilerMessageSeverity {
     INFO,
     ERROR,
-    WARNING
+    WARNING,
+    EXCEPTION,
+    LOGGING;
+
+    public static final EnumSet<CompilerMessageSeverity> ERRORS = EnumSet.of(ERROR, EXCEPTION);
 }

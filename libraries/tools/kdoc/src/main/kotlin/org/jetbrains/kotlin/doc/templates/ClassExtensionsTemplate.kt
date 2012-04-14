@@ -29,7 +29,7 @@ ${pkg.name}</FONT>
 Extensions on ${klass.name}</H2>
 <DL>
 <DT>
-extension functions on class <A HREF="${sourceHref(klass)}"><B>${klass.name}</B></A><DT>
+extension functions on class <A HREF="${sourceHref(klass)}"${klass.sourceTargetAttribute()}><B>${klass.name}</B></A><DT>
 from package ${link(pkg)}
 </DL>
 </PRE>

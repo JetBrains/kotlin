@@ -49,8 +49,29 @@
                         <ignorePackage>jet</ignorePackage>
                         <ignorePackage>junit</ignorePackage>
                         <ignorePackage>org</ignorePackage>
+                        <ignorePackage>kotlin.support</ignorePackage>
+                        <ignorePackage>kotlin.properties</ignorePackage>
                     </ignorePackages>
-
+                    <sourceRootHref>https://github.com/JetBrains/kotlin/tree/master</sourceRootHref>
+                    <projectRootDir>${project-root}</projectRootDir>
+                    <packageDescriptionFiles>
+                        <kotlin.swing>${project-root}/libraries/kotlin-swing/ReadMe.md</kotlin.swing>
+                    </packageDescriptionFiles>
+                    <packageSummaryText>
+                        <kotlin>Core API</kotlin>
+                        <kotlin.beans>Functions for working with Java Beans</kotlin.beans>
+                        <kotlin.concurrent>Concurrent programing API</kotlin.concurrent>
+                        <kotlin.dom>Functions for working with the W3C DOM</kotlin.dom>
+                        <kotlin.io>IO API for working with files and streams</kotlin.io>
+                        <kotlin.jdbc>Functions for working with SQL databases via JDBC (in kotlin-jdbc module)</kotlin.jdbc>
+                        <kotlin.math>Mathematics API</kotlin.math>
+                        <kotlin.modules>API for defining compilation units</kotlin.modules>
+                        <kotlin.nullable>Functions for treating nullable types as composable collections of zero or one element</kotlin.nullable>
+                        <kotlin.swing>Swing API (in kotlin-swing module)</kotlin.swing>
+                        <kotlin.template>Text processing API</kotlin.template>
+                        <kotlin.test>Functions for writing tests (in kunit module)</kotlin.test>
+                        <kotlin.util>Utility functions</kotlin.util>
+                    </packageSummaryText>
                 </configuration>
 
                 <executions>

@@ -26,7 +26,8 @@ class KDocConfig() {
     public var version: String = "SNAPSHOT"
 
     /**
-     * Returns a map of the package prefix to the URLs to use to link to it in the documentation
+     * Returns a map of the package prefix to the HTML URL for the root of the apidoc using javadoc/kdoc style
+     * directory layouts so that this API doc report can link to external packages
      */
     public val packagePrefixToUrls: Map<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
 
@@ -40,6 +41,27 @@ class KDocConfig() {
     * on documented function or property
     */
     public var warnNoComments: Boolean = true
+
+    /**
+     * Returns the HTTP URL of the root directory of source code that we should link to
+     */
+    public var sourceRootHref: String? = null
+
+    /**
+     * The root project directory used to deduce relative file names when linking to source code
+     */
+    public var projectRootDir: String? = null
+
+    /**
+     * A map of package name to html or markdown files used to describe the package. If none is
+     * speciied we will look for a package.html or package.md file in the source tree
+     */
+    public var packageDescriptionFiles: Map<String,String> = HashMap<String,String>()
+
+    /**
+     * A map of package name to summary text used in the package overviews
+     */
+    public var packageSummaryText: Map<String,String> = HashMap<String,String>()
 
     /**
     * Returns true if protected functions and properties should be documented
@@ -69,21 +91,16 @@ class KDocConfig() {
     /**
      * Resolves a link to the given class name
      */
-    fun resolveLink(packageName: String): String {
-        // TODO should be able to do something like
-        // for (e in packageUrls.filterNotNull()) {
-        val entrySet = packagePrefixToUrls.entrySet()
-        if (entrySet != null) {
-            for (e in entrySet) {
-                val p = e?.getKey()
-                val url = e?.getValue()
-                if (p != null && url != null) {
-                    if (packageName.startsWith(p)) {
-                        return url
-                    }
+    fun resolveLink(packageName: String, warn: Boolean = true): String {
+        for (e in packagePrefixToUrls) {
+            val p = e.key
+            val url = e.value
+            if (p != null && url != null) {
+                if (packageName.startsWith(p)) {
+                    return url
                 }
             }
-        }
+       }
         if (missingPackageUrls.add(packageName)) {
             println("Warning: could not find external link to package: $packageName")
         }
