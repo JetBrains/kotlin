@@ -101,7 +101,7 @@ class KDocConfig() {
                 }
             }
        }
-        if (missingPackageUrls.add(packageName)) {
+        if (warn && missingPackageUrls.add(packageName)) {
             println("Warning: could not find external link to package: $packageName")
         }
         return ""

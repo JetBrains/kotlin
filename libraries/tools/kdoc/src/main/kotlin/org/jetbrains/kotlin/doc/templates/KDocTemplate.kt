@@ -157,5 +157,22 @@ abstract class KDocTemplate() : TextTemplate() {
         return "<A HREF=\"${href(c)}\" title=\"annotation in ${c.packageName}\">@${c.simpleName}</A>"
     }
 
+    fun searchBox(): String =
+"""  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1" ALIGN="right">
+  <label for="searchBox">Search: </label>
+  <input id="searchBox" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" data-url="${relativePrefix()}search.xml">
+  </TD>"""
+
+
+    fun stylesheets(): String {
+        return """<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}stylesheet.css" TITLE="Style">
+<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}jquery-ui.css" TITLE="Style">
+<LINK REL="stylesheet" TYPE="text/css" HREF="${relativePrefix()}kotlin.css" TITLE="Style">
+<script type="text/javascript" src="${relativePrefix()}js/jquery.js"></script>
+<script type="text/javascript" src="${relativePrefix()}js/jquery-ui.js"></script>
+<script type="text/javascript" src="${relativePrefix()}js/apidoc.js"></script>
+"""
+    }
+
     protected open fun relativePrefix(): String = ""
 }

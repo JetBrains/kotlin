@@ -72,6 +72,7 @@ class JavadocStyleHtmlDoclet() : Doclet {
         run("overview-summary.html", OverviewSummaryTemplate(model))
         run("overview-tree.html", OverviewTreeTemplate(model))
         run("package-list", PackageListTemplate(model))
+        run("search.xml", SearchXmlTemplate(model))
         // run("serialized-form.html", SerializedFormTemplate(model))
         for (p in model.packages) {
             run("${p.nameAsPath}/package-frame.html", PackageFrameTemplate(model, p))
