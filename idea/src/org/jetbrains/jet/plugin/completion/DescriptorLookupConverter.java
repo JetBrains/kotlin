@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
@@ -50,7 +51,8 @@ public final class DescriptorLookupConverter {
     private DescriptorLookupConverter() {}
 
     @NotNull
-    public static LookupElement createLookupElement(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
+    public static LookupElement createLookupElement(@NotNull BindingContext bindingContext,
+            @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
 
         LookupElementBuilder element = LookupElementBuilder.create(
                 new JetLookupObject(descriptor, bindingContext, declaration), descriptor.getName());
@@ -105,6 +107,9 @@ public final class DescriptorLookupConverter {
 
         if (declaration != null) {
             element = element.setIcon(declaration.getIcon(Iconable.ICON_FLAG_OPEN | Iconable.ICON_FLAG_VISIBILITY));
+        }
+        else {
+            element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor));
         }
 
         return element;
