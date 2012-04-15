@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searches>
+<search>
+  <href>kotlin/template/Formatter.html</href>
+  <name>kotlin.template.Formatter</name>
+  <kind>trait</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html</href>
+  <name>kotlin.template.HtmlFormatter</name>
+  <kind>class</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html</href>
+  <name>kotlin.template.LocaleFormatter</name>
+  <kind>class</kind>
+</search>
+<search>
+  <href>kotlin/template/ToStringFormatter.html</href>
+  <name>kotlin.template.ToStringFormatter</name>
+  <kind>class</kind>
+</search>
+</searches>

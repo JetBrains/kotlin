@@ -72,3 +72,25 @@
 .jet.anchor:visited { }
 .jet.anchor:hover   { color:blue; text-decoration:underline; }
 .jet.anchor:active  { color:blue; text-decoration:underline; }
+
+
+.ui-autocomplete-loading { background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat; }
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding to account for vertical scrollbar */
+    padding-right: 20px;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+    height: 100px;
+}
+
+.NavBarCell1 label {
+  color: white;
+}
