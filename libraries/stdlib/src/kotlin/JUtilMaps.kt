@@ -113,3 +113,12 @@ public inline fun <K,V,R,C: java.util.Map<K,R>> java.util.Map<K,V>.mapValuesTo(r
   }
   return result
 }
+
+/**
+ * Puts all the entries into the map with the first value in the tuple being the key and the second the value
+ */
+public inline fun <K,V> java.util.Map<K,V>.putAll(vararg values: #(K,V)): Unit {
+    for (v in values) {
+        put(v._1, v._2)
+    }
+}

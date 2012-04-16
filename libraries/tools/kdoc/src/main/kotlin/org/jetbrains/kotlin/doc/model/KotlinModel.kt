@@ -676,6 +676,18 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
 }
 
 class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate): LinkRenderer() {
+    // TODO dirty hack - remove when this issue is fixed
+    // http://youtrack.jetbrains.com/issue/KT-1524
+    val hackedLinks = hashMap(
+            #("IllegalArgumentException", #("java.lang", "java/lang/IllegalArgumentException.html")),
+            #("IllegalStateException", #("java.lang", "java/lang/IllegalStateException.html")),
+            #("Map.Entry", #("java.util", "java/util/Map.Entry.html")),
+            #("System.in", #("java.lang", "java/lang/System.html#in")),
+            #("System.out", #("java.lang", "java/lang/System.html#in")),
+            #("#equals()", #("java.lang", "java/lang/Object.html#equals(java.lang.Object)")),
+            #("#hashCode()", #("java.lang", "java/lang/Object.html#hashCode()"))
+    )
+
 
     public override fun render(node: WikiLinkNode?): Rendering? {
         val answer = super.render(node)
@@ -683,7 +695,6 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
             val text = answer.text
             if (text != null) {
                 val qualified = resolveToQualifiedName(text)
-
                 var href = resolveClassNameLink(qualified)
                 if (href != null) {
                     answer.href = href
@@ -706,15 +717,6 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                 }
                 if (href == null) {
                     // TODO even hacker than the above hack!
-                    val hackedLinks = HashMap<String, #(String,String)>()
-                    hackedLinks.put("IllegalArgumentException", #("java.lang", "java/lang/IllegalArgumentException.html"))
-                    hackedLinks.put("IllegalStateException", #("java.lang", "java/lang/IllegalStateException.html"))
-                    hackedLinks.put("Map.Entry", #("java.util", "java/util/Map.Entry.html"))
-                    hackedLinks.put("System.in", #("java.lang", "java/lang/System.html#in"))
-                    hackedLinks.put("System.out", #("java.lang", "java/lang/System.html#in"))
-                    hackedLinks.put("#equals()", #("java.lang", "java/lang/Object.html#equals(java.lang.Object)"))
-                    hackedLinks.put("#hashCode()", #("java.lang", "java/lang/Object.html#hashCode()"))
-
                     val link = hackedLinks.get(text)
                     if (link != null) {
                         href = annotated.model.config.resolveLink(link._1) + link._2
