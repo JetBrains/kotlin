@@ -119,6 +119,13 @@ class MapTest {
         assertEquals(2, map.get("b"))
     }
 
+    test fun createUsingTo() {
+        val map = hashMap("a" to 1, "b" to 2)
+        assertEquals(2, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+    }
+
     test fun createLinkedMap() {
         val map = linkedMap(#("c", 3), #("b", 2), #("a", 1))
         assertEquals(1, map.get("a"))

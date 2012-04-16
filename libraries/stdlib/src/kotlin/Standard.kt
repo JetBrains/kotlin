@@ -73,6 +73,15 @@ public inline fun <T> Iterator<T>.toSortedSet() : SortedSet<T> = toCollection(Tr
  */
 public inline fun <T> Iterator<T>.toSortedSet(comparator: Comparator<T>) : SortedSet<T> = toCollection(TreeSet<T>(comparator))
 
+
+/**
+ * Creates a tuple of type [[#(A,B)]] from this and *that* which can be useful for creating [[Map]] literals
+ * with less noise, for example
+
+ * @includeFunctionBody ../../test/MapTest.kt createUsingTo
+ */
+public inline fun <A,B> A.to(that: B): #(A, B) = #(this, that)
+
 /**
 Run function f
 */
