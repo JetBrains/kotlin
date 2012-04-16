@@ -723,7 +723,7 @@ public class DescriptorResolver {
                     JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType, type));
                         }
                     }
                     else {
@@ -776,7 +776,7 @@ public class DescriptorResolver {
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }
             }
 

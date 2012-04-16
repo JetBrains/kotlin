@@ -223,8 +223,8 @@ public interface Errors {
     SimpleDiagnosticFactory<JetSimpleNameExpression> USELESS_CAST_STATIC_ASSERT_IS_FINE = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetSimpleNameExpression> USELESS_CAST = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetSimpleNameExpression> CAST_NEVER_SUCCEEDS = SimpleDiagnosticFactory.create(WARNING);
-    DiagnosticFactory1<JetTypeReference, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<JetTypeReference, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_SETTER_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetTypeReference, JetType, JetType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ClassifierDescriptor> NO_CLASS_OBJECT = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> NO_GENERICS_IN_SUPERTYPE_SPECIFIER = SimpleDiagnosticFactory.create(ERROR);
 
