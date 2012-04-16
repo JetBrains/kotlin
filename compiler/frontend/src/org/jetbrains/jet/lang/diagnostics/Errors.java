@@ -123,10 +123,10 @@ public interface Errors {
                                                                                                              PositioningStrategies.POSITION_NAME_IDENTIFIER);
     SimpleDiagnosticFactory<JetExpression>PROPERTY_INITIALIZER_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR);
-    DiagnosticFactory3<JetModifierListOwner, String, ClassDescriptor, JetClass> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS =
-            DiagnosticFactory3.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory3<JetFunction, String, ClassDescriptor, JetClass> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS =
-            DiagnosticFactory3.create(ERROR,PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+    DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS =
+            DiagnosticFactory2.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+    DiagnosticFactory2<JetFunction, String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS =
+            DiagnosticFactory2.create(ERROR,PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY =
             DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
     DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY =
