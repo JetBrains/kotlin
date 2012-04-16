@@ -16,13 +16,14 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
-import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
-import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.*;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.NAME;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
 
 /**
@@ -50,6 +51,16 @@ public class IdeErrorMessages {
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "<html>Loop parameter type mismatch." +
                                            "<table><tr><td>Iterated values:</td><td>{0}</td></tr>" +
                                            "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
+                                                  "{1}</html>",
+                new Renderer<CallableMemberDescriptor>() {
+                    @NotNull
+                    @Override
+                    public String render(@NotNull CallableMemberDescriptor object) {
+                        return DescriptorRenderer.TEXT.renderType(object.getReturnType());
+                    }
+                }, DescriptorRenderer.HTML);
 
         MAP.setImmutable();
     }
