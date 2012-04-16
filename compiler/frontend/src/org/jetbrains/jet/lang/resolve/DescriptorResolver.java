@@ -919,7 +919,7 @@ public class DescriptorResolver {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound));
+                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound, typeArgument));
             }
         }
     }

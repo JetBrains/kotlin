@@ -251,7 +251,7 @@ public class DefaultErrorMessages {
             }
         });
 
-        MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE);
+        MAP.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(FINAL_CLASS_OBJECT_UPPER_BOUND, "''{0}'' is a final type, and thus a class object cannot extend it", RENDER_TYPE);
         MAP.put(FINAL_UPPER_BOUND, "''{0}'' is a final type, and thus a value of the type parameter is predetermined", RENDER_TYPE);
         MAP.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE);

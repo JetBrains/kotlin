@@ -267,7 +267,7 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> IMPLICIT_CAST_TO_UNIT_OR_ANY = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<JetExpression, JetExpression> EXPRESSION_EXPECTED = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<JetTypeReference, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<JetTypeReference, JetType, JetType> UPPER_BOUND_VIOLATED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<JetExpression, JetType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING);
