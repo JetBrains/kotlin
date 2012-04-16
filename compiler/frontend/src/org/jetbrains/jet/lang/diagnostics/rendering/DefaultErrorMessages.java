@@ -307,7 +307,7 @@ public class DefaultErrorMessages {
                 TO_STRING); // TODO: message
         MAP.put(TYPE_MISMATCH_IN_BINDING_PATTERN, "{0} is not a supertype of {1}. Use ''is'' to match against {0}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(EXPECTED_CONDITION, "Expected condition of Boolean type");
+        MAP.put(EXPECTED_CONDITION, "Expected condition of jet.Boolean type");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
         MAP.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);
