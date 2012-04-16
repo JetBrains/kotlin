@@ -1,43 +1,44 @@
-namespace LambdaTheGathering;
+package LambdaTheGathering
+
+/**
+ * Incomplete solution to the IFCP Contest 2011
+ * @author yole
+ */
 
 class GameError(msg: String): Exception(msg) {
 }
 
-fun print(s: String) {
-  System.out?.println(s)
-}
-
-class Function(val name: String) {
-  fun apply(x: Value, proponent: Player): Value
+abstract class Function(val name: String) {
+  abstract fun apply(x: Value, proponent: Player): Value
   fun toString() = name
-  fun asNumber(): Int { throw GameError("could not get numeric value of a function") }
+  open fun asNumber(): Int { throw GameError("could not get numeric value of a function") }
 }
 
 object Identity: Function("I") {
-  fun apply(x: Value, proponent: Player): Value = x
+  override fun apply(x: Value, proponent: Player): Value = x
 }
 
 object IdentityValue: Value(Identity)
 
 object Zero: Function("zero") {
-  fun apply(x: Value, proponent: Player): Value = Value(0)
-  fun asNumber(): Int = 0
+  override fun apply(x: Value, proponent: Player): Value = Value(0)
+  override fun asNumber(): Int = 0
 }
 
 object Succ: Function("succ") {
-  fun apply(x: Value, proponent: Player): Value = Value(x.asNumber() + 1)
+  override fun apply(x: Value, proponent: Player): Value = Value(x.asNumber() + 1)
 }
 
 object Get: Function("get") {
-  fun apply(x: Value, proponent: Player): Value = proponent.getSlot(x.asNumber()).field
+  override fun apply(x: Value, proponent: Player): Value = proponent.getSlot(x.asNumber()).field
 }
 
 object Dbl: Function("dbl") {
-  fun apply(x: Value, proponent: Player): Value = Value(x.asNumber() * 2)
+  override fun apply(x: Value, proponent: Player): Value = Value(x.asNumber() * 2)
 }
 
 class HelpFunc2(val i: Value, val j: Value): Function("help(" + i + ")(" + j + ")") {
-  fun apply(x: Value, proponent: Player): Value {
+  override fun apply(x: Value, proponent: Player): Value {
     val n = x.asNumber()
     proponent.getSlot(i.asNumber()).decreaseVitality(n)
     proponent.getSlot(j.asNumber()).increaseVitality(n * 11 / 10);
@@ -46,23 +47,23 @@ class HelpFunc2(val i: Value, val j: Value): Function("help(" + i + ")(" + j + "
 }
 
 class HelpFunc(val i: Value): Function("help(" + i + ")") {
-  fun apply(x: Value, proponent: Player): Value = Value(HelpFunc2(i, x))
+  override fun apply(x: Value, proponent: Player): Value = Value(HelpFunc2(i, x))
 }
 
 object Help: Function("help") {
-  fun apply(x: Value, proponent: Player): Value = Value(HelpFunc(x))
+  override fun apply(x: Value, proponent: Player): Value = Value(HelpFunc(x))
 }
 
 class KFunc(val arg: Value): Function("K(" + arg + ")") {
-  fun apply(x: Value, proponent: Player): Value = arg
+  override fun apply(x: Value, proponent: Player): Value = arg
 }
 
 object K: Function("K") {
-  fun apply(x: Value, proponent: Player): Value = Value(KFunc(x))
+  override fun apply(x: Value, proponent: Player): Value = Value(KFunc(x))
 }
 
 class SFunc2(val f: Value, val g: Value): Function("S(" + f + ")(" + g + ")") {
-  fun apply(x: Value, proponent: Player): Value {
+  override fun apply(x: Value, proponent: Player): Value {
     val h = f.apply(x, proponent)
     val y = g.apply(x, proponent)
     val z = h.apply(y, proponent)
@@ -71,14 +72,14 @@ class SFunc2(val f: Value, val g: Value): Function("S(" + f + ")(" + g + ")") {
 }
 
 class SFunc(val f: Value): Function("S(" + f + ")") {
-  fun apply(x: Value, proponent: Player): Value = Value(SFunc2(f, x))
+  override fun apply(x: Value, proponent: Player): Value = Value(SFunc2(f, x))
 }
 
 object S: Function("S") {
-  fun apply(x: Value, proponent: Player): Value = Value(SFunc(x))
+  override fun apply(x: Value, proponent: Player): Value = Value(SFunc(x))
 }
 
-class Value(val n: Int, val f: Function, val isFunction: Boolean) {
+open class Value(val n: Int, val f: Function, val isFunction: Boolean) {
   this(n: Int): this(if (n > 65535) 65535 else n, Identity, false) {}
   this(f: Function): this(0, f, true) {}
 
@@ -132,14 +133,9 @@ class Slot() {
 }
 
 class Player() {
-  var opponent: Player
+  var opponent: Player? = null
 
-  val slots: Array<Slot> = Array<Slot>(256)
-  {
-    for(i in 0..255) {
-      slots[i] = Slot()
-    }
-  }
+  val slots: Array<Slot> = Array<Slot>(256, { i -> Slot() })
 
   fun getSlot(i: Int): Slot {
     if (i < 0 || i > 255) throw GameError("invalid slot index")
@@ -148,21 +144,21 @@ class Player() {
   }
 
   fun printSlots() {
-    print("(slots {10000,I} are omitted)")
+    println("(slots {10000,I} are omitted)")
     for(val i in 0..255) {
       if (!slots[i].isDefault()) {
-        print("" + i + "=" + slots[i].toString())
+        println("" + i + "=" + slots[i].toString())
       }
     }
   }
 
   fun applyCardToSlot(index: Int, card: Function) {
-    print("applying card " + card + " to slot " + index)
+    println("applying card " + card + " to slot " + index)
     slots[index].field = card.apply(slots[index].field, this)
   }
 
   fun applySlotToCard(index: Int, card: Function) {
-    print("applying slot " + index + " to card " + card)
+    println("applying slot " + index + " to card " + card)
     slots[index].field = slots[index].field.apply(Value(card), this)
   }
 }
