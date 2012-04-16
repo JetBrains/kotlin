@@ -329,14 +329,14 @@ public class DefaultErrorMessages {
                     }
                 });
 
-        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator {0} cannot be applied to {1} and {2}", new Renderer<JetSimpleNameExpression>() {
+        MAP.put(EQUALITY_NOT_APPLICABLE, "Operator ''{0}'' cannot be applied to ''{1}'' and ''{2}''", new Renderer<JetSimpleNameExpression>() {
             @NotNull
             @Override
             public String render(@NotNull JetSimpleNameExpression nameExpression) {
                 //noinspection ConstantConditions
                 return nameExpression.getReferencedName();
             }
-        }, TO_STRING, TO_STRING);
+        }, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(OVERRIDING_FINAL_MEMBER, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
         MAP.put(CANNOT_WEAKEN_ACCESS_PRIVILEGE, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", TO_STRING, NAME, NAME);
