@@ -20,8 +20,15 @@ public inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(L
 /** Returns a new HashSet with a variable number of initial elements */
 public inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
 
-/** Returns a new SortedSet with a variable number of initial elements */
+/**
+ * Returns a new [[SortedSet]] with the initial elements
+ */
 public inline fun sortedSet<T>(vararg values: T) : TreeSet<T> = values.to(TreeSet<T>())
+
+/**
+ * Returns a new [[SortedSet]] with the given *comparator* and the initial elements
+ */
+public inline fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = values.to(TreeSet<T>(comparator))
 
 /**
  * Returns a new [[HashMap]] populated with the given tuple values where the first value in each tuple

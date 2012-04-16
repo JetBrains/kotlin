@@ -6,6 +6,8 @@ import java.util.LinkedList
 import java.util.HashSet
 import java.util.LinkedHashSet
 import java.util.TreeSet
+import java.util.SortedSet
+import java.util.Comparator
 
 /**
 Helper to make jet.Iterator usable in for
@@ -56,14 +58,20 @@ Add iterated elements to java.util.HashSet
 public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = to(HashSet<T>())
 
 /**
-Add iterated elements to java.util.LinkedHashSet
-*/
-public inline fun <T> Iterator<T>.toLinkedHashSet() : LinkedHashSet<T> = to(LinkedHashSet<T>())
+ * Add iterated elements to a [[LinkedHashSet]] to preserve insertion order
+ */
+public inline fun <T> Iterator<T>.toLinkedSet() : LinkedHashSet<T> = to(LinkedHashSet<T>())
 
 /**
-Add iterated elements to java.util.TreeSet
-*/
-public inline fun <T> Iterator<T>.toTreeSet() : TreeSet<T> = to(TreeSet<T>())
+ * Add iterated elements to [[SortedSet]] to ensure iteration is in the order of the default comparator
+ * for the type
+ */
+public inline fun <T> Iterator<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
+
+/**
+ * Add iterated elements to [[SortedSet]] with the given *comparator* to ensure iteration is in the order of the given comparator
+ */
+public inline fun <T> Iterator<T>.toSortedSet(comparator: Comparator<T>) : SortedSet<T> = to(TreeSet<T>(comparator))
 
 /**
 Run function f
