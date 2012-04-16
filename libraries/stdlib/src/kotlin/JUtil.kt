@@ -30,7 +30,7 @@ public inline fun sortedSet<T>(vararg values: T) : TreeSet<T> = values.to(TreeSe
  * @includeFunctionBody ../../test/MapTest.kt createUsingTuples
  */
 public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
-    val answer = HashMap<K,V>()
+    val answer = HashMap<K,V>(values.size)
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)
@@ -44,9 +44,30 @@ public inline fun <K,V> hashMap(vararg values: #(K,V)): HashMap<K,V> {
 /**
  * Returns a new [[SortedMap]] populated with the given tuple values where the first value in each tuple
  * is the key and the second value is the value
+ *
+ * @includeFunctionBody ../../test/MapTest.kt createSortedMap
  */
 public inline fun <K,V> sortedMap(vararg values: #(K,V)): SortedMap<K,V> {
     val answer = TreeMap<K,V>()
+    /**
+        TODO replace by this simpler call when we can pass vararg values into other methods
+        answer.putAll(values)
+    */
+    for (v in values) {
+        answer.put(v._1, v._2)
+    }
+    return answer
+}
+
+/**
+ * Returns a new [[LinkedHashMap]] populated with the given tuple values where the first value in each tuple
+ * is the key and the second value is the value. This map preserves insertion order so iterating through
+ * the map's entries will be in the same order
+ *
+ * @includeFunctionBody ../../test/MapTest.kt createLinkedHashMap
+ */
+public inline fun <K,V> linkedMap(vararg values: #(K,V)): LinkedHashMap<K,V> {
+    val answer = LinkedHashMap<K,V>(values.size)
     /**
         TODO replace by this simpler call when we can pass vararg values into other methods
         answer.putAll(values)

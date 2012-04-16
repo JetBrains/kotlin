@@ -119,6 +119,24 @@ class MapTest {
         assertEquals(2, map.get("b"))
     }
 
+    test fun createLinkedMap() {
+        val map = linkedMap(#("c", 3), #("b", 2), #("a", 1))
+        assertEquals(3, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+        assertEquals(3, map.get("c"))
+        assertEquals(arrayList("c", "b", "a"), map.keySet().toList())
+    }
+
+    test fun createSortedMap() {
+        val map = sortedMap(#("c", 3), #("b", 2), #("a", 1))
+        assertEquals(3, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+        assertEquals(3, map.get("c"))
+        assertEquals(arrayList("a", "b", "c"), map.keySet()!!.toList())
+    }
+
     /**
     TODO
     test case for http://youtrack.jetbrains.com/issue/KT-1773
