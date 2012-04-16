@@ -2256,46 +2256,6 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/java/lang/Iterable-extensions.html#to(C)</href>
-  <name>to() [java.lang.Iterable]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/java/util/Collection-extensions.html#to(C)</href>
-  <name>to() [java.util.Collection]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/java/util/Iterator-extensions.html#to(C)</href>
-  <name>to() [java.util.Iterator]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/java/util/List-extensions.html#to(C)</href>
-  <name>to() [java.util.List]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/java/util/Set-extensions.html#to(C)</href>
-  <name>to() [java.util.Set]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Array-extensions.html#to(C)</href>
-  <name>to() [jet.Array]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Iterable-extensions.html#to(C)</href>
-  <name>to() [jet.Iterable]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Iterator-extensions.html#to(U)</href>
-  <name>to() [jet.Iterator]</name>
-  <kind>fun</kind>
-</search>
-<search>
   <href>kotlin/java/util/Collection-extensions.html#toArray()</href>
   <name>toArray() [java.util.Collection]</name>
   <kind>fun</kind>
@@ -2371,6 +2331,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/Iterator-extensions.html#toCollection(U)</href>
+  <name>toCollection() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/String-extensions.html#toDouble()</href>
   <name>toDouble() [jet.String]</name>
   <kind>fun</kind>
@@ -2398,11 +2363,6 @@
 <search>
   <href>kotlin/jet/String-extensions.html#toInt()</href>
   <name>toInt() [jet.String]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Iterator-extensions.html#toLinkedHashSet()</href>
-  <name>toLinkedHashSet() [jet.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2443,6 +2403,16 @@
 <search>
   <href>kotlin/jet/Iterator-extensions.html#toLinkedList()</href>
   <name>toLinkedList() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#toLinkedMap()</href>
+  <name>toLinkedMap() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toLinkedSet()</href>
+  <name>toLinkedSet() [jet.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2503,6 +2473,11 @@
 <search>
   <href>kotlin/jet/String-extensions.html#toLowerCase()</href>
   <name>toLowerCase() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#toMap(java.util.Map)</href>
+  <name>toMap() [java.util.Map]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -2571,6 +2546,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/util/Map-extensions.html#toSortedMap()</href>
+  <name>toSortedMap() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/java/lang/Iterable-extensions.html#toSortedSet()</href>
   <name>toSortedSet() [java.lang.Iterable]</name>
   <kind>fun</kind>
@@ -2606,6 +2586,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/Iterator-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jet/ByteArray-extensions.html#toString(java.nio.charset.Charset)</href>
   <name>toString() [jet.ByteArray]</name>
   <kind>fun</kind>
@@ -2638,11 +2623,6 @@
 <search>
   <href>kotlin/template/ToStringFormatter.html#toString()</href>
   <name>toString() [kotlin.template.ToStringFormatter]</name>
-  <kind>fun</kind>
-</search>
-<search>
-  <href>kotlin/jet/Iterator-extensions.html#toTreeSet()</href>
-  <name>toTreeSet() [jet.Iterator]</name>
   <kind>fun</kind>
 </search>
 <search>
