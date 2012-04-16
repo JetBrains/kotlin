@@ -22,9 +22,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererM
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
-import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_GETTER_RETURN_TYPE;
-import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_SETTER_PARAMETER_TYPE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
 
 /**
@@ -39,9 +37,12 @@ public class IdeErrorMessages {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
-                                             "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table><html>", RENDER_TYPE, RENDER_TYPE);
+                                             "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "<html>Getter return type must be equal to the type of the property." +
-                                          "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table><html>", RENDER_TYPE, RENDER_TYPE);
+                                          "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(UPPER_BOUND_VIOLATED, "<html>Type argument is not within its bounds." +
+                                      "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
         MAP.setImmutable();
     }
