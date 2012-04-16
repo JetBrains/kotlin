@@ -28,35 +28,50 @@ import java.util.Map;
  * @author Evgeny Gerashchenko
  * @since 4/13/12
  */
-public class DiagnosticFactoryToRendererMap {
+public final class DiagnosticFactoryToRendererMap {
     private final Map<AbstractDiagnosticFactory, DiagnosticRenderer<?>> map =
             new HashMap<AbstractDiagnosticFactory, DiagnosticRenderer<?>>();
+    private boolean immutable = false;
 
-    public final <E extends PsiElement> void put(SimpleDiagnosticFactory<E> factory, String message) {
+    private void checkMutability() {
+        if (immutable) {
+            throw new IllegalStateException("factory to renderer map is already immutable");
+        }
+    }
+
+    public <E extends PsiElement> void put(SimpleDiagnosticFactory<E> factory, String message) {
+        checkMutability();
         map.put(factory, new SimpleDiagnosticRenderer(message));
     }
 
-    public final <E extends PsiElement, A> void put(DiagnosticFactory1<E, A> factory, String message, Renderer<? super A> rendererA) {
+    public <E extends PsiElement, A> void put(DiagnosticFactory1<E, A> factory, String message, Renderer<? super A> rendererA) {
+        checkMutability();
         map.put(factory, new DiagnosticWithParameters1Renderer<A>(message, rendererA));
     }
 
-    public final <E extends PsiElement, A, B> void put(DiagnosticFactory2<E, A, B> factory,
+    public <E extends PsiElement, A, B> void put(DiagnosticFactory2<E, A, B> factory,
             String message,
             Renderer<? super A> rendererA,
             Renderer<? super B> rendererB) {
+        checkMutability();
         map.put(factory, new DiagnosticWithParameters2Renderer<A, B>(message, rendererA, rendererB));
     }
 
-    public final <E extends PsiElement, A, B, C> void put(DiagnosticFactory3<E, A, B, C> factory,
+    public <E extends PsiElement, A, B, C> void put(DiagnosticFactory3<E, A, B, C> factory,
             String message,
             Renderer<? super A> rendererA,
             Renderer<? super B> rendererB,
             Renderer<? super C> rendererC) {
+        checkMutability();
         map.put(factory, new DiagnosticWithParameters3Renderer<A, B, C>(message, rendererA, rendererB, rendererC));
     }
 
     @Nullable
-    public final DiagnosticRenderer<?> get(@NotNull AbstractDiagnosticFactory factory) {
+    public DiagnosticRenderer<?> get(@NotNull AbstractDiagnosticFactory factory) {
         return map.get(factory);
+    }
+
+    public void setImmutable() {
+        immutable = false;
     }
 }

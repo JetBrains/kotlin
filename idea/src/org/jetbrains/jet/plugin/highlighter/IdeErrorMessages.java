@@ -32,6 +32,7 @@ public class IdeErrorMessages {
 
     static {
         // TODO
+        MAP.setImmutable();
     }
 
     private IdeErrorMessages() {

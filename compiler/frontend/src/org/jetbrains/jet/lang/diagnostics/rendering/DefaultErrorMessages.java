@@ -388,6 +388,8 @@ public class DefaultErrorMessages {
                 "Separate it with a semicolon (;) if it is not intended to be an argument.");
 
         MAP.put(NOT_AN_ANNOTATION_CLASS, "{0} is not an annotation class", TO_STRING);
+
+        MAP.setImmutable();
     }
 
     private DefaultErrorMessages() {
