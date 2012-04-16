@@ -77,7 +77,7 @@
 .ui-autocomplete-loading { background: white url('images/ui-anim_basic_16x16.gif') right center no-repeat; }
 
 .ui-autocomplete {
-    max-height: 100px;
+    max-height: 500px;
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     overflow-x: hidden;
@@ -88,7 +88,7 @@
  * we use height instead, but this forces the menu to always be this tall
  */
 * html .ui-autocomplete {
-    height: 100px;
+    height: 500px;
 }
 
 .NavBarCell1 label {

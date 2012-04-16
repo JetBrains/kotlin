@@ -691,15 +691,14 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
 
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
-                    for (prefix in arrayList("java.lang", "java.util", "java.util.regex", "java.io", "jet"))
+                    for (prefix in arrayList("java.lang", "java.util", "java.util.regex", "java.io", "jet")) {
                         if (href == null) {
                             href = resolveClassNameLink(prefix + "." + qualified)
+                            if (href != null) {
+                                break
+                            }
                         }
-                    /** TODO use break when KT-1523 is fixed
-                    if (href != null) {
-                        break
                     }
-                    */
                 }
                 if (href != null) {
                     answer.href = href
@@ -1128,6 +1127,8 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
     fun equals(other: KFunction) = name == other.name
 
     fun isVar(): Boolean = descriptor.isVar()
+
+    fun kind(): String = if (isVar()) "var" else "val"
 
     fun toString() = "property $name"
 }

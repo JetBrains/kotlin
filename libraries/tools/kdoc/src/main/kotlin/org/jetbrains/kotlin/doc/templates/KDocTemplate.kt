@@ -53,6 +53,10 @@ abstract class KDocTemplate() : TextTemplate() {
         return "${extensionsHref(pkg, c)}#${f.link}"
     }
 
+    open fun extensionsHref(pkg: KPackage, c: KClass, f: KProperty): String {
+        return "${extensionsHref(pkg, c)}#${f.link}"
+    }
+
     open fun sourceHref(klass: KClass): String {
         if (klass.isLinkToSourceRepo()) {
             return klass.sourceLink()
@@ -160,7 +164,7 @@ abstract class KDocTemplate() : TextTemplate() {
     fun searchBox(): String =
 """  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1" ALIGN="right">
   <label for="searchBox">Search: </label>
-  <input id="searchBox" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" data-url="${relativePrefix()}search.xml">
+  <input id="searchBox" class="ui-autocomplete-input" autocomplete="off" role="textbox" aria-autocomplete="list" aria-haspopup="true" size="50" data-url="${relativePrefix()}search.xml">
   </TD>"""
 
 
