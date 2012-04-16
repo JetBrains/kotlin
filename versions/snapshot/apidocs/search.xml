@@ -1876,6 +1876,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/java/util/Map-extensions.html#putAll(jet.Array)</href>
+  <name>putAll() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/jdbc/java/sql/Connection-extensions.html#query(jet.String, jet.Function1)</href>
   <name>query() [java.sql.Connection]</name>
   <kind>fun</kind>
