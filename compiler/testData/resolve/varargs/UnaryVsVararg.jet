@@ -1,0 +1,10 @@
+~unary~fun foo1(a : Int) : String = "noarg"
+
+~vararg~fun foo1(a : Int, vararg t : Int) : String = "vararg"
+
+fun test1() {
+    `unary`foo1(1)
+    `vararg`foo1(1, 1)
+    val a = intArray()
+    `vararg`foo1(1, *a)
+}

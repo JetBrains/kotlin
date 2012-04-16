@@ -94,10 +94,24 @@ public class OverloadingConflictResolver {
         List<ValueParameterDescriptor> gParams = g.getValueParameters();
 
         int fSize = fParams.size();
-        if (fSize != gParams.size()) return false;
-        for (int i = 0; i < fSize; i++) {
+        int gSize = gParams.size();
+        if (fSize > gSize) return false;
+        for (int i = 0; i < gSize; i++) {
+            ValueParameterDescriptor gParam = gParams.get(i);
+            JetType gParamType = gParam.getType();
+
+            if (i >= fSize) {
+                // f() has fewer parameters than g()
+                // The point is: g() may have a last vararg that doesn't get any arguments
+                // In this case f() is more specific, because one can explicitly pass
+                // an empty array to g() and make it preferred
+                if (i != gSize - 1 || gParam.getVarargElementType() == null) {
+                    return false;
+                }
+                return true;
+            }
+
             JetType fParamType = fParams.get(i).getType();
-            JetType gParamType = gParams.get(i).getType();
 
             if (!typeMoreSpecific(fParamType, gParamType)) {
                 return false;
