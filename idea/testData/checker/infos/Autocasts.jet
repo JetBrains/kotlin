@@ -66,7 +66,7 @@ fun f12(a : A?) {
     is A -> <info descr="Automatically cast to A">a</info>.foo()
     is Any -> <info descr="Automatically cast to A">a</info>.foo();
     is Any? -> a.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
-    is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B must be a supertype of A?. Use is to match against B">B</error> -> c.foo()
+    is val c : <error descr="[TYPE_MISMATCH_IN_BINDING_PATTERN] B is not a supertype of A?. Use 'is' to match against B">B</error> -> c.foo()
     is val c is C -> <info descr="Automatically cast to C">c</info>.bar()
     is val c is C -> <info descr="Automatically cast to C">a</info>.bar()
     else -> a<info>?.</info>foo()
@@ -237,17 +237,17 @@ fun mergeAutocasts(a: Any?) {
 fun f(): String {
     var <info>a</info>: Any = 11
     if (<info>a</info> is String) {
-        val <warning>i</warning>: String = <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>
-        <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>.compareTo("f")
-        val <warning>f</warning>: Function0<String> = { <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error> }
-        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.String is impossible, because a could have changed since the is-check">a</error>
+        val <warning>i</warning>: String = <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.String' is impossible, because 'a' could have changed since the is-check">a</error>
+        <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.String' is impossible, because 'a' could have changed since the is-check">a</error>.compareTo("f")
+        val <warning>f</warning>: Function0<String> = { <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.String' is impossible, because 'a' could have changed since the is-check">a</error> }
+        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.String' is impossible, because 'a' could have changed since the is-check">a</error>
     }
     return ""
 }
 
 fun foo(var a: Any): Int {
     if (a is Int) {
-        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to jet.Int is impossible, because a could have changed since the is-check">a</error>
+        return <error descr="[AUTOCAST_IMPOSSIBLE] Automatic cast to 'jet.Int' is impossible, because 'a' could have changed since the is-check">a</error>
     }
     return 1
 }

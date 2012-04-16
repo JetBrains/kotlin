@@ -305,7 +305,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type jet.Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(TYPE_MISMATCH_IN_TUPLE_PATTERN, "Type mismatch: subject is of type {0} but the pattern is of type Tuple{1}", RENDER_TYPE,
                 TO_STRING); // TODO: message
-        MAP.put(TYPE_MISMATCH_IN_BINDING_PATTERN, "{0} must be a supertype of {1}. Use 'is' to match against {0}", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH_IN_BINDING_PATTERN, "{0} is not a supertype of {1}. Use ''is'' to match against {0}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
         MAP.put(EXPECTED_CONDITION, "Expected condition of Boolean type");
 
