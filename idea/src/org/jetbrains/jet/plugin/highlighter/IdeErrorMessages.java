@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_GETTER_RETURN_TYPE;
+import static org.jetbrains.jet.lang.diagnostics.Errors.WRONG_SETTER_PARAMETER_TYPE;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
 
 /**
@@ -34,7 +36,13 @@ public class IdeErrorMessages {
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP, DefaultErrorMessages.MAP);
 
     static {
-        MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table>", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
+                                             "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table><html>", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(WRONG_GETTER_RETURN_TYPE, "<html>Getter return type must be equal to the type of the property." +
+                                          "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table><html>", RENDER_TYPE, RENDER_TYPE);
+
         MAP.setImmutable();
     }
 
