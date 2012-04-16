@@ -36,7 +36,7 @@ public fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object:
 /**
 Add iterated elements to given container
 */
-public fun <T,U: Collection<in T>> Iterator<T>.to(container: U) : U {
+public fun <T,U: Collection<in T>> Iterator<T>.toCollection(container: U) : U {
     while(hasNext)
         container.add(next())
     return container
@@ -45,33 +45,33 @@ public fun <T,U: Collection<in T>> Iterator<T>.to(container: U) : U {
 /**
 Add iterated elements to java.util.ArrayList
 */
-public inline fun <T> Iterator<T>.toArrayList() : ArrayList<T> = to(ArrayList<T>())
+public inline fun <T> Iterator<T>.toArrayList() : ArrayList<T> = toCollection(ArrayList<T>())
 
 /**
 Add iterated elements to java.util.LinkedList
 */
-public inline fun <T> Iterator<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
+public inline fun <T> Iterator<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
 
 /**
 Add iterated elements to java.util.HashSet
 */
-public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = to(HashSet<T>())
+public inline fun <T> Iterator<T>.toHashSet() : HashSet<T> = toCollection(HashSet<T>())
 
 /**
  * Add iterated elements to a [[LinkedHashSet]] to preserve insertion order
  */
-public inline fun <T> Iterator<T>.toLinkedSet() : LinkedHashSet<T> = to(LinkedHashSet<T>())
+public inline fun <T> Iterator<T>.toLinkedSet() : LinkedHashSet<T> = toCollection(LinkedHashSet<T>())
 
 /**
  * Add iterated elements to [[SortedSet]] to ensure iteration is in the order of the default comparator
  * for the type
  */
-public inline fun <T> Iterator<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
+public inline fun <T> Iterator<T>.toSortedSet() : SortedSet<T> = toCollection(TreeSet<T>())
 
 /**
  * Add iterated elements to [[SortedSet]] with the given *comparator* to ensure iteration is in the order of the given comparator
  */
-public inline fun <T> Iterator<T>.toSortedSet(comparator: Comparator<T>) : SortedSet<T> = to(TreeSet<T>(comparator))
+public inline fun <T> Iterator<T>.toSortedSet(comparator: Comparator<T>) : SortedSet<T> = toCollection(TreeSet<T>(comparator))
 
 /**
 Run function f

@@ -156,23 +156,23 @@ public inline fun <T> T?.reverse(): T? {
 }
 
 /** Copies the collection into the given collection */
-public inline fun <T, C: Collection<T>> T?.to(result: C): C {
+public inline fun <T, C: Collection<T>> T?.toCollection(result: C): C {
     if (this != null)
         result.add(this)
     return result
 }
 
 /** Converts the collection into a LinkedList */
-public inline fun <T> T?.toLinkedList(): LinkedList<T> = this.to(LinkedList<T>())
+public inline fun <T> T?.toLinkedList(): LinkedList<T> = this.toCollection(LinkedList<T>())
 
 /**  Converts the collection into a List */
-public inline fun <T> T?.toList(): List<T> = this.to(ArrayList<T>())
+public inline fun <T> T?.toList(): List<T> = this.toCollection(ArrayList<T>())
 
 /** Converts the collection into a Set */
-public inline fun <T> T?.toSet(): Set<T> = this.to(HashSet<T>())
+public inline fun <T> T?.toSet(): Set<T> = this.toCollection(HashSet<T>())
 
 /** Converts the collection into a SortedSet */
-public inline fun <T> T?.toSortedSet(): SortedSet<T> = this.to(TreeSet<T>())
+public inline fun <T> T?.toSortedSet(): SortedSet<T> = this.toCollection(TreeSet<T>())
 /**
   TODO figure out necessary variance/generics ninja stuff... :)
 public inline fun <in T> T?.toSortedList(transform: fun(T) : java.lang.Comparable<*>) : List<T> {

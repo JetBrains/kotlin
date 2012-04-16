@@ -193,25 +193,25 @@ public inline fun <T> Array<T>.reverse() : List<T> {
 }
 
 /** Copies all elements into the given collection */
-public inline fun <in T, C: Collection<in T>> Array<T>.to(result: C) : C {
+public inline fun <in T, C: Collection<in T>> Array<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
 }
 
 /** Copies all elements into a [[LinkedList]]  */
-public inline fun <in T> Array<T>.toLinkedList() : LinkedList<T> = to(LinkedList<T>())
+public inline fun <in T> Array<T>.toLinkedList() : LinkedList<T> = toCollection(LinkedList<T>())
 
 /** Copies all elements into a [[List]] */
-public inline fun <in T> Array<T>.toList() : List<T> = to(ArrayList<T>())
+public inline fun <in T> Array<T>.toList() : List<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[List] */
-public inline fun <in T> Array<T>.toCollection() : Collection<T> = to(ArrayList<T>())
+public inline fun <in T> Array<T>.toCollection() : Collection<T> = toCollection(ArrayList<T>())
 
 /** Copies all elements into a [[Set]] */
-public inline fun <in T> Array<T>.toSet() : Set<T> = to(HashSet<T>())
+public inline fun <in T> Array<T>.toSet() : Set<T> = toCollection(HashSet<T>())
 
 /** Copies all elements into a [[SortedSet]] */
-public inline fun <in T> Array<T>.toSortedSet() : SortedSet<T> = to(TreeSet<T>())
+public inline fun <in T> Array<T>.toSortedSet() : SortedSet<T> = toCollection(TreeSet<T>())
 
 /**
   TODO figure out necessary variance/generics ninja stuff... :)

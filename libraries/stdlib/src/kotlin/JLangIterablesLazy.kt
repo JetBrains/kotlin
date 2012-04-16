@@ -45,7 +45,7 @@ public inline fun <T, R> java.lang.Iterable<T>.flatMap(transform: (T)-> Collecti
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
 public inline fun <in T> java.lang.Iterable<T>.plus(element: T): List<in T> {
-    val list = to(ArrayList<T>())
+    val list = toCollection(ArrayList<T>())
     list.add(element)
     return list
 }
@@ -57,7 +57,7 @@ public inline fun <in T> java.lang.Iterable<T>.plus(element: T): List<in T> {
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
 public inline fun <in T> java.lang.Iterable<T>.plus(elements: java.lang.Iterable<T>): List<T> {
-    val list = to(ArrayList<T>())
+    val list = toCollection(ArrayList<T>())
     list.addAll(elements.toCollection())
     return list
 }

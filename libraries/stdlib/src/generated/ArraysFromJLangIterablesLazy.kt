@@ -48,7 +48,7 @@ public inline fun <T, R> Array<T>.flatMap(transform: (T)-> Collection<R>) : Coll
  * @includeFunctionBody ../../test/CollectionTest.kt plus
  */
 public inline fun <in T> Array<T>.plus(element: T): List<in T> {
-    val list = to(ArrayList<T>())
+    val list = toCollection(ArrayList<T>())
     list.add(element)
     return list
 }
@@ -60,7 +60,7 @@ public inline fun <in T> Array<T>.plus(element: T): List<in T> {
  * @includeFunctionBody ../../test/CollectionTest.kt plusCollection
  */
 public inline fun <in T> Array<T>.plus(elements: Array<T>): List<T> {
-    val list = to(ArrayList<T>())
+    val list = toCollection(ArrayList<T>())
     list.addAll(elements.toCollection())
     return list
 }

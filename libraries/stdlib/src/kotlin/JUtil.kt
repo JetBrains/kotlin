@@ -12,23 +12,23 @@ val Collection<*>.empty : Boolean
     get() = isEmpty()
 
 /** Returns a new ArrayList with a variable number of initial elements */
-public inline fun arrayList<T>(vararg values: T) : ArrayList<T> = values.to(ArrayList<T>(values.size))
+public inline fun arrayList<T>(vararg values: T) : ArrayList<T> = values.toCollection(ArrayList<T>(values.size))
 
 /** Returns a new LinkedList with a variable number of initial elements */
-public inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.to(LinkedList<T>())
+public inline fun linkedList<T>(vararg values: T) : LinkedList<T>  = values.toCollection(LinkedList<T>())
 
 /** Returns a new HashSet with a variable number of initial elements */
-public inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.to(HashSet<T>(values.size))
+public inline fun hashSet<T>(vararg values: T) : HashSet<T> = values.toCollection(HashSet<T>(values.size))
 
 /**
  * Returns a new [[SortedSet]] with the initial elements
  */
-public inline fun sortedSet<T>(vararg values: T) : TreeSet<T> = values.to(TreeSet<T>())
+public inline fun sortedSet<T>(vararg values: T) : TreeSet<T> = values.toCollection(TreeSet<T>())
 
 /**
  * Returns a new [[SortedSet]] with the given *comparator* and the initial elements
  */
-public inline fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = values.to(TreeSet<T>(comparator))
+public inline fun sortedSet<T>(comparator: Comparator<T>, vararg values: T) : TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
 
 /**
  * Returns a new [[HashMap]] populated with the given tuple values where the first value in each tuple
