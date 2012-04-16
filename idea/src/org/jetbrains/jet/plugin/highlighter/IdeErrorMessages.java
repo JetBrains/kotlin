@@ -37,12 +37,19 @@ public class IdeErrorMessages {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
-                                             "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                             "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
+                                             "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "<html>Getter return type must be equal to the type of the property." +
-                                          "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                          "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
+                                          "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(UPPER_BOUND_VIOLATED, "<html>Type argument is not within its bounds." +
-                                      "<table><tr><td>Expected:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                      "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
+                                      "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "<html>Loop parameter type mismatch." +
+                                           "<table><tr><td>Iterated values:</td><td>{0}</td></tr>" +
+                                           "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
         MAP.setImmutable();
     }
