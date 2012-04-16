@@ -64,7 +64,7 @@ public inline fun <K,V> sortedMap(vararg values: #(K,V)): SortedMap<K,V> {
  * is the key and the second value is the value. This map preserves insertion order so iterating through
  * the map's entries will be in the same order
  *
- * @includeFunctionBody ../../test/MapTest.kt createLinkedHashMap
+ * @includeFunctionBody ../../test/MapTest.kt createLinkedMap
  */
 public inline fun <K,V> linkedMap(vararg values: #(K,V)): LinkedHashMap<K,V> {
     val answer = LinkedHashMap<K,V>(values.size)

@@ -6,6 +6,11 @@ import java.util.Collection
 import java.util.Collections
 import java.util.HashMap
 import java.util.List
+import java.util.LinkedHashMap
+import java.util.Map
+import java.util.TreeMap
+import java.util.SortedMap
+import java.util.Comparator
 
 // Map APIs
 
@@ -121,4 +126,32 @@ public inline fun <K,V> java.util.Map<K,V>.putAll(vararg values: #(K,V)): Unit {
     for (v in values) {
         put(v._1, v._2)
     }
+}
+
+/**
+ * Converts this [[Map]] to a [[LinkedHashMap]] so future insertion orders are maintained
+ */
+public inline fun <K,V> java.util.Map<K,V>.toLinkedMap(): LinkedHashMap<K,V> = toMap<K,V>(LinkedHashMap(size)) as LinkedHashMap<K,V>
+
+/**
+ * Converts this [[Map]] to a [[SortedMap]] so iteration order will be in key order
+ *
+ * @includeFunctionBody ../../test/MapTest.kt toSortedMap
+ */
+public inline fun <K,V> java.util.Map<K,V>.toSortedMap(): SortedMap<K,V> = toMap<K,V>(TreeMap()) as SortedMap<K,V>
+
+/**
+ * Converts this [[Map]] to a [[SortedMap]] using the given *comparator* so that iteration order will be in the order
+ * defined by the comparator
+ *
+ * @includeFunctionBody ../../test/MapTest.kt toSortedMapWithComparator
+ */
+public inline fun <K,V> java.util.Map<K,V>.toSortedMap(comparator: Comparator<K>): SortedMap<K,V> = toMap<K,V>(TreeMap(comparator)) as SortedMap<K,V>
+
+/**
+ * Copies the entries in this [[Map]] to the given *map*
+ */
+public inline fun <K,V> java.util.Map<K,V>.toMap(map: Map<K,V>): Map<K,V> {
+    map.putAll(this)
+    return map
 }

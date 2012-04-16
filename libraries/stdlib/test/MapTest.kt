@@ -121,7 +121,6 @@ class MapTest {
 
     test fun createLinkedMap() {
         val map = linkedMap(#("c", 3), #("b", 2), #("a", 1))
-        assertEquals(3, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
         assertEquals(3, map.get("c"))
@@ -130,11 +129,32 @@ class MapTest {
 
     test fun createSortedMap() {
         val map = sortedMap(#("c", 3), #("b", 2), #("a", 1))
-        assertEquals(3, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
         assertEquals(3, map.get("c"))
         assertEquals(arrayList("a", "b", "c"), map.keySet()!!.toList())
+    }
+
+    test fun toSortedMap() {
+        val map = hashMap<String,Int>(#("c", 3), #("b", 2), #("a", 1))
+        val sorted = map.toSortedMap<String,Int>()
+        assertEquals(1, sorted.get("a"))
+        assertEquals(2, sorted.get("b"))
+        assertEquals(3, sorted.get("c"))
+        assertEquals(arrayList("a", "b", "c"), sorted.keySet()!!.toList())
+    }
+
+    test fun toSortedMapWithComparator() {
+        val map = hashMap(#("c", 3), #("bc", 2), #("bd", 4), #("abc", 1))
+        val c = comparator<String>{ a, b ->
+            val answer = a.length() - b.length()
+            if (answer == 0) a.compareTo(b) else answer
+        }
+        val sorted = map.toSortedMap(c)
+        assertEquals(arrayList("c", "bc", "bd", "abc"), sorted.keySet()!!.toList())
+        assertEquals(1, sorted.get("abc"))
+        assertEquals(2, sorted.get("bc"))
+        assertEquals(3, sorted.get("c"))
     }
 
     /**

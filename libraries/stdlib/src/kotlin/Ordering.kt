@@ -51,6 +51,7 @@ public inline fun <T> comparator(vararg functions: Function1<T,Any?>): Comparato
     return FunctionComparator<T>(functions)
 }
 
+
 private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  Comparator<T> {
 
     public fun toString(): String {
@@ -59,6 +60,30 @@ private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  C
 
     public override fun compare(o1: T?, o2: T?): Int {
         return compareBy<T>(o1, o2, *functions)
+    }
+
+    public override fun equals(obj: Any?): Boolean {
+        return this == obj
+    }
+}
+
+/**
+ * Creates a comparator using the sequence of functions used to calculate a value to compare on
+ */
+public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
+    return Function2Comparator<T>(fn)
+}
+private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T> {
+
+    public fun toString(): String {
+        return "Function2Comparator${compareFn}"
+    }
+
+    public override fun compare(a: T?, b: T?): Int {
+        if (a === b) return 0
+        if (a == null) return - 1
+        if (b == null) return 1
+        return (compareFn)(a, b)
     }
 
     public override fun equals(obj: Any?): Boolean {
