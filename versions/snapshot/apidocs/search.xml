@@ -2,22 +2,2772 @@
 <searches>
 <search>
   <href>kotlin/template/Formatter.html</href>
-  <name>kotlin.template.Formatter</name>
+  <name>Formatter [kotlin.template]</name>
   <kind>trait</kind>
 </search>
 <search>
   <href>kotlin/template/HtmlFormatter.html</href>
-  <name>kotlin.template.HtmlFormatter</name>
+  <name>HtmlFormatter [kotlin.template]</name>
   <kind>class</kind>
 </search>
 <search>
   <href>kotlin/template/LocaleFormatter.html</href>
-  <name>kotlin.template.LocaleFormatter</name>
+  <name>LocaleFormatter [kotlin.template]</name>
   <kind>class</kind>
 </search>
 <search>
   <href>kotlin/template/ToStringFormatter.html</href>
-  <name>kotlin.template.ToStringFormatter</name>
+  <name>ToStringFormatter [kotlin.template]</name>
   <kind>class</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/Button-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [java.awt.Button]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/List-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [java.awt.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/MenuItem-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [java.awt.MenuItem]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/TextField-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [java.awt.TextField]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/TrayIcon-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [java.awt.TrayIcon]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/AbstractButton-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.AbstractButton]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/ButtonModel-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.ButtonModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/ComboBoxEditor-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.ComboBoxEditor]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/DefaultButtonModel-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.DefaultButtonModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JComboBox-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.JComboBox]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JFileChooser-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.JFileChooser]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JTextField-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.JTextField]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/Timer-extensions.html#addActionListener(jet.Function1)</href>
+  <name>addActionListener() [javax.swing.Timer]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/AbstractButton-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.AbstractButton]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/AbstractSpinnerModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.AbstractSpinnerModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/BoundedRangeModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.BoundedRangeModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/ButtonModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.ButtonModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/DefaultButtonModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.DefaultButtonModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/DefaultSingleSelectionModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.DefaultSingleSelectionModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JProgressBar-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.JProgressBar]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JSlider-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.JSlider]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JSpinner-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.JSpinner]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JViewport-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.JViewport]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/MenuSelectionManager-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.MenuSelectionManager]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/SingleSelectionModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.SingleSelectionModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/SpinnerModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.SpinnerModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/colorchooser/ColorSelectionModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.colorchooser.ColorSelectionModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/colorchooser/DefaultColorSelectionModel-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.colorchooser.DefaultColorSelectionModel]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/text/Caret-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.text.Caret]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/text/DefaultCaret-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.text.DefaultCaret]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/text/StyleContext-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.text.StyleContext]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/text/Style-extensions.html#addChangeListener(jet.Function1)</href>
+  <name>addChangeListener() [javax.swing.text.Style]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#addClass(jet.String)</href>
+  <name>addClass() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#addElement(jet.String, jet.ExtensionFunction0)</href>
+  <name>addElement() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#addElement(jet.String, org.w3c.dom.Document, jet.ExtensionFunction0)</href>
+  <name>addElement() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/Button-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [java.awt.Button]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/Component-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [java.awt.Component]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/List-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [java.awt.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/TextField-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [java.awt.TextField]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/AbstractButton-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.AbstractButton]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JComboBox-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JComboBox]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JFileChooser-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JFileChooser]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JFrame-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JFrame]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JProgressBar-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JProgressBar]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JSlider-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JSlider]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JSpinner-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JSpinner]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JTextField-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JTextField]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JViewport-extensions.html#addPropertyChangeListener(jet.Function1)</href>
+  <name>addPropertyChangeListener() [javax.swing.JViewport]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#addText(jet.String, org.w3c.dom.Document)</href>
+  <name>addText() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#all(jet.Function1)</href>
+  <name>all() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#all(jet.Function1)</href>
+  <name>all() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#all(jet.Function1)</href>
+  <name>all() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#all(jet.Function1)</href>
+  <name>all() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#all(jet.Function1)</href>
+  <name>all() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#all(jet.Function1)</href>
+  <name>all() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#any(jet.Function1)</href>
+  <name>any() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#any(jet.Function1)</href>
+  <name>any() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#any(jet.Function1)</href>
+  <name>any() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#any(jet.Function1)</href>
+  <name>any() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#any(jet.Function1)</href>
+  <name>any() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#any(jet.Function1)</href>
+  <name>any() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/kotlin/template/StringTemplate-extensions.html#append(java.lang.Appendable, kotlin.template.Formatter)</href>
+  <name>append() [kotlin.template.StringTemplate]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#appendString(java.lang.Appendable, jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>appendString() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#attribute(jet.String)</href>
+  <name>attribute() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#binarySearch(jet.Byte)</href>
+  <name>binarySearch() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#binarySearch(jet.Char)</href>
+  <name>binarySearch() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#binarySearch(jet.Double)</href>
+  <name>binarySearch() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#binarySearch(jet.Float)</href>
+  <name>binarySearch() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#binarySearch(jet.Int)</href>
+  <name>binarySearch() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#binarySearch(jet.Int, jet.Int, jet.Long)</href>
+  <name>binarySearch() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#binarySearch(jet.Int, jet.Int, jet.Short)</href>
+  <name>binarySearch() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#buffered(jet.Int)</href>
+  <name>buffered() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/InputStream-extensions.html#buffered(jet.Int)</href>
+  <name>buffered() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/OutputStream-extensions.html#buffered(jet.Int)</href>
+  <name>buffered() [java.io.OutputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Reader-extensions.html#buffered(jet.Int)</href>
+  <name>buffered() [java.io.Reader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Writer-extensions.html#buffered(jet.Int)</href>
+  <name>buffered() [java.io.Writer]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#charAt(jet.Int)</href>
+  <name>charAt() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#charAt(jet.Int)</href>
+  <name>charAt() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#children()</href>
+  <name>children() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#codePointAt(jet.Int)</href>
+  <name>codePointAt() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#codePointBefore(jet.Int)</href>
+  <name>codePointBefore() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#codePointCount(jet.Int, jet.Int)</href>
+  <name>codePointCount() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#compareToIgnoreCase(jet.String)</href>
+  <name>compareToIgnoreCase() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#concat(jet.String)</href>
+  <name>concat() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#contains(T)</href>
+  <name>contains() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#contains(T)</href>
+  <name>contains() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#contains(T)</href>
+  <name>contains() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#contains(T)</href>
+  <name>contains() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#contains(jet.CharSequence)</href>
+  <name>contains() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#contentEquals(java.lang.StringBuffer)</href>
+  <name>contentEquals() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/BooleanArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#copyOf(jet.Int)</href>
+  <name>copyOf() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/BooleanArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#copyOfRange(jet.Int, jet.Int)</href>
+  <name>copyOfRange() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#copyTo(java.io.Writer, jet.Int)</href>
+  <name>copyTo() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#copyTo(java.io.File, jet.Int)</href>
+  <name>copyTo() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/InputStream-extensions.html#copyTo(java.io.OutputStream, jet.Int)</href>
+  <name>copyTo() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Reader-extensions.html#copyTo(java.io.Writer, jet.Int)</href>
+  <name>copyTo() [java.io.Reader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#count()</href>
+  <name>count() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#count()</href>
+  <name>count() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#count(jet.Function1)</href>
+  <name>count() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#count()</href>
+  <name>count() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#count()</href>
+  <name>count() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#count(jet.Function1)</href>
+  <name>count() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#count(jet.Function1)</href>
+  <name>count() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#createElement(jet.String, jet.ExtensionFunction0)</href>
+  <name>createElement() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#createElement(jet.String, org.w3c.dom.Document, jet.ExtensionFunction0)</href>
+  <name>createElement() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#dateFormat</href>
+  <name>dateFormat [kotlin.template.HtmlFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#dateFormat</href>
+  <name>dateFormat [kotlin.template.LocaleFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigDecimal-extensions.html#div(java.math.BigDecimal)</href>
+  <name>div() [java.math.BigDecimal]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigInteger-extensions.html#div(java.math.BigInteger)</href>
+  <name>div() [java.math.BigInteger]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#elements(jet.String)</href>
+  <name>elements() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#elements(jet.String)</href>
+  <name>elements() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#endsWith(jet.String)</href>
+  <name>endsWith() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#equalsIgnoreCase(jet.String)</href>
+  <name>equalsIgnoreCase() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/Executor-extensions.html#execute(jet.Function0)</href>
+  <name>execute() [java.util.concurrent.Executor]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JFrame-extensions.html#exitOnClose()</href>
+  <name>exitOnClose() [javax.swing.JFrame]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#fill(T)</href>
+  <name>fill() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/BooleanArray-extensions.html#fill(jet.Boolean)</href>
+  <name>fill() [jet.BooleanArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#fill(jet.Byte)</href>
+  <name>fill() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#fill(jet.Char)</href>
+  <name>fill() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#fill(jet.Double)</href>
+  <name>fill() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#fill(jet.Float)</href>
+  <name>fill() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#fill(jet.Int)</href>
+  <name>fill() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#fill(jet.Long)</href>
+  <name>fill() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#fill(jet.Short)</href>
+  <name>fill() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filter(jet.Function1)</href>
+  <name>filter() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterIsInstance(java.lang.Class)</href>
+  <name>filterIsInstance() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filterNot(jet.Function1)</href>
+  <name>filterNot() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filterNotNull()</href>
+  <name>filterNotNull() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filterNotNullTo(L)</href>
+  <name>filterNotNullTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filterNotTo(L, jet.Function1)</href>
+  <name>filterNotTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#filterTo(C, jet.Function1)</href>
+  <name>filterTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#find(jet.Function1)</href>
+  <name>find() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#find(jet.Function1)</href>
+  <name>find() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#find(jet.Function1)</href>
+  <name>find() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#find(jet.Function1)</href>
+  <name>find() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#find(jet.Function1)</href>
+  <name>find() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#find(jet.Function1)</href>
+  <name>find() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#first()</href>
+  <name>first() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#first()</href>
+  <name>first() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#first()</href>
+  <name>first() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#first()</href>
+  <name>first() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#flatMap(jet.Function1)</href>
+  <name>flatMap() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#flatMapTo(java.util.Collection, jet.Function1)</href>
+  <name>flatMapTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#fold(T, jet.Function2)</href>
+  <name>fold() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#foldRight(T, jet.Function2)</href>
+  <name>foldRight() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#forEach(jet.Function1)</href>
+  <name>forEach() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#forEachLine(jet.Function1)</href>
+  <name>forEachLine() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Reader-extensions.html#forEachLine(jet.Function1)</href>
+  <name>forEachLine() [java.io.Reader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#format(jet.String, jet.Array)</href>
+  <name>format() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/Formatter.html#format(java.lang.Appendable, jet.Any)</href>
+  <name>format() [kotlin.template.Formatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#format(java.lang.Appendable, jet.Any)</href>
+  <name>format() [kotlin.template.HtmlFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#format(java.lang.Appendable, jet.Any)</href>
+  <name>format() [kotlin.template.LocaleFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/ToStringFormatter.html#format(java.lang.Appendable, jet.Any)</href>
+  <name>format() [kotlin.template.ToStringFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/ResultSet-extensions.html#get(jet.Int)</href>
+  <name>get() [java.sql.ResultSet]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#get(jet.Int)</href>
+  <name>get() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#get(jet.Int)</href>
+  <name>get() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#get(jet.String)</href>
+  <name>get() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#get(jet.String)</href>
+  <name>get() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#getBytes()</href>
+  <name>getBytes() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#getChars(jet.Int, jet.Int, jet.CharArray, jet.Int)</href>
+  <name>getChars() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#getOrElse(K, jet.Function0)</href>
+  <name>getOrElse() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#getOrPut(K, jet.Function0)</href>
+  <name>getOrPut() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#groupBy(jet.Function1)</href>
+  <name>groupBy() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#groupByTo(java.util.Map, jet.Function1)</href>
+  <name>groupByTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#hasClass(jet.String)</href>
+  <name>hasClass() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#indexOf(jet.Char)</href>
+  <name>indexOf() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#inputStream(jet.Int, jet.Int)</href>
+  <name>inputStream() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#intern()</href>
+  <name>intern() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#isDescendant(java.io.File)</href>
+  <name>isDescendant() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#isEmpty()</href>
+  <name>isEmpty() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#isEmpty()</href>
+  <name>isEmpty() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#isText()</href>
+  <name>isText() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#isText()</href>
+  <name>isText() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#isText()</href>
+  <name>isText() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/InputStream-extensions.html#iterator()</href>
+  <name>iterator() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/ResultSet-extensions.html#iterator()</href>
+  <name>iterator() [java.sql.ResultSet]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Enumeration-extensions.html#iterator()</href>
+  <name>iterator() [java.util.Enumeration]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#iterator()</href>
+  <name>iterator() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#iterator()</href>
+  <name>iterator() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#iterator()</href>
+  <name>iterator() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#iterator()</href>
+  <name>iterator() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#iterator()</href>
+  <name>iterator() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#last()</href>
+  <name>last() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#last()</href>
+  <name>last() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#last()</href>
+  <name>last() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#last()</href>
+  <name>last() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#lastIndexOf(jet.Char)</href>
+  <name>lastIndexOf() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#length()</href>
+  <name>length() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#length()</href>
+  <name>length() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#lineIterator()</href>
+  <name>lineIterator() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#locale</href>
+  <name>locale [kotlin.template.HtmlFormatter]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#locale</href>
+  <name>locale [kotlin.template.LocaleFormatter]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#makeString(jet.String, jet.String, jet.String, jet.Int, jet.String)</href>
+  <name>makeString() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/ResultSet-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.sql.ResultSet]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#map(jet.Function1)</href>
+  <name>map() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#map(jet.Function1)</href>
+  <name>map() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/ResultSet-extensions.html#mapTo(java.util.Collection, jet.Function1)</href>
+  <name>mapTo() [java.sql.ResultSet]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#mapTo(C, jet.Function1)</href>
+  <name>mapTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#mapValues(jet.Function1)</href>
+  <name>mapValues() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#mapValuesTo(C, jet.Function1)</href>
+  <name>mapValuesTo() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#matches(jet.String)</href>
+  <name>matches() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigDecimal-extensions.html#minus()</href>
+  <name>minus() [java.math.BigDecimal]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigInteger-extensions.html#minus()</href>
+  <name>minus() [java.math.BigInteger]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigDecimal-extensions.html#mod(java.math.BigDecimal)</href>
+  <name>mod() [java.math.BigDecimal]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#nextElements()</href>
+  <name>nextElements() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#nextElements()</href>
+  <name>nextElements() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#nextElements()</href>
+  <name>nextElements() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#nextSiblings()</href>
+  <name>nextSiblings() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#nextSiblings()</href>
+  <name>nextSiblings() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#nextSiblings()</href>
+  <name>nextSiblings() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#notEmpty()</href>
+  <name>notEmpty() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#notEmpty()</href>
+  <name>notEmpty() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#notEmpty()</href>
+  <name>notEmpty() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#notEmpty()</href>
+  <name>notEmpty() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#notEmpty()</href>
+  <name>notEmpty() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#nullString</href>
+  <name>nullString [kotlin.template.HtmlFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#nullString</href>
+  <name>nullString [kotlin.template.LocaleFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/template/ToStringFormatter.html#nullString</href>
+  <name>nullString [kotlin.template.ToStringFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#numberFormat</href>
+  <name>numberFormat [kotlin.template.HtmlFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#numberFormat</href>
+  <name>numberFormat [kotlin.template.LocaleFormatter]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#offsetByCodePoints(jet.Int, jet.Int)</href>
+  <name>offsetByCodePoints() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#orEmpty()</href>
+  <name>orEmpty() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#orEmpty()</href>
+  <name>orEmpty() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#orEmpty()</href>
+  <name>orEmpty() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#orEmpty()</href>
+  <name>orEmpty() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#orEmpty()</href>
+  <name>orEmpty() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#orEmpty()</href>
+  <name>orEmpty() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#ownerDocument(org.w3c.dom.Document)</href>
+  <name>ownerDocument() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#ownerDocument(org.w3c.dom.Document)</href>
+  <name>ownerDocument() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#ownerDocument(org.w3c.dom.Document)</href>
+  <name>ownerDocument() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#plus(T)</href>
+  <name>plus() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigDecimal-extensions.html#plus(java.math.BigDecimal)</href>
+  <name>plus() [java.math.BigDecimal]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigInteger-extensions.html#plus(java.math.BigInteger)</href>
+  <name>plus() [java.math.BigInteger]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#plus(T)</href>
+  <name>plus() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#plus(T)</href>
+  <name>plus() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#plus(T)</href>
+  <name>plus() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#plus(T)</href>
+  <name>plus() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#plus(T)</href>
+  <name>plus() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#plus(T)</href>
+  <name>plus() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#plus(org.w3c.dom.Node)</href>
+  <name>plus() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#plus(jet.String)</href>
+  <name>plus() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#plus(org.w3c.dom.Node)</href>
+  <name>plus() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#plusAssign(jet.String)</href>
+  <name>plusAssign() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/Connection-extensions.html#prepare(kotlin.template.StringTemplate)</href>
+  <name>prepare() [java.sql.Connection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#previousElements()</href>
+  <name>previousElements() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#previousElements()</href>
+  <name>previousElements() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#previousElements()</href>
+  <name>previousElements() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#previousSiblings()</href>
+  <name>previousSiblings() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#previousSiblings()</href>
+  <name>previousSiblings() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#previousSiblings()</href>
+  <name>previousSiblings() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/Connection-extensions.html#query(jet.String, jet.Function1)</href>
+  <name>query() [java.sql.Connection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/PreparedStatement-extensions.html#query(jet.Function1)</href>
+  <name>query() [java.sql.PreparedStatement]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#query(jet.String, jet.Function1)</href>
+  <name>query() [javax.sql.DataSource]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/locks/ReentrantReadWriteLock-extensions.html#read(jet.Function0)</href>
+  <name>read() [java.util.concurrent.locks.ReentrantReadWriteLock]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#readBytes()</href>
+  <name>readBytes() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/InputStream-extensions.html#readBytes(jet.Int)</href>
+  <name>readBytes() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/net/URL-extensions.html#readBytes()</href>
+  <name>readBytes() [java.net.URL]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#readText()</href>
+  <name>readText() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#readText(java.nio.charset.Charset)</href>
+  <name>readText() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Reader-extensions.html#readText()</href>
+  <name>readText() [java.io.Reader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/net/URL-extensions.html#readText(java.nio.charset.Charset)</href>
+  <name>readText() [java.net.URL]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/InputStream-extensions.html#reader(java.nio.charset.Charset)</href>
+  <name>reader() [java.io.InputStream]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#recurse(jet.Function1)</href>
+  <name>recurse() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#regionMatches(jet.Boolean, jet.Int, jet.String, jet.Int, jet.Int)</href>
+  <name>regionMatches() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#relativePath(java.io.File)</href>
+  <name>relativePath() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#removeClass(jet.String)</href>
+  <name>removeClass() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#replace(jet.Char, jet.Char)</href>
+  <name>replace() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#replaceAll(jet.String, jet.String)</href>
+  <name>replaceAll() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#replaceFirst(jet.String, jet.String)</href>
+  <name>replaceFirst() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#requireNoNulls()</href>
+  <name>requireNoNulls() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#reverse()</href>
+  <name>reverse() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#reverse()</href>
+  <name>reverse() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#reverse()</href>
+  <name>reverse() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#reverse()</href>
+  <name>reverse() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#reverse()</href>
+  <name>reverse() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#reverse()</href>
+  <name>reverse() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#reverse()</href>
+  <name>reverse() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/Timer-extensions.html#schedule(java.util.Date, jet.ExtensionFunction0)</href>
+  <name>schedule() [java.util.Timer]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/Timer-extensions.html#scheduleAtFixedRate(java.util.Date, jet.Long, jet.ExtensionFunction0)</href>
+  <name>scheduleAtFixedRate() [java.util.Timer]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Map-extensions.html#set(K, V)</href>
+  <name>set() [java.util.Map]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#sort()</href>
+  <name>sort() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#sort()</href>
+  <name>sort() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#sort()</href>
+  <name>sort() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/DoubleArray-extensions.html#sort()</href>
+  <name>sort() [jet.DoubleArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/FloatArray-extensions.html#sort()</href>
+  <name>sort() [jet.FloatArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/IntArray-extensions.html#sort()</href>
+  <name>sort() [jet.IntArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/LongArray-extensions.html#sort()</href>
+  <name>sort() [jet.LongArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ShortArray-extensions.html#sort()</href>
+  <name>sort() [jet.ShortArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#split(jet.String)</href>
+  <name>split() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#startsWith(jet.String)</href>
+  <name>startsWith() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/Connection-extensions.html#statement(jet.Function1)</href>
+  <name>statement() [java.sql.Connection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#statement(jet.Function1)</href>
+  <name>statement() [javax.sql.DataSource]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#subSequence(jet.Int, jet.Int)</href>
+  <name>subSequence() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#subSequence(jet.Int, jet.Int)</href>
+  <name>subSequence() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#substring(jet.Int)</href>
+  <name>substring() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#take(jet.Int)</href>
+  <name>take() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#take(jet.Int)</href>
+  <name>take() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#take(jet.Int)</href>
+  <name>take() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#take(jet.Int)</href>
+  <name>take() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#take(jet.Int)</href>
+  <name>take() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#take(jet.Int)</href>
+  <name>take() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#takeWhile(jet.Function1)</href>
+  <name>takeWhile() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#takeWhileTo(L, jet.Function1)</href>
+  <name>takeWhileTo() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigDecimal-extensions.html#times(java.math.BigDecimal)</href>
+  <name>times() [java.math.BigDecimal]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/math/java/math/BigInteger-extensions.html#times(java.math.BigInteger)</href>
+  <name>times() [java.math.BigInteger]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Int-extensions.html#times(jet.Function0)</href>
+  <name>times() [jet.Int]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#to(C)</href>
+  <name>to() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#to(C)</href>
+  <name>to() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#to(C)</href>
+  <name>to() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#to(C)</href>
+  <name>to() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#to(C)</href>
+  <name>to() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#to(C)</href>
+  <name>to() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#to(C)</href>
+  <name>to() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#to(U)</href>
+  <name>to() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toArray()</href>
+  <name>toArray() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toArray()</href>
+  <name>toArray() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toArray()</href>
+  <name>toArray() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toArrayList()</href>
+  <name>toArrayList() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toBoolean()</href>
+  <name>toBoolean() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toByteArray(java.nio.charset.Charset)</href>
+  <name>toByteArray() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toCharArray()</href>
+  <name>toCharArray() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toCharList()</href>
+  <name>toCharList() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toCollection()</href>
+  <name>toCollection() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toCollection()</href>
+  <name>toCollection() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#toCollection()</href>
+  <name>toCollection() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toCollection()</href>
+  <name>toCollection() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toCollection()</href>
+  <name>toCollection() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#toCollection()</href>
+  <name>toCollection() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toDouble()</href>
+  <name>toDouble() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/NodeList-extensions.html#toElementList()</href>
+  <name>toElementList() [org.w3c.dom.NodeList]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toFloat()</href>
+  <name>toFloat() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toHashSet()</href>
+  <name>toHashSet() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/kotlin/template/StringTemplate-extensions.html#toHtml(kotlin.template.HtmlFormatter)</href>
+  <name>toHtml() [kotlin.template.StringTemplate]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toInt()</href>
+  <name>toInt() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toLinkedHashSet()</href>
+  <name>toLinkedHashSet() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toLinkedList()</href>
+  <name>toLinkedList() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toList()</href>
+  <name>toList() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toList()</href>
+  <name>toList() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#toList()</href>
+  <name>toList() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toList()</href>
+  <name>toList() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toList()</href>
+  <name>toList() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#toList()</href>
+  <name>toList() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharArray-extensions.html#toList()</href>
+  <name>toList() [jet.CharArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#toList()</href>
+  <name>toList() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/NodeList-extensions.html#toList()</href>
+  <name>toList() [org.w3c.dom.NodeList]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/kotlin/template/StringTemplate-extensions.html#toLocale(kotlin.template.LocaleFormatter)</href>
+  <name>toLocale() [kotlin.template.StringTemplate]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toLong()</href>
+  <name>toLong() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toLowerCase()</href>
+  <name>toLowerCase() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toRegex(jet.Int)</href>
+  <name>toRegex() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toSet()</href>
+  <name>toSet() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toSet()</href>
+  <name>toSet() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#toSet()</href>
+  <name>toSet() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toSet()</href>
+  <name>toSet() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toSet()</href>
+  <name>toSet() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#toSet()</href>
+  <name>toSet() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#toSet()</href>
+  <name>toSet() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toShort()</href>
+  <name>toShort() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toSortedList()</href>
+  <name>toSortedList() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toSortedList()</href>
+  <name>toSortedList() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toSortedList()</href>
+  <name>toSortedList() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toSortedList()</href>
+  <name>toSortedList() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Iterator-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [java.util.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Array-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.Array]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterable-extensions.html#toSortedSet()</href>
+  <name>toSortedSet() [jet.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/ByteArray-extensions.html#toString(java.nio.charset.Charset)</href>
+  <name>toString() [jet.ByteArray]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/CharSequence-extensions.html#toString()</href>
+  <name>toString() [jet.CharSequence]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toString()</href>
+  <name>toString() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/HtmlFormatter.html#toString()</href>
+  <name>toString() [kotlin.template.HtmlFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/LocaleFormatter.html#toString()</href>
+  <name>toString() [kotlin.template.LocaleFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/kotlin/template/StringTemplate-extensions.html#toString(kotlin.template.Formatter)</href>
+  <name>toString() [kotlin.template.StringTemplate]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/template/ToStringFormatter.html#toString()</href>
+  <name>toString() [kotlin.template.ToStringFormatter]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Iterator-extensions.html#toTreeSet()</href>
+  <name>toTreeSet() [jet.Iterator]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#toUpperCase()</href>
+  <name>toUpperCase() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#toXmlString(jet.Boolean)</href>
+  <name>toXmlString() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#toXmlString(jet.Boolean)</href>
+  <name>toXmlString() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/NodeList-extensions.html#toXmlString(jet.Boolean)</href>
+  <name>toXmlString() [org.w3c.dom.NodeList]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#toXmlString(jet.Boolean)</href>
+  <name>toXmlString() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#trim()</href>
+  <name>trim() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#trimLeading(jet.String)</href>
+  <name>trimLeading() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/String-extensions.html#trimTrailing(jet.String)</href>
+  <name>trimTrailing() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/Connection-extensions.html#update(jet.String)</href>
+  <name>update() [java.sql.Connection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/java/sql/PreparedStatement-extensions.html#update()</href>
+  <name>update() [java.sql.PreparedStatement]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#update(jet.String)</href>
+  <name>update() [javax.sql.DataSource]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jdbc/javax/sql/DataSource-extensions.html#use(jet.Function1)</href>
+  <name>use() [javax.sql.DataSource]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/BufferedReader-extensions.html#useLines(jet.Function1)</href>
+  <name>useLines() [java.io.BufferedReader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/Reader-extensions.html#useLines(jet.Function1)</href>
+  <name>useLines() [java.io.Reader]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/lang/Iterable-extensions.html#withIndices()</href>
+  <name>withIndices() [java.lang.Iterable]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Collection-extensions.html#withIndices()</href>
+  <name>withIndices() [java.util.Collection]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/List-extensions.html#withIndices()</href>
+  <name>withIndices() [java.util.List]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/java/util/Set-extensions.html#withIndices()</href>
+  <name>withIndices() [java.util.Set]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/locks/Lock-extensions.html#withLock(jet.Function0)</href>
+  <name>withLock() [java.util.concurrent.locks.Lock]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/concurrent/java/util/concurrent/locks/ReentrantReadWriteLock-extensions.html#write(jet.Function0)</href>
+  <name>write() [java.util.concurrent.locks.ReentrantReadWriteLock]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#writeBytes(jet.ByteArray)</href>
+  <name>writeBytes() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/File-extensions.html#writeText(jet.String, java.nio.charset.Charset)</href>
+  <name>writeText() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Document-extensions.html#writeXmlString(java.io.Writer, jet.Boolean)</href>
+  <name>writeXmlString() [org.w3c.dom.Document]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Element-extensions.html#writeXmlString(java.io.Writer, jet.Boolean)</href>
+  <name>writeXmlString() [org.w3c.dom.Element]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/dom/org/w3c/dom/Node-extensions.html#writeXmlString(java.io.Writer, jet.Boolean)</href>
+  <name>writeXmlString() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/io/java/io/OutputStream-extensions.html#writer(java.nio.charset.Charset)</href>
+  <name>writer() [java.io.OutputStream]</name>
+  <kind>fun</kind>
 </search>
 </searches>

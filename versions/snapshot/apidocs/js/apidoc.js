@@ -13,7 +13,7 @@ $(function(){
         success: function( xmlResponse ) {
             var data = $( "search", xmlResponse ).map(function() {
                 return {
-                    value: $( "name", this ).text(),
+                    value: $( "kind", this ).text() + " " + $( "name", this ).text(),
                     id: $( "href", this ).text()
                 };
             }).get();
