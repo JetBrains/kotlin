@@ -3,7 +3,7 @@ package kotlin
 import java.util.Comparator
 
 /**
-* Helper method for implementing [[Comparable<T>]] methods using a list of functions
+* Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
 inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): Int {

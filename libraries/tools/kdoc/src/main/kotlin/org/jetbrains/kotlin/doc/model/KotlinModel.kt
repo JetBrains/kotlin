@@ -691,7 +691,11 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
 
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
-                    for (prefix in arrayList("java.lang", "java.util", "java.util.regex", "java.io", "jet")) {
+                    for (prefix in arrayList("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
+                            "jet", "java.awt", "java.awt.event", "java.sql", "java.beans",
+                            "javax.swing", "javax.swing.event",
+                            "org.w3c.dom",
+                            "kotlin.template")) {
                         if (href == null) {
                             href = resolveClassNameLink(prefix + "." + qualified)
                             if (href != null) {
@@ -700,9 +704,26 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                         }
                     }
                 }
+                if (href == null) {
+                    // TODO even hacker than the above hack!
+                    val hackedLinks = HashMap<String, #(String,String)>()
+                    hackedLinks.put("IllegalArgumentException", #("java.lang", "java/lang/IllegalArgumentException.html"))
+                    hackedLinks.put("IllegalStateException", #("java.lang", "java/lang/IllegalStateException.html"))
+                    hackedLinks.put("Map.Entry", #("java.util", "java/util/Map.Entry.html"))
+                    hackedLinks.put("System.in", #("java.lang", "java/lang/System.html#in"))
+                    hackedLinks.put("System.out", #("java.lang", "java/lang/System.html#in"))
+                    hackedLinks.put("#equals()", #("java.lang", "java/lang/Object.html#equals(java.lang.Object)"))
+                    hackedLinks.put("#hashCode()", #("java.lang", "java/lang/Object.html#hashCode()"))
+
+                    val link = hackedLinks.get(text)
+                    if (link != null) {
+                        href = annotated.model.config.resolveLink(link._1) + link._2
+                    }
+                }
                 if (href != null) {
                     answer.href = href
                 } else {
+                    answer.href = "#NotImplementedYet"
                     warning("could not resolve expression: $qualified into a wiki link")
                 }
             }
