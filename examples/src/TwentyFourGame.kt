@@ -1,14 +1,18 @@
-namespace TwentyFourGame;
+package TwentyFourGame
 
+/**
+ * @author yole
+ */
 import java.util.*
 import java.io.*
 
 fun StringBuilder.takeFirst(): Char {
-  if (this.length() == 0) return '\0'
+  if (this.length() == 0) return 0.toChar()
   val c = this.charAt(0)
   this.deleteCharAt(0)
   return c
 }
+
 class Evaluator(val expr: StringBuilder, val numbers: ArrayList<Int>) {
   fun checkFirst(expect: Char): Boolean {
     if (expr.length() > 0 && expr.charAt(0) == expect) {
@@ -21,20 +25,20 @@ class Evaluator(val expr: StringBuilder, val numbers: ArrayList<Int>) {
   fun evaluateArg(): Int {
     val c = expr.takeFirst()
     when(c) {
-      in '0'..'9' => {
+      in '0'..'9' -> {
         val n = c - '0'
         val index = numbers.indexOf(n)
         if (index < 0) throw Exception("You used incorrect number: " + n)
         numbers.remove(index) // gotcha: conflict between remove(Object) and remove(int)
         return n
       }
-      '(' => {
+      '(' -> {
         val result = evaluate()
         if (expr.takeFirst() != ')') throw Exception(") expected")
         return result
       }
-      '\0' => throw Exception("Syntax error: Character expected")
-      else => throw Exception("Syntax error: Unrecognized character " + c)
+      0.toChar() -> throw Exception("Syntax error: Character expected")
+      else -> throw Exception("Syntax error: Unrecognized character " + c)
     }
   }
 
@@ -64,7 +68,7 @@ class Evaluator(val expr: StringBuilder, val numbers: ArrayList<Int>) {
 }
 
 fun main(args: Array<String>) {
-  System.out?.println("24 game")
+  println("24 game")
   val numbers = ArrayList<Int>(4)
   val rnd = Random();
   val prompt = StringBuilder()
@@ -74,18 +78,18 @@ fun main(args: Array<String>) {
     if (i > 0) prompt.append(" ");
     prompt.append(n)
   }
-  System.out?.println("Your numbers: " + prompt)
-  System.out?.println("Enter your expression:")
+  println("Your numbers: " + prompt)
+  println("Enter your expression:")
   val reader = BufferedReader(InputStreamReader(System.`in`))
   val expr = StringBuilder(reader.readLine())
   try {
     val result = Evaluator(expr, numbers).evaluateAll()
     if (result != 24)
-      System.out?.println("Sorry, that's " + result)
+      println("Sorry, that's " + result)
     else
-      System.out?.println("You won!");
+      println("You won!");
   }
   catch(e: Throwable) {
-    System.out?.println(e.getMessage())
+    println(e.getMessage())
   }
 }
