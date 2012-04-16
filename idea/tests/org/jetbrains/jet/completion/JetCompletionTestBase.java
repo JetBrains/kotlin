@@ -64,13 +64,22 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                 ExpectedCompletionUtils.CompletionProposal[] unexpected = completionUtils.itemsShouldAbsent(fileText);
                 Integer itemsNumber = completionUtils.getExpectedNumber(fileText);
 
-                assertTrue("Should be some assertions about completion", expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
+                assertTrue("Should be some assertions about completion",
+                           expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
+
+                if (myItems == null) {
+                    myItems = new LookupElement[0];
+                }
 
                 ExpectedCompletionUtils.assertContainsRenderedItems(expected, myItems);
                 ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, myItems);
 
                 if (itemsNumber != null) {
-                    assertEquals("Invalid number of completion items", itemsNumber.intValue(), myItems.length);
+                    assertEquals(
+                            String.format(
+                                    "Invalid number of completion items: %s",
+                                    ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(myItems))),
+                            itemsNumber.intValue(), myItems.length);
                 }
             }
             finally {
@@ -78,9 +87,8 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
                     ConfigRuntimeUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
                 }
             }
-
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AssertionError(e);
         }
     }
@@ -102,7 +110,7 @@ public abstract class JetCompletionTestBase extends LightCompletionTestCase {
     protected void complete(final int time) {
         new CodeCompletionHandlerBase(type, false, false, true).invokeCompletion(getProject(), getEditor(), time, false);
 
-        LookupImpl lookup = (LookupImpl) LookupManager.getActiveLookup(myEditor);
+        LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(myEditor);
         myItems = lookup == null ? null : lookup.getItems().toArray(LookupElement.EMPTY_ARRAY);
         myPrefix = lookup == null ? null : lookup.itemPattern(lookup.getItems().get(0));
     }

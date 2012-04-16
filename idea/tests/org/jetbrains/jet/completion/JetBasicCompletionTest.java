@@ -105,6 +105,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInPackageBegin() {
+        doTest();
+    }
+
     public void testInTypeAnnotation() {
         doTest();
     }
