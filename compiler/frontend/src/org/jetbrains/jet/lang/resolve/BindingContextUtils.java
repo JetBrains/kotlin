@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +32,8 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -83,6 +86,27 @@ public class BindingContextUtils {
         return null;
     }
 
+    @NotNull
+    public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
+        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        if (declarationDescriptor == null) {
+            return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
+        }
+
+        List<PsiElement> elements = descriptorToDeclarations(bindingContext, declarationDescriptor);
+        if (elements.size() > 0) {
+            return elements;
+        }
+
+        // TODO: Need to have a valid stubs for standard classes
+        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
+            return Lists.<PsiElement>newArrayList(referenceExpression.getContainingFile());
+        }
+
+        return Lists.newArrayList();
+    }
+
+
     @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable JetElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
@@ -131,6 +155,21 @@ public class BindingContextUtils {
         }
     }
 
+    @NotNull
+    public static List<PsiElement> descriptorToDeclarations(@NotNull BindingContext context, @NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            return callableDescriptorToDeclarations(context, (CallableMemberDescriptor) descriptor);
+        }
+        else {
+            PsiElement psiElement = descriptorToDeclaration(context, descriptor);
+            if (psiElement != null) {
+                return Lists.newArrayList(psiElement);
+            } else {
+                return Lists.newArrayList();
+            }
+        }
+    }
+
     @Nullable
     public static PsiElement callableDescriptorToDeclaration(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
@@ -146,6 +185,19 @@ public class BindingContextUtils {
         }
 
         return doGetDescriptorToDeclaration(context, callable.getOriginal());
+    }
+
+    private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
+        if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+            List<PsiElement> r = new ArrayList<PsiElement>();
+            Set<? extends CallableMemberDescriptor> overridenDescriptors = callable.getOverriddenDescriptors();
+            for (CallableMemberDescriptor overriden : overridenDescriptors) {
+                r.addAll(callableDescriptorToDeclarations(context, overriden));
+            }
+            return r;
+        }
+        PsiElement psiElement = doGetDescriptorToDeclaration(context, callable);
+        return psiElement != null ? Lists.newArrayList(psiElement) : Lists.<PsiElement>newArrayList();
     }
 
     @Nullable
