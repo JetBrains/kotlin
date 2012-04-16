@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererM
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
+
 /**
  * @author Evgeny Gerashchenko
  * @since 4/13/12
@@ -31,7 +34,7 @@ public class IdeErrorMessages {
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP, DefaultErrorMessages.MAP);
 
     static {
-        // TODO
+        MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table>", RENDER_TYPE, RENDER_TYPE);
         MAP.setImmutable();
     }
 
