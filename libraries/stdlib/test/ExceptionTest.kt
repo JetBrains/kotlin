@@ -40,8 +40,7 @@ class ExceptionTest {
             t.printStackTrace(stream)
         }
 
-        assertNotNull(byteBuffer.toByteArray()) { bytes ->
-            assertTrue(bytes.size > 10)
-        }
+        val bytes = assertNotNull(byteBuffer.toByteArray())
+        assertTrue(bytes.size > 10)
     }
 }

@@ -1,106 +1,104 @@
 package test.collections
 
-import junit.framework.TestCase
+import org.junit.Test as test
 import kotlin.test.*
-import java.lang.IllegalArgumentException
 
-class PreconditionsTest() : TestCase() {
+class PreconditionsTest() {
 
-    fun testPassingRequire() {
+    test fun passingRequire() {
         require(true)
 
         var called = false
         require(true) { called = true; "some message" }
-
         assertFalse(called)
     }
 
-    fun testFailingRequire() {
-        val error = fails {
+    test fun failingRequire() {
+        val error = failsWith<IllegalArgumentException> {
             require(false)
         }
-        if(error is IllegalArgumentException) {
-            assertNull(error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
-        }
+        assertNotNull(error.getMessage())
     }
 
-    fun testPassingRequireWithMessage() {
+    test fun passingRequireWithMessage() {
         require(true, "Hello")
     }
 
-    fun testFailingRequireWithMessage() {
-        val error = fails {
+    test fun failingRequireWithMessage() {
+        val error = failsWith<IllegalArgumentException> {
             require(false, "Hello")
         }
-        if(error is IllegalArgumentException) {
-            assertEquals("Hello", error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
-        }
+        assertEquals("Hello", error.getMessage())
     }
 
-    fun testFailingRequireWithLazyMessage() {
-        val error = fails {
+    test fun failingRequireWithLazyMessage() {
+        val error = failsWith<IllegalArgumentException> {
             require(false) {"Hello"}
         }
-        if(error is IllegalArgumentException) {
-            assertEquals("Hello", error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
-        }
+        assertEquals("Hello", error.getMessage())
     }
 
-    fun testPassingCheck() {
+    test fun passingCheck() {
         check(true)
 
         var called = false
         check(true) { called = true; "some message" }
-
         assertFalse(called)
     }
 
-    fun testFailingCheck() {
-        val error = fails {
+    test fun failingCheck() {
+        val error = failsWith<IllegalStateException> {
             check(false)
         }
-        if(error is IllegalStateException) {
-            assertNull(error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
-        }
+        assertNotNull(error.getMessage())
     }
 
-    fun testPassingCheckWithMessage() {
+    test fun passingCheckWithMessage() {
         check(true, "Hello")
     }
 
-    fun testFailingCheckWithMessage() {
-        val error = fails {
+    test fun failingCheckWithMessage() {
+        val error = failsWith<IllegalStateException> {
             check(false, "Hello")
         }
-        if(error is IllegalStateException) {
-            assertEquals("Hello", error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
-        }
+        assertEquals("Hello", error.getMessage())
     }
 
-    fun testFailingCheckWithLazyMessage() {
-        val error = fails {
+    test fun failingCheckWithLazyMessage() {
+        val error = failsWith<IllegalStateException> {
             check(false) {"Hello"}
         }
-        if(error is IllegalStateException) {
-            assertEquals("Hello", error.getMessage())
-        } else {
-            fail("Invalid exception type: "+error)
+        assertEquals("Hello", error.getMessage())
+    }
+
+    test fun requireNotNull() {
+        val s1: String? = "S1"
+        val r1: String = requireNotNull(s1)
+        assertEquals("S1", r1)
+    }
+
+    test fun requireNotNullFails() {
+        failsWith<IllegalArgumentException> {
+            val s2: String? = null
+            requireNotNull(s2)
         }
     }
 
+    test fun checkNotNull() {
+        val s1: String? = "S1"
+        val r1: String = checkNotNull(s1)
+        assertEquals("S1", r1)
+    }
+
+    test fun checkNotNullFails() {
+        failsWith<IllegalStateException> {
+            val s2: String? = null
+            checkNotNull(s2)
+        }
+    }
 
 // TODO: uncomment when KT-1540 is resolved.
-//    fun testPassingAssert() {
+//    test fun passingAssert() {
 //        assert(true)
 //        var called = false
 //        assert(true) { called = true; "some message" }
@@ -109,7 +107,7 @@ class PreconditionsTest() : TestCase() {
 //    }
 //
 //
-//    fun testFailingAssert() {
+//    test fun failingAssert() {
 //        val error = fails {
 //            assert(false)
 //        }
@@ -120,11 +118,11 @@ class PreconditionsTest() : TestCase() {
 //        }
 //    }
 //
-//    fun testPassingAssertWithMessage() {
+//    test fun passingAssertWithMessage() {
 //        assert(true, "Hello")
 //    }
 //
-//    fun testFailingAssertWithMessage() {
+//    test fun failingAssertWithMessage() {
 //        val error = fails {
 //            assert(false, "Hello")
 //        }
@@ -135,7 +133,7 @@ class PreconditionsTest() : TestCase() {
 //        }
 //    }
 //
-//    fun testFailingAssertWithLazyMessage() {
+//    test fun failingAssertWithLazyMessage() {
 //        val error = fails {
 //            assert(false) {"Hello"}
 //        }

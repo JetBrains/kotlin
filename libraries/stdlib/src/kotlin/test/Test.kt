@@ -63,8 +63,9 @@ public inline fun assertEquals(expected: Any?, actual: Any?, message: String = "
 }
 
 /** Asserts that the expression is not null, with an optional message */
-public inline fun assertNotNull(actual: Any?, message: String = "") {
+public inline fun <T> assertNotNull(actual: T?, message: String = ""): T {
     asserter.assertNotNull(message, actual)
+    return actual!!
 }
 
 /** Asserts that the expression is not null, with an optional message and a function block to process the not-null value */
