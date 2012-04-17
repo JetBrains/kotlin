@@ -62,6 +62,9 @@ public class IdeErrorMessages {
                     }
                 }, DescriptorRenderer.HTML);
 
+        MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
+                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+
         MAP.setImmutable();
     }
 
