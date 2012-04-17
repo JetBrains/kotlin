@@ -212,3 +212,18 @@ public inline fun CharSequence.subSequence(start : Int, end : Int) : CharSequenc
 public inline fun CharSequence.get(start : Int, end : Int) : CharSequence? = subSequence(start, end)
 
 public inline fun CharSequence.toString() : String? = (this as java.lang.CharSequence).toString()
+
+/**
+ * Counts the number of characters which match the given predicate
+ *
+ * @includeFunctionBody ../../test/StringTest.kt count
+ */
+public inline fun String.count(predicate: (Char) -> Boolean): Int {
+    var answer = 0
+    for (c in this) {
+        if (predicate(c)) {
+            answer++
+        }
+    }
+    return answer
+}
