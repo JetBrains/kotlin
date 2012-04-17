@@ -281,17 +281,16 @@ public class DescriptorUtils {
     }
 
     public static boolean isSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
-        DeclarationDescriptor superOriginal = superClass.getOriginal();
-        return hasEqualSuperType(subClass.getDefaultType(), superOriginal);
+        return isSubtypeOfClass(subClass.getDefaultType(), superClass.getOriginal());
     }
 
-    private static boolean hasEqualSuperType(@NotNull JetType type, @NotNull DeclarationDescriptor superOriginal) {
+    private static boolean isSubtypeOfClass(@NotNull JetType type, @NotNull DeclarationDescriptor superClass) {
         DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor != null && superOriginal.equals(descriptor.getOriginal())) {
+        if (descriptor != null && superClass == descriptor.getOriginal()) {
             return true;
         }
         for (JetType superType : type.getConstructor().getSupertypes()) {
-            if (hasEqualSuperType(superType, superOriginal)) {
+            if (isSubtypeOfClass(superType, superClass)) {
                 return true;
             }
         }
