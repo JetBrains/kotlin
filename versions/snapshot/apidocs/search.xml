@@ -656,6 +656,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/String-extensions.html#count(jet.Function1)</href>
+  <name>count() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/dom/org/w3c/dom/Document-extensions.html#createElement(jet.String, jet.ExtensionFunction0)</href>
   <name>createElement() [org.w3c.dom.Document]</name>
   <kind>fun</kind>
@@ -1376,8 +1381,18 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/Char-extensions.html#isDefined()</href>
+  <name>isDefined() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/io/java/io/File-extensions.html#isDescendant(java.io.File)</href>
   <name>isDescendant() [java.io.File]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isDigit()</href>
+  <name>isDigit() [jet.Char]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1388,6 +1403,41 @@
 <search>
   <href>kotlin/jet/String-extensions.html#isEmpty()</href>
   <name>isEmpty() [jet.String]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isHighSurrogate()</href>
+  <name>isHighSurrogate() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isISOControl()</href>
+  <name>isISOControl() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isIdentifierIgnorable()</href>
+  <name>isIdentifierIgnorable() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isJavaIdentifierPart()</href>
+  <name>isJavaIdentifierPart() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isJavaIdentifierStart()</href>
+  <name>isJavaIdentifierStart() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isJavaLetter()</href>
+  <name>isJavaLetter() [jet.Char]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isJavaLetterOrDigit()</href>
+  <name>isJavaLetterOrDigit() [jet.Char]</name>
   <kind>fun</kind>
 </search>
 <search>
@@ -1403,6 +1453,11 @@
 <search>
   <href>kotlin/dom/org/w3c/dom/Node-extensions.html#isText()</href>
   <name>isText() [org.w3c.dom.Node]</name>
+  <kind>fun</kind>
+</search>
+<search>
+  <href>kotlin/jet/Char-extensions.html#isWhitespace()</href>
+  <name>isWhitespace() [jet.Char]</name>
   <kind>fun</kind>
 </search>
 <search>
