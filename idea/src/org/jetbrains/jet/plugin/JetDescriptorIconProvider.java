@@ -17,6 +17,8 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Iconable;
+import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,7 +35,43 @@ public final class JetDescriptorIconProvider {
     private JetDescriptorIconProvider() {
     }
 
-    public static Icon getIcon(@NotNull DeclarationDescriptor descriptor) {
+    public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Iconable.IconFlags int flags) {
+        Icon result = getBaseIcon(descriptor);
+        if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0) {
+            RowIcon rowIcon = new RowIcon(2);
+            rowIcon.setIcon(result, 0);
+            rowIcon.setIcon(getVisibilityIcon(descriptor), 1);
+            result = rowIcon;
+        }
+
+        return result;
+    }
+
+    public static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof DeclarationDescriptorWithVisibility) {
+            DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility)descriptor;
+            Visibility visibility = descriptorWithVisibility.getVisibility();
+            if (visibility == Visibilities.PUBLIC) {
+                return PlatformIcons.PUBLIC_ICON;
+            }
+
+            if (visibility == Visibilities.PROTECTED || visibility == Visibilities.INTERNAL_PROTECTED) {
+                return PlatformIcons.PROTECTED_ICON;
+            }
+
+            if (visibility == Visibilities.PRIVATE) {
+                return PlatformIcons.PRIVATE_ICON;
+            }
+
+            if (visibility == Visibilities.INTERNAL) {
+                return PlatformIcons.PACKAGE_LOCAL_ICON;
+            }
+        }
+
+        return null;
+    }
+
+    public static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof NamespaceDescriptor) {
             return PlatformIcons.PACKAGE_OPEN_ICON;
         }

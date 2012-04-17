@@ -153,6 +153,22 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testVisibilityClassMembersFromExternal() {
+        doTest();
+    }
+
+    public void testVisibilityClassMembersFromExternalForce() {
+        doTest();
+    }
+
+    public void testVisibilityInSubclass() {
+        doTest();
+    }
+
+    public void testVisibilityInSubclassForce() {
+        doTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return new File(PluginTestCaseBase.getTestDataPathBase(), "/completion/basic").getPath() +

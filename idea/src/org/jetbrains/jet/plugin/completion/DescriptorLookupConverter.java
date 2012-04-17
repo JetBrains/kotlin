@@ -104,13 +104,7 @@ public final class DescriptorLookupConverter {
         }
 
         element = element.setTailText(tailText, tailTextGrayed).setTypeText(typeText);
-
-        if (declaration != null) {
-            element = element.setIcon(declaration.getIcon(Iconable.ICON_FLAG_OPEN | Iconable.ICON_FLAG_VISIBILITY));
-        }
-        else {
-            element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor));
-        }
+        element = element.setIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
 
         return element;
     }
