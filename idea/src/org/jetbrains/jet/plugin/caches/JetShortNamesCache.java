@@ -129,8 +129,8 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @NotNull
-    public Collection<FqName> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope).getBindingContext();
+    public Collection<FqName> getFQNamesByName(@NotNull final String name, JetFile file, @NotNull GlobalSearchScope scope) {
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
         return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
             @Override
             public boolean apply(@Nullable FqName fqName) {

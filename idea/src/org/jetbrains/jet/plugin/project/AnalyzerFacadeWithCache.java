@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.project;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
@@ -110,48 +109,5 @@ public final class AnalyzerFacadeWithCache {
     private static void handleError(@NotNull Throwable e) {
         DiagnosticUtils.throwIfRunningOnServer(e);
         LOG.error(e);
-    }
-
-    /**
-     * Analyze project with string cache for the whole project. All given files will be analyzed only for descriptors.
-     */
-    @NotNull
-    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull final Project project, @NotNull final Collection<JetFile> files) {
-        // Need lock for getValue(), because parallel threads can start evaluation of compute() simultaneously
-        synchronized (lock) {
-            CachedValue<AnalyzeExhaust> bindingContextCachedValue = project.getUserData(ANALYZE_EXHAUST);
-            if (bindingContextCachedValue == null) {
-                bindingContextCachedValue =
-                    CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AnalyzeExhaust>() {
-                        @Override
-                        public Result<AnalyzeExhaust> compute() {
-                            try {
-                                AnalyzeExhaust analyzeExhaust = AnalyzerFacadeProvider.getAnalyzerFacadeForProject(project)
-                                    .analyzeFiles(project,
-                                                  files,
-                                                  Predicates.<PsiFile>alwaysFalse(),
-                                                  JetControlFlowDataTraceFactory.EMPTY);
-                                return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                            }
-                            catch (ProcessCanceledException e) {
-                                throw e;
-                            }
-                            catch (Throwable e) {
-                                handleError(e);
-                                return emptyExhaust();
-                            }
-                        }
-
-                        @NotNull
-                        private Result<AnalyzeExhaust> emptyExhaust() {
-                            BindingTraceContext bindingTraceContext = new BindingTraceContext();
-                            AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
-                            return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
-                        }
-                    }, false);
-                project.putUserData(ANALYZE_EXHAUST, bindingContextCachedValue);
-            }
-            return bindingContextCachedValue.getValue();
-        }
     }
 }

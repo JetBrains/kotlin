@@ -16,18 +16,19 @@
 
 package org.jetbrains.jet.plugin.refactoring.rename;
 
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.rename.RenameProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -64,9 +65,23 @@ public class RenameInKotlinTest extends MultiFileTestCase {
         doTest(new PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCache(
-                        getProject(), GlobalSearchScope.allScope(getProject()))
-                            .getBindingContext();
+                VirtualFile child = rootDir.findChild(getTestName(false) + ".kt");
+                if (child == null) {
+                    return;
+                }
+
+                Document document = FileDocumentManager.getInstance().getDocument(child);
+                if (document == null) {
+                    return;
+                }
+
+                PsiFile file = PsiDocumentManager.getInstance(getProject()).getPsiFile(document);
+                if (!(file instanceof JetFile)) {
+                    return;
+                }
+
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)file)
+                        .getBindingContext();
                 ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
 
                 assertNotNull(classDescriptor);
@@ -79,8 +94,6 @@ public class RenameInKotlinTest extends MultiFileTestCase {
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments();
                 FileDocumentManager.getInstance().saveAllDocuments();
                 VirtualFileManager.getInstance().refresh(false);
-
-
             }
         });
     }

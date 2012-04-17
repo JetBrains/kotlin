@@ -53,7 +53,10 @@ import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -85,7 +88,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         assert referenceName != null;
 
         List<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, file.getProject()));
+        result.addAll(getClassNames(referenceName, (JetFile) file));
         result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
         result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
 
@@ -142,11 +145,11 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull Project project) {
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
+        final GlobalSearchScope scope = GlobalSearchScope.allScope(file.getProject());
         Set<FqName> possibleResolveNames = Sets.newHashSet();
-        possibleResolveNames.addAll(JetCacheManager.getInstance(project).getNamesCache().getFQNamesByName(referenceName, scope));
-        possibleResolveNames.addAll(getJavaClasses(referenceName, project, scope));
+        possibleResolveNames.addAll(JetCacheManager.getInstance(file.getProject()).getNamesCache().getFQNamesByName(referenceName, file, scope));
+        possibleResolveNames.addAll(getJavaClasses(referenceName, file.getProject(), scope));
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
