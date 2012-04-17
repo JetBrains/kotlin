@@ -117,7 +117,7 @@ fun LinkedList<Int>.sum(f : (Int, Int )-> Int): Int {
 //      }
 //}
 
-fun Char.isDigit() = Character.isDigit(this)
+// fun Char.isDigit() = Character.isDigit(this)
 
 fun Reader.forEachChar(body : (Char) -> Unit) {
     do {

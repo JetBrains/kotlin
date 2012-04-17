@@ -103,7 +103,7 @@ fun <T> List<T>.backwards() : Iterable<T> = object : Iterable<T> {
       }
 }
 
-fun Char.isDigit() = Character.isDigit(this)
+// fun Char.isDigit() = Character.isDigit(this)
 
 //class Queue<T>(initialBufSize : Int) {
 //

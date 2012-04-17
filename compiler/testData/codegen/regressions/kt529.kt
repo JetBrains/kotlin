@@ -86,7 +86,7 @@ class Luhny() {
     }
 }
 
-fun Char.isDigit() = Character.isDigit(this)
+// fun Char.isDigit() = Character.isDigit(this)
 
 fun java.lang.Iterable<Int>.sum(f : (index : Int, value : Int) -> Int) : Int {
     var sum = 0
