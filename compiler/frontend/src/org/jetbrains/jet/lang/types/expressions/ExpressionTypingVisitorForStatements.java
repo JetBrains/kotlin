@@ -169,6 +169,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
+        JetExpression right = expression.getRight();
+        if (right == null) return null;
+
         //There is a temporary binding trace for an opportunity to resolve set method for array if needed (the initial trace should be used there)
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(contextWithExpectedType.trace);
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceExpectedReturnType(TypeUtils.NO_EXPECTED_TYPE).replaceBindingTrace(temporaryBindingTrace);
@@ -180,7 +183,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetType leftType = facade.getType(left, context);
         if (leftType == null) {
-            facade.getType(expression.getRight(), context);
+            facade.getType(right, context);
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign));
             temporaryBindingTrace.commit();
             return null;
@@ -208,7 +211,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             for (ResolvedCall<? extends FunctionDescriptor> call : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(call.getResultingDescriptor());
             }
-            facade.getType(expression.getRight(), context);
+            facade.getType(right, context);
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);
         }
         else if (assignmentOperationType != null) {
@@ -222,7 +225,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.record(VARIABLE_REASSIGNMENT, expression);
             if (left instanceof JetArrayAccessExpression) {
                 ExpressionTypingContext contextForResolve = context.replaceScope(scope).replaceBindingTrace(TemporaryBindingTrace.create(contextWithExpectedType.trace));
-                basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, expression.getRight(), contextForResolve, context.trace);
+                basic.resolveArrayAccessSetMethod((JetArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
         }
         basic.checkLValue(context.trace, expression.getLeft());
