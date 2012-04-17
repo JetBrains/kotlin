@@ -1,0 +1,53 @@
+fun box() : String {
+    if (!B().test()) return "fail 1";
+    if (!D().test()) return "fail 2"
+    if (!L().test()) return "fail 4"
+    if (!N().test()) return "fail 5"
+    return "OK"
+}
+
+class A {
+    fun foo() = 1
+}
+
+class B {
+    fun foo() = 2
+
+    fun A.bar() = foo()
+
+    fun test() = A().bar() == 1
+}
+
+
+class C {
+    fun D.foo() = 2
+}
+
+class D {
+    fun C.foo() = 1
+
+    fun C.bar() = foo()
+
+    fun test() = C().bar() == 1
+}
+
+
+class M
+fun M.foo() = 2
+
+class N {
+    fun M.foo() = 1
+
+    fun M.bar() = foo()
+
+    fun test() = M().bar() == 1
+}
+
+class K
+class L {
+    fun K.bar() = foo()
+
+    fun test() = K().bar() == 1
+}
+fun K.foo() = 1
+fun L.foo() = 2

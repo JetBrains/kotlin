@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +26,6 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSuperExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastServiceImpl;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -79,8 +77,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     @NotNull
     public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull BasicResolutionContext context, @NotNull String name,
                                                            @NotNull JetReferenceExpression functionReference) {
-        List<ResolutionTask<D>> result = Lists.newArrayList();
-
         ReceiverDescriptor explicitReceiver = context.call.getExplicitReceiver();
         final JetScope scope;
         if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
@@ -100,24 +96,17 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 return Visibilities.isVisible(candidateDescriptor, scope.getContainingDeclaration());
             }
         };
-        Predicate<ResolvedCallImpl<D>> invisibleStrategy = new Predicate<ResolvedCallImpl<D>>() {
-            @Override
-            public boolean apply(@Nullable ResolvedCallImpl<D> call) {
-                return !visibleStrategy.apply(call);
-            }
-        };
-        doComputeTasks(scope, explicitReceiver, name, result, context, functionReference, visibleStrategy);
-        doComputeTasks(scope, explicitReceiver, name, result, context, functionReference, invisibleStrategy);
 
-        return result;
+        ResolutionTaskHolder<D> result = new ResolutionTaskHolder<D>(functionReference, context, visibleStrategy );
+        doComputeTasks(scope, explicitReceiver, name, result, context);
+
+        return result.getTasks();
     }
 
     private void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver,
-            @NotNull String name, @NotNull List<ResolutionTask<D>> result,
-            @NotNull BasicResolutionContext context, @NotNull JetReferenceExpression functionReference,
-            @NotNull Predicate<ResolvedCallImpl<D>> filterStrategy) {
+            @NotNull String name, @NotNull ResolutionTaskHolder<D> result,
+            @NotNull BasicResolutionContext context) {
         AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
-        DataFlowInfo dataFlowInfo = autoCastService.getDataFlowInfo();
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
         if (receiver.exists()) {
@@ -135,25 +124,16 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members);
             }
 
-            if (getReceiverSuper(receiver) != null) {
-                // If the call is of the form super.foo(), it can actually be only a member
-                // But  if there's no appropriate member, we would like to report that super cannot be a receiver for an extension
-                // Thus, put members first
-                addTask(result, members, context, functionReference, filterStrategy);
-                addTask(result, locals, context, functionReference, filterStrategy);
-            }
-            else {
-                addTask(result, locals, context, functionReference, filterStrategy);
-                addTask(result, members, context, functionReference, filterStrategy);
-            }
+            result.addLocalExtensions(locals);
+            result.addMembers(members);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
                 Collection<D> memberExtensions = getExtensionsByName(implicitReceiver.getType().getMemberScope(), name);
                 List<ReceiverDescriptor> variantsForImplicitReceiver = autoCastService.getVariantsForReceiver(implicitReceiver);
-                addTask(result, convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver), context, functionReference, filterStrategy);
+                result.addNonLocalExtensions(convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver));
             }
 
-            addTask(result, nonlocals, context, functionReference, filterStrategy);
+            result.addNonLocalExtensions(nonlocals);
         }
         else {
             Collection<ResolvedCallImpl<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), getNonExtensionsByName(scope, name));
@@ -163,13 +143,12 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             //noinspection unchecked,RedundantTypeArguments
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
 
-            addTask(result, locals, context, functionReference, filterStrategy);
+            result.addLocalExtensions(locals);
+            result.addNonLocalExtensions(nonlocals);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
-                doComputeTasks(scope, implicitReceiver, name, result, context, functionReference, filterStrategy);
+                doComputeTasks(scope, implicitReceiver, name, result, context);
             }
-
-            addTask(result, nonlocals, context, functionReference, filterStrategy);
         }
     }
 
@@ -180,7 +159,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     }
 
     private void convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters, Collection<ResolvedCallImpl<D>> result) {
-//        Collection<ResolvedCallImpl<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor thisObject : thisObjects) {
             for (ReceiverDescriptor receiverParameter : receiverParameters) {
                 for (D extension : descriptors) {
@@ -191,7 +169,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                 }
             }
         }
-//        return result;
     }
 
     public static <D extends CallableDescriptor> Collection<ResolvedCallImpl<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
@@ -235,16 +212,6 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             }
         }
         return false;
-    }
-
-    private void addTask(@NotNull List<ResolutionTask<D>> result,
-            @NotNull Collection<ResolvedCallImpl<D>> candidates,
-            @NotNull final BasicResolutionContext context,
-            @NotNull JetReferenceExpression functionReference,
-            @NotNull Predicate<ResolvedCallImpl<D>> filterStrategy) {
-        Collection<ResolvedCallImpl<D>> filteredCandidates = Collections2.filter(candidates, filterStrategy);
-        if (filteredCandidates.isEmpty()) return;
-        result.add(new ResolutionTask<D>(filteredCandidates, functionReference, context));
     }
 
     @NotNull

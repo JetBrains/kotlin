@@ -312,4 +312,8 @@ public class ClassGenTest extends CodegenTestCase {
         blackBoxFile("regressions/kt1538.kt");
         System.out.println(generateToText());
     }
+
+    public void testResolveOrder() throws Exception {
+        blackBoxFile("classes/resolveOrder.jet");
+    }
 }
