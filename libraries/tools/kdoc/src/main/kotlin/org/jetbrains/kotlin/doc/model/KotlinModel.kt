@@ -320,6 +320,23 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
         return markdownProcessor.markdownToHtml(text, linkRenderer).sure()
     }
 
+    fun sourceLinkFor(filePath: String, sourceLine: Int, lineLinkText: String = "#L"): String? {
+        val root = config.sourceRootHref
+        if (root != null) {
+            // lets remove the root project directory
+            val rootDir = projectRootDir()
+            val canonicalFile = File(filePath).getCanonicalPath() ?: ""
+            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
+                canonicalFile.substring(rootDir.length()) else canonicalFile
+            if (relativeFile != null) {
+                val cleanRoot = root.trimTrailing("/")
+                val cleanPath = relativeFile.trimLeading("/")
+                return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
+            }
+        }
+        return null
+    }
+
     protected fun isLocal(descriptor: DeclarationDescriptor): Boolean {
         return if (descriptor is ModuleDescriptor) {
             true
@@ -513,7 +530,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     val fnName = words[1].sure()
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
                     if (content != null) {
-                        return highlighter.highlight(content)
+                        return content
                     } else {
                         warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
                     }
@@ -538,7 +555,17 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                     if (matcher.find()) {
                         val idx = matcher.end()
                         val remaining = text.substring(idx)
-                        return extractBlock(remaining)
+                        val content = extractBlock(remaining)
+                        if (content != null) {
+                            val highlight = highlighter.highlight(content)
+                            val filePath = filePath(file)
+                            val sourceLine = text.substring(0, idx).count{ it == '\n'} + 1
+                            val link = if (filePath != null) sourceLinkFor(filePath, sourceLine) else  null
+                            return if (link != null)
+                                """<div class="source-detail"><a href="$link" target="_top"  class="repoSourceCode">source</a></div>
+$highlight"""
+                            else highlight
+                        }
                     }
                 }
             }
@@ -860,25 +887,13 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     fun sourceLink(): String {
         val file = filePath()
         if (file != null) {
-            // lets remove the root project directory
-            val rootDir = model.projectRootDir()
-            val canonicalFile = File(file).getCanonicalPath() ?: ""
-            val relativeFile = if (rootDir != null && canonicalFile.startsWith(rootDir))
-                canonicalFile.substring(rootDir.length()) else canonicalFile
-            return sourceLinkFor(relativeFile!!)
+            val link = model.sourceLinkFor(file, sourceLine)
+            if (link != null) return link
         }
         return ""
     }
 
     fun filePath(): String? = model.filePath(declarationDescriptor)
-
-    protected fun sourceLinkFor(filePath: String, lineLinkText: String = "#L"): String {
-        val root = model.config.sourceRootHref!!
-        val cleanRoot = root.trimTrailing("/")
-        val cleanPath = filePath.trimLeading("/")
-        return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
-
-    }
 
     fun location(): LineAndColumn? = model.locationFor(declarationDescriptor)
 
