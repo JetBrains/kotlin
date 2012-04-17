@@ -734,13 +734,25 @@ public class JavaDescriptorResolver {
         return jetSignatureTypeParametersVisitor.r;
     }
 
-    private ClassOrNamespaceDescriptor resolveParentDescriptor(PsiClass psiClass) {
+    @NotNull
+    private ClassOrNamespaceDescriptor resolveParentDescriptor(@NotNull PsiClass psiClass) {
+        FqName fqName = new FqName(psiClass.getQualifiedName());
+
         PsiClass containingClass = psiClass.getContainingClass();
         if (containingClass != null) {
-            return resolveClass(new FqName(containingClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+            FqName containerFqName = new FqName(containingClass.getQualifiedName());
+            ClassDescriptor clazz = resolveClass(containerFqName, DescriptorSearchRule.INCLUDE_KOTLIN);
+            if (clazz == null) {
+                throw new IllegalStateException("PsiClass not found by name " + containerFqName + ", required to be container declaration of " + fqName);
+            }
+            return clazz;
         }
 
-        return resolveNamespace(new FqName(psiClass.getQualifiedName()).parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
+        NamespaceDescriptor ns = resolveNamespace(fqName.parent(), DescriptorSearchRule.INCLUDE_KOTLIN);
+        if (ns == null) {
+            throw new IllegalStateException("cannot resolve namespace " + fqName.parent() + ", required to be container for " + fqName);
+        }
+        return ns;
     }
 
     private List<TypeParameterDescriptorInitialization> makeUninitializedTypeParameters(@NotNull DeclarationDescriptor containingDeclaration, @NotNull PsiTypeParameter[] typeParameters) {

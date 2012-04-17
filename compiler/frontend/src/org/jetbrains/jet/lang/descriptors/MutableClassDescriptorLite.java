@@ -60,7 +60,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     private ClassReceiver implicitReceiver;
 
-    public MutableClassDescriptorLite(DeclarationDescriptor containingDeclaration, ClassKind kind) {
+    public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration, ClassKind kind) {
         super(containingDeclaration);
         this.kind = kind;
     }
