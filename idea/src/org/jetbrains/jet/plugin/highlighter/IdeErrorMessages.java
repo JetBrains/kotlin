@@ -23,8 +23,9 @@ import org.jetbrains.jet.lang.diagnostics.rendering.*;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.NAME;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
 
 /**
  * @author Evgeny Gerashchenko
@@ -64,6 +65,13 @@ public class IdeErrorMessages {
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+
+        MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +
+                                                 "{1}</html>", RENDER_CLASS_OR_OBJECT,
+                DescriptorRenderer.HTML);
+
+        MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
+                RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
 
         MAP.setImmutable();
     }
