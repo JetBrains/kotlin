@@ -6,7 +6,7 @@ object Assertions {
 }
 
 /**
-* Throws an [[AssertionError]] with specified *message* if the *value* is false
+* Throws an [[AssertionError]] with an optional *message* if the *value* is false
 * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
 */
 public inline fun assert(value: Boolean, message: Any = "Assertion failed") {
@@ -18,7 +18,7 @@ public inline fun assert(value: Boolean, message: Any = "Assertion failed") {
 }
 
 /**
- * Throws an [[AssertionError]] with specified *message* if the *value* is false
+ * Throws an [[AssertionError]] with the specified *lazyMessage* if the *value* is false
  * and runtime assertions have been enabled on the JVM using the *-ea* JVM option.
  */
 public inline fun assert(value: Boolean, lazyMessage: () -> String) {
@@ -31,7 +31,7 @@ public inline fun assert(value: Boolean, lazyMessage: () -> String) {
 }
 
 /**
- * Throws an [[IllegalArgumentException]] with specified *message* if the *value* is false.
+ * Throws an [[IllegalArgumentException]] with an optional *message* if the *value* is false.
  *
  * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithMessage
  */
@@ -42,7 +42,7 @@ public inline fun require(value: Boolean, message: Any = "Failed requirement"): 
 }
 
 /**
- * Throws an [[IllegalArgumentException]] with specified *message* if the *value* is false.
+ * Throws an [[IllegalArgumentException]] with the *lazyMessage* if the *value* is false.
  *
  * @includeFunctionBody ../../test/PreconditionsTest.kt failingRequireWithLazyMessage
  */
@@ -68,7 +68,7 @@ public inline fun <T> requireNotNull(value: T?, message: Any = "Required value w
 }
 
 /**
- * Throws an [[IllegalStateException]] with specified *message* if the *value* is false.
+ * Throws an [[IllegalStateException]] with an optional *message* if the *value* is false.
  *
  * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithMessage
  */
@@ -79,9 +79,9 @@ public inline fun check(value: Boolean, message: Any = "Check failed"): Unit {
 }
 
 /**
- * Throws an [[IllegalStateException]] with specified *message* if the *value* is false.
+ * Throws an [[IllegalStateException]] with the *lazyMessage* if the *value* is false.
  *
- * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithMessage
+ * @includeFunctionBody ../../test/PreconditionsTest.kt failingCheckWithLazyMessage
  */
 public inline fun check(value: Boolean, lazyMessage: () -> String): Unit {
     if (!value) {

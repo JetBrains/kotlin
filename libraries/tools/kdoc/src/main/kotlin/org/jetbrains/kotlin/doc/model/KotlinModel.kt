@@ -485,30 +485,7 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
                         text = text.trimLeading("* ")
                         if (text == "*") text = ""
                     }
-                    // lets check for javadoc style @ tags and macros
-                    if (text.startsWith("@")) {
-                        val remaining = text.substring(1)
-                        val macro = "includeFunctionBody"
-                        if (remaining.startsWith(macro)) {
-                            val next = remaining.substring(macro.length()).trim()
-                            val words = next.split("\\s")
-                            // TODO we could default the test function name to match that of the
-                            // source code function if folks adopted a convention of naming the test method after the
-                            // method its acting as a demo/test for
-                            if (words != null && words.size > 1) {
-                                val includeFile = words[0].sure()
-                                val fnName = words[1].sure()
-                                val content = findFunctionInclude(psiElement, includeFile, fnName)
-                                if (content != null) {
-                                    text = highlighter.highlight(content)
-                                } else {
-                                    warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
-                                }
-                             }
-                        } else {
-                            warning("Unknown kdoc macro @$remaining")
-                        }
-                    }
+                    text = processMacros(text, psiElement)
                     buffer.append(text)
                 }
                 return buffer.toString() ?: ""
@@ -517,6 +494,35 @@ class KModel(var context: BindingContext, val config: KDocConfig) {
             }
         }
         return ""
+    }
+
+    protected fun processMacros(textWithWhitespace: String, psiElement: PsiElement): String {
+        val text = textWithWhitespace.trim()
+        // lets check for javadoc style @ tags and macros
+        if (text.startsWith("@")) {
+            val remaining = text.substring(1)
+            val macro = "includeFunctionBody"
+            if (remaining.startsWith(macro)) {
+                val next = remaining.substring(macro.length()).trim()
+                val words = next.split("\\s")
+                // TODO we could default the test function name to match that of the
+                // source code function if folks adopted a convention of naming the test method after the
+                // method its acting as a demo/test for
+                if (words != null && words.size > 1) {
+                    val includeFile = words[0].sure()
+                    val fnName = words[1].sure()
+                    val content = findFunctionInclude(psiElement, includeFile, fnName)
+                    if (content != null) {
+                        return highlighter.highlight(content)
+                    } else {
+                        warning("could not find function $fnName in file $includeFile from source file ${psiElement.getContainingFile()}")
+                    }
+                }
+            } else {
+                warning("Unknown kdoc macro @$remaining")
+            }
+        }
+        return textWithWhitespace
     }
 
     protected fun findFunctionInclude(psiElement: PsiElement, includeFile: String, functionName: String): String? {
