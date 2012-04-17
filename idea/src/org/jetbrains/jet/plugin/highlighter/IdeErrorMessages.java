@@ -74,6 +74,10 @@ public class IdeErrorMessages {
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
         MAP.put(CONFLICTING_OVERLOADS, "<html>{1}<br />is already defined in ''{0}''</html>", DescriptorRenderer.HTML, TO_STRING);
 
+        MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
+                                      "<table><tr><td>Expected:</td><td>{1}</td></tr>" +
+                                      "<tr><td>Found:</td><td>{2}</td></tr></table></html>", TO_STRING, RENDER_TYPE, RENDER_TYPE);
+
         MAP.setImmutable();
     }
 
