@@ -124,13 +124,3 @@ public inline fun <T> Array<T>.isEmpty() : Boolean = this.size == 0
 
 /** Returns the array if its not null or else returns an empty array */
 public inline fun <T> Array<T>?.orEmpty() : Array<T> = if (this != null) this else array<T>()
-
-public inline fun CharArray.toList(): List<Character> {
-    val list = ArrayList<Character>(this.size)
-    for (c in this) {
-        if (c != null) {
-            list.add(Character(c))
-        }
-    }
-    return list
-}

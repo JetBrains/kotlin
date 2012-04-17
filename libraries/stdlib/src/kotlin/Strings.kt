@@ -54,7 +54,7 @@ public inline fun String.getBytes() : ByteArray = (this as java.lang.String).get
 
 public inline fun String.toCharArray() : CharArray = (this as java.lang.String).toCharArray().sure()
 
-public inline fun String.toCharList(): List<Character> = toCharArray().toList()
+public inline fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public inline fun String.format(format : String, vararg args : Any?) : String = java.lang.String.format(format, args).sure()
 

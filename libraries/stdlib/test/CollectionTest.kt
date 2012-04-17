@@ -162,7 +162,7 @@ class CollectionTest {
 
     test fun flatMap() {
         val data = arrayList("", "foo", "bar", "x", "")
-        val characters = data.flatMap<String,Character>{ it.toCharList() }
+        val characters = data.flatMap<String,Char>{ it.toCharList() }
         println("Got list of characters ${characters}")
         assertEquals(7, characters.size())
         val text = characters.makeString("")
