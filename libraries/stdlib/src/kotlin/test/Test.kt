@@ -67,6 +67,14 @@ public inline fun assertNotNull(actual: Any?, message: String = "") {
     asserter.assertNotNull(message, actual)
 }
 
+/** Asserts that the expression is not null, with an optional message and a function block to process the not-null value */
+public inline fun <T, R> assertNotNull(actual: T?, message: String = "", block: (T) -> R) {
+    asserter.assertNotNull(message, actual)
+    if (actual != null) {
+        block(actual)
+    }
+}
+
 /** Asserts that the expression is null, with an optional message */
 public inline fun assertNull(actual: Any?, message: String = "") {
     asserter.assertNull(message, actual)

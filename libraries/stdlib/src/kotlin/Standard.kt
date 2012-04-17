@@ -8,6 +8,8 @@ import java.util.LinkedHashSet
 import java.util.TreeSet
 import java.util.SortedSet
 import java.util.Comparator
+import java.io.PrintWriter
+import java.io.PrintStream
 
 /**
 Helper to make jet.Iterator usable in for
@@ -96,4 +98,20 @@ public inline fun runnable(action: ()-> Unit): Runnable {
             action()
         }
     }
+}
+
+/**
+ * Allows a stack trace to be printed from Kotlin's [[Throwable]]
+ */
+public inline fun Throwable.printStackTrace(writer: PrintWriter): Unit {
+    val jlt = this as java.lang.Throwable
+    jlt.printStackTrace(writer)
+}
+
+/**
+ * Allows a stack trace to be printed from Kotlin's [[Throwable]]
+ */
+public inline fun Throwable.printStackTrace(stream: PrintStream): Unit {
+    val jlt = this as java.lang.Throwable
+    jlt.printStackTrace(stream)
 }
