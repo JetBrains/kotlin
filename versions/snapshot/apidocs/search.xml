@@ -1876,6 +1876,11 @@
   <kind>fun</kind>
 </search>
 <search>
+  <href>kotlin/jet/Throwable-extensions.html#printStackTrace(java.io.PrintStream)</href>
+  <name>printStackTrace() [jet.Throwable]</name>
+  <kind>fun</kind>
+</search>
+<search>
   <href>kotlin/java/util/Map-extensions.html#putAll(jet.Array)</href>
   <name>putAll() [java.util.Map]</name>
   <kind>fun</kind>
