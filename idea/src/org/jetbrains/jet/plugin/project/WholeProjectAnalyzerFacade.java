@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -39,10 +37,5 @@ public final class WholeProjectAnalyzerFacade {
     @NotNull
     public static AnalyzeExhaust analyzeProjectWithCacheOnAFile(@NotNull JetFile file) {
         return analyzeFileWithCache(file, JetFilesProvider.getInstance(file.getProject()).sampleToAllFilesInModule());
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeProjectWithCache(@NotNull Project project, @NotNull GlobalSearchScope scope) {
-        return AnalyzerFacadeWithCache.analyzeProjectWithCache(project, JetFilesProvider.getInstance(project).allInScope(scope));
     }
 }
