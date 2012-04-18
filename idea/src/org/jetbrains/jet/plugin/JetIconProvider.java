@@ -64,7 +64,7 @@ public class JetIconProvider extends IconProvider {
         }
         if (psiElement instanceof JetNamedFunction) {
             return PsiTreeUtil.getParentOfType(psiElement, JetNamedDeclaration.class) instanceof JetClass
-                   ? JetIcons.LAMBDA
+                   ? PlatformIcons.METHOD_ICON
                    : JetIcons.FUNCTION;
         }
         if (psiElement instanceof JetClass) {
@@ -90,14 +90,14 @@ public class JetIconProvider extends IconProvider {
             if (parameter.getValOrVarNode() != null) {
                 JetParameterList parameterList = PsiTreeUtil.getParentOfType(psiElement, JetParameterList.class);
                 if (parameterList != null && parameterList.getParent() instanceof JetClass) {
-                    return parameter.isVarArg() ? JetIcons.VAR : JetIcons.VAL;
+                    return parameter.isMutable() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
                 }
             }
             return JetIcons.PARAMETER;
         }
         if (psiElement instanceof JetProperty) {
             JetProperty property = (JetProperty)psiElement;
-            return property.isVar() ? JetIcons.VAR : JetIcons.VAL;
+            return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
         }
         return null;
     }

@@ -34,4 +34,6 @@ public interface JetIcons {
     Icon VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/variable.png");
     Icon VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/value.png");
     Icon PARAMETER = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/parameter.png");
+    Icon FIELD_VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_value.png");
+    Icon FIELD_VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_variable.png");
 }
