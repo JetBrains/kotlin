@@ -212,7 +212,7 @@ public inline fun Writer.buffered(bufferSize: Int = defaultBufferSize): Buffered
 /**
  * Iterates through each line of this reader then closing the [[Reader]] when its completed
  */
-public inline fun Reader.forEachLine(block: (String) -> Unit): Unit {
+public inline fun Reader.forEachLine(block: (String) -> Any): Unit {
     this.use{
         val iter = buffered().lineIterator()
         while (iter.hasNext) {
