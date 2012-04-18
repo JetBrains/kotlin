@@ -38,8 +38,8 @@ public class Visibilities {
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
-                if ((parent instanceof ClassDescriptor && ((ClassDescriptor)parent).getKind() != ClassKind.OBJECT) ||
-                    parent instanceof NamespaceDescriptor) {
+                if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
+                        parent instanceof NamespaceDescriptor) {
                     break;
                 }
             }
