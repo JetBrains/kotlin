@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -118,7 +119,7 @@ public class ClosureAnnotator {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        if(CodegenUtil.isClassObject(classDescriptor))
+        if(DescriptorUtils.isClassObject(classDescriptor))
             return false;
 
         ClassDescriptor other = enclosing.get(classDescriptor);

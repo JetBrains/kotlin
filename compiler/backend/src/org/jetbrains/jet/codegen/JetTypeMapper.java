@@ -835,7 +835,7 @@ public class JetTypeMapper {
             return ACC_PROTECTED;
         }
         else if (p.getVisibility() == Visibilities.PRIVATE) {
-            if(CodegenUtil.isClassObject(declaration)) {
+            if(DescriptorUtils.isClassObject(declaration)) {
                 return defaultFlags;
             }
             return ACC_PRIVATE;

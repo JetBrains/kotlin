@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -121,7 +122,7 @@ public class PropertyCodegen {
     }
 
     private static boolean isExternallyAccessible(PropertyDescriptor p) {
-        return p.getVisibility() != Visibilities.PRIVATE || CodegenUtil.isClassObject(p.getContainingDeclaration());
+        return p.getVisibility() != Visibilities.PRIVATE || DescriptorUtils.isClassObject(p.getContainingDeclaration());
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {
