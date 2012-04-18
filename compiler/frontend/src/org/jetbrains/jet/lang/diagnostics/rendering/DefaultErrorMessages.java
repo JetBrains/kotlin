@@ -371,13 +371,7 @@ public class DefaultErrorMessages {
 
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
         MAP.put(TYPE_INFERENCE_FAILED, "Type inference failed: {0}", TO_STRING);
-        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0} type arguments expected", new Renderer<Integer>() {
-            @NotNull
-            @Override
-            public String render(@NotNull Integer argument) {
-                return argument == 0 ? "No" : argument.toString();
-            }
-        });
+        MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type argument} expected", null);
 
         MAP.put(UNRESOLVED_IDE_TEMPLATE, "Unresolved IDE template: {0}", TO_STRING);
 
