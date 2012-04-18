@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -227,7 +229,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
-            renderFullyQualifiedName(containingDeclaration, stringBuilder);
+            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+            stringBuilder.append(FqName.ROOT.toUnsafe().equals(fqName) ? "root package" : escape(fqName.getFqName()));
         }
     }
 
@@ -242,15 +245,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     public String renderMessage(String s) {
         return s;
-    }
-
-    private void renderFullyQualifiedName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration != null) {
-            renderFullyQualifiedName(containingDeclaration, stringBuilder);
-            stringBuilder.append(".");
-        }
-        stringBuilder.append(escape(descriptor.getName()));
     }
 
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitor<Void, StringBuilder> {
