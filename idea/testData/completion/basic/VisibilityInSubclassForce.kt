@@ -12,7 +12,4 @@ class SomeSubclass : Some() {
 }
 
 // TIME: 2
-// EXIST: testPublic, testProtected, testPackage
-
-// Should exist after KT-1805 Better diagnostic for access to private field of parent class
-// ABSENT: testPrivate
+// EXIST: testPublic, testProtected, testPackage, testPrivate
