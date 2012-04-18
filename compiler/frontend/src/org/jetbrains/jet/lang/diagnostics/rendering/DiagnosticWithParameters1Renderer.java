@@ -17,9 +17,12 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 
 import java.text.MessageFormat;
+
+import static org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRendererUtil.renderParameter;
 
 /**
 * @author Evgeny Gerashchenko
@@ -29,7 +32,7 @@ public class DiagnosticWithParameters1Renderer<A> implements DiagnosticRenderer<
     private final MessageFormat messageFormat;
     private final Renderer<? super A> rendererForA;
 
-    public DiagnosticWithParameters1Renderer(@NotNull String message, @NotNull Renderer<? super A> rendererForA) {
+    public DiagnosticWithParameters1Renderer(@NotNull String message, @Nullable Renderer<? super A> rendererForA) {
         this.messageFormat = new MessageFormat(message);
         this.rendererForA = rendererForA;
     }
@@ -37,6 +40,6 @@ public class DiagnosticWithParameters1Renderer<A> implements DiagnosticRenderer<
     @NotNull
     @Override
     public String render(@NotNull DiagnosticWithParameters1<?, A> diagnostic) {
-        return messageFormat.format(new Object[]{rendererForA.render(diagnostic.getA())});
+        return messageFormat.format(new Object[]{renderParameter(diagnostic.getA(), rendererForA)});
     }
 }

@@ -39,29 +39,29 @@ public final class DiagnosticFactoryToRendererMap {
         }
     }
 
-    public <E extends PsiElement> void put(SimpleDiagnosticFactory<E> factory, String message) {
+    public <E extends PsiElement> void put(@NotNull SimpleDiagnosticFactory<E> factory, @NotNull String message) {
         checkMutability();
         map.put(factory, new SimpleDiagnosticRenderer(message));
     }
 
-    public <E extends PsiElement, A> void put(DiagnosticFactory1<E, A> factory, String message, Renderer<? super A> rendererA) {
+    public <E extends PsiElement, A> void put(@NotNull DiagnosticFactory1<E, A> factory, @NotNull String message, @Nullable Renderer<? super A> rendererA) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters1Renderer<A>(message, rendererA));
     }
 
-    public <E extends PsiElement, A, B> void put(DiagnosticFactory2<E, A, B> factory,
-            String message,
-            Renderer<? super A> rendererA,
-            Renderer<? super B> rendererB) {
+    public <E extends PsiElement, A, B> void put(@NotNull DiagnosticFactory2<E, A, B> factory,
+            @NotNull String message,
+            @Nullable Renderer<? super A> rendererA,
+            @Nullable Renderer<? super B> rendererB) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters2Renderer<A, B>(message, rendererA, rendererB));
     }
 
-    public <E extends PsiElement, A, B, C> void put(DiagnosticFactory3<E, A, B, C> factory,
-            String message,
-            Renderer<? super A> rendererA,
-            Renderer<? super B> rendererB,
-            Renderer<? super C> rendererC) {
+    public <E extends PsiElement, A, B, C> void put(@NotNull DiagnosticFactory3<E, A, B, C> factory,
+            @NotNull String message,
+            @Nullable Renderer<? super A> rendererA,
+            @Nullable Renderer<? super B> rendererB,
+            @Nullable  Renderer<? super C> rendererC) {
         checkMutability();
         map.put(factory, new DiagnosticWithParameters3Renderer<A, B, C>(message, rendererA, rendererB, rendererC));
     }
