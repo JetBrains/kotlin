@@ -39,22 +39,26 @@ public class IdeErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP, DefaultErrorMessages.MAP);
 
+    private static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> HTML_AMBIGUOUS_CALLS =
+            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+                @NotNull
+                @Override
+                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                        stringBuilder.append("<li>");
+                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append("</li>");
+                    }
+                    return stringBuilder.toString();
+                }
+            };
+
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "<html>Assignment operators ambiguity. All these functions match.<ul>{0}</ul></table></html>", new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
-            @NotNull
-            @Override
-            public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
-                StringBuilder stringBuilder = new StringBuilder("");
-                for (ResolvedCall<? extends CallableDescriptor> call : calls) {
-                    stringBuilder.append("<li>");
-                    stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
-                    stringBuilder.append("</li>");
-                }
-                return stringBuilder.toString();
-            }
-        });
+        MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "<html>Assignment operators ambiguity. All these functions match.<ul>{0}</ul></table></html>",
+                HTML_AMBIGUOUS_CALLS);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
                                              "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
@@ -62,6 +66,8 @@ public class IdeErrorMessages {
         MAP.put(WRONG_GETTER_RETURN_TYPE, "<html>Getter return type must be equal to the type of the property." +
                                           "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
                                           "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(ITERATOR_AMBIGUITY, "<html>Method ''iterator()'' is ambiguous for this expression.<ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
 
         MAP.put(UPPER_BOUND_VIOLATED, "<html>Type argument is not within its bounds." +
                                       "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
