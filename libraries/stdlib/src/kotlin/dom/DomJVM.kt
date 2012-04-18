@@ -18,6 +18,9 @@ import java.lang.Iterable
 import java.util.List
 import java.util.Collection
 import java.io.Writer
+import java.io.File
+import java.io.InputStream
+import org.xml.sax.InputSource
 
 /** Creates a new document with the given document builder*/
 public fun createDocument(builder: DocumentBuilder): Document {
@@ -25,9 +28,52 @@ public fun createDocument(builder: DocumentBuilder): Document {
 }
 
 /** Creates a new document with an optional DocumentBuilderFactory */
-public fun createDocument(builderFactory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance().sure()): Document {
-    return createDocument(builderFactory.newDocumentBuilder().sure())
+public fun createDocument(builderFactory: DocumentBuilderFactory = defaultDocumentBuilderFactory()): Document {
+    return createDocument(builderFactory.newDocumentBuilder()!!)
 }
+
+/**
+ * Returns the default [[DocumentBuilderFactory]]
+ */
+public fun defaultDocumentBuilderFactory(): DocumentBuilderFactory {
+    return DocumentBuilderFactory.newInstance()!!
+}
+
+/**
+ * Returns the default [[DocumentBuilder]]
+ */
+public fun defaultDocumentBuilder(builderFactory: DocumentBuilderFactory = defaultDocumentBuilderFactory()): DocumentBuilder {
+    return builderFactory.newDocumentBuilder()!!
+}
+
+/**
+ * Parses the XML document using the given *file*
+ */
+public fun parseXml(file: File, builder: DocumentBuilder = defaultDocumentBuilder()): Document {
+    return builder.parse(file)!!
+}
+
+/**
+ * Parses the XML document using the given *uri*
+ */
+public fun parseXml(uri: String, builder: DocumentBuilder = defaultDocumentBuilder()): Document {
+    return builder.parse(uri)!!
+}
+
+/**
+ * Parses the XML document using the given *inputStream*
+ */
+public fun parseXml(inputStream: InputStream, builder: DocumentBuilder = defaultDocumentBuilder()): Document {
+    return builder.parse(inputStream)!!
+}
+
+/**
+ * Parses the XML document using the given *inputSource*
+ */
+public fun parseXml(inputSource: InputSource, builder: DocumentBuilder = defaultDocumentBuilder()): Document {
+    return builder.parse(inputSource)!!
+}
+
 
 /** Creates a new TrAX transformer */
 public fun createTransformer(source: Source? = null, factory: TransformerFactory = TransformerFactory.newInstance().sure()): Transformer {
