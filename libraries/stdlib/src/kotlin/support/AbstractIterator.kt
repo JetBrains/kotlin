@@ -17,7 +17,7 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
     private var state: State = State.NotReady
     private var next: T? = null
 
-    public override fun hasNext(): Boolean {
+    override fun hasNext(): Boolean {
         require(state != State.Failed)
         return when (state) {
             State.Done -> false
@@ -26,13 +26,13 @@ public abstract class AbstractIterator<T>: java.util.Iterator<T> {
         }
     }
 
-    public override fun next(): T {
+    override fun next(): T {
         if (!hasNext()) throw NoSuchElementException()
         state = State.NotReady
         return next.sure()
     }
 
-    public override fun remove() {
+    override fun remove() {
         throw UnsupportedOperationException()
     }
 

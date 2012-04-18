@@ -17,13 +17,13 @@ class TestBuilt<T>(name: String, val builder: TestBuilder<T>, val test: TestBuil
         get() = myState.sure()
         set(newState: T) { myState = newState }
 
-    public override fun countTestCases(): Int = 1
+    override fun countTestCases(): Int = 1
 
-    protected override fun setUp() = this.(builder.setUp)()
+    override fun setUp() = this.(builder.setUp)()
 
-    protected override fun tearDown() = this.(builder.tearDown)()
+    override fun tearDown() = this.(builder.tearDown)()
 
-    protected override fun runTest() = this.(test)()
+    override fun runTest() = this.(test)()
 }
 
 open class TestBuilder<T>(name: String) {

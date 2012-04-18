@@ -25,7 +25,7 @@ public inline fun <T> java.util.Iterator<T>.iterator() : java.util.Iterator<T> =
 Helper to make java.util.Enumeration usable in for
 */
 public fun <erased T> java.util.Enumeration<T>.iterator(): Iterator<T> = object: Iterator<T> {
-    public override val hasNext: Boolean
+    override val hasNext: Boolean
     get() = hasMoreElements()
 
     public override fun next() : T = nextElement().sure()

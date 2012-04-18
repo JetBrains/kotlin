@@ -3,7 +3,7 @@ trait ISized {
 }
 
 trait javaUtilIterator<T> : java.util.Iterator<T> {
-    public override fun remove() : Unit {
+    override fun remove() : Unit {
         throw UnsupportedOperationException()
     }
 }
@@ -11,9 +11,9 @@ trait javaUtilIterator<T> : java.util.Iterator<T> {
 class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
     private var index = 0
 
-    public override fun hasNext() : Boolean = index < array.size
+    override fun hasNext() : Boolean = index < array.size
 
-    public override fun next() : T = array.get(index++)
+    override fun next() : T = array.get(index++)
 }
 
 trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
@@ -23,7 +23,7 @@ trait ReadOnlyArray<out T> : ISized, java.lang.Iterable<T> {
     fun check(v: Any) =  v is T
   }
 
-  public override fun iterator() : java.util.Iterator<T> = MyIterator<T>(this)
+  override fun iterator() : java.util.Iterator<T> = MyIterator<T>(this)
 }
 
 trait WriteOnlyArray<in T> : ISized {

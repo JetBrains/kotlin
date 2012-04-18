@@ -28,7 +28,7 @@ class Customer() : ChangeSupport() {
 class MyChangeListener() : ChangeListener {
     val events = ArrayList<ChangeEvent>()
 
-    public override fun onPropertyChange(event: ChangeEvent): Unit {
+    override fun onPropertyChange(event: ChangeEvent): Unit {
         println("Property changed: $event")
         events.add(event)
     }

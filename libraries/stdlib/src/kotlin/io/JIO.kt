@@ -172,7 +172,7 @@ public inline fun <T: Closeable, R> T.use(block: (T)-> R) : R {
 /** Returns an [Iterator] of bytes over an input stream */
 public fun InputStream.iterator() : ByteIterator =
 object: ByteIterator() {
-    public override val hasNext : Boolean
+    override val hasNext : Boolean
     get() = available() > 0
 
     public override fun nextByte() : Byte = read().toByte()
@@ -238,7 +238,7 @@ class LineIterator(val reader: BufferedReader) : Iterator<String> {
     private var nextValue: String? = null
     private var done = false
 
-    public override val hasNext: Boolean
+    override val hasNext: Boolean
     get() {
         if (nextValue == null && !done) {
             nextValue = reader.readLine()

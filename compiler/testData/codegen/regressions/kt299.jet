@@ -1,5 +1,5 @@
 class MyRange1() : Range<Int> {
-    public override fun contains(item: Int) = true
+    override fun contains(item: Int) = true
 }
 
 class MyRange2() {

@@ -7,9 +7,9 @@ public abstract class BaseClass() {
 }
 
 public class Subclass : BaseClass() {
-    protected override val kind : String = "Physical"
+    override val kind : String = "Physical"
 
-    protected override val kind2 : String = " kind2"
+    override val kind2 : String = " kind2"
 }
 
 fun box():String = if(Subclass().debug() == "Physical kind2") "OK" else "fail"

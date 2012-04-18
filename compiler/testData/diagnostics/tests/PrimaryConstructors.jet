@@ -1,4 +1,3 @@
-
 class X {
   val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>x<!> : Int
 }
@@ -18,12 +17,12 @@ class Z : Y() {
 
 class MyIterable<T> : Iterable<T>
 {
-    public override fun iterator(): Iterator<T>  = MyIterator()
+    override fun iterator(): Iterator<T>  = MyIterator()
 
     class MyIterator : Iterator<T>
     {
-        public override val hasNext: Boolean = false
-        public override fun next(): T {
+        override val hasNext: Boolean = false
+        override fun next(): T {
             throw UnsupportedOperationException()
         }
     }
