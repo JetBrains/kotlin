@@ -18,7 +18,7 @@ open class D {
 }
 
 class E : D() {
-    internal <!NOTHING_TO_OVERRIDE!>override<!> fun self() = this
+    internal <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun self() = this
 
     fun test() {
         val <!UNUSED_VARIABLE!>s<!> : E = self()
@@ -31,7 +31,11 @@ open class F {
 }
 
 class G : F() {
-    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>override<!> fun protected_fun() {}
+    override fun protected_fun() {}
+}
+
+fun test_fun_stays_protected(g: G) {
+    g.<!INVISIBLE_MEMBER!>protected_fun<!>()
 }
 
 //------------
@@ -57,11 +61,11 @@ trait T {
 }
 
 open class L : T {
-    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>override<!> fun foo() {}
+    override fun foo() {}
 }
 
 class M : L() {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 //---------------
 trait R {

@@ -157,7 +157,10 @@ public interface Errors {
     DiagnosticFactory<JetDelegatorToSuperClass> INITIALIZER_WITH_NO_ARGUMENTS = DiagnosticFactory.create(ERROR, "Constructor arguments required");
     DiagnosticFactory<JetDelegationSpecifier> MANY_CALLS_TO_THIS = DiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
     DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, "{0} overrides nothing", PositioningStrategies.positionModifier(JetTokens.OVERRIDE_KEYWORD), DescriptorRenderer.TEXT);
-    DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN = DiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", PositioningStrategies.POSITION_NAME_IDENTIFIER, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
+    DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN =
+            DiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", PositioningStrategies.POSITION_NAME_IDENTIFIER, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
+    DiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor, DeclarationDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
+            DiagnosticFactory3.create(ERROR, "''{0}'' cannot has no access to ''{1}'' in class {2}, so it cannot override it", PositioningStrategies.positionModifier(JetTokens.OVERRIDE_KEYWORD), DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
 
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, "Missing delegation specifier ''{0}''", PositioningStrategies.POSITION_NAME_IDENTIFIER, NAME);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR, "The type constructor of enum entry should be ''{0}''", NAME);

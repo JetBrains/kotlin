@@ -106,6 +106,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         return this;
     }
 
+    public void setVisibility(@NotNull Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     public void setReturnType(@NotNull JetType unsubstitutedReturnType) {
         this.unsubstitutedReturnType = unsubstitutedReturnType;
     }

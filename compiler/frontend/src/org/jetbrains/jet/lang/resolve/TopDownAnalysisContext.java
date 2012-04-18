@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -46,7 +47,8 @@ public class TopDownAnalysisContext {
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<JetSecondaryConstructor, ConstructorDescriptor> constructors = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
-    private final Set<PropertyDescriptor> primaryConstructorParameterProperties = Sets.newHashSet();
+    private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
+    private Map<JetDeclaration, CallableMemberDescriptor> members = null;
 
     private StringBuilder debugOutput;
 
@@ -114,7 +116,7 @@ public class TopDownAnalysisContext {
         return namespaceDescriptors;
     }
 
-    public Set<PropertyDescriptor> getPrimaryConstructorParameterProperties() {
+    public Map<JetParameter, PropertyDescriptor> getPrimaryConstructorParameterProperties() {
         return primaryConstructorParameterProperties;
     }
 
@@ -134,4 +136,13 @@ public class TopDownAnalysisContext {
         return functions;
     }
 
+    public Map<JetDeclaration, CallableMemberDescriptor> getMembers() {
+        if (members == null) {
+            members = Maps.newHashMap();
+            members.putAll(functions);
+            members.putAll(properties);
+            members.putAll(primaryConstructorParameterProperties);
+        }
+        return members;
+    }
 }

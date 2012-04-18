@@ -32,6 +32,9 @@ public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            if (what instanceof CallableMemberDescriptor && ((CallableMemberDescriptor)what).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                return false;
+            }
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
@@ -93,7 +96,14 @@ public class Visibilities {
     public static final Visibility LOCAL = new Visibility("local", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            return true;
+            throw new IllegalStateException(); //This method shouldn't be invoked for LOCAL visibility
+        }
+    };
+
+    public static final Visibility INHERITED = new Visibility("inherited", false) {
+        @Override
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            throw new IllegalStateException("Visibility is unknown yet"); //This method shouldn't be invoked for INHERITED visibility
         }
     };
 
@@ -102,6 +112,9 @@ public class Visibilities {
     public static boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null) {
+            if (parent.getVisibility() == LOCAL) {
+                return true;
+            }
             if (!parent.getVisibility().isVisible(parent, from)) {
                 return false;
             }

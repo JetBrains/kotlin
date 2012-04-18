@@ -223,7 +223,7 @@ public class DeclarationResolver {
                         parameter, trace
                 );
                 classDescriptor.addPropertyDescriptor(propertyDescriptor);
-                context.getPrimaryConstructorParameterProperties().add(propertyDescriptor);
+                context.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
             }
         }
         if (constructorDescriptor != null) {

@@ -131,6 +131,10 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.setter = setter;
     }
 
+    public void setVisibility(@NotNull Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
