@@ -28,6 +28,8 @@ import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
 
 /**
+ * @see DefaultErrorMessages
+ *
  * @author Evgeny Gerashchenko
  * @since 4/13/12
  */
