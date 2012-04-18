@@ -17,15 +17,17 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.util.Collection;
+
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_TYPE;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 
 /**
  * @see DefaultErrorMessages
@@ -39,6 +41,20 @@ public class IdeErrorMessages {
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+
+        MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "<html>Assignment operators ambiguity. All these functions match.<ul>{0}</ul></table></html>", new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+            @NotNull
+            @Override
+            public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                StringBuilder stringBuilder = new StringBuilder("");
+                for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                    stringBuilder.append("<li>");
+                    stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
+                    stringBuilder.append("</li>");
+                }
+                return stringBuilder.toString();
+            }
+        });
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
                                              "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
