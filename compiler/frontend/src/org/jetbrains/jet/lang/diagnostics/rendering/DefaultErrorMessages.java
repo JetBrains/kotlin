@@ -64,12 +64,11 @@ public class DefaultErrorMessages {
             @Override
             public String render(@NotNull Collection<JetKeywordToken> tokens) {
                 StringBuilder sb = new StringBuilder();
-                for (Iterator<JetKeywordToken> iterator = tokens.iterator(); iterator.hasNext(); ) {
-                    JetKeywordToken modifier = iterator.next();
-                    sb.append(modifier.getValue());
-                    if (iterator.hasNext()) {
+                for (JetKeywordToken token : tokens) {
+                    if (sb.length() != 0) {
                         sb.append(" ");
                     }
+                    sb.append(token.getValue());
                 }
                 return sb.toString();
             }
