@@ -308,22 +308,23 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            builder.append(visibility).append(" ");
+            builder.append(renderKeyword(visibility.toString())).append(" ");
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
+            String keyword = "";
             switch (modality) {
                 case FINAL:
-                    builder.append("final");
+                    keyword = "final";
                     break;
                 case OPEN:
-                    builder.append("open");
+                    keyword = "open";
                     break;
                 case ABSTRACT:
-                    builder.append("abstract");
+                    keyword = "abstract";
                     break;
             }
-            builder.append(" ");
+            builder.append(renderKeyword(keyword)).append(" ");
         }
 
         @Override
