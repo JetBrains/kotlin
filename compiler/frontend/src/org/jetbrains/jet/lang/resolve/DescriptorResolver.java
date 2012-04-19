@@ -673,7 +673,8 @@ public class DescriptorResolver {
 
     @NotNull
     /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
-        return resolveVisibilityFromModifiers(modifierList, Visibilities.INTERNAL);
+        Visibility defaultVisibility = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD) ? Visibilities.INHERITED : Visibilities.INTERNAL;
+        return resolveVisibilityFromModifiers(modifierList, defaultVisibility);
     }
 
     @NotNull

@@ -78,25 +78,25 @@ fun box() : String {
 }
 
 class MyCollection1(): java.lang.Iterable<Int> {
-    public override fun iterator(): java.util.Iterator<Int> = MyIterator()
+    override fun iterator(): java.util.Iterator<Int> = MyIterator()
 
     class MyIterator(): java.util.Iterator<Int> {
         var k : Int = 5
 
-        public override fun next() : Int = k--
-        public override fun hasNext() = k > 0
-        public override fun remove() {}
+        override fun next() : Int = k--
+        override fun hasNext() = k > 0
+        override fun remove() {}
     }
 }
 
 class MyCollection2(): Iterable<Int> {
-    public override fun iterator(): Iterator<Int> = MyIterator()
+    override fun iterator(): Iterator<Int> = MyIterator()
 
     class MyIterator(): Iterator<Int> {
         var k : Int = 5
 
-        public override fun next() : Int = k--
-        public override val hasNext : Boolean
+        override fun next() : Int = k--
+        override val hasNext : Boolean
           get() = k > 0
     }
 }

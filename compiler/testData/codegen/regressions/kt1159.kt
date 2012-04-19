@@ -1,6 +1,6 @@
 public object RefreshQueue {
     private val workerThread: Thread = Thread(object : Runnable {
-        public override fun run() {
+        override fun run() {
             workerThread.isInterrupted()
         }
     });

@@ -495,7 +495,9 @@ public class CallResolver {
                 // and throw the results away
                 // We'll type check the arguments later, with the inferred types expected
                 TemporaryBindingTrace traceForUnknown = TemporaryBindingTrace.create(context.trace);
-                JetType type = expressionTypingServices.getType(context.scope, valueArgument.getArgumentExpression(), substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT), traceForUnknown);
+                JetExpression argumentExpression = valueArgument.getArgumentExpression();
+                JetType type = argumentExpression != null ? expressionTypingServices.getType(context.scope, argumentExpression,
+                        substituteDontCare.substitute(valueParameterDescriptor.getType(), Variance.INVARIANT), traceForUnknown) : null;
                 if (type != null && !ErrorUtils.isErrorType(type)) {
                     constraintSystem.addSubtypingConstraint(VALUE_ARGUMENT.assertSubtyping(type, effectiveExpectedType));
                 }

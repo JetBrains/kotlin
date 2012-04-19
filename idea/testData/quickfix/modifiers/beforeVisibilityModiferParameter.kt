@@ -4,6 +4,6 @@ trait ParseResult<out T> {
     public val value : T
 }
 
-class Success<T>(<caret>override val value : T) : ParseResult<T> {
+class Success<T>(<caret>internal override val value : T) : ParseResult<T> {
     public override val success : Boolean = true
 }

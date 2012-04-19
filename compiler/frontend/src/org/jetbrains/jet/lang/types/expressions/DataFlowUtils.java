@@ -48,7 +48,7 @@ public class DataFlowUtils {
     @NotNull
     public static DataFlowInfo extractDataFlowInfoFromCondition(@Nullable JetExpression condition, final boolean conditionValue, @Nullable final WritableScope scopeToExtend, final ExpressionTypingContext context) {
         if (condition == null) return context.dataFlowInfo;
-        final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(context.dataFlowInfo);
+        final Ref<DataFlowInfo> result = new Ref<DataFlowInfo>(null);
         condition.accept(new JetVisitorVoid() {
             @Override
             public void visitIsExpression(JetIsExpression expression) {
@@ -148,7 +148,7 @@ public class DataFlowUtils {
         if (result.get() == null) {
             return context.dataFlowInfo;
         }
-        return result.get();
+        return context.dataFlowInfo.and(result.get());
     }
 
     @Nullable

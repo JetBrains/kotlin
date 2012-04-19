@@ -1021,7 +1021,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             final boolean directToField = expression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER && contextKind() != OwnerKind.TRAIT_IMPL ;
             JetExpression r = getReceiverForSelector(expression);
             final boolean isSuper = r instanceof JetSuperExpression;
-            if(propertyDescriptor.getVisibility() == Visibilities.PRIVATE && !CodegenUtil.isClassObject(propertyDescriptor.getContainingDeclaration())) {
+            if(propertyDescriptor.getVisibility() == Visibilities.PRIVATE && !DescriptorUtils
+                    .isClassObject(propertyDescriptor.getContainingDeclaration())) {
                 if(context.getClassOrNamespaceDescriptor() != propertyDescriptor.getContainingDeclaration()) {
                     DeclarationDescriptor enclosed = propertyDescriptor.getContainingDeclaration();
                     if(enclosed != null && enclosed != context.getThisDescriptor()) {
@@ -1374,7 +1375,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             Type exprType = asmType(descriptor.getType());
             ClassReceiver classReceiver = (ClassReceiver) descriptor;
             ClassDescriptor classReceiverDeclarationDescriptor = (ClassDescriptor) classReceiver.getDeclarationDescriptor();
-            if(CodegenUtil.isClassObject(classReceiverDeclarationDescriptor)) {
+            if(DescriptorUtils.isClassObject(classReceiverDeclarationDescriptor)) {
                 ClassDescriptor containingDeclaration = (ClassDescriptor) classReceiverDeclarationDescriptor.getContainingDeclaration();
                 Type classObjType = typeMapper.mapType(containingDeclaration.getDefaultType(), MapTypeMode.IMPL);
                 v.getstatic(classObjType.getInternalName(), "$classobj", exprType.getDescriptor());

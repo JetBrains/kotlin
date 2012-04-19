@@ -6,7 +6,7 @@ class Test() : Thread("Test") {
 
         }
     }
-    public override fun run() {
+    override fun run() {
         init2()      // unresolved
         Test.init2() // ok
     }

@@ -42,21 +42,6 @@ public class CodegenUtil {
     public static boolean isInterface(JetType type) {
         return isInterface(type.getConstructor().getDeclarationDescriptor());
     }
-    
-    public static boolean isClassObject(DeclarationDescriptor descriptor) {
-        if(descriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-            if(classDescriptor.getKind() == ClassKind.OBJECT) {
-                if(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
-                    ClassDescriptor containingDeclaration = (ClassDescriptor) classDescriptor.getContainingDeclaration();
-                    if(classDescriptor.getDefaultType().equals(containingDeclaration.getClassObjectType())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
