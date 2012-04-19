@@ -162,7 +162,9 @@ public class JavaTypeTransformer {
                         PsiType[] psiArguments = classType.getParameters();
                         
                         if (parameters.size() != psiArguments.length) {
-                            throw new IllegalStateException();
+                            throw new IllegalStateException(
+                                    "parameters = " + parameters.size() + ", actual arguments = " + psiArguments.length
+                                            + " in " + classType.getPresentableText());
                         }
                         
                         for (int i = 0; i < parameters.size(); i++) {
