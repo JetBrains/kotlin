@@ -81,7 +81,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            super.visitVariableDescriptor(descriptor, builder);
+            super.visitVariableDescriptor(descriptor, builder, true);
             if (descriptor.hasDefaultValue()) {
                 builder.append(" = ...");
             }
@@ -260,9 +260,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
+            return visitVariableDescriptor(descriptor, builder, false);
+        }
+
+        protected Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder,
-                    descriptor.isVar(),
+                    skipValVar ? null : descriptor.isVar(),
                     Collections.<TypeParameterDescriptor>emptyList(),
                     ReceiverDescriptor.NO_RECEIVER,
                     descriptor.getType());
@@ -273,13 +277,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         private String renderPropertyPrefixAndComputeTypeString(
                 @NotNull StringBuilder builder,
-                boolean isVar,
+                @Nullable Boolean isVar,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull ReceiverDescriptor receiver,
                 @Nullable JetType outType) {
             String typeString = lt() + "no type>";
             if (outType != null) {
-                builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
+                if (isVar != null) {
+                    builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
+                }
                 typeString = renderType(outType);
             }
 
