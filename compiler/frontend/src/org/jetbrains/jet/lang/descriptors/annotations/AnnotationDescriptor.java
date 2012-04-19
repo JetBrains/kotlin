@@ -42,7 +42,7 @@ public class AnnotationDescriptor {
     }
 
     public void setAnnotationType(@NotNull JetType annotationType) {
-        if (!(annotationType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
+        if (false && !(annotationType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
             throw new IllegalStateException();
         }
         this.annotationType = annotationType;

@@ -76,6 +76,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.NamespaceFactory;
@@ -92,6 +93,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.constants.ShortValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -103,6 +105,7 @@ import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
+import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -1618,11 +1621,18 @@ public class JavaDescriptorResolver {
             return null;
         }
 
-        ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+        final ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
         if (clazz == null) {
             return null;
         }
-        annotation.setAnnotationType(clazz.getDefaultType());
+        // TODO: no lazy types
+        //annotation.setAnnotationType(clazz.getDefaultType());
+        annotation.setAnnotationType(DeferredType.create(new BindingTraceContext(), new LazyValue<JetType>() {
+            @Override
+            protected JetType compute() {
+                return clazz.getDefaultType();
+            }
+        }));
         ArrayList<CompileTimeConstant<?>> valueArguments = new ArrayList<CompileTimeConstant<?>>();
 
         PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();
