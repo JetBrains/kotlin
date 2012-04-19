@@ -388,6 +388,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     }
                 }
                 builder.append(">");
+                return true;
             }
             return false;
         }

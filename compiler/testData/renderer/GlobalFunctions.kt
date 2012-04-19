@@ -10,6 +10,8 @@ private fun prv(a : String, b : Int = 5) = 5
 
 public fun Int.ext() : Int {}
 
+public fun <out T> withTypeParam(a : Array<T>) : Int {}
+
 //package rendererTest defined in root package
 //public final fun pub() : Unit defined in rendererTest
 //internal final fun int() : jet.String defined in rendererTest
@@ -19,3 +21,6 @@ public fun Int.ext() : Int {}
 //value-parameter val a : jet.String defined in rendererTest.prv
 //value-parameter val b : jet.Int defined in rendererTest.prv
 //public final fun jet.Int.ext() : jet.Int defined in rendererTest
+//public final fun <out T> withTypeParam(a : jet.Array<T>) : jet.Int defined in rendererTest
+//<out T> defined in rendererTest.withTypeParam
+//value-parameter val a : jet.Array<T> defined in rendererTest.withTypeParam
