@@ -40,6 +40,8 @@ abstract class ForTestCompileSomething {
     private File jarFile;
 
     ForTestCompileSomething(@NotNull String jarName) {
+        System.out.println("Compiling " + jarName + "...");
+        long start = System.currentTimeMillis();
         this.jarName = jarName;
         try {
             File tmpDir = JetTestUtils.tmpDir("runtimejar");
@@ -67,9 +69,15 @@ abstract class ForTestCompileSomething {
             }
 
             FileUtil.delete(classesDir);
+            long end = System.currentTimeMillis();
+            System.out.println("Compiling " + jarName + " done in " + millisecondsToSecondsString(end - start) + "s");
         } catch (Throwable e) {
             error = e;
         }
+    }
+
+    private static String millisecondsToSecondsString(long millis) {
+        return millis / 1000 + "." + String.format("%03d", millis % 1000);
     }
 
     private static void copyToJar(File root, JarOutputStream os) throws IOException {
