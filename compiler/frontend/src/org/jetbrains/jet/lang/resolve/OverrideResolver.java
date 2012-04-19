@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 
 /**
@@ -418,10 +419,10 @@ public class OverrideResolver {
 
     private void resolveUnknownVisibilityForMembers(@NotNull Set<CallableMemberDescriptor> fakeOverrides) {
         for (CallableMemberDescriptor override : fakeOverrides) {
-            resolveUnknownVisibilityForMember(override);
+            resolveUnknownVisibilityForMember(null, override);
         }
-        for (CallableMemberDescriptor memberDescriptor : context.getMembers().values()) {
-            resolveUnknownVisibilityForMember(memberDescriptor);
+        for (Map.Entry<JetDeclaration, CallableMemberDescriptor> entry : context.getMembers().entrySet()) {
+            resolveUnknownVisibilityForMember(entry.getKey(), entry.getValue());
         }
         for (PropertyDescriptor propertyDescriptor : context.getProperties().values()) {
             for (PropertyAccessorDescriptor accessor : propertyDescriptor.getAccessors()) {
@@ -432,13 +433,19 @@ public class OverrideResolver {
         }
     }
 
-    private void resolveUnknownVisibilityForMember(@NotNull CallableMemberDescriptor memberDescriptor) {
+    private void resolveUnknownVisibilityForMember(@Nullable JetDeclaration member, @NotNull CallableMemberDescriptor memberDescriptor) {
         resolveUnknownVisibilityForOverriddenDescriptors(memberDescriptor.getOverriddenDescriptors());
         if (memberDescriptor.getVisibility() != Visibilities.INHERITED) {
             return;
         }
 
         Visibility visibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
+        if (visibility == null) {
+            if (member != null) {
+                trace.report(CANNOT_INFER_VISIBILITY.on(member));
+            }
+            visibility = Visibilities.PUBLIC;
+        }
 
         if (memberDescriptor instanceof PropertyDescriptor) {
             ((PropertyDescriptor)memberDescriptor).setVisibility(visibility);
@@ -465,12 +472,14 @@ public class OverrideResolver {
     private void resolveUnknownVisibilityForOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         for (CallableMemberDescriptor descriptor : descriptors) {
             if (descriptor.getVisibility() == Visibilities.INHERITED) {
-                resolveUnknownVisibilityForMember(descriptor);
+                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
+                JetDeclaration declaration = (element instanceof JetDeclaration) ? (JetDeclaration) element : null;
+                resolveUnknownVisibilityForMember(declaration, descriptor);
             }
         }
     }
 
-    @NotNull
+    @Nullable
     private Visibility findMaxVisibility(@NotNull Collection<? extends CallableMemberDescriptor> descriptors) {
         if (descriptors.isEmpty()) {
             return Visibilities.INTERNAL;
@@ -483,16 +492,23 @@ public class OverrideResolver {
                 maxVisibility = visibility;
                 continue;
             }
-            Integer compare = Visibilities.compare(visibility, maxVisibility);
-            if (compare == null) {
-                maxVisibility = Visibilities.PUBLIC; //todo error or warning when inference only from incomparable visibilities
-                continue;
+            Integer compareResult = Visibilities.compare(visibility, maxVisibility);
+            if (compareResult == null) {
+                maxVisibility = null;
             }
-            if (compare > 0) {
+            else if (compareResult > 0) {
                 maxVisibility = visibility;
             }
         }
-        assert maxVisibility != null;
+        if (maxVisibility == null) {
+            return null;
+        }
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            Integer compareResult = Visibilities.compare(maxVisibility, descriptor.getVisibility());
+            if (compareResult == null || compareResult < 0) {
+                return null;
+            }
+        }
         return maxVisibility;
     }
 
