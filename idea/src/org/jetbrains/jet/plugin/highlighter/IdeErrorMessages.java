@@ -16,15 +16,27 @@
 
 package org.jetbrains.jet.plugin.highlighter;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
+import org.jetbrains.jet.lang.psi.JetValueArgument;
+import org.jetbrains.jet.lang.psi.JetValueArgumentList;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
@@ -48,6 +60,62 @@ public class IdeErrorMessages {
                     for (ResolvedCall<? extends CallableDescriptor> call : calls) {
                         stringBuilder.append("<li>");
                         stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append("</li>");
+                    }
+                    return stringBuilder.toString();
+                }
+            };
+
+    private static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> NONE_APPLICABLE_CALLS =
+            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+                @Nullable
+                private ValueParameterDescriptor findParameterByArgumentExpression(
+                        ResolvedCall<? extends CallableDescriptor> call,
+                        JetValueArgument argument) {
+                    for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments()
+                            .entrySet()) {
+                        for (ValueArgument va : entry.getValue().getArguments()) {
+                            if (va == argument) {
+                                return entry.getKey();
+                            }
+                        }
+                    }
+                    return null;
+                }
+
+                @NotNull
+                @Override
+                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                        stringBuilder.append("<li>");
+                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()));
+                        if (call instanceof ResolvedCallImpl) {
+                            Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
+                            stringBuilder.append(" | ");
+                            for (Diagnostic diagnostic : diagnostics) {
+                                //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
+                                PsiElement element = diagnostic.getPsiElement();
+                                JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
+                                assert argumentList != null;
+                                JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
+                                if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
+                                    stringBuilder.append("LAST )");
+                                } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
+                                    ValueParameterDescriptor valueParameterDescriptor =
+                                            ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
+                                    stringBuilder.append("ARGUMENT ").append(valueParameterDescriptor.getName()).append(" ");
+                                } else {
+                                    if (argument != null) {
+                                        assert argument.getParent() == argumentList; // TODO check that this really can't happen
+                                        ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
+                                        if (parameter != null) {
+                                            stringBuilder.append("ARGUMENT ").append(parameter.getName()).append(" ");
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         stringBuilder.append("</li>");
                     }
                     return stringBuilder.toString();
@@ -103,7 +171,8 @@ public class IdeErrorMessages {
                                       "<tr><td>Found:</td><td>{2}</td></tr></table></html>", TO_STRING, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "<html>Overload resolution ambiguity. All these functions match. <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
-        MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
+        MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>",
+                NONE_APPLICABLE_CALLS);
 
         MAP.setImmutable();
     }
