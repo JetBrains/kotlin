@@ -31,8 +31,8 @@ private enum class TheEnum(val rgb : Int) {
 
 //package rendererTest defined in root package
 //internal final annotation class TheAnnotation defined in rendererTest
-//public open class TheClass<T : jet.Int, X> defined in rendererTest
-//<T : jet.Int> defined in rendererTest.TheClass
+//public open class TheClass<out T : jet.Int, X> defined in rendererTest
+//<out T : jet.Int> defined in rendererTest.TheClass
 //<X> defined in rendererTest.TheClass
 //private final val privateVal : jet.Int defined in rendererTest.TheClass
 //internal final val shouldBeFinal : jet.Int defined in rendererTest.TheClass

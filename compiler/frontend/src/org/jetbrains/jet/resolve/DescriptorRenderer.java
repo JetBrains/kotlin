@@ -469,7 +469,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            if (!descriptor.isReified()) {
+            if (descriptor.isReified()) {
+                String variance = descriptor.getVariance().toString();
+                if (!variance.isEmpty()) {
+                    builder.append(renderKeyword(variance)).append(" ");
+                }
+            }
+            else {
                 builder.append(renderKeyword("erased")).append(" ");
             }
             renderName(descriptor, builder);
