@@ -206,13 +206,14 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         try {
             AnalyzeExhaust binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 //            AnalyzingUtils.throwExceptionOnErrors(binding);
+            if (binding.isError()) {
+                return printStackTraceToString(binding.getError());
+            }
             state = new GenerationState(myProject, ClassBuilderFactories.TEXT, binding, Collections.singletonList(file));
             state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (Exception e) {
-            StringWriter out = new StringWriter(1024);
-            e.printStackTrace(new PrintWriter(out));
-            return out.toString().replaceAll("\r", "");
+            return printStackTraceToString(e);
         }
 
 
@@ -227,6 +228,11 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         }
 
         return answer.toString();
+    }
+
+    private static String printStackTraceToString(Throwable e) {StringWriter out = new StringWriter(1024);
+        e.printStackTrace(new PrintWriter(out));
+        return out.toString().replaceAll("\r", "");
     }
 
     @Override

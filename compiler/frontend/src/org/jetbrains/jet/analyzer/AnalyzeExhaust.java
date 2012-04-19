@@ -27,12 +27,22 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 public class AnalyzeExhaust {
     @NotNull
     private final BindingContext bindingContext;
-    @Nullable
     private final JetStandardLibrary standardLibrary;
+    private final Throwable error;
 
-    public AnalyzeExhaust(@NotNull BindingContext bindingContext, @Nullable JetStandardLibrary standardLibrary) {
+    private AnalyzeExhaust(@NotNull BindingContext bindingContext,
+            @Nullable JetStandardLibrary standardLibrary, @Nullable Throwable error) {
         this.bindingContext = bindingContext;
         this.standardLibrary = standardLibrary;
+        this.error = error;
+    }
+
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull JetStandardLibrary standardLibrary) {
+        return new AnalyzeExhaust(bindingContext, standardLibrary, null);
+    }
+
+    public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
+        return new AnalyzeExhaust(bindingContext, null, error);
     }
 
     @NotNull
@@ -40,8 +50,23 @@ public class AnalyzeExhaust {
         return bindingContext;
     }
 
-    @Nullable
+    @NotNull
     public JetStandardLibrary getStandardLibrary() {
         return standardLibrary;
+    }
+
+    @NotNull
+    public Throwable getError() {
+        return error;
+    }
+
+    public boolean isError() {
+        return error != null;
+    }
+
+    public void throwIfError() {
+        if (isError()) {
+            throw new IllegalStateException("failed to analyze: " + error, error);
+        }
     }
 }

@@ -96,7 +96,7 @@ public final class AnalyzerFacadeWithCache {
                         private Result<AnalyzeExhaust> emptyExhaustWithDiagnosticOnFile(Throwable e) {
                             BindingTraceContext bindingTraceContext = new BindingTraceContext();
                             bindingTraceContext.report(Errors.EXCEPTION_WHILE_ANALYZING.on(file, e));
-                            AnalyzeExhaust analyzeExhaust = new AnalyzeExhaust(bindingTraceContext.getBindingContext(), null);
+                            AnalyzeExhaust analyzeExhaust = AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e);
                             return new Result<AnalyzeExhaust>(analyzeExhaust, PsiModificationTracker.MODIFICATION_COUNT);
                         }
                     }, false);
