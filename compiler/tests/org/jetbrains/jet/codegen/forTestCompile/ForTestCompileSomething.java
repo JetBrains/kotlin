@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TimeUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -70,14 +71,10 @@ abstract class ForTestCompileSomething {
 
             FileUtil.delete(classesDir);
             long end = System.currentTimeMillis();
-            System.out.println("Compiling " + jarName + " done in " + millisecondsToSecondsString(end - start) + "s");
+            System.out.println("Compiling " + jarName + " done in " + TimeUtils.millisecondsToSecondsString(end - start) + "s");
         } catch (Throwable e) {
             error = e;
         }
-    }
-
-    private static String millisecondsToSecondsString(long millis) {
-        return millis / 1000 + "." + String.format("%03d", millis % 1000);
     }
 
     private static void copyToJar(File root, JarOutputStream os) throws IOException {
