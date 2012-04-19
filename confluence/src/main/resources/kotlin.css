@@ -1,6 +1,17 @@
 .jet {
-  white-space: pre;
   display: inline;
+}
+
+.code {
+  padding: 5px !important;
+}
+
+.codeContent {
+  margin: 5px !important;
+}
+
+.line {
+  white-space: pre !important;
 }
 
 .jet.keyword {

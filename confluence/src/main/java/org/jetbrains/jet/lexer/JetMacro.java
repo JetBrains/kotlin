@@ -226,11 +226,32 @@ public class JetMacro extends BaseMacro {
                 case '&':
                     builder.append("&amp;");
                     break;
+                case ' ':
+                    builder.append("&nbsp;");
+                    break;
                 case '"':
                     builder.append("&quot;");
                     break;
                 default:
                     builder.append(c);
+            }
+        }
+    }
+
+    private String addNewLineOpenTag() {
+        return "<div class=\"line\">";
+    }
+
+    private String addNewLineCloseTag() {
+        return "</div>";
+    }
+
+    private void addNewLines(StringBuilder result, String yytext) {
+        for (int i = 0; i < yytext.length(); i++) {
+            if (yytext.charAt(i) == '\n') {
+                result.append("&nbsp;");
+                result.append(addNewLineCloseTag());
+                result.append(addNewLineOpenTag());
             }
         }
     }
@@ -251,6 +272,8 @@ public class JetMacro extends BaseMacro {
                             "<div class=\"codeContent panelContent\">" +
                             "<div class=\"container\">"
             );
+
+            result.append(addNewLineOpenTag());
 
             _JetLexer jetLexer = new _JetLexer(DUMMY_READER);
             jetLexer.reset(afterPreprocessing, 0, afterPreprocessing.length(), _JetLexer.YYINITIAL);
@@ -284,7 +307,13 @@ public class JetMacro extends BaseMacro {
                 IElementType token = jetLexer.advance();
                 if (token == null) break;
 //                CharSequence yytext = jetLexer.yytext();
-                String yytext = jetLexer.yytext().toString().replaceAll("\n", "\r\n");
+                String yytext = jetLexer.yytext().toString();
+
+                if (yytext.contains("\n")) {
+                    addNewLines(result, yytext);
+                    yytext = yytext.replaceAll("\n", "");
+                }
+
                 String style = null;
                 if (token instanceof JetKeywordToken) {
                     style = "keyword";
@@ -306,6 +335,7 @@ public class JetMacro extends BaseMacro {
                 result.append("</code>");
             }
 
+            result.append(addNewLineCloseTag());
             result.append("</div>");
             result.append("</div>");
             result.append("</div>");
