@@ -71,14 +71,7 @@ public interface Errors {
     SimpleDiagnosticFactory<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetReturnExpression> RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
-            SimpleDiagnosticFactory.create(ERROR,
-                                           new PositioningStrategy<JetTypeProjection>() {
-                                               @NotNull
-                                               @Override
-                                               public List<TextRange> mark(@NotNull JetTypeProjection element) {
-                                                   return markNode(element.getProjectionNode());
-                                               }
-                                           });
+            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PROJECTION_MODIFIER);
     SimpleDiagnosticFactory<JetSimpleNameExpression>LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR);
 
@@ -143,7 +136,7 @@ public interface Errors {
             SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
 
     SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT =
-            SimpleDiagnosticFactory.create(ERROR); // TODO : better positioning
+            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PROJECTION_MODIFIER);
     SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY = SimpleDiagnosticFactory.create(ERROR);
