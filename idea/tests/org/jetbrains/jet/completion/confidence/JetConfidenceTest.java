@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.completion.confidence;
 
+import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -35,6 +37,18 @@ public class JetConfidenceTest extends LightCompletionTestCase {
 
     public void testInModifierList() {
         doTest("pub");
+    }
+
+    public void testInBeginningOfFunctionLiteral() {
+        doTest("mm");
+    }
+
+    public void testInBeginningOfFunctionLiteralInBrackets() {
+        doTest("mm");
+    }
+
+    public void testInBlockOfFunctionLiteral() {
+        doTest("mm");
     }
 
     protected void doTest(String completionActivateType) {
@@ -59,5 +73,10 @@ public class JetConfidenceTest extends LightCompletionTestCase {
     @Override
     protected Sdk getProjectJDK() {
         return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
+    }
+
+    @Override
+    protected void complete() {
+        new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(getProject(), getEditor(), 0, false);
     }
 }

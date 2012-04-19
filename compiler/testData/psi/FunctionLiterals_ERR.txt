@@ -326,7 +326,66 @@ JetFile: FunctionLiterals_ERR.jet
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('f')
                       PsiElement(RBRACE)('}')
-                PsiWhiteSpace('\n')
-                PsiElement(RBRACE)('}')
-          PsiErrorElement:Expecting '}'
-            <empty list>
+                  PsiWhiteSpace('\n\n    ')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      VALUE_PARAMETER_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('a')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('b')
+                        PsiElement(RPAR)(')')
+                      PsiErrorElement:An -> is expected
+                        <empty list>
+                      PsiWhiteSpace(' ')
+                      BLOCK
+                        <empty list>
+                      PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n    ')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('T')
+                      PsiElement(DOT)('.')
+                      VALUE_PARAMETER_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('a')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('b')
+                        PsiElement(RPAR)(')')
+                      PsiErrorElement:An -> is expected
+                        <empty list>
+                      PsiWhiteSpace(' ')
+                      BLOCK
+                        <empty list>
+                      PsiElement(RBRACE)('}')
+                  PsiWhiteSpace('\n    ')
+                  FUNCTION_LITERAL_EXPRESSION
+                    FUNCTION_LITERAL
+                      PsiElement(LBRACE)('{')
+                      VALUE_PARAMETER_LIST
+                        VALUE_PARAMETER
+                          PsiElement(IDENTIFIER)('a')
+                        PsiElement(COMMA)(',')
+                        PsiWhiteSpace(' ')
+                        VALUE_PARAMETER
+                          PsiErrorElement:Expecting parameter name
+                            PsiElement(RBRACE)('}')
+                        PsiErrorElement:Expecting '->' or ','
+                          <empty list>
+                      PsiWhiteSpace('\n')
+                      BLOCK
+                        <empty list>
+                      PsiElement(RBRACE)('}')
+                PsiErrorElement:Expecting '}'
+                  <empty list>
