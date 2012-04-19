@@ -44,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -141,6 +142,12 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         final Stack<StubElement> stubStack = new Stack<StubElement>();
 
         final ClassBuilderFactory builderFactory = new ClassBuilderFactory() {
+            @NotNull
+            @Override
+            public ClassBuilderMode getClassBuilderMode() {
+                return ClassBuilderMode.SIGNATURES;
+            }
+
             @Override
             public ClassBuilder newClassBuilder() {
                 return new StubClassBuilder(stubStack);

@@ -49,6 +49,8 @@ public class GenerationState {
     private final List<JetFile> files;
     @NotNull
     private final InjectorForJvmCodegen injector;
+    @NotNull
+    private final ClassBuilderMode classBuilderMode;
 
 
     public GenerationState(Project project, ClassBuilderFactory builderFactory, AnalyzeExhaust analyzeExhaust, List<JetFile> files) {
@@ -61,9 +63,10 @@ public class GenerationState {
         this.progress = progress;
         this.analyzeExhaust = exhaust;
         this.files = files;
+        this.classBuilderMode = builderFactory.getClassBuilderMode();
         this.injector = new InjectorForJvmCodegen(
                 analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(),
-                this.files, project, compilerSpecialMode, this, builderFactory);
+                this.files, project, compilerSpecialMode, builderFactory.getClassBuilderMode(), this, builderFactory);
     }
 
     @NotNull
@@ -81,6 +84,11 @@ public class GenerationState {
 
     public BindingContext getBindingContext() {
         return analyzeExhaust.getBindingContext();
+    }
+
+    @NotNull
+    public ClassBuilderMode getClassBuilderMode() {
+        return classBuilderMode;
     }
 
     public ClassCodegen forClass() {

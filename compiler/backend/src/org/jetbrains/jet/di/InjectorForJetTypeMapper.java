@@ -23,6 +23,7 @@ import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.ClosureAnnotator;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -42,9 +43,11 @@ public class InjectorForJetTypeMapper {
     ) {
         this.jetTypeMapper = new JetTypeMapper();
         CompilerSpecialMode compilerSpecialMode = CompilerSpecialMode.REGULAR;
+        ClassBuilderMode classBuilderMode = ClassBuilderMode.FULL;
         ClosureAnnotator closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
         this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
         this.jetTypeMapper.setStandardLibrary(jetStandardLibrary);

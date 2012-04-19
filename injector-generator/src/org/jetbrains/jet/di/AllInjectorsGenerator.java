@@ -18,6 +18,7 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -149,6 +150,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addParameter(Project.class);
         generator.addParameter(CompilerSpecialMode.class);
+        generator.addParameter(ClassBuilderMode.class);
         generator.addPublicParameter(GenerationState.class);
         generator.addParameter(ClassBuilderFactory.class);
         generator.addPublicField(JetTypeMapper.class);
@@ -164,6 +166,7 @@ public class AllInjectorsGenerator {
         generator.addParameter(DiType.listOf(JetFile.class));
         generator.addPublicField(JetTypeMapper.class);
         generator.addField(CompilerSpecialMode.REGULAR);
+        generator.addField(ClassBuilderMode.FULL);
         generator.generate("compiler/backend/src", "org.jetbrains.jet.di", "InjectorForJetTypeMapper");
     }
 

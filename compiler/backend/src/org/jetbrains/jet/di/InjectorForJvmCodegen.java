@@ -23,6 +23,7 @@ import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.JetTypeMapper;
@@ -35,6 +36,7 @@ import java.util.List;
 import org.jetbrains.jet.lang.psi.JetFile;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +56,7 @@ public class InjectorForJvmCodegen {
         @NotNull List<JetFile> listOfJetFile,
         @NotNull Project project,
         @NotNull CompilerSpecialMode compilerSpecialMode,
+        @NotNull ClassBuilderMode classBuilderMode,
         @NotNull GenerationState generationState,
         @NotNull ClassBuilderFactory classBuilderFactory
     ) {
@@ -65,6 +68,7 @@ public class InjectorForJvmCodegen {
         ClosureAnnotator closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
+        this.jetTypeMapper.setClassBuilderMode(classBuilderMode);
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
         this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
         this.jetTypeMapper.setStandardLibrary(jetStandardLibrary);

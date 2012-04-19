@@ -107,9 +107,4 @@ public class StubClassBuilder extends ClassBuilder {
         }
         super.done();
     }
-
-    @Override
-    public Mode generateCode() {
-        return Mode.SIGNATURES;
-    }
 }
