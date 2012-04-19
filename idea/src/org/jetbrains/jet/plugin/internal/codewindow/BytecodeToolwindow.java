@@ -232,7 +232,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
 
     private static String printStackTraceToString(Throwable e) {StringWriter out = new StringWriter(1024);
         e.printStackTrace(new PrintWriter(out));
-        return out.toString().replaceAll("\r", "");
+        return out.toString().replace("\r", "");
     }
 
     @Override
