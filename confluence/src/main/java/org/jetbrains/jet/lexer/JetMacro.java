@@ -25,6 +25,10 @@ import com.atlassian.renderer.v2.macro.MacroException;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import org.apache.velocity.VelocityContext;
+import org.jetbrains.jet.ConfluenceUtils;
+import org.jetbrains.jet.tags.StyledDivTagType;
+import org.jetbrains.jet.tags.TagData;
+import org.jetbrains.jet.tags.TagType;
 
 import java.io.StringReader;
 import java.util.*;
@@ -38,61 +42,6 @@ public class JetMacro extends BaseMacro {
 
     public static final StringReader DUMMY_READER = new StringReader("");
 
-    private static class TagData {
-        final TagType type;
-        final String message;
-        final int start;
-        final boolean nextToken;
-        int end;
-
-        TagData(TagType type, String message, int start, boolean nextToken) {
-            this.type = type;
-            this.message = message;
-            this.start = start;
-            this.nextToken = nextToken;
-        }
-    }
-
-    private static abstract class TagType {
-        public final String tagName;
-
-        private TagType(String tagName) {
-            this.tagName = tagName;
-        }
-
-        public abstract void appendOpenTag(StringBuilder builder, TagData tagData);
-        public abstract void appendCloseTag(StringBuilder builder, TagData tagData);
-
-        @Override
-        public String toString() {
-            return tagName;
-        }
-    }
-
-    private static class StyledDivTagType extends TagType {
-
-        private StyledDivTagType(String tagName) {
-            super(tagName);
-        }
-
-        @Override
-        public void appendOpenTag(StringBuilder builder, TagData tagData) {
-            assert tagData.type == this;
-            builder.append("<div class=\"jet ").append(tagName).append("\"");
-            if (tagData.message != null) {
-                builder.append(" title=\"");
-                escapeHTML(builder, tagData.message);
-                builder.append("\"");
-            }
-            builder.append(">");
-        }
-
-        @Override
-        public void appendCloseTag(StringBuilder builder, TagData tagData) {
-            builder.append("</div>");
-        }
-    }
-
     private static final TagType[] knownExtraTagTypes = {
             new StyledDivTagType("error"),
             new StyledDivTagType("warning"),
@@ -101,7 +50,7 @@ public class JetMacro extends BaseMacro {
                 @Override
                 public void appendOpenTag(StringBuilder builder, TagData tagData) {
                     builder.append("<a class=\"jet ref\" href=\"#");
-                    builder.append(tagData.message);
+                    builder.append(tagData.getMessage());
                     builder.append("\">");
                 }
 
@@ -114,7 +63,7 @@ public class JetMacro extends BaseMacro {
                 @Override
                 public void appendOpenTag(StringBuilder builder, TagData tagData) {
                     builder.append("<a name=\"");
-                    builder.append(tagData.message);
+                    builder.append(tagData.getMessage());
                     builder.append("\">");
                 }
 
@@ -127,7 +76,7 @@ public class JetMacro extends BaseMacro {
                 @Override
                 public void appendOpenTag(StringBuilder builder, TagData tagData) {
                     builder.append("<a class=\"jet anchor\" href=\"");
-                    builder.append(tagData.message);
+                    builder.append(tagData.getMessage());
                     builder.append("\">");
                 }
 
@@ -140,7 +89,7 @@ public class JetMacro extends BaseMacro {
                 @Override
                 public void appendOpenTag(StringBuilder builder, TagData tagData) {
                     builder.append("<div style=\"");
-                    builder.append(tagData.message);
+                    builder.append(tagData.getMessage());
                     builder.append("\">");
                 }
 
@@ -153,7 +102,7 @@ public class JetMacro extends BaseMacro {
                 @Override
                 public void appendOpenTag(StringBuilder builder, TagData tagData) {
                     builder.append("<div class=\"");
-                    builder.append(tagData.message);
+                    builder.append(tagData.getMessage());
                     builder.append("\">");
                 }
 
@@ -167,9 +116,10 @@ public class JetMacro extends BaseMacro {
     private static final Map<TagType, Pattern> nextTokenTags = new HashMap<TagType, Pattern>();
     private static final Map<TagType, Pattern> closedTags = new HashMap<TagType, Pattern>();
     private static final Map<TagType, Pattern> closeTags = new HashMap<TagType, Pattern>();
+
     static {
         for (TagType type : knownExtraTagTypes) {
-            String tagName = type.tagName;
+            String tagName = type.getTagName();
             openTags.put(type, Pattern.compile("<" + tagName + "\\s*((desc)?=\\\"([^\n\"]*?)\\\")?>", Pattern.MULTILINE));
             closeTags.put(type, Pattern.compile("</" + tagName + ">"));
 
@@ -179,6 +129,7 @@ public class JetMacro extends BaseMacro {
     }
 
     private static final Map<IElementType, String> styleMap = new HashMap<IElementType, String>();
+
     static {
         styleMap.put(JetTokens.BLOCK_COMMENT, "jet-comment");
         styleMap.put(JetTokens.DOC_COMMENT, "jet-comment");
@@ -198,7 +149,6 @@ public class JetMacro extends BaseMacro {
         styleMap.put(JetTokens.LABEL_IDENTIFIER, "label");
         styleMap.put(JetTokens.ATAT, "label");
         styleMap.put(JetTokens.FIELD_IDENTIFIER, "field");
-        styleMap.put(JetTokens.RAW_STRING_LITERAL, "string");
         styleMap.put(TokenType.BAD_CHARACTER, "bad");
     }
 
@@ -212,25 +162,20 @@ public class JetMacro extends BaseMacro {
         return RenderMode.allow(0);
     }
 
-    private static void escapeHTML(StringBuilder builder, CharSequence seq) {
-        if (seq == null) return;
-        for (int i = 0; i < seq.length(); i++) {
-            char c = seq.charAt(i);
-            switch (c) {
-                case '<':
-                    builder.append("&lt;");
-                    break;
-                case '>':
-                    builder.append("&gt;");
-                    break;
-                case '&':
-                    builder.append("&amp;");
-                    break;
-                case '"':
-                    builder.append("&quot;");
-                    break;
-                default:
-                    builder.append(c);
+    private String addNewLineOpenTag() {
+        return "<div class=\"line\">";
+    }
+
+    private String addNewLineCloseTag() {
+        return "</div>";
+    }
+
+    private void convertNewLines(StringBuilder result, String yytext) {
+        for (int i = 0; i < yytext.length(); i++) {
+            if (yytext.charAt(i) == '\n') {
+                result.append("&nbsp;");
+                result.append(addNewLineCloseTag());
+                result.append(addNewLineOpenTag());
             }
         }
     }
@@ -238,19 +183,30 @@ public class JetMacro extends BaseMacro {
     @Override
     public String execute(Map map, String code, RenderContext renderContext) throws MacroException {
         try {
-            List<TagData> tags = new ArrayList<TagData>();
-
-            StringBuilder afterPreprocessing = preprocess(code.trim(), tags);
-
             VelocityContext context = new VelocityContext(MacroUtils.defaultVelocityContext());
             String renderedTemplate = VelocityUtils.getRenderedTemplate("template.velocity", context);
-
             StringBuilder result = new StringBuilder(renderedTemplate);
+
+            generateHtmlFromCode(code, result);
+
+            return result.toString();
+        } catch (Throwable e) {
+            return ConfluenceUtils.getErrorInHtml(e, code);
+        }
+    }
+
+    public void generateHtmlFromCode(String code, StringBuilder result) throws java.io.IOException {
+        try {
+            List<TagData> tags = new ArrayList<TagData>();
+            StringBuilder afterPreprocessing = preprocess(code.trim(), tags);
+
             result.append(
                     "<div class=\"code panel\" style=\"border-width: 1px;\">" +
                             "<div class=\"codeContent panelContent\">" +
                             "<div class=\"container\">"
             );
+
+            result.append(addNewLineOpenTag());
 
             _JetLexer jetLexer = new _JetLexer(DUMMY_READER);
             jetLexer.reset(afterPreprocessing, 0, afterPreprocessing.length(), _JetLexer.YYINITIAL);
@@ -259,24 +215,24 @@ public class JetMacro extends BaseMacro {
             TagData tag = iterator.hasNext() ? iterator.next() : null;
             while (true) {
                 int tokenEnd = jetLexer.getTokenEnd();
-                while (tag != null && tag.end < tokenEnd) {
-                    result.append("<div class=\"jet hwarning\">Skipping a tag in the middle of a token: &lt;").append(tag.type).append("&gt;</div>");
+                while (tag != null && tag.getEnd() < tokenEnd) {
+                    result.append("<div class=\"jet hwarning\">Skipping a tag in the middle of a token: &lt;").append(tag.getType()).append("&gt;</div>");
                     tag = iterator.hasNext() ? iterator.next() : null;
                 }
 
                 if (tag != null) {
-                    if (tag.start == tokenEnd) {
+                    if (tag.getStart() == tokenEnd) {
 //                        result.append("<div class=\"jet ").append(tag.type).append("\"");
 //                        if (tag.message != null) {
 //                            result.append(" title=\"").append(tag.message).append("\"");
 //                        }
 //                        result.append(">");
-                        tag.type.appendOpenTag(result, tag);
+                        tag.getType().appendOpenTag(result, tag);
                     }
                 }
                 if (tag != null) {
-                    if (tag.end == tokenEnd || (tag.nextToken && tag.start < tokenEnd)) {
-                        tag.type.appendCloseTag(result, tag);
+                    if (tag.getEnd() == tokenEnd || (tag.isNextToken() && tag.getStart() < tokenEnd)) {
+                        tag.getType().appendCloseTag(result, tag);
                         tag = iterator.hasNext() ? iterator.next() : null;
                     }
                 }
@@ -284,7 +240,13 @@ public class JetMacro extends BaseMacro {
                 IElementType token = jetLexer.advance();
                 if (token == null) break;
 //                CharSequence yytext = jetLexer.yytext();
-                String yytext = jetLexer.yytext().toString().replaceAll("\n", "\r\n");
+                String yytext = jetLexer.yytext().toString();
+
+                if (yytext.contains("\n")) {
+                    convertNewLines(result, yytext);
+                    yytext = yytext.replaceAll("\n", "");
+                }
+
                 String style = null;
                 if (token instanceof JetKeywordToken) {
                     style = "keyword";
@@ -305,26 +267,18 @@ public class JetMacro extends BaseMacro {
                     style = "plain";
                 }
                 result.append("<code class=\"jet ").append(style).append("\">");
-                escapeHTML(result, yytext);
+                ConfluenceUtils.escapeHTML(result, yytext);
                 result.append("</code>");
             }
 
+            result.append(addNewLineCloseTag());
             result.append("</div>");
             result.append("</div>");
             result.append("</div>");
-            return result.toString();
         } catch (Throwable e) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("<div class=\"jet herror\">Jet highlighter error [").append(e.getClass().getSimpleName()).append("]: ");
-            escapeHTML(stringBuilder, e.getMessage());
-            stringBuilder.append("<br/>");
-            stringBuilder.append("Original text:");
-            stringBuilder.append("<pre>");
-            escapeHTML(stringBuilder, code);
-            stringBuilder.append("</pre>");
-            stringBuilder.append("</div>");
-            return stringBuilder.toString();
+            result = new StringBuilder(ConfluenceUtils.getErrorInHtml(e, code));
         }
+
     }
 
     private StringBuilder preprocess(CharSequence code, Collection<TagData> tags) {
@@ -355,11 +309,11 @@ public class JetMacro extends BaseMacro {
                     }
                     else {
                         TagData tag = tagStack.pop();
-                        if (type != tag.type) {
+                        if (type != tag.getType()) {
                             throw new IllegalArgumentException("Unmatched closing tag: " + closeMatcher.group());
                         }
 
-                        tag.end = position;
+                        tag.setEnd(position);
                         tags.add(tag);
                         i += closeMatcher.end() - 1;
                         continue charLoop;
@@ -370,7 +324,7 @@ public class JetMacro extends BaseMacro {
                 Matcher closedMatcher = matchFrom(code, i, closed);
                 if (closedMatcher != null) {
                     TagData tag = new TagData(type, closedMatcher.group(3), position, false);
-                    tag.end = position;
+                    tag.setEnd(position);
                     tags.add(tag);
                     i += closedMatcher.end() - 1;
                     continue charLoop;
@@ -381,7 +335,7 @@ public class JetMacro extends BaseMacro {
                 if (nextMatcher != null) {
                     TagData tag = new TagData(type, nextMatcher.group(3), position, true);
                     tags.add(tag);
-                    tag.end = code.length();
+                    tag.setEnd(code.length());
                     i += nextMatcher.end() - 1;
                     continue charLoop;
                 }
