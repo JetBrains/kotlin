@@ -163,9 +163,12 @@ public class JetTestUtils {
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
     }
 
-
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+        return createEnvironmentWithMockJdk(disposable, CompilerSpecialMode.REGULAR);
+    }
+
+    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
+        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         environment.addToClasspath(rtJar);
         environment.addToClasspath(getAnnotationsJar());
