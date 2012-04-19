@@ -1,6 +1,6 @@
 <project name="ConfluenceLexer" default="confluenceLexer">
     <property name="home" value="${basedir}"/>
-    <property file="${home}/../compiler/frontend/idea.properties"/>
+    <property file="${home}/../ideaSDK/bin/idea.properties"/>
 
     <property name="flex.base" value="${idea.home}/tools/lexer/jflex-1.4"/>
     <property name="out.dir" value="${basedir}/tmpout"/>

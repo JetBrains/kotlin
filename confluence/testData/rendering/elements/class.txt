@@ -1,0 +1,8 @@
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent"><div class="container">
+<div class="line"><code class="jet keyword">class</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">Greeter1</code><code class="jet plain">(</code><code class="jet plain">)</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">{</code>&nbsp;</div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="jet whitespace"></code><code class="jet plain">}</code>&nbsp;</div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="jet whitespace"></code><code class="jet keyword">class</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">Greeter2</code><code class="jet plain">(</code><code class="jet keyword">val</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">name</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">:</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">String</code><code class="jet plain">)</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">{</code>&nbsp;</div>
+<div class="line">&nbsp;</div>
+<div class="line"><code class="jet whitespace"></code><code class="jet plain">}</code></div></div></div></div>
