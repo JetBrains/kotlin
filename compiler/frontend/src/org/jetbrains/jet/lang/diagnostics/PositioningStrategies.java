@@ -88,6 +88,8 @@ public class PositioningStrategies {
 
     public static final PositioningStrategy<JetModifierListOwner> POSITION_ABSTRACT_MODIFIER = positionModifier(JetTokens.ABSTRACT_KEYWORD);
 
+    public static final PositioningStrategy<JetModifierListOwner> POSITION_OVERRIDE_MODIFIER = positionModifier(JetTokens.OVERRIDE_KEYWORD);
+
     public static PositioningStrategy<JetModifierListOwner> positionModifier(final JetKeywordToken token) {
         return new PositioningStrategy<JetModifierListOwner>() {
             @NotNull

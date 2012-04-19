@@ -31,14 +31,15 @@ import java.util.Collections;
  */
 public class GenerationUtils {
 
-    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile) {
-        return compileFileGetGenerationStateForTest(psiFile).getFactory();
+    public static ClassFileFactory compileFileGetClassFileFactoryForTest(@NotNull JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
+        return compileFileGetGenerationStateForTest(psiFile, compilerSpecialMode).getFactory();
     }
 
-    public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile) {
+    public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
+        analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;

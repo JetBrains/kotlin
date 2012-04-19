@@ -76,7 +76,8 @@ public final class JetDescriptorIconProvider {
             return PlatformIcons.PACKAGE_OPEN_ICON;
         }
         if (descriptor instanceof FunctionDescriptor) {
-            return JetIcons.FUNCTION;
+            return descriptor.getContainingDeclaration() instanceof ClassDescriptor ?
+                   PlatformIcons.METHOD_ICON : JetIcons.FUNCTION;
         }
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor)descriptor).getKind()) {
@@ -97,9 +98,20 @@ public final class JetDescriptorIconProvider {
                     return null;
             }
         }
+        if (descriptor instanceof ValueParameterDescriptor) {
+            return JetIcons.PARAMETER;
+        }
+
+        if (descriptor instanceof LocalVariableDescriptor) {
+            return ((LocalVariableDescriptor)descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
+        }
 
         if (descriptor instanceof PropertyDescriptor) {
-            return ((PropertyDescriptor)descriptor).isVar() ? JetIcons.VAR : JetIcons.VAL;
+            return ((PropertyDescriptor)descriptor).isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+        }
+
+        if (descriptor instanceof TypeParameterDescriptor) {
+            return PlatformIcons.CLASS_ICON;
         }
 
         LOG.warn("No icon for descriptor: " + descriptor);

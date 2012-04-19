@@ -71,6 +71,8 @@ public class KotlinToJVMBytecodeCompiler {
             return null;
         }
 
+        exhaust.throwIfError();
+
         return generate(environment, dependencies, messageCollector, exhaust, stubs);
     }
 

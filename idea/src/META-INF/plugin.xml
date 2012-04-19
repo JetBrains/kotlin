@@ -56,7 +56,7 @@
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                       serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
 
-      <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+      <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
       <internalFileTemplate name="Kotlin File"/>
       <internalFileTemplate name="Kotlin Class"/>
@@ -109,6 +109,7 @@
       <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor" id="liveTemplates" order="first"/>
 
       <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.UnfocusedNameIdentifier"/>
+      <completion.confidence language="jet" implementationClass="org.jetbrains.jet.plugin.completion.confidence.UnfocusedPossibleFunctionParameter"/>
       <completion.confidence language="jet" implementationClass="com.intellij.codeInsight.completion.AlwaysFocusLookup" order="last"/>
 
       <completion.skip implementation="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor$Skipper" id="skipLiveTemplate"/>
@@ -170,7 +171,7 @@
       <toolWindow id="Kotlin"
                   factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
                   anchor="right"
-                  icon="/org/jetbrains/jet/plugin/icons/kotlin16x16.png"
+                  icon="/org/jetbrains/jet/plugin/icons/kotlin13x13.png"
               />
 
 

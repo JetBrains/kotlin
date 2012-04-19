@@ -76,6 +76,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.NamespaceFactory;
@@ -92,6 +93,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.constants.ShortValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
+import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -103,6 +105,7 @@ import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
+import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -330,7 +333,15 @@ public class JavaDescriptorResolver {
 
     @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
+        List<Runnable> tasks = Lists.newArrayList();
+        ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, tasks);
+        for (Runnable task : tasks) {
+            task.run();
+        }
+        return clazz;
+    }
 
+    private ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule, @NotNull List<Runnable> tasks) {
         if (qualifiedName.getFqName().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)) {
             // TODO: only if -$$TImpl class is created by Kotlin
             return null;
@@ -365,12 +376,12 @@ public class JavaDescriptorResolver {
             if (psiClass == null) {
                 return null;
             }
-            classData = createJavaClassDescriptor(psiClass);
+            classData = createJavaClassDescriptor(psiClass, tasks);
         }
         return classData.getClassDescriptor();
     }
 
-    private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass) {
+    private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass, List<Runnable> taskList) {
         FqName fqName = new FqName(psiClass.getQualifiedName());
         if (classDescriptorCache.containsKey(fqName)) {
             throw new IllegalStateException(psiClass.getQualifiedName());
@@ -384,7 +395,7 @@ public class JavaDescriptorResolver {
         ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
         classDescriptorCache.put(fqName, classData);
         classData.classDescriptor.setName(name);
-        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass));
+        classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
 
         List<JetType> supertypes = new ArrayList<JetType>();
 
@@ -1596,11 +1607,11 @@ public class JavaDescriptorResolver {
         return (FunctionDescriptorImpl) substitutedFunctionDescriptor;
     }
 
-    private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
+    private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner, @NotNull List<Runnable> tasks) {
         PsiAnnotation[] psiAnnotations = owner.getModifierList().getAnnotations();
         List<AnnotationDescriptor> r = Lists.newArrayListWithCapacity(psiAnnotations.length);
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
-            AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation);
+            AnnotationDescriptor annotation = resolveAnnotation(psiAnnotation, tasks);
             if (annotation != null) {
                 r.add(annotation);
             }
@@ -1608,9 +1619,18 @@ public class JavaDescriptorResolver {
         return r;
     }
 
+    private List<AnnotationDescriptor> resolveAnnotations(PsiModifierListOwner owner) {
+        List<Runnable> tasks = Lists.newArrayList();
+        List<AnnotationDescriptor> annotations = resolveAnnotations(owner, tasks);
+        for (Runnable task : tasks) {
+            task.run();
+        }
+        return annotations;
+    }
+
     @Nullable
-    private AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation) {
-        AnnotationDescriptor annotation = new AnnotationDescriptor();
+    private AnnotationDescriptor resolveAnnotation(PsiAnnotation psiAnnotation, @NotNull List<Runnable> taskList) {
+        final AnnotationDescriptor annotation = new AnnotationDescriptor();
 
         String qname = psiAnnotation.getQualifiedName();
         if (qname.startsWith("java.lang.annotation.") || qname.startsWith("jet.runtime.typeinfo.") || qname.equals(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName())) {
@@ -1618,11 +1638,16 @@ public class JavaDescriptorResolver {
             return null;
         }
 
-        ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
+        final ClassDescriptor clazz = resolveClass(new FqName(psiAnnotation.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN, taskList);
         if (clazz == null) {
             return null;
         }
-        annotation.setAnnotationType(clazz.getDefaultType());
+        taskList.add(new Runnable() {
+            @Override
+            public void run() {
+                annotation.setAnnotationType(clazz.getDefaultType());
+            }
+        });
         ArrayList<CompileTimeConstant<?>> valueArguments = new ArrayList<CompileTimeConstant<?>>();
 
         PsiAnnotationParameterList parameterList = psiAnnotation.getParameterList();

@@ -165,6 +165,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
                 // TODO: wrong environment // stepan.koltsov@ 2012-04-09
                 CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
 
+        if (context.isError()) {
+            throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
+        }
+
         final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
             protected void generateNamespace(JetFile namespace) {

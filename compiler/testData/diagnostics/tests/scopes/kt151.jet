@@ -36,5 +36,5 @@ class F : C(), T {
 }
 
 class G : C(), T {
-    override fun foo() {}
+    public override fun foo() {}
 }

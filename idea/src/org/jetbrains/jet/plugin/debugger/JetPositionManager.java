@@ -155,6 +155,7 @@ public class JetPositionManager implements PositionManager {
             return mapper;
         }
         final AnalyzeExhaust analyzeExhaust = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        analyzeExhaust.throwIfError();
         JetTypeMapper typeMapper = new InjectorForJetTypeMapper(
             analyzeExhaust.getStandardLibrary(), analyzeExhaust.getBindingContext(), Collections.singletonList(file)).getJetTypeMapper();
         myTypeMappers.put(file, typeMapper);

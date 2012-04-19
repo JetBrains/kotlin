@@ -156,11 +156,12 @@ public interface Errors {
     DiagnosticFactory<JetDelegatorByExpressionSpecifier> BY_IN_SECONDARY_CONSTRUCTOR = DiagnosticFactory.create(ERROR, "'by'-clause is only supported for primary constructors");
     DiagnosticFactory<JetDelegatorToSuperClass> INITIALIZER_WITH_NO_ARGUMENTS = DiagnosticFactory.create(ERROR, "Constructor arguments required");
     DiagnosticFactory<JetDelegationSpecifier> MANY_CALLS_TO_THIS = DiagnosticFactory.create(ERROR, "Only one call to 'this(...)' is allowed");
-    DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, "{0} overrides nothing", PositioningStrategies.positionModifier(JetTokens.OVERRIDE_KEYWORD), DescriptorRenderer.TEXT);
+    DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, "{0} overrides nothing", PositioningStrategies.POSITION_OVERRIDE_MODIFIER, DescriptorRenderer.TEXT);
     DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN =
             DiagnosticFactory3.create(ERROR, "''{0}'' hides ''{1}'' in class {2} and needs 'override' modifier", PositioningStrategies.POSITION_NAME_IDENTIFIER, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
     DiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor, DeclarationDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
-            DiagnosticFactory3.create(ERROR, "''{0}'' cannot has no access to ''{1}'' in class {2}, so it cannot override it", PositioningStrategies.positionModifier(JetTokens.OVERRIDE_KEYWORD), DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
+            DiagnosticFactory3.create(ERROR, "''{0}'' cannot has no access to ''{1}'' in class {2}, so it cannot override it", PositioningStrategies.POSITION_OVERRIDE_MODIFIER, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT, DescriptorRenderer.TEXT);
+    DiagnosticFactory<JetModifierListOwner> CANNOT_INFER_VISIBILITY = DiagnosticFactory.create(ERROR, "Cannot infer visibility. Please specify it explicitly", PositioningStrategies.POSITION_OVERRIDE_MODIFIER);
 
     DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, "Missing delegation specifier ''{0}''", PositioningStrategies.POSITION_NAME_IDENTIFIER, NAME);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR, "The type constructor of enum entry should be ''{0}''", NAME);
@@ -379,6 +380,8 @@ public interface Errors {
             return nameExpression.getReferencedName();
         }
     }, TO_STRING, TO_STRING);
+
+    DiagnosticFactory2<JetBinaryExpression, JetBinaryExpression, Boolean> SENSELESS_COMPARISON = DiagnosticFactory2.create(WARNING, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
 
     DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE = DiagnosticFactory3.create(ERROR, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", PositioningStrategies.POSITION_VISIBILITY_MODIFIER, TO_STRING, NAME, NAME);

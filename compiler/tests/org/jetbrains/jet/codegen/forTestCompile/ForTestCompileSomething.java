@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.TimeUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +41,8 @@ abstract class ForTestCompileSomething {
     private File jarFile;
 
     ForTestCompileSomething(@NotNull String jarName) {
+        System.out.println("Compiling " + jarName + "...");
+        long start = System.currentTimeMillis();
         this.jarName = jarName;
         try {
             File tmpDir = JetTestUtils.tmpDir("runtimejar");
@@ -67,6 +70,8 @@ abstract class ForTestCompileSomething {
             }
 
             FileUtil.delete(classesDir);
+            long end = System.currentTimeMillis();
+            System.out.println("Compiling " + jarName + " done in " + TimeUtils.millisecondsToSecondsString(end - start) + "s");
         } catch (Throwable e) {
             error = e;
         }

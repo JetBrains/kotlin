@@ -62,11 +62,13 @@ public class CompilationException extends RuntimeException {
     
     private String where() {
         Throwable cause = getCause();
-        if (cause != null && cause.getStackTrace().length > 0) {
-            return cause.getStackTrace()[0].getFileName() + ":" + cause.getStackTrace()[0].getLineNumber();
+        Throwable throwable = cause != null ? cause : this;
+        StackTraceElement[] stackTrace = throwable.getStackTrace();
+        if (stackTrace != null && stackTrace.length > 0) {
+            return stackTrace[0].getFileName() + ":" + stackTrace[0].getLineNumber();
         }
         else {
-            return "far away in cyberspace";
+            return "unknown";
         }
     }
 

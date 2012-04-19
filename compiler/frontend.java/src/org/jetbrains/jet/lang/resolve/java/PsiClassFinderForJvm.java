@@ -87,7 +87,7 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
         if (result != null) {
             FqName actualQualifiedName = new FqName(result.getQualifiedName());
             if (!actualQualifiedName.equals(qualifiedName)) {
-//                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
+                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
             }
         }
 

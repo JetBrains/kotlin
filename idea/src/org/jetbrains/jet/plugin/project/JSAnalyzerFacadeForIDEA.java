@@ -47,6 +47,6 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
                                        @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
                                        @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         BindingContext context = AnalyzerFacadeForJS.analyzeFiles(files, new IDEAConfig(project));
-        return new AnalyzeExhaust(context, JetStandardLibrary.getInstance());
+        return AnalyzeExhaust.success(context, JetStandardLibrary.getInstance());
     }
 }
