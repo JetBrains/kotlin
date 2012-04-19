@@ -56,7 +56,7 @@
       <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                       serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
 
-      <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+      <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
       <internalFileTemplate name="Kotlin File"/>
       <internalFileTemplate name="Kotlin Class"/>
