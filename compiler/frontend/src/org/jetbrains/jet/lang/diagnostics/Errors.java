@@ -380,6 +380,8 @@ public interface Errors {
         }
     }, TO_STRING, TO_STRING);
 
+    DiagnosticFactory2<JetBinaryExpression, JetBinaryExpression, Boolean> SENSELESS_COMPARISON = DiagnosticFactory2.create(WARNING, "Condition ''{0}'' is always ''{1}''", ELEMENT_TEXT, TO_STRING);
+
     DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR, "''{0}'' in ''{1}'' is final and cannot be overridden", NAME, NAME);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE = DiagnosticFactory3.create(ERROR, "Cannot weaken access privilege ''{0}'' for ''{1}'' in ''{2}''", PositioningStrategies.POSITION_VISIBILITY_MODIFIER, TO_STRING, NAME, NAME);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_CHANGE_ACCESS_PRIVILEGE = DiagnosticFactory3.create(ERROR, "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''", PositioningStrategies.POSITION_VISIBILITY_MODIFIER, TO_STRING, NAME, NAME);
