@@ -230,8 +230,7 @@ public class FqNameUnsafe {
         if (isRoot()) {
             return false;
         }
-        List<String> pathSegments = pathSegments();
-        return pathSegments.get(pathSegments.size() - 1).equals(segment);
+        return shortName().equals(segment);
     }
 
 
