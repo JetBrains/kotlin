@@ -1,0 +1,2 @@
+<div class="code panel" style="border-width: 1px;"><div class="codeContent panelContent"><div class="container">
+<div class="line"><code class="jet keyword">var</code><code class="jet whitespace">&nbsp;</code><div class="jet warning"></div><code class="jet plain">allByDefault</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">:</code><code class="jet whitespace">&nbsp;</code><code class="jet plain">Int</code><code class="jet plain">?</code></div></div></div></div>
