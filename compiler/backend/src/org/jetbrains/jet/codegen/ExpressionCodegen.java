@@ -1325,7 +1325,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         CallableMethod callableMethod;
         if (fd instanceof VariableAsFunctionDescriptor) {
             assert !superCall;
-            callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+            // Invoking an variable as a function..
+            VariableAsFunctionDescriptor vfd = (VariableAsFunctionDescriptor) fd;
+            if(vfd.getFunctionDescriptor() !=null ) {
+                // It was an object with that defined an 'invoke' method.
+                callableMethod = typeMapper.mapToCallableMethod(vfd.getFunctionDescriptor(), superCall, OwnerKind.IMPLEMENTATION);
+                callableMethod.requestGenerateCallee(Type.getObjectType(callableMethod.getOwner()));
+            } else {
+                // It was a function literal
+                callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
+            }
         }
         else if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && fd.getContainingDeclaration() instanceof FunctionDescriptor)) {
             SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
