@@ -49,7 +49,7 @@ public enum ResolutionStatus {
     }
 
     public ResolutionStatus combine(ResolutionStatus other) {
-        if (this.isSuccess()) return other;
+        if (this == UNKNOWN_STATUS || this.isSuccess()) return other;
         if (!other.isSuccess() && this.getSeverityIndex() < other.getSeverityIndex()) return other;
         return this;
     }

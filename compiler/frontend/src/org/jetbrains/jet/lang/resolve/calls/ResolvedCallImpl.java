@@ -81,8 +81,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return status;
     }
 
-    public void setStatus(@NotNull ResolutionStatus status) {
-        this.status = status;
+    public void addStatus(@NotNull ResolutionStatus status) {
+        this.status = this.status.combine(status);
     }
 
     @NotNull
