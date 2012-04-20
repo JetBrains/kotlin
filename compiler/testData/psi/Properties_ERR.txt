@@ -119,22 +119,22 @@ JetFile: Properties_ERR.jet
   MODIFIER_LIST
     PsiElement(public)('public')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(LPAR)('(')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(EQ)('=')
   PsiWhiteSpace(' ')
   PROPERTY
