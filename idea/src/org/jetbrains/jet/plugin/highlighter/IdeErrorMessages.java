@@ -37,9 +37,13 @@ import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
@@ -191,11 +195,19 @@ public class IdeErrorMessages {
                     if (!first) {
                         stringBuilder.append(", ");
                     }
-                    String paramType = htmlRend.renderType(parameter.getType());
-                    if (parametersToHighlight.contains(parameter)) {
-                        paramType = String.format(RED_TEMPLATE, paramType);
+                    JetType type = parameter.getType();
+                    JetType varargElementType = parameter.getVarargElementType();
+                    if (varargElementType != null) {
+                        type = varargElementType;
                     }
-                    stringBuilder.append(paramType);
+                    String paramString = (varargElementType != null ? "<b>vararg</b> " : "") + htmlRend.renderType(type);
+                    if (parameter.hasDefaultValue()) {
+                        paramString += " = ...";
+                    }
+                    if (parametersToHighlight.contains(parameter)) {
+                        paramString = String.format(RED_TEMPLATE, paramString);
+                    }
+                    stringBuilder.append(paramString);
 
                     first = false;
                 }
