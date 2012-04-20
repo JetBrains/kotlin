@@ -27,10 +27,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -105,6 +107,8 @@ public class DependencyInjectorGenerator {
             generateFields(out);
             out.println();
             generateConstructor(injectorClassName, out);
+            out.println();
+            generateDestroy(injectorClassName, out);
             out.println();
             generateGetters(out);
 // Needed to fix double-checked locking
@@ -212,6 +216,7 @@ public class DependencyInjectorGenerator {
                 break;
             }
         }
+        generateImportDirective(out, PreDestroy.class, injectorPackageName);
     }
 
     private void generateImportDirectives(PrintStream out, DiType type, String injectorPackageName) {
@@ -305,9 +310,17 @@ public class DependencyInjectorGenerator {
     }
 
     private static List<Method> getPostConstructMethods(Class<?> clazz) {
+        return getInjectSpecialMethods(clazz, PostConstruct.class);
+    }
+
+    private static List<Method> getPreDestroyMethods(Class<?> clazz) {
+        return getInjectSpecialMethods(clazz, PreDestroy.class);
+    }
+
+    private static List<Method> getInjectSpecialMethods(Class<?> clazz, Class<? extends Annotation> annotationClass) {
         List<Method> r = Lists.newArrayList();
         for (Method method : clazz.getMethods()) {
-            if (method.getAnnotation(PostConstruct.class) != null) {
+            if (method.getAnnotation(annotationClass) != null) {
                 if (method.getParameterTypes().length != 0) {
                     throw new IllegalStateException("@PostConstruct method must have no arguments: " + method);
                 }
@@ -315,6 +328,22 @@ public class DependencyInjectorGenerator {
             }
         }
         return r;
+    }
+
+    private void generateDestroy(@NotNull String injectorClassName, @NotNull PrintStream out) {
+        out.println("    @PreDestroy");
+        out.println("    public void destroy() {");
+        for (Field field : fields) {
+            // TODO: type of field may be different from type of object
+            List<Method> preDestroyMethods = getPreDestroyMethods(field.getType().getClazz());
+            for (Method preDestroy : preDestroyMethods) {
+                out.println("        " + field.getName() + "." + preDestroy.getName() + "();");
+            }
+            if (preDestroyMethods.size() > 0) {
+                out.println();
+            }
+        }
+        out.println("    }");
     }
 
     private void generateGetters(PrintStream out) {

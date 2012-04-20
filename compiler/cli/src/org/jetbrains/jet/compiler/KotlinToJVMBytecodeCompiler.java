@@ -165,21 +165,26 @@ public class KotlinToJVMBytecodeCompiler {
             return false;
         }
 
-        ClassFileFactory factory = generationState.getFactory();
-        if (jar != null) {
-            try {
-                CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
-            } catch (FileNotFoundException e) {
-                throw new CompileEnvironmentException("Invalid jar path " + jar, e);
+        try {
+            ClassFileFactory factory = generationState.getFactory();
+            if (jar != null) {
+                try {
+                    CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
+                } catch (FileNotFoundException e) {
+                    throw new CompileEnvironmentException("Invalid jar path " + jar, e);
+                }
             }
+            else if (outputDir != null) {
+                CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
+            }
+            else {
+                throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+            }
+            return true;
         }
-        else if (outputDir != null) {
-            CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
+        finally {
+            generationState.destroy();
         }
-        else {
-            throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
-        }
-        return true;
     }
 
     public static boolean compileBunchOfSources(
