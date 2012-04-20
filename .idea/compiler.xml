@@ -17,6 +17,7 @@
       <entry name="?*.jet" />
       <entry name="?*.ft" />
       <entry name="?*.kt" />
+      <entry name="?*.template" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>
