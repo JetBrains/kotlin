@@ -38,12 +38,6 @@ import java.util.LinkedList;
  */
 public class JetPluginUtil {
     @NotNull
-    public static FqName computeTypeFullName(@NotNull JetType type) {
-        ClassDescriptor clazz = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
-        return DescriptorUtils.getFQName(clazz).toSafe();
-    }
-
-    @NotNull
     private static LinkedList<String> computeTypeFullNameList(JetType type) {
         if (type instanceof DeferredType) {
             type = ((DeferredType)type).getActualType();

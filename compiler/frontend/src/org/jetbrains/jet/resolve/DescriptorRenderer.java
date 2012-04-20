@@ -30,10 +30,7 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -122,6 +119,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
     }
 
+    private static List<String> getOuterClassesNames(ClassDescriptor cd) {
+        ArrayList<String> result = new ArrayList<String>();
+        while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
+            result.add(cd.getName());
+            cd = (ClassDescriptor)cd.getContainingDeclaration();
+        }
+        return result;
+    }
+
     private String renderDefaultType(JetType type, boolean shortNamesOnly) {
         StringBuilder sb = new StringBuilder();
         ClassifierDescriptor cd = type.getConstructor().getDeclarationDescriptor();
@@ -132,7 +138,18 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             typeNameObject = type.getConstructor();
         }
         else {
-            typeNameObject = shortNamesOnly ? cd.getName() : DescriptorUtils.getFQName(cd);
+            if (shortNamesOnly) {
+                // for nested classes qualified name should be used
+                typeNameObject = cd.getName();
+                DeclarationDescriptor parent = cd.getContainingDeclaration();
+                while (parent instanceof ClassDescriptor) {
+                    typeNameObject = parent.getName() + "." + typeNameObject;
+                    parent = parent.getContainingDeclaration();
+                }
+            }
+            else {
+                typeNameObject = DescriptorUtils.getFQName(cd);
+            }
         }
 
         sb.append(typeNameObject);

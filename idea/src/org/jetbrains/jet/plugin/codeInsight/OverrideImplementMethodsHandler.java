@@ -131,7 +131,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
         bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
                 descriptor.getType()));
-        ImportInsertHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
+        ImportInsertHelper.addImportDirectivesIfNeeded(descriptor.getType(), file);
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
@@ -168,7 +168,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             bodyBuilder.append(" : ");
             bodyBuilder.append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(parameterDescriptor.getType()));
 
-            ImportInsertHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
+            ImportInsertHelper.addImportDirectivesIfNeeded(parameterDescriptor.getType(), file);
 
             if (!isAbstractFun) {
                 delegationBuilder.append(parameterDescriptor.getName());
@@ -184,7 +184,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
         if (returnsNotUnit) {
             bodyBuilder.append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(returnType));
-            ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
+            ImportInsertHelper.addImportDirectivesIfNeeded(returnType, file);
         }
 
         bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");

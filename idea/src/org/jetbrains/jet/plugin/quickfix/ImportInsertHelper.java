@@ -17,22 +17,21 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.usages.impl.rules.NonCodeUsageGroupingRule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -53,7 +52,7 @@ public class ImportInsertHelper {
      * @param type type to import
      * @param file file where import directive should be added
      */
-    public static void addImportDirectiveIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
+    public static void addImportDirectivesIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
@@ -62,7 +61,9 @@ public class ImportInsertHelper {
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
         }
-        addImportDirective(JetPluginUtil.computeTypeFullName(type), file);
+        for (ClassDescriptor clazz : TypeUtils.getAllClassDescriptors(type)) {
+            addImportDirective(DescriptorUtils.getFQName(getTopLevelClass(clazz)).toSafe(), file);
+        }
     }
 
     /**
@@ -154,5 +155,16 @@ public class ImportInsertHelper {
         }
 
         return true;
+    }
+
+    private static ClassDescriptor getTopLevelClass(ClassDescriptor classDescriptor) {
+        while (true) {
+            DeclarationDescriptor parent = classDescriptor.getContainingDeclaration();
+            if (parent instanceof ClassDescriptor) {
+                classDescriptor = (ClassDescriptor) parent;
+            } else {
+                return classDescriptor;
+            }
+        }
     }
 }
