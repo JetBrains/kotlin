@@ -21,26 +21,23 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.objectweb.asm.*;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 public abstract class ClassBuilder {
     public static class Concrete extends ClassBuilder {
         private final ClassVisitor v;
-        private final boolean stubs;
 
-        public Concrete(ClassVisitor v, boolean stubs) {
+        public Concrete(ClassVisitor v) {
             this.v = v;
-            this.stubs = stubs;
         }
 
         @Override
         public ClassVisitor getVisitor() {
             return v;
-        }
-
-        @Override
-        public Mode generateCode() {
-            return stubs ? Mode.STUBS : Mode.FULL;
         }
     }
     public FieldVisitor newField(@Nullable PsiElement origin,
@@ -88,15 +85,4 @@ public abstract class ClassBuilder {
     public void visitInnerClass(String name, String outerName, String innerName, int access) {
         getVisitor().visitInnerClass(name, outerName, innerName, access);
     }
-
-    public enum Mode {
-        /** Full function bodies */
-        FULL,
-        /** Only function signatures */
-        SIGNATURES,
-        /** Function with stub bodies: just throw exception */
-        STUBS,
-    }
-
-    public abstract Mode generateCode();
 }

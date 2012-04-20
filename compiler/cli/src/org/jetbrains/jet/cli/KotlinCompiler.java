@@ -20,11 +20,11 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.compiler.CompilerPlugin;
+import org.jetbrains.jet.compiler.*;
 import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
 import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
@@ -135,23 +135,30 @@ public class KotlinCompiler {
             runtimeJar = null;
         }
 
-        CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar,runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar, runtimeJar);
         PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-        CompileEnvironment environment = new CompileEnvironment(messageCollector, dependencies);
+        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+
+        JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
+        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
         try {
-            configureEnvironment(environment, arguments);
+            configureEnvironment(configuration, arguments);
 
             boolean noErrors;
             if (arguments.module != null) {
-                noErrors = environment.compileModuleScript(arguments.module, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                noErrors = KotlinToJVMBytecodeCompiler.compileModuleScript(configuration,
+                                                                           arguments.module, arguments.jar, arguments.outputDir,
+                                                                           arguments.includeRuntime);
             }
             else {
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
-                    noErrors = environment.compileBunchOfSourceDirectories(arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
+                                                                                           arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
                 }
                 else {
-                    noErrors = environment.compileBunchOfSources(arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
+                                                                 arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
                 }
             }
             return noErrors ? OK : COMPILATION_ERROR;
@@ -161,7 +168,7 @@ public class KotlinCompiler {
             return INTERNAL_ERROR;
         }
         finally {
-            environment.dispose();
+            Disposer.dispose(rootDisposable);
             messageCollector.printToErrStream();
         }
     }
@@ -228,20 +235,20 @@ public class KotlinCompiler {
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    protected void configureEnvironment(CompileEnvironment environment, CompilerArguments arguments) {
+    protected void configureEnvironment(CompileEnvironmentConfiguration configuration, CompilerArguments arguments) {
         // install any compiler plugins
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
         if (plugins != null) {
-            environment.getEnvironment().getCompilerPlugins().addAll(plugins);
+            configuration.getCompilerPlugins().addAll(plugins);
         }
 
-        if (environment.getCompilerDependencies().getRuntimeJar() != null) {
-            environment.addToClasspath(environment.getCompilerDependencies().getRuntimeJar());
+        if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
         }
 
         if (arguments.classpath != null) {
             final Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
-            environment.addToClasspath(Iterables.toArray(classpath, String.class));
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, String.class));
         }
     }
 

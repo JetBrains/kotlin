@@ -170,10 +170,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
         cv.newField(fun, ACC_PRIVATE | ACC_STATIC | ACC_FINAL, "$instance", classDescr, null, null);
 
         MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC | ACC_STATIC, "$getInstance", "()" + classDescr, null, new String[0]);
-        if (cv.generateCode() == ClassBuilder.Mode.STUBS) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }
-        else if (cv.generateCode() == ClassBuilder.Mode.FULL) {
+        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             mv.visitFieldInsn(GETSTATIC, name, "$instance", classDescr);
             mv.visitInsn(DUP);
@@ -211,10 +211,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
             return;
 
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "invoke", bridge.getAsmMethod().getDescriptor(), null, new String[0]);
-        if (cv.generateCode() == ClassBuilder.Mode.STUBS) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }
-        if (cv.generateCode() == ClassBuilder.Mode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             InstructionAdapter iv = new InstructionAdapter(mv);
@@ -296,10 +296,10 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
 
         final Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
         final MethodVisitor mv = cv.newMethod(fun, ACC_PUBLIC, "<init>", constructor.getDescriptor(), null, new String[0]);
-        if (cv.generateCode() == ClassBuilder.Mode.STUBS) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
             StubCodegen.generateStubCode(mv);
         }
-        else if (cv.generateCode() == ClassBuilder.Mode.FULL) {
+        else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 

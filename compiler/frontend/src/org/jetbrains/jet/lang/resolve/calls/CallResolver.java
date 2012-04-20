@@ -102,16 +102,16 @@ public class CallResolver {
         if (referencedName == null) {
             return OverloadResolutionResultsImpl.nameNotFound();
         }
-        TaskPrioritizer<VariableDescriptor> task_prioritizer;
+        List<MemberPrioritizer<VariableDescriptor>> memberPrioritizers = Lists.newArrayList();
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
             referencedName = referencedName.substring(1);
-            task_prioritizer = TaskPrioritizers.PROPERTY_TASK_PRIORITIZER;
+            memberPrioritizers.add(MemberPrioritizers.PROPERTY_TASK_PRIORITIZER);
         }
         else {
-            task_prioritizer = TaskPrioritizers.VARIABLE_TASK_PRIORITIZER;
+            memberPrioritizers.add(MemberPrioritizers.VARIABLE_TASK_PRIORITIZER);
         }
-        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = task_prioritizer.computePrioritizedTasks(context, referencedName, nameExpression);
-        return doResolveCall(context, prioritizedTasks, nameExpression);
+        List<ResolutionTask<VariableDescriptor>> prioritizedTasks = TaskPrioritizer.computePrioritizedTasks(context, referencedName, nameExpression, memberPrioritizers);
+        return doResolveCall(context, prioritizedTasks, CallTransformationStrategy.PROPERTY_CALL_TRANSFORMATION_STRATEGY, nameExpression);
     }
 
     @NotNull
@@ -119,9 +119,9 @@ public class CallResolver {
             @NotNull BasicResolutionContext context,
             @NotNull final JetReferenceExpression functionReference,
             @NotNull String name) {
-        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(
-                context, name, functionReference);
-        return doResolveCall(context, tasks, functionReference);
+        List<ResolutionTask<FunctionDescriptor>> tasks = TaskPrioritizer.computePrioritizedTasks(
+                context, name, functionReference, Collections.singletonList(MemberPrioritizers.FUNCTION_TASK_PRIORITIZER));
+        return doResolveCall(context, tasks, CallTransformationStrategy.FUNCTION_CALL_TRANSFORMATION_STRATEGY, functionReference);
     }
 
     @NotNull
@@ -142,7 +142,7 @@ public class CallResolver {
             String name = expression.getReferencedName();
             if (name == null) return checkArgumentTypesAndFail(context);
 
-            prioritizedTasks = TaskPrioritizers.FUNCTION_TASK_PRIORITIZER.computePrioritizedTasks(context, name, functionReference);
+            prioritizedTasks = TaskPrioritizer.computePrioritizedTasks(context, name, functionReference, Collections.singletonList(MemberPrioritizers.FUNCTION_TASK_PRIORITIZER));
             ResolutionTask.DescriptorCheckStrategy abstractConstructorCheck = new ResolutionTask.DescriptorCheckStrategy() {
                 @Override
                 public <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing) {
@@ -184,7 +184,7 @@ public class CallResolver {
                         context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                         return checkArgumentTypesAndFail(context);
                     }
-                    Collection<ResolvedCallImpl<FunctionDescriptor>> candidates = TaskPrioritizer.<FunctionDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors);
+                    Collection<ResolutionCandidate<FunctionDescriptor>> candidates = TaskPrioritizer.<FunctionDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors);
                     prioritizedTasks.add(new ResolutionTask<FunctionDescriptor>(candidates, functionReference, context));  // !! DataFlowInfo.EMPTY
                 }
                 else {
@@ -206,7 +206,7 @@ public class CallResolver {
                     context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(context);
                 }
-                List<ResolvedCallImpl<FunctionDescriptor>> candidates = ResolvedCallImpl.<FunctionDescriptor>convertCollection(constructors);
+                List<ResolutionCandidate<FunctionDescriptor>> candidates = ResolutionCandidate.<FunctionDescriptor>convertCollection(constructors);
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(candidates, functionReference, context)); // !! DataFlowInfo.EMPTY
             }
             else if (calleeExpression != null) {
@@ -223,15 +223,15 @@ public class CallResolver {
                 
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), "[for expression " + calleeExpression.getText() + "]");
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER);
-                ResolvedCallImpl<FunctionDescriptor> resolvedCall = ResolvedCallImpl.<FunctionDescriptor>create(functionDescriptor);
-                resolvedCall.setReceiverArgument(context.call.getExplicitReceiver());
+                ResolutionCandidate<FunctionDescriptor> resolutionCandidate = ResolutionCandidate.<FunctionDescriptor>create(functionDescriptor);
+                resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
 
                 // strictly speaking, this is a hack:
                 // we need to pass a reference, but there's no reference in the PSI,
                 // so we wrap what we have into a fake reference and pass it on (unwrap on the other end)
                 functionReference = new JetFakeReference(calleeExpression);
 
-                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(Collections.singleton(resolvedCall), functionReference, context));
+                prioritizedTasks = Collections.singletonList(new ResolutionTask<FunctionDescriptor>(Collections.singleton(resolutionCandidate), functionReference, context));
             }
             else {
 //                checkTypesWithNoCallee(trace, scope, call);
@@ -239,7 +239,7 @@ public class CallResolver {
             }
         }
 
-        return doResolveCall(context, prioritizedTasks, functionReference);
+        return doResolveCall(context, prioritizedTasks, CallTransformationStrategy.FUNCTION_CALL_TRANSFORMATION_STRATEGY, functionReference);
     }
 
     private <D extends CallableDescriptor> OverloadResolutionResults<D> checkArgumentTypesAndFail(BasicResolutionContext context) {
@@ -251,6 +251,7 @@ public class CallResolver {
     private <D extends CallableDescriptor> OverloadResolutionResults<D> doResolveCall(
             @NotNull final BasicResolutionContext context,
             @NotNull final List<ResolutionTask<D>> prioritizedTasks, // high to low priority
+            @NotNull CallTransformationStrategy<D, D> callTransformationStrategy,
             @NotNull final JetReferenceExpression reference) {
 
         ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
@@ -267,7 +268,7 @@ public class CallResolver {
         OverloadResolutionResultsImpl<D> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D> task : prioritizedTasks) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace);
-            OverloadResolutionResultsImpl<D> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.withTrace(temporaryTrace));
+            OverloadResolutionResultsImpl<D> results = performResolutionGuardedForExtraFunctionLiteralArguments(task.withTrace(temporaryTrace), callTransformationStrategy);
             if (results.isSuccess() || results.isAmbiguity()) {
                 temporaryTrace.commit();
 
@@ -299,8 +300,9 @@ public class CallResolver {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolutionGuardedForExtraFunctionLiteralArguments(ResolutionTask<D> task) {
-        OverloadResolutionResultsImpl<D> results = performResolution(task);
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolutionGuardedForExtraFunctionLiteralArguments(@NotNull ResolutionTask<D> task,
+            @NotNull CallTransformationStrategy<D, D> callTransformationStrategy) {
+        OverloadResolutionResultsImpl<D> results = performResolution(task, callTransformationStrategy);
 
         // If resolution fails, we should check for some of the following situations:
         //   class A {
@@ -323,9 +325,9 @@ public class CallResolver {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            Collection<ResolvedCallImpl<D>> newCandidates = Lists.newArrayList();
-            for (ResolvedCallImpl<D> candidate : task.getCandidates()) {
-                newCandidates.add(ResolvedCallImpl.create(candidate.getCandidateDescriptor()));
+            Collection<ResolutionCandidate<D>> newCandidates = Lists.newArrayList();
+            for (ResolutionCandidate<D> candidate : task.getCandidates()) {
+                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor()));
             }
             ResolutionTask<D> newContext = new ResolutionTask<D>(newCandidates, task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
                             @NotNull
@@ -334,7 +336,7 @@ public class CallResolver {
                                 return Collections.emptyList();
                             }
                         }, task.expectedType, task.dataFlowInfo);
-            OverloadResolutionResultsImpl<D> resultsWithFunctionLiteralsStripped = performResolution(newContext);
+            OverloadResolutionResultsImpl<D> resultsWithFunctionLiteralsStripped = performResolution(newContext, callTransformationStrategy);
             if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
                 task.tracing.danglingFunctionLiteralArgumentSuspected(task.trace, task.call.getFunctionLiteralArguments());
             }
@@ -344,101 +346,23 @@ public class CallResolver {
     }
 
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolution(ResolutionTask<D> task) {
-        for (ResolvedCallImpl<D> candidateCall : task.getCandidates()) {
-            D candidate = candidateCall.getCandidateDescriptor();
+    private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> performResolution(@NotNull ResolutionTask<D> task,
+            @NotNull CallTransformationStrategy<D, D> callTransformationStrategy) {
+
+        for (ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
             TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(task.trace);
-            candidateCall.setTrace(temporaryTrace);
+            CallResolutionContext<D> context = callTransformationStrategy.createCallContext(resolutionCandidate, task, temporaryTrace, task.tracing);
+            performResolutionForCandidateCall(context, task, temporaryTrace);
 
-            CallResolutionContext<D> context = new CallResolutionContext<D>(candidateCall, task, temporaryTrace, task.tracing);
-
-            context.tracing.bindReference(context.trace, candidateCall);
-            
-            if (ErrorUtils.isError(candidate)) {
-                candidateCall.setStatus(SUCCESS);
-                checkTypesWithNoCallee(context.toBasic());
-                continue;
+            Collection<ResolvedCallImpl<D>> calls = callTransformationStrategy.transformResultCall(context, this, task);
+            for (ResolvedCallImpl<D> call : calls) {
+                task.getResolvedCallMap().put(resolutionCandidate, call);
             }
-
-            if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
-                candidateCall.setStatus(OTHER_ERROR);
-                context.tracing.invisibleMember(context.trace, candidate);
-                continue;
-            }
-
-            boolean errorInArgumentMapping = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing, candidateCall);
-            if (errorInArgumentMapping) {
-                candidateCall.setStatus(OTHER_ERROR);
-                checkTypesWithNoCallee(context.toBasic());
-                continue;
-            }
-
-            List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
-            if (jetTypeArguments.isEmpty()) {
-                if (!candidate.getTypeParameters().isEmpty()) {
-                    candidateCall.setStatus(inferTypeArguments(context));
-                }
-                else {
-                    candidateCall.setStatus(checkAllValueArguments(context));
-                }
-            }
-            else {
-                // Explicit type arguments passed
-
-                List<JetType> typeArguments = new ArrayList<JetType>();
-                for (JetTypeProjection projection : jetTypeArguments) {
-                    if (projection.getProjectionKind() != JetProjectionKind.NONE) {
-                        context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
-                    }
-                    JetTypeReference typeReference = projection.getTypeReference();
-                    if (typeReference != null) {
-                        typeArguments.add(typeResolver.resolveType(context.scope, typeReference, context.trace, true));
-                    }
-                    else {
-                        typeArguments.add(ErrorUtils.createErrorType("Star projection in a call"));
-                    }
-                }
-                int expectedTypeArgumentCount = candidate.getTypeParameters().size();
-                if (expectedTypeArgumentCount == jetTypeArguments.size()) {
-
-                    checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, context.trace);
-                    
-                    Map<TypeConstructor, TypeProjection> substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor) candidate, typeArguments);
-                    D substitutedDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
-
-                    candidateCall.setResultingDescriptor(substitutedDescriptor);
-                    replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
-
-                    List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
-                    for (int i = 0; i < typeParameters.size(); i++) {
-                        TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
-                        candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
-                    }
-                    candidateCall.setStatus(checkAllValueArguments(context));
-                }
-                else {
-                    candidateCall.setStatus(OTHER_ERROR);
-                    context.tracing.wrongNumberOfTypeArguments(context.trace, expectedTypeArgumentCount);
-                }
-            }
-            
-            task.performAdvancedChecks(candidate, context.trace, context.tracing);
-
-            // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
-            // See TaskPrioritizer for more
-            JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getReceiverArgument());
-            if (superExpression != null) {
-                context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
-                candidateCall.setStatus(OTHER_ERROR);
-            }
-
-            recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
-            recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
         }
 
         Set<ResolvedCallImpl<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallImpl<D>> failedCandidates = Sets.newLinkedHashSet();
-        for (ResolvedCallImpl<D> candidateCall : task.getCandidates()) {
+        for (ResolvedCallImpl<D> candidateCall : task.getResolvedCallMap().values()) {
             ResolutionStatus status = candidateCall.getStatus();
             if (status.isSuccess()) {
                 successfulCandidates.add(candidateCall);
@@ -454,6 +378,103 @@ public class CallResolver {
             checkTypesWithNoCallee(task.toBasic());
         }
         return results;
+    }
+
+    private <D extends CallableDescriptor> void performResolutionForCandidateCall(@NotNull CallResolutionContext<D> context,
+            @NotNull ResolutionTask<D> task,
+            @NotNull TemporaryBindingTrace temporaryTrace) {
+        ResolvedCallImpl<D> candidateCall = context.candidateCall;
+
+        candidateCall.setTrace(temporaryTrace);
+        D candidate = candidateCall.getCandidateDescriptor();
+
+        context.tracing.bindReference(context.trace, candidateCall);
+
+        if (ErrorUtils.isError(candidate)) {
+            candidateCall.addStatus(SUCCESS);
+            checkTypesWithNoCallee(context.toBasic());
+            return;
+        }
+
+        if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
+            candidateCall.addStatus(OTHER_ERROR);
+            context.tracing.invisibleMember(context.trace, candidate);
+            return;
+        }
+
+        ValueArgumentsToParametersMapper.Status
+                argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
+                                                                                                        candidateCall);
+        if (!argumentMappingStatus.isSuccess()) {
+            candidateCall.addStatus(OTHER_ERROR);
+            if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR) {
+                checkTypesWithNoCallee(context.toBasic());
+                return;
+            }
+        }
+
+        List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
+        if (jetTypeArguments.isEmpty()) {
+            if (!candidate.getTypeParameters().isEmpty()) {
+                candidateCall.addStatus(inferTypeArguments(context));
+            }
+            else {
+                candidateCall.addStatus(checkAllValueArguments(context));
+            }
+        }
+        else {
+            // Explicit type arguments passed
+
+            List<JetType> typeArguments = new ArrayList<JetType>();
+            for (JetTypeProjection projection : jetTypeArguments) {
+                if (projection.getProjectionKind() != JetProjectionKind.NONE) {
+                    context.trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection));
+                }
+                JetTypeReference typeReference = projection.getTypeReference();
+                if (typeReference != null) {
+                    typeArguments.add(typeResolver.resolveType(context.scope, typeReference, context.trace, true));
+                }
+                else {
+                    typeArguments.add(ErrorUtils.createErrorType("Star projection in a call"));
+                }
+            }
+            int expectedTypeArgumentCount = candidate.getTypeParameters().size();
+            if (expectedTypeArgumentCount == jetTypeArguments.size()) {
+
+                checkGenericBoundsInAFunctionCall(jetTypeArguments, typeArguments, candidate, context.trace);
+
+                Map<TypeConstructor, TypeProjection>
+                        substitutionContext = FunctionDescriptorUtil.createSubstitutionContext((FunctionDescriptor)candidate, typeArguments);
+                D substitutedDescriptor = (D) candidate.substitute(TypeSubstitutor.create(substitutionContext));
+
+                candidateCall.setResultingDescriptor(substitutedDescriptor);
+                replaceValueParametersWithSubstitutedOnes(candidateCall, substitutedDescriptor);
+
+                List<TypeParameterDescriptor> typeParameters = candidateCall.getCandidateDescriptor().getTypeParameters();
+                for (int i = 0; i < typeParameters.size(); i++) {
+                    TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
+                    candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
+                }
+                candidateCall.addStatus(checkAllValueArguments(context));
+            }
+            else {
+                candidateCall.addStatus(OTHER_ERROR);
+                context.tracing.wrongNumberOfTypeArguments(context.trace, expectedTypeArgumentCount);
+            }
+        }
+
+        task.performAdvancedChecks(candidate, context.trace, context.tracing);
+
+        // 'super' cannot be passed as an argument, for receiver arguments expression typer does not track this
+        // See TaskPrioritizer for more
+        JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getReceiverArgument());
+        if (superExpression != null) {
+            context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
+            candidateCall.addStatus(OTHER_ERROR);
+        }
+
+        recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
+        recordAutoCastIfNecessary(candidateCall.getThisObject(), candidateCall.getTrace());
     }
 
     private <D extends CallableDescriptor> ResolutionStatus inferTypeArguments(CallResolutionContext<D> context) {
@@ -843,25 +864,26 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
-        List<ResolvedCallImpl<FunctionDescriptor>> result = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
+        List<ResolutionCandidate<FunctionDescriptor>> candidates = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
         TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(trace);
-        Set<ResolvedCallImpl<FunctionDescriptor>> candidates = Sets.newLinkedHashSet();
-        for (ResolvedCallImpl<FunctionDescriptor> call : result) {
+        Set<ResolvedCallImpl<FunctionDescriptor>> calls = Sets.newLinkedHashSet();
+        for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {
+            ResolvedCallImpl<FunctionDescriptor> call = ResolvedCallImpl.create(candidate);
             call.setTrace(temporaryBindingTrace);
-            candidates.add(call);
+            calls.add(call);
         }
-        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, candidates, Collections.<ResolvedCallImpl<FunctionDescriptor>>emptySet());
+        return computeResultAndReportErrors(trace, TracingStrategy.EMPTY, calls, Collections.<ResolvedCallImpl<FunctionDescriptor>>emptySet());
     }
 
-    private List<ResolvedCallImpl<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
+    private List<ResolutionCandidate<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
                                                                                       String name, List<JetType> parameterTypes) {
-        List<ResolvedCallImpl<FunctionDescriptor>> result = Lists.newArrayList();
+        List<ResolutionCandidate<FunctionDescriptor>> result = Lists.newArrayList();
         if (receiver.exists()) {
-            Collection<ResolvedCallImpl<FunctionDescriptor>> extensionFunctionDescriptors = ResolvedCallImpl.convertCollection(scope.getFunctions(name));
-            List<ResolvedCallImpl<FunctionDescriptor>> nonlocal = Lists.newArrayList();
-            List<ResolvedCallImpl<FunctionDescriptor>> local = Lists.newArrayList();
+            Collection<ResolutionCandidate<FunctionDescriptor>> extensionFunctionDescriptors = ResolutionCandidate.convertCollection(scope.getFunctions(name));
+            List<ResolutionCandidate<FunctionDescriptor>> nonlocal = Lists.newArrayList();
+            List<ResolutionCandidate<FunctionDescriptor>> local = Lists.newArrayList();
             TaskPrioritizer.splitLexicallyLocalDescriptors(extensionFunctionDescriptors, scope.getContainingDeclaration(), local, nonlocal);
 
 
@@ -869,7 +891,7 @@ public class CallResolver {
                 return result;
             }
 
-            Collection<ResolvedCallImpl<FunctionDescriptor>> functionDescriptors = ResolvedCallImpl.convertCollection(receiver.getType().getMemberScope().getFunctions(name));
+            Collection<ResolutionCandidate<FunctionDescriptor>> functionDescriptors = ResolutionCandidate.convertCollection(receiver.getType().getMemberScope().getFunctions(name));
             if (lookupExactSignature(functionDescriptors, parameterTypes, result)) {
                 return result;
 
@@ -878,16 +900,16 @@ public class CallResolver {
             return result;
         }
         else {
-            lookupExactSignature(ResolvedCallImpl.convertCollection(scope.getFunctions(name)), parameterTypes, result);
+            lookupExactSignature(ResolutionCandidate.convertCollection(scope.getFunctions(name)), parameterTypes, result);
             return result;
         }
     }
 
-    private static boolean lookupExactSignature(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, List<JetType> parameterTypes,
-                                                List<ResolvedCallImpl<FunctionDescriptor>> result) {
+    private static boolean lookupExactSignature(Collection<ResolutionCandidate<FunctionDescriptor>> candidates, List<JetType> parameterTypes,
+                                                List<ResolutionCandidate<FunctionDescriptor>> result) {
         boolean found = false;
-        for (ResolvedCallImpl<FunctionDescriptor> resolvedCall : candidates) {
-            FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
+        for (ResolutionCandidate<FunctionDescriptor> resolvedCall : candidates) {
+            FunctionDescriptor functionDescriptor = resolvedCall.getDescriptor();
             if (functionDescriptor.getReceiverParameter().exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes)) continue;
@@ -897,17 +919,17 @@ public class CallResolver {
         return found;
     }
 
-    private boolean findExtensionFunctions(Collection<ResolvedCallImpl<FunctionDescriptor>> candidates, ReceiverDescriptor receiver,
-                                           List<JetType> parameterTypes, List<ResolvedCallImpl<FunctionDescriptor>> result) {
+    private boolean findExtensionFunctions(Collection<ResolutionCandidate<FunctionDescriptor>> candidates, ReceiverDescriptor receiver,
+                                           List<JetType> parameterTypes, List<ResolutionCandidate<FunctionDescriptor>> result) {
         boolean found = false;
-        for (ResolvedCallImpl<FunctionDescriptor> resolvedCall : candidates) {
-            FunctionDescriptor functionDescriptor = resolvedCall.getResultingDescriptor();
+        for (ResolutionCandidate<FunctionDescriptor> candidate : candidates) {
+            FunctionDescriptor functionDescriptor = candidate.getDescriptor();
             ReceiverDescriptor functionReceiver = functionDescriptor.getReceiverParameter();
             if (!functionReceiver.exists()) continue;
             if (!functionDescriptor.getTypeParameters().isEmpty()) continue;
             if (!typeChecker.isSubtypeOf(receiver.getType(), functionReceiver.getType())) continue;
             if (!checkValueParameters(functionDescriptor, parameterTypes))continue;
-            result.add(resolvedCall);
+            result.add(candidate);
             found = true;
         }
         return found;
@@ -922,16 +944,5 @@ public class CallResolver {
             if (!TypeUtils.equalTypes(expectedType, valueParameter.getType())) return false;
         }
         return true;
-    }
-
-    private static final class CallResolutionContext<D extends CallableDescriptor> extends ResolutionContext {
-        /*package*/ final ResolvedCallImpl<D> candidateCall;
-        /*package*/ final TracingStrategy tracing;
-
-        public CallResolutionContext(ResolvedCallImpl<D> candidateCall, ResolutionTask<D> task, BindingTrace trace, TracingStrategy tracing) {
-            super(trace, task.scope, task.call, task.expectedType, task.dataFlowInfo);
-            this.candidateCall = candidateCall;
-            this.tracing = tracing;
-        }
     }
 }

@@ -25,10 +25,10 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 import java.util.Set;
@@ -95,29 +95,73 @@ public class OverloadingConflictResolver {
 
         int fSize = fParams.size();
         int gSize = gParams.size();
-        if (fSize > gSize) return false;
-        for (int i = 0; i < gSize; i++) {
-            ValueParameterDescriptor gParam = gParams.get(i);
-            JetType gParamType = gParam.getType();
 
-            if (i >= fSize) {
-                // f() has fewer parameters than g()
-                // The point is: g() may have a last vararg that doesn't get any arguments
-                // In this case f() is more specific, because one can explicitly pass
-                // an empty array to g() and make it preferred
-                if (i != gSize - 1 || gParam.getVarargElementType() == null) {
+        boolean fIsVararg = isVariableArity(fParams);
+        boolean gIsVararg = isVariableArity(gParams);
+
+        if (!fIsVararg && gIsVararg) return true;
+        if (fIsVararg && !gIsVararg) return false;
+
+        if (!fIsVararg && !gIsVararg) {
+            if (fSize != gSize) return false;
+
+            for (int i = 0; i < fSize; i++) {
+                ValueParameterDescriptor fParam = fParams.get(i);
+                ValueParameterDescriptor gParam = gParams.get(i);
+
+                JetType fParamType = fParam.getType();
+                JetType gParamType = gParam.getType();
+
+                if (!typeMoreSpecific(fParamType, gParamType)) {
                     return false;
                 }
-                return true;
-            }
-
-            JetType fParamType = fParams.get(i).getType();
-
-            if (!typeMoreSpecific(fParamType, gParamType)) {
-                return false;
             }
         }
-        
+
+        if (fIsVararg && gIsVararg) {
+            // Check matching parameters
+            int minSize = Math.min(fSize, gSize);
+            for (int i = 0; i < minSize - 1; i++) {
+                ValueParameterDescriptor fParam = fParams.get(i);
+                ValueParameterDescriptor gParam = gParams.get(i);
+
+                JetType fParamType = fParam.getType();
+                JetType gParamType = gParam.getType();
+
+                if (!typeMoreSpecific(fParamType, gParamType)) {
+                    return false;
+                }
+            }
+
+            // Check the non-matching parameters of one function against the vararg parameter of the other funciton
+            // Example:
+            //   f(a : A, vararg vf : T)
+            //   g(vararg vg : T)
+            // here we check that typeof(a) < typeof(vg) and elementTypeOf(vf) < elementTypeOf(vg)
+            if (fSize < gSize) {
+                ValueParameterDescriptor fParam = fParams.get(fSize - 1);
+                JetType fParamType = fParam.getVarargElementType();
+                assert fParamType != null : "fIsVararg guarantees this";
+                for (int i = fSize - 1; i < gSize; i++) {
+                    ValueParameterDescriptor gParam = gParams.get(i);
+                    if (!typeMoreSpecific(fParamType, gParam.getType())) {
+                        return false;
+                    }
+                }
+            }
+            else {
+                ValueParameterDescriptor gParam = gParams.get(gSize - 1);
+                JetType gParamType = gParam.getVarargElementType();
+                assert gParamType != null : "gIsVararg guarantees this";
+                for (int i = gSize - 1; i < fSize; i++) {
+                    ValueParameterDescriptor fParam = fParams.get(i);
+                    if (!typeMoreSpecific(fParam.getType(), gParamType)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         if (discriminateGenericDescriptors && isGeneric(f)) {
             if (!isGeneric(g)) {
                 return false;
@@ -130,7 +174,12 @@ public class OverloadingConflictResolver {
 
         return true;
     }
-    
+
+    private boolean isVariableArity(List<ValueParameterDescriptor> fParams) {
+        int fSize = fParams.size();
+        return fSize > 0 && fParams.get(fSize - 1).getVarargElementType() != null;
+    }
+
     private boolean isGeneric(CallableDescriptor f) {
         return !f.getOriginal().getTypeParameters().isEmpty();
     }

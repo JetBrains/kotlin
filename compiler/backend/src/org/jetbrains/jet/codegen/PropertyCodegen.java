@@ -182,10 +182,10 @@ public class PropertyCodegen {
             AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getGetter());
         }
 
-        if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
-                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
                 }
                 else {
@@ -266,10 +266,10 @@ public class PropertyCodegen {
             AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getSetter());
         }
 
-        if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
-                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
                 }
                 else {

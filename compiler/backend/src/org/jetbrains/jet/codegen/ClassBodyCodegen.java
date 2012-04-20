@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -148,7 +147,7 @@ public abstract class ClassBodyCodegen {
     private void generateStaticInitializer() {
         if (staticInitializerChunks.size() > 0) {
             final MethodVisitor mv = v.newMethod(null, ACC_PUBLIC | Opcodes.ACC_STATIC,"<clinit>", "()V", null, null);
-            if (v.generateCode() == ClassBuilder.Mode.FULL) {
+            if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
                 InstructionAdapter v = new InstructionAdapter(mv);

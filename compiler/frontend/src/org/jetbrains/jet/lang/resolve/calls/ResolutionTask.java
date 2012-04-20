@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -39,10 +41,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 /**
  * Stores candidates for call resolution.
@@ -50,24 +49,30 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
  * @author abreslav
  */
 public class ResolutionTask<D extends CallableDescriptor> extends ResolutionContext {
-    private final Collection<ResolvedCallImpl<D>> candidates;
+    private final Collection<ResolutionCandidate<D>> candidates;
+    private final Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> resolvedCallMap = LinkedHashMultimap.create();
     /*package*/ final JetReferenceExpression reference;
     private DescriptorCheckStrategy checkingStrategy;
 
-    public ResolutionTask(@NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull JetReferenceExpression reference,
+    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference,
                           BindingTrace trace, JetScope scope, Call call, JetType expectedType, DataFlowInfo dataFlowInfo) {
         super(trace, scope, call, expectedType, dataFlowInfo);
         this.candidates = candidates;
         this.reference = reference;
     }
 
-    public ResolutionTask(@NotNull Collection<ResolvedCallImpl<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicResolutionContext context) {
+    public ResolutionTask(@NotNull Collection<ResolutionCandidate<D>> candidates, @NotNull JetReferenceExpression reference, @NotNull BasicResolutionContext context) {
         this(candidates, reference, context.trace, context.scope, context.call, context.expectedType, context.dataFlowInfo);
     }
 
     @NotNull
-    public Collection<ResolvedCallImpl<D>> getCandidates() {
+    public Collection<ResolutionCandidate<D>> getCandidates() {
         return candidates;
+    }
+
+    @NotNull
+    public Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> getResolvedCallMap() {
+        return resolvedCallMap;
     }
 
     public void setCheckingStrategy(DescriptorCheckStrategy strategy) {

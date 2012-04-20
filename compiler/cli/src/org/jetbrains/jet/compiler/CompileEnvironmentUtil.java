@@ -51,9 +51,17 @@ import java.util.jar.*;
  * @author abreslav
  */
 public class CompileEnvironmentUtil {
+    public static Disposable createMockDisposable() {
+        return new Disposable() {
+            @Override
+            public void dispose() {
+            }
+        };
+    }
+
     @Nullable
     public static File getUnpackedRuntimePath() {
-        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = CompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("file")) {
             return new File(url.getPath()).getParentFile().getParentFile();
         }
@@ -62,7 +70,7 @@ public class CompileEnvironmentUtil {
 
     @Nullable
     public static File getRuntimeJarPath() {
-        URL url = CompileEnvironment.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = CompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("jar")) {
             String path = url.getPath();
             return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
@@ -165,7 +173,7 @@ public class CompileEnvironmentUtil {
         scriptEnvironment.addSources(moduleFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
-                .analyzeAndGenerate(scriptEnvironment, dependencies, messageCollector, false);
+                .analyzeAndGenerate(new CompileEnvironmentConfiguration(scriptEnvironment, dependencies, messageCollector), false);
         if (generationState == null) {
             return null;
         }
@@ -187,7 +195,7 @@ public class CompileEnvironmentUtil {
             }
         }
         else {
-            loader = new GeneratedClassLoader(factory, CompileEnvironment.class.getClassLoader());
+            loader = new GeneratedClassLoader(factory, CompileEnvironmentConfiguration.class.getClassLoader());
         }
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
@@ -299,6 +307,31 @@ public class CompileEnvironmentUtil {
             } catch (IOException e) {
                 throw new CompileEnvironmentException(e);
             }
+        }
+    }
+
+    /**
+     * Add path specified to the compilation environment.
+     * @param environment compilation environment to add to
+     * @param paths paths to add
+     */
+    public static void addToClasspath(JetCoreEnvironment environment, File ... paths) {
+        for (File path : paths) {
+            if (!path.exists()) {
+                throw new CompileEnvironmentException("'" + path + "' does not exist");
+            }
+            environment.addToClasspath(path);
+        }
+    }
+
+    /**
+     * Add path specified to the compilation environment.
+     * @param environment compilation environment to add to
+     * @param paths paths to add
+     */
+    public static void addToClasspath(JetCoreEnvironment environment, String ... paths) {
+        for (String path : paths) {
+            addToClasspath(environment, new File(path));
         }
     }
 }

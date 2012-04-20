@@ -65,6 +65,7 @@ public class JetTypeMapper {
     public BindingContext bindingContext;
     private ClosureAnnotator closureAnnotator;
     private CompilerSpecialMode compilerSpecialMode;
+    private ClassBuilderMode classBuilderMode;
 
 
     @Inject
@@ -85,6 +86,11 @@ public class JetTypeMapper {
     @Inject
     public void setCompilerSpecialMode(CompilerSpecialMode compilerSpecialMode) {
         this.compilerSpecialMode = compilerSpecialMode;
+    }
+
+    @Inject
+    public void setClassBuilderMode(ClassBuilderMode classBuilderMode) {
+        this.classBuilderMode = classBuilderMode;
     }
 
     @PostConstruct
@@ -335,6 +341,9 @@ public class JetTypeMapper {
         DeclarationDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
 
         if (ErrorUtils.isError(descriptor)) {
+            if (classBuilderMode != ClassBuilderMode.SIGNATURES) {
+                throw new IllegalStateException("error types are not allowed when classBuilderMode = " + classBuilderMode);
+            }
             Type asmType = Type.getObjectType("error/NonExistentClass");
             if (signatureVisitor != null) {
                 visitAsmType(signatureVisitor, asmType, true);

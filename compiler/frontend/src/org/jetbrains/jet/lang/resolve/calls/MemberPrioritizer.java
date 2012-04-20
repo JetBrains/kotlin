@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.util.TraceClassVisitor;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.JetType;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.Collection;
 
 /**
- * @author max
+ * @author svtk
  */
-public interface ClassBuilderFactory {
+public interface MemberPrioritizer<D extends CallableDescriptor> {
     @NotNull
-    ClassBuilderMode getClassBuilderMode();
-    ClassBuilder newClassBuilder();
-    String asText(ClassBuilder builder);
-    byte[] asBytes(ClassBuilder builder);
+    Collection<D> getNonExtensionsByName(JetScope scope, String name);
+
+    @NotNull
+    Collection<D> getMembersByName(@NotNull JetType receiver, String name);
+
+    @NotNull
+    Collection<D> getExtensionsByName(JetScope scope, String name);
 }

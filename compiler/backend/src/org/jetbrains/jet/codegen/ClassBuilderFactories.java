@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
@@ -28,9 +29,15 @@ import java.io.StringWriter;
 public class ClassBuilderFactories {
 
     public static ClassBuilderFactory TEXT = new ClassBuilderFactory() {
+        @NotNull
+        @Override
+        public ClassBuilderMode getClassBuilderMode() {
+            return ClassBuilderMode.FULL;
+        }
+
         @Override
         public ClassBuilder newClassBuilder() {
-            return new ClassBuilder.Concrete(new TraceClassVisitor(new PrintWriter(new StringWriter())), false);
+            return new ClassBuilder.Concrete(new TraceClassVisitor(new PrintWriter(new StringWriter())));
         }
 
         @Override
@@ -51,6 +58,12 @@ public class ClassBuilderFactories {
 
     public static ClassBuilderFactory binaries(final boolean stubs) {
         return new ClassBuilderFactory() {
+            @NotNull
+            @Override
+            public ClassBuilderMode getClassBuilderMode() {
+                return stubs ? ClassBuilderMode.STUBS : ClassBuilderMode.FULL;
+            }
+
             @Override
             public ClassBuilder newClassBuilder() {
                 return new ClassBuilder.Concrete(new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS){
@@ -64,7 +77,7 @@ public class ClassBuilderFactories {
                             return "java/lang/Object";
                         }
                     }
-                }, stubs);
+                });
             }
 
             @Override

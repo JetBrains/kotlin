@@ -4,7 +4,7 @@ import java.io.File
 import java.io.PrintStream
 import org.jetbrains.jet.cli.CompilerArguments
 import org.jetbrains.jet.cli.KotlinCompiler
-import org.jetbrains.jet.compiler.CompileEnvironment
+import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration
 import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
 
 /**
@@ -20,16 +20,16 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : KotlinCompiler() {
 
-    protected override fun configureEnvironment(environment : CompileEnvironment?, arguments : CompilerArguments?) {
-        super.configureEnvironment(environment, arguments)
-        val coreEnvironment = environment?.getEnvironment()
+    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration?, arguments : CompilerArguments?) {
+        super.configureEnvironment(configuration, arguments)
+        val coreEnvironment = configuration?.getEnvironment()
         if (coreEnvironment != null) {
             val kdoc = KDoc()
 
             if (arguments is KDocArguments) {
                 kdoc.config = arguments.apply()
             }
-            val plugins = coreEnvironment.getCompilerPlugins().orEmpty()
+            val plugins = configuration?.getCompilerPlugins().orEmpty()
 /*
             val sourcePlugin = HtmlCompilerPlugin()
             plugins.add(sourcePlugin)
