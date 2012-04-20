@@ -194,7 +194,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         if (debugInfo != null) {
             List<? extends ResolutionTask<? extends CallableDescriptor>> resolutionTasks = debugInfo.get(TASKS);
             for (ResolutionTask<? extends CallableDescriptor> resolutionTask : resolutionTasks) {
-                for (ResolvedCallImpl<? extends CallableDescriptor> resolvedCall : resolutionTask.getCandidates()) {
+                for (ResolvedCallImpl<? extends CallableDescriptor> resolvedCall : resolutionTask.getResolvedCallMap().values()) {
                     renderResolutionLogForCall(debugInfo, resolvedCall, result);
                 }
             }

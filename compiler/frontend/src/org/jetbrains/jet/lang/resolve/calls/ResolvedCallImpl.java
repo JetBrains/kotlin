@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.UNKNOWN_STATUS;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor.NO_RECEIVER;
 
 /**
  * @author abreslav
@@ -55,23 +54,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull D descriptor) {
-        return new ResolvedCallImpl<D>(descriptor);
-    }
-
-    @NotNull
-    public static <D extends CallableDescriptor> List<ResolvedCallImpl<D>> convertCollection(@NotNull Collection<? extends D> descriptors) {
-        List<ResolvedCallImpl<D>> result = Lists.newArrayList();
-        for (D descriptor : descriptors) {
-            result.add(create(descriptor));
-        }
-        return result;
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate) {
+        return new ResolvedCallImpl<D>(candidate.getDescriptor(), candidate.getThisObject(), candidate.getReceiverArgument());
     }
 
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
-    private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
-    private ReceiverDescriptor receiverArgument = NO_RECEIVER; // receiver of an extension function
+    private final ReceiverDescriptor thisObject; // receiver object of a method
+    private final ReceiverDescriptor receiverArgument; // receiver of an extension function
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
@@ -80,8 +70,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
 
-    private ResolvedCallImpl(@NotNull D candidateDescriptor) {
+    private ResolvedCallImpl(@NotNull D candidateDescriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
         this.candidateDescriptor = candidateDescriptor;
+        this.thisObject = thisObject;
+        this.receiverArgument = receiverArgument;
     }
 
     @NotNull
@@ -140,18 +132,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return receiverArgument;
     }
 
-    public void setReceiverArgument(@NotNull ReceiverDescriptor receiverParameter) {
-        this.receiverArgument = receiverParameter;
-    }
-
     @Override
     @NotNull
     public ReceiverDescriptor getThisObject() {
         return thisObject;
-    }
-
-    public void setThisObject(@NotNull ReceiverDescriptor thisObject) {
-        this.thisObject = thisObject;
     }
 
     @Override

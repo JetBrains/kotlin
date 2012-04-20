@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
@@ -44,16 +43,16 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 /**
  * @author abreslav
  */
-/*package*/ abstract class TaskPrioritizer<D extends CallableDescriptor> {
+/*package*/ abstract class TaskPrioritizer {
 
     public static <D extends CallableDescriptor> void splitLexicallyLocalDescriptors(
-            @NotNull Collection<ResolvedCallImpl<D>> allDescriptors,
+            @NotNull Collection<ResolutionCandidate<D>> allDescriptors,
             @NotNull DeclarationDescriptor containerOfTheCurrentLocality,
-            @NotNull Collection<ResolvedCallImpl<D>> local,
-            @NotNull Collection<ResolvedCallImpl<D>> nonlocal
+            @NotNull Collection<ResolutionCandidate<D>> local,
+            @NotNull Collection<ResolutionCandidate<D>> nonlocal
     ) {
-        for (ResolvedCallImpl<D> resolvedCall : allDescriptors) {
-            if (DescriptorUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getCandidateDescriptor())) {
+        for (ResolutionCandidate<D> resolvedCall : allDescriptors) {
+            if (DescriptorUtils.isLocal(containerOfTheCurrentLocality, resolvedCall.getDescriptor())) {
                 local.add(resolvedCall);
             }
             else {
@@ -75,8 +74,8 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
     }
 
     @NotNull
-    public List<ResolutionTask<D>> computePrioritizedTasks(@NotNull BasicResolutionContext context, @NotNull String name,
-                                                           @NotNull JetReferenceExpression functionReference) {
+    public static <D extends CallableDescriptor> List<ResolutionTask<D>> computePrioritizedTasks(@NotNull BasicResolutionContext context, @NotNull String name,
+                                                           @NotNull JetReferenceExpression functionReference, @NotNull List<MemberPrioritizer<D>> memberPrioritizers) {
         ReceiverDescriptor explicitReceiver = context.call.getExplicitReceiver();
         final JetScope scope;
         if (explicitReceiver.exists() && explicitReceiver.getType() instanceof NamespaceType) {
@@ -87,40 +86,41 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         else {
             scope = context.scope;
         }
-        final Predicate<ResolvedCallImpl<D>> visibleStrategy = new Predicate<ResolvedCallImpl<D>>() {
+        final Predicate<ResolutionCandidate<D>> visibleStrategy = new Predicate<ResolutionCandidate<D>>() {
             @Override
-            public boolean apply(@Nullable ResolvedCallImpl<D> call) {
+            public boolean apply(@Nullable ResolutionCandidate<D> call) {
                 if (call == null) return false;
-                D candidateDescriptor = call.getCandidateDescriptor();
+                D candidateDescriptor = call.getDescriptor();
                 if (ErrorUtils.isError(candidateDescriptor)) return true;
                 return Visibilities.isVisible(candidateDescriptor, scope.getContainingDeclaration());
             }
         };
 
         ResolutionTaskHolder<D> result = new ResolutionTaskHolder<D>(functionReference, context, visibleStrategy );
-        doComputeTasks(scope, explicitReceiver, name, result, context);
+        doComputeTasks(scope, explicitReceiver, name, result, context, memberPrioritizers);
 
         return result.getTasks();
     }
 
-    private void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver,
+    private static <D extends CallableDescriptor> void doComputeTasks(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver,
             @NotNull String name, @NotNull ResolutionTaskHolder<D> result,
-            @NotNull BasicResolutionContext context) {
+            @NotNull BasicResolutionContext context, @NotNull List<MemberPrioritizer<D>> memberPrioritizers) {
+        MemberPrioritizer<D> memberPrioritizer = memberPrioritizers.get(0);
         AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.trace.getBindingContext());
         List<ReceiverDescriptor> implicitReceivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(implicitReceivers);
         if (receiver.exists()) {
             List<ReceiverDescriptor> variantsForExplicitReceiver = autoCastService.getVariantsForReceiver(receiver);
 
-            Collection<ResolvedCallImpl<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, getExtensionsByName(scope, name));
-            List<ResolvedCallImpl<D>> nonlocals = Lists.newArrayList();
-            List<ResolvedCallImpl<D>> locals = Lists.newArrayList();
+            Collection<ResolutionCandidate<D>> extensionFunctions = convertWithImpliedThis(scope, variantsForExplicitReceiver, memberPrioritizer.getExtensionsByName(scope, name));
+            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
+            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(extensionFunctions, scope.getContainingDeclaration(), locals, nonlocals);
 
-            Collection<ResolvedCallImpl<D>> members = Lists.newArrayList();
+            Collection<ResolutionCandidate<D>> members = Lists.newArrayList();
             for (ReceiverDescriptor variant : variantsForExplicitReceiver) {
-                Collection<D> membersForThisVariant = getMembersByName(variant.getType(), name);
+                Collection<D> membersForThisVariant = memberPrioritizer.getMembersByName(variant.getType(), name);
                 convertWithReceivers(membersForThisVariant, Collections.singletonList(variant), Collections.singletonList(NO_RECEIVER), members);
             }
 
@@ -128,7 +128,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             result.addMembers(members);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
-                Collection<D> memberExtensions = getExtensionsByName(implicitReceiver.getType().getMemberScope(), name);
+                Collection<D> memberExtensions = memberPrioritizer.getExtensionsByName(implicitReceiver.getType().getMemberScope(), name);
                 List<ReceiverDescriptor> variantsForImplicitReceiver = autoCastService.getVariantsForReceiver(implicitReceiver);
                 result.addNonLocalExtensions(convertWithReceivers(memberExtensions, variantsForImplicitReceiver, variantsForExplicitReceiver));
             }
@@ -136,10 +136,10 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             result.addNonLocalExtensions(nonlocals);
         }
         else {
-            Collection<ResolvedCallImpl<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), getNonExtensionsByName(scope, name));
+            Collection<ResolutionCandidate<D>> functions = convertWithImpliedThis(scope, Collections.singletonList(receiver), memberPrioritizer.getNonExtensionsByName(scope, name));
 
-            List<ResolvedCallImpl<D>> nonlocals = Lists.newArrayList();
-            List<ResolvedCallImpl<D>> locals = Lists.newArrayList();
+            List<ResolutionCandidate<D>> nonlocals = Lists.newArrayList();
+            List<ResolutionCandidate<D>> locals = Lists.newArrayList();
             //noinspection unchecked,RedundantTypeArguments
             TaskPrioritizer.<D>splitLexicallyLocalDescriptors(functions, scope.getContainingDeclaration(), locals, nonlocals);
 
@@ -147,22 +147,22 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             result.addNonLocalExtensions(nonlocals);
 
             for (ReceiverDescriptor implicitReceiver : implicitReceivers) {
-                doComputeTasks(scope, implicitReceiver, name, result, context);
+                doComputeTasks(scope, implicitReceiver, name, result, context, memberPrioritizers);
             }
         }
     }
 
-    private Collection<ResolvedCallImpl<D>> convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters) {
-        Collection<ResolvedCallImpl<D>> result = Lists.newArrayList();
+    private static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters) {
+        Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         convertWithReceivers(descriptors, thisObjects, receiverParameters, result);
         return result;
     }
 
-    private void convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters, Collection<ResolvedCallImpl<D>> result) {
+    private static <D extends CallableDescriptor> void convertWithReceivers(Collection<D> descriptors, Iterable<ReceiverDescriptor> thisObjects, Iterable<ReceiverDescriptor> receiverParameters, Collection<ResolutionCandidate<D>> result) {
         for (ReceiverDescriptor thisObject : thisObjects) {
             for (ReceiverDescriptor receiverParameter : receiverParameters) {
                 for (D extension : descriptors) {
-                    ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(extension);
+                    ResolutionCandidate<D> resolvedCall = ResolutionCandidate.create(extension);
                     resolvedCall.setThisObject(thisObject);
                     resolvedCall.setReceiverArgument(receiverParameter);
                     result.add(resolvedCall);
@@ -171,11 +171,11 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         }
     }
 
-    public static <D extends CallableDescriptor> Collection<ResolvedCallImpl<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
-        Collection<ResolvedCallImpl<D>> result = Lists.newArrayList();
+    public static <D extends CallableDescriptor> Collection<ResolutionCandidate<D>> convertWithImpliedThis(JetScope scope, Iterable<ReceiverDescriptor> receiverParameters, Collection<? extends D> descriptors) {
+        Collection<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (ReceiverDescriptor receiverParameter : receiverParameters) {
             for (D descriptor : descriptors) {
-                ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(descriptor);
+                ResolutionCandidate<D> resolvedCall = ResolutionCandidate.create(descriptor);
                 resolvedCall.setReceiverArgument(receiverParameter);
                 if (setImpliedThis(scope, resolvedCall)) {
                     result.add(resolvedCall);
@@ -190,7 +190,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
                     containingDeclaration = containingDeclaration.getContainingDeclaration();
                 }
                 if (containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).getKind() == ClassKind.OBJECT) {
-                    ResolvedCallImpl<D> resolvedCall = ResolvedCallImpl.create(descriptor);
+                    ResolutionCandidate<D> resolvedCall = ResolutionCandidate.create(descriptor);
                     resolvedCall.setThisObject(new ClassReceiver((ClassDescriptor) containingDeclaration));
                     result.add(resolvedCall);
                 }
@@ -199,8 +199,8 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         return result;
     }
 
-    private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolvedCallImpl<D> resolvedCall) {
-        ReceiverDescriptor expectedThisObject = resolvedCall.getCandidateDescriptor().getExpectedThisObject();
+    private static <D extends CallableDescriptor> boolean setImpliedThis(@NotNull JetScope scope, ResolutionCandidate<D> resolvedCall) {
+        ReceiverDescriptor expectedThisObject = resolvedCall.getDescriptor().getExpectedThisObject();
         if (!expectedThisObject.exists()) return true;
         List<ReceiverDescriptor> receivers = Lists.newArrayList();
         scope.getImplicitReceiversHierarchy(receivers);
@@ -213,13 +213,4 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
         }
         return false;
     }
-
-    @NotNull
-    protected abstract Collection<D> getNonExtensionsByName(JetScope scope, String name);
-
-    @NotNull
-    protected abstract Collection<D> getMembersByName(@NotNull JetType receiver, String name);
-
-    @NotNull
-    protected abstract Collection<D> getExtensionsByName(JetScope scope, String name);
 }

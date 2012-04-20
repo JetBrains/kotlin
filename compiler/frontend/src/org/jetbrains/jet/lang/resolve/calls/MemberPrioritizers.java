@@ -34,14 +34,15 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class TaskPrioritizers {
+public class MemberPrioritizers {
 
 
-    /*package*/ static TaskPrioritizer<FunctionDescriptor> FUNCTION_TASK_PRIORITIZER = new TaskPrioritizer<FunctionDescriptor>() {
+    /*package*/ static MemberPrioritizer<FunctionDescriptor> FUNCTION_TASK_PRIORITIZER = new MemberPrioritizer<FunctionDescriptor>() {
+
 
         @NotNull
         @Override
-        protected Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, String name) {
+        public Collection<FunctionDescriptor> getNonExtensionsByName(JetScope scope, String name) {
             Set<FunctionDescriptor> functions = Sets.newLinkedHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = functions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor functionDescriptor = iterator.next();
@@ -57,7 +58,7 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<FunctionDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
+        public Collection<FunctionDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
             JetScope receiverScope = receiverType.getMemberScope();
             Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
             addConstructors(receiverScope, name, members);
@@ -67,7 +68,7 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<FunctionDescriptor> getExtensionsByName(JetScope scope, String name) {
+        public Collection<FunctionDescriptor> getExtensionsByName(JetScope scope, String name) {
             Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctions(name));
             for (Iterator<FunctionDescriptor> iterator = extensionFunctions.iterator(); iterator.hasNext(); ) {
                 FunctionDescriptor descriptor = iterator.next();
@@ -104,11 +105,11 @@ public class TaskPrioritizers {
         }
     };
 
-    /*package*/ static TaskPrioritizer<VariableDescriptor> VARIABLE_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
+    /*package*/ static MemberPrioritizer<VariableDescriptor> VARIABLE_TASK_PRIORITIZER = new MemberPrioritizer<VariableDescriptor>() {
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
+        public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
             VariableDescriptor descriptor = scope.getLocalVariable(name);
             if (descriptor == null) {
                 descriptor = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
@@ -119,13 +120,13 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
+        public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiverType, String name) {
             return receiverType.getMemberScope().getProperties(name);
         }
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
+        public Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
             return Collections2.filter(scope.getProperties(name), new Predicate<VariableDescriptor>() {
                 @Override
                 public boolean apply(@Nullable VariableDescriptor variableDescriptor) {
@@ -135,7 +136,7 @@ public class TaskPrioritizers {
         }
     };
     
-    /*package*/ static TaskPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new TaskPrioritizer<VariableDescriptor>() {
+    /*package*/ static MemberPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new MemberPrioritizer<VariableDescriptor>() {
         private Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
             ArrayList<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
@@ -148,19 +149,19 @@ public class TaskPrioritizers {
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
+        public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
             return filterProperties(VARIABLE_TASK_PRIORITIZER.getNonExtensionsByName(scope, name));
         }
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, String name) {
+        public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, String name) {
             return filterProperties(VARIABLE_TASK_PRIORITIZER.getMembersByName(receiver, name));
         }
 
         @NotNull
         @Override
-        protected Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
+        public Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
             return filterProperties(VARIABLE_TASK_PRIORITIZER.getExtensionsByName(scope, name));
         }
     };
