@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.rendering.*;
 import org.jetbrains.jet.lang.psi.JetValueArgument;
-import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -136,8 +135,7 @@ public class IdeErrorMessages {
         private static ValueParameterDescriptor findParameterByArgumentExpression(
                 ResolvedCall<? extends CallableDescriptor> call,
                 JetValueArgument argument) {
-            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments()
-                    .entrySet()) {
+            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
                 for (ValueArgument va : entry.getValue().getArguments()) {
                     if (va == argument) {
                         return entry.getKey();
@@ -152,11 +150,6 @@ public class IdeErrorMessages {
             if (call instanceof ResolvedCallImpl) {
                 Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
                 for (Diagnostic diagnostic : diagnostics) {
-                    //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
-                    PsiElement element = diagnostic.getPsiElement();
-                    JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
-                    assert argumentList != null;
-                    JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
                     if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
                         parameters.add(null);
                     } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
@@ -164,8 +157,8 @@ public class IdeErrorMessages {
                                 ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
                         parameters.add(parameter);
                     } else {
+                        JetValueArgument argument = PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetValueArgument.class, false);
                         if (argument != null) {
-                            assert argument.getParent() == argumentList; // TODO check that this really can't happen
                             ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
                             if (parameter != null) {
                                 parameters.add(parameter);
