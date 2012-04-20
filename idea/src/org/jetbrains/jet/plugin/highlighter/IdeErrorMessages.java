@@ -69,92 +69,6 @@ public class IdeErrorMessages {
                 }
             };
 
-    private static final Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> NONE_APPLICABLE_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
-                @Nullable
-                private ValueParameterDescriptor findParameterByArgumentExpression(
-                        ResolvedCall<? extends CallableDescriptor> call,
-                        JetValueArgument argument) {
-                    for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments()
-                            .entrySet()) {
-                        for (ValueArgument va : entry.getValue().getArguments()) {
-                            if (va == argument) {
-                                return entry.getKey();
-                            }
-                        }
-                    }
-                    return null;
-                }
-
-                private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
-                    Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
-                    if (call instanceof ResolvedCallImpl) {
-                        Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
-                        for (Diagnostic diagnostic : diagnostics) {
-                            //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
-                            PsiElement element = diagnostic.getPsiElement();
-                            JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
-                            assert argumentList != null;
-                            JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
-                            if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
-                                parameters.add(null);
-                            } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
-                                ValueParameterDescriptor parameter =
-                                        ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
-                                parameters.add(parameter);
-                            } else {
-                                if (argument != null) {
-                                    assert argument.getParent() == argumentList; // TODO check that this really can't happen
-                                    ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
-                                    if (parameter != null) {
-                                        parameters.add(parameter);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    return parameters;
-                }
-
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
-                    String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
-
-                    StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
-                        stringBuilder.append("<li>");
-                        CallableDescriptor funDescriptor = call.getResultingDescriptor();
-                        Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
-
-                        stringBuilder.append(funDescriptor.getName()).append("(");
-                        boolean first = true;
-                        DescriptorRenderer htmlRend = DescriptorRenderer.HTML;
-                        for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
-                            if (!first) {
-                                stringBuilder.append(", ");
-                            }
-                            String paramType = htmlRend.renderType(parameter.getType());
-                            if (parametersToHighlight.contains(parameter)) {
-                                paramType = String.format(RED_TEMPLATE, paramType);
-                            }
-                            stringBuilder.append(paramType);
-
-                            first = false;
-                        }
-                        stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
-                        stringBuilder.append(" ").append(htmlRend.renderMessage("defined in")).append(" ");
-                        DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
-                        if (containingDeclaration != null) {
-                            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
-                            stringBuilder.append(FqName.ROOT.toUnsafe().equals(fqName) ? "root package" : fqName.getFqName());
-                        }
-                        stringBuilder.append("</li>");
-                    }
-                    return stringBuilder.toString();
-                }
-            };
-
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
 
@@ -205,11 +119,96 @@ public class IdeErrorMessages {
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "<html>Overload resolution ambiguity. All these functions match. <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
         MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>",
-                NONE_APPLICABLE_CALLS);
+                new NoneApplicableCallsRenderer());
 
         MAP.setImmutable();
     }
 
     private IdeErrorMessages() {
+    }
+
+    private static class NoneApplicableCallsRenderer implements Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>> {
+        @Nullable
+        private static ValueParameterDescriptor findParameterByArgumentExpression(
+                ResolvedCall<? extends CallableDescriptor> call,
+                JetValueArgument argument) {
+            for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments()
+                    .entrySet()) {
+                for (ValueArgument va : entry.getValue().getArguments()) {
+                    if (va == argument) {
+                        return entry.getKey();
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
+            Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
+            if (call instanceof ResolvedCallImpl) {
+                Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
+                for (Diagnostic diagnostic : diagnostics) {
+                    //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
+                    PsiElement element = diagnostic.getPsiElement();
+                    JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
+                    assert argumentList != null;
+                    JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
+                    if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
+                        parameters.add(null);
+                    } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
+                        ValueParameterDescriptor parameter =
+                                ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
+                        parameters.add(parameter);
+                    } else {
+                        if (argument != null) {
+                            assert argument.getParent() == argumentList; // TODO check that this really can't happen
+                            ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
+                            if (parameter != null) {
+                                parameters.add(parameter);
+                            }
+                        }
+                    }
+                }
+            }
+            return parameters;
+        }
+
+        @NotNull
+        @Override
+        public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+            String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
+
+            StringBuilder stringBuilder = new StringBuilder("");
+            for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                stringBuilder.append("<li>");
+                CallableDescriptor funDescriptor = call.getResultingDescriptor();
+                Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
+
+                stringBuilder.append(funDescriptor.getName()).append("(");
+                boolean first = true;
+                DescriptorRenderer htmlRend = DescriptorRenderer.HTML;
+                for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
+                    if (!first) {
+                        stringBuilder.append(", ");
+                    }
+                    String paramType = htmlRend.renderType(parameter.getType());
+                    if (parametersToHighlight.contains(parameter)) {
+                        paramType = String.format(RED_TEMPLATE, paramType);
+                    }
+                    stringBuilder.append(paramType);
+
+                    first = false;
+                }
+                stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
+                stringBuilder.append(" ").append(htmlRend.renderMessage("defined in")).append(" ");
+                DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
+                if (containingDeclaration != null) {
+                    FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+                    stringBuilder.append(FqName.ROOT.toUnsafe().equals(fqName) ? "root package" : fqName.getFqName());
+                }
+                stringBuilder.append("</li>");
+            }
+            return stringBuilder.toString();
+        }
     }
 }
