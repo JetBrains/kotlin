@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package org.jetbrains.jet.lang.diagnostics.rendering;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
 /**
- * @author abreslav
- */
-public interface Renderer<P> {
+* @author Evgeny Gerashchenko
+* @since 4/12/12
+*/
+public class SimpleDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
+    private final String message;
+
+    public SimpleDiagnosticRenderer(@NotNull String message) {
+        this.message = message;
+    }
 
     @NotNull
-    String render(@Nullable P element);
+    @Override
+    public String render(@NotNull Diagnostic diagnostic) {
+        return message;
+    }
 }

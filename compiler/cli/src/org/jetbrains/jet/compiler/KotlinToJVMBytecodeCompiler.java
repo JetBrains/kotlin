@@ -37,10 +37,8 @@ import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.Severity;
+import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -63,6 +61,7 @@ import java.util.List;
  * @author abreslav
  */
 public class KotlinToJVMBytecodeCompiler {
+    private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
 
     @Nullable
     public static ClassFileFactory compileModule(
@@ -271,7 +270,7 @@ public class KotlinToJVMBytecodeCompiler {
                 public void visitErrorElement(PsiErrorElement element) {
                     String description = element.getErrorDescription();
                     String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = DiagnosticFactory.create(Severity.ERROR, message).on(element);
+                    Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
                     reportDiagnostic(messageCollectorWrapper, diagnostic);
                 }
             });
@@ -326,7 +325,14 @@ public class KotlinToJVMBytecodeCompiler {
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();
-        collector.report(convertSeverity(diagnostic.getSeverity()), diagnostic.getMessage(), CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+        String render;
+        if (diagnostic.getFactory() == SYNTAX_ERROR_FACTORY) {
+            render = ((SyntaxErrorDiagnostic)diagnostic).message;
+        }
+        else {
+            render = DefaultErrorMessages.RENDERER.render(diagnostic);
+        }
+        collector.report(convertSeverity(diagnostic.getSeverity()), render, CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
     }
 
     private static CompilerMessageSeverity convertSeverity(Severity severity) {
@@ -350,6 +356,15 @@ public class KotlinToJVMBytecodeCompiler {
                 message.append("    ").append(fqName).append("\n");
             }
             collector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
+        }
+    }
+
+    private static class SyntaxErrorDiagnostic extends SimpleDiagnostic<PsiErrorElement> {
+        private String message;
+
+        private SyntaxErrorDiagnostic(@NotNull PsiErrorElement psiElement, @NotNull Severity severity, String message) {
+            super(psiElement, SYNTAX_ERROR_FACTORY, severity);
+            this.message = message;
         }
     }
 }

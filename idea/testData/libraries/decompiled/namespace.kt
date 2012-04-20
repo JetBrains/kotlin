@@ -15,12 +15,12 @@ package testData.libraries
 
 [public final fun func() : Unit { /* compiled code */ }]
 
-[public final fun func(val a : jet.Int, val b : jet.Int) : Unit { /* compiled code */ }]
+[public final fun func(a : jet.Int, b : jet.Int) : Unit { /* compiled code */ }]
 
-[public final fun func(val a : jet.Int, val b : jet.String = /* compiled code */) : Unit { /* compiled code */ }]
+[public final fun func(a : jet.Int, b : jet.String = /* compiled code */) : Unit { /* compiled code */ }]
 
-[public final fun func(val str : jet.String) : Unit { /* compiled code */ }]
+[public final fun func(str : jet.String) : Unit { /* compiled code */ }]
 
-[public final fun main(val args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
+[public final fun main(args : jet.Array<jet.String>) : Unit { /* compiled code */ }]
 
-[public final fun <T : jet.Any?>T.filter(val predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]
+[public final fun <T : jet.Any?> T.filter(predicate : (T) -> jet.Boolean) : T? { /* compiled code */ }]

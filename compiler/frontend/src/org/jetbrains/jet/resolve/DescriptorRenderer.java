@@ -19,8 +19,10 @@ package org.jetbrains.jet.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.diagnostics.Renderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.Renderer;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -79,7 +81,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            super.visitVariableDescriptor(descriptor, builder);
+            super.visitVariableDescriptor(descriptor, builder, true);
             if (descriptor.hasDefaultValue()) {
                 builder.append(" = ...");
             }
@@ -209,8 +211,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     @NotNull
     @Override
-    public String render(DeclarationDescriptor declarationDescriptor) {
-        if (declarationDescriptor == null) return lt() + "null>";
+    public String render(@NotNull DeclarationDescriptor declarationDescriptor) {
         StringBuilder stringBuilder = new StringBuilder();
         declarationDescriptor.accept(rootVisitor, stringBuilder);
         if (shouldRenderDefinedIn()) {
@@ -228,7 +229,8 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         final DeclarationDescriptor containingDeclaration = declarationDescriptor.getContainingDeclaration();
         if (containingDeclaration != null) {
-            renderFullyQualifiedName(containingDeclaration, stringBuilder);
+            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+            stringBuilder.append(FqName.ROOT.toUnsafe().equals(fqName) ? "root package" : escape(fqName.getFqName()));
         }
     }
 
@@ -245,34 +247,34 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return s;
     }
 
-    private void renderFullyQualifiedName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
-        if (containingDeclaration != null) {
-            renderFullyQualifiedName(containingDeclaration, stringBuilder);
-            stringBuilder.append(".");
-        }
-        stringBuilder.append(escape(descriptor.getName()));
-    }
-
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitor<Void, StringBuilder> {
 
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
-            if (descriptor.getVarargElementType() != null) {
-                builder.append(renderKeyword("vararg")).append(" ");
-            }
             return super.visitValueParameterDescriptor(descriptor, builder);
         }
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
+            return visitVariableDescriptor(descriptor, builder, false);
+        }
+
+        protected Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
+            JetType type = descriptor.getType();
+            if (descriptor instanceof ValueParameterDescriptor) {
+                JetType varargElementType = ((ValueParameterDescriptor)descriptor).getVarargElementType();
+                if (varargElementType != null) {
+                    builder.append(renderKeyword("vararg")).append(" ");
+                    type = varargElementType;
+                }
+            }
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder,
-                    descriptor.isVar(),
+                    skipValVar ? null : descriptor.isVar(),
                     Collections.<TypeParameterDescriptor>emptyList(),
                     ReceiverDescriptor.NO_RECEIVER,
-                    descriptor.getType());
+                    type);
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
@@ -280,13 +282,15 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
         private String renderPropertyPrefixAndComputeTypeString(
                 @NotNull StringBuilder builder,
-                boolean isVar,
+                @Nullable Boolean isVar,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull ReceiverDescriptor receiver,
                 @Nullable JetType outType) {
             String typeString = lt() + "no type>";
             if (outType != null) {
-                builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
+                if (isVar != null) {
+                    builder.append(renderKeyword(isVar ? "var" : "val")).append(" ");
+                }
                 typeString = renderType(outType);
             }
 
@@ -315,22 +319,23 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            builder.append(visibility).append(" ");
+            builder.append(renderKeyword(visibility.toString())).append(" ");
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
+            String keyword = "";
             switch (modality) {
                 case FINAL:
-                    builder.append("final");
+                    keyword = "final";
                     break;
                 case OPEN:
-                    builder.append("open");
+                    keyword = "open";
                     break;
                 case ABSTRACT:
-                    builder.append("abstract");
+                    keyword = "abstract";
                     break;
             }
-            builder.append(" ");
+            builder.append(renderKeyword(keyword)).append(" ");
         }
 
         @Override
@@ -388,6 +393,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     }
                 }
                 builder.append(">");
+                return true;
             }
             return false;
         }
@@ -475,7 +481,13 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            if (!descriptor.isReified()) {
+            if (descriptor.isReified()) {
+                String variance = descriptor.getVariance().toString();
+                if (!variance.isEmpty()) {
+                    builder.append(renderKeyword(variance)).append(" ");
+                }
+            }
+            else {
                 builder.append(renderKeyword("erased")).append(" ");
             }
             renderName(descriptor, builder);

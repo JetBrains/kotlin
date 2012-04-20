@@ -16,22 +16,31 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
-import java.text.MessageFormat;
+import java.util.List;
 
 /**
-* @author abreslav
-*/
-public abstract class DiagnosticFactoryWithMessageFormat<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
-    protected final MessageFormat messageFormat;
-
-    public DiagnosticFactoryWithMessageFormat(Severity severity, String message) {
-        this(severity, message, PositioningStrategies.DEFAULT);
+ * @author svtk
+ */
+public class SimpleDiagnostic<E extends PsiElement> extends AbstractDiagnostic<E> {
+    public SimpleDiagnostic(@NotNull E psiElement,
+            @NotNull SimpleDiagnosticFactory<E> factory,
+            @NotNull Severity severity) {
+        super(psiElement, factory, severity);
     }
-    
-    public DiagnosticFactoryWithMessageFormat(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy) {
-        super(severity, positioningStrategy);
-        this.messageFormat = new MessageFormat(message);
+
+    @NotNull
+    @Override
+    public SimpleDiagnosticFactory<E> getFactory() {
+        return (SimpleDiagnosticFactory<E>)super.getFactory();
+    }
+
+    @Override
+    @NotNull
+    public List<TextRange> getTextRanges() {
+        return getFactory().getTextRanges(this);
     }
 }

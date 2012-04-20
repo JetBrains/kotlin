@@ -125,7 +125,7 @@ class DecompiledDataFactory {
         return r;
     }
 
-    private void appendDescriptor(DeclarationDescriptor descriptor, String indent) {
+    private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
         int startOffset = myBuilder.length();
         String renderedDescriptor = DescriptorRenderer.COMPACT.render(descriptor);
         renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);

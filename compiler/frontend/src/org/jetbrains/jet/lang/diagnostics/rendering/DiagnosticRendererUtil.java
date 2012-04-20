@@ -14,32 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.diagnostics;
+package org.jetbrains.jet.lang.diagnostics.rendering;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * @author abreslav
+ * @author Evgeny Gerashchenko
+ * @since 4/18/12
  */
-public interface Diagnostic {
+public class DiagnosticRendererUtil {
+    private DiagnosticRendererUtil() {
+    }
 
     @NotNull
-    AbstractDiagnosticFactory getFactory();
-
-    @NotNull
-    Severity getSeverity();
-
-    @NotNull
-    PsiElement getPsiElement();
-
-    @NotNull
-    List<TextRange> getTextRanges();
-
-    @NotNull
-    PsiFile getPsiFile();
+    public static <P> Object renderParameter(@NotNull P parameter, @Nullable Renderer<P> renderer) {
+        return renderer == null ? parameter : renderer.render(parameter);
+    }
 }

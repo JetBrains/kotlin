@@ -16,47 +16,41 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
- * @author svtk
+ * @author Evgeny Gerashchenko
+ * @since 4/11/12
  */
-public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
-    private final E psiElement;
-    private final AbstractDiagnosticFactory factory;
-    private final Severity severity;
+public class DiagnosticWithParameters1<E extends PsiElement, A> extends AbstractDiagnostic<E> {
+    private A a;
 
-    public AbstractDiagnostic(@NotNull E psiElement,
-            @NotNull AbstractDiagnosticFactory factory,
+    public DiagnosticWithParameters1(@NotNull E psiElement,
+            @NotNull A a,
+            @NotNull DiagnosticFactory1<E, A> factory,
             @NotNull Severity severity) {
-        this.psiElement = psiElement;
-        this.factory = factory;
-        this.severity = severity;
+        super(psiElement, factory, severity);
+        this.a = a;
     }
 
     @NotNull
     @Override
-    public AbstractDiagnosticFactory getFactory() {
-        return factory;
-    }
-
-    @NotNull
-    @Override
-    public PsiFile getPsiFile() {
-        return psiElement.getContainingFile();
-    }
-
-    @NotNull
-    @Override
-    public Severity getSeverity() {
-        return severity;
+    public DiagnosticFactory1<E, A> getFactory() {
+        return (DiagnosticFactory1<E, A>)super.getFactory();
     }
 
     @Override
     @NotNull
-    public E getPsiElement() {
-        return psiElement;
+    public List<TextRange> getTextRanges() {
+        return getFactory().getTextRanges(this);
+    }
+
+    @NotNull
+    public A getA() {
+        return a;
     }
 }

@@ -10,12 +10,17 @@ private fun prv(a : String, b : Int = 5) = 5
 
 public fun Int.ext() : Int {}
 
-//package rendererTest defined in <module>.<root>
-//public final fun pub() : Unit defined in <module>.<root>.rendererTest
-//internal final fun int() : jet.String defined in <module>.<root>.rendererTest
-//internal final fun int2(val ints : jet.IntArray) : jet.Int defined in <module>.<root>.rendererTest
-//value-parameter vararg val ints : jet.IntArray defined in <module>.<root>.rendererTest.int2
-//private final fun prv(val a : jet.String, val b : jet.Int = ...) : jet.Int defined in <module>.<root>.rendererTest
-//value-parameter val a : jet.String defined in <module>.<root>.rendererTest.prv
-//value-parameter val b : jet.Int defined in <module>.<root>.rendererTest.prv
-//public final fun jet.Int.ext() : jet.Int defined in <module>.<root>.rendererTest
+public fun <out T> withTypeParam(a : Array<T>) : Int {}
+
+//package rendererTest defined in root package
+//public final fun pub() : Unit defined in rendererTest
+//internal final fun int() : jet.String defined in rendererTest
+//internal final fun int2(vararg ints : jet.Int) : jet.Int defined in rendererTest
+//value-parameter vararg val ints : jet.Int defined in rendererTest.int2
+//private final fun prv(a : jet.String, b : jet.Int = ...) : jet.Int defined in rendererTest
+//value-parameter val a : jet.String defined in rendererTest.prv
+//value-parameter val b : jet.Int defined in rendererTest.prv
+//public final fun jet.Int.ext() : jet.Int defined in rendererTest
+//public final fun <out T> withTypeParam(a : jet.Array<T>) : jet.Int defined in rendererTest
+//<out T> defined in rendererTest.withTypeParam
+//value-parameter val a : jet.Array<T> defined in rendererTest.withTypeParam

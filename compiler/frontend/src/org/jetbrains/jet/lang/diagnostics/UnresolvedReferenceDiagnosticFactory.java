@@ -17,30 +17,35 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetArrayAccessExpression;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author abreslav
  */
-public class UnresolvedReferenceDiagnosticFactory extends AbstractDiagnosticFactory {
-
-    private final String message;
-
-    private UnresolvedReferenceDiagnosticFactory(String message) {
-        this.message = message;
+public class UnresolvedReferenceDiagnosticFactory extends DiagnosticFactory1<JetReferenceExpression, String> {
+    public UnresolvedReferenceDiagnosticFactory() {
+        super(Severity.ERROR, new PositioningStrategy<JetReferenceExpression>() {
+            @NotNull
+            @Override
+            public List<TextRange> mark(@NotNull JetReferenceExpression element) {
+                if (element instanceof JetArrayAccessExpression) {
+                    return ((JetArrayAccessExpression) element).getBracketRanges();
+                }
+                return Collections.singletonList(element.getTextRange());
+            }
+        });
     }
 
-    public UnresolvedReferenceDiagnostic on(@NotNull JetReferenceExpression reference) {
-        return new UnresolvedReferenceDiagnostic(reference, message);
+    public DiagnosticWithParameters1<JetReferenceExpression, String> on(@NotNull JetReferenceExpression reference) {
+        return new DiagnosticWithParameters1<JetReferenceExpression, String>(reference, reference.getText(), this, severity);
     }
 
-    public static UnresolvedReferenceDiagnosticFactory create(String message) {
-        return new UnresolvedReferenceDiagnosticFactory(message);
+    public static UnresolvedReferenceDiagnosticFactory create() {
+        return new UnresolvedReferenceDiagnosticFactory();
     }
 }

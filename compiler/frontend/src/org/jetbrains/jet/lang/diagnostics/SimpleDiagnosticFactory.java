@@ -22,22 +22,22 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithPsiElement<E> {
+public class SimpleDiagnosticFactory<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
 
-    protected DiagnosticFactory3(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
+    protected SimpleDiagnosticFactory(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity) {
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity) {
         return create(severity, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
-        return new DiagnosticFactory3<T, A, B, C>(severity, positioningStrategy);
+    public static <T extends PsiElement> SimpleDiagnosticFactory<T> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new SimpleDiagnosticFactory<T>(severity, positioningStrategy);
     }
 
     @NotNull
-    public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity);
+    public SimpleDiagnostic<E> on(@NotNull E element) {
+        return new SimpleDiagnostic<E>(element, this, severity);
     }
 }

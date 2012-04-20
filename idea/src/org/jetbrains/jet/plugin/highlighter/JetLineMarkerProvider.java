@@ -35,6 +35,7 @@ import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -132,7 +133,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                         public String getElementText(PsiElement element) {
                                             if (element instanceof JetNamedFunction) {
                                                 JetNamedFunction function = (JetNamedFunction) element;
-                                                return DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.FUNCTION, function));
+                                                SimpleFunctionDescriptor fd =
+                                                        bindingContext.get(BindingContext.FUNCTION, function);
+                                                assert fd != null;
+                                                return DescriptorRenderer.HTML.render(fd);
                                             }
                                             return super.getElementText(element);
                                         }

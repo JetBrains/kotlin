@@ -22,40 +22,21 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithMessageFormat<E> {
-    private final Renderer<? super A> renderer;
-
-    protected String makeMessage(@NotNull A argument) {
-        return messageFormat.format(new Object[]{makeMessageFor(argument)});
-    }
-
-    protected String makeMessageFor(@NotNull A argument) {
-        return renderer.render(argument);
-    }
-    
+public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithPsiElement<E> {
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A argument) {
-        return new DiagnosticWithPsiElement<E>(element, this, severity, makeMessage(argument));
+        return new DiagnosticWithParameters1<E, A>(element, argument, this, severity);
     }
 
-    protected DiagnosticFactory1(Severity severity, String message, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> renderer) {
-        super(severity, message, positioningStrategy);
-        this.renderer = renderer;
+    protected DiagnosticFactory1(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
+        super(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> renderer) {
-        return new DiagnosticFactory1<T, A>(severity, message, positioningStrategy, renderer);
+    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new DiagnosticFactory1<T, A>(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, String message, PositioningStrategy<? super T> positioningStrategy) {
-        return create(severity, message, positioningStrategy, Renderers.TO_STRING);
-    }
-
-    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, String message, Renderer<? super A> renderer) {
-        return create(severity, message, PositioningStrategies.DEFAULT, renderer);
-    }
-
-    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity, String message) {
-        return create(severity, message, PositioningStrategies.DEFAULT, Renderers.TO_STRING);
+    public static <T extends PsiElement, A> DiagnosticFactory1<T, A> create(Severity severity) {
+        return create(severity, PositioningStrategies.DEFAULT);
     }
 }

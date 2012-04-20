@@ -30,10 +30,12 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -145,16 +147,14 @@ public class JetPsiChecker implements Annotator {
             if (diagnostic.getFactory() == Errors.UNRESOLVED_IDE_TEMPLATE) {
                 return;
             }
-            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
-                JetReferenceExpression referenceExpression = unresolvedReferenceDiagnostic.getPsiElement();
+            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                JetReferenceExpression referenceExpression = (JetReferenceExpression)diagnostic.getPsiElement();
                 PsiReference reference = referenceExpression.getReference();
                 if (reference instanceof MultiRangeReference) {
                     MultiRangeReference mrr = (MultiRangeReference)reference;
                     for (TextRange range : mrr.getRanges()) {
-                        Annotation annotation = holder.createErrorAnnotation(
-                            range.shiftRight(referenceExpression.getTextOffset()),
-                            diagnostic.getMessage());
+                        Annotation annotation = holder.createErrorAnnotation(range.shiftRight(referenceExpression.getTextOffset()), getDefaultMessage(diagnostic));
+                        annotation.setTooltip(getMessage(diagnostic));
 
                         registerQuickFix(annotation, diagnostic);
 
@@ -163,7 +163,8 @@ public class JetPsiChecker implements Annotator {
                 }
                 else {
                     for (TextRange textRange : textRanges) {
-                        Annotation annotation = holder.createErrorAnnotation(textRange, diagnostic.getMessage());
+                        Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
+                        annotation.setTooltip(getMessage(diagnostic));
                         registerQuickFix(annotation, diagnostic);
                         annotation.setHighlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL);
                     }
@@ -174,22 +175,22 @@ public class JetPsiChecker implements Annotator {
 
             if (diagnostic.getFactory() == Errors.ILLEGAL_ESCAPE_SEQUENCE) {
                 for (TextRange textRange : diagnostic.getTextRanges()) {
-                    Annotation annotation = holder.createErrorAnnotation(textRange, getMessage(diagnostic));
+                    Annotation annotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
+                    annotation.setTooltip(getMessage(diagnostic));
                     annotation.setTextAttributes(JetHighlightingColors.INVALID_STRING_ESCAPE);
-                    //annotation.setEnforcedTextAttributes(TextAttributes.merge(JetHighlightingColors.INVALID_STRING_ESCAPE.getDefaultAttributes(), annotation.getTextAttributes().getDefaultAttributes()));
                 }
                 return;
             }
 
-            if (diagnostic instanceof RedeclarationDiagnostic) {
-                RedeclarationDiagnostic redeclarationDiagnostic = (RedeclarationDiagnostic)diagnostic;
-                registerQuickFix(markRedeclaration(redeclarations, redeclarationDiagnostic, holder), diagnostic);
+            if (diagnostic.getFactory() instanceof RedeclarationDiagnosticFactory) {
+                registerQuickFix(markRedeclaration(redeclarations, diagnostic, holder), diagnostic);
                 return;
             }
 
             // Generic annotation
             for (TextRange textRange : textRanges) {
-                Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getMessage(diagnostic));
+                Annotation errorAnnotation = holder.createErrorAnnotation(textRange, getDefaultMessage(diagnostic));
+                errorAnnotation.setTooltip(getMessage(diagnostic));
                 registerQuickFix(errorAnnotation, diagnostic);
 
                 if (diagnostic.getFactory() == Errors.INVISIBLE_REFERENCE) {
@@ -199,7 +200,8 @@ public class JetPsiChecker implements Annotator {
         }
         else if (diagnostic.getSeverity() == Severity.WARNING) {
             for (TextRange textRange : textRanges) {
-                Annotation annotation = holder.createWarningAnnotation(textRange, getMessage(diagnostic));
+                Annotation annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic));
+                annotation.setTooltip(getMessage(diagnostic));
                 registerQuickFix(annotation, diagnostic);
 
                 if (diagnostic.getFactory() instanceof UnusedElementDiagnosticFactory) {
@@ -239,19 +241,39 @@ public class JetPsiChecker implements Annotator {
 
     @NotNull
     private static String getMessage(@NotNull Diagnostic diagnostic) {
+        String message = IdeErrorMessages.RENDERER.render(diagnostic);
         if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
-            return "[" + diagnostic.getFactory().getName() + "] " + diagnostic.getMessage();
+            String factoryName = diagnostic.getFactory().getName();
+            if (message.startsWith("<html>")) {
+                message = String.format("<html>[%s] %s", factoryName, message.substring("<html>".length()));
+            } else {
+                message = String.format("[%s] %s", factoryName, message);
+            }
         }
-        return diagnostic.getMessage();
+        if (!message.startsWith("<html>")) {
+            message = "<html><body>" + XmlStringUtil.escapeString(message) + "</body></html>";
+        }
+        return message;
+    }
+
+    @NotNull
+    private static String getDefaultMessage(@NotNull Diagnostic diagnostic) {
+        String message = DefaultErrorMessages.RENDERER.render(diagnostic);
+        if (ApplicationManager.getApplication().isInternal() || ApplicationManager.getApplication().isUnitTestMode()) {
+            return String.format("[%s] %s", diagnostic.getFactory().getName(), message);
+        }
+        return message;
     }
 
     @Nullable
     private static Annotation markRedeclaration(@NotNull Set<PsiElement> redeclarations,
-                                                @NotNull RedeclarationDiagnostic diagnostic,
+                                                @NotNull Diagnostic redeclarationDiagnostic,
                                                 @NotNull AnnotationHolder holder) {
-        if (!redeclarations.add(diagnostic.getPsiElement())) return null;
-        List<TextRange> textRanges = diagnostic.getTextRanges();
+        if (!redeclarations.add(redeclarationDiagnostic.getPsiElement())) return null;
+        List<TextRange> textRanges = redeclarationDiagnostic.getTextRanges();
         if (textRanges.isEmpty()) return null;
-        return holder.createErrorAnnotation(textRanges.get(0), getMessage(diagnostic));
+        Annotation annotation = holder.createErrorAnnotation(textRanges.get(0), "");
+        annotation.setTooltip(getMessage(redeclarationDiagnostic));
+        return annotation;
     }
 }
