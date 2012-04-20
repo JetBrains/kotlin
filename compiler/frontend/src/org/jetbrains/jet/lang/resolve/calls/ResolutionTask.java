@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
@@ -50,7 +50,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  */
 public class ResolutionTask<D extends CallableDescriptor> extends ResolutionContext {
     private final Collection<ResolutionCandidate<D>> candidates;
-    private final Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> resolvedCallMap = HashMultimap.create();
+    private final Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> resolvedCallMap = LinkedHashMultimap.create();
     /*package*/ final JetReferenceExpression reference;
     private DescriptorCheckStrategy checkingStrategy;
 
