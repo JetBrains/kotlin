@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.KotlinCompiler;
@@ -65,6 +66,9 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
         assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
         libraryDir = LocalFileSystem.getInstance().findFileByIoFile(libraryIoDir);
         assertNotNull(libraryDir);
+
+        ((NewVirtualFile)libraryDir).markDirtyRecursively();
+        libraryDir.refresh(false, true);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
