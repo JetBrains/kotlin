@@ -90,7 +90,15 @@ public class ForTestCompileRuntime {
     }
     
     private static void compileJavaPartOfBuiltins(File destdir) throws IOException {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        if (true) {
+            FileUtil.copyDir(new File("out/production/runtime"), destdir);
+        }
+        else {
+            doCompileJavaPartOfBuiltins(destdir);
+        }
+    }
+
+    private static void doCompileJavaPartOfBuiltins(File destdir) throws IOException {JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
 
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
