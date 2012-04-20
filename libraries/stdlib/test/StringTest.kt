@@ -64,13 +64,13 @@ class StringTest {
         assertFalse("".endsWith('a'))
     }
 
-    fun testStartsWithChar() {
+    test fun testStartsWithChar() {
         assertTrue("abcd".startsWith('a'))
         assertFalse("abcd".startsWith('b'))
         assertFalse("".startsWith('a'))
     }
 
-    fun testEndsWithChar() {
+    test fun testEndsWithChar() {
         assertTrue("abcd".endsWith('d'))
         assertFalse("abcd".endsWith('b'))
         assertFalse("".endsWith('a'))
