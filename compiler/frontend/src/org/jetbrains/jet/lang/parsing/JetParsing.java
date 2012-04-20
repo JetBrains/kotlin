@@ -286,7 +286,7 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         if (declType == null) {
-            errorAndAdvance("Expecting namespace or top level declaration");
+            errorAndAdvance("Expecting package directive or top level declaration");
             decl.drop();
         }
         else {
