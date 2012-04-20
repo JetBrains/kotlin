@@ -46,7 +46,6 @@ import java.util.List;
  */
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
-    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
         super(parentDisposable);
@@ -136,14 +135,6 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public List<JetFile> getSourceFiles() {
         return sourceFiles;
-    }
-
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 
     public void addToClasspathFromClassLoader(ClassLoader loader) {

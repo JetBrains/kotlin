@@ -239,7 +239,7 @@ public class KotlinCompiler {
         // install any compiler plugins
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
         if (plugins != null) {
-            configuration.getEnvironment().getCompilerPlugins().addAll(plugins);
+            configuration.getCompilerPlugins().addAll(plugins);
         }
 
         if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
