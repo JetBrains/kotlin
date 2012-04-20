@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -37,7 +38,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -75,7 +75,6 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            PrintStream err = System.err;
             CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
@@ -92,7 +91,7 @@ public class TestlibTest extends CodegenTestCase {
             myEnvironment.addSources(localFileSystem.findFileByPath(JetParsingTest.getTestDataDir() + "/../../libraries/kunit/src"));
 
             GenerationState generationState = KotlinToJVMBytecodeCompiler
-                    .analyzeAndGenerate(myEnvironment, compilerDependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, false);
+                    .analyzeAndGenerate(new CompileEnvironmentConfiguration(myEnvironment, compilerDependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR), false);
 
             if (generationState == null) {
                 throw new RuntimeException("There were compilation errors");

@@ -173,7 +173,7 @@ public class CompileEnvironmentUtil {
         scriptEnvironment.addSources(moduleFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
-                .analyzeAndGenerate(scriptEnvironment, dependencies, messageCollector, false);
+                .analyzeAndGenerate(new CompileEnvironmentConfiguration(scriptEnvironment, dependencies, messageCollector), false);
         if (generationState == null) {
             return null;
         }

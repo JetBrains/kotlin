@@ -47,7 +47,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
@@ -219,19 +218,16 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(CompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration.getEnvironment(), configuration.getCompilerDependencies(), configuration.getMessageCollector(), configuration.getCompilerDependencies().getCompilerSpecialMode().isStubs());
+        return analyzeAndGenerate(configuration, configuration.getCompilerDependencies().getCompilerSpecialMode().isStubs());
     }
 
     @Nullable
     public static GenerationState analyzeAndGenerate(
-            JetCoreEnvironment environment,
-            CompilerDependencies dependencies,
-
-            final MessageCollector messageCollector,
+            CompileEnvironmentConfiguration configuration,
 
             boolean stubs
     ) {
-        AnalyzeExhaust exhaust = analyze(environment, dependencies, messageCollector, stubs);
+        AnalyzeExhaust exhaust = analyze(configuration, stubs);
 
         if (exhaust == null) {
             return null;
@@ -239,14 +235,13 @@ public class KotlinToJVMBytecodeCompiler {
 
         exhaust.throwIfError();
 
-        return generate(environment, dependencies, messageCollector, exhaust, stubs);
+        return generate(configuration, exhaust, stubs);
     }
 
     @Nullable
     private static AnalyzeExhaust analyze(
-            JetCoreEnvironment environment,
-            CompilerDependencies dependencies,
-            final MessageCollector messageCollector,
+            final CompileEnvironmentConfiguration configuration,
+
             boolean stubs) {
         final Ref<Boolean> hasErrors = new Ref<Boolean>(false);
         final MessageCollector messageCollectorWrapper = new MessageCollector() {
@@ -258,9 +253,11 @@ public class KotlinToJVMBytecodeCompiler {
                 if (CompilerMessageSeverity.ERRORS.contains(severity)) {
                     hasErrors.set(true);
                 }
-                messageCollector.report(severity, message, location);
+                configuration.getMessageCollector().report(severity, message, location);
             }
         };
+
+        JetCoreEnvironment environment = configuration.getEnvironment();
 
         // Report syntax errors
         for (JetFile file : environment.getSourceFiles()) {
@@ -280,7 +277,7 @@ public class KotlinToJVMBytecodeCompiler {
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
-                dependencies);
+                configuration.getCompilerDependencies());
 
         for (Diagnostic diagnostic : exhaust.getBindingContext().getDiagnostics()) {
             reportDiagnostic(messageCollectorWrapper, diagnostic);
@@ -293,26 +290,24 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            JetCoreEnvironment environment,
-            CompilerDependencies dependencies,
-
-            final MessageCollector messageCollector,
+            final CompileEnvironmentConfiguration configuration,
 
             AnalyzeExhaust exhaust,
 
             boolean stubs) {
+        JetCoreEnvironment environment = configuration.getEnvironment();
         Project project = environment.getProject();
         Progress backendProgress = new Progress() {
             @Override
             public void log(String message) {
-                messageCollector.report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
+                configuration.getMessageCollector().report(CompilerMessageSeverity.LOGGING, message, CompilerMessageLocation.NO_LOCATION);
             }
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
-                                                              exhaust, environment.getSourceFiles(), dependencies.getCompilerSpecialMode());
+                                                              exhaust, environment.getSourceFiles(), configuration.getCompilerDependencies().getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
-        List<CompilerPlugin> plugins = environment.getCompilerPlugins();
+        List<CompilerPlugin> plugins = configuration.getCompilerPlugins();
         if (plugins != null) {
             CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
             for (CompilerPlugin plugin : plugins) {
