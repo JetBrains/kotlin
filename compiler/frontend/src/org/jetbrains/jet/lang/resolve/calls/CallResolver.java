@@ -391,31 +391,35 @@ public class CallResolver {
         context.tracing.bindReference(context.trace, candidateCall);
 
         if (ErrorUtils.isError(candidate)) {
-            candidateCall.setStatus(SUCCESS);
+            candidateCall.addStatus(SUCCESS);
             checkTypesWithNoCallee(context.toBasic());
             return;
         }
 
         if (!Visibilities.isVisible(candidate, context.scope.getContainingDeclaration())) {
-            candidateCall.setStatus(OTHER_ERROR);
+            candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, candidate);
             return;
         }
 
-        boolean errorInArgumentMapping = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing, candidateCall);
-        if (errorInArgumentMapping) {
-            candidateCall.setStatus(OTHER_ERROR);
-            checkTypesWithNoCallee(context.toBasic());
-            return;
+        ValueArgumentsToParametersMapper.Status
+                argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
+                                                                                                        candidateCall);
+        if (!argumentMappingStatus.isSuccess()) {
+            candidateCall.addStatus(OTHER_ERROR);
+            if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR) {
+                checkTypesWithNoCallee(context.toBasic());
+                return;
+            }
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
         if (jetTypeArguments.isEmpty()) {
             if (!candidate.getTypeParameters().isEmpty()) {
-                candidateCall.setStatus(inferTypeArguments(context));
+                candidateCall.addStatus(inferTypeArguments(context));
             }
             else {
-                candidateCall.setStatus(checkAllValueArguments(context));
+                candidateCall.addStatus(checkAllValueArguments(context));
             }
         }
         else {
@@ -451,10 +455,10 @@ public class CallResolver {
                     TypeParameterDescriptor typeParameterDescriptor = typeParameters.get(i);
                     candidateCall.recordTypeArgument(typeParameterDescriptor, typeArguments.get(i));
                 }
-                candidateCall.setStatus(checkAllValueArguments(context));
+                candidateCall.addStatus(checkAllValueArguments(context));
             }
             else {
-                candidateCall.setStatus(OTHER_ERROR);
+                candidateCall.addStatus(OTHER_ERROR);
                 context.tracing.wrongNumberOfTypeArguments(context.trace, expectedTypeArgumentCount);
             }
         }
@@ -466,7 +470,7 @@ public class CallResolver {
         JetSuperExpression superExpression = TaskPrioritizer.getReceiverSuper(candidateCall.getReceiverArgument());
         if (superExpression != null) {
             context.trace.report(SUPER_IS_NOT_AN_EXPRESSION.on(superExpression, superExpression.getText()));
-            candidateCall.setStatus(OTHER_ERROR);
+            candidateCall.addStatus(OTHER_ERROR);
         }
 
         recordAutoCastIfNecessary(candidateCall.getReceiverArgument(), candidateCall.getTrace());
