@@ -62,6 +62,22 @@ public class InjectorForTopDownAnalyzerForJs {
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
     private final ObservableBindingTrace observableBindingTrace;
+    private final ModuleDescriptor moduleDescriptor;
+    private final JetControlFlowDataTraceFactory jetControlFlowDataTraceFactory;
+    private final ModuleConfiguration moduleConfiguration;
+    private DeclarationResolver declarationResolver;
+    private AnnotationResolver annotationResolver;
+    private CallResolver callResolver;
+    private ExpressionTypingServices expressionTypingServices;
+    private TypeResolver typeResolver;
+    private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private OverloadingConflictResolver overloadingConflictResolver;
+    private ImportsResolver importsResolver;
+    private DelegationResolver delegationResolver;
+    private NamespaceFactoryImpl namespaceFactoryImpl;
+    private OverloadResolver overloadResolver;
+    private OverrideResolver overrideResolver;
+    private TypeHierarchyResolver typeHierarchyResolver;
 
     public InjectorForTopDownAnalyzerForJs(
         @NotNull Project project,
@@ -80,19 +96,22 @@ public class InjectorForTopDownAnalyzerForJs {
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
         this.observableBindingTrace = observableBindingTrace;
-        DeclarationResolver declarationResolver = new DeclarationResolver();
-        AnnotationResolver annotationResolver = new AnnotationResolver();
-        CallResolver callResolver = new CallResolver();
-        ExpressionTypingServices expressionTypingServices = new ExpressionTypingServices();
-        TypeResolver typeResolver = new TypeResolver();
-        QualifiedExpressionResolver qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
-        ImportsResolver importsResolver = new ImportsResolver();
-        DelegationResolver delegationResolver = new DelegationResolver();
-        NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
-        OverloadResolver overloadResolver = new OverloadResolver();
-        OverrideResolver overrideResolver = new OverrideResolver();
-        TypeHierarchyResolver typeHierarchyResolver = new TypeHierarchyResolver();
+        this.moduleDescriptor = moduleDescriptor;
+        this.jetControlFlowDataTraceFactory = jetControlFlowDataTraceFactory;
+        this.moduleConfiguration = moduleConfiguration;
+        this.declarationResolver = new DeclarationResolver();
+        this.annotationResolver = new AnnotationResolver();
+        this.callResolver = new CallResolver();
+        this.expressionTypingServices = new ExpressionTypingServices();
+        this.typeResolver = new TypeResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.overloadingConflictResolver = new OverloadingConflictResolver();
+        this.importsResolver = new ImportsResolver();
+        this.delegationResolver = new DelegationResolver();
+        this.namespaceFactoryImpl = new NamespaceFactoryImpl();
+        this.overloadResolver = new OverloadResolver();
+        this.overrideResolver = new OverrideResolver();
+        this.typeHierarchyResolver = new TypeHierarchyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setContext(topDownAnalysisContext);

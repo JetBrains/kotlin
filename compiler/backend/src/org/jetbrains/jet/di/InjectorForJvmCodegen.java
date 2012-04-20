@@ -45,10 +45,17 @@ import org.jetbrains.annotations.NotNull;
 public class InjectorForJvmCodegen {
 
     private final JetStandardLibrary jetStandardLibrary;
+    private final BindingContext bindingContext;
+    private final List<JetFile> listOfJetFile;
+    private final Project project;
+    private final CompilerSpecialMode compilerSpecialMode;
+    private final ClassBuilderMode classBuilderMode;
     private final GenerationState generationState;
+    private final ClassBuilderFactory classBuilderFactory;
     private JetTypeMapper jetTypeMapper;
     private IntrinsicMethods intrinsics;
     private ClassFileFactory classFileFactory;
+    private ClosureAnnotator closureAnnotator;
 
     public InjectorForJvmCodegen(
         @NotNull JetStandardLibrary jetStandardLibrary,
@@ -61,11 +68,17 @@ public class InjectorForJvmCodegen {
         @NotNull ClassBuilderFactory classBuilderFactory
     ) {
         this.jetStandardLibrary = jetStandardLibrary;
+        this.bindingContext = bindingContext;
+        this.listOfJetFile = listOfJetFile;
+        this.project = project;
+        this.compilerSpecialMode = compilerSpecialMode;
+        this.classBuilderMode = classBuilderMode;
         this.generationState = generationState;
+        this.classBuilderFactory = classBuilderFactory;
         this.jetTypeMapper = new JetTypeMapper();
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory();
-        ClosureAnnotator closureAnnotator = new ClosureAnnotator();
+        this.closureAnnotator = new ClosureAnnotator();
 
         this.jetTypeMapper.setBindingContext(bindingContext);
         this.jetTypeMapper.setClassBuilderMode(classBuilderMode);

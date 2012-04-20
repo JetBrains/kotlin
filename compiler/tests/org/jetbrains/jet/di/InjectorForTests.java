@@ -38,6 +38,9 @@ public class InjectorForTests {
     private CallResolver callResolver;
     private JetStandardLibrary jetStandardLibrary;
     private final Project project;
+    private AnnotationResolver annotationResolver;
+    private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForTests(
         @NotNull Project project
@@ -48,9 +51,9 @@ public class InjectorForTests {
         this.callResolver = new CallResolver();
         this.jetStandardLibrary = JetStandardLibrary.getInstance();
         this.project = project;
-        AnnotationResolver annotationResolver = new AnnotationResolver();
-        QualifiedExpressionResolver qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
+        this.annotationResolver = new AnnotationResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.overloadingConflictResolver = new OverloadingConflictResolver();
 
         this.descriptorResolver.setAnnotationResolver(annotationResolver);
         this.descriptorResolver.setExpressionTypingServices(expressionTypingServices);

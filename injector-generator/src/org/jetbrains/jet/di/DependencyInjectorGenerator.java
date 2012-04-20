@@ -233,10 +233,8 @@ public class DependencyInjectorGenerator {
 
     private void generateFields(PrintStream out) {
         for (Field field : fields) {
-            if (lazy || field.isPublic()) {
-                String _final = backsParameter.contains(field) ? "final " : "";
-                out.println("    private " + _final + field.getType().getSimpleName() + " " + field.getName() + ";");
-            }
+            String _final = backsParameter.contains(field) ? "final " : "";
+            out.println("    private " + _final + field.getType().getSimpleName() + " " + field.getName() + ";");
         }
     }
 
@@ -272,10 +270,10 @@ public class DependencyInjectorGenerator {
         else {
             // Initialize fields
             for (Field field : fields) {
-                if (!backsParameter.contains(field) || field.isPublic()) {
-                    String prefix = field.isPublic() ? "this." : field.getTypeName() + " ";
+                //if (!backsParameter.contains(field) || field.isPublic()) {
+                    String prefix = "this.";
                     out.println(indent + prefix + field.getName() + " = " + field.getInitialization() + ";");
-                }
+                //}
             }
             out.println();
 

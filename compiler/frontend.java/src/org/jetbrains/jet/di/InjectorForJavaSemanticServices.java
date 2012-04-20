@@ -38,8 +38,14 @@ public class InjectorForJavaSemanticServices {
     private JavaSemanticServices javaSemanticServices;
     private JavaDescriptorResolver javaDescriptorResolver;
     private BindingTrace bindingTrace;
+    private JavaBridgeConfiguration javaBridgeConfiguration;
     private PsiClassFinderForJvm psiClassFinderForJvm;
+    private ModuleDescriptor moduleDescriptor;
+    private final CompilerDependencies compilerDependencies;
+    private CompilerSpecialMode compilerSpecialMode;
     private final Project project;
+    private JavaTypeTransformer javaTypeTransformer;
+    private NamespaceFactoryImpl namespaceFactoryImpl;
 
     public InjectorForJavaSemanticServices(
         @NotNull CompilerDependencies compilerDependencies,
@@ -48,13 +54,14 @@ public class InjectorForJavaSemanticServices {
         this.javaSemanticServices = new JavaSemanticServices();
         this.javaDescriptorResolver = new JavaDescriptorResolver();
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
-        JavaBridgeConfiguration javaBridgeConfiguration = new JavaBridgeConfiguration();
+        this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinderForJvm = new PsiClassFinderForJvm();
-        ModuleDescriptor moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
-        CompilerSpecialMode compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
+        this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
+        this.compilerDependencies = compilerDependencies;
+        this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.project = project;
-        JavaTypeTransformer javaTypeTransformer = new JavaTypeTransformer();
-        NamespaceFactoryImpl namespaceFactoryImpl = new NamespaceFactoryImpl();
+        this.javaTypeTransformer = new JavaTypeTransformer();
+        this.namespaceFactoryImpl = new NamespaceFactoryImpl();
 
         this.javaSemanticServices.setDescriptorResolver(javaDescriptorResolver);
         this.javaSemanticServices.setPsiClassFinder(psiClassFinderForJvm);

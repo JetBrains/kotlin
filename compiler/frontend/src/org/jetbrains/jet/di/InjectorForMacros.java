@@ -33,18 +33,24 @@ public class InjectorForMacros {
 
     private ExpressionTypingServices expressionTypingServices;
     private final Project project;
+    private CallResolver callResolver;
+    private DescriptorResolver descriptorResolver;
+    private AnnotationResolver annotationResolver;
+    private TypeResolver typeResolver;
+    private QualifiedExpressionResolver qualifiedExpressionResolver;
+    private OverloadingConflictResolver overloadingConflictResolver;
 
     public InjectorForMacros(
         @NotNull Project project
     ) {
         this.expressionTypingServices = new ExpressionTypingServices();
         this.project = project;
-        CallResolver callResolver = new CallResolver();
-        DescriptorResolver descriptorResolver = new DescriptorResolver();
-        AnnotationResolver annotationResolver = new AnnotationResolver();
-        TypeResolver typeResolver = new TypeResolver();
-        QualifiedExpressionResolver qualifiedExpressionResolver = new QualifiedExpressionResolver();
-        OverloadingConflictResolver overloadingConflictResolver = new OverloadingConflictResolver();
+        this.callResolver = new CallResolver();
+        this.descriptorResolver = new DescriptorResolver();
+        this.annotationResolver = new AnnotationResolver();
+        this.typeResolver = new TypeResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
+        this.overloadingConflictResolver = new OverloadingConflictResolver();
 
         this.expressionTypingServices.setCallResolver(callResolver);
         this.expressionTypingServices.setDescriptorResolver(descriptorResolver);
