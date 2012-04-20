@@ -25,12 +25,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.LocalTimeCounter;
+import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.ClassBuilderFactories;
-import org.jetbrains.jet.codegen.CompilationErrorHandler;
-import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
 import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
@@ -41,12 +42,20 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.Progress;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,6 +64,163 @@ import java.util.List;
  * @author abreslav
  */
 public class KotlinToJVMBytecodeCompiler {
+
+    @Nullable
+    public static ClassFileFactory compileModule(
+            CompileEnvironmentConfiguration configuration,
+            Module moduleBuilder,
+            String directory
+    ) {
+        if (moduleBuilder.getSourceFiles().isEmpty()) {
+            throw new CompileEnvironmentException("No source files where defined");
+        }
+
+        for (String sourceFile : moduleBuilder.getSourceFiles()) {
+            File source = new File(sourceFile);
+            if (!source.isAbsolute()) {
+                source = new File(directory, sourceFile);
+            }
+
+            if (!source.exists()) {
+                throw new CompileEnvironmentException("'" + source + "' does not exist");
+            }
+
+            configuration.getEnvironment().addSources(source.getPath());
+        }
+        for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
+            configuration.getEnvironment().addToClasspath(new File(classpathRoot));
+        }
+
+        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getCompilerDependencies());
+
+        GenerationState generationState = analyzeAndGenerate(configuration);
+        if (generationState == null) {
+            return null;
+        }
+        return generationState.getFactory();
+    }
+
+    public static boolean compileModuleScript(
+            CompileEnvironmentConfiguration configuration,
+
+            @NotNull String moduleScriptFile,
+            @Nullable String jarPath,
+            @Nullable String outputDir,
+            boolean jarRuntime) {
+        List<Module> modules = CompileEnvironmentUtil.loadModuleScript(moduleScriptFile, configuration.getMessageCollector());
+
+        if (modules == null) {
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
+        }
+
+        if (modules.isEmpty()) {
+            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
+        }
+
+        final String directory = new File(moduleScriptFile).getParent();
+        for (Module moduleBuilder : modules) {
+            // TODO: this should be done only once for the environment
+            if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
+                CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
+            }
+            ClassFileFactory moduleFactory = KotlinToJVMBytecodeCompiler.compileModule(configuration, moduleBuilder, directory);
+            if (moduleFactory == null) {
+                return false;
+            }
+            if (outputDir != null) {
+                CompileEnvironmentUtil.writeToOutputDirectory(moduleFactory, outputDir);
+            }
+            else {
+                String path = jarPath != null ? jarPath : new File(directory, moduleBuilder.getModuleName() + ".jar").getPath();
+                try {
+                    CompileEnvironmentUtil.writeToJar(moduleFactory, new FileOutputStream(path), null, jarRuntime);
+                }
+                catch (FileNotFoundException e) {
+                    throw new CompileEnvironmentException("Invalid jar path " + path, e);
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean compileBunchOfSources(
+            CompileEnvironmentConfiguration configuration,
+
+            String jar,
+            String outputDir,
+            boolean includeRuntime
+    ) {
+        FqName mainClass = null;
+        for (JetFile file : configuration.getEnvironment().getSourceFiles()) {
+            if (JetMainDetector.hasMain(file.getDeclarations())) {
+                FqName fqName = JetPsiUtil.getFQName(file);
+                mainClass = fqName.child(JvmAbi.PACKAGE_CLASS);
+                break;
+            }
+        }
+
+        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getCompilerDependencies());
+
+        GenerationState generationState = analyzeAndGenerate(configuration);
+        if (generationState == null) {
+            return false;
+        }
+
+        ClassFileFactory factory = generationState.getFactory();
+        if (jar != null) {
+            try {
+                CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
+            } catch (FileNotFoundException e) {
+                throw new CompileEnvironmentException("Invalid jar path " + jar, e);
+            }
+        }
+        else if (outputDir != null) {
+            CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
+        }
+        else {
+            throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
+        }
+        return true;
+    }
+
+    public static boolean compileBunchOfSources(
+            CompileEnvironmentConfiguration configuration,
+
+            String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
+        configuration.getEnvironment().addSources(sourceFileOrDir);
+
+        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
+    }
+
+    public static boolean compileBunchOfSourceDirectories(
+            CompileEnvironmentConfiguration configuration,
+
+            List<String> sources, String jar, String outputDir, boolean includeRuntime) {
+        for (String source : sources) {
+            configuration.getEnvironment().addSources(source);
+        }
+
+        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
+    }
+
+    @Nullable
+    public static ClassLoader compileText(
+            CompileEnvironmentConfiguration configuration,
+
+            String code) {
+        configuration.getEnvironment().addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
+
+        GenerationState generationState = analyzeAndGenerate(configuration);
+        if (generationState == null) {
+            return null;
+        }
+        return new GeneratedClassLoader(generationState.getFactory());
+    }
+
+    @Nullable
+    public static GenerationState analyzeAndGenerate(CompileEnvironmentConfiguration configuration) {
+        return analyzeAndGenerate(configuration.getEnvironment(), configuration.getCompilerDependencies(), configuration.getMessageCollector(), configuration.getCompilerDependencies().getCompilerSpecialMode().isStubs());
+    }
 
     @Nullable
     public static GenerationState analyzeAndGenerate(

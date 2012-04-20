@@ -18,9 +18,7 @@ package org.jetbrains.jet.buildtools.core;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.CompileEnvironment;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.compiler.CompilerPlugin;
+import org.jetbrains.jet.compiler.*;
 import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -42,22 +40,25 @@ public class BytecodeCompiler {
 
 
     /**
-     * Creates new instance of {@link CompileEnvironment} instance using the arguments specified.
+     * Creates new instance of {@link org.jetbrains.jet.compiler.CompileEnvironmentConfiguration} instance using the arguments specified.
      *
      * @param stdlib    path to "kotlin-runtime.jar", only used if not null and not empty
      * @param classpath compilation classpath, only used if not null and not empty
      *
      * @return compile environment instance
      */
-    private CompileEnvironment env( String stdlib, String[] classpath ) {
-        CompileEnvironment env = new CompileEnvironment(MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+    private CompileEnvironmentConfiguration env( String stdlib, String[] classpath ) {
+        CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
+        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
+        CompileEnvironmentConfiguration env = new CompileEnvironmentConfiguration(environment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
-            env.setStdlib( stdlib );
+            File file = new File(stdlib);
+            CompileEnvironmentUtil.addToClasspath(env.getEnvironment(), file);
         }
 
         if (( classpath != null ) && ( classpath.length > 0 )) {
-            env.addToClasspath( classpath );
+            CompileEnvironmentUtil.addToClasspath(env.getEnvironment(), classpath);
         }
 
         // lets register any compiler plugins
@@ -92,7 +93,8 @@ public class BytecodeCompiler {
      */
     public void sourcesToDir ( @NotNull String src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = env( stdlib, classpath ).compileBunchOfSources( src, null, output, true /* Last arg is ignored anyway */ );
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), src, null, output, true
+                                                                                /* Last arg is ignored anyway */);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
@@ -114,7 +116,7 @@ public class BytecodeCompiler {
      */
     public void sourcesToJar ( @NotNull String src, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = env( stdlib, classpath ).compileBunchOfSources( src, jar, null, includeRuntime );
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), src, jar, null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }
@@ -136,7 +138,8 @@ public class BytecodeCompiler {
      */
     public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = env( stdlib, classpath ).compileModuleScript( module, jar, null, includeRuntime);
+            CompileEnvironmentConfiguration env = env(stdlib, classpath);
+            boolean success = KotlinToJVMBytecodeCompiler.compileModuleScript(env, module, jar, null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( module, false ));
             }
