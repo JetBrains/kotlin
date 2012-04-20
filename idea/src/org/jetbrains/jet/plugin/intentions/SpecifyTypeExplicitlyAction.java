@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -65,8 +66,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!(element instanceof LeafPsiElement) || ((LeafPsiElement)element).getElementType() != JetTokens.IDENTIFIER
-            || !(element.getParent() instanceof JetProperty)) {
+        if (!(element.getParent() instanceof JetProperty) || PsiTreeUtil.isAncestor(((JetProperty)element.getParent()).getInitializer(), element, false)) {
             return false;
         }
 
