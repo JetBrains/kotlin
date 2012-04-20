@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
@@ -30,13 +31,15 @@ import org.jetbrains.jet.lang.diagnostics.rendering.*;
 import org.jetbrains.jet.lang.psi.JetValueArgument;
 import org.jetbrains.jet.lang.psi.JetValueArgumentList;
 import org.jetbrains.jet.lang.psi.ValueArgument;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
@@ -83,38 +86,68 @@ public class IdeErrorMessages {
                     return null;
                 }
 
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
-                    StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
-                        stringBuilder.append("<li>");
-                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()));
-                        if (call instanceof ResolvedCallImpl) {
-                            Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
-                            stringBuilder.append(" | ");
-                            for (Diagnostic diagnostic : diagnostics) {
-                                //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
-                                PsiElement element = diagnostic.getPsiElement();
-                                JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
-                                assert argumentList != null;
-                                JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
-                                if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
-                                    stringBuilder.append("LAST )");
-                                } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
-                                    ValueParameterDescriptor valueParameterDescriptor =
-                                            ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
-                                    stringBuilder.append("ARGUMENT ").append(valueParameterDescriptor.getName()).append(" ");
-                                } else {
-                                    if (argument != null) {
-                                        assert argument.getParent() == argumentList; // TODO check that this really can't happen
-                                        ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
-                                        if (parameter != null) {
-                                            stringBuilder.append("ARGUMENT ").append(parameter.getName()).append(" ");
-                                        }
+                private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
+                    Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
+                    if (call instanceof ResolvedCallImpl) {
+                        Collection<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
+                        for (Diagnostic diagnostic : diagnostics) {
+                            //stringBuilder.append(DefaultErrorMessages.RENDERER.render(diagnostic));
+                            PsiElement element = diagnostic.getPsiElement();
+                            JetValueArgumentList argumentList = PsiTreeUtil.getParentOfType(element, JetValueArgumentList.class, false);
+                            assert argumentList != null;
+                            JetValueArgument argument = PsiTreeUtil.getParentOfType(element, JetValueArgument.class, false);
+                            if (diagnostic.getFactory() == Errors.TOO_MANY_ARGUMENTS) {
+                                parameters.add(null);
+                            } else if (diagnostic.getFactory() == Errors.NO_VALUE_FOR_PARAMETER) {
+                                ValueParameterDescriptor parameter =
+                                        ((DiagnosticWithParameters1<PsiElement, ValueParameterDescriptor>)diagnostic).getA();
+                                parameters.add(parameter);
+                            } else {
+                                if (argument != null) {
+                                    assert argument.getParent() == argumentList; // TODO check that this really can't happen
+                                    ValueParameterDescriptor parameter = findParameterByArgumentExpression(call, argument);
+                                    if (parameter != null) {
+                                        parameters.add(parameter);
                                     }
                                 }
                             }
+                        }
+                    }
+                    return parameters;
+                }
+
+                @NotNull
+                @Override
+                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                    String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
+
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                        stringBuilder.append("<li>");
+                        CallableDescriptor funDescriptor = call.getResultingDescriptor();
+                        Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
+
+                        stringBuilder.append(funDescriptor.getName()).append("(");
+                        boolean first = true;
+                        DescriptorRenderer htmlRend = DescriptorRenderer.HTML;
+                        for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
+                            if (!first) {
+                                stringBuilder.append(", ");
+                            }
+                            String paramType = htmlRend.renderType(parameter.getType());
+                            if (parametersToHighlight.contains(parameter)) {
+                                paramType = String.format(RED_TEMPLATE, paramType);
+                            }
+                            stringBuilder.append(paramType);
+
+                            first = false;
+                        }
+                        stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
+                        stringBuilder.append(" ").append(htmlRend.renderMessage("defined in")).append(" ");
+                        DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
+                        if (containingDeclaration != null) {
+                            FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);
+                            stringBuilder.append(FqName.ROOT.toUnsafe().equals(fqName) ? "root package" : fqName.getFqName());
                         }
                         stringBuilder.append("</li>");
                     }
