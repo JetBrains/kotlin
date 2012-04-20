@@ -252,9 +252,6 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(renderKeyword("value-parameter")).append(" ");
-            if (descriptor.getVarargElementType() != null) {
-                builder.append(renderKeyword("vararg")).append(" ");
-            }
             return super.visitValueParameterDescriptor(descriptor, builder);
         }
 
@@ -264,12 +261,20 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder, boolean skipValVar) {
+            JetType type = descriptor.getType();
+            if (descriptor instanceof ValueParameterDescriptor) {
+                JetType varargElementType = ((ValueParameterDescriptor)descriptor).getVarargElementType();
+                if (varargElementType != null) {
+                    builder.append(renderKeyword("vararg")).append(" ");
+                    type = varargElementType;
+                }
+            }
             String typeString = renderPropertyPrefixAndComputeTypeString(
                     builder,
                     skipValVar ? null : descriptor.isVar(),
                     Collections.<TypeParameterDescriptor>emptyList(),
                     ReceiverDescriptor.NO_RECEIVER,
-                    descriptor.getType());
+                    type);
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
             return super.visitVariableDescriptor(descriptor, builder);
