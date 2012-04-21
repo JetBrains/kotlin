@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,7 +58,7 @@ abstract class ForTestCompileSomething {
 
             FileOutputStream stdlibJar = new FileOutputStream(jarFile);
             try {
-                JarOutputStream jarOutputStream = new JarOutputStream(stdlibJar);
+                JarOutputStream jarOutputStream = new JarOutputStream(new BufferedOutputStream(stdlibJar));
                 try {
                     copyToJar(classesDir, jarOutputStream);
                 }
