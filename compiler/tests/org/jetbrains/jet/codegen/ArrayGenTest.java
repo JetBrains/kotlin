@@ -316,4 +316,24 @@ public class ArrayGenTest extends CodegenTestCase {
         blackBoxFile("classes/nonnullarray.jet");
 //        System.out.println(generateToText());
     }
+
+    public void testEmptyArrayLastIndex() throws Exception {
+        loadText("fun test() : Int { val arr = Array<Int>(0, {it}); return arr.lastIndex; }");
+        Method test = generateFunction();
+        assertTrue(-1 == (Integer) test.invoke(null));
+    }
+
+    public void testIntArrayLastIndex() throws Exception {
+        loadText("fun test() : Int { val arr = Array<Int>(5, {it}); return arr.lastIndex; }");
+        Method test = generateFunction();
+        assertTrue(4 == (Integer) test.invoke(null));
+    }
+
+    public void testObjectLastIndex() throws Exception {
+        loadText("fun test() : Int { val arr = Array<String>(5, {\"$it\"}); return arr.lastIndex; }");
+        Method test = generateFunction();
+        assertTrue(4 == (Integer) test.invoke(null));
+    }
+
 }
+

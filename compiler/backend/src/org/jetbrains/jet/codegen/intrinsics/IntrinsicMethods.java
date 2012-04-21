@@ -58,6 +58,7 @@ public class IntrinsicMethods {
     private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Byte", "Char", "Short", "Int", "Float", "Long", "Double");
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
+    public static final IntrinsicMethod ARRAY_LAST_INDEX = new ArrayLastIndex();
     public static final Equals EQUALS = new Equals();
     public static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
     public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
@@ -166,6 +167,7 @@ public class IntrinsicMethods {
 
         declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
         declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
+        declareIntrinsicProperty("Array", "lastIndex", ARRAY_LAST_INDEX);
         declareIntrinsicFunction("Array", "set", 2, ARRAY_SET, true);
         declareIntrinsicFunction("Array", "get", 1, ARRAY_GET, true);
         declareIterator(myStdLib.getArray());
@@ -175,6 +177,7 @@ public class IntrinsicMethods {
         PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
         declareIntrinsicProperty(primitiveType.getArrayTypeName(), "size", ARRAY_SIZE);
         declareIntrinsicProperty(primitiveType.getArrayTypeName(), "indices", ARRAY_INDICES);
+        declareIntrinsicProperty(primitiveType.getArrayTypeName(), "lastIndex", ARRAY_LAST_INDEX);
         declareIntrinsicFunction(primitiveType.getArrayTypeName(), "set", 2, ARRAY_SET, true);
         declareIntrinsicFunction(primitiveType.getArrayTypeName(), "get", 1, ARRAY_GET, true);
         declareIterator(myStdLib.getPrimitiveArrayClassDescriptor(primitiveType));
@@ -287,3 +290,4 @@ public class IntrinsicMethods {
     }
 
 }
+
