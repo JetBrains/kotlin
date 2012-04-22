@@ -18,6 +18,8 @@ package org.jetbrains.kotlin;
 
 import org.junit.Test;
 
+import java.io.File;
+
 import static junit.framework.Assert.*;
 
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
@@ -28,7 +30,9 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
     @Test
     public void compileAndRunHelloApp() throws Exception {
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", "hello.jar"));
-        runJava("hello.run", "-cp", "hello.jar", "Hello.namespace");
+        final String jar = tempDir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar));
+        runJava("hello.run", "-cp", jar, "Hello.namespace");
     }
 }

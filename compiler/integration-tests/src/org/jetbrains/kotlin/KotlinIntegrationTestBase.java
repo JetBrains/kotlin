@@ -30,7 +30,10 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import org.apache.commons.lang.SystemUtils;
+import org.junit.Rule;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import sun.misc.JarFilter;
 
 import java.io.File;
@@ -43,6 +46,30 @@ import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
+    protected File tempDir;
+
+    @Rule
+    public TestRule watchman = new TestWatcher() {
+        @Override
+        protected void starting(Description description) {
+            tempDir = Files.createTempDir();
+        }
+
+        @Override
+        protected void succeeded(Description description) {
+            try {
+                tempDir.delete();
+            } catch (Exception e) {
+                System.out.print("Can't delete temp directory " + tempDir + ": " + e);
+            }
+        }
+
+        @Override
+        protected void failed(Throwable e, Description description) {
+            System.err.println("Temp directory: " + tempDir);
+        }
+    };
+
     protected int runCompiler(String logName, String... arguments) throws Exception {
         final File lib = getCompilerLib();
 
@@ -89,7 +116,8 @@ public abstract class KotlinIntegrationTestBase {
         if (!goldFile.isFile()) {
             Files.write(content, tmpFile, Charsets.UTF_8);
             fail("No gold file " + goldFile);
-        } else {
+        }
+        else {
             final String goldContent = Files.toString(goldFile, UTF_8);
             if (!goldContent.equals(content.toString())) {
                 Files.write(content, tmpFile, Charsets.UTF_8);
@@ -113,13 +141,17 @@ public abstract class KotlinIntegrationTestBase {
                     System.out.print(event.getText());
                 }
                 else if (outputType == ProcessOutputTypes.STDOUT) {
-                    outContent.append("OUT ");
-                    outContent.append(event.getText());
+                    appendToContent(outContent, "OUT ", event.getText());
                 }
                 else if (outputType == ProcessOutputTypes.STDERR) {
-                    errContent.append("ERR ");
-                    errContent.append(event.getText());
+                    appendToContent(errContent, "ERR ", event.getText());
                 }
+            }
+
+            private void appendToContent(StringBuilder content, String prefix, String line) {
+                content.append(prefix);
+                content.append(StringUtil.trimTrailing(line));
+                content.append("\n");
             }
         });
 
@@ -129,7 +161,7 @@ public abstract class KotlinIntegrationTestBase {
 
         executionLog.append(outContent);
         executionLog.append(errContent);
-        executionLog.append("Return code: ").append(exitCode).append(SystemUtils.LINE_SEPARATOR);
+        executionLog.append("Return code: ").append(exitCode).append("\n");
 
         return exitCode;
     }
