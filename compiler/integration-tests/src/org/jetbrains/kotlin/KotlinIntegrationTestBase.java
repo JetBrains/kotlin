@@ -27,8 +27,11 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import org.apache.commons.lang.SystemUtils;
+import sun.misc.JarFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,29 +43,29 @@ import static com.google.common.base.Charsets.UTF_8;
 import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
-    protected void runCompiler(String logName, String... arguments) throws Exception {
+    protected int runCompiler(String logName, String... arguments) throws Exception {
+        final File lib = getCompilerLib();
+
+        final File[] jars = lib.listFiles(new JarFilter());
+        final String classpath = StringUtil.join(jars, new Function<File, String>() {
+            @Override
+            public String fun(File file) {
+                return file.getAbsolutePath();
+            }
+        }, File.pathSeparator);
+
         Collection<String> javaArgs = new ArrayList<String>();
-        javaArgs.add("-jar");
-        javaArgs.add(getCompilerJar().getAbsolutePath());
+        javaArgs.add("-cp");
+        javaArgs.add(classpath);
+        javaArgs.add("org.jetbrains.jet.cli.KotlinCompiler");
         Collections.addAll(javaArgs, arguments);
 
-        runJava(logName, ArrayUtil.toStringArray(javaArgs));
+        return runJava(logName, ArrayUtil.toStringArray(javaArgs));
     }
 
-    protected void runCompiler(StringBuilder executionLog) throws ExecutionException {
-        final File compilerJar = getCompilerJar();
-        assertTrue("no kotlin compiler at " + compilerJar, compilerJar.isFile());
-
+    protected int runJava(String logName, String... arguments) throws Exception {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setExePath(getJavaRuntime().getAbsolutePath());
-        commandLine.addParameters("-jar", compilerJar.getAbsolutePath());
-        commandLine.addParameters("--help");
-
-        runProcess(commandLine, executionLog);
-    }
-
-    protected void runJava(String logName, String... arguments) throws Exception {
-        GeneralCommandLine commandLine = new GeneralCommandLine();
+        commandLine.setWorkDirectory(getTestDataDirectory());
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -75,6 +78,8 @@ public abstract class KotlinIntegrationTestBase {
         else {
             check(logName, executionLog);
         }
+
+        return exitCode;
     }
 
     protected void check(String baseName, StringBuilder content) throws IOException {
@@ -139,9 +144,9 @@ public abstract class KotlinIntegrationTestBase {
         return runtime;
     }
 
-    protected static File getCompilerJar() {
-        final File file = new File(getKotlinProjectHome(), "dist" + File.separator + "kotlin-compiler.jar");
-        assertTrue("no kotlin compiler at " + file, file.isFile());
+    protected static File getCompilerLib() {
+        final File file = new File(getKotlinProjectHome(), "dist" + File.separator + "kotlinc" + File.separator + "lib");
+        assertTrue("no kotlin compiler lib at " + file, file.isDirectory());
         return file;
     }
 
