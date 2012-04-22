@@ -18,9 +18,17 @@ package org.jetbrains.kotlin;
 
 import org.junit.Test;
 
+import static junit.framework.Assert.*;
+
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     @Test
     public void help() throws Exception {
         runCompiler("help", "--help");
+    }
+
+    @Test
+    public void compileAndRunHelloApp() throws Exception {
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", "hello.jar"));
+        runJava("hello.run", "-cp", "hello.jar", "Hello.namespace");
     }
 }
