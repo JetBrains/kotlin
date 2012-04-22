@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -33,15 +34,13 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author yole
@@ -145,7 +144,40 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
     private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor));
-        bodyBuilder.append("override fun ").append(descriptor.getName()).append("(");
+        bodyBuilder.append("override fun ");
+
+        List<String> whereRestrictions = new ArrayList<String>();
+        if (!descriptor.getTypeParameters().isEmpty()) {
+            bodyBuilder.append("<");
+            boolean first = true;
+            for (TypeParameterDescriptor param : descriptor.getTypeParameters()) {
+                if (!first) {
+                    bodyBuilder.append(", ");
+                }
+
+                bodyBuilder.append(param.getName());
+                Set<JetType> upperBounds = param.getUpperBounds();
+                if (!upperBounds.isEmpty()) {
+                    boolean firstUpperBound = true;
+                    for (JetType upperBound : upperBounds) {
+                        String upperBoundText = " : " + DescriptorRenderer.TEXT.renderTypeWithShortNames(upperBound);
+                        if (upperBound != JetStandardClasses.getDefaultBound()) {
+                            if (firstUpperBound) {
+                                bodyBuilder.append(upperBoundText);
+                            } else {
+                                whereRestrictions.add(param.getName() + upperBoundText);
+                            }
+                        }
+                        ImportInsertHelper.addImportDirectivesIfNeeded(upperBound, file);
+                        firstUpperBound = false;
+                    }
+                }
+
+                first = false;
+            }
+            bodyBuilder.append("> ");
+        }
+        bodyBuilder.append(descriptor.getName()).append("(");
         boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
         StringBuilder delegationBuilder = new StringBuilder();
         if (isAbstractFun) {
@@ -166,7 +198,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
             bodyBuilder.append(" : ");
-            bodyBuilder.append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(parameterDescriptor.getType()));
+            bodyBuilder.append(DescriptorRenderer.TEXT.renderTypeWithShortNames(parameterDescriptor.getType()));
 
             ImportInsertHelper.addImportDirectivesIfNeeded(parameterDescriptor.getType(), file);
 
@@ -183,10 +215,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
         if (returnsNotUnit) {
-            bodyBuilder.append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(returnType));
+            bodyBuilder.append(" : ").append(DescriptorRenderer.TEXT.renderTypeWithShortNames(returnType));
             ImportInsertHelper.addImportDirectivesIfNeeded(returnType, file);
         }
-
+        if (!whereRestrictions.isEmpty()) {
+            bodyBuilder.append("\n").append("where ").append(StringUtil.join(whereRestrictions, ", "));
+        }
         bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");
 
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());

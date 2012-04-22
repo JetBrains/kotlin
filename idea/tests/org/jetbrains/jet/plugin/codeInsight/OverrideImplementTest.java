@@ -58,6 +58,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doImplementFileTest();
     }
 
+    public void testFunctionWithTypeParameters() {
+        doImplementFileTest();
+    }
+
     public void testJavaInterfaceMethod() {
         doImplementDirectoryTest();
     }
