@@ -431,6 +431,9 @@ public class DescriptorResolver {
             // Error is reported by the parser
             type = ErrorUtils.createErrorType("Annotation is absent");
         }
+        if (parameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+            return getVarargParameterType(type);
+        }
         return type;
     }
 
