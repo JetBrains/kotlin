@@ -25,12 +25,13 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 /**
- * This is a regression test against KT-1652
- *
  * @author Evgeny Gerashchenko
  * @since 3/27/12
  */
-public class FakeJetPsiClassRegressionTest extends LightCodeInsightFixtureTestCase {
+public class LibraryNavigationRegressionTest extends LightCodeInsightFixtureTestCase {
+    /**
+     * Regression test against KT-1652
+     */
     public void testRefToStdlib() {
         String text = "fun foo() { println() }";
         myFixture.configureByText(JetFileType.INSTANCE, text);
@@ -39,6 +40,9 @@ public class FakeJetPsiClassRegressionTest extends LightCodeInsightFixtureTestCa
         assertSame(JetLanguage.INSTANCE, ref.resolve().getNavigationElement().getLanguage());
     }
 
+    /**
+     * Regression test against KT-1652
+     */
     public void testRefToJdk() {
         String text = "val x = java.util.HashMap<String, Int>().get(\"\")";
         myFixture.configureByText(JetFileType.INSTANCE, text);
