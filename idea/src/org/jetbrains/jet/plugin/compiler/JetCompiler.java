@@ -25,7 +25,6 @@ import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.diagnostic.Logger;
@@ -34,14 +33,12 @@ import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -53,8 +50,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
 
@@ -138,7 +133,7 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-        OutputItemsCollector collector = new OutputItemsCollector(outputDir.getPath());
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(outputDir.getPath());
 
         if (RUN_OUT_OF_PROCESS) {
             runOutOfProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
@@ -354,7 +349,7 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static class OutputItemsCollector {
+    public static class OutputItemsCollectorImpl implements OutputItemsCollector {
         private static final String FOR_SOURCE_PREFIX = "For source: ";
         private static final String EMITTING_PREFIX = "Emitting: ";
         private final String outputPath;
@@ -362,10 +357,11 @@ public class JetCompiler implements TranslatingCompiler {
         private List<OutputItem> answer = new ArrayList<OutputItem>();
         private List<VirtualFile> sources = new ArrayList<VirtualFile>();
 
-        private OutputItemsCollector(String outputPath) {
+        public OutputItemsCollectorImpl(String outputPath) {
             this.outputPath = outputPath;
         }
 
+        @Override
         public void learn(String message) {
             message = message.trim();
             if (message.startsWith(FOR_SOURCE_PREFIX)) {
@@ -401,214 +397,5 @@ public class JetCompiler implements TranslatingCompiler {
         }
 
         return path;
-    }
-
-    private static class NullProcessHandler extends ProcessHandler {
-        public static NullProcessHandler INSTANCE = new NullProcessHandler();
-        @Override
-        protected void destroyProcessImpl() {
-            throw new UnsupportedOperationException("destroyProcessImpl is not implemented");
-        }
-
-        @Override
-        protected void detachProcessImpl() {
-            throw new UnsupportedOperationException("detachProcessImpl is not implemented"); // TODO
-        }
-
-        @Override
-        public boolean detachIsDefault() {
-            throw new UnsupportedOperationException("detachIsDefault is not implemented");
-        }
-
-        @Override
-        public OutputStream getProcessInput() {
-            throw new UnsupportedOperationException("getProcessInput is not implemented");
-        }
-    }
-
-    private static class CompilerProcessListener extends ProcessAdapter {
-        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION|LOGGING)", Pattern.MULTILINE);
-        private static final Pattern OPEN_TAG_END_PATTERN = Pattern.compile(">", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("\\s*(path|line|column)\\s*=\\s*\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION|LOGGING)>", Pattern.MULTILINE | Pattern.DOTALL);
-
-        private enum State {
-            WAITING, ATTRIBUTES, MESSAGE
-        }
-
-        private static class CompilerMessage {
-            private CompilerMessageCategory messageCategory;
-            private boolean isException;
-            private @Nullable String url;
-            private @Nullable Integer line;
-            private @Nullable Integer column;
-            private String message;
-
-            public void setMessageCategoryFromString(String tagName) {
-                if ("ERROR".equals(tagName)) {
-                    messageCategory = ERROR;
-                }
-                else if ("EXCEPTION".equals(tagName)) {
-                    messageCategory = ERROR;
-                    isException = true;
-                }
-                else if ("WARNING".equals(tagName)) {
-                    messageCategory = WARNING;
-                }
-                else if ("LOGGING".equals(tagName)) {
-                    messageCategory = STATISTICS;
-                }
-                else {
-                    messageCategory = INFORMATION;
-                }
-            }
-
-            public void setAttributeFromStrings(String name, String value) {
-                if ("path".equals(name)) {
-                    url = "file://" + value.trim();
-                }
-                else if ("line".equals(name)) {
-                    line = safeParseInt(value);
-                }
-                else if ("column".equals(name)) {
-                    column = safeParseInt(value);
-                }
-            }
-
-            @Nullable
-            private static Integer safeParseInt(String value) {
-                try {
-                    return Integer.parseInt(value.trim());
-                }
-                catch (NumberFormatException e) {
-                    return null;
-                }
-            }
-
-            public void setMessage(String message) {
-                this.message = message;
-            }
-
-            public void reportTo(CompileContext compileContext) {
-                if (messageCategory == STATISTICS) {
-                    compileContext.getProgressIndicator().setText(message);
-                }
-                else {
-                    compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line,
-                                              column == null
-                                              ? -1
-                                              : column);
-                    if (isException) {
-                        LOG.error(message);
-                    }
-                }
-            }
-        }
-
-        private final CompileContext compileContext;
-        private final OutputItemsCollector collector;
-        private final StringBuilder output = new StringBuilder();
-        private int firstUnprocessedIndex = 0;
-        private State state = State.WAITING;
-        private CompilerMessage currentCompilerMessage;
-
-        public CompilerProcessListener(CompileContext compileContext, OutputItemsCollector collector) {
-            this.compileContext = compileContext;
-            this.collector = collector;
-        }
-
-        @Override
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-            String text = event.getText();
-            if (outputType == ProcessOutputTypes.STDERR) {
-                output.append(text);
-
-                // We loop until the state stabilizes
-                State lastState;
-                do {
-                    lastState = state;
-                    switch (state) {
-                        case WAITING: {
-                            Matcher matcher = matcher(DIAGNOSTIC_PATTERN);
-                            if (find(matcher)) {
-                                currentCompilerMessage = new CompilerMessage();
-                                currentCompilerMessage.setMessageCategoryFromString(matcher.group(1));
-                                state = State.ATTRIBUTES;
-                            }
-                            break;
-                        }
-                        case ATTRIBUTES: {
-                            Matcher matcher = matcher(ATTRIBUTE_PATTERN);
-                            int indexDelta = 0;
-                            while (matcher.find()) {
-                                handleSkippedOutput(output.subSequence(firstUnprocessedIndex + indexDelta, firstUnprocessedIndex + matcher.start()));
-                                currentCompilerMessage.setAttributeFromStrings(matcher.group(1), matcher.group(2));
-                                indexDelta = matcher.end();
-
-                            }
-                            firstUnprocessedIndex += indexDelta;
-
-                            Matcher endMatcher = matcher(OPEN_TAG_END_PATTERN);
-                            if (find(endMatcher)) {
-                                state = State.MESSAGE;
-                            }
-                            break;
-                        }
-                        case MESSAGE: {
-                            Matcher matcher = matcher(MESSAGE_PATTERN);
-                            if (find(matcher)) {
-                                String message = matcher.group(1);
-                                currentCompilerMessage.setMessage(message);
-                                currentCompilerMessage.reportTo(compileContext);
-
-                                if (currentCompilerMessage.messageCategory == STATISTICS) {
-                                    collector.learn(message);
-                                }
-
-                                state = State.WAITING;
-                            }
-                            break;
-                        }
-                    }
-                }
-                while (state != lastState);
-
-            }
-            else {
-                compileContext.addMessage(INFORMATION, text, "", -1, -1);
-            }
-        }
-
-        private boolean find(Matcher matcher) {
-            boolean result = matcher.find();
-            if (result) {
-                handleSkippedOutput(output.subSequence(firstUnprocessedIndex, firstUnprocessedIndex + matcher.start()));
-                firstUnprocessedIndex += matcher.end();
-            }
-            return result;
-        }
-
-        private Matcher matcher(Pattern pattern) {
-            return pattern.matcher(output.subSequence(firstUnprocessedIndex, output.length()));
-        }
-
-        @Override
-        public void processTerminated(ProcessEvent event) {
-            if (firstUnprocessedIndex < output.length()) {
-                handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
-            }
-            int exitCode = event.getExitCode();
-            // 0 is normal, 1 is "errors found" - handled by the messages above
-            if (exitCode != 0 && exitCode != 1) {
-                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
-            }
-        }
-
-        private void handleSkippedOutput(CharSequence substring) {
-            String message = substring.toString();
-            if (!message.trim().isEmpty()) {
-                compileContext.addMessage(ERROR, message, "", -1, -1);
-            }
-        }
     }
 }
