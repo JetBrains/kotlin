@@ -92,12 +92,12 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         builder.append(DescriptorRenderer.HTML.render(descriptor));
                         int overrideCount = overriddenMembers.size();
                         if (overrideCount >= 1) {
-                            builder.append(" ").append(implementsOrOverrides).append(" ");
+                            builder.append("\n").append(implementsOrOverrides).append("\n");
                             builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
                         }
                         if (overrideCount > 1) {
                             int count = overrideCount - 1;
-                            builder.append(" and ").append(count).append(" other ").append(memberKind);
+                            builder.append("\nand ").append(count).append(" other ").append(memberKind);
                             if (count > 1) {
                                 builder.append("s");
                             }
