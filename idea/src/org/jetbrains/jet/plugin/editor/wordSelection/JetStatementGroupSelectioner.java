@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin;
+package org.jetbrains.jet.plugin.editor.wordSelection;
 
 import com.intellij.codeInsight.editorActions.wordSelection.BasicSelectioner;
 import com.intellij.openapi.editor.Editor;
