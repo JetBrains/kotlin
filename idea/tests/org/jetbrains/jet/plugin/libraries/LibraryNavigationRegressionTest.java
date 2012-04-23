@@ -16,7 +16,11 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +53,20 @@ public class LibraryNavigationRegressionTest extends LightCodeInsightFixtureTest
         PsiReference ref = myFixture.getFile().findReferenceAt(text.indexOf("get"));
         //noinspection ConstantConditions
         ref.resolve().getNavigationElement();
+    }
+
+    /**
+     * Regression test against KT-1815
+     */
+    public void testRefToAltHeaders() {
+        String text = "fun foo(e : java.util.Map.Entry<String, String>) { e.getKey(); }";
+        myFixture.configureByText(JetFileType.INSTANCE, text);
+        PsiReference ref = myFixture.getFile().findReferenceAt(text.indexOf("getKey"));
+        PsiClass expectedClass =
+                JavaPsiFacade.getInstance(getProject()).findClass("java.util.Map.Entry", GlobalSearchScope.allScope(getProject()));
+        //noinspection ConstantConditions
+        PsiElement actualClass = ref.resolve().getNavigationElement().getParent();
+        assertSame(expectedClass, actualClass);
     }
 
     @NotNull
