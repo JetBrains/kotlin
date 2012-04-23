@@ -35,6 +35,22 @@ public class WordSelectionTest extends LightCodeInsightFixtureTestCase {
         doTest(6);
     }
 
+    public void testTypeArguments() {
+        doTest(1);
+    }
+
+    public void testValueArguments() {
+        doTest(1);
+    }
+
+    public void testTypeParameters() {
+        doTest(1);
+    }
+
+    public void testValueParameters() {
+        doTest(1);
+    }
+
     private void doTest(int howMany) {
         String testName = getTestName(false);
         String[] afterFiles = new String[howMany];
