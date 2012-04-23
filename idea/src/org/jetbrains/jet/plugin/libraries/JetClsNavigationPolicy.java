@@ -34,6 +34,9 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
+        if (clsClass.getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         JetClass jetClass = (JetClass) getJetDeclarationByClsElement(clsClass);
         if (jetClass != null) {
             JetClass sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
@@ -47,6 +50,9 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
+        if (clsMethod.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
         if (jetDeclaration instanceof JetProperty) {
             JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
@@ -66,6 +72,9 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
+        if (clsField.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         return getJetDeclarationByClsElement(clsField);
     }
 
