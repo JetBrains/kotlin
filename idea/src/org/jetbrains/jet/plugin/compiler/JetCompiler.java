@@ -453,7 +453,8 @@ public class JetCompiler implements TranslatingCompiler {
 
             message.setLength(0);
 
-            path = attributes.getValue("path");
+            String rawPath = attributes.getValue("path");
+            path = rawPath == null ? null : "file://" + rawPath;
             line = safeParseInt(attributes.getValue("line"), -1);
             column = safeParseInt(attributes.getValue("column"), -1);
         }
