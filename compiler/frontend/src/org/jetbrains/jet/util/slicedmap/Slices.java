@@ -32,11 +32,12 @@ public class Slices {
 
         @Override
         public <K, V> boolean processRewrite(WritableSlice<K, V> slice, K key, V oldValue, V newValue) {
-            assert (oldValue == null && newValue == null) || (oldValue != null && oldValue.equals(newValue))
-                    : "Rewrite at slice " + slice +
-                      " key: " + key +
-                      " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
-                      " new value: " + newValue + '@' + System.identityHashCode(newValue);
+            if (!((oldValue == null && newValue == null) || (oldValue != null && oldValue.equals(newValue)))) {
+                throw new IllegalStateException("Rewrite at slice " + slice +
+                        " key: " + key +
+                        " old value: " + oldValue + '@' + System.identityHashCode(oldValue) +
+                        " new value: " + newValue + '@' + System.identityHashCode(newValue));
+            }
             return true;
         }
     };
