@@ -28,6 +28,11 @@ public interface MessageRenderer {
 
     MessageRenderer TAGS = new MessageRenderer() {
         @Override
+        public String renderPreamble() {
+            return "<MESSAGES>";
+        }
+
+        @Override
         public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
             StringBuilder out = new StringBuilder();
             out.append("<").append(severity.toString());
@@ -48,9 +53,19 @@ public interface MessageRenderer {
         public String renderException(@NotNull Throwable e) {
             return render(CompilerMessageSeverity.EXCEPTION, PLAIN.renderException(e), CompilerMessageLocation.NO_LOCATION);
         }
+
+        @Override
+        public String renderConclusion() {
+            return "</MESSAGES>";
+        }
     };
 
     MessageRenderer PLAIN = new MessageRenderer() {
+        @Override
+        public String renderPreamble() {
+            return "";
+        }
+
         @Override
         public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
             String path = location.getPath();
@@ -65,8 +80,15 @@ public interface MessageRenderer {
             e.printStackTrace(new PrintWriter(out));
             return out.toString();
         }
+
+        @Override
+        public String renderConclusion() {
+            return "";
+        }
     };
 
+    String renderPreamble();
     String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location);
     String renderException(@NotNull Throwable e);
+    String renderConclusion();
 }
