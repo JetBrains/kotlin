@@ -336,7 +336,11 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         private void renderVisibility(Visibility visibility, StringBuilder builder) {
-            builder.append(renderKeyword(visibility.toString())).append(" ");
+            if ("package".equals(visibility.toString())) {
+                builder.append("public/*package*/ ");
+            } else {
+                builder.append(renderKeyword(visibility.toString())).append(" ");
+            }
         }
 
         private void renderModality(Modality modality, StringBuilder builder) {
