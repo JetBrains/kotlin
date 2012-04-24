@@ -77,7 +77,8 @@ public class KotlinCompiler {
                 System.err.println("exec() finished with " + rc + " return code");
                 System.exit(rc.getCode());
             }
-        } catch (CompileEnvironmentException e) {
+        }
+        catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());
             System.exit(INTERNAL_ERROR.getCode());
         }
@@ -103,73 +104,82 @@ public class KotlinCompiler {
 
         final MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
 
-        if (arguments.version) {
-            errStream.println(messageRenderer.render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, CompilerMessageLocation.NO_LOCATION));
-        }
+        errStream.print(messageRenderer.renderPreamble());
 
-        CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-
-        File jdkHeadersJar;
-        if (mode.includeJdkHeaders()) {
-            if (arguments.jdkHeaders != null) {
-                jdkHeadersJar = new File(arguments.jdkHeaders);
-            }
-            else {
-                jdkHeadersJar = PathUtil.getAltHeadersPath();
-            }
-        }
-        else {
-            jdkHeadersJar = null;
-        }
-        File runtimeJar;
-
-        if (mode.includeKotlinRuntime()) {
-            if (arguments.stdlib != null) {
-                runtimeJar = new File(arguments.stdlib);
-            }
-            else {
-                runtimeJar = PathUtil.getDefaultRuntimePath();
-            }
-        }
-        else {
-            runtimeJar = null;
-        }
-
-        CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar, runtimeJar);
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
-
-        JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
-        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
         try {
-            configureEnvironment(configuration, arguments);
-
-            boolean noErrors;
-            if (arguments.module != null) {
-                noErrors = KotlinToJVMBytecodeCompiler.compileModuleScript(configuration,
-                                                                           arguments.module, arguments.jar, arguments.outputDir,
-                                                                           arguments.includeRuntime);
+            if (arguments.version) {
+                errStream.println(messageRenderer.render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + CompilerVersion.VERSION, CompilerMessageLocation.NO_LOCATION));
             }
-            else {
-                // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
-                if (arguments.getSourceDirs() != null) {
-                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                                                                                           arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
+
+            CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
+
+            File jdkHeadersJar;
+            if (mode.includeJdkHeaders()) {
+                if (arguments.jdkHeaders != null) {
+                    jdkHeadersJar = new File(arguments.jdkHeaders);
                 }
                 else {
-                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                 arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                    jdkHeadersJar = PathUtil.getAltHeadersPath();
                 }
             }
-            return noErrors ? OK : COMPILATION_ERROR;
-        }
-        catch (Throwable t) {
-            errStream.println(messageRenderer.renderException(t));
-            return INTERNAL_ERROR;
+            else {
+                jdkHeadersJar = null;
+            }
+            File runtimeJar;
+
+            if (mode.includeKotlinRuntime()) {
+                if (arguments.stdlib != null) {
+                    runtimeJar = new File(arguments.stdlib);
+                }
+                else {
+                    runtimeJar = PathUtil.getDefaultRuntimePath();
+                }
+            }
+            else {
+                runtimeJar = null;
+            }
+
+            CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar, runtimeJar);
+            PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
+            Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
+
+            JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
+            CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
+
+            configuration.getMessageCollector().report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION);
+            try {
+                configureEnvironment(configuration, arguments);
+
+                boolean noErrors;
+                if (arguments.module != null) {
+                    noErrors = KotlinToJVMBytecodeCompiler.compileModuleScript(configuration,
+                                                                               arguments.module, arguments.jar, arguments.outputDir,
+                                                                               arguments.includeRuntime);
+                }
+                else {
+                    // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
+                    if (arguments.getSourceDirs() != null) {
+                        noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
+                                                                                               arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                    }
+                    else {
+                        noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
+                                                                     arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                    }
+                }
+                return noErrors ? OK : COMPILATION_ERROR;
+            }
+            catch (Throwable t) {
+                errStream.println(messageRenderer.renderException(t));
+                return INTERNAL_ERROR;
+            }
+            finally {
+                Disposer.dispose(rootDisposable);
+                messageCollector.printToErrStream();
+            }
         }
         finally {
-            Disposer.dispose(rootDisposable);
-            messageCollector.printToErrStream();
+             errStream.print(messageRenderer.renderConclusion());
         }
     }
 
