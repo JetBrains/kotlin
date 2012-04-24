@@ -410,6 +410,7 @@ public class JavaDescriptorResolver {
         return classData.classDescriptor;
     }
 
+    @NotNull
     private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass, List<Runnable> taskList) {
         FqName fqName = new FqName(psiClass.getQualifiedName());
         if (classDescriptorCache.containsKey(fqName)) {
@@ -421,7 +422,14 @@ public class JavaDescriptorResolver {
         String name = psiClass.getName();
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
+
+        // class may be resolved during resolution of parent
+        ResolverBinaryClassData classData = classDescriptorCache.get(fqName);
+        if (classData != null) {
+            return classData;
+        }
+
+        classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
         classDescriptorCache.put(fqName, classData);
         classData.classDescriptor.setName(name);
         classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
