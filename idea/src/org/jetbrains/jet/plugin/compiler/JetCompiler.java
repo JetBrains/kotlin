@@ -481,12 +481,18 @@ public class JetCompiler implements TranslatingCompiler {
                 // We're directly inside the root tag: <MESSAGES>
                 return;
             }
-            CompilerMessageCategory category = CATEGORIES.get(qName.toLowerCase());
+            String qNameLowerCase = qName.toLowerCase();
+            CompilerMessageCategory category = CATEGORIES.get(qNameLowerCase);
             if (category == null) {
                 compileContext.addMessage(ERROR, "Unknown compiler message tag: " + qName, null, -1, -1);
                 category = INFORMATION;
             }
             String text = message.toString();
+
+            if ("exception".equals(qNameLowerCase)) {
+                LOG.error(text);
+            }
+
             if (category == STATISTICS) {
                 compileContext.getProgressIndicator().setText(text);
                 collector.learn(text);
