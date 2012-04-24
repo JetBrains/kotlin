@@ -10,6 +10,7 @@
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="frontend.java" />
+    <orderEntry type="module" module-name="runtime" />
   </component>
 </module>
 
