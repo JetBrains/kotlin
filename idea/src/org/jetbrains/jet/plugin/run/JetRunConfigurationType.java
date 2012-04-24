@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.run;
 import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetIcons;
 
 /**
  * @author yole
@@ -30,7 +30,7 @@ public class JetRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public JetRunConfigurationType() {
-        super("JetRunConfigurationType", "Kotlin", "Kotlin", JetFileType.INSTANCE.getIcon());
+        super("JetRunConfigurationType", "Kotlin", "Kotlin", JetIcons.LAUNCH);
         addFactory(new JetRunConfigurationFactory(this));
     }
 

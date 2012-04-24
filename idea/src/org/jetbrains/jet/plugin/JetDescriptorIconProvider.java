@@ -92,7 +92,7 @@ public final class JetDescriptorIconProvider {
                 case OBJECT:
                     return JetIcons.OBJECT;
                 case CLASS:
-                    return PlatformIcons.CLASS_ICON;
+                    return JetIcons.CLASS;
                 default:
                     LOG.warn("No icon for descriptor: " + descriptor);
                     return null;
