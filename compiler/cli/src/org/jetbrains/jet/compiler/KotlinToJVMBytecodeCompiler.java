@@ -19,12 +19,7 @@ package org.jetbrains.jet.compiler;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.LocalTimeCounter;
 import jet.modules.Module;
@@ -32,17 +27,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.compiler.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
 import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.diagnostics.*;
-import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -53,7 +43,6 @@ import org.jetbrains.jet.utils.Progress;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -61,7 +50,9 @@ import java.util.List;
  * @author abreslav
  */
 public class KotlinToJVMBytecodeCompiler {
-    private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
+
+    private KotlinToJVMBytecodeCompiler() {
+    }
 
     @Nullable
     public static ClassFileFactory compileModule(
@@ -111,7 +102,8 @@ public class KotlinToJVMBytecodeCompiler {
         for (Module moduleBuilder : modules) {
             // TODO: this should be done only once for the environment
             if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
-                CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
+                CompileEnvironmentUtil
+                        .addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
             }
             ClassFileFactory moduleFactory = KotlinToJVMBytecodeCompiler.compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
@@ -135,7 +127,6 @@ public class KotlinToJVMBytecodeCompiler {
 
     private static boolean compileBunchOfSources(
             CompileEnvironmentConfiguration configuration,
-
             String jar,
             String outputDir,
             boolean includeRuntime
@@ -161,7 +152,8 @@ public class KotlinToJVMBytecodeCompiler {
             if (jar != null) {
                 try {
                     CompileEnvironmentUtil.writeToJar(factory, new FileOutputStream(jar), mainClass, includeRuntime);
-                } catch (FileNotFoundException e) {
+                }
+                catch (FileNotFoundException e) {
                     throw new CompileEnvironmentException("Invalid jar path " + jar, e);
                 }
             }
@@ -203,7 +195,8 @@ public class KotlinToJVMBytecodeCompiler {
             CompileEnvironmentConfiguration configuration,
 
             String code) {
-        configuration.getEnvironment().addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
+        configuration.getEnvironment()
+                .addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
@@ -237,51 +230,27 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     private static AnalyzeExhaust analyze(
             final CompileEnvironmentConfiguration configuration,
-
             boolean stubs) {
-        final Ref<Boolean> hasErrors = new Ref<Boolean>(false);
-        final MessageCollector messageCollectorWrapper = new MessageCollector() {
 
-            @Override
-            public void report(@NotNull CompilerMessageSeverity severity,
-                    @NotNull String message,
-                    @NotNull CompilerMessageLocation location) {
-                if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-                    hasErrors.set(true);
-                }
-                configuration.getMessageCollector().report(severity, message, location);
-            }
-        };
 
-        JetCoreEnvironment environment = configuration.getEnvironment();
-
-        // Report syntax errors
-        for (JetFile file : environment.getSourceFiles()) {
-            file.accept(new PsiRecursiveElementWalkingVisitor() {
-                @Override
-                public void visitErrorElement(PsiErrorElement element) {
-                    String description = element.getErrorDescription();
-                    String message = StringUtil.isEmpty(description) ? "Syntax error" : description;
-                    Diagnostic diagnostic = new SyntaxErrorDiagnostic(element, Severity.ERROR, message);
-                    reportDiagnostic(messageCollectorWrapper, diagnostic);
-                }
-            });
-        }
-
-        // Analyze and report semantic errors
-        Predicate<PsiFile> filesToAnalyzeCompletely =
+        final JetCoreEnvironment environment = configuration.getEnvironment();
+        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
+        final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
-        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely, JetControlFlowDataTraceFactory.EMPTY,
-                configuration.getCompilerDependencies());
+        analyzerWithCompilerReport.analyzeAndReport(
+                new AnalyzerWithCompilerReport.AnalyzerWrapper() {
+                    @NotNull
+                    @Override
+                    public AnalyzeExhaust analyze() {
+                        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                                environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely,
+                                JetControlFlowDataTraceFactory.EMPTY,
+                                configuration.getCompilerDependencies());
+                    }
+                }, environment.getSourceFiles()
+        );
 
-        for (Diagnostic diagnostic : exhaust.getBindingContext().getDiagnostics()) {
-            reportDiagnostic(messageCollectorWrapper, diagnostic);
-        }
-
-        reportIncompleteHierarchies(messageCollectorWrapper, exhaust);
-
-        return hasErrors.get() ? null : exhaust;
+        return analyzerWithCompilerReport.hasErrors() ? null : analyzerWithCompilerReport.getAnalyzeExhaust();
     }
 
     @NotNull
@@ -300,7 +269,8 @@ public class KotlinToJVMBytecodeCompiler {
             }
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
-                                                              exhaust, environment.getSourceFiles(), configuration.getCompilerDependencies().getCompilerSpecialMode());
+                                                              exhaust, environment.getSourceFiles(),
+                                                              configuration.getCompilerDependencies().getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = configuration.getCompilerPlugins();
@@ -311,52 +281,5 @@ public class KotlinToJVMBytecodeCompiler {
             }
         }
         return generationState;
-    }
-
-    private static void reportDiagnostic(MessageCollector collector, Diagnostic diagnostic) {
-        DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
-        VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
-        String path = virtualFile == null ? null : virtualFile.getPath();
-        String render;
-        if (diagnostic.getFactory() == SYNTAX_ERROR_FACTORY) {
-            render = ((SyntaxErrorDiagnostic)diagnostic).message;
-        }
-        else {
-            render = DefaultErrorMessages.RENDERER.render(diagnostic);
-        }
-        collector.report(convertSeverity(diagnostic.getSeverity()), render, CompilerMessageLocation.create(path, lineAndColumn.getLine(), lineAndColumn.getColumn()));
-    }
-
-    private static CompilerMessageSeverity convertSeverity(Severity severity) {
-        switch (severity) {
-            case INFO:
-                return CompilerMessageSeverity.INFO;
-            case ERROR:
-                return CompilerMessageSeverity.ERROR;
-            case WARNING:
-                return CompilerMessageSeverity.WARNING;
-        }
-        throw new IllegalStateException("Unknown severity: " + severity);
-    }
-
-    private static void reportIncompleteHierarchies(MessageCollector collector, AnalyzeExhaust exhaust) {
-        Collection<ClassDescriptor> incompletes = exhaust.getBindingContext().getKeys(BindingContext.INCOMPLETE_HIERARCHY);
-        if (!incompletes.isEmpty()) {
-            StringBuilder message = new StringBuilder("The following classes have incomplete hierarchies:\n");
-            for (ClassDescriptor incomplete : incompletes) {
-                String fqName = DescriptorUtils.getFQName(incomplete).getFqName();
-                message.append("    ").append(fqName).append("\n");
-            }
-            collector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
-        }
-    }
-
-    private static class SyntaxErrorDiagnostic extends SimpleDiagnostic<PsiErrorElement> {
-        private String message;
-
-        private SyntaxErrorDiagnostic(@NotNull PsiErrorElement psiElement, @NotNull Severity severity, String message) {
-            super(psiElement, SYNTAX_ERROR_FACTORY, severity);
-            this.message = message;
-        }
     }
 }
