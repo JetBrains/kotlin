@@ -153,7 +153,7 @@ public class KotlinCompiler {
 
                 boolean noErrors;
                 if (arguments.module != null) {
-                    List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, configuration.getMessageCollector());
+                    List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
                     File directory = new File(arguments.module).getParentFile();
                     noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                           directory, arguments.jar, arguments.outputDir,
