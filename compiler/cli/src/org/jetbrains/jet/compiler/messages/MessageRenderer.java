@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.compiler.messages;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
@@ -37,16 +38,20 @@ public interface MessageRenderer {
             StringBuilder out = new StringBuilder();
             out.append("<").append(severity.toString());
             if (location.getPath() != null) {
-                out.append(" path=\"").append(location.getPath()).append("\"");
+                out.append(" path=\"").append(e(location.getPath())).append("\"");
                 out.append(" line=\"").append(location.getLine()).append("\"");
                 out.append(" column=\"").append(location.getColumn()).append("\"");
             }
             out.append(">\n");
 
-            out.append(message);
+            out.append(e(message));
 
             out.append("</").append(severity.toString()).append(">\n");
             return out.toString();
+        }
+
+        private String e(String str) {
+            return StringUtil.escapeXml(str);
         }
 
         @Override
