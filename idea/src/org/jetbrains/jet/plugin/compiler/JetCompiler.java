@@ -477,6 +477,10 @@ public class JetCompiler implements TranslatingCompiler {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (tags.size() == 1) {
+                // We're directly inside the root tag: <MESSAGES>
+                return;
+            }
             CompilerMessageCategory category = CATEGORIES.get(qName.toLowerCase());
             if (category == null) {
                 compileContext.addMessage(ERROR, "Unknown compiler message tag: " + qName, null, -1, -1);
