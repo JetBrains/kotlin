@@ -128,7 +128,7 @@ public class BytecodeCompiler {
 
 
     /**
-     * {@code CompileEnvironment#compileModuleScript} wrapper.
+     * {@code CompileEnvironment#compileModules} wrapper.
      *
      * @param module         compilation module file
      * @param jar            compilation destination jar
@@ -139,7 +139,7 @@ public class BytecodeCompiler {
     public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
             CompileEnvironmentConfiguration env = env(stdlib, classpath);
-            boolean success = KotlinToJVMBytecodeCompiler.compileModuleScript(env, module, jar, null, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, module, jar, null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( module, false ));
             }

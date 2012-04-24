@@ -98,22 +98,15 @@ public class KotlinToJVMBytecodeCompiler {
         return generationState.getFactory();
     }
 
-    public static boolean compileModuleScript(
+    public static boolean compileModules(
             CompileEnvironmentConfiguration configuration,
+
+            @NotNull List<Module> modules,
 
             @NotNull String moduleScriptFile,
             @Nullable String jarPath,
             @Nullable String outputDir,
             boolean jarRuntime) {
-        List<Module> modules = CompileEnvironmentUtil.loadModuleScript(moduleScriptFile, configuration.getMessageCollector());
-
-        if (modules == null) {
-            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
-        }
-
-        if (modules.isEmpty()) {
-            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
-        }
 
         final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
