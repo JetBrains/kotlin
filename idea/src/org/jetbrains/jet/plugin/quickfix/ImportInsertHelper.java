@@ -16,7 +16,12 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
@@ -33,6 +38,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.List;
@@ -73,6 +79,24 @@ public class ImportInsertHelper {
      * @param file File where directive should be added.
      */
     public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
+        addImportDirective(new ImportPath(importFqn, false), null, file);
+    }
+
+    public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
+        PsiReference reference = file.findReferenceAt(refOffset);
+        if (reference instanceof JetPsiReference) {
+            PsiElement target = reference.resolve();
+            if (target != null) {
+                boolean same = file.getManager().areElementsEquivalent(target, targetElement);
+                same |= target instanceof PsiClass && importFqn.getFqName().equals(((PsiClass)target).getQualifiedName());
+                if (!same) {
+                    Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+                    TextRange refRange = reference.getElement().getTextRange();
+                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), importFqn.getFqName());
+                }
+                return;
+            }
+        }
         addImportDirective(new ImportPath(importFqn, false), null, file);
     }
 

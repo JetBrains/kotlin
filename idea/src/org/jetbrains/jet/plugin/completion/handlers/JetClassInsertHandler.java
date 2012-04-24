@@ -49,15 +49,12 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                     }
 
                     if (context.getFile() instanceof JetFile && item.getObject() instanceof JetLookupObject) {
-                        final DeclarationDescriptor descriptor = ((JetLookupObject) item.getObject()).getDescriptor();
-                        if (descriptor != null) {
-                            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                                @Override
-                                public void run() {
-                                    final FqName fqn = DescriptorUtils.getFQName(descriptor).toSafe();
-                                    ImportInsertHelper.addImportDirective(fqn, jetFile);
-                                }
-                            });
+                        JetLookupObject lookupObject = (JetLookupObject)item.getObject();
+                        final DeclarationDescriptor descriptor = lookupObject.getDescriptor();
+                        PsiElement targetElement = lookupObject.getPsiElement();
+                        if (descriptor != null && targetElement != null) {
+                            final FqName fqn = DescriptorUtils.getFQName(descriptor).toSafe();
+                            ImportInsertHelper.addImportDirectiveOrChangeToFqName(fqn, jetFile, context.getStartOffset(), targetElement);
                         }
                     }
                 }
