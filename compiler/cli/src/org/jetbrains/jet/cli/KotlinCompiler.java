@@ -23,6 +23,7 @@ import com.google.common.collect.Multimap;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
+import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.compiler.*;
 import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
@@ -152,9 +153,10 @@ public class KotlinCompiler {
 
                 boolean noErrors;
                 if (arguments.module != null) {
-                    noErrors = KotlinToJVMBytecodeCompiler.compileModuleScript(configuration,
-                                                                               arguments.module, arguments.jar, arguments.outputDir,
-                                                                               arguments.includeRuntime);
+                    List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, configuration.getMessageCollector());
+                    noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
+                                                                          arguments.module, arguments.jar, arguments.outputDir,
+                                                                          arguments.includeRuntime);
                 }
                 else {
                     // TODO ideally we'd unify to just having a single field that supports multiple files/dirs

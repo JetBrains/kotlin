@@ -78,10 +78,6 @@ public class CompileEnvironmentUtil {
         return null;
     }
 
-    //public static void ensureRuntime(@NotNull JetCoreEnvironment env) {
-    //    ensureJdkRuntime(env);
-    //}
-
     public static void ensureKotlinRuntime(JetCoreEnvironment env) {
         if (JavaPsiFacade.getInstance(env.getProject()).findClass("jet.JetObject", GlobalSearchScope.allScope(env.getProject())) == null) {
             // TODO: prepend
@@ -151,16 +147,7 @@ public class CompileEnvironmentUtil {
         }
     }
 
-    //private CompileEnvironment copyEnvironment(boolean verbose) {
-    //    CompileEnvironment compileEnvironment = new CompileEnvironment(messageRenderer, verbose, compilerDependencies);
-    //    compileEnvironment.setIgnoreErrors(ignoreErrors);
-    //    compileEnvironment.setErrorStream(errorStream);
-    //    // copy across any compiler plugins
-    //    compileEnvironment.getEnvironment().getCompilerPlugins().addAll(environment.getCompilerPlugins());
-    //    return compileEnvironment;
-    //}
-    //
-    public static List<Module> loadModuleScript(String moduleFile, MessageCollector messageCollector) {
+    public static List<Module> loadModuleScript(String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
             public void dispose() {
@@ -170,7 +157,7 @@ public class CompileEnvironmentUtil {
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
         JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, dependencies);
         ensureRuntime(scriptEnvironment, dependencies);
-        scriptEnvironment.addSources(moduleFile);
+        scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
                 .analyzeAndGenerate(new CompileEnvironmentConfiguration(scriptEnvironment, dependencies, messageCollector), false);
@@ -178,9 +165,17 @@ public class CompileEnvironmentUtil {
             return null;
         }
 
-        List<Module> modules = runDefineModules(dependencies, moduleFile, generationState.getFactory());
+        List<Module> modules = runDefineModules(dependencies, moduleScriptFile, generationState.getFactory());
 
         Disposer.dispose(disposable);
+
+        if (modules == null) {
+            throw new CompileEnvironmentException("Module script " + moduleScriptFile + " compilation failed");
+        }
+
+        if (modules.isEmpty()) {
+            throw new CompileEnvironmentException("No modules where defined by " + moduleScriptFile);
+        }
         return modules;
     }
 
