@@ -67,7 +67,7 @@ public class KotlinToJVMBytecodeCompiler {
     public static ClassFileFactory compileModule(
             CompileEnvironmentConfiguration configuration,
             Module moduleBuilder,
-            String directory
+            File directory
     ) {
         if (moduleBuilder.getSourceFiles().isEmpty()) {
             throw new CompileEnvironmentException("No source files where defined");
@@ -103,12 +103,11 @@ public class KotlinToJVMBytecodeCompiler {
 
             @NotNull List<Module> modules,
 
-            @NotNull String moduleScriptFile,
+            @NotNull File directory,
             @Nullable String jarPath,
             @Nullable String outputDir,
             boolean jarRuntime) {
 
-        final String directory = new File(moduleScriptFile).getParent();
         for (Module moduleBuilder : modules) {
             // TODO: this should be done only once for the environment
             if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
