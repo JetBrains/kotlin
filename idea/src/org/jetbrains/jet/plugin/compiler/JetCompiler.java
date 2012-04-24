@@ -246,15 +246,15 @@ public class JetCompiler implements TranslatingCompiler {
         int exitCode = execInProcess(kotlinHome, outputDir, scriptFile, out, compileContext);
 
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        parseCompilerMessagesFromReader(compileContext, reader);
+        parseCompilerMessagesFromReader(compileContext, reader, collector);
         handleProcessTermination(exitCode, compileContext);
     }
 
-    private static void parseCompilerMessagesFromReader(CompileContext compileContext, Reader reader) {
+    private static void parseCompilerMessagesFromReader(CompileContext compileContext, Reader reader, OutputItemsCollector collector) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(new InputSource(reader), new CompilerOutputSAXHandler(compileContext));
+            parser.parse(new InputSource(reader), new CompilerOutputSAXHandler(compileContext, collector));
         }
         catch (Throwable e) {
             LOG.error(e);
@@ -319,7 +319,7 @@ public class JetCompiler implements TranslatingCompiler {
         return new URLClassLoader(urls, null);
     }
 
-    private static void runOutOfProcess(final CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private static void runOutOfProcess(final CompileContext compileContext, final OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
@@ -350,7 +350,7 @@ public class JetCompiler implements TranslatingCompiler {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                 @Override
                 public void run() {
-                    parseCompilerMessagesFromReader(compileContext, new InputStreamReader(out));
+                    parseCompilerMessagesFromReader(compileContext, new InputStreamReader(out), collector);
                 }
             });
 
@@ -436,6 +436,7 @@ public class JetCompiler implements TranslatingCompiler {
                 .build();
 
         private final CompileContext compileContext;
+        private final OutputItemsCollector collector;
 
         private final StringBuilder message = new StringBuilder();
         private Stack<String> tags = new Stack<String>();
@@ -443,8 +444,9 @@ public class JetCompiler implements TranslatingCompiler {
         private int line;
         private int column;
 
-        public CompilerOutputSAXHandler(CompileContext compileContext) {
+        public CompilerOutputSAXHandler(CompileContext compileContext, OutputItemsCollector collector) {
             this.compileContext = compileContext;
+            this.collector = collector;
         }
 
         @Override
@@ -483,6 +485,8 @@ public class JetCompiler implements TranslatingCompiler {
             String text = message.toString();
             if (category == STATISTICS) {
                 compileContext.getProgressIndicator().setText(text);
+                collector.learn(text);
+                System.out.println(text);
             }
             else {
                 compileContext.addMessage(category, text, path, line, column);
