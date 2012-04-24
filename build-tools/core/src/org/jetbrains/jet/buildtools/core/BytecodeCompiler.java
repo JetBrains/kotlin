@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.buildtools.core;
 
+import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.*;
@@ -139,7 +140,9 @@ public class BytecodeCompiler {
     public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
             CompileEnvironmentConfiguration env = env(stdlib, classpath);
-            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, module, jar, null, includeRuntime);
+            List<Module> modules = CompileEnvironmentUtil.loadModuleScript(module, env.getMessageCollector());
+            File directory = new File(module).getParentFile();
+            boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, modules, directory, jar, null, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( module, false ));
             }
