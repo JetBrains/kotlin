@@ -26,6 +26,7 @@ import javax.swing.*;
 public interface JetIcons {
     Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
 
+    Icon CLASS = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/class_kotlin.png");
     Icon FILE = SMALL_LOGO; // TODO: Add file icon
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/object.png");
     Icon TRAIT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/trait.png");
@@ -36,4 +37,6 @@ public interface JetIcons {
     Icon PARAMETER = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/parameter.png");
     Icon FIELD_VAL = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_value.png");
     Icon FIELD_VAR = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/field_variable.png");
+
+    Icon LAUNCH = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_launch_configuration.png");
 }
