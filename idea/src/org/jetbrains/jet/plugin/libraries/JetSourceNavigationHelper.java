@@ -93,7 +93,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetClass getSourceClass(@NotNull JetClass decompiledClass) {
+    public static JetClassOrObject getSourceClass(@NotNull JetClass decompiledClass) {
         Tuple2<BindingContext, ClassDescriptor> bindingContextAndClassDescriptor = getBindingContextAndClassDescriptor(decompiledClass);
         if (bindingContextAndClassDescriptor == null) return null;
         PsiElement declaration = BindingContextUtils.classDescriptorToDeclaration(
@@ -101,7 +101,7 @@ public class JetSourceNavigationHelper {
         if (declaration == null) {
             throw new IllegalStateException("class not found by " + bindingContextAndClassDescriptor._2);
         }
-        return (JetClass) declaration;
+        return (JetClassOrObject) declaration;
     }
 
     @NotNull
