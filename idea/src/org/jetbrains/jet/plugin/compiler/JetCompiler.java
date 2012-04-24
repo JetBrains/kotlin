@@ -486,7 +486,6 @@ public class JetCompiler implements TranslatingCompiler {
             if (category == STATISTICS) {
                 compileContext.getProgressIndicator().setText(text);
                 collector.learn(text);
-                System.out.println(text);
             }
             else {
                 compileContext.addMessage(category, text, path, line, column);
