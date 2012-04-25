@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -53,7 +54,7 @@ public final class AnalyzerWithCompilerReport {
     @NotNull
     private static final SimpleDiagnosticFactory<PsiErrorElement> SYNTAX_ERROR_FACTORY = SimpleDiagnosticFactory.create(Severity.ERROR);
 
-    private boolean hasErrors;
+    private boolean hasErrors = false;
     @NotNull
     private final MessageCollector messageCollectorWrapper;
     @Nullable
@@ -131,17 +132,13 @@ public final class AnalyzerWithCompilerReport {
         return hasErrors;
     }
 
-    public void analyzeAndReport(@NotNull AnalyzerWrapper analyzerWrapper, @NotNull Collection<JetFile> files) {
+    public void analyzeAndReport(@NotNull Function0<AnalyzeExhaust> analyzer, @NotNull Collection<JetFile> files) {
         reportSyntaxErrors(files);
-        analyzeExhaust = analyzerWrapper.analyze();
+        analyzeExhaust = analyzer.invoke();
         reportDiagnostics();
         reportIncompleteHierarchies();
     }
 
-    public interface AnalyzerWrapper {
-        @NotNull
-        AnalyzeExhaust analyze();
-    }
 
     public static class SyntaxErrorDiagnostic extends SimpleDiagnostic<PsiErrorElement> {
         private String message;
