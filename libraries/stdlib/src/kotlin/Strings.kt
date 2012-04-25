@@ -60,6 +60,8 @@ public inline fun String.format(format : String, vararg args : Any?) : String = 
 
 public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex) as Array<String>
 
+public inline fun String.split(ch : Char) : Array<String> = (this as java.lang.String).split(java.util.regex.Pattern.quote(ch.toString())) as Array<String>
+
 public inline fun String.substring(beginIndex : Int) : String = (this as java.lang.String).substring(beginIndex).sure()
 
 public inline fun String.substring(beginIndex : Int, endIndex : Int) : String = (this as java.lang.String).substring(beginIndex, endIndex).sure()
@@ -68,9 +70,13 @@ public inline fun String.startsWith(prefix: String) : Boolean = (this as java.la
 
 public inline fun String.startsWith(prefix: String, toffset: Int) : Boolean = (this as java.lang.String).startsWith(prefix, toffset)
 
+public inline fun String.startsWith(ch: Char) : Boolean = (this as java.lang.String).startsWith(ch.toString())
+
 public inline fun String.contains(seq: CharSequence) : Boolean = (this as java.lang.String).contains(seq)
 
 public inline fun String.endsWith(suffix: String) : Boolean = (this as java.lang.String).endsWith(suffix)
+
+public inline fun String.endsWith(ch: Char) : Boolean = (this as java.lang.String).endsWith(ch.toString())
 
 inline val String.size : Int
 get() = length()
