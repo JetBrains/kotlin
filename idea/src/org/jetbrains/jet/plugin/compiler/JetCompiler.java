@@ -343,14 +343,12 @@ public class JetCompiler implements TranslatingCompiler {
         compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
         
         try {
-            Process process = commandLine.createProcess();
-            final InputStream err = process.getErrorStream();
-            final InputStream out = process.getInputStream();
+            final Process process = commandLine.createProcess();
 
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                 @Override
                 public void run() {
-                    parseCompilerMessagesFromReader(compileContext, new InputStreamReader(out), collector);
+                    parseCompilerMessagesFromReader(compileContext, new InputStreamReader(process.getInputStream()), collector);
                 }
             });
 
@@ -358,7 +356,7 @@ public class JetCompiler implements TranslatingCompiler {
                 @Override
                 public void run() {
                     try {
-                        FileUtil.loadBytes(err);
+                        FileUtil.loadBytes(process.getErrorStream());
                     }
                     catch (IOException e) {
                         // Don't care
@@ -366,8 +364,8 @@ public class JetCompiler implements TranslatingCompiler {
                 }
             });
 
-            process.waitFor();
-            handleProcessTermination(process.exitValue(), compileContext);
+            int exitCode = process.waitFor();
+            handleProcessTermination(exitCode, compileContext);
         }
         catch (Exception e) {
             compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
