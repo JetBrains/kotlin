@@ -391,6 +391,11 @@ public class OverrideResolver {
                 }
             }
         }
+
+        if (hasOverrideModifier) {
+            checkOverridesForParameters(declared);
+        }
+
         if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
             if (!invisibleOverriddenDescriptors.get(declared).isEmpty()) {
                 CallableDescriptor descriptor = invisibleOverriddenDescriptors.values().iterator().next();
@@ -404,6 +409,21 @@ public class OverrideResolver {
         if (!hasOverrideModifier && declared.getOverriddenDescriptors().size() > 0 && nameIdentifier != null) {
             CallableMemberDescriptor overridden = declared.getOverriddenDescriptors().iterator().next();
             trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
+        }
+    }
+
+    private void checkOverridesForParameters(CallableMemberDescriptor declared) {
+        // Let p1 be a parameter of the overriding function
+        // Let p2 be a parameter of the function being overridden
+        // Then
+        //  a) p1 is not allowed to have a default value declared
+        //  b) p1 must have the same name as p2
+        for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
+            JetParameter parameter =
+                    (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
+            if (parameterFromSubclass.hasDefaultValue()) {
+                trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
+            }
         }
     }
 

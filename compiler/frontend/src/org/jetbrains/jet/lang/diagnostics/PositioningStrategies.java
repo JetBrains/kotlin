@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -142,6 +141,14 @@ public class PositioningStrategies {
         @Override
         public List<TextRange> mark(@NotNull JetTypeProjection element) {
             return markNode(element.getProjectionNode());
+        }
+    };
+
+    public static PositioningStrategy<JetParameter> PARAMETER_DEFAULT_VALUE = new PositioningStrategy<JetParameter>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetParameter element) {
+            return markNode(element.getDefaultValue().getNode());
         }
     };
 }

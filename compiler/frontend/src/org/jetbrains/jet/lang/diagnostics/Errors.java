@@ -380,6 +380,8 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetClassOrObject, CallableMemberDescriptor> MANY_IMPL_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR);
 
+    SimpleDiagnosticFactory<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PARAMETER_DEFAULT_VALUE);
+
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, new PositioningStrategy<JetDeclaration>() {
                 @NotNull
