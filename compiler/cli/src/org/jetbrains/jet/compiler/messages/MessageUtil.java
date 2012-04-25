@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.compiler.messages;
+
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
 /**
  * @author abreslav
  */
-public interface CompilationErrorHandler {
-
-    CompilationErrorHandler THROW_EXCEPTION = new CompilationErrorHandler() {
-        @Override
-        public void reportException(Throwable exception, String fileUrl) {
-            if (exception instanceof RuntimeException) {
-                throw (RuntimeException)exception;
-            }
-            throw new IllegalStateException(exception);
-        }
-    };
-
-    void reportException(Throwable exception, String fileUrl);
+public class MessageUtil {
+    public static CompilerMessageLocation psiElementToMessageLocation(PsiElement element) {
+        PsiFile file = element.getContainingFile();
+        DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(file, element.getTextRange());
+        return CompilerMessageLocation.create(file.getVirtualFile().getPath(), lineAndColumn.getLine(), lineAndColumn.getColumn());
+    }
 }

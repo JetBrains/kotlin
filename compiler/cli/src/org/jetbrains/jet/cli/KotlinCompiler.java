@@ -25,11 +25,9 @@ import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.compiler.*;
-import org.jetbrains.jet.compiler.messages.CompilerMessageLocation;
-import org.jetbrains.jet.compiler.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
-import org.jetbrains.jet.compiler.messages.MessageRenderer;
+import org.jetbrains.jet.compiler.messages.*;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
@@ -147,7 +145,8 @@ public class KotlinCompiler {
             JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
             CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
 
-            configuration.getMessageCollector().report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment", CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
+                                    CompilerMessageLocation.NO_LOCATION);
             try {
                 configureEnvironment(configuration, arguments);
 
@@ -172,8 +171,13 @@ public class KotlinCompiler {
                 }
                 return noErrors ? OK : COMPILATION_ERROR;
             }
+            catch (CompilationException e) {
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                                        MessageUtil.psiElementToMessageLocation(e.getElement()));
+                return INTERNAL_ERROR;
+            }
             catch (Throwable t) {
-                errStream.println(messageRenderer.renderException(t));
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t), CompilerMessageLocation.NO_LOCATION);
                 return INTERNAL_ERROR;
             }
             finally {
