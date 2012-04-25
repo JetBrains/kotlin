@@ -33,12 +33,15 @@ public class CompilerDependencies {
     @NotNull
     private final CompilerSpecialMode compilerSpecialMode;
     @Nullable
+    private final File jdkJar;
+    @Nullable
     private final File jdkHeadersJar;
     @Nullable
     private final File runtimeJar;
 
-    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkHeadersJar, @Nullable File runtimeJar) {
+    public CompilerDependencies(@NotNull CompilerSpecialMode compilerSpecialMode, @Nullable File jdkJar, @Nullable File jdkHeadersJar, @Nullable File runtimeJar) {
         this.compilerSpecialMode = compilerSpecialMode;
+        this.jdkJar = jdkJar;
         this.jdkHeadersJar = jdkHeadersJar;
         this.runtimeJar = runtimeJar;
 
@@ -57,6 +60,11 @@ public class CompilerDependencies {
     @NotNull
     public CompilerSpecialMode getCompilerSpecialMode() {
         return compilerSpecialMode;
+    }
+
+    @Nullable
+    public File getJdkJar() {
+        return jdkJar;
     }
 
     @Nullable
@@ -93,8 +101,36 @@ public class CompilerDependencies {
     public static CompilerDependencies compilerDependenciesForProduction(@NotNull CompilerSpecialMode compilerSpecialMode) {
         return new CompilerDependencies(
                 compilerSpecialMode,
+                findRtJar(),
                 compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersPath() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? PathUtil.getDefaultRuntimePath() : null);
     }
 
+    public static File findRtJar() {
+        String javaHome = System.getProperty("java.home");
+        if ("jre".equals(new File(javaHome).getName())) {
+            javaHome = new File(javaHome).getParent();
+        }
+
+        File rtJar = findRtJar(javaHome);
+
+        if (rtJar == null || !rtJar.exists()) {
+            throw new IllegalArgumentException("No JDK rt.jar found under " + javaHome);
+        }
+
+        return rtJar;
+    }
+
+    private static File findRtJar(String javaHome) {
+        File rtJar = new File(javaHome, "jre/lib/rt.jar");
+        if (rtJar.exists()) {
+            return rtJar;
+        }
+
+        File classesJar = new File(new File(javaHome).getParentFile().getAbsolutePath(), "Classes/classes.jar");
+        if (classesJar.exists()) {
+            return classesJar;
+        }
+        return null;
+    }
 }

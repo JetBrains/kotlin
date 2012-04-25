@@ -72,7 +72,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         AnalyzeExhaust analyzeExhaust =
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                         (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                        CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                        CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.acceptChildren(new JetVisitorVoid() {

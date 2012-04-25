@@ -75,7 +75,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
             if (!junitJar.exists()) {
