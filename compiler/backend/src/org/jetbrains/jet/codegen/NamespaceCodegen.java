@@ -69,7 +69,8 @@ public class NamespaceCodegen {
             else if (declaration instanceof JetNamedFunction) {
                 try {
                     functionCodegen.gen((JetNamedFunction) declaration);
-                } catch (CompilationException e) {
+                }
+                catch (CompilationException e) {
                     throw e;
                 }
                 catch (Exception e) {
