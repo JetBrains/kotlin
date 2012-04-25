@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -24,6 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -34,6 +36,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final boolean isVar;
     private final int index;
     private final ValueParameterDescriptor original;
+    private final Set<ValueParameterDescriptor> overriddenDescriptors = Sets.newHashSet();
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -59,7 +62,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             boolean isVar,
             @NotNull JetType outType,
             @Nullable JetType varargElementType
-            ) {
+    ) {
         super(containingDeclaration, annotations, original.getName(), outType);
         this.original = original;
         this.index = original.getIndex();
@@ -130,5 +133,16 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @Override
     public Visibility getVisibility() {
         return Visibilities.LOCAL;
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
+        return overriddenDescriptors;
+    }
+
+    @Override
+    public void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden) {
+        overriddenDescriptors.add(overridden);
     }
 }
