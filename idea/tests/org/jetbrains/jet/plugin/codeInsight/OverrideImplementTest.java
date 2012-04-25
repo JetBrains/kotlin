@@ -209,7 +209,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             @Override
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                        myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler.membersFromDescriptors(Collections.singletonList(singleToOverride)));
             }
         }.execute();
@@ -233,7 +233,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             @Override
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                        myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler.membersFromDescriptors(descriptorsList));
             }
         }.execute();
