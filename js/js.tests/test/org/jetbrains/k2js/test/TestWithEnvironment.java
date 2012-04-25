@@ -21,7 +21,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 /**
  * @author Pavel Talanov

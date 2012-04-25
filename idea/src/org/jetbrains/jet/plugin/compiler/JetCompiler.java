@@ -31,6 +31,7 @@ import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -43,6 +44,7 @@ import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.utils.PathUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -71,7 +73,14 @@ public class JetCompiler implements TranslatingCompiler {
 
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
-        return virtualFile.getFileType() instanceof JetFileType;
+        if (!(virtualFile.getFileType() instanceof JetFileType)) {
+            return false;
+        }
+        Project project = compileContext.getProject();
+        if (project == null || JsModuleDetector.isJsProject(project)) {
+            return false;
+        }
+        return true;
     }
 
     @NotNull
@@ -316,7 +325,7 @@ public class JetCompiler implements TranslatingCompiler {
     private static int execInProcess(File kotlinHome, VirtualFile outputDir, File scriptFile, PrintStream out, CompileContext context) {
         URLClassLoader loader = getOrCreateClassLoader(kotlinHome, context);
         try {
-            String compilerClassName = "org.jetbrains.jet.cli.KotlinCompiler";
+            String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
@@ -326,9 +335,9 @@ public class JetCompiler implements TranslatingCompiler {
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
             
             Object rc = exec.invoke(kompiler.newInstance(), out, arguments);
-            // exec() returns a KotlinCompiler.ExitCode object, that class is not accessible here,
+            // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
-            if ("org.jetbrains.jet.cli.KotlinCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
+            if ("org.jetbrains.jet.cli.jvm.K2JVMCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
                 return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
             }
             else {
@@ -372,7 +381,7 @@ public class JetCompiler implements TranslatingCompiler {
     private static void runOutOfProcess(final CompileContext compileContext, final OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
-        params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
+        params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
 
         for (String arg : commandLineArguments(outputDir, scriptFile)) {
             params.getProgramParametersList().add(arg);

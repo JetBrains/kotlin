@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.jetbrains.jet.cli.CompilerArguments;
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 /**
  * Converts Kotlin to JavaScript code
@@ -36,7 +36,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojo {
     private String outFile;
 
     @Override
-    protected void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException {
+    protected void configureCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException {
         super.configureCompilerArguments(arguments);
 
         K2JSCompilerPlugin plugin = new K2JSCompilerPlugin();

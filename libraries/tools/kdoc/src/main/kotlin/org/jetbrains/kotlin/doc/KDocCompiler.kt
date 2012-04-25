@@ -2,25 +2,25 @@ package org.jetbrains.kotlin.doc
 
 import java.io.File
 import java.io.PrintStream
-import org.jetbrains.jet.cli.CompilerArguments
-import org.jetbrains.jet.cli.KotlinCompiler
-import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration
 import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
 
 /**
 * Main for running the KDocCompiler
 */
 fun main(args: Array<String?>): Unit {
-    KotlinCompiler.doMain(KDocCompiler(), args);
+    K2JVMCompiler.doMain(KDocCompiler(), args);
 }
 
 /**
- * A version of the [[KotlinCompiler]] which includes the [[KDoc]] compiler plugin and allows
+ * A version of the [[K2JVMCompiler]] which includes the [[KDoc]] compiler plugin and allows
  * command line validation or for the configuration to be provided via [[KDocArguments]]
  */
-class KDocCompiler() : KotlinCompiler() {
+class KDocCompiler() : K2JVMCompiler() {
 
-    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration?, arguments : CompilerArguments?) {
+    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration?, arguments : K2JVMCompilerArguments?) {
         super.configureEnvironment(configuration, arguments)
         val coreEnvironment = configuration?.getEnvironment()
         if (coreEnvironment != null) {
@@ -38,7 +38,7 @@ class KDocCompiler() : KotlinCompiler() {
         }
     }
 
-    protected override fun createArguments() : CompilerArguments? {
+    protected override fun createArguments() : K2JVMCompilerArguments? {
         return KDocArguments()
     }
 
@@ -47,7 +47,7 @@ class KDocCompiler() : KotlinCompiler() {
     }
 }
 
-class KDocArguments() : CompilerArguments() {
+class KDocArguments() : K2JVMCompilerArguments() {
 
     public var docConfig: KDocConfig = KDocConfig()
 

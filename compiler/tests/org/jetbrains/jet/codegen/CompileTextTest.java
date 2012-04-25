@@ -17,11 +17,11 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
-import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration;
-import org.jetbrains.jet.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 

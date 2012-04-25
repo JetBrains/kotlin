@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.doc.highlighter
 
-import org.jetbrains.jet.compiler.CompilerPlugin
-import org.jetbrains.jet.compiler.CompilerPluginContext
+import org.jetbrains.jet.cli.common.CompilerPlugin
+import org.jetbrains.jet.cli.common.CompilerPluginContext
 
 /**
 */

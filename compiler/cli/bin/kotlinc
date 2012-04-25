@@ -95,4 +95,4 @@ CPSELECT="-cp "
   $JAVA_OPTS \
   "${java_args[@]}" \
   ${CPSELECT}${TOOL_CLASSPATH} \
-   org.jetbrains.jet.cli.KotlinCompiler  "$@"
+   org.jetbrains.jet.cli.jvm.K2JVMCompiler  "$@"
