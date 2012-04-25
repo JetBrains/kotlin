@@ -249,14 +249,61 @@ public class JetCompiler implements TranslatingCompiler {
         handleProcessTermination(exitCode, compileContext);
     }
 
-    private static void parseCompilerMessagesFromReader(CompileContext compileContext, Reader reader, OutputItemsCollector collector) {
+    private static void parseCompilerMessagesFromReader(CompileContext compileContext, final Reader reader, OutputItemsCollector collector) {
+        // Sometimes the compiler can't output valid XML
+        // Example: error in command line arguments passed to the compiler
+        // having no -tags key (arguments are not parsed), the compiler doesn't know
+        // if it should put any tags in the output, so it will simply print the usage
+        // and the SAX parser will break.
+        // In this case, we want to read everything from this stream
+        // and report it as an IDE error.
+        final StringBuilder stringBuilder = new StringBuilder();
+        //noinspection IOResourceOpenedButNotSafelyClosed
+        Reader wrappingReader = new Reader() {
+
+            @Override
+            public int read(char[] cbuf, int off, int len) throws IOException {
+                int read = reader.read(cbuf, off, len);
+                stringBuilder.append(cbuf, off, len);
+                return read;
+            }
+
+            @Override
+            public void close() throws IOException {
+                // Do nothing:
+                // If the SAX parser sees a syntax error, it throws an expcetion
+                // and calls close() on the reader.
+                // We prevent hte reader from being closed here, and close it later,
+                // when all the text is read from it
+            }
+        };
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(new InputSource(reader), new CompilerOutputSAXHandler(compileContext, collector));
+            parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(compileContext, collector));
         }
         catch (Throwable e) {
+
+            // Load all the text into the stringBuilder
+            try {
+                // This will not close the reader (see the wrapper above)
+                FileUtil.loadTextAndClose(wrappingReader);
+            }
+            catch (IOException ioException) {
+                LOG.error(ioException);
+            }
+            String message = stringBuilder.toString();
+            LOG.error(message);
             LOG.error(e);
+            compileContext.addMessage(ERROR, message, null, -1, -1);
+        }
+        finally {
+           try {
+               reader.close();
+           }
+           catch (IOException e) {
+               LOG.error(e);
+           }
         }
     }
 
