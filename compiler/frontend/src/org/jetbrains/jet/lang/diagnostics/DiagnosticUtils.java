@@ -80,11 +80,16 @@ public class DiagnosticUtils {
     @NotNull
     public static LineAndColumn getLineAndColumn(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
-        Document document = file.getViewProvider().getDocument();
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return LineAndColumn.NONE;
         TextRange firstRange = textRanges.iterator().next();
-        return offsetToLineAndColumn(document, firstRange.getStartOffset());
+        return getLineAndColumnInPsiFile(file, firstRange);
+    }
+
+    @NotNull
+    public static LineAndColumn getLineAndColumnInPsiFile(PsiFile file, TextRange range) {
+        Document document = file.getViewProvider().getDocument();
+        return offsetToLineAndColumn(document, range.getStartOffset());
     }
 
     @NotNull

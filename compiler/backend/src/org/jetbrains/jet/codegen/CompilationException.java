@@ -23,20 +23,22 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
 /**
 * @author alex.tkachman
+* @author abreslav
 */
 public class CompilationException extends RuntimeException {
-    private PsiElement element;
+    private final PsiElement element;
 
     CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
         super(message, cause);
         this.element = element;
     }
 
-    @Override
-    public String toString() {
-        return getMessage();
+    @NotNull
+    public PsiElement getElement() {
+        return element;
     }
-    
+
+
     private String where() {
         Throwable cause = getCause();
         Throwable throwable = cause != null ? cause : this;
@@ -56,7 +58,7 @@ public class CompilationException extends RuntimeException {
             message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
         }
         message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
-        message.append("The root cause was thrown from: ").append(where());
+        message.append("The root cause was thrown at: ").append(where());
 
         return message.toString();
     }
