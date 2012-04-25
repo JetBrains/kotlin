@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DELEGATED;
 
 /**
@@ -176,7 +175,7 @@ public class OverrideResolver {
             for (CallableMemberDescriptor functionFromCurrent : functionsFromCurrent) {
                 OverridingUtil.OverrideCompatibilityInfo.Result result = OverridingUtil.isOverridableBy(functionFromSupertype, functionFromCurrent).getResult();
                 if (result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
-                    functionFromCurrent.addOverriddenDescriptor(functionFromSupertype);
+                    OverridingUtil.bindOverride(functionFromCurrent, functionFromSupertype);
                     overrides = true;
                 }
                 else if (result == OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT) {
@@ -186,14 +185,14 @@ public class OverrideResolver {
             
             for (CallableMemberDescriptor fakeOverride : fakeOverrideList) {
                 if (OverridingUtil.isOverridableBy(functionFromSupertype, fakeOverride).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
-                    fakeOverride.addOverriddenDescriptor(functionFromSupertype);
+                    OverridingUtil.bindOverride(fakeOverride, functionFromSupertype);
                     overrides = true;
                 }
             }
 
             if (!overrides) {
                 CallableMemberDescriptor fakeOverride = functionFromSupertype.copy(current, false, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
-                fakeOverride.addOverriddenDescriptor(functionFromSupertype);
+                OverridingUtil.bindOverride(fakeOverride, functionFromSupertype);
                 fakeOverrideList.add(fakeOverride);
                 if (fakeOverrides != null) {
                     fakeOverrides.add(fakeOverride);
@@ -202,7 +201,6 @@ public class OverrideResolver {
             }
         }
     }
-
 
     private static <T extends DeclarationDescriptor> MultiMap<String, T> groupDescriptorsByName(Collection<T> properties) {
         MultiMap<String, T> r = new LinkedMultiMap<String, T>();

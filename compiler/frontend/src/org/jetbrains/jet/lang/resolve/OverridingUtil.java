@@ -268,6 +268,17 @@ public class OverridingUtil {
         }
     }
 
+    public static void bindOverride(CallableMemberDescriptor fromCurrent, CallableMemberDescriptor fromSupertype) {
+        fromCurrent.addOverriddenDescriptor(fromSupertype);
+
+        for (ValueParameterDescriptor parameterFromCurrent : fromCurrent.getValueParameters()) {
+            assert parameterFromCurrent.getIndex() < fromSupertype.getValueParameters().size()
+                    : "An override relation between functions implies that they have the same number of value parameters";
+            ValueParameterDescriptor parameterFromSupertype = fromSupertype.getValueParameters().get(parameterFromCurrent.getIndex());
+            parameterFromCurrent.addOverriddenDescriptor(parameterFromSupertype);
+        }
+    }
+
     public static class OverrideCompatibilityInfo {
 
         public enum Result {
