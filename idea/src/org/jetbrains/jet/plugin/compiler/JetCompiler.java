@@ -23,7 +23,6 @@ import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
-import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
@@ -412,10 +411,6 @@ public class JetCompiler implements TranslatingCompiler {
         public List<VirtualFile> getSources() {
             return sources;
         }
-    }
-
-    private static ProcessAdapter createProcessListener(final CompileContext compileContext, OutputItemsCollector collector) {
-        return new CompilerProcessListener(compileContext, collector);
     }
 
     private static String path(VirtualFile root) {
