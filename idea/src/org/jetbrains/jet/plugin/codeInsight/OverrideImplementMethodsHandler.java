@@ -67,10 +67,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
 
-    public static void generateMethods(Project project,
-                                       Editor editor,
-                                       JetClassOrObject classOrObject,
-                                       List<DescriptorClassMember> selectedElements) {
+    public static void generateMethods(Editor editor,
+            JetClassOrObject classOrObject,
+            List<DescriptorClassMember> selectedElements) {
         final JetClassBody body = classOrObject.getBody();
         if (body == null) {
             return;
@@ -82,17 +81,8 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             return;
         }
 
-        for (DescriptorClassMember selectedElement : selectedElements) {
-            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
-            JetFile containingFile = (JetFile)classOrObject.getContainingFile();
-            if (descriptor instanceof SimpleFunctionDescriptor) {
-                JetElement target = overrideFunction(project, containingFile, (SimpleFunctionDescriptor)descriptor);
-                afterAnchor = body.addAfter(target, afterAnchor);
-            }
-            else if (descriptor instanceof PropertyDescriptor) {
-                JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor)descriptor);
-                afterAnchor = body.addAfter(target, afterAnchor);
-            }
+        for (JetElement element : generateOverridingMembers(selectedElements, (JetFile)classOrObject.getContainingFile(), false)) {
+            afterAnchor = body.addAfter(element, afterAnchor);
         }
     }
 
@@ -119,7 +109,21 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return afterAnchor;
     }
 
-    private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor) {
+    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file, boolean fqNames) {
+        List<JetElement> overridingMembers = new ArrayList<JetElement>();
+        for (DescriptorClassMember selectedElement : selectedElements) {
+            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
+            if (descriptor instanceof SimpleFunctionDescriptor) {
+                overridingMembers.add(overrideFunction(file.getProject(), file, (SimpleFunctionDescriptor)descriptor, fqNames));
+            }
+            else if (descriptor instanceof PropertyDescriptor) {
+                overridingMembers.add(overrideProperty(file.getProject(), file, (PropertyDescriptor)descriptor, fqNames));
+            }
+        }
+        return overridingMembers;
+    }
+
+    private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor, boolean fqNames) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
         if (descriptor.isVar()) {
@@ -141,7 +145,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor) {
+    private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor, boolean fqNames) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor));
         bodyBuilder.append("override fun ");
@@ -303,7 +307,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                generateMethods(project, editor, classOrObject, selectedElements);
+                generateMethods(editor, classOrObject, selectedElements);
             }
         });
     }
