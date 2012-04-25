@@ -174,7 +174,6 @@ public class JetTestUtils {
         JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
         final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
         environment.addToClasspath(rtJar);
-        environment.addToClasspath(getAnnotationsJar());
         return environment;
     }
 
