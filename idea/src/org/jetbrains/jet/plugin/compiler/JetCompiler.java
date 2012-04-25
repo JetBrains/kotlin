@@ -399,7 +399,9 @@ public class JetCompiler implements TranslatingCompiler {
             }
             else if (message.startsWith(EMITTING_PREFIX)) {
                 if (currentSource != null) {
-                    answer.add(new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource));
+                    OutputItemImpl item = new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource);
+                    LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(item.getOutputPath()));
+                    answer.add(item);
                 }
             }
         }
