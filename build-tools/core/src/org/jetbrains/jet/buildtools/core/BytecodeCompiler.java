@@ -19,8 +19,9 @@ package org.jetbrains.jet.buildtools.core;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.*;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
@@ -41,7 +42,7 @@ public class BytecodeCompiler {
 
 
     /**
-     * Creates new instance of {@link org.jetbrains.jet.compiler.CompileEnvironmentConfiguration} instance using the arguments specified.
+     * Creates new instance of {@link org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration} instance using the arguments specified.
      *
      * @param stdlib    path to "kotlin-runtime.jar", only used if not null and not empty
      * @param classpath compilation classpath, only used if not null and not empty

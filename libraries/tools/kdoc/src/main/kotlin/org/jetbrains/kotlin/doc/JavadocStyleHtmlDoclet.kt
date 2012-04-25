@@ -15,7 +15,7 @@ import java.util.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContext.*
-import org.jetbrains.jet.compiler.CompilerPlugin
+import org.jetbrains.jet.cli.common.CompilerPlugin
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor
 import org.jetbrains.jet.lexer.JetTokens

@@ -29,7 +29,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;

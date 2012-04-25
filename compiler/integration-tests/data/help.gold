@@ -1,4 +1,4 @@
-OUT Usage: org.jetbrains.jet.cli.CompilerArguments
+OUT Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
 OUT   -output [String] output directory
 OUT   -jar [String] jar file name
 OUT   -src [String] source file or directory

@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;

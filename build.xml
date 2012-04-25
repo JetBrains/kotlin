@@ -54,7 +54,7 @@
 
     <target name="compileStdlib" depends="jar,jarLang,compileRT">
         <mkdir dir="${output}/classes/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true" fork="true">
+        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true" fork="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -72,7 +72,7 @@
 
     <target name="compileJDKHeaders" depends="jar,jarLang">
         <mkdir dir="${output}/classes/stdlib"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -88,7 +88,7 @@
 
     <target name="compileLang" depends="jar">
         <mkdir dir="${output}/classes/lang"/>
-        <java classname="org.jetbrains.jet.cli.KotlinCompiler" failonerror="true">
+        <java classname="org.jetbrains.jet.cli.jvm.K2JVMCompiler" failonerror="true">
             <classpath>
                 <path refid="classpath"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
@@ -210,7 +210,7 @@
                 <attribute name="Implementation-Title" value="Kotlin Compiler"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
 
-                <attribute name="Main-Class" value="org.jetbrains.jet.cli.KotlinCompiler"/>
+                <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
             </manifest>
         </jar>
 

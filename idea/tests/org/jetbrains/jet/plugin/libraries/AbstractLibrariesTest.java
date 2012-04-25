@@ -28,7 +28,8 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -61,9 +62,9 @@ public abstract class AbstractLibrariesTest extends PlatformTestCase {
         });
         librarySourceDir = LocalFileSystem.getInstance().findFileByPath(TEST_DATA_PATH + "/library");
         assertNotNull(librarySourceDir);
-        KotlinCompiler.ExitCode compilerExec =
-                new KotlinCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryIoDir.getAbsolutePath());
-        assertEquals(KotlinCompiler.ExitCode.OK, compilerExec);
+        ExitCode compilerExec =
+                new K2JVMCompiler().exec(System.out, "-src", librarySourceDir.getPath(), "-output", libraryIoDir.getAbsolutePath());
+        assertEquals(ExitCode.OK, compilerExec);
         libraryDir = LocalFileSystem.getInstance().findFileByIoFile(libraryIoDir);
         assertNotNull(libraryDir);
 

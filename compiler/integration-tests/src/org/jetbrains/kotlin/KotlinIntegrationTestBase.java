@@ -84,7 +84,7 @@ public abstract class KotlinIntegrationTestBase {
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");
         javaArgs.add(classpath);
-        javaArgs.add("org.jetbrains.jet.cli.KotlinCompiler");
+        javaArgs.add("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
         Collections.addAll(javaArgs, arguments);
 
         return runJava(logName, ArrayUtil.toStringArray(javaArgs));

@@ -23,8 +23,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.jetbrains.jet.cli.CompilerArguments;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.cli.common.ExitCode.*;
+import org.jetbrains.jet.cli.common.ExitCode;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,15 +106,15 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final CompilerArguments arguments = createCompilerArguments();
+        final K2JVMCompilerArguments arguments = createCompilerArguments();
 
         configureCompilerArguments(arguments);
 
-        final KotlinCompiler compiler = createCompiler();
+        final K2JVMCompiler compiler = createCompiler();
 
         printCompilerArgumentsIfDebugEnabled(arguments, compiler);
 
-        final KotlinCompiler.ExitCode exitCode = compiler.exec(System.err, arguments);
+        final ExitCode exitCode = compiler.exec(System.err, arguments);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
@@ -123,7 +125,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
     }
 
-    private void printCompilerArgumentsIfDebugEnabled(CompilerArguments arguments, KotlinCompiler compiler) {
+    private void printCompilerArgumentsIfDebugEnabled(K2JVMCompilerArguments arguments, K2JVMCompiler compiler) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("Invoking compiler " + compiler + " with arguments:");
             try {
@@ -142,24 +144,24 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         }
     }
 
-    protected KotlinCompiler createCompiler() {
-        return new KotlinCompiler();
+    protected K2JVMCompiler createCompiler() {
+        return new K2JVMCompiler();
     }
 
     /**
      * Derived classes can create custom compiler argument implementations
      * such as for KDoc
      */
-    protected CompilerArguments createCompilerArguments() {
-        return new CompilerArguments();
+    protected K2JVMCompilerArguments createCompilerArguments() {
+        return new K2JVMCompilerArguments();
     }
 
     /**
      * Derived classes can register custom plugins or configurations
      */
-    protected abstract void configureCompilerArguments(CompilerArguments arguments) throws MojoExecutionException;
+    protected abstract void configureCompilerArguments(K2JVMCompilerArguments arguments) throws MojoExecutionException;
 
-    protected void configureBaseCompilerArguments(Log log, CompilerArguments arguments, String module,
+    protected void configureBaseCompilerArguments(Log log, K2JVMCompilerArguments arguments, String module,
                                                   List<String> sources, List<String> classpath, String output) throws MojoExecutionException {
         // don't include runtime, it should be in maven dependencies
         arguments.mode = "stdlib";
