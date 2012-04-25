@@ -3,6 +3,8 @@ package kotlin.io
 import java.io.*
 import java.nio.charset.*
 import java.util.NoSuchElementException
+import java.util.List
+import java.util.ArrayList
 import java.net.URL
 
 
@@ -146,4 +148,57 @@ public fun File.copyTo(file: File, bufferSize: Int = defaultBufferSize): Long {
             input.copyTo(output, bufferSize)
         }
     }
+}
+
+/**
+ * Reads file by byte blocks and calls closure for each block read. Block size depends on implementation but never less than 512.
+ * This functions passes byte array and amount of bytes in this buffer to the closure function.
+ *
+ * You can use this function for huge files
+ */
+fun File.forEachBlock(closure : (ByteArray, Int) -> Unit) : Unit {
+    val arr = ByteArray(4096)
+    val fis = FileInputStream(this)
+
+    try {
+        do {
+            val size = fis.read(arr)
+            if (size == -1) {
+                break
+            } else if (size > 0) {
+                closure(arr, size)
+            }
+        } while(true)
+    } finally {
+        fis.close()
+    }
+}
+
+/**
+ * Reads file line by line. Default charset is UTF-8.
+ *
+ * You may use this function on huge files
+ */
+fun File.forEachLine (charset : String = "UTF-8", closure : (line : String) -> Unit) : Unit {
+    val reader = BufferedReader(InputStreamReader(FileInputStream(this), charset))
+    try {
+        reader.forEachLine(closure)
+    } finally {
+        reader.close()
+    }
+}
+
+/**
+ * Reads file content as strings list. By default uses UTF-8 charset.
+ *
+ * Do not use this function for huge files.
+ */
+fun File.readLines(charset : String = "UTF-8") : List<String> {
+    val rs = ArrayList<String>()
+
+    this.forEachLine(charset) { (line : String) : Unit ->
+        rs.add(line);
+    }
+
+    return rs
 }
