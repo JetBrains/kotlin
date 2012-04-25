@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.LocalTimeCounter;
+import jet.Function0;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,7 +106,7 @@ public class KotlinToJVMBytecodeCompiler {
                 CompileEnvironmentUtil
                         .addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
             }
-            ClassFileFactory moduleFactory = KotlinToJVMBytecodeCompiler.compileModule(configuration, moduleBuilder, directory);
+            ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
                 return false;
             }
@@ -193,7 +194,6 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     public static ClassLoader compileText(
             CompileEnvironmentConfiguration configuration,
-
             String code) {
         configuration.getEnvironment()
                 .addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
@@ -213,7 +213,6 @@ public class KotlinToJVMBytecodeCompiler {
     @Nullable
     public static GenerationState analyzeAndGenerate(
             CompileEnvironmentConfiguration configuration,
-
             boolean stubs
     ) {
         AnalyzeExhaust exhaust = analyze(configuration, stubs);
@@ -231,17 +230,15 @@ public class KotlinToJVMBytecodeCompiler {
     private static AnalyzeExhaust analyze(
             final CompileEnvironmentConfiguration configuration,
             boolean stubs) {
-
-
         final JetCoreEnvironment environment = configuration.getEnvironment();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
         final Predicate<PsiFile> filesToAnalyzeCompletely =
                 stubs ? Predicates.<PsiFile>alwaysFalse() : Predicates.<PsiFile>alwaysTrue();
         analyzerWithCompilerReport.analyzeAndReport(
-                new AnalyzerWithCompilerReport.AnalyzerWrapper() {
+                new Function0<AnalyzeExhaust>() {
                     @NotNull
                     @Override
-                    public AnalyzeExhaust analyze() {
+                    public AnalyzeExhaust invoke() {
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely,
                                 JetControlFlowDataTraceFactory.EMPTY,
@@ -256,9 +253,7 @@ public class KotlinToJVMBytecodeCompiler {
     @NotNull
     private static GenerationState generate(
             final CompileEnvironmentConfiguration configuration,
-
             AnalyzeExhaust exhaust,
-
             boolean stubs) {
         JetCoreEnvironment environment = configuration.getEnvironment();
         Project project = environment.getProject();
