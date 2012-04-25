@@ -63,7 +63,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS), jetCoreEnvironment.getProject());
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true), jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName("A"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         Assert.assertNotNull(classDescriptor);

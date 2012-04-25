@@ -59,7 +59,7 @@ public class ResolveDescriptorsFromExternalLibraries {
 
     public ResolveDescriptorsFromExternalLibraries() {
         System.out.println("Getting compiler dependencies");
-        compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
+        compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
     }
 
     private void run() throws Exception {

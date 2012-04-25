@@ -163,7 +163,7 @@ public class JetTestUtils {
 
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
@@ -171,10 +171,11 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        environment.addToClasspath(rtJar);
-        return environment;
+        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+    }
+
+    public static File findMockJdkRtJar() {
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
     }
 
     public static File getAnnotationsJar() {

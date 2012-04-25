@@ -138,7 +138,7 @@ public class KotlinCompiler {
                 runtimeJar = null;
             }
 
-            CompilerDependencies dependencies = new CompilerDependencies(mode, jdkHeadersJar, runtimeJar);
+            CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
             PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
             Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 

@@ -143,7 +143,7 @@ public abstract class ExpectedResolveData {
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
                 Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
