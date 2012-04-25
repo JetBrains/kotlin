@@ -274,7 +274,7 @@ public class JetCompiler implements TranslatingCompiler {
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version", "-mode", "stdlib" };
+            String[] arguments = commandLineArguments(outputDir, scriptFile);
 
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
@@ -292,6 +292,10 @@ public class JetCompiler implements TranslatingCompiler {
             LOG.error(e);
             return -1;
         }
+    }
+
+    private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
+        return new String[]{ "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version", "-mode", "stdlib" };
     }
 
     private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
@@ -323,10 +327,10 @@ public class JetCompiler implements TranslatingCompiler {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
         params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
-        params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
-        params.getProgramParametersList().add("-output", path(outputDir));
-        params.getProgramParametersList().add("-tags");
-        params.getProgramParametersList().add("-verbose");
+
+        for (String arg : commandLineArguments(outputDir, scriptFile)) {
+            params.getProgramParametersList().add(arg);
+        }
 
         for (File jar : kompilerClasspath(kotlinHome, compileContext)) {
             params.getClassPath().add(jar);
