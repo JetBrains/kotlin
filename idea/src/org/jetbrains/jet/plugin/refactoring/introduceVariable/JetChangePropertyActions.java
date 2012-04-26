@@ -5,10 +5,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 /**
  * User: Alefas
@@ -35,13 +38,14 @@ public class JetChangePropertyActions {
         if (anchor == null) return;
         anchor = anchor.getNextSibling();
         if (anchor == null || !(anchor instanceof PsiWhiteSpace)) return;
-        JetTypeReference typeReference = JetPsiFactory.createType(project, exprType.toString());
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderTypeWithShortNames(exprType));
         ASTNode colon = JetPsiFactory.createColonNode(project);
         ASTNode anchorNode = anchor.getNode().getTreeNext();
         property.getNode().addChild(colon, anchorNode);
         property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
         property.getNode().addChild(typeReference.getNode(), anchorNode);
         property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        ImportInsertHelper.addImportDirectivesIfNeeded(exprType, (JetFile)property.getContainingFile());
         anchor.delete();
     }
 

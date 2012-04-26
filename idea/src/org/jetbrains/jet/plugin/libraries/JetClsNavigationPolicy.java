@@ -21,10 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetClass;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -34,9 +31,12 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
+        if (clsClass.getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         JetClass jetClass = (JetClass) getJetDeclarationByClsElement(clsClass);
         if (jetClass != null) {
-            JetClass sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
+            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
             if (sourceClass != null) {
                 return sourceClass;
             }
@@ -47,6 +47,9 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
+        if (clsMethod.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
         if (jetDeclaration instanceof JetProperty) {
             JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
@@ -66,6 +69,9 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
+        if (clsField.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         return getJetDeclarationByClsElement(clsField);
     }
 

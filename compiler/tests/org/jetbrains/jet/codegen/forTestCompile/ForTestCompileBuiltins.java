@@ -17,7 +17,8 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.KotlinCompiler;
+import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 
 import java.io.File;
 
@@ -37,9 +38,9 @@ public class ForTestCompileBuiltins {
 
         @Override
         protected void doCompile(@NotNull File classesDir) throws Exception {
-            KotlinCompiler.ExitCode exitCode = new KotlinCompiler().exec(
+            ExitCode exitCode = new K2JVMCompiler().exec(
                     System.err, "-output", classesDir.getPath(), "-src", "./compiler/frontend/src", "-mode", "builtins");
-            if (exitCode != KotlinCompiler.ExitCode.OK) {
+            if (exitCode != ExitCode.OK) {
                 throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
             }
         }

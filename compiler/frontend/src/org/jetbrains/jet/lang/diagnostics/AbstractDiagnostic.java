@@ -25,15 +25,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
     private final E psiElement;
-    private final String message;
     private final AbstractDiagnosticFactory factory;
     private final Severity severity;
 
-    public AbstractDiagnostic(@NotNull E psiElement, @NotNull AbstractDiagnosticFactory factory, @NotNull Severity severity, @NotNull String message) {
+    public AbstractDiagnostic(@NotNull E psiElement,
+            @NotNull AbstractDiagnosticFactory factory,
+            @NotNull Severity severity) {
         this.psiElement = psiElement;
         this.factory = factory;
         this.severity = severity;
-        this.message = message;
     }
 
     @NotNull
@@ -50,16 +50,9 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
 
     @NotNull
     @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @NotNull
-    @Override
     public Severity getSeverity() {
         return severity;
     }
-
 
     @Override
     @NotNull

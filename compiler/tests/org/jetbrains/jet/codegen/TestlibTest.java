@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration;
-import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -75,7 +75,7 @@ public class TestlibTest extends CodegenTestCase {
 
     private TestSuite doBuildSuite() {
         try {
-            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
             File junitJar = new File("libraries/lib/junit-4.9.jar");
 
             if (!junitJar.exists()) {

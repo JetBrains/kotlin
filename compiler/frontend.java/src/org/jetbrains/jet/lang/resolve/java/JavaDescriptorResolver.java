@@ -76,7 +76,6 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.NamespaceFactory;
@@ -93,7 +92,6 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.constants.ShortValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.types.DeferredType;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -105,7 +103,6 @@ import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureExceptionsAdapter;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
-import org.jetbrains.jet.util.lazy.LazyValue;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -209,11 +206,9 @@ public class JavaDescriptorResolver {
         final PsiClass psiClass;
         @Nullable
         final PsiPackage psiPackage;
-        @NotNull
         final FqName fqName;
         final boolean staticMembers;
         final boolean kotlin;
-        @NotNull
         final ClassOrNamespaceDescriptor classOrNamespaceDescriptor;
 
         protected ResolverScopeData(@Nullable PsiClass psiClass, @Nullable PsiPackage psiPackage, @NotNull FqName fqName, boolean staticMembers, @NotNull ClassOrNamespaceDescriptor descriptor) {
@@ -235,6 +230,22 @@ public class JavaDescriptorResolver {
             this.kotlin = psiClass != null &&
                     (new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS));
             classOrNamespaceDescriptor = descriptor;
+        }
+
+        protected ResolverScopeData(boolean negative) {
+            if (!negative) {
+                throw new IllegalStateException();
+            }
+            this.psiClass = null;
+            this.psiPackage = null;
+            this.fqName = null;
+            this.staticMembers = false;
+            this.kotlin = false;
+            this.classOrNamespaceDescriptor = null;
+        }
+
+        public boolean isPositive() {
+            return this.classOrNamespaceDescriptor != null;
         }
 
         @NotNull
@@ -262,6 +273,13 @@ public class JavaDescriptorResolver {
             this.classDescriptor = classDescriptor;
         }
 
+        private ResolverBinaryClassData(boolean negative) {
+            super(negative);
+            this.classDescriptor = null;
+        }
+
+        static final ResolverBinaryClassData NEGATIVE = new ResolverBinaryClassData(true);
+
         List<TypeParameterDescriptorInitialization> typeParameters;
 
         @NotNull
@@ -285,6 +303,13 @@ public class JavaDescriptorResolver {
             super(psiClass, psiPackage, fqName, true, namespaceDescriptor);
             this.namespaceDescriptor = namespaceDescriptor;
         }
+
+        private ResolverNamespaceData(boolean negative) {
+            super(negative);
+            this.namespaceDescriptor = null;
+        }
+
+        static final ResolverNamespaceData NEGATIVE = new ResolverNamespaceData(true);
 
         private JavaPackageScope memberScope;
 
@@ -374,13 +399,18 @@ public class JavaDescriptorResolver {
         if (classData == null) {
             PsiClass psiClass = psiClassFinder.findPsiClass(qualifiedName, PsiClassFinder.RuntimeClassesHandleMode.THROW);
             if (psiClass == null) {
+                ResolverBinaryClassData oldValue = classDescriptorCache.put(qualifiedName, ResolverBinaryClassData.NEGATIVE);
+                if (oldValue != null) {
+                    throw new IllegalStateException("rewrite at " + qualifiedName);
+                }
                 return null;
             }
             classData = createJavaClassDescriptor(psiClass, tasks);
         }
-        return classData.getClassDescriptor();
+        return classData.classDescriptor;
     }
 
+    @NotNull
     private ResolverBinaryClassData createJavaClassDescriptor(@NotNull final PsiClass psiClass, List<Runnable> taskList) {
         FqName fqName = new FqName(psiClass.getQualifiedName());
         if (classDescriptorCache.containsKey(fqName)) {
@@ -392,18 +422,21 @@ public class JavaDescriptorResolver {
         String name = psiClass.getName();
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
-        ResolverBinaryClassData classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
+
+        // class may be resolved during resolution of parent
+        ResolverBinaryClassData classData = classDescriptorCache.get(fqName);
+        if (classData != null) {
+            return classData;
+        }
+
+        classData = new ResolverBinaryClassData(psiClass, fqName, new MutableClassDescriptorLite(containingDeclaration, kind));
         classDescriptorCache.put(fqName, classData);
         classData.classDescriptor.setName(name);
         classData.classDescriptor.setAnnotations(resolveAnnotations(psiClass, taskList));
 
         List<JetType> supertypes = new ArrayList<JetType>();
 
-        TypeVariableResolver outerTypeVariableByNameResolver = TypeVariableResolvers.classTypeVariableResolver(
-                (ClassOrNamespaceDescriptor) classData.classDescriptor.getContainingDeclaration(),
-                "class " + psiClass.getQualifiedName());
-
-        classData.typeParameters = createUninitializedClassTypeParameters(psiClass, classData, outerTypeVariableByNameResolver);
+        classData.typeParameters = createUninitializedClassTypeParameters(psiClass, classData);
         
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>();
         for (TypeParameterDescriptorInitialization typeParameter : classData.typeParameters) {
@@ -583,7 +616,7 @@ public class JavaDescriptorResolver {
         return classData.classDescriptor;
     }
 
-    private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData, TypeVariableResolver typeVariableResolver) {
+    private List<TypeParameterDescriptorInitialization> createUninitializedClassTypeParameters(PsiClass psiClass, ResolverBinaryClassData classData) {
         JetClassAnnotation jetClassAnnotation = JetClassAnnotation.get(psiClass);
 
         if (jetClassAnnotation.signature().length() > 0) {
@@ -974,6 +1007,10 @@ public class JavaDescriptorResolver {
                 break lookingForPsi;
             }
 
+            ResolverNamespaceData oldValue = namespaceDescriptorCacheByFqn.put(fqName, ResolverNamespaceData.NEGATIVE);
+            if (oldValue != null) {
+                throw new IllegalStateException("rewrite at " + fqName);
+            }
             return null;
         }
 

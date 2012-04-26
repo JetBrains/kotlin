@@ -68,7 +68,7 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
             assert element instanceof JetFunction;
             newElement = addFunctionType(project, (JetFunction) element, type);
         }
-        ImportInsertHelper.addImportDirectiveIfNeeded(type, (JetFile) file);
+        ImportInsertHelper.addImportDirectivesIfNeeded(type, (JetFile)file);
         element.replace(newElement);
     }
 

@@ -95,9 +95,13 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 compilerDependencies);
 
 
-        injector.getTopDownAnalyzer().analyzeFiles(files);
+        try {
+            injector.getTopDownAnalyzer().analyzeFiles(files);
 
-        return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance());
+            return AnalyzeExhaust.success(bindingTraceContext.getBindingContext(), JetStandardLibrary.getInstance());
+        } finally {
+            injector.destroy();
+        }
     }
 
     public static AnalyzeExhaust shallowAnalyzeFiles(Collection<JetFile> files,

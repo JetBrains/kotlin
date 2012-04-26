@@ -24,11 +24,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
@@ -101,9 +102,8 @@ public class JetTestUtils {
 
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic)diagnostic;
-                throw new IllegalStateException("Unresolved: " + unresolvedReferenceDiagnostic.getPsiElement().getText());
+            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                throw new IllegalStateException("Unresolved: " + diagnostic.getPsiElement().getText());
             }
         }
     };
@@ -153,14 +153,17 @@ public class JetTestUtils {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {
             if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(diagnostic.getMessage());
+                throw new IllegalStateException(DefaultErrorMessages.RENDERER.render(diagnostic));
             }
         }
     };
 
+    private JetTestUtils() {
+    }
+
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
@@ -168,11 +171,11 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        JetCoreEnvironment environment = new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
-        final File rtJar = new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
-        environment.addToClasspath(rtJar);
-        environment.addToClasspath(getAnnotationsJar());
-        return environment;
+        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+    }
+
+    public static File findMockJdkRtJar() {
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK-1.7/jre/lib/rt.jar");
     }
 
     public static File getAnnotationsJar() {

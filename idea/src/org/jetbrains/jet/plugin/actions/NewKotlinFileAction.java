@@ -23,6 +23,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetIcons;
 
 /**
  * @author Nikolay Krasko
@@ -37,8 +38,8 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction {
         builder
                 .setTitle(JetBundle.message("new.kotlin.file.action"))
                 .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File")
-                .addKind("Class", PlatformIcons.CLASS_ICON, "Kotlin Class")
-                .addKind("Trait", PlatformIcons.INTERFACE_ICON, "Kotlin Trait")
+                .addKind("Class", JetIcons.CLASS, "Kotlin Class")
+                .addKind("Trait", JetIcons.TRAIT, "Kotlin Trait")
                 .addKind("Enum class", PlatformIcons.ENUM_ICON, "Kotlin Enum");
     }
 

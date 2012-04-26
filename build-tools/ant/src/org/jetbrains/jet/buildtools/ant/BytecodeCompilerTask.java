@@ -21,7 +21,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
-import org.jetbrains.jet.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.File;
 

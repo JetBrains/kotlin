@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -72,8 +72,8 @@ public class DebugInfoAnnotator implements Annotator {
 
                 final Set<JetReferenceExpression> unresolvedReferences = Sets.newHashSet();
                 for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-                    if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                        unresolvedReferences.add(((UnresolvedReferenceDiagnostic) diagnostic).getPsiElement());
+                    if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                        unresolvedReferences.add((JetReferenceExpression)diagnostic.getPsiElement());
                     }
                 }
 

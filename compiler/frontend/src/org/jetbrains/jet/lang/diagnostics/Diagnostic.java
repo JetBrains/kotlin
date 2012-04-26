@@ -32,9 +32,6 @@ public interface Diagnostic {
     AbstractDiagnosticFactory getFactory();
 
     @NotNull
-    String getMessage();
-
-    @NotNull
     Severity getSeverity();
 
     @NotNull

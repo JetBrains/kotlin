@@ -53,26 +53,27 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
-                                                            @NotNull Config config) {
-        BindingContext bindingContext = analyzeFiles(files, config);
+            @NotNull Config config) {
+        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
         checkForErrors(withJsLibAdded(files, config), bindingContext);
         return bindingContext;
     }
 
     @NotNull
     public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
-                                              @NotNull Config config) {
+            Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-            notLibFiles(config.getLibFiles()), false, false);
+        Predicate<PsiFile> completely = Predicates.<PsiFile>and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
+                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
         injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
         return bindingTraceContext.getBindingContext();
@@ -123,11 +124,11 @@ public final class AnalyzerFacadeForJS {
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-            Predicates.<PsiFile>alwaysTrue(), false, false);
+                Predicates.<PsiFile>alwaysTrue(), false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-            project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-            JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
+                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
+                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
         injector.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(file));
         return bindingTraceContext.getBindingContext();
@@ -156,9 +157,9 @@ public final class AnalyzerFacadeForJS {
 
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
-                                         @NotNull WritableScope namespaceMemberScope) {
+                @NotNull WritableScope namespaceMemberScope) {
             DefaultModuleConfiguration.createStandardConfiguration(project, true)
-                .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+                    .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         }
     }
 }

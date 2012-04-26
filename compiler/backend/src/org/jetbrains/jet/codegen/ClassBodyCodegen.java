@@ -90,9 +90,10 @@ public abstract class ClassBodyCodegen {
             try {
                 genNamedFunction((JetNamedFunction) declaration, functionCodegen);
             }
-            catch(CompilationException e) {
+            catch (CompilationException e) {
                 throw e;
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e) {
                 throw new RuntimeException("Error generating method " + myClass.getName() + "." + declaration.getName() + " in " + context, e);
             }
         }

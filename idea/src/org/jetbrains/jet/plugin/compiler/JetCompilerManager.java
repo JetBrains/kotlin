@@ -31,8 +31,11 @@ import java.util.Collections;
 public class JetCompilerManager implements ProjectComponent {
     public JetCompilerManager(CompilerManager manager) {
         manager.addTranslatingCompiler(new JetCompiler(),
-                Collections.<FileType>singleton(JetFileType.INSTANCE),
-                Collections.singleton(StdFileTypes.CLASS));
+                                       Collections.<FileType>singleton(JetFileType.INSTANCE),
+                                       Collections.singleton(StdFileTypes.CLASS));
+        manager.addTranslatingCompiler(new K2JSCompiler(),
+                                       Collections.<FileType>singleton(JetFileType.INSTANCE),
+                                       Collections.<FileType>singleton(StdFileTypes.JS));
         manager.addCompilableFileType(JetFileType.INSTANCE);
     }
 

@@ -31,7 +31,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;

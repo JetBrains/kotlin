@@ -36,7 +36,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     private final BindingContext bindingContext = new BindingContext() {
         @Override
         public Collection<Diagnostic> getDiagnostics() {
-            throw new UnsupportedOperationException(); // TODO
+            return diagnostics;
         }
 
         @Override
@@ -57,6 +57,7 @@ public class DelegatingBindingTrace implements BindingTrace {
     }
 
     @Override
+    @NotNull
     public BindingContext getBindingContext() {
         return bindingContext;
     }

@@ -35,6 +35,7 @@ import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
@@ -91,12 +92,12 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                         builder.append(DescriptorRenderer.HTML.render(descriptor));
                         int overrideCount = overriddenMembers.size();
                         if (overrideCount >= 1) {
-                            builder.append(" ").append(implementsOrOverrides).append(" ");
+                            builder.append("\n").append(implementsOrOverrides).append("\n");
                             builder.append(DescriptorRenderer.HTML.render(overriddenMembers.iterator().next()));
                         }
                         if (overrideCount > 1) {
                             int count = overrideCount - 1;
-                            builder.append(" and ").append(count).append(" other ").append(memberKind);
+                            builder.append("\nand ").append(count).append(" other ").append(memberKind);
                             if (count > 1) {
                                 builder.append("s");
                             }
@@ -132,7 +133,10 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                                         public String getElementText(PsiElement element) {
                                             if (element instanceof JetNamedFunction) {
                                                 JetNamedFunction function = (JetNamedFunction) element;
-                                                return DescriptorRenderer.HTML.render(bindingContext.get(BindingContext.FUNCTION, function));
+                                                SimpleFunctionDescriptor fd =
+                                                        bindingContext.get(BindingContext.FUNCTION, function);
+                                                assert fd != null;
+                                                return DescriptorRenderer.HTML.render(fd);
                                             }
                                             return super.getElementText(element);
                                         }

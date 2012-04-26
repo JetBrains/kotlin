@@ -264,7 +264,7 @@ public class DescriptorResolver {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true);
             }
 
-            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(functionDescriptor, valueParameter, i, type, trace);
+            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(parameterScope, functionDescriptor, valueParameter, i, type, trace);
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
             result.add(valueParameterDescriptor);
         }
@@ -272,7 +272,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
+    public MutableValueParameterDescriptor resolveValueParameterDescriptor(JetScope scope, DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
         JetType varargElementType = null;
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
@@ -282,7 +282,7 @@ public class DescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
                 index,
-                annotationResolver.createAnnotationStubs(valueParameter.getModifierList(), trace),
+                annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
                 valueParameter.isMutable(),
                 variableType,
@@ -430,6 +430,9 @@ public class DescriptorResolver {
         else {
             // Error is reported by the parser
             type = ErrorUtils.createErrorType("Annotation is absent");
+        }
+        if (parameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+            return getVarargParameterType(type);
         }
         return type;
     }
@@ -724,7 +727,7 @@ public class DescriptorResolver {
                     JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType, type));
                         }
                     }
                     else {
@@ -732,7 +735,7 @@ public class DescriptorResolver {
                     }
                 }
 
-                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type, trace);
+                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(scope, setterDescriptor, parameter, 0, type, trace);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
             else {
@@ -777,7 +780,7 @@ public class DescriptorResolver {
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }
             }
 
@@ -920,7 +923,7 @@ public class DescriptorResolver {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound));
+                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound, typeArgument));
             }
         }
     }

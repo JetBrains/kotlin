@@ -16,50 +16,29 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 
 /**
 * @author alex.tkachman
+* @author abreslav
 */
 public class CompilationException extends RuntimeException {
-    private PsiElement element;
+    private final PsiElement element;
 
-    CompilationException(String message, Throwable cause, PsiElement element) {
+    CompilationException(@NotNull String message, @Nullable Throwable cause, @NotNull PsiElement element) {
         super(message, cause);
         this.element = element;
     }
 
+    @NotNull
     public PsiElement getElement() {
         return element;
     }
 
-    @Override
-    public String toString() {
-        PsiFile psiFile = element.getContainingFile();
-        TextRange textRange = element.getTextRange();
-        Document document = psiFile.getViewProvider().getDocument();
-        int line;
-        int col;
-        if (document != null) {
-            line = document.getLineNumber(textRange.getStartOffset());
-            col = textRange.getStartOffset() - document.getLineStartOffset(line) + 1;
-        }
-        else {
-            line = -1;
-            col = -1;
-        }
 
-        String s2 = "";
-        Throwable cause = getCause();
-        if (cause != null) {
-            s2 = cause.getMessage() != null ? cause.getMessage() : cause.toString();
-        }
-        return "Internal error: (" + (line+1) + "," + col + ") " + s2 + "\n@" + where();
-    }
-    
     private String where() {
         Throwable cause = getCause();
         Throwable throwable = cause != null ? cause : this;
@@ -67,13 +46,20 @@ public class CompilationException extends RuntimeException {
         if (stackTrace != null && stackTrace.length > 0) {
             return stackTrace[0].getFileName() + ":" + stackTrace[0].getLineNumber();
         }
-        else {
-            return "unknown";
-        }
+        return "unknown";
     }
 
     @Override
     public String getMessage() {
-        return this.toString();
+        StringBuilder message = new StringBuilder("Back-end (JVM) Internal error: ").append(super.getMessage()).append("\n");
+        Throwable cause = getCause();
+        if (cause != null) {
+            String causeMessage = cause.getMessage();
+            message.append("Cause: ").append(causeMessage == null ? cause.toString() : causeMessage).append("\n");
+        }
+        message.append("File being compiled and position: ").append(DiagnosticUtils.atLocation(element)).append("\n");
+        message.append("The root cause was thrown at: ").append(where());
+
+        return message.toString();
     }
 }

@@ -133,8 +133,9 @@
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
       <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>
 
-      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.JetStatementGroupSelectioner"/>
-      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.JetCodeBlockSelectioner"/>
+      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetStatementGroupSelectioner"/>
+      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetCodeBlockSelectioner"/>
+      <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetListSelectioner"/>
 
       <documentationProvider implementation="org.jetbrains.jet.plugin.JetQuickDocumentationProvider"/>
       <configurationType implementation="org.jetbrains.jet.plugin.run.JetRunConfigurationType"/>
@@ -171,9 +172,13 @@
       <toolWindow id="Kotlin"
                   factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
                   anchor="right"
-                  icon="/org/jetbrains/jet/plugin/icons/kotlin13x13.png"
+                  icon="/org/jetbrains/jet/plugin/icons/kotlin_13.png"
               />
 
+      <intentionAction>
+        <className>org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction</className>
+        <category>Kotlin</category>
+      </intentionAction>
 
   </extensions>
 </idea-plugin>

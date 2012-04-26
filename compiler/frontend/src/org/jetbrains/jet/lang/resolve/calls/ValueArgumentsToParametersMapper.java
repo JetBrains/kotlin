@@ -33,9 +33,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.ERROR;
-import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.OK;
-import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.WEAK_ERROR;
+import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
 
 /**
  * @author abreslav
@@ -217,10 +215,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         if (!receiverParameter.exists() && receiverArgument.exists()) {
             tracing.noReceiverAllowed(temporaryTrace);
             status = ERROR;
-        }
-
-        if (candidateCall.getThisObject().exists() != candidateCall.getResultingDescriptor().getExpectedThisObject().exists()) {
-            assert false : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
         }
 
         return status;

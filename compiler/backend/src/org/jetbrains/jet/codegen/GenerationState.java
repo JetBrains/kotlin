@@ -170,4 +170,8 @@ public class GenerationState {
 
         return answer.toString();
     }
+
+    public void destroy() {
+        injector.destroy();
+    }
 }

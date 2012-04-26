@@ -16,13 +16,14 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
-import com.intellij.execution.process.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -30,11 +31,11 @@ import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,18 +44,22 @@ import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.utils.PathUtil;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.Charset;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
 
@@ -68,7 +73,14 @@ public class JetCompiler implements TranslatingCompiler {
 
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
-        return virtualFile.getFileType() instanceof JetFileType;
+        if (!(virtualFile.getFileType() instanceof JetFileType)) {
+            return false;
+        }
+        Project project = compileContext.getProject();
+        if (project == null || JsModuleDetector.isJsProject(project)) {
+            return false;
+        }
+        return true;
     }
 
     @NotNull
@@ -138,7 +150,7 @@ public class JetCompiler implements TranslatingCompiler {
             return;
         }
 
-        OutputItemsCollector collector = new OutputItemsCollector(outputDir.getPath());
+        OutputItemsCollectorImpl collector = new OutputItemsCollectorImpl(outputDir.getPath());
 
         if (RUN_OUT_OF_PROCESS) {
             runOutOfProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
@@ -235,47 +247,97 @@ public class JetCompiler implements TranslatingCompiler {
         return answer;
     }
 
-    private void runInProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private void runInProcess(final CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream out = new PrintStream(outputStream);
 
-        int rc = execInProcess(kotlinHome, outputDir, scriptFile, out, compileContext);
-
-        ProcessAdapter listener = createProcessListener(compileContext, collector);
+        int exitCode = execInProcess(kotlinHome, outputDir, scriptFile, out, compileContext);
 
         BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        while (true) {
-            try {
-                String line = reader.readLine();
-                if (line == null) break;
-                listener.onTextAvailable(new ProcessEvent(NullProcessHandler.INSTANCE, line + "\n"), ProcessOutputTypes.STDERR);
-            } catch (IOException e) {
-                // Can't be
-                throw new IllegalStateException(e);
-            }
-        }
+        parseCompilerMessagesFromReader(compileContext, reader, collector);
+        handleProcessTermination(exitCode, compileContext);
+    }
 
-        ProcessEvent termintationEvent = new ProcessEvent(NullProcessHandler.INSTANCE, rc);
-        listener.processWillTerminate(termintationEvent, false);
-        listener.processTerminated(termintationEvent);
+    private static void parseCompilerMessagesFromReader(CompileContext compileContext, final Reader reader, OutputItemsCollector collector) {
+        // Sometimes the compiler can't output valid XML
+        // Example: error in command line arguments passed to the compiler
+        // having no -tags key (arguments are not parsed), the compiler doesn't know
+        // if it should put any tags in the output, so it will simply print the usage
+        // and the SAX parser will break.
+        // In this case, we want to read everything from this stream
+        // and report it as an IDE error.
+        final StringBuilder stringBuilder = new StringBuilder();
+        //noinspection IOResourceOpenedButNotSafelyClosed
+        Reader wrappingReader = new Reader() {
+
+            @Override
+            public int read(char[] cbuf, int off, int len) throws IOException {
+                int read = reader.read(cbuf, off, len);
+                stringBuilder.append(cbuf, off, len);
+                return read;
+            }
+
+            @Override
+            public void close() throws IOException {
+                // Do nothing:
+                // If the SAX parser sees a syntax error, it throws an expcetion
+                // and calls close() on the reader.
+                // We prevent hte reader from being closed here, and close it later,
+                // when all the text is read from it
+            }
+        };
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser parser = factory.newSAXParser();
+            parser.parse(new InputSource(wrappingReader), new CompilerOutputSAXHandler(compileContext, collector));
+        }
+        catch (Throwable e) {
+
+            // Load all the text into the stringBuilder
+            try {
+                // This will not close the reader (see the wrapper above)
+                FileUtil.loadTextAndClose(wrappingReader);
+            }
+            catch (IOException ioException) {
+                LOG.error(ioException);
+            }
+            String message = stringBuilder.toString();
+            LOG.error(message);
+            LOG.error(e);
+            compileContext.addMessage(ERROR, message, null, -1, -1);
+        }
+        finally {
+           try {
+               reader.close();
+           }
+           catch (IOException e) {
+               LOG.error(e);
+           }
+        }
+    }
+
+    private static void handleProcessTermination(int exitCode, CompileContext compileContext) {
+        if (exitCode != 0 && exitCode != 1) {
+            compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
+        }
     }
 
     private static int execInProcess(File kotlinHome, VirtualFile outputDir, File scriptFile, PrintStream out, CompileContext context) {
         URLClassLoader loader = getOrCreateClassLoader(kotlinHome, context);
         try {
-            String compilerClassName = "org.jetbrains.jet.cli.KotlinCompiler";
+            String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
             Class<?> kompiler = Class.forName(compilerClassName, true, loader);
             Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
 
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version", "-mode", "stdlib" };
+            String[] arguments = commandLineArguments(outputDir, scriptFile);
 
             context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
             context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
             
             Object rc = exec.invoke(kompiler.newInstance(), out, arguments);
-            // exec() returns a KotlinCompiler.ExitCode object, that class is not accessible here,
+            // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
-            if ("org.jetbrains.jet.cli.KotlinCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
+            if ("org.jetbrains.jet.cli.jvm.K2JVMCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
                 return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
             }
             else {
@@ -285,6 +347,10 @@ public class JetCompiler implements TranslatingCompiler {
             LOG.error(e);
             return -1;
         }
+    }
+
+    private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
+        return new String[]{ "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version", "-mode", "stdlib" };
     }
 
     private static SoftReference<URLClassLoader> ourClassLoaderRef = new SoftReference<URLClassLoader>(null);
@@ -312,14 +378,14 @@ public class JetCompiler implements TranslatingCompiler {
         return new URLClassLoader(urls, null);
     }
 
-    private static void runOutOfProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private static void runOutOfProcess(final CompileContext compileContext, final OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
-        params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
-        params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
-        params.getProgramParametersList().add("-output", path(outputDir));
-        params.getProgramParametersList().add("-tags");
-        params.getProgramParametersList().add("-verbose");
+        params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
+
+        for (String arg : commandLineArguments(outputDir, scriptFile)) {
+            params.getProgramParametersList().add(arg);
+        }
 
         for (File jar : kompilerClasspath(kotlinHome, compileContext)) {
             params.getClassPath().add(jar);
@@ -336,25 +402,37 @@ public class JetCompiler implements TranslatingCompiler {
         compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
         
         try {
-            final OSProcessHandler processHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString()) {
-              @Override
-              public Charset getCharset() {
-                return commandLine.getCharset();
-              }
-            };
+            final Process process = commandLine.createProcess();
 
-            ProcessAdapter processListener = createProcessListener(compileContext, collector);
-            processHandler.addProcessListener(processListener);
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                @Override
+                public void run() {
+                    parseCompilerMessagesFromReader(compileContext, new InputStreamReader(process.getInputStream()), collector);
+                }
+            });
 
-            processHandler.startNotify();
-            processHandler.waitFor();
-        } catch (Exception e) {
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FileUtil.loadBytes(process.getErrorStream());
+                    }
+                    catch (IOException e) {
+                        // Don't care
+                    }
+                }
+            });
+
+            int exitCode = process.waitFor();
+            handleProcessTermination(exitCode, compileContext);
+        }
+        catch (Exception e) {
             compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
             return;
         }
     }
 
-    private static class OutputItemsCollector {
+    public static class OutputItemsCollectorImpl implements OutputItemsCollector {
         private static final String FOR_SOURCE_PREFIX = "For source: ";
         private static final String EMITTING_PREFIX = "Emitting: ";
         private final String outputPath;
@@ -362,10 +440,11 @@ public class JetCompiler implements TranslatingCompiler {
         private List<OutputItem> answer = new ArrayList<OutputItem>();
         private List<VirtualFile> sources = new ArrayList<VirtualFile>();
 
-        private OutputItemsCollector(String outputPath) {
+        public OutputItemsCollectorImpl(String outputPath) {
             this.outputPath = outputPath;
         }
 
+        @Override
         public void learn(String message) {
             message = message.trim();
             if (message.startsWith(FOR_SOURCE_PREFIX)) {
@@ -376,7 +455,9 @@ public class JetCompiler implements TranslatingCompiler {
             }
             else if (message.startsWith(EMITTING_PREFIX)) {
                 if (currentSource != null) {
-                    answer.add(new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource));
+                    OutputItemImpl item = new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource);
+                    LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(item.getOutputPath()));
+                    answer.add(item);
                 }
             }
         }
@@ -390,10 +471,6 @@ public class JetCompiler implements TranslatingCompiler {
         }
     }
 
-    private static ProcessAdapter createProcessListener(final CompileContext compileContext, OutputItemsCollector collector) {
-        return new CompilerProcessListener(compileContext, collector);
-    }
-
     private static String path(VirtualFile root) {
         String path = root.getPath();
         if (path.endsWith("!/")) {
@@ -403,211 +480,93 @@ public class JetCompiler implements TranslatingCompiler {
         return path;
     }
 
-    private static class NullProcessHandler extends ProcessHandler {
-        public static NullProcessHandler INSTANCE = new NullProcessHandler();
-        @Override
-        protected void destroyProcessImpl() {
-            throw new UnsupportedOperationException("destroyProcessImpl is not implemented");
-        }
-
-        @Override
-        protected void detachProcessImpl() {
-            throw new UnsupportedOperationException("detachProcessImpl is not implemented"); // TODO
-        }
-
-        @Override
-        public boolean detachIsDefault() {
-            throw new UnsupportedOperationException("detachIsDefault is not implemented");
-        }
-
-        @Override
-        public OutputStream getProcessInput() {
-            throw new UnsupportedOperationException("getProcessInput is not implemented");
-        }
-    }
-
-    private static class CompilerProcessListener extends ProcessAdapter {
-        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION|LOGGING)", Pattern.MULTILINE);
-        private static final Pattern OPEN_TAG_END_PATTERN = Pattern.compile(">", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("\\s*(path|line|column)\\s*=\\s*\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION|LOGGING)>", Pattern.MULTILINE | Pattern.DOTALL);
-
-        private enum State {
-            WAITING, ATTRIBUTES, MESSAGE
-        }
-
-        private static class CompilerMessage {
-            private CompilerMessageCategory messageCategory;
-            private boolean isException;
-            private @Nullable String url;
-            private @Nullable Integer line;
-            private @Nullable Integer column;
-            private String message;
-
-            public void setMessageCategoryFromString(String tagName) {
-                if ("ERROR".equals(tagName)) {
-                    messageCategory = ERROR;
-                }
-                else if ("EXCEPTION".equals(tagName)) {
-                    messageCategory = ERROR;
-                    isException = true;
-                }
-                else if ("WARNING".equals(tagName)) {
-                    messageCategory = WARNING;
-                }
-                else if ("LOGGING".equals(tagName)) {
-                    messageCategory = STATISTICS;
-                }
-                else {
-                    messageCategory = INFORMATION;
-                }
-            }
-
-            public void setAttributeFromStrings(String name, String value) {
-                if ("path".equals(name)) {
-                    url = "file://" + value.trim();
-                }
-                else if ("line".equals(name)) {
-                    line = safeParseInt(value);
-                }
-                else if ("column".equals(name)) {
-                    column = safeParseInt(value);
-                }
-            }
-
-            @Nullable
-            private static Integer safeParseInt(String value) {
-                try {
-                    return Integer.parseInt(value.trim());
-                }
-                catch (NumberFormatException e) {
-                    return null;
-                }
-            }
-
-            public void setMessage(String message) {
-                this.message = message;
-            }
-
-            public void reportTo(CompileContext compileContext) {
-                if (messageCategory == STATISTICS) {
-                    compileContext.getProgressIndicator().setText(message);
-                }
-                else {
-                    compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line,
-                                              column == null
-                                              ? -1
-                                              : column);
-                    if (isException) {
-                        LOG.error(message);
-                    }
-                }
-            }
-        }
+    private static class CompilerOutputSAXHandler extends DefaultHandler {
+        private static final Map<String, CompilerMessageCategory> CATEGORIES = ImmutableMap.<String, CompilerMessageCategory>builder()
+                .put("error", CompilerMessageCategory.ERROR)
+                .put("warning", CompilerMessageCategory.WARNING)
+                .put("logging", CompilerMessageCategory.STATISTICS)
+                .put("exception", CompilerMessageCategory.ERROR)
+                .put("info", CompilerMessageCategory.INFORMATION)
+                .put("messages", CompilerMessageCategory.INFORMATION) // Root XML element
+                .build();
 
         private final CompileContext compileContext;
         private final OutputItemsCollector collector;
-        private final StringBuilder output = new StringBuilder();
-        private int firstUnprocessedIndex = 0;
-        private State state = State.WAITING;
-        private CompilerMessage currentCompilerMessage;
 
-        public CompilerProcessListener(CompileContext compileContext, OutputItemsCollector collector) {
+        private final StringBuilder message = new StringBuilder();
+        private Stack<String> tags = new Stack<String>();
+        private String path;
+        private int line;
+        private int column;
+
+        public CompilerOutputSAXHandler(CompileContext compileContext, OutputItemsCollector collector) {
             this.compileContext = compileContext;
             this.collector = collector;
         }
 
         @Override
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-            String text = event.getText();
-            if (outputType == ProcessOutputTypes.STDERR) {
-                output.append(text);
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            tags.push(qName);
 
-                // We loop until the state stabilizes
-                State lastState;
-                do {
-                    lastState = state;
-                    switch (state) {
-                        case WAITING: {
-                            Matcher matcher = matcher(DIAGNOSTIC_PATTERN);
-                            if (find(matcher)) {
-                                currentCompilerMessage = new CompilerMessage();
-                                currentCompilerMessage.setMessageCategoryFromString(matcher.group(1));
-                                state = State.ATTRIBUTES;
-                            }
-                            break;
-                        }
-                        case ATTRIBUTES: {
-                            Matcher matcher = matcher(ATTRIBUTE_PATTERN);
-                            int indexDelta = 0;
-                            while (matcher.find()) {
-                                handleSkippedOutput(output.subSequence(firstUnprocessedIndex + indexDelta, firstUnprocessedIndex + matcher.start()));
-                                currentCompilerMessage.setAttributeFromStrings(matcher.group(1), matcher.group(2));
-                                indexDelta = matcher.end();
+            message.setLength(0);
 
-                            }
-                            firstUnprocessedIndex += indexDelta;
-
-                            Matcher endMatcher = matcher(OPEN_TAG_END_PATTERN);
-                            if (find(endMatcher)) {
-                                state = State.MESSAGE;
-                            }
-                            break;
-                        }
-                        case MESSAGE: {
-                            Matcher matcher = matcher(MESSAGE_PATTERN);
-                            if (find(matcher)) {
-                                String message = matcher.group(1);
-                                currentCompilerMessage.setMessage(message);
-                                currentCompilerMessage.reportTo(compileContext);
-
-                                if (currentCompilerMessage.messageCategory == STATISTICS) {
-                                    collector.learn(message);
-                                }
-
-                                state = State.WAITING;
-                            }
-                            break;
-                        }
-                    }
-                }
-                while (state != lastState);
-
-            }
-            else {
-                compileContext.addMessage(INFORMATION, text, "", -1, -1);
-            }
-        }
-
-        private boolean find(Matcher matcher) {
-            boolean result = matcher.find();
-            if (result) {
-                handleSkippedOutput(output.subSequence(firstUnprocessedIndex, firstUnprocessedIndex + matcher.start()));
-                firstUnprocessedIndex += matcher.end();
-            }
-            return result;
-        }
-
-        private Matcher matcher(Pattern pattern) {
-            return pattern.matcher(output.subSequence(firstUnprocessedIndex, output.length()));
+            String rawPath = attributes.getValue("path");
+            path = rawPath == null ? null : "file://" + rawPath;
+            line = safeParseInt(attributes.getValue("line"), -1);
+            column = safeParseInt(attributes.getValue("column"), -1);
         }
 
         @Override
-        public void processTerminated(ProcessEvent event) {
-            if (firstUnprocessedIndex < output.length()) {
-                handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            if (tags.size() == 1) {
+                // We're directly inside the root tag: <MESSAGES>
+                String message = new String(ch, start, length);
+                if (!message.trim().isEmpty()) {
+                    compileContext.addMessage(ERROR, "Unhandled compiler output: " + message, null, -1, -1);
+                }
             }
-            int exitCode = event.getExitCode();
-            // 0 is normal, 1 is "errors found" - handled by the messages above
-            if (exitCode != 0 && exitCode != 1) {
-                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
+            else {
+                message.append(ch, start, length);
             }
         }
 
-        private void handleSkippedOutput(CharSequence substring) {
-            String message = substring.toString();
-            if (!message.trim().isEmpty()) {
-                compileContext.addMessage(ERROR, message, "", -1, -1);
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            if (tags.size() == 1) {
+                // We're directly inside the root tag: <MESSAGES>
+                return;
+            }
+            String qNameLowerCase = qName.toLowerCase();
+            CompilerMessageCategory category = CATEGORIES.get(qNameLowerCase);
+            if (category == null) {
+                compileContext.addMessage(ERROR, "Unknown compiler message tag: " + qName, null, -1, -1);
+                category = INFORMATION;
+            }
+            String text = message.toString();
+
+            if ("exception".equals(qNameLowerCase)) {
+                LOG.error(text);
+            }
+
+            if (category == STATISTICS) {
+                compileContext.getProgressIndicator().setText(text);
+                collector.learn(text);
+            }
+            else {
+                compileContext.addMessage(category, text, path, line, column);
+            }
+            tags.pop();
+        }
+
+        private static int safeParseInt(@Nullable String value, int defaultValue) {
+            if (value == null) {
+                return defaultValue;
+            }
+            try {
+                return Integer.parseInt(value.trim());
+            }
+            catch (NumberFormatException e) {
+                return defaultValue;
             }
         }
     }

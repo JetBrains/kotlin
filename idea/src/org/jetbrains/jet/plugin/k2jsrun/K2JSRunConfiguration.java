@@ -38,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Pavel Talanov
  */
+@SuppressWarnings("deprecation")
 public final class K2JSRunConfiguration extends RunConfigurationBase
     implements RunConfigurationWithSuppressedDefaultRunAction {
 
@@ -78,14 +79,17 @@ public final class K2JSRunConfiguration extends RunConfigurationBase
         @Override
         public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
             return new ExecutionResult() {
+                @Override
                 public ExecutionConsole getExecutionConsole() {
                     return null;
                 }
 
+                @Override
                 public AnAction[] getActions() {
                     return AnAction.EMPTY_ARRAY;
                 }
 
+                @Override
                 public ProcessHandler getProcessHandler() {
                     return null;
                 }

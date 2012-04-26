@@ -38,7 +38,7 @@ public class GenerationUtils {
     public static GenerationState compileFileGetGenerationStateForTest(JetFile psiFile, @NotNull CompilerSpecialMode compilerSpecialMode) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
         analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.binaries(false), analyzeExhaust, Collections.singletonList(psiFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);

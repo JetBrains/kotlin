@@ -31,7 +31,7 @@ JetFile: Imports_ERR.jet
     REFERENCE_EXPRESSION
       PsiErrorElement:Expecting qualified name
         <empty list>
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(MUL)('*')
   PsiWhiteSpace('\n')
   IMPORT_DIRECTIVE
@@ -125,7 +125,7 @@ JetFile: Imports_ERR.jet
             PsiErrorElement:Expecting type name
               PsiElement(MUL)('*')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(as)('as')
   PsiWhiteSpace(' ')
   MODIFIER_LIST
@@ -158,7 +158,7 @@ JetFile: Imports_ERR.jet
             PsiErrorElement:Expecting type name
               PsiElement(MUL)('*')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting namespace or top level declaration
+  PsiErrorElement:Expecting package directive or top level declaration
     PsiElement(as)('as')
   PsiWhiteSpace('\n\n')
   IMPORT_DIRECTIVE

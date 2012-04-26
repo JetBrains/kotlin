@@ -49,9 +49,10 @@ public class CompileCompilerDependenciesTest {
      * @see CompilerDependencies#compilerDependenciesForProduction(org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode)
      */
     @NotNull
-    public static CompilerDependencies compilerDependenciesForTests(@NotNull CompilerSpecialMode compilerSpecialMode) {
+    public static CompilerDependencies compilerDependenciesForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {
         return new CompilerDependencies(
                 compilerSpecialMode,
+                mockJdk ? JetTestUtils.findMockJdkRtJar() : CompilerDependencies.findRtJar(),
                 compilerSpecialMode.includeJdkHeaders() ? ForTestCompileJdkHeaders.jdkHeadersForTests() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
     }

@@ -17,11 +17,11 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
-import org.jetbrains.jet.compiler.CompileEnvironmentConfiguration;
-import org.jetbrains.jet.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
-import org.jetbrains.jet.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.jet.compiler.messages.MessageCollector;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
-        CompilerDependencies dependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR);
+        CompilerDependencies dependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
         CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
