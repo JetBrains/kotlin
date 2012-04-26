@@ -166,3 +166,6 @@ val <T> List<T>.tail : T?
 
 val <T> List<T>.last : T?
     get() = this.tail
+
+val <T> List<T>.lastIndex : Int
+    get() = this.size - 1
