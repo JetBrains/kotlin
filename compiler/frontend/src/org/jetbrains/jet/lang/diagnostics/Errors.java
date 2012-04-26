@@ -381,6 +381,8 @@ public interface Errors {
             DiagnosticFactory2.create(ERROR);
 
     SimpleDiagnosticFactory<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PARAMETER_DEFAULT_VALUE);
+    DiagnosticFactory1<JetParameter, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES = DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory1<JetClassOrObject, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE = DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
 
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
             DiagnosticFactory2.create(ERROR, new PositioningStrategy<JetDeclaration>() {

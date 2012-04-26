@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.*;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.LinkedMultiMap;
@@ -80,6 +83,20 @@ public class OverrideResolver {
 
         checkVisibility();
         checkOverrides(invisibleOverriddenDescriptors);
+        checkParameterOverrides();
+    }
+
+    private void checkParameterOverrides() {
+        List<MutableClassDescriptor> allClasses = Lists.newArrayList(context.getClasses().values());
+        allClasses.addAll(context.getObjects().values());
+        for (MutableClassDescriptor classDescriptor : allClasses) {
+            Collection<CallableMemberDescriptor> members = classDescriptor.getCallableMembers();
+            for (CallableMemberDescriptor member : members) {
+                //if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                    checkOverridesForParameters(member);
+                //}
+            }
+        }
     }
 
     /**
@@ -394,10 +411,6 @@ public class OverrideResolver {
             }
         }
 
-        if (hasOverrideModifier) {
-            checkOverridesForParameters(declared);
-        }
-
         if (hasOverrideModifier && declared.getOverriddenDescriptors().size() == 0) {
             if (!invisibleOverriddenDescriptors.get(declared).isEmpty()) {
                 CallableDescriptor descriptor = invisibleOverriddenDescriptors.values().iterator().next();
@@ -415,6 +428,16 @@ public class OverrideResolver {
     }
 
     private void checkOverridesForParameters(CallableMemberDescriptor declared) {
+        boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+        if (!fakeOverride) {
+            // No check if the function is not marked as 'override'
+            JetModifierListOwner declaration =
+                    (JetModifierListOwner) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), declared);
+            if (!declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) {
+                return;
+            }
+        }
+
         // Let p1 be a parameter of the overriding function
         // Let p2 be a parameter of the function being overridden
         // Then
@@ -422,9 +445,41 @@ public class OverrideResolver {
         //  b) p1 must have the same name as p2
         for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
             JetParameter parameter =
-                    (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
-            if (parameterFromSubclass.hasDefaultValue()) {
+                    fakeOverride ? null :
+                            (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
+
+            if (parameterFromSubclass.hasDefaultValue() && !fakeOverride) {
                 trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
+            }
+
+            // If p1 overrides p2 and p3 and p2 overrides p3, we remove p2 from p1's overridden list
+            Set<ValueParameterDescriptor> uniqueOverridden = Sets.newHashSet(parameterFromSubclass.getOverriddenDescriptors());
+            for (ValueParameterDescriptor p2 : parameterFromSubclass.getOverriddenDescriptors()) {
+                for (ValueParameterDescriptor p3 : p2.getOverriddenDescriptors()) {
+                    if (uniqueOverridden.contains(p3)) {
+                        uniqueOverridden.remove(p2);
+                    }
+                }
+            }
+
+            boolean superWithDefault = false;
+            for (ValueParameterDescriptor parameterFromSuperclass : uniqueOverridden) {
+                if (parameterFromSuperclass.hasDefaultValue()) {
+                    if (!superWithDefault) {
+                        superWithDefault = true;
+                    }
+                    else {
+                        if (fakeOverride) {
+                            JetClassOrObject classElement = (JetClassOrObject) BindingContextUtils
+                                    .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration());
+                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
+                        }
+                        else {
+                            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, parameterFromSubclass));
+                        }
+                        break;
+                    }
+                }
             }
         }
     }

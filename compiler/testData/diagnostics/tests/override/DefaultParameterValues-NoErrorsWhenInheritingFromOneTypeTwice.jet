@@ -1,0 +1,15 @@
+trait Y {
+    fun foo(a : Int = 1)
+}
+
+trait YSub : Y {
+
+}
+
+class Z2 : Y, YSub {
+    override fun foo(a : Int) {}
+}
+
+class Z2O : Y, YSub {
+    override fun foo(a : Int) {}
+}

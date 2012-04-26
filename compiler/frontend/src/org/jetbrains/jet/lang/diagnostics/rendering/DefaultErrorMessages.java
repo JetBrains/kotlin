@@ -386,6 +386,11 @@ public class DefaultErrorMessages {
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", TO_STRING);
 
         MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES, "More than one overridden descriptor declares a default value for ''{0}''. " +
+                                                             "As the compiler can not make sure these values agree, this is not allowed.", TO_STRING);
+
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE, "More than one overridden descriptor declares a default value for ''{0}''. " +
+                                                             "As the compiler can not make sure these values agree, this is not allowed.", TO_STRING);
 
         MAP.setImmutable();
     }

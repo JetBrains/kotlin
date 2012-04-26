@@ -36,7 +36,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     private final boolean isVar;
     private final int index;
     private final ValueParameterDescriptor original;
-    private final Set<ValueParameterDescriptor> overriddenDescriptors = Sets.newHashSet();
+    private final Set<ValueParameterDescriptor> overriddenDescriptors = Sets.newLinkedHashSet(); // Linked is essential
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
