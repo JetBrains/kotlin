@@ -18,16 +18,15 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.common.CompilerArguments;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Command line arguments for the {@link K2JVMCompiler}
  */
-public class K2JVMCompilerArguments {
-    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
+public class K2JVMCompilerArguments extends CompilerArguments {
+
 
     // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
     private List<String> sourceDirs;
@@ -150,16 +149,5 @@ public class K2JVMCompilerArguments {
 
     public void setTags(boolean tags) {
         this.tags = tags;
-    }
-
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    /**
-     * Sets the compiler plugins to be used when working with the {@link K2JVMCompiler}
-     */
-    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 }

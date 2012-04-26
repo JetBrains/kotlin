@@ -16,12 +16,28 @@
 
 package org.jetbrains.jet.cli.common;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 /**
- * A simple interface for compiler plugins to run after the compiler has finished such as for things like
- * generating documentation or code generation etc
+ * @author Pavel Talanov
  */
-public interface CompilerPlugin {
-    void processFiles(@NotNull CompilerPluginContext context);
+public abstract class CompilerArguments {
+    @NotNull
+    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
+
+
+    @NotNull
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
+    }
+
+    /**
+     * Sets the compiler plugins to be used when working with the {@link org.jetbrains.jet.cli.CLICompiler}
+     */
+    public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
+        this.compilerPlugins = compilerPlugins;
+    }
 }

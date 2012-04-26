@@ -20,15 +20,13 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
-import com.sampullara.cli.Args;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
-import org.jetbrains.jet.codegen.CompilationException;
-import org.jetbrains.jet.cli.jvm.compiler.*;
 import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.utils.PathUtil;
@@ -44,7 +42,7 @@ import static org.jetbrains.jet.cli.common.ExitCode.*;
  * @author alex.tkachman
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class K2JVMCompiler {
+public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEnvironmentConfiguration> {
 
     public static void main(String... args) {
         doMain(new K2JVMCompiler(), args);
@@ -67,17 +65,12 @@ public class K2JVMCompiler {
         }
     }
 
-    public ExitCode exec(PrintStream errStream, String... args) {
-        K2JVMCompilerArguments arguments = createArguments();
-        if (!parseArguments(errStream, arguments, args)) {
-            return INTERNAL_ERROR;
-        }
-        return exec(errStream, arguments);
-    }
 
     /**
      * Executes the compiler on the parsed arguments
      */
+    @NotNull
+    @Override
     public ExitCode exec(final PrintStream errStream, K2JVMCompilerArguments arguments) {
         if (arguments.help) {
             usage(errStream);
@@ -91,7 +84,9 @@ public class K2JVMCompiler {
 
         try {
             if (arguments.version) {
-                errStream.println(messageRenderer.render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION, CompilerMessageLocation.NO_LOCATION));
+                errStream.println(messageRenderer
+                                          .render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
+                                                  CompilerMessageLocation.NO_LOCATION));
             }
 
             CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
@@ -127,7 +122,8 @@ public class K2JVMCompiler {
             Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 
             JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
-            CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
+            CompileEnvironmentConfiguration configuration =
+                    new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
 
             messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                     CompilerMessageLocation.NO_LOCATION);
@@ -136,7 +132,8 @@ public class K2JVMCompiler {
 
                 boolean noErrors;
                 if (arguments.module != null) {
-                    List<Module> modules = CompileEnvironmentUtil.loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
+                    List<Module> modules = CompileEnvironmentUtil
+                            .loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
                     File directory = new File(arguments.module).getParentFile();
                     noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                           directory, arguments.jar, arguments.outputDir,
@@ -146,11 +143,14 @@ public class K2JVMCompiler {
                     // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                     if (arguments.getSourceDirs() != null) {
                         noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                                                                                               arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                                                                                               arguments.getSourceDirs(), arguments.jar,
+                                                                                               arguments.outputDir,
+                                                                                               arguments.includeRuntime);
                     }
                     else {
                         noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                     arguments.src, arguments.jar, arguments.outputDir, arguments.includeRuntime);
+                                                                                     arguments.src, arguments.jar, arguments.outputDir,
+                                                                                     arguments.includeRuntime);
                     }
                 }
                 return noErrors ? OK : COMPILATION_ERROR;
@@ -161,7 +161,8 @@ public class K2JVMCompiler {
                 return INTERNAL_ERROR;
             }
             catch (Throwable t) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t), CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
+                                        CompilerMessageLocation.NO_LOCATION);
                 return INTERNAL_ERROR;
             }
             finally {
@@ -170,12 +171,12 @@ public class K2JVMCompiler {
             }
         }
         finally {
-             errStream.print(messageRenderer.renderConclusion());
+            errStream.print(messageRenderer.renderConclusion());
         }
     }
 
     @NotNull
-    private CompilerSpecialMode parseCompilerSpecialMode(@NotNull K2JVMCompilerArguments arguments) {
+    private static CompilerSpecialMode parseCompilerSpecialMode(@NotNull K2JVMCompilerArguments arguments) {
         if (arguments.mode == null) {
             return CompilerSpecialMode.REGULAR;
         }
@@ -190,58 +191,21 @@ public class K2JVMCompiler {
         throw new IllegalArgumentException("unknown compiler mode: " + arguments.mode);
     }
 
-    /**
-     * Returns true if the arguments can be parsed correctly
-     */
-    protected boolean parseArguments(PrintStream errStream, K2JVMCompilerArguments arguments, String[] args) {
-        try {
-            Args.parse(arguments, args);
-            return true;
-        }
-        catch (IllegalArgumentException e) {
-            usage(errStream);
-        }
-        catch (Throwable t) {
-            // Always use tags
-            errStream.println(MessageRenderer.TAGS.renderException(t));
-        }
-        return false;
-    }
-
-    protected void usage(PrintStream target) {
-        // We should say something like
-        //   Args.usage(target, K2JVMCompilerArguments.class);
-        // but currently cli-parser we are using does not support that
-        // a corresponding patch has been sent to the authors
-        // For now, we are using this:
-
-        PrintStream oldErr = System.err;
-        System.setErr(target);
-        try {
-            // TODO: use proper argv0
-            Args.usage(new K2JVMCompilerArguments());
-        } finally {
-            System.setErr(oldErr);
-        }
-    }
 
     /**
      * Allow derived classes to add additional command line arguments
      */
+    @NotNull
+    @Override
     protected K2JVMCompilerArguments createArguments() {
         return new K2JVMCompilerArguments();
     }
 
-    /**
-     * Strategy method to configure the environment, allowing compiler
-     * based tools to customise their own plugins
-     */
-    protected void configureEnvironment(CompileEnvironmentConfiguration configuration, K2JVMCompilerArguments arguments) {
-        // install any compiler plugins
-        List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
-        if (plugins != null) {
-            configuration.getCompilerPlugins().addAll(plugins);
-        }
+
+    @Override
+    protected void configureEnvironment(@NotNull CompileEnvironmentConfiguration configuration,
+            @NotNull K2JVMCompilerArguments arguments) {
+        super.configureEnvironment(configuration, arguments);
 
         if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.common;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -27,8 +28,12 @@ import java.util.List;
  * the {@link Project}, the {@link BindingContext} and the underlying {@link JetFile} files.
  */
 public class CompilerPluginContext {
+    @NotNull
     private final Project project;
+    //TODO: should we in fact store AnalyzeExhaust here?
+    @NotNull
     private final BindingContext context;
+    @NotNull
     private final List<JetFile> files;
 
     public CompilerPluginContext(Project project, BindingContext context, List<JetFile> files) {
@@ -37,14 +42,17 @@ public class CompilerPluginContext {
         this.files = files;
     }
 
+    @NotNull
     public BindingContext getContext() {
         return context;
     }
 
+    @NotNull
     public List<JetFile> getFiles() {
         return files;
     }
 
+    @NotNull
     public Project getProject() {
         return project;
     }
