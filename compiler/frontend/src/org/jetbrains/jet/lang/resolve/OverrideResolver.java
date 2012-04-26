@@ -90,11 +90,9 @@ public class OverrideResolver {
         List<MutableClassDescriptor> allClasses = Lists.newArrayList(context.getClasses().values());
         allClasses.addAll(context.getObjects().values());
         for (MutableClassDescriptor classDescriptor : allClasses) {
-            Collection<CallableMemberDescriptor> members = classDescriptor.getCallableMembers();
+            Collection<CallableMemberDescriptor> members = classDescriptor.getAllCallableMembers();
             for (CallableMemberDescriptor member : members) {
-                //if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                    checkOverridesForParameters(member);
-                //}
+                checkOverridesForParameters(member);
             }
         }
     }
@@ -136,7 +134,7 @@ public class OverrideResolver {
 
         MultiMap<String, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
 
-        MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getCallableMembers());
+        MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
 
         Set<String> functionNames = new LinkedHashSet<String>();
         functionNames.addAll(functionsFromSupertypesByName.keySet());
@@ -261,10 +259,8 @@ public class OverrideResolver {
         if (topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
-        for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
-            if (member.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                checkOverrideForMember(member, invisibleOverriddenDescriptors);
-            }
+        for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
+            checkOverrideForMember(member, invisibleOverriddenDescriptors);
         }
 
         // Check if everything that must be overridden, actually is
