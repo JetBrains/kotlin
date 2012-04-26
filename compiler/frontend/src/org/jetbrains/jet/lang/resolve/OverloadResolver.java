@@ -163,10 +163,8 @@ public class OverloadResolver {
     ) {
         MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
-        for (CallableMemberDescriptor function : classDescriptor.getCallableMembers()) {
-            if (function.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                functionsByName.putValue(function.getName(), function);
-            }
+        for (CallableMemberDescriptor function : classDescriptor.getDeclaredCallableMembers()) {
+            functionsByName.putValue(function.getName(), function);
         }
         
         for (ConstructorDescriptor nestedClassConstructor : nestedClassConstructors) {

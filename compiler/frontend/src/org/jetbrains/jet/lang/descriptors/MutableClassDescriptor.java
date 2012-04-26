@@ -33,7 +33,8 @@ import java.util.Set;
  * @author abreslav
  */
 public class MutableClassDescriptor extends MutableClassDescriptorLite {
-    private final Set<CallableMemberDescriptor> callableMembers = Sets.newHashSet();
+    private final Set<CallableMemberDescriptor> declaredCallableMembers = Sets.newHashSet();
+    private final Set<CallableMemberDescriptor> allCallableMembers = Sets.newHashSet(); // includes fake overrides
     private final Set<PropertyDescriptor> properties = Sets.newHashSet();
     private final Set<SimpleFunctionDescriptor> functions = Sets.newHashSet();
 
@@ -104,7 +105,10 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
         super.addPropertyDescriptor(propertyDescriptor);
         properties.add(propertyDescriptor);
-        callableMembers.add(propertyDescriptor);
+        if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            declaredCallableMembers.add(propertyDescriptor);
+        }
+        allCallableMembers.add(propertyDescriptor);
         scopeForMemberResolution.addPropertyDescriptor(propertyDescriptor);
     }
 
@@ -112,7 +116,10 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
         super.addFunctionDescriptor(functionDescriptor);
         functions.add(functionDescriptor);
-        callableMembers.add(functionDescriptor);
+        if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            declaredCallableMembers.add(functionDescriptor);
+        }
+        allCallableMembers.add(functionDescriptor);
         scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
 
@@ -127,8 +134,13 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     @NotNull
-    public Set<CallableMemberDescriptor> getCallableMembers() {
-        return callableMembers;
+    public Set<CallableMemberDescriptor> getDeclaredCallableMembers() {
+        return declaredCallableMembers;
+    }
+
+    @NotNull
+    public Set<CallableMemberDescriptor> getAllCallableMembers() {
+        return allCallableMembers;
     }
 
     @Override

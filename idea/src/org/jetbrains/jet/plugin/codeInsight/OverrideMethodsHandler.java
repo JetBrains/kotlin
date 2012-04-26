@@ -30,10 +30,8 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
     @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
         final Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
-        for (CallableMemberDescriptor member : descriptor.getCallableMembers()) {
-            if (member.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                superMethods.removeAll(member.getOverriddenDescriptors());
-            }
+        for (CallableMemberDescriptor member : descriptor.getDeclaredCallableMembers()) {
+            superMethods.removeAll(member.getOverriddenDescriptors());
         }
         Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor superMethod : superMethods) {
