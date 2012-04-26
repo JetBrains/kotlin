@@ -31,7 +31,7 @@ public abstract class CompileEnvironmentConfig {
     @NotNull
     private final MessageCollector messageCollector;
     @NotNull
-    private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
+    private final List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
