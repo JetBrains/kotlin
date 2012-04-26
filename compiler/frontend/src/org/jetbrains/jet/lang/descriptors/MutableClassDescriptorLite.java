@@ -127,7 +127,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-    public WritableScope getScopeForMemberLookupAsWritableScope() {
+    private WritableScope getScopeForMemberLookupAsWritableScope() {
         // hack
         return (WritableScope) scopeForMemberLookup;
     }
