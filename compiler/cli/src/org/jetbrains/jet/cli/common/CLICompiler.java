@@ -19,11 +19,13 @@ package org.jetbrains.jet.cli.common;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.PrintStream;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.ExitCode.INTERNAL_ERROR;
+import static org.jetbrains.jet.cli.common.ExitCode.OK;
 
 /**
  * @author Pavel Talanov
@@ -77,5 +79,22 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
     protected abstract CLArgs createArguments();
 
     @NotNull
-    public abstract ExitCode exec(final PrintStream errStream, CLArgs arguments);
+    public abstract ExitCode exec(PrintStream errStream, CLArgs arguments);
+
+    /**
+     * Useful main for derived command line tools
+     */
+    public static void doMain(@NotNull CLICompiler compiler, @NotNull String[] args) {
+        try {
+            ExitCode rc = compiler.exec(System.out, args);
+            if (rc != OK) {
+                System.err.println("exec() finished with " + rc + " return code");
+                System.exit(rc.getCode());
+            }
+        }
+        catch (CompileEnvironmentException e) {
+            System.err.println(e.getMessage());
+            System.exit(INTERNAL_ERROR.getCode());
+        }
+    }
 }

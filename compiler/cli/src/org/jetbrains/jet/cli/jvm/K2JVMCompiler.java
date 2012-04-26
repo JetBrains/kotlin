@@ -25,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.jvm.compiler.*;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
@@ -47,24 +50,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
     public static void main(String... args) {
         doMain(new K2JVMCompiler(), args);
     }
-
-    /**
-     * Useful main for derived command line tools
-     */
-    public static void doMain(K2JVMCompiler compiler, String[] args) {
-        try {
-            ExitCode rc = compiler.exec(System.out, args);
-            if (rc != OK) {
-                System.err.println("exec() finished with " + rc + " return code");
-                System.exit(rc.getCode());
-            }
-        }
-        catch (CompileEnvironmentException e) {
-            System.err.println(e.getMessage());
-            System.exit(INTERNAL_ERROR.getCode());
-        }
-    }
-
 
     /**
      * Executes the compiler on the parsed arguments

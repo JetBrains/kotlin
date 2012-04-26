@@ -4,14 +4,16 @@ import java.io.File
 import java.io.PrintStream
 import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler
+import org.jetbrains.jet.cli.common.CLICompiler
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration
 import org.jetbrains.kotlin.doc.highlighter.HtmlCompilerPlugin
+import org.jetbrains.jet.cli.common.ExitCode
 
 /**
 * Main for running the KDocCompiler
 */
 fun main(args: Array<String?>): Unit {
-    K2JVMCompiler.doMain(KDocCompiler(), args);
+    CLICompiler.doMain(KDocCompiler(), args);
 }
 
 /**
@@ -20,7 +22,7 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : K2JVMCompiler() {
 
-    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration, arguments : K2JVMCompilerArguments) {
+    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration?, arguments : K2JVMCompilerArguments?) {
         super.configureEnvironment(configuration, arguments)
         val coreEnvironment = configuration?.getEnvironment()
         if (coreEnvironment != null) {
