@@ -134,10 +134,10 @@ public class OverrideResolver {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                             if (fakeOverride instanceof PropertyDescriptor) {
-                                classDescriptor.getScopeForMemberLookupAsWritableScope().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
+                                classDescriptor.addPropertyDescriptor((PropertyDescriptor) fakeOverride);
                             }
                             else if (fakeOverride instanceof SimpleFunctionDescriptor) {
-                                classDescriptor.getScopeForMemberLookupAsWritableScope().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
+                                classDescriptor.addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
                             }
                             else {
                                 throw new IllegalStateException(fakeOverride.getClass().getName());
@@ -245,7 +245,9 @@ public class OverrideResolver {
 
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getCallableMembers()) {
-            checkOverrideForMember(member, invisibleOverriddenDescriptors);
+            if (member.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                checkOverrideForMember(member, invisibleOverriddenDescriptors);
+            }
         }
 
         // Check if everything that must be overridden, actually is
