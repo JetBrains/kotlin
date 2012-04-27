@@ -1,6 +1,6 @@
 namespace test
 
-open class test.JavaBeanVarOfGenericType</*0*/ P : jet.Any?> : jet.Any {
+open class test.JavaBeanVarOfGenericType</*0*/ P : jet.Any?> : java.lang.Object {
     final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.JavaBeanVarOfGenericType<P>
     open fun getCharacters(): java.util.ArrayList<P>?
     open fun setCharacters(/*0*/ p0: java.util.ArrayList<P>?): jet.Tuple0

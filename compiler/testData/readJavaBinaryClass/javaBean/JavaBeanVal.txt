@@ -1,6 +1,6 @@
 namespace test
 
-open class test.JavaBeanVal : jet.Any {
+open class test.JavaBeanVal : java.lang.Object {
     final /*constructor*/ fun <init>(): test.JavaBeanVal
     open fun getColor(): jet.String?
 }

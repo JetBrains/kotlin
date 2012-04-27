@@ -1,3 +1,3 @@
 package test
 
-class Simple()
+class Simple() : java.lang.Object()

@@ -357,6 +357,15 @@ public class JavaDescriptorResolver {
 
 
     @Nullable
+    private ClassDescriptor resolveJavaLangObject() {
+        ClassDescriptor clazz = resolveClass(JdkNames.JL_OBJECT.getFqName(), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        if (clazz == null) {
+            // TODO: warning
+        }
+        return clazz;
+    }
+
+    @Nullable
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName, @NotNull DescriptorSearchRule searchRule) {
         List<Runnable> tasks = Lists.newArrayList();
         ClassDescriptor clazz = resolveClass(qualifiedName, searchRule, tasks);
@@ -466,7 +475,7 @@ public class JavaDescriptorResolver {
                 "class " + psiClass.getQualifiedName());
 
         // TODO: ugly hack: tests crash if initializeTypeParameters called with class containing proper supertypes
-        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData.classDescriptor, classData.getTypeParameters()));
+        supertypes.addAll(getSupertypes(new PsiClassWrapper(psiClass), classData, classData.getTypeParameters()));
 
         PsiMethod[] psiConstructors = psiClass.getConstructors();
 
@@ -599,7 +608,7 @@ public class JavaDescriptorResolver {
 
         classDescriptorCache.put(fqName, classData);
 
-        classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData.classDescriptor, new ArrayList<TypeParameterDescriptor>(0)));
+        classData.classDescriptor.setSupertypes(getSupertypes(new PsiClassWrapper(classObjectPsiClass), classData, new ArrayList<TypeParameterDescriptor>(0)));
         classData.classDescriptor.setName(JetPsiUtil.NO_NAME_PROVIDED); // TODO
         classData.classDescriptor.setModality(Modality.FINAL);
         classData.classDescriptor.setVisibility(containing.getVisibility());
@@ -862,7 +871,9 @@ public class JavaDescriptorResolver {
         }
     }
 
-    private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ClassDescriptor classDescriptor, List<TypeParameterDescriptor> typeParameters) {
+    private Collection<JetType> getSupertypes(PsiClassWrapper psiClass, ResolverBinaryClassData classData, List<TypeParameterDescriptor> typeParameters) {
+        ClassDescriptor classDescriptor = classData.classDescriptor;
+
         final List<JetType> result = new ArrayList<JetType>();
 
         String context = "class " + psiClass.getQualifiedName();
@@ -908,7 +919,21 @@ public class JavaDescriptorResolver {
         }
         
         if (result.isEmpty()) {
-            result.add(JetStandardClasses.getAnyType());
+            if (classData.kotlin
+                    || psiClass.getQualifiedName().equals(JdkNames.JL_OBJECT.getFqName().getFqName())
+                    // TODO: annotations
+                    || classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+                result.add(JetStandardClasses.getAnyType());
+            }
+            else {
+                ClassDescriptor object = resolveJavaLangObject();
+                if (object != null) {
+                    result.add(object.getDefaultType());
+                }
+                else {
+                    result.add(JetStandardClasses.getAnyType());
+                }
+            }
         }
         return result;
     }
