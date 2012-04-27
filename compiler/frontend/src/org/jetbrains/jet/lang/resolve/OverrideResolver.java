@@ -271,10 +271,10 @@ public class OverrideResolver {
 
         PsiElement nameIdentifier = null;
         if (klass instanceof JetClass) {
-            nameIdentifier = ((JetClass) klass).getNameIdentifier();
+            nameIdentifier = klass.getNameIdentifier();
         }
         else if (klass instanceof JetObjectDeclaration) {
-            nameIdentifier = ((JetObjectDeclaration) klass).getNameIdentifier();
+            nameIdentifier = klass.getNameIdentifier();
             if (nameIdentifier == null) {
                 nameIdentifier = ((JetObjectDeclaration) klass).getObjectKeyword();
             }
