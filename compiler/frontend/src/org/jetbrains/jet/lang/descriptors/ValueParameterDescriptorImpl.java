@@ -115,11 +115,6 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
         }
     }
 
-    @Override
-    public boolean isRef() {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     @Nullable
     public JetType getVarargElementType() {
         return varargElementType;

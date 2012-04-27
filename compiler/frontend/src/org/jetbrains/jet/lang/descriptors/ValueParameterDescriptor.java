@@ -49,7 +49,6 @@ public interface ValueParameterDescriptor extends VariableDescriptor, Annotated 
      */
     boolean declaresDefaultValue();
 
-    boolean isRef();
     @Nullable JetType getVarargElementType();
 
     @Override
