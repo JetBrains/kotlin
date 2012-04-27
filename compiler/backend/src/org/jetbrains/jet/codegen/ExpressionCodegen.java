@@ -888,7 +888,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         return answer;
     }
 
-    private void markLineNumber(JetElement statement) {
+    private void markLineNumber(@NotNull JetElement statement) {
         final Document document = statement.getContainingFile().getViewProvider().getDocument();
         if (document != null) {
             int lineNumber = document.getLineNumber(statement.getTextRange().getStartOffset());  // 0-based
