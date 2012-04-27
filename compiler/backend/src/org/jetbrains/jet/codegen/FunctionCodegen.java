@@ -446,22 +446,22 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean differentMethods(Method method, Method overriden) {
-        if(!method.getReturnType().equals(overriden.getReturnType()))
+    private static boolean differentMethods(Method method, Method overridden) {
+        if(!method.getReturnType().equals(overridden.getReturnType()))
             return true;
         Type[] methodArgumentTypes = method.getArgumentTypes();
-        Type[] overridenArgumentTypes = overriden.getArgumentTypes();
-        if(methodArgumentTypes.length != overridenArgumentTypes.length)
+        Type[] overriddenArgumentTypes = overridden.getArgumentTypes();
+        if(methodArgumentTypes.length != overriddenArgumentTypes.length)
             return true;
         for(int i = 0; i != methodArgumentTypes.length; ++i)
-            if(!methodArgumentTypes[i].equals(overridenArgumentTypes[i]))
+            if(!methodArgumentTypes[i].equals(overriddenArgumentTypes[i]))
                 return true;
         return false;
     }
     
     private static void checkOverride(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
         Method method = state.getInjector().getJetTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
-        Method overriden = state.getInjector().getJetTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
+        Method overridden = state.getInjector().getJetTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
 
         if(overriddenFunction.getModality() == Modality.ABSTRACT) {
             Set<? extends FunctionDescriptor> overriddenFunctions = overriddenFunction.getOverriddenDescriptors();
@@ -470,17 +470,17 @@ public class FunctionCodegen {
             }
         }
 
-        if(differentMethods(method, overriden)) {
+        if(differentMethods(method, overridden)) {
             int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
 
-            final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
+            final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 StubCodegen.generateStubCode(mv);
             }
             else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
-                Type[] argTypes = overriden.getArgumentTypes();
+                Type[] argTypes = overridden.getArgumentTypes();
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
                 for (int i = 0, reg = 1; i < argTypes.length; i++) {
@@ -495,11 +495,11 @@ public class FunctionCodegen {
                 }
 
                 iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
-                if(JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
+                if(JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overridden.getReturnType()))
                     StackValue.valueOf(iv, jvmSignature.getReturnType());
                 if(jvmSignature.getReturnType() == Type.VOID_TYPE)
                     iv.aconst(null);
-                iv.areturn(overriden.getReturnType());
+                iv.areturn(overridden.getReturnType());
                 endVisit(mv, "bridge method", BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
             }
         }

@@ -1024,18 +1024,18 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 continue;
             }
 
-            Collection<CallableMemberDescriptor> overridenDeclarations = OverridingUtil.getOverridenDeclarations(callableMemberDescriptor);
-            for (CallableMemberDescriptor overridenDeclaration : overridenDeclarations) {
-                if (overridenDeclaration.getModality() != Modality.ABSTRACT) {
-                    if (!CodegenUtil.isInterface(overridenDeclaration.getContainingDeclaration())) {
+            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
+            for (CallableMemberDescriptor overriddenDeclaration : overriddenDeclarations) {
+                if (overriddenDeclaration.getModality() != Modality.ABSTRACT) {
+                    if (!CodegenUtil.isInterface(overriddenDeclaration.getContainingDeclaration())) {
                         continue root;
                     }
                 }
             }
             
-            for (CallableMemberDescriptor overridenDeclaration : overridenDeclarations) {
-                if (overridenDeclaration.getModality() != Modality.ABSTRACT) {
-                    r.add(Pair.create(callableMemberDescriptor, overridenDeclaration));
+            for (CallableMemberDescriptor overriddenDeclaration : overriddenDeclarations) {
+                if (overriddenDeclaration.getModality() != Modality.ABSTRACT) {
+                    r.add(Pair.create(callableMemberDescriptor, overriddenDeclaration));
                 }
             }
         }
