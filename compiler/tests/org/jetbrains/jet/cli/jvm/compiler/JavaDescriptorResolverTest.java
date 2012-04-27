@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
@@ -28,6 +29,7 @@ import org.junit.Assert;
 
 import javax.tools.*;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,14 +44,29 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
     // This test can be implemented in ReadJavaBinaryClass test, but it is simpler here
     public void testInner() throws Exception {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        compileFileResolveDescriptor("inner.java", new FqName("A"));
+    }
 
+    private void compileFileResolveDescriptor(@NotNull String fileRelativePath, @NotNull FqName fqName) throws IOException {
+        compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
+
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        jetCoreEnvironment.addToClasspath(tmpdir);
+
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true), jetCoreEnvironment.getProject());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        Assert.assertNotNull(classDescriptor);
+    }
+
+    private static void compileJavaFile(@NotNull File file, @NotNull File outputDirectory) throws IOException {
+        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
         try {
-            File file = new File("compiler/testData/javaDescriptorResolver/inner.java");
             Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
             List<String> options = Arrays.asList(
-                    "-d", tmpdir.getPath()
+                    "-d", outputDirectory.getPath()
             );
             JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
 
@@ -57,16 +74,5 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         } finally {
             fileManager.close();
         }
-
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
-
-        jetCoreEnvironment.addToClasspath(tmpdir);
-
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true), jetCoreEnvironment.getProject());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new FqName("A"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        Assert.assertNotNull(classDescriptor);
     }
-
 }
