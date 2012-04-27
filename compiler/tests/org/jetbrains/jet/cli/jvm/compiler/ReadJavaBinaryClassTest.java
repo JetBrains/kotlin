@@ -75,6 +75,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         NamespaceComparator.compareNamespaces(nsa, nsb, false, txtFile);
     }
 
+    @NotNull
     private NamespaceDescriptor compileKotlin() throws Exception {
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
