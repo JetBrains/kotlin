@@ -10,6 +10,6 @@ class Z2 : Y, YSub {
     override fun foo(a : Int) {}
 }
 
-class Z2O : Y, YSub {
+object Z2O : Y, YSub {
     override fun foo(a : Int) {}
 }
