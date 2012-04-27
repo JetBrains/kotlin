@@ -307,7 +307,7 @@ public class OverrideResolver {
         if (!descriptor.getKind().isReal()) {
             Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
             if (overriddenDeclarations.size() == 0) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("A 'fake override' must override something");
             }
             else if (overriddenDeclarations.size() == 1) {
                 CallableMemberDescriptor single = overriddenDeclarations.iterator().next();
