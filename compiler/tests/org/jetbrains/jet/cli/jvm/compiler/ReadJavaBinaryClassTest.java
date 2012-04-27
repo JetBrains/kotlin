@@ -44,6 +44,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +60,11 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     private final File javaFile;
     private final File txtFile;
 
-    public ReadJavaBinaryClassTest(File ktFile) {
-        this.ktFile = ktFile;
-        Assert.assertTrue(ktFile.getName().endsWith(".kt"));
-        this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".java"));
-        this.txtFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".txt"));
+    public ReadJavaBinaryClassTest(@NotNull File javaFile) {
+        this.javaFile = javaFile;
+        Assert.assertTrue(javaFile.getName().endsWith(".java"));
+        this.ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
+        this.txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
         setName(javaFile.getName());
     }
 
@@ -121,7 +122,14 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     }
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readJavaBinaryClass", true, new JetTestCaseBuilder.NamedTestFactory() {
+        class JavaFilter implements FilenameFilter {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".java");
+            }
+        }
+
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readJavaBinaryClass", true, new JavaFilter(), new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
