@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * @author svtk
@@ -97,6 +98,24 @@ public class Renderers {
                     return stringBuilder.toString();
                 }
             };
+
+    public static <T> Renderer<Collection<? extends T>> commaSeparated(final Renderer<T> itemRenderer) {
+        return new Renderer<Collection<? extends T>>() {
+            @NotNull
+            @Override
+            public String render(@NotNull Collection<? extends T> object) {
+                StringBuilder result = new StringBuilder();
+                for (Iterator<? extends T> iterator = object.iterator(); iterator.hasNext(); ) {
+                    T next = iterator.next();
+                    result.append(itemRenderer.render(next));
+                    if (iterator.hasNext()) {
+                        result.append(", ");
+                    }
+                }
+                return result.toString();
+            }
+        };
+    }
 
     private Renderers() {
     }

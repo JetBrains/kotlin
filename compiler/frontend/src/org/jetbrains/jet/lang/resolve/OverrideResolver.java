@@ -437,6 +437,9 @@ public class OverrideResolver {
                     fakeOverride ? null :
                             (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
 
+            JetClassOrObject classElement = fakeOverride ? (JetClassOrObject) BindingContextUtils
+                    .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration()) : null;
+
             if (parameterFromSubclass.declaresDefaultValue() && !fakeOverride) {
                 trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
             }
@@ -449,14 +452,21 @@ public class OverrideResolver {
                     }
                     else {
                         if (fakeOverride) {
-                            JetClassOrObject classElement = (JetClassOrObject) BindingContextUtils
-                                    .descriptorToDeclaration(trace.getBindingContext(), declared.getContainingDeclaration());
                             trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, parameterFromSubclass));
                         }
                         else {
                             trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, parameterFromSubclass));
                         }
                         break;
+                    }
+                }
+
+                if (!parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
+                    if (fakeOverride) {
+                        trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
+                    }
+                    else {
+                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(), parameterFromSuperclass));
                     }
                 }
             }

@@ -4,12 +4,10 @@ open class A {
 
 class C : A() {
     override fun foo(a : Int = <!DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE!>1<!>) {
-        super<A>.foo(a)
     }
 }
 
 class D : A() {
-    override fun foo(b : Int = <!DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE!>1<!>) {
-        super<A>.foo(b)
+    override fun foo(a : Int = <!DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE!>1<!>) {
     }
 }
