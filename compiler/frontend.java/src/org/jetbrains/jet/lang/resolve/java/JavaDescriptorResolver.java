@@ -539,28 +539,7 @@ public class JavaDescriptorResolver {
         }
         else {
             for (PsiMethod psiConstructor : psiConstructors) {
-                PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
-
-                if (constructor.getJetConstructor().hidden()) {
-                    continue;
-                }
-
-                ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
-                        classData.classDescriptor,
-                        Collections.<AnnotationDescriptor>emptyList(), // TODO
-                        false);
-                String context = "constructor of class " + psiClass.getQualifiedName();
-                ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
-                        constructor.getParameters(),
-                        TypeVariableResolvers.classTypeVariableResolver(classData.classDescriptor, context));
-                if (valueParameterDescriptors.receiverType != null) {
-                    throw new IllegalStateException();
-                }
-                constructorDescriptor.initialize(typeParameters, valueParameterDescriptors.descriptors,
-                        resolveVisibilityFromPsiModifiers(psiConstructor), isStatic);
-                constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
-                classData.classDescriptor.addConstructor(constructorDescriptor, null);
-                trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
+                resolveConstructor(psiClass, classData, isStatic, psiConstructor);
             }
         }
 
@@ -572,6 +551,32 @@ public class JavaDescriptorResolver {
         trace.record(BindingContext.CLASS, psiClass, classData.classDescriptor);
 
         return classData;
+    }
+
+    private void resolveConstructor(PsiClass psiClass, ResolverBinaryClassData classData, boolean aStatic, PsiMethod psiConstructor) {
+        PsiMethodWrapper constructor = new PsiMethodWrapper(psiConstructor);
+
+        if (constructor.getJetConstructor().hidden()) {
+            return;
+        }
+
+        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+                classData.classDescriptor,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO
+                false);
+        String context = "constructor of class " + psiClass.getQualifiedName();
+        ValueParameterDescriptors valueParameterDescriptors = resolveParameterDescriptors(constructorDescriptor,
+                constructor.getParameters(),
+                TypeVariableResolvers.classTypeVariableResolver(classData.classDescriptor, context));
+        if (valueParameterDescriptors.receiverType != null) {
+            throw new IllegalStateException();
+        }
+        constructorDescriptor.initialize(classData.classDescriptor.getTypeConstructor().getParameters(),
+                valueParameterDescriptors.descriptors,
+                resolveVisibilityFromPsiModifiers(psiConstructor), aStatic);
+        constructorDescriptor.setReturnType(classData.classDescriptor.getDefaultType());
+        classData.classDescriptor.addConstructor(constructorDescriptor, null);
+        trace.record(BindingContext.CONSTRUCTOR, psiConstructor, constructorDescriptor);
     }
 
     static void checkPsiClassIsNotJet(PsiClass psiClass) {
