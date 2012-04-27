@@ -956,7 +956,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    private boolean isSenselessComparisonWithNull(JetType firstType, JetExpression secondExpression) {
+    private boolean isSenselessComparisonWithNull(@Nullable JetType firstType, @NotNull JetExpression secondExpression) {
+        if (firstType == null) return false;
         return !firstType.isNullable() && secondExpression instanceof JetConstantExpression && secondExpression.getNode().getElementType() == JetNodeTypes.NULL;
     }
 
