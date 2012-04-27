@@ -317,7 +317,8 @@ public class OverrideResolver {
             }
             else {
                 List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
-                for (CallableMemberDescriptor overridden : overriddenDeclarations) {
+                Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+                for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
                     if (overridden.getModality() != Modality.ABSTRACT) {
                         nonAbstractManyImpl.add(overridden);
                     }
