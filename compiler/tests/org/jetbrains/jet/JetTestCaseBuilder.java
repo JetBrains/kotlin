@@ -53,37 +53,37 @@ public abstract class JetTestCaseBuilder {
 
     @NotNull
     public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, @NotNull NamedTestFactory factory) {
-        return suiteForDirectory(baseDataDir, dataPath, recursive, emptyFilter, factory);
+        return suiteForDirectory(baseDataDir, dataPath, recursive, kotlinFilter, factory);
     }    
     
     @NotNull
-    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive, final FilenameFilter filter, @NotNull NamedTestFactory factory) {
+    public static TestSuite suiteForDirectory(String baseDataDir, @NotNull final String dataPath, boolean recursive,
+            @NotNull final FilenameFilter filter, @NotNull NamedTestFactory factory) {
         TestSuite suite = new TestSuite(dataPath);
         appendTestsInDirectory(baseDataDir, dataPath, recursive, filter, factory, suite);
         return suite;
     }
 
-    public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive, final FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
-        final String extensionJet = ".jet";
-        final String extensionKt = ".kt";
-        final FilenameFilter extensionFilter = new FilenameFilter() {
+    public static FilenameFilter kotlinFilter = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".kt") || name.endsWith("jet");
+        }
+    };
+
+    @NotNull
+    public static FilenameFilter and(@NotNull final FilenameFilter a, @NotNull final FilenameFilter b) {
+        return new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.endsWith(extensionJet) || name.endsWith(extensionKt);
+                return a.accept(dir, name) && b.accept(dir, name);
             }
         };
-        FilenameFilter resultFilter;
-        if (filter != emptyFilter) {
-            resultFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File file, String s) {
-                    return extensionFilter.accept(file, s) && filter.accept(file, s);
-                }
-            };
-        }
-        else {
-            resultFilter = extensionFilter;
-        }
+    }
+
+    public static void appendTestsInDirectory(String baseDataDir, String dataPath, boolean recursive, @NotNull FilenameFilter filter, NamedTestFactory factory, TestSuite suite) {
+        final String extensionJet = ".jet";
+        final String extensionKt = ".kt";
         File dir = new File(baseDataDir + dataPath);
         FileFilter dirFilter = new FileFilter() {
             @Override
@@ -100,13 +100,15 @@ public abstract class JetTestCaseBuilder {
                 suite.addTest(suiteForDirectory(baseDataDir, dataPath + "/" + subdir.getName(), recursive, filter, factory));
             }
         }
-        List<File> files = Arrays.asList(dir.listFiles(resultFilter));
+        List<File> files = Arrays.asList(dir.listFiles(filter));
         Collections.sort(files);
         for (File file : files) {
             String fileName = file.getName();
-            assert fileName != null;
-            String extension = fileName.endsWith(extensionJet) ? extensionJet : extensionKt;
-            suite.addTest(factory.createTest(dataPath, fileName.substring(0, fileName.length() - extension.length()), file));
+            String testName =
+                    fileName.endsWith(extensionJet) ? fileName.substring(0, fileName.length() - extensionJet.length()) :
+                    fileName.endsWith(extensionKt) ? fileName.substring(0, fileName.length() - extensionKt.length()) :
+                    fileName;
+            suite.addTest(factory.createTest(dataPath, testName, file));
         }
     }
 }
