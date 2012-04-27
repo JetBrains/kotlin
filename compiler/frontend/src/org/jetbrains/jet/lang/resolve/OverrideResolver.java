@@ -298,21 +298,13 @@ public class OverrideResolver {
     }
 
     public static void collectMissingImplementations(MutableClassDescriptor classDescriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
-        
-        for (DeclarationDescriptor descriptor : classDescriptor.getScopeForMemberLookup().getAllDescriptors()) {
-            if (descriptor instanceof CallableMemberDescriptor) {
-                collectMissingImplementations((CallableMemberDescriptor) descriptor, abstractNoImpl, manyImpl);
-            }
+        for (CallableMemberDescriptor descriptor : classDescriptor.getAllCallableMembers()) {
+            collectMissingImplementations(descriptor, abstractNoImpl, manyImpl);
         }
     }
 
     private static void collectMissingImplementations(CallableMemberDescriptor descriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
-        if (descriptor.getKind().isReal()) {
-            if (descriptor.getModality() == Modality.ABSTRACT) {
-                //abstractNoImpl.add(descriptor);
-            }
-        }
-        else {
+        if (!descriptor.getKind().isReal()) {
             Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverridenDeclarations(descriptor);
             if (overriddenDeclarations.size() == 0) {
                 throw new IllegalStateException();
