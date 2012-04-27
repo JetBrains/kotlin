@@ -33,7 +33,22 @@ public interface ValueParameterDescriptor extends VariableDescriptor, Annotated 
      * @return the parameter index
      */
     int getIndex();
+
+    /**
+     * The font-end relies on this property when resolving function calls
+     *
+     * @return {@code true} iff the parameter has a default value, i.e. declares it or inherits
+     *         by overriding a parameter in an overridden function.
+     */
     boolean hasDefaultValue();
+
+    /**
+     * The back-end should relies on this property when generating function signatures
+     *
+     * @return {@code true} iff the parameter declares a default value, i.e. explicitly specifies it in the function header
+     */
+    boolean declaresDefaultValue();
+
     boolean isRef();
     @Nullable JetType getVarargElementType();
 

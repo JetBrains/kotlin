@@ -83,18 +83,7 @@ public class OverrideResolver {
 
         checkVisibility();
         checkOverrides(invisibleOverriddenDescriptors);
-        checkParameterOverrides();
-    }
-
-    private void checkParameterOverrides() {
-        List<MutableClassDescriptor> allClasses = Lists.newArrayList(context.getClasses().values());
-        allClasses.addAll(context.getObjects().values());
-        for (MutableClassDescriptor classDescriptor : allClasses) {
-            Collection<CallableMemberDescriptor> members = classDescriptor.getAllCallableMembers();
-            for (CallableMemberDescriptor member : members) {
-                checkOverridesForParameters(member);
-            }
-        }
+        checkParameterOverridesForAllClasses();
     }
 
     /**
@@ -416,6 +405,17 @@ public class OverrideResolver {
         }
     }
 
+    private void checkParameterOverridesForAllClasses() {
+        List<MutableClassDescriptor> allClasses = Lists.newArrayList(context.getClasses().values());
+        allClasses.addAll(context.getObjects().values());
+        for (MutableClassDescriptor classDescriptor : allClasses) {
+            Collection<CallableMemberDescriptor> members = classDescriptor.getAllCallableMembers();
+            for (CallableMemberDescriptor member : members) {
+                checkOverridesForParameters(member);
+            }
+        }
+    }
+
     private void checkOverridesForParameters(CallableMemberDescriptor declared) {
         boolean fakeOverride = declared.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
         if (!fakeOverride) {
@@ -437,23 +437,13 @@ public class OverrideResolver {
                     fakeOverride ? null :
                             (JetParameter) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), parameterFromSubclass);
 
-            if (parameterFromSubclass.hasDefaultValue() && !fakeOverride) {
+            if (parameterFromSubclass.declaresDefaultValue() && !fakeOverride) {
                 trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
             }
 
-            // If p1 overrides p2 and p3 and p2 overrides p3, we remove p2 from p1's overridden list
-            Set<ValueParameterDescriptor> uniqueOverridden = Sets.newHashSet(parameterFromSubclass.getOverriddenDescriptors());
-            for (ValueParameterDescriptor p2 : parameterFromSubclass.getOverriddenDescriptors()) {
-                for (ValueParameterDescriptor p3 : p2.getOverriddenDescriptors()) {
-                    if (uniqueOverridden.contains(p3)) {
-                        uniqueOverridden.remove(p2);
-                    }
-                }
-            }
-
             boolean superWithDefault = false;
-            for (ValueParameterDescriptor parameterFromSuperclass : uniqueOverridden) {
-                if (parameterFromSuperclass.hasDefaultValue()) {
+            for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
+                if (parameterFromSuperclass.declaresDefaultValue()) {
                     if (!superWithDefault) {
                         superWithDefault = true;
                     }

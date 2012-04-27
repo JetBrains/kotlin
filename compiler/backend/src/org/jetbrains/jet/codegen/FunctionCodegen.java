@@ -159,7 +159,7 @@ public class FunctionCodegen {
                         JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
                         av.writeName(parameterDescriptor.getName());
-                        av.writeHasDefaultValue(parameterDescriptor.hasDefaultValue());
+                        av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
                         av.writeNullable(parameterDescriptor.getType().isNullable());
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
                             av.writeType(jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
@@ -312,7 +312,7 @@ public class FunctionCodegen {
         boolean needed = false;
         if(functionDescriptor != null) {
             for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-                if(parameterDescriptor.hasDefaultValue()) {
+                if(parameterDescriptor.declaresDefaultValue()) {
                     needed = true;
                     break;
                 }
@@ -398,7 +398,7 @@ public class FunctionCodegen {
 
                     Type t = argumentTypes[extra + index];
                     Label endArg = null;
-                    if (parameterDescriptor.hasDefaultValue()) {
+                    if (parameterDescriptor.declaresDefaultValue()) {
                         iv.load(maskIndex, Type.INT_TYPE);
                         iv.iconst(1 << index);
                         iv.and(Type.INT_TYPE);
@@ -418,7 +418,7 @@ public class FunctionCodegen {
                     iv.load(var, t);
                     var += t.getSize();
 
-                    if (parameterDescriptor.hasDefaultValue()) {
+                    if (parameterDescriptor.declaresDefaultValue()) {
                         iv.mark(endArg);
                     }
                 }
