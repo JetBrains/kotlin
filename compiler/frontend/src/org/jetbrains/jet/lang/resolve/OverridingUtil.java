@@ -244,17 +244,17 @@ public class OverridingUtil {
     }
 
     /**
-     * Get overriden descriptors that are declarations or delegations.
+     * Get overridden descriptors that are declarations or delegations.
      *
      * @see CallableMemberDescriptor.Kind#isReal()
      */
-    public static Collection<CallableMemberDescriptor> getOverridenDeclarations(CallableMemberDescriptor descriptor) {
+    public static Collection<CallableMemberDescriptor> getOverriddenDeclarations(CallableMemberDescriptor descriptor) {
         Map<ClassDescriptor, CallableMemberDescriptor> result = Maps.newHashMap();
-        getOverridenDeclarations(descriptor, result);
+        getOverriddenDeclarations(descriptor, result);
         return result.values();
     }
 
-    private static void getOverridenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
+    private static void getOverriddenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
         if (descriptor.getKind().isReal()) {
             r.put((ClassDescriptor) descriptor.getContainingDeclaration(), descriptor);
         }
@@ -262,8 +262,8 @@ public class OverridingUtil {
             if (descriptor.getOverriddenDescriptors().isEmpty()) {
                 throw new IllegalStateException();
             }
-            for (CallableMemberDescriptor overriden : descriptor.getOverriddenDescriptors()) {
-                getOverridenDeclarations(overriden, r);
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                getOverriddenDeclarations(overridden, r);
             }
         }
     }

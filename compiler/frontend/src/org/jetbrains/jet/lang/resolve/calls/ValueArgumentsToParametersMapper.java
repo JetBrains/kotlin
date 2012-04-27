@@ -265,8 +265,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             dest.add(descriptor);
         }
         else {
-            for (CallableDescriptor overriden : descriptor.getOverriddenDescriptors()) {
-                getAllDescriptorsForValueArgumentsResolving((D) overriden, dest);
+            for (CallableDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                getAllDescriptorsForValueArgumentsResolving((D) overridden, dest);
             }
         }
     }

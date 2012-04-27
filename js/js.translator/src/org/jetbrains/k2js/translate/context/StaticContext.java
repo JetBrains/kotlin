@@ -327,7 +327,7 @@ public final class StaticContext {
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(enclosingScope.jsScope());
                     NamingScope newScope = enclosingScope.innerScope(correspondingFunction.getScope());
-                    assert (!scopeToFunction.containsKey(newScope)) : "Scope to function value overriden for " + descriptor;
+                    assert (!scopeToFunction.containsKey(newScope)) : "Scope to function value overridden for " + descriptor;
                     scopeToFunction.put(newScope, correspondingFunction);
                     return newScope;
                 }

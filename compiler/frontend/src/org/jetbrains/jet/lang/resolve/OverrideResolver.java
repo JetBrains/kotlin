@@ -305,7 +305,7 @@ public class OverrideResolver {
 
     private static void collectMissingImplementations(CallableMemberDescriptor descriptor, Set<CallableMemberDescriptor> abstractNoImpl, Set<CallableMemberDescriptor> manyImpl) {
         if (!descriptor.getKind().isReal()) {
-            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverridenDeclarations(descriptor);
+            Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
             if (overriddenDeclarations.size() == 0) {
                 throw new IllegalStateException();
             }

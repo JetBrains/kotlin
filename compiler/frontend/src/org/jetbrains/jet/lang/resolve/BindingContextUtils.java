@@ -178,7 +178,7 @@ public class BindingContextUtils {
                 // TODO evil code
                 throw new IllegalStateException(
                         "cannot find declaration: fake descriptor" +
-                                " has more then one overriden descriptor: " + callable);
+                                " has more then one overridden descriptor: " + callable);
             }
 
             return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
@@ -190,9 +190,9 @@ public class BindingContextUtils {
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             List<PsiElement> r = new ArrayList<PsiElement>();
-            Set<? extends CallableMemberDescriptor> overridenDescriptors = callable.getOverriddenDescriptors();
-            for (CallableMemberDescriptor overriden : overridenDescriptors) {
-                r.addAll(callableDescriptorToDeclarations(context, overriden));
+            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+            for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+                r.addAll(callableDescriptorToDeclarations(context, overridden));
             }
             return r;
         }
