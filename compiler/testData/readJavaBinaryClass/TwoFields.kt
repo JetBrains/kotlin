@@ -1,6 +1,6 @@
 package test
 
-class TwoFields() {
+class TwoFields() : java.lang.Object() {
     var a: Int = 1
     var b: Short = 2;
 }

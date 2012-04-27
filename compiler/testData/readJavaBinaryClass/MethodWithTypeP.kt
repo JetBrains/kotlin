@@ -1,5 +1,5 @@
 package test
 
-class MethodWithTypeP() {
+class MethodWithTypeP() : java.lang.Object() {
     fun <erased P> f() = #()
 }

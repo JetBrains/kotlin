@@ -1,6 +1,6 @@
 namespace test
 
-open class test.NotNullField : jet.Any {
+open class test.NotNullField : java.lang.Object {
     final /*constructor*/ fun <init>(): test.NotNullField
     final var hi: jet.String
 }

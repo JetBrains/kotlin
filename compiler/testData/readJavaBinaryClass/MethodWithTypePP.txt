@@ -1,6 +1,6 @@
 namespace test
 
-final class test.MethodWithTypePP : jet.Any {
+final class test.MethodWithTypePP : java.lang.Object {
     final /*constructor*/ fun <init>(): test.MethodWithTypePP
     final fun </*0*/ P : jet.Any?, /*1*/ Q : P>f(): jet.Tuple0
 }

@@ -1,6 +1,6 @@
 namespace test
 
-open class test.DifferentGetterAndSetter : jet.Any {
+open class test.DifferentGetterAndSetter : java.lang.Object {
     final /*constructor*/ fun <init>(): test.DifferentGetterAndSetter
     open fun getSomething(): jet.Int
     open fun setSomething(/*0*/ p0: jet.String?): jet.Tuple0

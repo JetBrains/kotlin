@@ -1,6 +1,6 @@
 namespace test
 
-open class test.HasAnnotatedMethod : jet.Any {
+open class test.HasAnnotatedMethod : java.lang.Object {
     final /*constructor*/ fun <init>(): test.HasAnnotatedMethod
     open test.Aaa() fun f(): jet.Tuple0
 }

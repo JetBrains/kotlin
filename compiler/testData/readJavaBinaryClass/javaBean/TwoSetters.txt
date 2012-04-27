@@ -1,6 +1,6 @@
 namespace test
 
-open class test.TwoSetters : jet.Any {
+open class test.TwoSetters : java.lang.Object {
     final /*constructor*/ fun <init>(): test.TwoSetters
     open fun setSize(/*0*/ p0: jet.Int): jet.Tuple0
     open fun setSize(/*0*/ p0: jet.String?): jet.Tuple0
