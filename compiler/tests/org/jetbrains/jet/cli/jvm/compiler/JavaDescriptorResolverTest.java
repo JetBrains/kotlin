@@ -42,7 +42,7 @@ import java.util.Locale;
  */
 public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
 
-    // This test can be implemented in ReadJavaBinaryClass test, but it is simpler here
+    // This test can be implemented in ReadJavaBinaryClassTest, but it is simpler here
     public void testInner() throws Exception {
         compileFileResolveDescriptor("inner.java", new FqName("A"));
     }
