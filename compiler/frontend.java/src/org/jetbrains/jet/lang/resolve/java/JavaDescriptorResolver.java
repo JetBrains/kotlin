@@ -1269,8 +1269,6 @@ public class JavaDescriptorResolver {
             namedMembers.propertyAccessors = Collections.emptyList();
         }
 
-        TypeVariableResolver typeVariableResolver = TypeVariableResolvers.classTypeVariableResolver(owner, context);
-
         class GroupingValue {
             PropertyAccessorData getter;
             PropertyAccessorData setter;
@@ -1411,14 +1409,14 @@ public class JavaDescriptorResolver {
                 PsiMethodWrapper method = (PsiMethodWrapper) members.setter.getMember();
 
                 if (anyMember == members.setter) {
-                    typeParameters = resolveMethodTypeParameters(method, propertyDescriptor, typeVariableResolver);
+                    typeParameters = resolveMethodTypeParameters(method, propertyDescriptor);
                 }
             }
             if (members.getter != null) {
                 PsiMethodWrapper method = (PsiMethodWrapper) members.getter.getMember();
 
                 if (anyMember == members.getter) {
-                    typeParameters = resolveMethodTypeParameters(method, propertyDescriptor, typeVariableResolver);
+                    typeParameters = resolveMethodTypeParameters(method, propertyDescriptor);
                 }
             }
 
@@ -1647,9 +1645,7 @@ public class JavaDescriptorResolver {
 
         String context = "method " + method.getName() + " in class " + psiClass.getQualifiedName();
 
-        final TypeVariableResolver typeVariableResolverForParameters = TypeVariableResolvers.classTypeVariableResolver(scopeData.classOrNamespaceDescriptor, context);
-
-        final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(method, functionDescriptorImpl, typeVariableResolverForParameters);
+        final List<TypeParameterDescriptor> methodTypeParameters = resolveMethodTypeParameters(method, functionDescriptorImpl);
 
         TypeVariableResolver methodTypeVariableResolver = TypeVariableResolvers.typeVariableResolverFromTypeParameters(methodTypeParameters, functionDescriptorImpl, context);
 
@@ -1790,8 +1786,7 @@ public class JavaDescriptorResolver {
 
     private List<TypeParameterDescriptor> resolveMethodTypeParameters(
             @NotNull PsiMethodWrapper method,
-            @NotNull DeclarationDescriptor functionDescriptor,
-            @NotNull TypeVariableResolver classTypeVariableResolver) {
+            @NotNull DeclarationDescriptor functionDescriptor) {
 
         List<TypeParameterDescriptorInitialization> typeParametersIntialization;
         if (method.getJetMethod().typeParameters().length() > 0) {
