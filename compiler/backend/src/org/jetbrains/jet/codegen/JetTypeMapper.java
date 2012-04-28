@@ -54,6 +54,7 @@ public class JetTypeMapper {
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
+    public static final Type JL_ARRAY_LIST = Type.getObjectType("java/util/ArrayList");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
