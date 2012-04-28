@@ -17,6 +17,7 @@
 package org.jetbrains.jet.cli.common;
 
 import com.google.common.collect.Lists;
+import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,7 +28,6 @@ import java.util.List;
 public abstract class CompilerArguments {
     @NotNull
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
-
 
     @NotNull
     public List<CompilerPlugin> getCompilerPlugins() {
@@ -40,4 +40,8 @@ public abstract class CompilerArguments {
     public void setCompilerPlugins(@NotNull List<CompilerPlugin> compilerPlugins) {
         this.compilerPlugins = compilerPlugins;
     }
+
+    public abstract boolean isHelp();
+    public abstract boolean isTags();
+    public abstract boolean isVersion();
 }

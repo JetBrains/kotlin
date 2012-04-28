@@ -39,17 +39,11 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         this.sourceDirs = sourceDirs;
     }
 
-    @Argument(value = "output", description = "output directory")
-    public String outputDir;
-
     @Argument(value = "jar", description = "jar file name")
     public String jar;
 
     @Argument(value = "src", description = "source file or directory")
     public String src;
-
-    @Argument(value = "module", description = "module to compile")
-    public String module;
 
     @Argument(value = "classpath", description = "classpath to use when compiling")
     public String classpath;
@@ -63,11 +57,14 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
     public String jdkHeaders;
 
-    @Argument(value = "help", alias = "h", description = "show help")
-    public boolean help;
-
     @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
     public String mode;
+
+    @Argument(value = "output", description = "output directory")
+    public String outputDir;
+
+    @Argument(value = "module", description = "module to compile")
+    public String module;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
@@ -78,6 +75,8 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
+    @Argument(value = "help", alias = "h", description = "show help")
+    public boolean help;
 
     public String getClasspath() {
         return classpath;
@@ -87,6 +86,7 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         this.classpath = classpath;
     }
 
+    @Override
     public boolean isHelp() {
         return help;
     }
@@ -143,8 +143,14 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         this.stdlib = stdlib;
     }
 
+    @Override
     public boolean isTags() {
         return tags;
+    }
+
+    @Override
+    public boolean isVersion() {
+        return version;
     }
 
     public void setTags(boolean tags) {
