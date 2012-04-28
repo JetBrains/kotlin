@@ -959,7 +959,7 @@ public class JavaDescriptorResolver {
                 continue;
             }
             
-            JetType transform = semanticServices.getTypeTransformer().transformToType(type, typeVariableResolver);
+            JetType transform = semanticServices.getTypeTransformer().transformToType(type, JavaTypeTransformer.TypeUsage.SUPERTYPE, typeVariableResolver);
 
             result.add(TypeUtils.makeNotNullable(transform));
         }
