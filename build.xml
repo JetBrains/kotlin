@@ -19,6 +19,7 @@
         <pathelement path="${idea.sdk}/lib/resources_en.jar"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
+        <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
         <pathelement path="${output}/classes/runtime"/>
     </path>
 
@@ -36,6 +37,9 @@
             <include name="util/src"/>
             <include name="jet.as.java.psi/src"/>
         </dirset>
+       <dirset dir="${basedir}/js/js.translator">
+         <include name="src"/>
+       </dirset>
     </path>
 
     <target name="init" depends="clean">
