@@ -140,7 +140,9 @@ public class TypeUtils {
 
     @Nullable
     public static JetType intersect(@NotNull JetTypeChecker typeChecker, @NotNull Set<JetType> types) {
-        assert !types.isEmpty();
+        if (types.isEmpty()) {
+            return JetStandardClasses.getNullableAnyType();
+        }
 
         if (types.size() == 1) {
             return types.iterator().next();
