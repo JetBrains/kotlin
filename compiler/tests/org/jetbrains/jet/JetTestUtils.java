@@ -171,7 +171,10 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+        JetCoreEnvironment environment =
+                new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+        environment.addToClasspath(getAnnotationsJar());
+        return environment;
     }
 
     public static File findMockJdkRtJar() {
