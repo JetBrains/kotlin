@@ -93,6 +93,7 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
         System.setProperty("java.awt.headless", "true");
         final MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
+        printVersionIfNeeded(errStream, arguments, messageRenderer);
         try {
             return doExecute(errStream, arguments, messageRenderer);
         }
@@ -114,9 +115,10 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
             @NotNull CLArgs arguments,
             @NotNull MessageRenderer messageRenderer) {
         if (arguments.isVersion()) {
-            errStream.println(messageRenderer
-                                      .render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
-                                              CompilerMessageLocation.NO_LOCATION));
+            String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
+                                                           "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
+                                                           CompilerMessageLocation.NO_LOCATION);
+            errStream.println(versionMessage);
         }
     }
 

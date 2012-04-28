@@ -42,7 +42,7 @@ public interface MessageRenderer {
                 out.append(" line=\"").append(location.getLine()).append("\"");
                 out.append(" column=\"").append(location.getColumn()).append("\"");
             }
-            out.append(">\n");
+            out.append(">");
 
             out.append(e(message));
 

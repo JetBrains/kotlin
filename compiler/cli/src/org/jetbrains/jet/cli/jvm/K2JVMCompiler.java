@@ -56,10 +56,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
     protected ExitCode doExecute(PrintStream errStream,
             K2JVMCompilerArguments arguments,
             MessageRenderer messageRenderer) {
-        printVersionIfNeeded(errStream, arguments, messageRenderer);
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-
         File jdkHeadersJar;
         if (mode.includeJdkHeaders()) {
             if (arguments.jdkHeaders != null) {
