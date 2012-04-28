@@ -230,6 +230,11 @@ public class JetTestUtils {
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
 
+    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+        return new JetCoreEnvironment(disposable,
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
+    }
+
     public interface TestFileFactory<F> {
         F create(String fileName, String text);
     }

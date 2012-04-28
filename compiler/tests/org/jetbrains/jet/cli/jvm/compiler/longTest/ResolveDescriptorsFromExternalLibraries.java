@@ -24,6 +24,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
@@ -38,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -63,6 +65,7 @@ public class ResolveDescriptorsFromExternalLibraries {
     }
 
     private void run() throws Exception {
+        testLibraryFile(null, "rt.jar");
         testLibrary("com.google.guava", "guava", "12.0-rc2");
         testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE");
     }
@@ -70,8 +73,18 @@ public class ResolveDescriptorsFromExternalLibraries {
     private void testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev) throws Exception {
         LibFromMaven lib = new LibFromMaven(org, module, rev);
         File jar = getLibrary(lib);
-        System.out.println("Testing library " + lib + "...");
-        System.out.println("Using file " + jar);
+
+        testLibraryFile(jar, lib.toString());
+    }
+
+    private void testLibraryFile(@Nullable File jar, @NotNull String libDescription) throws IOException {
+        System.out.println("Testing library " + libDescription + "...");
+        if (jar != null) {
+            System.out.println("Using file " + jar);
+        }
+        else {
+            System.out.println("Using rt.jar");
+        }
 
         long start = System.currentTimeMillis();
 
@@ -80,8 +93,16 @@ public class ResolveDescriptorsFromExternalLibraries {
             public void dispose() { }
         };
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(junk);
-        jetCoreEnvironment.addToClasspath(jar);
+        JetCoreEnvironment jetCoreEnvironment;
+        if (jar != null) {
+            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(junk);
+            jetCoreEnvironment.addToClasspath(jar);
+        }
+        else {
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
+            jetCoreEnvironment = new JetCoreEnvironment(junk, compilerDependencies);
+            jar = compilerDependencies.getJdkJar();
+        }
 
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(compilerDependencies, jetCoreEnvironment.getProject());
@@ -107,7 +128,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
                 ClassDescriptor clazz = injector.getJavaDescriptorResolver().resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
                 if (clazz == null) {
-                    throw new IllegalStateException("class not found by name " + className + " in " + lib);
+                    throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                 }
                 clazz.getDefaultType().getMemberScope().getAllDescriptors();
             }
@@ -121,7 +142,7 @@ public class ResolveDescriptorsFromExternalLibraries {
             Disposer.dispose(junk);
         }
 
-        System.out.println("Testing library " + lib + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s");
+        System.out.println("Testing library " + libDescription + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s");
     }
 
     @NotNull
