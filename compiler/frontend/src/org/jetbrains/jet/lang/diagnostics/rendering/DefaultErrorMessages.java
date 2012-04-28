@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
@@ -25,6 +27,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -401,6 +405,22 @@ public class DefaultErrorMessages {
                     "This may cause problems when calling this function with named arguments.", commaSeparated(TO_STRING), TO_STRING);
 
         MAP.setImmutable();
+
+        for (Field field : Errors.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                try {
+                    Object fieldValue = field.get(null);
+                    if (fieldValue instanceof AbstractDiagnosticFactory) {
+                        if (MAP.get((AbstractDiagnosticFactory) fieldValue) == null) {
+                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((AbstractDiagnosticFactory)fieldValue).getName());
+                        }
+                    }
+                }
+                catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
     }
 
     private DefaultErrorMessages() {

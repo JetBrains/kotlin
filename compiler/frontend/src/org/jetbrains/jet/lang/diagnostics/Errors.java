@@ -449,7 +449,7 @@ public interface Errors {
     class Initializer {
         static {
             for (Field field : Errors.class.getFields()) {
-                if ((field.getModifiers() & Modifier.STATIC) != 0) {
+                if (Modifier.isStatic(field.getModifiers())) {
                     try {
                         Object value = field.get(null);
                         if (value instanceof AbstractDiagnosticFactory) {
