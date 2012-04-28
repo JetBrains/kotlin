@@ -1,0 +1,4 @@
+package foo
+
+fun f() {
+}
