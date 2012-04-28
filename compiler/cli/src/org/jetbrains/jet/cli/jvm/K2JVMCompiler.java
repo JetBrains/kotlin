@@ -51,112 +51,92 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
         doMain(new K2JVMCompiler(), args);
     }
 
-    /**
-     * Executes the compiler on the parsed arguments
-     */
-    @NotNull
     @Override
-    public ExitCode exec(final PrintStream errStream, K2JVMCompilerArguments arguments) {
-        if (arguments.help) {
-            usage(errStream);
-            return OK;
+    @NotNull
+    protected ExitCode doExecute(PrintStream errStream,
+            K2JVMCompilerArguments arguments,
+            MessageRenderer messageRenderer) {
+        printVersionIfNeeded(errStream, arguments, messageRenderer);
+
+        CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
+
+        File jdkHeadersJar;
+        if (mode.includeJdkHeaders()) {
+            if (arguments.jdkHeaders != null) {
+                jdkHeadersJar = new File(arguments.jdkHeaders);
+            }
+            else {
+                jdkHeadersJar = PathUtil.getAltHeadersPath();
+            }
         }
-        System.setProperty("java.awt.headless", "true");
+        else {
+            jdkHeadersJar = null;
+        }
+        File runtimeJar;
 
-        final MessageRenderer messageRenderer = arguments.tags ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+        if (mode.includeKotlinRuntime()) {
+            if (arguments.stdlib != null) {
+                runtimeJar = new File(arguments.stdlib);
+            }
+            else {
+                runtimeJar = PathUtil.getDefaultRuntimePath();
+            }
+        }
+        else {
+            runtimeJar = null;
+        }
 
-        errStream.print(messageRenderer.renderPreamble());
+        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
+        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
+        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 
+        JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
+        CompileEnvironmentConfiguration configuration =
+                new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
+
+        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
+                                CompilerMessageLocation.NO_LOCATION);
         try {
-            if (arguments.version) {
-                errStream.println(messageRenderer
-                                          .render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
-                                                  CompilerMessageLocation.NO_LOCATION));
-            }
+            configureEnvironment(configuration, arguments);
 
-            CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-
-            File jdkHeadersJar;
-            if (mode.includeJdkHeaders()) {
-                if (arguments.jdkHeaders != null) {
-                    jdkHeadersJar = new File(arguments.jdkHeaders);
-                }
-                else {
-                    jdkHeadersJar = PathUtil.getAltHeadersPath();
-                }
+            boolean noErrors;
+            if (arguments.module != null) {
+                List<Module> modules = CompileEnvironmentUtil
+                        .loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
+                File directory = new File(arguments.module).getParentFile();
+                noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
+                                                                      directory, arguments.jar, arguments.outputDir,
+                                                                      arguments.includeRuntime);
             }
             else {
-                jdkHeadersJar = null;
-            }
-            File runtimeJar;
-
-            if (mode.includeKotlinRuntime()) {
-                if (arguments.stdlib != null) {
-                    runtimeJar = new File(arguments.stdlib);
+                // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
+                if (arguments.getSourceDirs() != null) {
+                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
+                                                                                           arguments.getSourceDirs(), arguments.jar,
+                                                                                           arguments.outputDir,
+                                                                                           arguments.includeRuntime);
                 }
                 else {
-                    runtimeJar = PathUtil.getDefaultRuntimePath();
+                    noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
+                                                                                 arguments.src, arguments.jar, arguments.outputDir,
+                                                                                 arguments.includeRuntime);
                 }
             }
-            else {
-                runtimeJar = null;
-            }
-
-            CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
-            PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-            Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
-
-            JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
-            CompileEnvironmentConfiguration configuration =
-                    new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
-
-            messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
+            return noErrors ? OK : COMPILATION_ERROR;
+        }
+        catch (CompilationException e) {
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
+                                    MessageUtil.psiElementToMessageLocation(e.getElement()));
+            return INTERNAL_ERROR;
+        }
+        catch (Throwable t) {
+            messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
                                     CompilerMessageLocation.NO_LOCATION);
-            try {
-                configureEnvironment(configuration, arguments);
-
-                boolean noErrors;
-                if (arguments.module != null) {
-                    List<Module> modules = CompileEnvironmentUtil
-                            .loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
-                    File directory = new File(arguments.module).getParentFile();
-                    noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
-                                                                          directory, arguments.jar, arguments.outputDir,
-                                                                          arguments.includeRuntime);
-                }
-                else {
-                    // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
-                    if (arguments.getSourceDirs() != null) {
-                        noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                                                                                               arguments.getSourceDirs(), arguments.jar,
-                                                                                               arguments.outputDir,
-                                                                                               arguments.includeRuntime);
-                    }
-                    else {
-                        noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                                     arguments.src, arguments.jar, arguments.outputDir,
-                                                                                     arguments.includeRuntime);
-                    }
-                }
-                return noErrors ? OK : COMPILATION_ERROR;
-            }
-            catch (CompilationException e) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(e),
-                                        MessageUtil.psiElementToMessageLocation(e.getElement()));
-                return INTERNAL_ERROR;
-            }
-            catch (Throwable t) {
-                messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
-                                        CompilerMessageLocation.NO_LOCATION);
-                return INTERNAL_ERROR;
-            }
-            finally {
-                Disposer.dispose(rootDisposable);
-                messageCollector.printToErrStream();
-            }
+            return INTERNAL_ERROR;
         }
         finally {
-            errStream.print(messageRenderer.renderConclusion());
+            Disposer.dispose(rootDisposable);
+            messageCollector.printToErrStream();
         }
     }
 
@@ -184,6 +164,15 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
     @Override
     protected K2JVMCompilerArguments createArguments() {
         return new K2JVMCompilerArguments();
+    }
+
+    //TODO: Hacked! Be sure that our kotlin stuff builds correctly before you remove.
+    // our compiler throws method not found error
+    // probably relates to KT-1863... well, may be not
+    @NotNull
+    @Override
+    public ExitCode exec(PrintStream errStream, K2JVMCompilerArguments arguments) {
+        return super.exec(errStream, arguments);
     }
 
 

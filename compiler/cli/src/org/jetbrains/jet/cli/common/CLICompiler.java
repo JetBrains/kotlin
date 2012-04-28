@@ -18,7 +18,10 @@ package org.jetbrains.jet.cli.common;
 
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerVersion;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.PrintStream;
@@ -78,8 +81,44 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
     @NotNull
     protected abstract CLArgs createArguments();
 
+    /**
+     * Executes the compiler on the parsed arguments
+     */
     @NotNull
-    public abstract ExitCode exec(PrintStream errStream, CLArgs arguments);
+    public ExitCode exec(final PrintStream errStream, CLArgs arguments) {
+        if (arguments.isHelp()) {
+            usage(errStream);
+            return OK;
+        }
+        System.setProperty("java.awt.headless", "true");
+        final MessageRenderer messageRenderer = getMessageRenderer(arguments);
+        errStream.print(messageRenderer.renderPreamble());
+        try {
+            return doExecute(errStream, arguments, messageRenderer);
+        }
+        finally {
+            errStream.print(messageRenderer.renderConclusion());
+        }
+    }
+
+    //TODO: can't declare parameters as not null due to KT-1863
+    @NotNull
+    protected abstract ExitCode doExecute(PrintStream stream, CLArgs arguments, MessageRenderer renderer);
+
+    @NotNull
+    private MessageRenderer getMessageRenderer(@NotNull CLArgs arguments) {
+        return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
+    }
+
+    protected void printVersionIfNeeded(@NotNull PrintStream errStream,
+            @NotNull CLArgs arguments,
+            @NotNull MessageRenderer messageRenderer) {
+        if (arguments.isVersion()) {
+            errStream.println(messageRenderer
+                                      .render(CompilerMessageSeverity.INFO, "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
+                                              CompilerMessageLocation.NO_LOCATION));
+        }
+    }
 
     /**
      * Useful main for derived command line tools
