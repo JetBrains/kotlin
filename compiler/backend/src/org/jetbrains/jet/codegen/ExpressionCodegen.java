@@ -1529,15 +1529,55 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         Type type = asmType(outType);
         assert type.getSort() == Type.ARRAY;
         Type elementType = correctElementType(type);
-        int size = valueArgument.getArguments().size();
+        List<ValueArgument> arguments = valueArgument.getArguments();
+        int size = arguments.size();
 
-        v.iconst(valueArgument.getArguments().size());
-        v.newarray(elementType);
+        boolean hasSpread = false;
         for(int i = 0; i != size; ++i) {
-            v.dup();
-            v.iconst(i);
-            gen(valueArgument.getArguments().get(i).getArgumentExpression(), elementType);
-            StackValue.arrayElement(elementType, false).store(v);
+            if(arguments.get(i).getSpreadElement() != null) {
+                hasSpread = true;
+                break;
+            }
+        }
+
+        if(hasSpread) {
+            if(size == 1) {
+                gen(arguments.get(0).getArgumentExpression(), type);
+            }
+            else {
+                String owner = "jet/runtime/Intrinsics$SpreadBuilder";
+                v.anew(Type.getObjectType(owner));
+                v.dup();
+                v.invokespecial(owner, "<init>", "()V");
+                for(int i = 0; i != size; ++i) {
+                    v.dup();
+                    ValueArgument argument = arguments.get(i);
+                    if(argument.getSpreadElement() != null) {
+                        gen(argument.getArgumentExpression(),JetTypeMapper.TYPE_OBJECT);
+                        v.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V");
+                    }
+                    else {
+                        gen(argument.getArgumentExpression(), elementType);
+                        v.invokevirtual(owner, "add", "(Ljava/lang/Object;)Z");
+                        v.pop();
+                    }
+                }
+                v.dup();
+                v.invokevirtual(owner, "size", "()I");
+                v.newarray(elementType);
+                v.invokevirtual(owner, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;");
+                v.checkcast(type);
+            }
+        }
+        else {
+            v.iconst(arguments.size());
+            v.newarray(elementType);
+            for(int i = 0; i != size; ++i) {
+                v.dup();
+                v.iconst(i);
+                gen(arguments.get(i).getArgumentExpression(), elementType);
+                StackValue.arrayElement(elementType, false).store(v);
+            }
         }
     }
 

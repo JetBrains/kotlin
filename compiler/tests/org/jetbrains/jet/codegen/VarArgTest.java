@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * @author alex.tkachman
@@ -93,5 +95,24 @@ public class VarArgTest extends CodegenTestCase {
 
     public void testKt797() {
         blackBoxFile("regressions/kt796_797.jet");
+    }
+
+    public void testArrayAsVararg () throws InvocationTargetException, IllegalAccessException {
+        loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
+        //System.out.println(generateToText());
+        final Method main = generateFunction("test");
+        String[] args = {"mama", "papa"};
+        assertTrue(args == main.invoke(null, new Object[]{ args } ));
+    }
+
+    public void testArrayAsVararg2 () throws InvocationTargetException, IllegalAccessException {
+        loadText("private fun asList(vararg elems: String) = elems; fun test(ts1: Array<String>, ts2: String) = asList(*ts1, ts2); ");
+        System.out.println(generateToText());
+        final Method main = generateFunction("test");
+        Object invoke = main.invoke(null, new Object[] {new String[] {"mama"}, "papa" });
+        assertInstanceOf(invoke, String[].class);
+        assertEquals(2, Array.getLength(invoke));
+        assertEquals("mama", Array.get(invoke, 0));
+        assertEquals("papa", Array.get(invoke, 1));
     }
 }
