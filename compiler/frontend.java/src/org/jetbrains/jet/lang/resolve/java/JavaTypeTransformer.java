@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
@@ -35,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author abreslav
@@ -126,6 +129,19 @@ public class JavaTypeTransformer {
 
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
+
+                    PsiTypeParameterListOwner typeParameterListOwner = typeParameter.getOwner();
+                    if (typeParameterListOwner instanceof PsiMethod) {
+                        PsiMethod psiMethod = (PsiMethod) typeParameterListOwner;
+                        if (psiMethod.isConstructor()) {
+                            Set<JetType> supertypesJet = Sets.newHashSet();
+                            for (PsiClassType supertype : typeParameter.getExtendsListTypes()) {
+                                supertypesJet.add(transformToType(supertype, TypeUsage.UPPER_BOUND, typeVariableResolver));
+                            }
+                            return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
+                        }
+                    }
+
                     TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
 
                     if (howThisTypeIsUsed == TypeUsage.TYPE_ARGUMENT || howThisTypeIsUsed == TypeUsage.UPPER_BOUND) {
