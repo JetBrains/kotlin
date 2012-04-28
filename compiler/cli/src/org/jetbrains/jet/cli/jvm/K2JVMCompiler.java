@@ -106,7 +106,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
             PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
             Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 
-            JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
+            JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
             CompileEnvironmentConfiguration configuration =
                     new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
 
