@@ -222,14 +222,14 @@ public class JavaDescriptorResolver {
                 throw new IllegalStateException("both psiClass and psiPackage cannot be null");
             }
 
-            if (fqName.lastSegmentIs(JvmAbi.PACKAGE_CLASS)) {
-                throw new IllegalStateException("identified cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
-            }
-
             this.staticMembers = staticMembers;
             this.kotlin = psiClass != null &&
                     (new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS));
             classOrNamespaceDescriptor = descriptor;
+
+            if (fqName.lastSegmentIs(JvmAbi.PACKAGE_CLASS) && psiClass != null && kotlin) {
+                throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
+            }
         }
 
         protected ResolverScopeData(boolean negative) {
