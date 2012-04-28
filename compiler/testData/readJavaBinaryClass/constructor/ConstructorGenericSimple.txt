@@ -1,0 +1,5 @@
+namespace test
+
+open class test.ConstructorGenericSimple : java.lang.Object {
+    final /*constructor*/ fun <init>(/*0*/ p0: jet.Any?): test.ConstructorGenericSimple
+}
