@@ -1020,7 +1020,7 @@ class KPackage(model: KModel, val descriptor: NamespaceDescriptor,
 }
 
 class KType(val jetType: JetType, model: KModel, val klass: KClass?, val arguments: List<KType> = ArrayList<KType>())
-: KNamed(klass?.name ?: jetType.toString(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
+: KNamed(klass?.name ?: jetType.toString().sure(), model, jetType.getConstructor().getDeclarationDescriptor().sure()) {
     {
         if (klass != null) {
             this.wikiDescription = klass.wikiDescription
