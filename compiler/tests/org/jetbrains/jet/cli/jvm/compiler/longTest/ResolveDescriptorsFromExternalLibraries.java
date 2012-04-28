@@ -100,7 +100,7 @@ public class ResolveDescriptorsFromExternalLibraries {
         }
         else {
             CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
-            jetCoreEnvironment = new JetCoreEnvironment(junk, compilerDependencies);
+            jetCoreEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(junk, compilerDependencies);
             jar = compilerDependencies.getJdkJar();
         }
 
