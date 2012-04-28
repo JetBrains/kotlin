@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Processor;
 import jet.modules.AllModules;
 import jet.modules.Module;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -157,7 +158,7 @@ public class CompileEnvironmentUtil {
             }
         };
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
-        JetCoreEnvironment scriptEnvironment = new JetCoreEnvironment(disposable, dependencies);
+        JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(disposable, dependencies);
         ensureRuntime(scriptEnvironment, dependencies);
         scriptEnvironment.addSources(moduleScriptFile);
 
@@ -335,6 +336,23 @@ public class CompileEnvironmentUtil {
     public static void addToClasspath(JetCoreEnvironment environment, String... paths) {
         for (String path : paths) {
             addToClasspath(environment, new File(path));
+        }
+    }
+
+    public static void addSourcesFromModuleToEnvironment(@NotNull JetCoreEnvironment environment,
+            @NotNull Module module,
+            @NotNull File moduleDirectory) {
+        for (String sourceFile : module.getSourceFiles()) {
+            File source = new File(sourceFile);
+            if (!source.isAbsolute()) {
+                source = new File(moduleDirectory, sourceFile);
+            }
+
+            if (!source.exists()) {
+                throw new CompileEnvironmentException("'" + source + "' does not exist");
+            }
+
+            environment.addSources(source.getPath());
         }
     }
 }

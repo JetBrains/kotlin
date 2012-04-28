@@ -67,18 +67,7 @@ public class KotlinToJVMBytecodeCompiler {
             throw new CompileEnvironmentException("No source files where defined");
         }
 
-        for (String sourceFile : moduleBuilder.getSourceFiles()) {
-            File source = new File(sourceFile);
-            if (!source.isAbsolute()) {
-                source = new File(directory, sourceFile);
-            }
-
-            if (!source.exists()) {
-                throw new CompileEnvironmentException("'" + source + "' does not exist");
-            }
-
-            configuration.getEnvironment().addSources(source.getPath());
-        }
+        CompileEnvironmentUtil.addSourcesFromModuleToEnvironment(configuration.getEnvironment(), moduleBuilder, directory);
         for (String classpathRoot : moduleBuilder.getClasspathRoots()) {
             configuration.getEnvironment().addToClasspath(new File(classpathRoot));
         }
