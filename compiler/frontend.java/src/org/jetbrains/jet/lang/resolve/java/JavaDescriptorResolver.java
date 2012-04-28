@@ -869,10 +869,16 @@ public class JavaDescriptorResolver {
 
     private void initializeTypeParameters(List<TypeParameterDescriptorInitialization> typeParametersInitialization, @NotNull DeclarationDescriptor typeParametersOwner, @NotNull String context) {
         List<TypeParameterDescriptor> prevTypeParameters = new ArrayList<TypeParameterDescriptor>();
+
+        List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
+        for (TypeParameterDescriptorInitialization typeParameterDescriptor : typeParametersInitialization) {
+            typeParameters.add(typeParameterDescriptor.descriptor);
+        }
+
         for (TypeParameterDescriptorInitialization psiTypeParameter : typeParametersInitialization) {
             prevTypeParameters.add(psiTypeParameter.descriptor);
             initializeTypeParameter(psiTypeParameter,
-                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(prevTypeParameters, typeParametersOwner, context));
+                    TypeVariableResolvers.typeVariableResolverFromTypeParameters(typeParameters, typeParametersOwner, context));
         }
     }
 
