@@ -59,10 +59,9 @@ public class PositioningStrategies {
                 returnTypeRef = accessor.getReturnTypeReference();
                 nameNode = accessor.getNamePlaceholder().getNode();
             }
-            if (returnTypeRef != null) return Collections.singletonList(returnTypeRef.getTextRange());
-            if (nameNode != null) return Collections.singletonList(nameNode.getTextRange());
-            return super.mark(declaration);
-
+            if (returnTypeRef != null) return markElement(returnTypeRef);
+            if (nameNode != null) return markNode(nameNode);
+            return markElement(declaration);
         }
 
         private ASTNode getNameNode(JetNamedDeclaration function) {
@@ -100,9 +99,9 @@ public class PositioningStrategies {
                     assert modifierList != null;
                     ASTNode node = modifierList.getModifierNode(token);
                     assert node != null;
-                    return Collections.singletonList(node.getTextRange());
+                    return markNode(node);
                 }
-                return Collections.emptyList();
+                return markElement(modifierListOwner);
             }
         };
     }

@@ -247,12 +247,12 @@ public interface Errors {
                                                public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
                                                    JetExpression bodyExpression = element.getBodyExpression();
                                                    if (!(bodyExpression instanceof JetBlockExpression)) {
-                                                       return Collections.emptyList();
+                                                       return markElement(element);
                                                    }
                                                    JetBlockExpression blockExpression = (JetBlockExpression)bodyExpression;
                                                    TextRange lastBracketRange = blockExpression.getLastBracketRange();
                                                    if (lastBracketRange == null) {
-                                                       return Collections.emptyList();
+                                                       return markElement(element);
                                                    }
                                                    return markRange(lastBracketRange);
                                                }
@@ -403,7 +403,7 @@ public interface Errors {
                         JetClass klass = (JetClass)jetDeclaration;
                         PsiElement nameAsDeclaration = klass.getNameIdentifier();
                         if (nameAsDeclaration == null) {
-                            return markRange(klass.getTextRange());
+                            return markElement(klass);
                         }
                         PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
                         if (primaryConstructorParameterList == null) {
@@ -416,7 +416,7 @@ public interface Errors {
                     }
                     else {
                         // safe way
-                        return markRange(jetDeclaration.getTextRange());
+                        return markElement(jetDeclaration);
                     }
                 }
             });

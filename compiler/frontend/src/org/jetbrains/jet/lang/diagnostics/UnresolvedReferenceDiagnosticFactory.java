@@ -34,7 +34,10 @@ public class UnresolvedReferenceDiagnosticFactory extends DiagnosticFactory1<Jet
             @Override
             public List<TextRange> mark(@NotNull JetReferenceExpression element) {
                 if (element instanceof JetArrayAccessExpression) {
-                    return ((JetArrayAccessExpression) element).getBracketRanges();
+                    List<TextRange> ranges = ((JetArrayAccessExpression) element).getBracketRanges();
+                    if (!ranges.isEmpty()) {
+                        return ranges;
+                    }
                 }
                 return Collections.singletonList(element.getTextRange());
             }
