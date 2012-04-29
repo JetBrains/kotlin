@@ -11,7 +11,7 @@ patches-master
 out
 dist
 ideaSDK
-PluginVerifier
+dependencies
 .idea/dictionaries/yozh.xml
 .idea/workspace.xml
 tmp

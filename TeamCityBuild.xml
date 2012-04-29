@@ -14,7 +14,7 @@
     <property name="compiler.version.java.bk" value="${compiler.version.java}.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned" />
 
-    <property name="plugin.verifier" value="${basedir}/PluginVerifier/plugin-verifier-1.0-SNAPSHOT.jar"/>
+    <property name="plugin.verifier" value="${basedir}/dependencies/plugin-verifier.jar"/>
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip" />
 
     <macrodef name="echoprop">

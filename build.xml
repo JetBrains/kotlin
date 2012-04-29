@@ -166,15 +166,31 @@
     </target>
 
     <target name="jarjar">
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/build/jarjar-1.2.jar"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
+        <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
 
-        <jarjar jarfile="${output}/kotlin-compiler-tmp.jar">
+        <!-- JarJar Kotlin compiler & dependencies -->
+        <delete file="${output}/kotlin-compiler-jarjar.jar" failonerror="false"/>
+        <jarjar jarfile="${output}/kotlin-compiler-jarjar.jar">
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
 
             <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
             <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar"/>
+
+            <zap pattern="com.thoughtworks.xstream.converters.extended.ISO8601*"/>
+            <zap pattern="com.thoughtworks.xstream.converters.reflection.CGLIBEnhancedConverter*"/>
+            <zap pattern="com.thoughtworks.xstream.io.xml.Dom4J*"/>
+            <zap pattern="com.thoughtworks.xstream.io.xml.Xom*"/>
+            <zap pattern="com.thoughtworks.xstream.mapper.CGLIBMapper*"/>
+
+            <zap pattern="org.apache.log4j.jmx.Agent"/>
+            <zap pattern="org.apache.log4j.net.JMS*"/>
+            <zap pattern="org.apache.log4j.net.SMTP*"/>
+            <zap pattern="org.apache.log4j.or.jms.MessageRenderer"/>
+
+            <zap pattern="org.jdom.xpath.Jaxen*"/>
 
             <rule pattern="com.intellij.**" result="kotlinc.internal.com.intellij.@1"/>
             <rule pattern="org.intellij.lang.annotations.**" result="kotlinc.internal.org.intellij.lang.annotations.@1"/>
@@ -189,11 +205,13 @@
 
         <delete failonerror="false" dir="${output}/kotlin-compiler.exploded"/>
         <mkdir dir="${output}/kotlin-compiler.exploded"/>
+        <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
 
-        <unzip src="${output}/kotlin-compiler-tmp.jar" dest="${output}/kotlin-compiler.exploded"/>
-        <delete file="${output}/kotlin-compiler-tmp.jar"/>
+        <delete file="${output}/kotlin-compiler-jarjar.jar"/>
 
-        <jar jarfile="${output}/kotlin-compiler-standalone.jar">
+        <!-- Clean JarJar result -->
+        <delete file="${output}/kotlin-compiler-clean.jar" failonerror="false"/>
+        <jar jarfile="${output}/kotlin-compiler-clean.jar">
             <fileset dir="${output}/kotlin-compiler.exploded">
                 <include name="**/*.class"/>
                 <include name="**/*.jet"/>
@@ -213,8 +231,57 @@
                 <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
             </manifest>
         </jar>
-
         <delete dir="${output}/kotlin-compiler.exploded" />
+
+        <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar" />
+        <available property="rtjar" value="${java.home}/lib/classes.jar" file="${java.home}/lib/classes.jar" />
+
+        <delete file="${output}/kotlin-compiler.jar" failonerror="false"/>
+        <proguard><![CDATA[
+            -injars '${output}/kotlin-compiler-clean.jar'
+            -outjars '${output}/kotlin-compiler.jar'
+
+            -libraryjars '${rtjar}'
+
+            -target 1.6
+            -dontoptimize
+            -dontobfuscate
+
+            # Keep application classes, along with their 'main' methods.
+            -keepclasseswithmembers public class * {
+                public static void main(java.lang.String[]);
+            }
+
+            -keepclasseswithmembers class * {
+                # Various dynamically called methods
+
+                void start();
+                void stop();
+                void dispose();
+                ** getFileSystem();
+                ** isVarArgs();
+                ** getApplication();
+                ** executeOnPooledThread(java.lang.Runnable);
+                int getBooleanAttributes(java.io.File);
+                <init>(kotlinc.internal.com.intellij.lang.ASTNode);
+            }
+
+            # Keep the special static methods that are required in enumeration classes.
+            -keepclassmembers enum * {
+                public static **[] values();
+                public static ** valueOf(java.lang.String);
+            }
+
+            -keepclassmembers class * {
+                ** toString();
+                ** hashCode();
+                ** project();
+
+                ** TYPE;
+                ** ourInstance;
+            }
+        ]]></proguard>
+        <delete file="${output}/kotlin-compiler-clean.jar" />
     </target>
 
     <target name="clean">
