@@ -111,18 +111,19 @@ public abstract class KotlinIntegrationTestBase {
 
     protected void check(String baseName, StringBuilder content) throws IOException {
         final File tmpFile = new File(getTestDataDirectory(), baseName + ".tmp");
-        final File goldFile = new File(getTestDataDirectory(), baseName + ".gold");
+        final File expectedFile = new File(getTestDataDirectory(), baseName + ".expected");
 
-        if (!goldFile.isFile()) {
+        if (!expectedFile.isFile()) {
             Files.write(content, tmpFile, Charsets.UTF_8);
-            fail("No gold file " + goldFile);
+            fail("No .expected file " + expectedFile);
         }
         else {
-            final String goldContent = Files.toString(goldFile, UTF_8);
+            final String goldContent = Files.toString(expectedFile, UTF_8);
             if (!goldContent.equals(content.toString())) {
                 Files.write(content, tmpFile, Charsets.UTF_8);
-                fail("tmp and gold differ, tmp file: " + tmpFile);
+                fail(".tmp and .expected files differ, tmp file: " + tmpFile);
             }
+
             tmpFile.delete();
         }
     }
