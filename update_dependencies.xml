@@ -36,8 +36,10 @@
 
     <macrodef name="execute_update">
         <attribute name="teamcity" default="http://teamcity.jetbrains.com"/>
-        <attribute name="teamcity.build" default="bt365"/>
+
         <!-- IDEA CE 11.1 branch 117 -->
+        <attribute name="teamcity.build" default="bt365"/>
+
         <sequential>
             <property name="core" value="ideaSDK/core"/>
             <property name="tc" value="@{teamcity}/guestAuth/repository/download/@{teamcity.build}/.lastSuccessful"/>
@@ -46,17 +48,18 @@
                 <exclude name="config/**"/>
                 <exclude name="system/**"/>
             </delete>
-            <mkdir dir="${core}"/>
-            <get src="${tc}/core/intellij-core.jar" dest="${core}"/>
-            <get src="${tc}/core/annotations.jar" dest="${core}"/>
-            <get src="${tc}/core/asm.jar" dest="${core}"/>
-            <get src="${tc}/core/asm-commons.jar" dest="${core}"/>
-            <get src="${tc}/core/cli-10.jar" dest="${core}"/>
-            <get src="${tc}/core/guava-11.0.1.jar" dest="${core}"/>
-            <get src="${tc}/core/picocontainer.jar" dest="${core}"/>
-            <get src="${tc}/core/trove4j.jar" dest="${core}"/>
 
-            <get src="${tc}/${build.zip}" dest="ideaSDK"/>
+            <mkdir dir="${core}"/>
+            <get src="${tc}/core/intellij-core.jar" dest="${core}/intellij-core.jar"/>
+            <get src="${tc}/core/annotations.jar" dest="${core}/annotations.jar"/>
+            <get src="${tc}/core/asm.jar" dest="${core}/asm.jar"/>
+            <get src="${tc}/core/asm-commons.jar" dest="${core}/asm-commons.jar"/>
+            <get src="${tc}/core/cli-10.jar" dest="${core}/cli-10.jar"/>
+            <get src="${tc}/core/guava-11.0.1.jar" dest="${core}/guava-11.0.1.jar"/>
+            <get src="${tc}/core/picocontainer.jar" dest="${core}/picocontainer.jar"/>
+            <get src="${tc}/core/trove4j.jar" dest="${core}/trove4j.jar"/>
+
+            <get src="${tc}/${build.zip}" dest="ideaSDK/${build.zip}"/>
             <unzip src="ideaSDK/${build.zip}" dest="ideaSDK"/>
             <delete file="ideaSDK/${build.zip}"/>
 
@@ -65,7 +68,6 @@
             <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xstream.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
-            <!--<copy file="lib/jsr305-1.3.9.jar" todir="${core}"/>-->
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
             <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
@@ -78,7 +80,7 @@
             <delete file="ideaSDK/lib/junit.jar"/>
 
             <mkdir dir="ideaSDK/sources"/>
-            <get src="${tc}/sources.zip" dest="ideaSDK/sources"/>
+            <get src="${tc}/sources.zip" dest="ideaSDK/sources/sources.zip"/>
         </sequential>
     </macrodef>
 </project>
