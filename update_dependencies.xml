@@ -14,7 +14,7 @@
         <mkdir dir="dependencies/download" />
 
         <!-- ProGuard -->
-        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard%20beta/4.8beta/proguard4.8beta1.zip" dest="dependencies/download/" usetimestamp="true"/>
+        <get src="http://heanet.dl.sourceforge.net/project/proguard/proguard%20beta/4.8beta/proguard4.8beta1.zip" dest="dependencies/download/proguard4.8beta1.zip" usetimestamp="true"/>
 
         <delete file="dependencies/proguard.jar" failonerror="false"/>
         <unzip src="dependencies/download/proguard4.8beta1.zip" dest="dependencies">
@@ -25,12 +25,12 @@
         </unzip>
 
         <!-- JarJar -->
-        <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/" usetimestamp="true"/>
+        <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true" />
 
         <!-- PluginVerifier -->
         <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt351/.lastPinned/plugin-verifier-1.0-SNAPSHOT.jar"
-             dest="dependencies/download/"/>
+             dest="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" usetimestamp="true"/>
         <copy file="dependencies/download/plugin-verifier-1.0-SNAPSHOT.jar" tofile="dependencies/plugin-verifier.jar" overwrite="true" />
     </target>
 
