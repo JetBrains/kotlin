@@ -74,14 +74,11 @@ public class PositioningStrategies {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
-            if (element.getLastChild() instanceof PsiErrorElement) {
-                return Collections.emptyList();
-            }
             PsiElement nameIdentifier = element.getNameIdentifier();
             if (nameIdentifier != null) {
                 return markElement(nameIdentifier);
             }
-            return Collections.emptyList();
+            return markElement(element);
         }
     };
 

@@ -288,7 +288,6 @@ public interface Errors {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetWhenExpression element) {
-            if (hasSyntaxError(element)) return Collections.emptyList();
             return markElement(element.getWhenKeywordElement());
         }
     });
