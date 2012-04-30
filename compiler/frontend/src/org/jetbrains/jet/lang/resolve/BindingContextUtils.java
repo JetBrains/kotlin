@@ -20,14 +20,10 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
@@ -68,7 +64,7 @@ public class BindingContextUtils {
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        DeclarationDescriptor declarationDescriptor = referenceToDescriptor(bindingContext, referenceExpression);
         if (declarationDescriptor == null) {
             return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
         }
@@ -88,7 +84,7 @@ public class BindingContextUtils {
 
     @NotNull
     public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        DeclarationDescriptor declarationDescriptor = referenceToDescriptor(bindingContext, referenceExpression);
         if (declarationDescriptor == null) {
             return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
         }
@@ -114,7 +110,7 @@ public class BindingContextUtils {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         }
         else if (element instanceof JetSimpleNameExpression) {
-            descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+            descriptor = referenceToDescriptor(bindingContext, (JetSimpleNameExpression) element);
         }
         else if (element instanceof JetQualifiedExpression) {
             descriptor = extractVariableDescriptorIfAny(bindingContext, ((JetQualifiedExpression) element).getSelectorExpression(), onlyReference);
@@ -126,6 +122,16 @@ public class BindingContextUtils {
             return ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
         return null;
+    }
+
+    @Nullable
+    public static DeclarationDescriptor referenceToDescriptor(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression element) {
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, element);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, element);
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
+        }
+        return descriptor;
     }
 
     // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
