@@ -101,4 +101,8 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testLocalFunction () throws InvocationTargetException, IllegalAccessException {
         blackBoxFile("functions/localFunction.kt");
     }
+
+    public void testInvoke() {
+        blackBoxFile("functions/invoke.kt");
+    }
 }
