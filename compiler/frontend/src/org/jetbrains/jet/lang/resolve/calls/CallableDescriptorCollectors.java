@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
@@ -34,11 +33,9 @@ import java.util.*;
 /**
  * @author abreslav
  */
-public class MemberPrioritizers {
+public class CallableDescriptorCollectors {
 
-
-    /*package*/ static MemberPrioritizer<FunctionDescriptor> FUNCTION_TASK_PRIORITIZER = new MemberPrioritizer<FunctionDescriptor>() {
-
+    /*package*/ static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS = new CallableDescriptorCollector<FunctionDescriptor>() {
 
         @NotNull
         @Override
@@ -51,8 +48,6 @@ public class MemberPrioritizers {
                 }
             }
             addConstructors(scope, name, functions);
-
-            addVariableAsFunction(scope, name, functions, false);
             return functions;
         }
 
@@ -62,22 +57,13 @@ public class MemberPrioritizers {
             JetScope receiverScope = receiverType.getMemberScope();
             Set<FunctionDescriptor> members = Sets.newHashSet(receiverScope.getFunctions(name));
             addConstructors(receiverScope, name, members);
-            addVariableAsFunction(receiverScope, name, members, false);
             return members;
         }
 
         @NotNull
         @Override
-        public Collection<FunctionDescriptor> getExtensionsByName(JetScope scope, String name) {
-            Set<FunctionDescriptor> extensionFunctions = Sets.newHashSet(scope.getFunctions(name));
-            for (Iterator<FunctionDescriptor> iterator = extensionFunctions.iterator(); iterator.hasNext(); ) {
-                FunctionDescriptor descriptor = iterator.next();
-                if (!descriptor.getReceiverParameter().exists()) {
-                    iterator.remove();
-                }
-            }
-            addVariableAsFunction(scope, name, extensionFunctions, true);
-            return extensionFunctions;
+        public Collection<FunctionDescriptor> getNonMembersByName(JetScope scope, String name) {
+            return scope.getFunctions(name);
         }
 
         private void addConstructors(JetScope scope, String name, Collection<FunctionDescriptor> functions) {
@@ -87,25 +73,9 @@ public class MemberPrioritizers {
                 functions.addAll(classDescriptor.getConstructors());
             }
         }
-
-        private void addVariableAsFunction(JetScope scope, String name, Set<FunctionDescriptor> functions, boolean receiverNeeded) {
-            VariableDescriptor variable = scope.getLocalVariable(name);
-            if (variable == null) {
-                variable = DescriptorUtils.filterNonExtensionProperty(scope.getProperties(name));
-            }
-            if (variable != null) {
-                JetType outType = variable.getType();
-                if (outType != null && JetStandardClasses.isFunctionType(outType)) {
-                    VariableAsFunctionDescriptor functionDescriptor = VariableAsFunctionDescriptor.create(variable);
-                    if ((functionDescriptor.getReceiverParameter().exists()) == receiverNeeded) {
-                        functions.add(functionDescriptor);
-                    }
-                }
-            }
-        }
     };
 
-    /*package*/ static MemberPrioritizer<VariableDescriptor> VARIABLE_TASK_PRIORITIZER = new MemberPrioritizer<VariableDescriptor>() {
+    /*package*/ static CallableDescriptorCollector<VariableDescriptor> VARIABLES = new CallableDescriptorCollector<VariableDescriptor>() {
 
         @NotNull
         @Override
@@ -126,17 +96,19 @@ public class MemberPrioritizers {
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
-            return Collections2.filter(scope.getProperties(name), new Predicate<VariableDescriptor>() {
-                @Override
-                public boolean apply(@Nullable VariableDescriptor variableDescriptor) {
-                    return (variableDescriptor != null) && variableDescriptor.getReceiverParameter().exists();
-                }
-            });
+        public Collection<VariableDescriptor> getNonMembersByName(JetScope scope, String name) {
+            Collection<VariableDescriptor> result = Sets.newLinkedHashSet();
+
+            VariableDescriptor localVariable = scope.getLocalVariable(name);
+            if (localVariable != null) {
+                result.add(localVariable);
+            }
+            result.addAll(scope.getProperties(name));
+            return result;
         }
     };
     
-    /*package*/ static MemberPrioritizer<VariableDescriptor> PROPERTY_TASK_PRIORITIZER = new MemberPrioritizer<VariableDescriptor>() {
+    /*package*/ static CallableDescriptorCollector<VariableDescriptor> PROPERTIES = new CallableDescriptorCollector<VariableDescriptor>() {
         private Collection<VariableDescriptor> filterProperties(Collection<? extends VariableDescriptor> variableDescriptors) {
             ArrayList<VariableDescriptor> properties = Lists.newArrayList();
             for (VariableDescriptor descriptor : variableDescriptors) {
@@ -150,19 +122,23 @@ public class MemberPrioritizers {
         @NotNull
         @Override
         public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, String name) {
-            return filterProperties(VARIABLE_TASK_PRIORITIZER.getNonExtensionsByName(scope, name));
+            return filterProperties(VARIABLES.getNonExtensionsByName(scope, name));
         }
 
         @NotNull
         @Override
         public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, String name) {
-            return filterProperties(VARIABLE_TASK_PRIORITIZER.getMembersByName(receiver, name));
+            return filterProperties(VARIABLES.getMembersByName(receiver, name));
         }
 
         @NotNull
         @Override
-        public Collection<VariableDescriptor> getExtensionsByName(JetScope scope, String name) {
-            return filterProperties(VARIABLE_TASK_PRIORITIZER.getExtensionsByName(scope, name));
+        public Collection<VariableDescriptor> getNonMembersByName(JetScope scope, String name) {
+            return filterProperties(VARIABLES.getNonMembersByName(scope, name));
         }
+
     };
+
+    /*package*/ static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES = Lists.newArrayList(
+            FUNCTIONS, VARIABLES);
 }
