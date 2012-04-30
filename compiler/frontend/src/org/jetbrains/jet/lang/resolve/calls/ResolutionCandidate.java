@@ -31,15 +31,21 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
  */
 public class ResolutionCandidate<D extends CallableDescriptor> {
     private final D candidateDescriptor;
-    private ReceiverDescriptor thisObject = NO_RECEIVER; // receiver object of a method
-    private ReceiverDescriptor receiverArgument = NO_RECEIVER; // receiver of an extension function
+    private ReceiverDescriptor thisObject; // receiver object of a method
+    private ReceiverDescriptor receiverArgument; // receiver of an extension function
 
-    private ResolutionCandidate(@NotNull D descriptor) {
-        candidateDescriptor = descriptor;
+    private ResolutionCandidate(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
+        this.candidateDescriptor = descriptor;
+        this.thisObject = thisObject;
+        this.receiverArgument = receiverArgument;
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor) {
-        return new ResolutionCandidate<D>(descriptor);
+        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER);
+    }
+
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
+        return new ResolutionCandidate<D>(descriptor, thisObject, receiverArgument);
     }
 
     public void setThisObject(@NotNull ReceiverDescriptor thisObject) {
