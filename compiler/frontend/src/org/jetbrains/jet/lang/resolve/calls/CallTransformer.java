@@ -106,7 +106,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             CallResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, temporaryTrace, task);
 
-            contextWithoutReceiver.delayedReceiverForVariableAsFunctionSecondCall = variableCall.getExplicitReceiver();
+            contextWithoutReceiver.receiverForVariableAsFunctionSecondCall = variableCall.getExplicitReceiver();
 
             return Lists.newArrayList(contextWithReceiver, contextWithoutReceiver);
         }
@@ -207,7 +207,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 @NotNull
                 @Override
                 public ReceiverDescriptor getExplicitReceiver() {
-                    return context.delayedReceiverForVariableAsFunctionSecondCall;
+                    return context.receiverForVariableAsFunctionSecondCall;
                 }
 
                 @NotNull
