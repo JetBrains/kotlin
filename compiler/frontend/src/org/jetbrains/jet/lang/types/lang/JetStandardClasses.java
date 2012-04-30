@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -25,6 +26,8 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.JetTypeImpl;
@@ -189,16 +192,23 @@ public class JetStandardClasses {
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
                     "Function" + i);
+
+            SimpleFunctionDescriptorImpl invoke = new SimpleFunctionDescriptorImpl(function, Collections.<AnnotationDescriptor>emptyList(), "invoke", CallableMemberDescriptor.Kind.DECLARATION);
+            WritableScope scopeForInvoke = createScopeForInvokeFunction(function, invoke);
+            List<TypeParameterDescriptor> typeParameters = createTypeParameters(i, function);
             FUNCTION[i] = function.initialize(
                     false,
-                    createTypeParameters(i, function),
-                    Collections.singleton(getAnyType()), STUB, Collections.<ConstructorDescriptor>emptySet(), null);
+                    typeParameters,
+                    Collections.singleton(getAnyType()), scopeForInvoke, Collections.<ConstructorDescriptor>emptySet(), null);
             FUNCTION_TYPE_CONSTRUCTORS.add(FUNCTION[i].getTypeConstructor());
+            FunctionDescriptorUtil.initializeFromFunctionType(invoke, function.getDefaultType(), new ClassReceiver(FUNCTION[i]));
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
                     Collections.<AnnotationDescriptor>emptyList(),
                     "ExtensionFunction" + i);
+            SimpleFunctionDescriptorImpl invokeWithReceiver = new SimpleFunctionDescriptorImpl(receiverFunction, Collections.<AnnotationDescriptor>emptyList(), "invoke", CallableMemberDescriptor.Kind.DECLARATION);
+            WritableScope scopeForInvokeWithReceiver = createScopeForInvokeFunction(receiverFunction, invokeWithReceiver);
             List<TypeParameterDescriptor> parameters = createTypeParameters(i, receiverFunction);
             parameters.add(0, TypeParameterDescriptor.createWithDefaultBound(
                     receiverFunction,
@@ -207,9 +217,17 @@ public class JetStandardClasses {
             RECEIVER_FUNCTION[i] = receiverFunction.initialize(
                     false,
                     parameters,
-                    Collections.singleton(getAnyType()), STUB, Collections.<ConstructorDescriptor>emptySet(), null);
+                    Collections.singleton(getAnyType()), scopeForInvokeWithReceiver, Collections.<ConstructorDescriptor>emptySet(), null);
             RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
+            FunctionDescriptorUtil.initializeFromFunctionType(invokeWithReceiver, receiverFunction.getDefaultType(), new ClassReceiver(RECEIVER_FUNCTION[i]));
         }
+    }
+
+    private static WritableScope createScopeForInvokeFunction(ClassDescriptorImpl function, SimpleFunctionDescriptorImpl invoke) {
+        WritableScope scopeForInvoke = new WritableScopeImpl(STUB, function, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Scope for function type");
+        scopeForInvoke.addFunctionDescriptor(invoke);
+        scopeForInvoke.changeLockLevel(WritableScope.LockLevel.READING);
+        return scopeForInvoke;
     }
 
     private static List<TypeParameterDescriptor> createTypeParameters(int parameterCount, ClassDescriptorImpl function) {
@@ -411,8 +429,9 @@ public class JetStandardClasses {
         }
         arguments.add(defaultProjection(returnType));
         int size = parameterTypes.size();
-        TypeConstructor constructor = receiverType == null ? FUNCTION[size].getTypeConstructor() : RECEIVER_FUNCTION[size].getTypeConstructor();
-        return new JetTypeImpl(annotations, constructor, false, arguments, STUB);
+        ClassDescriptor classDescriptor = receiverType == null ? FUNCTION[size] : RECEIVER_FUNCTION[size];
+        TypeConstructor constructor = classDescriptor.getTypeConstructor();
+        return new JetTypeImpl(annotations, constructor, false, arguments, classDescriptor.getMemberScope(arguments));
     }
 
     private static TypeProjection defaultProjection(JetType returnType) {

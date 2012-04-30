@@ -127,10 +127,20 @@ public class FunctionDescriptorUtil {
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),
                                       Modality.FINAL,
-                                      Visibilities.LOCAL);
+                                      Visibilities.PUBLIC);
     }
 
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
         return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
+    }
+
+    public static FunctionDescriptor getInvokeFunction(@NotNull JetType functionType) {
+        assert JetStandardClasses.isFunctionType(functionType);
+
+        ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
+        assert classDescriptorForFunction instanceof ClassDescriptor;
+        Set<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions("invoke");
+        assert invokeFunctions.size() == 1;
+        return invokeFunctions.iterator().next();
     }
 }
