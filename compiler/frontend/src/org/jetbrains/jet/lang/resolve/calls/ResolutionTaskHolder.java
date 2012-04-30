@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author svtk
  */
-public class ResolutionTaskHolder<D extends CallableDescriptor> {
+public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final JetReferenceExpression reference;
     private final BasicResolutionContext basicResolutionContext;
     private final Predicate<ResolutionCandidate<D>> visibleStrategy;
@@ -40,7 +40,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor> {
     private final Collection<Collection<ResolutionCandidate<D>>> members = Sets.newLinkedHashSet();
     private final Collection<Collection<ResolutionCandidate<D>>> nonLocalExtensions = Sets.newLinkedHashSet();
 
-    private List<ResolutionTask<D>> tasks = null;
+    private List<ResolutionTask<D, F>> tasks = null;
 
     public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
             @NotNull BasicResolutionContext basicResolutionContext,
@@ -68,7 +68,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor> {
         }
     }
 
-    public List<ResolutionTask<D>> getTasks() {
+    public List<ResolutionTask<D, F>> getTasks() {
         if (tasks == null) {
             tasks = Lists.newArrayList();
             List<Collection<ResolutionCandidate<D>>> candidateList = Lists.newArrayList();
@@ -89,7 +89,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor> {
                 for (Collection<ResolutionCandidate<D>> candidates : candidateList) {
                     Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, visibilityStrategy);
                     if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D>(filteredCandidates, reference, basicResolutionContext));
+                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicResolutionContext));
                     }
                 }
             }
