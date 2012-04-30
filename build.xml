@@ -238,7 +238,6 @@
         <delete dir="${output}/kotlin-compiler.exploded" />
 
         <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar" />
-        <available property="rtjar" value="${java.home}/lib/classes.jar" file="${java.home}/lib/classes.jar" />
         <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar" />
         
         <delete file="${output}/kotlin-compiler.jar" failonerror="false"/>
