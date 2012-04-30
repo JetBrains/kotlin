@@ -151,4 +151,18 @@ public class PositioningStrategies {
             return markNode(element.getDefaultValue().getNode());
         }
     };
+
+    public static PositioningStrategy<PsiElement> CALL_ELEMENT = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement callElement) {
+            if (callElement instanceof JetCallElement) {
+                JetExpression calleeExpression = ((JetCallElement) callElement).getCalleeExpression();
+                if (calleeExpression != null) {
+                    return markElement(calleeExpression);
+                }
+            }
+            return markElement(callElement);
+        }
+    };
 }
