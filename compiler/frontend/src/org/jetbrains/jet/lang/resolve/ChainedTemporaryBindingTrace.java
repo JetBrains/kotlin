@@ -17,23 +17,21 @@
 package org.jetbrains.jet.lang.resolve;
 
 /**
- * @author abreslav
+ * @author svtk
  */
-public class TemporaryBindingTrace extends DelegatingBindingTrace {
+public class ChainedTemporaryBindingTrace extends TemporaryBindingTrace {
 
-    public static TemporaryBindingTrace create(BindingTrace trace) {
-        return new TemporaryBindingTrace(trace);
+    public static ChainedTemporaryBindingTrace create(TemporaryBindingTrace trace) {
+        return new ChainedTemporaryBindingTrace(trace);
     }
 
-    protected final BindingTrace trace;
-
-    protected TemporaryBindingTrace(BindingTrace trace) {
-        super(trace.getBindingContext());
-        this.trace = trace;
+    private ChainedTemporaryBindingTrace(TemporaryBindingTrace trace) {
+        super(trace);
     }
 
+    @Override
     public void commit() {
-        addAllMyDataTo(trace);
-        clear();
+        super.commit();
+        ((TemporaryBindingTrace)  trace).commit();
     }
 }
