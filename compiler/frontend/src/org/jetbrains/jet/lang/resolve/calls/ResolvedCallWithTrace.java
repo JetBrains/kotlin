@@ -18,21 +18,17 @@ package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.JetType;
-
-import java.util.Collection;
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 
 /**
  * @author svtk
  */
-public interface MemberPrioritizer<D extends CallableDescriptor> {
-    @NotNull
-    Collection<D> getNonExtensionsByName(JetScope scope, String name);
+public interface ResolvedCallWithTrace<D extends CallableDescriptor> extends ResolvedCall<D>  {
 
     @NotNull
-    Collection<D> getMembersByName(@NotNull JetType receiver, String name);
+    ResolutionStatus getStatus();
 
-    @NotNull
-    Collection<D> getExtensionsByName(JetScope scope, String name);
+    boolean isDirty();
+
+    TemporaryBindingTrace getTrace();
 }
