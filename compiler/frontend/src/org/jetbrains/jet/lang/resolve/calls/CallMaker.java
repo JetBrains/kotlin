@@ -98,6 +98,12 @@ public class CallMaker {
             return explicitReceiver;
         }
 
+        @NotNull
+        @Override
+        public ReceiverDescriptor getThisObject() {
+            return ReceiverDescriptor.NO_RECEIVER;
+        }
+
         @Override
         public JetExpression getCalleeExpression() {
             return calleeExpression;
@@ -197,6 +203,12 @@ public class CallMaker {
             @Override
             public ReceiverDescriptor getExplicitReceiver() {
                 return explicitReceiver;
+            }
+
+            @NotNull
+            @Override
+            public ReceiverDescriptor getThisObject() {
+                return ReceiverDescriptor.NO_RECEIVER;
             }
 
             @Nullable
