@@ -197,6 +197,10 @@
             <zap pattern="org.jdom.xpath.Jaxen*"/>
 
             <rule pattern="com.intellij.**" result="kotlinc.internal.com.intellij.@1"/>
+            <rule pattern="com.sun.jna.**" result="kotlinc.internal.com.sun.jna.@1"/>
+            <rule pattern="org.apache.log4j.**" result="kotlinc.internal.org.apache.log4j.@1"/>
+            <rule pattern="org.jdom.**" result="kotlinc.internal.org.jdom.@1"/>
+            <rule pattern="JDOMAbout**" result="kotlinc.internal.org.jdom.JDOMAbout@1"/>
             <rule pattern="org.intellij.lang.annotations.**" result="kotlinc.internal.org.intellij.lang.annotations.@1"/>
             <rule pattern="org.jetbrains.annotations.**" result="kotlinc.internal.org.jetbrains.annotations.@1"/>
             <rule pattern="com.google.**" result="kotlinc.internal.com.google.@1"/>
