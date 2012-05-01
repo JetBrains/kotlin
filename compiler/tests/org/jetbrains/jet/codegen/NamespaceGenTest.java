@@ -30,6 +30,13 @@ import java.util.Arrays;
  * @author yole
  */
 public class NamespaceGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testPSVM() throws Exception {
         loadFile("PSVM.jet");
 //        System.out.println(generateToText());

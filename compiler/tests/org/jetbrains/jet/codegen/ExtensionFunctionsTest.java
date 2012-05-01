@@ -29,6 +29,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testSimple() throws Exception {
+        createEnvironmentWithMockJdk();
         loadFile();
         final Method foo = generateFunction("foo");
         final Character c = (Character) foo.invoke(null);
@@ -36,6 +37,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testWhenFail() throws Exception {
+        createEnvironmentWithMockJdk();
         loadFile();
 //        System.out.println(generateToText());
         Method foo = generateFunction("foo");
@@ -43,15 +45,18 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testVirtual() throws Exception {
+        createEnvironmentWithMockJdk();
         blackBoxFile("extensionFunctions/virtual.jet");
     }
 
     public void testShared() throws Exception {
+        createEnvironmentWithMockJdk();
         blackBoxFile("extensionFunctions/shared.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt475() throws Exception {
+        createEnvironmentWithMockJdk();
         blackBoxFile("regressions/kt475.jet");
     }
 

@@ -21,6 +21,12 @@ package org.jetbrains.jet.codegen;
  * @author alex.tkachman
  */
 public class ObjectGenTest extends CodegenTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testSimpleObject() throws Exception {
         blackBoxFile("objects/simpleObject.jet");
 //        System.out.println(generateToText());

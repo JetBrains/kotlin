@@ -30,8 +30,10 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -65,14 +67,19 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
     }
 
     protected void createEnvironmentWithMockJdk() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
         myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
     }
 
     protected void createEnvironmentWithFullJdk() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
         myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
     }
 

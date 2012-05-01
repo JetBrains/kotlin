@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 public class TupleGenTest extends CodegenTestCase {
     public void testBasic() {
+        createEnvironmentWithMockJdk();
         blackBoxFile("/tuples/basic.jet");
 //        System.out.println(generateToText());
     }

@@ -25,6 +25,12 @@ import java.lang.reflect.Method;
  */
 public class StringsTest extends CodegenTestCase {
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testAnyToString () throws InvocationTargetException, IllegalAccessException {
         loadText("fun foo(x: Any) = x.toString()");
 //        System.out.println(generateToText());

@@ -42,12 +42,19 @@ public class JetControlFlowTest extends JetLiteFixture {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
-    
+
     private String myName;
 
     public JetControlFlowTest(String dataPath, String name) {
         super(dataPath);
         myName = name;
+    }
+
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
     }
 
     @Override
