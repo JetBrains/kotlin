@@ -20,6 +20,13 @@ package org.jetbrains.jet.codegen;
  * @author max
  */
 public class ClosuresGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testSimplestClosure() throws Exception {
         blackBoxFile("classes/simplestClosure.jet");
 //        System.out.println(generateToText());

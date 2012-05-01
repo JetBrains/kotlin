@@ -19,6 +19,13 @@ package org.jetbrains.jet.codegen;
 import java.lang.reflect.Method;
 
 public class ArrayGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testKt238 () throws Exception {
         blackBoxFile("regressions/kt238.jet");
     }

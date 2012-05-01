@@ -66,6 +66,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
+        super.createEnvironmentWithMockJdk();
+
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();
 

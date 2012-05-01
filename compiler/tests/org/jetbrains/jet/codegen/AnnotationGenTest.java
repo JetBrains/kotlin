@@ -24,6 +24,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class AnnotationGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testPropField() throws NoSuchFieldException, NoSuchMethodException {
         loadText("[Deprecated] var x = 0");
         Class aClass = generateNamespaceClass();

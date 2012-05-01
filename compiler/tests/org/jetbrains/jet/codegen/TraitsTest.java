@@ -17,6 +17,13 @@
 package org.jetbrains.jet.codegen;
 
 public class TraitsTest  extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     @Override
     protected String getPrefix() {
         return "traits";

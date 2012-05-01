@@ -23,6 +23,12 @@ import java.lang.reflect.Method;
  * @author alex.tkachman
  */
 public class FunctionGenTest extends CodegenTestCase {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     public void testDefaultArgs() throws Exception {
         blackBoxFile("functions/defaultargs.jet");
 //        System.out.println(generateToText());

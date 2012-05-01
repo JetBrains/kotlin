@@ -24,6 +24,13 @@ import java.lang.reflect.Method;
  * @author yole
  */
 public class PatternMatchingTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
     @Override
     protected String getPrefix() {
         return "patternMatching";
