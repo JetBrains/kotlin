@@ -47,8 +47,14 @@ import java.util.List;
 public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
 
+    @NotNull
+    private final CompilerDependencies compilerDependencies;
+
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
         super(parentDisposable);
+
+        this.compilerDependencies = compilerDependencies;
+
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
         registerFileType(JetFileType.INSTANCE, "ktm");
@@ -151,5 +157,10 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
                     addToClasspath(file);
             }
         }
+    }
+
+    @NotNull
+    public CompilerDependencies getCompilerDependencies() {
+        return compilerDependencies;
     }
 }

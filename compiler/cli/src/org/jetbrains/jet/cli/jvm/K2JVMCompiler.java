@@ -127,7 +127,7 @@ public class K2JVMCompiler {
             Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 
             JetCoreEnvironment environment = new JetCoreEnvironment(rootDisposable, dependencies);
-            CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
+            CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, messageCollector);
 
             messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                     CompilerMessageLocation.NO_LOCATION);
@@ -243,8 +243,8 @@ public class K2JVMCompiler {
             configuration.getCompilerPlugins().addAll(plugins);
         }
 
-        if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
+        if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
         }
 
         if (arguments.classpath != null) {

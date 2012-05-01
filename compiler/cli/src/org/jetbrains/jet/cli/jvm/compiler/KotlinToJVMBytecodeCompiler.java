@@ -83,7 +83,7 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.getEnvironment().addToClasspath(new File(classpathRoot));
         }
 
-        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getCompilerDependencies());
+        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies());
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
@@ -104,9 +104,9 @@ public class KotlinToJVMBytecodeCompiler {
 
         for (Module moduleBuilder : modules) {
             // TODO: this should be done only once for the environment
-            if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
+            if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
                 CompileEnvironmentUtil
-                        .addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
+                        .addToClasspath(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
             }
             ClassFileFactory moduleFactory = compileModule(configuration, moduleBuilder, directory);
             if (moduleFactory == null) {
@@ -143,7 +143,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
         }
 
-        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getCompilerDependencies());
+        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies());
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
@@ -209,7 +209,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(CompileEnvironmentConfiguration configuration) {
-        return analyzeAndGenerate(configuration, configuration.getCompilerDependencies().getCompilerSpecialMode().isStubs());
+        return analyzeAndGenerate(configuration, configuration.getEnvironment().getCompilerDependencies().getCompilerSpecialMode().isStubs());
     }
 
     @Nullable
@@ -244,7 +244,7 @@ public class KotlinToJVMBytecodeCompiler {
                         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                                 environment.getProject(), environment.getSourceFiles(), filesToAnalyzeCompletely,
                                 JetControlFlowDataTraceFactory.EMPTY,
-                                configuration.getCompilerDependencies());
+                                configuration.getEnvironment().getCompilerDependencies());
                     }
                 }, environment.getSourceFiles()
         );
@@ -267,7 +267,7 @@ public class KotlinToJVMBytecodeCompiler {
         };
         GenerationState generationState = new GenerationState(project, ClassBuilderFactories.binaries(stubs), backendProgress,
                                                               exhaust, environment.getSourceFiles(),
-                                                              configuration.getCompilerDependencies().getCompilerSpecialMode());
+                                                              configuration.getEnvironment().getCompilerDependencies().getCompilerSpecialMode());
         generationState.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
 
         List<CompilerPlugin> plugins = configuration.getCompilerPlugins();

@@ -29,8 +29,9 @@ import java.util.List;
  * @author abreslav
  */
 public class CompileEnvironmentConfiguration {
+    @NotNull
     private final JetCoreEnvironment environment;
-    private final CompilerDependencies compilerDependencies;
+    @NotNull
     private final MessageCollector messageCollector;
 
     private List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
@@ -39,20 +40,14 @@ public class CompileEnvironmentConfiguration {
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      * @see Disposer
      */
-    public CompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull CompilerDependencies compilerDependencies, @NotNull MessageCollector messageCollector) {
+    public CompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment, @NotNull MessageCollector messageCollector) {
         this.messageCollector = messageCollector;
-        this.compilerDependencies = compilerDependencies;
         this.environment = environment;
     }
 
+    @NotNull
     public JetCoreEnvironment getEnvironment() {
         return environment;
-    }
-
-    @NotNull
-    public CompilerDependencies getCompilerDependencies() {
-        return compilerDependencies;
     }
 
     @NotNull
