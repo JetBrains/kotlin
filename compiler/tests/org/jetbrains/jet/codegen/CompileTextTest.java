@@ -33,8 +33,7 @@ public class CompileTextTest extends CodegenTestCase {
         createEnvironmentWithMockJdk();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         CompilerDependencies dependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
-        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
-        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(myEnvironment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");
