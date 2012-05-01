@@ -320,7 +320,8 @@ class CollectionTest {
         assertEquals(0, ArrayList<Double>().count())
     }
 
-    test fun last() {
+    //todo after KT-1873 the name might be returned to 'last'
+    test fun lastElement() {
         val data = arrayList("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayList(15, 19, 20, 25).last())
@@ -331,10 +332,9 @@ class CollectionTest {
 
 
     test fun lastException() {
-//todo(svtk)
-//        fails { arrayList<Int>().last() }
-//        fails { linkedList<String>().last() }
-//        fails { hashSet<Char>().last() }
+        fails { arrayList<Int>().last() }
+        fails { linkedList<String>().last() }
+        fails { hashSet<Char>().last() }
     }
 
     test fun subscript() {
