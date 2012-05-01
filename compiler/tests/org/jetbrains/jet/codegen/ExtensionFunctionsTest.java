@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
 import java.lang.reflect.Method;
 
 /**
@@ -31,7 +29,6 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testSimple() throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Method foo = generateFunction("foo");
         final Character c = (Character) foo.invoke(null);
@@ -39,7 +36,6 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testWhenFail() throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         Method foo = generateFunction("foo");
@@ -47,18 +43,15 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testVirtual() throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("extensionFunctions/virtual.jet");
     }
 
     public void testShared() throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("extensionFunctions/shared.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt475() throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt475.jet");
     }
 

@@ -22,14 +22,6 @@ import org.jetbrains.jet.codegen.CodegenTestCase;
 import java.lang.reflect.Method;
 
 public class JetNpeTest extends CodegenTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdk();
-    }
-
-
-
     public void testStackTrace () {
         try {
             Intrinsics.throwNpe();

@@ -16,11 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
 public class BridgeMethodGenTest extends CodegenTestCase {
     public void testBridgeMethod () throws Exception {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("bridge.jet");
     }
 }

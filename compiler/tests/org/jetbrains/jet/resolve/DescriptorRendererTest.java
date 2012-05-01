@@ -41,14 +41,6 @@ import java.util.List;
  * @since 4/6/12
  */
 public class DescriptorRendererTest extends JetLiteFixture {
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdk();
-    }
-
-
     public void testGlobalProperties() throws IOException {
         doTest();
     }

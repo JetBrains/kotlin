@@ -45,7 +45,6 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        super.createEnvironmentWithMockJdk();
         tc.setUp();
     }
 
