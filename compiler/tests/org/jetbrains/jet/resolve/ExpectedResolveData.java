@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -79,13 +78,9 @@ public abstract class ExpectedResolveData {
     private final Map<String, DeclarationDescriptor> nameToDescriptor;
     private final Map<String, PsiElement> nameToPsiElement;
 
-    @NotNull
-    private final JetCoreEnvironment jetCoreEnvironment;
-
-    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement, @NotNull JetCoreEnvironment environment) {
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
         this.nameToDescriptor = nameToDescriptor;
         this.nameToPsiElement = nameToPsiElement;
-        jetCoreEnvironment = environment;
     }
 
     public final JetFile createFileFromMarkedUpText(String fileName, String text) {
@@ -148,7 +143,7 @@ public abstract class ExpectedResolveData {
 
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
                 Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
-                jetCoreEnvironment.getCompilerDependencies());
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
         BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {

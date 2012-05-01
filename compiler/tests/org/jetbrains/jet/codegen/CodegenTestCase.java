@@ -24,7 +24,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
@@ -128,9 +127,8 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
         final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 myFile, JetControlFlowDataTraceFactory.EMPTY,
-                myEnvironment.getCompilerDependencies());
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
         analyzeExhaust.throwIfError();
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
@@ -196,7 +194,8 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
                 r = method;
             }
-            if (r == null) { throw new AssertionError(); }
+            if (r == null)
+                throw new AssertionError();
             return r;
         } catch (Error e) {
             System.out.println(generateToText());

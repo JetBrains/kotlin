@@ -15,7 +15,7 @@ class ArrayWrapper<T>() {
     }
 
     fun get(index: Int): T {
-        return contents.get(index).sure()
+        return contents.get(index)
     }
 }
 

@@ -16,19 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
 /**
  * @author yole
  * @author alex.tkachman
  */
 public class ObjectGenTest extends CodegenTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
-    }
-
     public void testSimpleObject() throws Exception {
         blackBoxFile("objects/simpleObject.jet");
 //        System.out.println(generateToText());

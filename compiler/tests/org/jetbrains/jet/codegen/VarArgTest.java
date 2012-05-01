@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +26,6 @@ import java.util.Arrays;
  */
 public class VarArgTest extends CodegenTestCase {
     public void testStringArray () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test(vararg ts: String) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -37,7 +34,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testIntArray () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test(vararg ts: Int) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -46,7 +42,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testIntArrayKotlinNoArgs () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test() = testf(); fun testf(vararg ts: Int) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -55,7 +50,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testIntArrayKotlin () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test() = testf(239, 7); fun testf(vararg ts: Int) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -66,7 +60,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testNullableIntArrayKotlin () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test() = testf(239.toByte(), 7.toByte()); fun testf(vararg ts: Byte?) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -77,7 +70,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testIntArrayKotlinObj () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test() = testf(\"239\"); fun testf(vararg ts: String) = ts");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -87,7 +79,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testArrayT () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun test() = _array(2, 4); fun <T> _array(vararg elements : T) = elements");
 //        System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -103,12 +94,10 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testKt797() {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt796_797.jet");
     }
 
     public void testArrayAsVararg () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts: Array<String>) = asList(*ts); ");
         //System.out.println(generateToText());
         final Method main = generateFunction("test");
@@ -117,7 +106,6 @@ public class VarArgTest extends CodegenTestCase {
     }
 
     public void testArrayAsVararg2 () throws InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts1: Array<String>, ts2: String) = asList(*ts1, ts2); ");
         System.out.println(generateToText());
         final Method main = generateFunction("test");

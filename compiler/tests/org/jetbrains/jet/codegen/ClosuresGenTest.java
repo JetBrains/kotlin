@@ -16,19 +16,10 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-
 /**
  * @author max
  */
 public class ClosuresGenTest extends CodegenTestCase {
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
-    }
-
     public void testSimplestClosure() throws Exception {
         blackBoxFile("classes/simplestClosure.jet");
 //        System.out.println(generateToText());
