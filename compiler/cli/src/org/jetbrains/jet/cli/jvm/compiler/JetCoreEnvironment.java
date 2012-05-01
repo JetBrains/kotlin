@@ -72,7 +72,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             }
         }
         if (compilerSpecialMode.includeKotlinRuntime()) {
-            addToClasspath(compilerDependencies.getRuntimeJar());
+            for (VirtualFile root : compilerDependencies.getRuntimeRoots()) {
+                addLibraryRoot(root);
+            }
         }
 
         JetStandardLibrary.initialize(getProject());
