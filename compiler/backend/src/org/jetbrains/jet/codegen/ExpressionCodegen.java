@@ -154,7 +154,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             throw e;
         }
         catch (Throwable error) {
-            throw new CompilationException(error.getMessage(), error, selector);
+            String message = error.getMessage();
+            throw new CompilationException(message != null ? message : "null", error, selector);
         }
     }
 
