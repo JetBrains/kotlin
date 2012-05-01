@@ -1,5 +1,3 @@
-import java.util.ArrayList
-
 class MyNumber(val i: Int) {
     fun inc(): MyNumber = MyNumber(i+1)
 }
@@ -52,21 +50,32 @@ fun test6() : Boolean {
     return true
 }
 
+// ArrayList without jdk-headers cannot be used in these tests
+class MyArrayList<T>(var value: T) {
+    fun get(index: Int): T {
+        if (index != 17)
+            throw Exception()
+        return value
+    }
+    fun set(index: Int, value: T): Unit {
+        if (index != 17)
+            throw Exception()
+        this.value = value
+    }
+}
+
 fun test7() : Boolean {
-    var mnr  = ArrayList<MyNumber>()
-    mnr.add(MyNumber(42))
-    mnr[0]++
-    if (mnr[0].i  != 43) return false
+    var mnr  = MyArrayList<MyNumber>(MyNumber(42))
+    mnr[17]++
+    if (mnr[17].i  != 43) return false
     return true
 }
 
 fun test8() : Boolean {
-    var mnr  = ArrayList<MyNumber>()
-    mnr.add(MyNumber(42))
-    mnr.add(MyNumber(41))
-    mnr[1] = mnr[0]++
-    if (mnr[0].i  != 43) return false
-    if (mnr[1].i  != 42) return false
+    var mnr  = MyArrayList<MyNumber>(MyNumber(42))
+    val old = mnr[17]++
+    if (old.i != 42) return false
+    if (mnr[17].i  != 43) return false
     return true
 }
 

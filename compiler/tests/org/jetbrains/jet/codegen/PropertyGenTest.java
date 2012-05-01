@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -31,7 +33,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivateVal() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVal");
         final Field[] fields = aClass.getDeclaredFields();
@@ -41,7 +43,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivateVar() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PrivateVar");
         final Object instance = aClass.newInstance();
@@ -52,7 +54,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPublicVar() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("class PublicVar() { public var foo : Int = 0; }");
         final Class aClass = loadImplementationClass(generateClassesInFile(), "PublicVar");
         final Object instance = aClass.newInstance();
@@ -63,7 +65,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsInInterface() {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("class AccessorsInInterface() { public var foo : Int = 0; }");
         final Class aClass = loadClass("AccessorsInInterface", generateClassesInFile());
         assertNotNull(findMethodByName(aClass, "getFoo"));
@@ -71,7 +73,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPrivatePropertyInNamespace() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("private val x = 239");
         final Class nsClass = generateNamespaceClass();
         final Field[] fields = nsClass.getDeclaredFields();
@@ -84,7 +86,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldPropertyAccess() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile("properties/fieldPropertyAccess.jet");
 //        System.out.println(generateToText());
         final Method method = generateFunction();
@@ -93,14 +95,14 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldGetter() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("val now: Long get() = System.currentTimeMillis(); fun foo() = now");
         final Method method = generateFunction("foo");
         assertIsCurrentTime((Long) method.invoke(null));
     }
 
     public void testFieldSetter() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
@@ -112,7 +114,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldSetterPlusEq() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Method method = generateFunction("append");
         method.invoke(null, "IntelliJ ");
@@ -121,7 +123,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAccessorsWithoutBody() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("class AccessorsWithoutBody() { protected var foo: Int = 349\n get\n  private set\n fun setter() { foo = 610; } } ");
 //        System.out.println(generateToText());
         final Class aClass = loadImplementationClass(generateClassesInFile(), "AccessorsWithoutBody");
@@ -139,7 +141,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testInitializersForNamespaceProperties() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("val x = System.currentTimeMillis()");
         final Method method = generateFunction("getX");
         method.setAccessible(true);
@@ -147,7 +149,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testPropertyReceiverOnStack() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Class aClass = loadImplementationClass(generateClassesInFile(), "Evaluator");
         final Constructor constructor = aClass.getConstructor(StringBuilder.class);
@@ -159,7 +161,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testAbstractVal() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("abstract class Foo { public abstract val x: String }");
         final ClassFileFactory codegens = generateClassesInFile();
         final Class aClass = loadClass("Foo", codegens);
@@ -167,7 +169,7 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testVolatileProperty() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("abstract class Foo { public volatile var x: String = \"\"; }");
 //        System.out.println(generateToText());
         final ClassFileFactory codegens = generateClassesInFile();
@@ -177,18 +179,18 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt257 () throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt257.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt613 () throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt613.jet");
     }
 
     public void testKt160() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         loadText("internal val s = java.lang.Double.toString(1.0)");
         final Method method = generateFunction("getS");
         method.setAccessible(true);
@@ -196,12 +198,12 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt1165() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1165.kt");
     }
 
     public void testKt1168() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1168.kt");
     }
 
@@ -211,17 +213,17 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testKt1159() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1159.kt");
     }
 
     public void testKt1417() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1417.kt");
     }
 
     public void testKt1398() throws Exception {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1398.kt");
     }
 

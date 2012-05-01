@@ -130,6 +130,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
                 myFile, JetControlFlowDataTraceFactory.EMPTY,
                 myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
@@ -195,8 +196,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
                 r = method;
             }
-            if (r == null)
-                throw new AssertionError();
+            if (r == null) { throw new AssertionError(); }
             return r;
         } catch (Error e) {
             System.out.println(generateToText());

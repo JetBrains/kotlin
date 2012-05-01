@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 public class SuperGenTest extends CodegenTestCase {
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
     }
 
     public void testBasicProperty () {

@@ -76,6 +76,13 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
     }
 
+    protected void createEnvironmentWithMockJdk(@NotNull CompilerSpecialMode compilerSpecialMode) {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable(), compilerSpecialMode);
+    }
+
     protected void createEnvironmentWithFullJdk() {
         if (myEnvironment != null) {
             throw new IllegalStateException("must not set up myEnvironemnt twice");

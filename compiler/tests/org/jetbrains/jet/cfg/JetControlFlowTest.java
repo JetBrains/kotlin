@@ -31,6 +31,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,7 +55,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
     }
 
     @Override
