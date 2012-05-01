@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 public class TupleGenTest extends CodegenTestCase {
     public void testBasic() {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("/tuples/basic.jet");
 //        System.out.println(generateToText());
     }

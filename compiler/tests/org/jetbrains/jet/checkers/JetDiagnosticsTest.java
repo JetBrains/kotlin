@@ -57,7 +57,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
     }
 
     @Override

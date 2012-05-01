@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import jet.IntRange;
 import jet.Tuple2;
 import jet.Tuple4;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -34,7 +35,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
     }
 
     public void testPSVM() throws Exception {

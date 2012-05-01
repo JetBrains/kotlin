@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 import java.lang.reflect.Method;
 
 public class ArrayGenTest extends CodegenTestCase {
@@ -23,7 +25,7 @@ public class ArrayGenTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdk(CompilerSpecialMode.JDK_HEADERS);
     }
 
     public void testKt238 () throws Exception {
@@ -244,7 +246,7 @@ public class ArrayGenTest extends CodegenTestCase {
     public void testCollectionAssignGetMultiIndex () throws Exception {
             loadText("import java.util.ArrayList\n" +
                          "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; s[2, -2] += \"7\"; return s[2,-2] }\n" +
-                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2].sure()\n" +
                          "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
 //            System.out.println(generateToText());
             Method foo = generateFunction("box");
@@ -264,7 +266,7 @@ public class ArrayGenTest extends CodegenTestCase {
     public void testCollectionGetMultiIndex () throws Exception {
             loadText("import java.util.ArrayList\n" +
                          "fun box() : String { val s = ArrayList<String>(1); s.add(\"\"); s [1, -1] = \"5\"; return s[2, -2] }\n" +
-                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2]\n" +
+                         "fun ArrayList<String>.get(index1: Int, index2 : Int) = this[index1+index2].sure()\n" +
                          "fun ArrayList<String>.set(index1: Int, index2 : Int, elem: String) { this[index1+index2] = elem }\n");
 //            System.out.println(generateToText());
             Method foo = generateFunction("box");
