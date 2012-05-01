@@ -14,5 +14,5 @@ var <T> ArrayList<T>.length : Int
     set(value: Int) = throw java.lang.Error()
 
 var <T> ArrayList<T>.last : T
-    get() = get(size()-1)
+    get() = get(size()-1).sure()
     set(el : T) { set(size()-1, el) }

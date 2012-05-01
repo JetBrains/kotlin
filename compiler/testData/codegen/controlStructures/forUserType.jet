@@ -19,28 +19,28 @@ fun box() : String {
     val c1: java.lang.Iterable<Int> = MyCollection1()
     sum = 0
     for (el in c1) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 15) return "c1 failed"
 
     val c2 = MyCollection1()
     sum = 0
     for (el in c2) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 15) return "c2 failed"
 
     val c3: Iterable<Int> = MyCollection2()
     sum = 0
     for (el in c3) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 15) return "c3 failed"
 
     val c4 = MyCollection2()
     sum = 0
     for (el in c4) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 15) return "c4 failed"
 
@@ -50,7 +50,7 @@ fun box() : String {
     }
     sum = 0
     for (el in a) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 10) return "a failed"
 
@@ -69,7 +69,7 @@ fun box() : String {
     val c7 = MyCollection5()
     sum = 0
     for (el in c7) {
-        sum = sum + el
+        sum = sum + el.sure()
     }
     if(sum != 0) return "c7 failed"
 
