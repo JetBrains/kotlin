@@ -45,6 +45,11 @@ public final class ImportPath {
         return fqName.getFqName() + (isAllUnder ? ".*" : "");
     }
 
+    @Override
+    public String toString() {
+        return getPathStr();
+    }
+
     @NotNull
     public FqName fqnPart() {
         return fqName;
