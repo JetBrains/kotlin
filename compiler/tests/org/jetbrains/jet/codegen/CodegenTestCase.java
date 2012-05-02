@@ -196,7 +196,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
                 r = method;
             }
-            if (r == null) { throw new AssertionError(); }
+            if (r == null) {
+                throw new AssertionError();
+            }
             return r;
         } catch (Error e) {
             System.out.println(generateToText());
