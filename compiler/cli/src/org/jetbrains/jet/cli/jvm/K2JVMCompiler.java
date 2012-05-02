@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.messages.*;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
@@ -45,7 +45,7 @@ import static org.jetbrains.jet.cli.common.ExitCode.*;
  * @author alex.tkachman
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEnvironmentConfiguration> {
+public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMCompileEnvironmentConfiguration> {
 
     public static void main(String... args) {
         doMain(new K2JVMCompiler(), args);
@@ -89,8 +89,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
 
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
-        CompileEnvironmentConfiguration configuration =
-                new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
+        K2JVMCompileEnvironmentConfiguration configuration =
+                new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
 
         messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
@@ -175,16 +175,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
 
 
     @Override
-    protected void configureEnvironment(@NotNull CompileEnvironmentConfiguration configuration,
-            @NotNull K2JVMCompilerArguments arguments) {
+    protected void configureEnvironment(K2JVMCompileEnvironmentConfiguration configuration, K2JVMCompilerArguments arguments) {
         super.configureEnvironment(configuration, arguments);
 
         if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(),
+                                                  configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
         }
 
         if (arguments.classpath != null) {
-            final Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
+            Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, String.class));
         }
     }

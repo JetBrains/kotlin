@@ -42,17 +42,18 @@ public class BytecodeCompiler {
 
 
     /**
-     * Creates new instance of {@link org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration} instance using the arguments specified.
+     * Creates new instance of {@link org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration} instance using the arguments specified.
      *
      * @param stdlib    path to "kotlin-runtime.jar", only used if not null and not empty
      * @param classpath compilation classpath, only used if not null and not empty
      *
      * @return compile environment instance
      */
-    private CompileEnvironmentConfiguration env( String stdlib, String[] classpath ) {
+    private K2JVMCompileEnvironmentConfiguration env( String stdlib, String[] classpath ) {
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
         JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
-        CompileEnvironmentConfiguration env = new CompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        K2JVMCompileEnvironmentConfiguration
+                env = new K2JVMCompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             File file = new File(stdlib);
@@ -140,7 +141,7 @@ public class BytecodeCompiler {
      */
     public void moduleToJar ( @NotNull String module, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            CompileEnvironmentConfiguration env = env(stdlib, classpath);
+            K2JVMCompileEnvironmentConfiguration env = env(stdlib, classpath);
             List<Module> modules = CompileEnvironmentUtil.loadModuleScript(module, env.getMessageCollector());
             File directory = new File(module).getParentFile();
             boolean success = KotlinToJVMBytecodeCompiler.compileModules(env, modules, directory, jar, null, includeRuntime);

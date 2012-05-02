@@ -59,7 +59,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static ClassFileFactory compileModule(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
             Module moduleBuilder,
             File directory
     ) {
@@ -82,7 +82,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileModules(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
 
             @NotNull List<Module> modules,
 
@@ -118,7 +118,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     private static boolean compileBunchOfSources(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
             String jar,
             String outputDir,
             boolean includeRuntime
@@ -163,7 +163,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileBunchOfSources(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
 
             String sourceFileOrDir, String jar, String outputDir, boolean includeRuntime) {
         configuration.getEnvironment().addSources(sourceFileOrDir);
@@ -172,7 +172,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileBunchOfSourceDirectories(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
 
             List<String> sources, String jar, String outputDir, boolean includeRuntime) {
         for (String source : sources) {
@@ -184,7 +184,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static ClassLoader compileText(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
             String code) {
         configuration.getEnvironment()
                 .addSources(new LightVirtualFile("script" + LocalTimeCounter.currentTime() + ".kt", JetLanguage.INSTANCE, code));
@@ -197,13 +197,13 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    public static GenerationState analyzeAndGenerate(CompileEnvironmentConfiguration configuration) {
+    public static GenerationState analyzeAndGenerate(K2JVMCompileEnvironmentConfiguration configuration) {
         return analyzeAndGenerate(configuration, configuration.getEnvironment().getCompilerDependencies().getCompilerSpecialMode().isStubs());
     }
 
     @Nullable
     public static GenerationState analyzeAndGenerate(
-            CompileEnvironmentConfiguration configuration,
+            K2JVMCompileEnvironmentConfiguration configuration,
             boolean stubs
     ) {
         AnalyzeExhaust exhaust = analyze(configuration, stubs);
@@ -219,7 +219,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     private static AnalyzeExhaust analyze(
-            final CompileEnvironmentConfiguration configuration,
+            final K2JVMCompileEnvironmentConfiguration configuration,
             boolean stubs) {
         final JetCoreEnvironment environment = configuration.getEnvironment();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(configuration.getMessageCollector());
@@ -243,7 +243,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @NotNull
     private static GenerationState generate(
-            final CompileEnvironmentConfiguration configuration,
+            final K2JVMCompileEnvironmentConfiguration configuration,
             AnalyzeExhaust exhaust,
             boolean stubs) {
         JetCoreEnvironment environment = configuration.getEnvironment();

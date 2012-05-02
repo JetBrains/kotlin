@@ -18,13 +18,13 @@ package org.jetbrains.jet.cli.js;
 
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.CompileEnvironmentConfig;
+import org.jetbrains.jet.cli.common.CompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
 /**
  * @author Pavel Talanov
  */
-public class K2JSCompileEnvironmentConfiguration extends CompileEnvironmentConfig {
+public class K2JSCompileEnvironmentConfiguration extends CompileEnvironmentConfiguration {
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      *

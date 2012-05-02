@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
@@ -27,7 +27,7 @@ public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         createEnvironmentWithMockJdk();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
-        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
                 myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);

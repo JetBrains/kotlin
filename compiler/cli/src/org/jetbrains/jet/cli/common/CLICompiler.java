@@ -33,11 +33,11 @@ import static org.jetbrains.jet.cli.common.ExitCode.OK;
 /**
  * @author Pavel Talanov
  */
-public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf extends CompileEnvironmentConfig> {
+public abstract class CLICompiler<A extends CompilerArguments, C extends CompileEnvironmentConfiguration> {
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {
-        CLArgs arguments = createArguments();
+        A arguments = createArguments();
         if (!parseArguments(errStream, arguments, args)) {
             return INTERNAL_ERROR;
         }
@@ -47,7 +47,7 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
     /**
      * Returns true if the arguments can be parsed correctly
      */
-    protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull CLArgs arguments, @NotNull String[] args) {
+    protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
         try {
             Args.parse(arguments, args);
             return true;
@@ -66,26 +66,40 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
      * Allow derived classes to add additional command line arguments
      */
     protected void usage(@NotNull PrintStream target) {
-        ArgsUtil.printUsage(target, createArguments());
+        // We should say something like
+        //   Args.usage(target, K2JVMCompilerArguments.class);
+        // but currently cli-parser we are using does not support that
+        // a corresponding patch has been sent to the authors
+        // For now, we are using this:
+        PrintStream oldErr = System.err;
+        System.setErr(target);
+        try {
+            // TODO: use proper argv0
+            Args.usage(createArguments());
+        }
+        finally {
+            System.setErr(oldErr);
+        }
     }
 
     /**
      * Strategy method to configure the environment, allowing compiler
      * based tools to customise their own plugins
      */
-    protected void configureEnvironment(@NotNull CEConf configuration, @NotNull CLArgs arguments) {
+    //TODO: add parameter annotations when KT-1863 is resolved
+    protected void configureEnvironment(C configuration, A arguments) {
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
         configuration.getCompilerPlugins().addAll(plugins);
     }
 
     @NotNull
-    protected abstract CLArgs createArguments();
+    protected abstract A createArguments();
 
     /**
      * Executes the compiler on the parsed arguments
      */
     @NotNull
-    public ExitCode exec(final PrintStream errStream, CLArgs arguments) {
+    public ExitCode exec(final PrintStream errStream, A arguments) {
         if (arguments.isHelp()) {
             usage(errStream);
             return OK;
@@ -104,15 +118,15 @@ public abstract class CLICompiler<CLArgs extends CompilerArguments, CEConf exten
 
     //TODO: can't declare parameters as not null due to KT-1863
     @NotNull
-    protected abstract ExitCode doExecute(PrintStream stream, CLArgs arguments, MessageRenderer renderer);
+    protected abstract ExitCode doExecute(PrintStream stream, A arguments, MessageRenderer renderer);
 
     @NotNull
-    private MessageRenderer getMessageRenderer(@NotNull CLArgs arguments) {
+    private MessageRenderer getMessageRenderer(@NotNull A arguments) {
         return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
     }
 
     protected void printVersionIfNeeded(@NotNull PrintStream errStream,
-            @NotNull CLArgs arguments,
+            @NotNull A arguments,
             @NotNull MessageRenderer messageRenderer) {
         if (arguments.isVersion()) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
