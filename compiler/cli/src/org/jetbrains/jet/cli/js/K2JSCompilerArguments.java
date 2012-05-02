@@ -23,11 +23,14 @@ import org.jetbrains.jet.cli.common.CompilerArguments;
  * @author Pavel Talanov
  */
 public class K2JSCompilerArguments extends CompilerArguments {
-    @Argument(value = "output", description = "output directory")
+    @Argument(value = "output", description = "Output directory")
     public String outputDir;
 
-    @Argument(value = "module", description = "module to compile")
+    @Argument(value = "module", description = "Module to compile")
     public String module;
+
+    @Argument(value = "srcdir", description = "Sources directory")
+    public String srcdir;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
