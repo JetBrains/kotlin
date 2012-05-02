@@ -22,7 +22,10 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.AbstractScopeAdapter;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
@@ -43,14 +46,21 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final WritableScope scopeForSupertypeResolution;
     private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
 
-    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration, @NotNull JetScope outerScope, ClassKind kind) {
+    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration,
+                                  @NotNull JetScope outerScope, ClassKind kind) {
         super(containingDeclaration, kind);
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler).setDebugName("MemberLookup").changeLockLevel(WritableScope.LockLevel.BOTH));
-        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler).setDebugName("SupertypeResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler).setDebugName("MemberResolution").changeLockLevel(WritableScope.LockLevel.BOTH);
+        setScopeForMemberLookup(new WritableScopeImpl(JetScope.EMPTY, this, redeclarationHandler)
+                                        .setDebugName("MemberLookup")
+                                        .changeLockLevel(WritableScope.LockLevel.BOTH));
+        this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler)
+                .setDebugName("SupertypeResolution")
+                .changeLockLevel(WritableScope.LockLevel.BOTH);
+        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler)
+                .setDebugName("MemberResolution")
+                .changeLockLevel(WritableScope.LockLevel.BOTH);
         if (getKind() == ClassKind.TRAIT) {
             setUpScopeForInitializers(this);
         }

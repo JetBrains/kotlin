@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Nikolay Krasko
  */
 public final class ImportPath {
-    final @NotNull FqName fqName;
-    final boolean isAllUnder;
+    private final @NotNull FqName fqName;
+    private final boolean isAllUnder;
 
     public ImportPath(@NotNull FqName fqName, boolean isAllUnder) {
         this.fqName = fqName;

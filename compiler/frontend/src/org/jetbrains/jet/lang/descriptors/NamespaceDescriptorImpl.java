@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -30,7 +29,9 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
 
     private WritableScope memberScope;
 
-    public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
+    public NamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration,
+                                   @NotNull List<AnnotationDescriptor> annotations,
+                                   @NotNull String name) {
         super(containingDeclaration, annotations, name);
     }
 
