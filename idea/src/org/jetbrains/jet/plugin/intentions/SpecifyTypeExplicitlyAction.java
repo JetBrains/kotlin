@@ -23,16 +23,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetFunction;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
+import org.jetbrains.jet.plugin.quickfix.AddReturnTypeFix;
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyActions;
 
 /**
@@ -41,6 +45,8 @@ import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyA
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     private JetType targetType;
+    private boolean isFunction;
+
     private boolean disabledForError;
 
     public SpecifyTypeExplicitlyAction() {
@@ -54,7 +60,12 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @NotNull
     @Override
     public String getText() {
-        return targetType == null ? JetBundle.message("specify.type.explicitly.remove.action.name") : JetBundle.message("specify.type.explicitly.add.action.name");
+        if (isFunction) {
+            return JetBundle.message("specify.type.explicitly.add.return.type.action.name");
+        }
+        else {
+            return targetType == null ? JetBundle.message("specify.type.explicitly.remove.action.name") : JetBundle.message("specify.type.explicitly.add.action.name");
+        }
     }
 
     @NotNull
@@ -65,37 +76,59 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        JetProperty property = (JetProperty)element.getParent();
-        if (targetType == null) {
-            JetChangePropertyActions.removeTypeAnnotation(project, property);
+        PsiElement parent = element.getParent();
+        if (parent instanceof JetProperty) {
+            JetProperty property = (JetProperty) parent;
+            if (targetType == null) {
+                JetChangePropertyActions.removeTypeAnnotation(project, property);
+            } else {
+                JetChangePropertyActions.addTypeAnnotation(project, property, targetType);
+            }
+        } else if (parent instanceof JetNamedFunction) {
+            assert targetType != null;
+            parent.replace(AddReturnTypeFix.addFunctionType(project, (JetFunction) parent, targetType));
         } else {
-            JetChangePropertyActions.addTypeAnnotation(project, property, targetType);
+            assert false;
         }
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!(element.getParent() instanceof JetProperty) || PsiTreeUtil.isAncestor(((JetProperty)element.getParent()).getInitializer(), element, false)) {
+        if (element.getParent() instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) element.getParent()).getInitializer(), element, false)) {
+            isFunction = false;
+            if (((JetProperty)element.getParent()).getPropertyTypeRef() != null) {
+                targetType = null;
+                return true;
+            }
+        }
+        else if (element.getParent() instanceof JetNamedFunction && ((JetNamedFunction) element.getParent()).getReturnTypeRef() == null
+                 && !((JetNamedFunction) element.getParent()).hasBlockBody()) {
+            isFunction = true;
+        }
+        else {
             return false;
         }
 
-        JetProperty property = (JetProperty)element.getParent();
-        boolean hasTypeSpecified = property.getPropertyTypeRef() != null;
-        if (hasTypeSpecified) {
-            targetType = null;
-        } else {
-            BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)element.getContainingFile());
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-            assert descriptor instanceof VariableDescriptor;
-            targetType = ((VariableDescriptor)descriptor).getType();
-            if (ErrorUtils.isErrorType(targetType)) {
-                return false;
-            }
-            if (disabledForError) {
-                for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-                    if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && property == diagnostic.getPsiElement()) {
-                        return false;
-                    }
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)element.getContainingFile());
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element.getParent());
+
+        if (descriptor instanceof VariableDescriptor) {
+            targetType = ((VariableDescriptor) descriptor).getType();
+        }
+        else if (descriptor instanceof SimpleFunctionDescriptor) {
+            targetType = ((SimpleFunctionDescriptor) descriptor).getReturnType();
+        }
+        else {
+            assert false;
+        }
+
+        if (targetType == null || ErrorUtils.isErrorType(targetType)) {
+            return false;
+        }
+        if (disabledForError) {
+            for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+                if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && element.getParent() == diagnostic.getPsiElement()) {
+                    return false;
                 }
             }
         }
