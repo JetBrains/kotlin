@@ -33,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -81,10 +83,79 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             return;
         }
 
-        for (JetElement element : generateOverridingMembers(selectedElements, (JetFile)classOrObject.getContainingFile(), false)) {
-            afterAnchor = body.addAfter(element, afterAnchor);
+        List<JetElement> elementsToCompact = new ArrayList<JetElement>();
+        final JetFile file = (JetFile)classOrObject.getContainingFile();
+        for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+            PsiElement added = body.addAfter(element, afterAnchor);
+            afterAnchor = added;
+            elementsToCompact.add((JetElement)added);
+        }
+        compactReferenceToClasses(elementsToCompact);
+    }
+
+    private static void compactReferenceToClasses(List<JetElement> elementsToCompact) {
+        if (elementsToCompact.isEmpty()) {
+            return;
+        }
+        final JetFile file = (JetFile) elementsToCompact.get(0).getContainingFile();
+        final BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        for (JetElement element : elementsToCompact) {
+            element.accept(new JetVisitorVoid() {
+                @Override
+                public void visitJetElement(JetElement element) {
+                    element.acceptChildren(this);
+                }
+
+                @Override
+                public void visitTypeReference(JetTypeReference typeReference) {
+                    super.visitTypeReference(typeReference);
+
+                    JetTypeElement typeElement = typeReference.getTypeElement();
+                    if (typeElement instanceof JetNullableType) {
+                        typeElement = ((JetNullableType) typeElement).getInnerType();
+                    }
+                    if (typeElement instanceof JetUserType) {
+                        JetUserType userType = (JetUserType) typeElement;
+                        DeclarationDescriptor target = bc.get(BindingContext.REFERENCE_TARGET,
+                                                              userType.getReferenceExpression());
+                        if (target instanceof ClassDescriptor) {
+                            ClassDescriptor targetClass = (ClassDescriptor) target;
+                            ClassDescriptor targetTopLevelClass = ImportInsertHelper.getTopLevelClass(targetClass);
+
+                            JetScope scope = bc.get(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference);
+                            ClassifierDescriptor classifier = scope.getClassifier(targetTopLevelClass.getName());
+                            if (targetTopLevelClass == classifier) {
+                                compactReferenceToClass(userType, targetClass);
+                            }
+                            else if (classifier == null) {
+                                ImportInsertHelper.addImportDirective(DescriptorUtils.getFQName(targetTopLevelClass).toSafe(), file);
+                                compactReferenceToClass(userType, targetClass);
+                            }
+                            else {
+                                // leave FQ name
+                            }
+                        }
+                    }
+                }
+
+                private void compactReferenceToClass(JetUserType userType, ClassDescriptor targetClass) {
+                    if (targetClass == JetStandardClasses.getUnitType().getConstructor().getDeclarationDescriptor()) {
+                        // do not replace "Unit" with "Tuple0"
+                        return;
+                    }
+                    String name = targetClass.getName();
+                    DeclarationDescriptor parent = targetClass.getContainingDeclaration();
+                    while (parent instanceof ClassDescriptor) {
+                        name = parent.getName() + "." + name;
+                        parent = parent.getContainingDeclaration();
+                    }
+                    JetTypeArgumentList typeArgumentList = userType.getTypeArgumentList();
+                    userType.replace(JetPsiFactory.createType(userType.getProject(), name + (typeArgumentList == null ? "" : typeArgumentList.getText())));
+                }
+            });
         }
     }
+
 
     @Nullable
     private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
@@ -109,21 +180,21 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return afterAnchor;
     }
 
-    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file, boolean fqNames) {
+    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
         List<JetElement> overridingMembers = new ArrayList<JetElement>();
         for (DescriptorClassMember selectedElement : selectedElements) {
             final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(), file, (SimpleFunctionDescriptor)descriptor, fqNames));
+                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor)descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(overrideProperty(file.getProject(), file, (PropertyDescriptor)descriptor, fqNames));
+                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor)descriptor));
             }
         }
         return overridingMembers;
     }
 
-    private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor, boolean fqNames) {
+    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
         if (descriptor.isVar()) {
@@ -134,7 +205,6 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
         bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
                 descriptor.getType()));
-        ImportInsertHelper.addImportDirectivesIfNeeded(descriptor.getType(), file);
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
             bodyBuilder.append(" = ").append(initializer);
@@ -145,7 +215,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor, boolean fqNames) {
+    private static String renderType(JetType type) {
+        return DescriptorRenderer.TEXT.renderType(type);
+    }
+
+    private static JetElement overrideFunction(Project project, SimpleFunctionDescriptor descriptor) {
         StringBuilder bodyBuilder = new StringBuilder();
         bodyBuilder.append(displayableVisibility(descriptor));
         bodyBuilder.append("override fun ");
@@ -164,7 +238,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 if (!upperBounds.isEmpty()) {
                     boolean firstUpperBound = true;
                     for (JetType upperBound : upperBounds) {
-                        String upperBoundText = " : " + DescriptorRenderer.TEXT.renderTypeWithShortNames(upperBound);
+                        String upperBoundText = " : " + renderType(upperBound);
                         if (upperBound != JetStandardClasses.getDefaultBound()) {
                             if (firstUpperBound) {
                                 bodyBuilder.append(upperBoundText);
@@ -172,7 +246,6 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                                 whereRestrictions.add(param.getName() + upperBoundText);
                             }
                         }
-                        ImportInsertHelper.addImportDirectivesIfNeeded(upperBound, file);
                         firstUpperBound = false;
                     }
                 }
@@ -202,9 +275,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
             bodyBuilder.append(" : ");
-            bodyBuilder.append(DescriptorRenderer.TEXT.renderTypeWithShortNames(parameterDescriptor.getType()));
-
-            ImportInsertHelper.addImportDirectivesIfNeeded(parameterDescriptor.getType(), file);
+            bodyBuilder.append(renderType(parameterDescriptor.getType()));
 
             if (!isAbstractFun) {
                 delegationBuilder.append(parameterDescriptor.getName());
@@ -219,8 +290,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
         boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
         if (returnsNotUnit) {
-            bodyBuilder.append(" : ").append(DescriptorRenderer.TEXT.renderTypeWithShortNames(returnType));
-            ImportInsertHelper.addImportDirectivesIfNeeded(returnType, file);
+            bodyBuilder.append(" : ").append(renderType(returnType));
         }
         if (!whereRestrictions.isEmpty()) {
             bodyBuilder.append("\n").append("where ").append(StringUtil.join(whereRestrictions, ", "));

@@ -69,6 +69,7 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
+        trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
 
         return type;
     }

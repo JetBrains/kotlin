@@ -61,6 +61,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
 
     /** A scope where type of expression has been resolved */
+    WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
 
     /** Collected during analyze, used in IDE in auto-cast completion */
