@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.compilerMessages;
 
+import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
@@ -32,44 +33,12 @@ import static org.jetbrains.jet.plugin.compilerMessages.Message.warning;
 /**
  * @author Pavel Talanov
  */
-public final class IDECompilerMessagingTest extends PlatformTestCase {
+public abstract class IDECompilerMessagingTest extends PlatformTestCase {
 
     private static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/compilerMessages";
 
-    public void testHelloWorld() {
-        doTest(new Function1<MessageChecker, Void>() {
-            @Override
-            public Void invoke(MessageChecker checker) {
-                //nothing apart from header
-                return null;
-            }
-        });
-    }
 
-
-    public void testSimpleWarning() {
-        doTest(new Function1<MessageChecker, Void>() {
-            @Override
-            public Void invoke(MessageChecker checker) {
-                checker.expect(warning().text("Unnecessary non-null assertion (!!) on a non-null receiver of type jet.String")
-                                       .at("test.kt", 4, 4));
-                return null;
-            }
-        });
-    }
-
-    public void testSimpleError() {
-        doTest(new Function1<MessageChecker, Void>() {
-            @Override
-            public Void invoke(MessageChecker checker) {
-                checker.expect(
-                        error().text("A 'return' expression required in a function with a block body ('{...}')").at("test.kt", 5, 1));
-                return null;
-            }
-        });
-    }
-
-    private void doTest(@NotNull Function1<MessageChecker, Void> whatToExpect) {
+    protected void performTest(Function1<MessageChecker, Void> whatToExpect, @NotNull TranslatingCompiler compiler) {
         String pathToTestDir = TEST_DATA_PATH + "/" + getTestName(true);
         VirtualFile testDir = LocalFileSystem.getInstance().findFileByPath(pathToTestDir);
         VirtualFile sampleFile = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/test.kt");
@@ -77,7 +46,7 @@ public final class IDECompilerMessagingTest extends PlatformTestCase {
         VirtualFile root = LocalFileSystem.getInstance().findFileByPath(pathToTestDir + "/src/");
         MockCompileContext mockCompileContext = new MockCompileContext(myModule, outDirectory, root);
         MockModuleChunk mockModuleChunk = new MockModuleChunk(myModule);
-        new JetCompiler()
+        compiler
                 .compile(mockCompileContext, mockModuleChunk, new VirtualFile[] {sampleFile}, new MockOutputSink());
         MessageChecker checker = new MessageChecker(mockCompileContext);
         checkHeader(checker);
