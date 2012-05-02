@@ -20,17 +20,17 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyActions;
@@ -41,6 +41,15 @@ import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyA
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     private JetType targetType;
+    private boolean disabledForError;
+
+    public SpecifyTypeExplicitlyAction() {
+        this(true);
+    }
+
+    public SpecifyTypeExplicitlyAction(boolean disabledForError) {
+        this.disabledForError = disabledForError;
+    }
 
     @NotNull
     @Override
@@ -81,6 +90,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             targetType = ((VariableDescriptor)descriptor).getType();
             if (ErrorUtils.isErrorType(targetType)) {
                 return false;
+            }
+            if (disabledForError) {
+                for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+                    if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && property == diagnostic.getPsiElement()) {
+                        return false;
+                    }
+                }
             }
         }
         return true;

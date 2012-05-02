@@ -1,4 +1,4 @@
-// "Add return type declaration" "true"
+// "Specify Type Explicitly" "true"
 
 class A() {}
 
