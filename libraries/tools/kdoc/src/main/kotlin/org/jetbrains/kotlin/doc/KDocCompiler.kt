@@ -22,7 +22,7 @@ fun main(args: Array<String?>): Unit {
  */
 class KDocCompiler() : K2JVMCompiler() {
 
-    protected override fun configureEnvironment(configuration : CompileEnvironmentConfiguration?, arguments : K2JVMCompilerArguments?) {
+    protected override fun configureEnvironment(configuration : K2JVMCompileEnvironmentConfiguration, arguments : K2JVMCompilerArguments) {
         super.configureEnvironment(configuration, arguments)
         val coreEnvironment = configuration?.getEnvironment()
         if (coreEnvironment != null) {

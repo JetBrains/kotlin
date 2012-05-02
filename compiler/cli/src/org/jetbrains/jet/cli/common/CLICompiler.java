@@ -86,7 +86,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      * based tools to customise their own plugins
      */
     //TODO: add parameter annotations when KT-1863 is resolved
-    protected void configureEnvironment(C configuration, A arguments) {
+    protected void configureEnvironment(@NotNull C configuration, @NotNull A arguments) {
         List<CompilerPlugin> plugins = arguments.getCompilerPlugins();
         configuration.getCompilerPlugins().addAll(plugins);
     }

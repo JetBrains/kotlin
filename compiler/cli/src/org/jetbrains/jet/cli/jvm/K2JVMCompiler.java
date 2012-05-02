@@ -175,7 +175,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
 
 
     @Override
-    protected void configureEnvironment(K2JVMCompileEnvironmentConfiguration configuration, K2JVMCompilerArguments arguments) {
+    protected void configureEnvironment(@NotNull K2JVMCompileEnvironmentConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
         super.configureEnvironment(configuration, arguments);
 
         if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
