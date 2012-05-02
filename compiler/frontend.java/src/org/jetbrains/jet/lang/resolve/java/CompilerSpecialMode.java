@@ -24,6 +24,7 @@ public enum CompilerSpecialMode {
     BUILTINS,
     JDK_HEADERS,
     STDLIB,
+    JS
     ;
 
     public boolean includeJdkHeaders() {

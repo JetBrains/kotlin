@@ -14,40 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.cli.jvm.compiler;
+package org.jetbrains.jet.cli.common;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.CompileEnvironmentConfig;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+
+import java.util.List;
 
 /**
- * @author abreslav
+ * @author Pavel Talanov
  */
-public class CompileEnvironmentConfiguration extends CompileEnvironmentConfig {
-    private final JetCoreEnvironment environment;
-    private final CompilerDependencies compilerDependencies;
+public abstract class CompileEnvironmentConfiguration {
+
+    @NotNull
+    private final MessageCollector messageCollector;
+    @NotNull
+    private final List<CompilerPlugin> compilerPlugins = Lists.newArrayList();
 
     /**
      * NOTE: It's very important to call dispose for every object of this class or there will be memory leaks.
      *
      * @see Disposer
      */
-    public CompileEnvironmentConfiguration(@NotNull JetCoreEnvironment environment,
-            @NotNull CompilerDependencies compilerDependencies,
-            @NotNull MessageCollector messageCollector) {
-        super(messageCollector);
-        this.compilerDependencies = compilerDependencies;
-        this.environment = environment;
-    }
-
-    public JetCoreEnvironment getEnvironment() {
-        return environment;
+    public CompileEnvironmentConfiguration(@NotNull MessageCollector messageCollector) {
+        this.messageCollector = messageCollector;
     }
 
     @NotNull
-    public CompilerDependencies getCompilerDependencies() {
-        return compilerDependencies;
+    public MessageCollector getMessageCollector() {
+        return messageCollector;
+    }
+
+    @NotNull
+    public List<CompilerPlugin> getCompilerPlugins() {
+        return compilerPlugins;
     }
 }

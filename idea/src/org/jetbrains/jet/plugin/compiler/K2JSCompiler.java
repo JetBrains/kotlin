@@ -22,6 +22,7 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import jet.Function1;
@@ -62,7 +63,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return;
         }
 
-        Module module = moduleChunk.getNodes().iterator().next();
+        final Module module = moduleChunk.getNodes().iterator().next();
         final CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
         if (!environment.success()) {
             environment.reportErrorsTo(context);
@@ -73,7 +74,7 @@ public final class K2JSCompiler implements TranslatingCompiler {
         outputCompilerMessagesAndHandleExitCode(context, collector, new Function1<PrintStream, Integer>() {
             @Override
             public Integer invoke(PrintStream stream) {
-                return execInProcess(context, environment, stream);
+                return execInProcess(context, environment, stream, module);
             }
         });
         sink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
@@ -81,11 +82,15 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     @NotNull
     private static Integer execInProcess(@NotNull CompileContext context,
-            @NotNull CompilerEnvironment environment, @NotNull PrintStream out) {
+            @NotNull CompilerEnvironment environment, @NotNull PrintStream out, @NotNull Module module) {
         try {
-            String[] commandLineArgs = {"-tags", "-verbose", "-version"};
-            Object rc = invokeExecMethod(environment, out, context, commandLineArgs,
-                                         "org.jetbrains.jet.cli.js.K2JSCompiler");
+            VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
+            if (roots.length != 1) {
+                context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support module source roots.", null, -1, -1);
+                return -1;
+            }
+            String[] commandLineArgs = {"-tags", "-verbose", "-version", "-srcdir", roots[0].getPath()};
+            Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
             return CompilerUtils.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {

@@ -62,7 +62,7 @@ public class CompileEnvironmentUtil {
 
     @Nullable
     public static File getUnpackedRuntimePath() {
-        URL url = CompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = K2JVMCompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("file")) {
             return new File(url.getPath()).getParentFile().getParentFile();
         }
@@ -71,7 +71,7 @@ public class CompileEnvironmentUtil {
 
     @Nullable
     public static File getRuntimeJarPath() {
-        URL url = CompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
+        URL url = K2JVMCompileEnvironmentConfiguration.class.getClassLoader().getResource("jet/JetObject.class");
         if (url != null && url.getProtocol().equals("jar")) {
             String path = url.getPath();
             return new File(path.substring(path.indexOf(":") + 1, path.indexOf("!/")));
@@ -163,7 +163,7 @@ public class CompileEnvironmentUtil {
         scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler
-                .analyzeAndGenerate(new CompileEnvironmentConfiguration(scriptEnvironment, messageCollector), false);
+                .analyzeAndGenerate(new K2JVMCompileEnvironmentConfiguration(scriptEnvironment, messageCollector), false);
         if (generationState == null) {
             return null;
         }
@@ -195,7 +195,7 @@ public class CompileEnvironmentUtil {
             }
         }
         else {
-            loader = new GeneratedClassLoader(factory, CompileEnvironmentConfiguration.class.getClassLoader());
+            loader = new GeneratedClassLoader(factory, K2JVMCompileEnvironmentConfiguration.class.getClassLoader());
         }
         try {
             Class namespaceClass = loader.loadClass(JvmAbi.PACKAGE_CLASS);
