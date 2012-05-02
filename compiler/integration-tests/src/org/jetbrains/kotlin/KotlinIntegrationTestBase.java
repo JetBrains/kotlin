@@ -59,7 +59,8 @@ public abstract class KotlinIntegrationTestBase {
         protected void succeeded(Description description) {
             try {
                 tempDir.delete();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.print("Can't delete temp directory " + tempDir + ": " + e);
             }
         }
@@ -119,12 +120,12 @@ public abstract class KotlinIntegrationTestBase {
         }
         else {
             final String goldContent = Files.toString(expectedFile, UTF_8);
-            if (!goldContent.equals(content.toString())) {
-                Files.write(content, tmpFile, Charsets.UTF_8);
-                fail(".tmp and .expected files differ, tmp file: " + tmpFile);
+            try {
+                assertEquals(goldContent, content.toString());
             }
-
-            tmpFile.delete();
+            finally {
+                tmpFile.delete();
+            }
         }
     }
 
