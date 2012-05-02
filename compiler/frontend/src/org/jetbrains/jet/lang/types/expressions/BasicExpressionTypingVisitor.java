@@ -472,6 +472,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (result != null) {
                 context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
                 context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
+                if (superTypeQualifier != null) {
+                    context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
+                }
             }
         }
         return DataFlowUtils.checkType(result, expression, context);
