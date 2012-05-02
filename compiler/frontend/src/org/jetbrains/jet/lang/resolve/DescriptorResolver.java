@@ -402,10 +402,10 @@ public class DescriptorResolver {
         }
     }
 
-    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint, BindingTrace trace) {
+    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstraint, BindingTrace trace) {
         JetType jetType = typeResolver.resolveType(scope, upperBound, trace, false);
         if (!TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, jetType)) {
-            if (classObjectConstaint) {
+            if (classObjectConstraint) {
                 trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
             }
             else {
