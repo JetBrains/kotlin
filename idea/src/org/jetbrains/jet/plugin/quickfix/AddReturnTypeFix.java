@@ -52,7 +52,7 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         JetType type = QuickFixUtil.getDeclarationReturnType(element);
-        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type);
+        return super.isAvailable(project, editor, file) && type != null && !ErrorUtils.isErrorType(type) && element instanceof JetFunction;
     }
 
     @Override
@@ -61,9 +61,6 @@ public class AddReturnTypeFix extends JetIntentionAction<JetNamedDeclaration> {
         PsiElement newElement;
         JetType type = QuickFixUtil.getDeclarationReturnType(element);
         if (type == null) return;
-        if (element instanceof JetProperty) {
-            newElement = addPropertyType(project, (JetProperty) element, type);
-        }
         else {
             assert element instanceof JetFunction;
             newElement = addFunctionType(project, (JetFunction) element, type);
