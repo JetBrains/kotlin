@@ -197,6 +197,8 @@
 
             <zap pattern="org.jdom.xpath.Jaxen*"/>
 
+            <zap pattern="org.mozilla.javascript.xml.impl.xmlbeans.**" />
+
             <rule pattern="com.intellij.**" result="kotlinc.internal.com.intellij.@1"/>
             <rule pattern="com.sun.jna.**" result="kotlinc.internal.com.sun.jna.@1"/>
             <rule pattern="org.apache.log4j.**" result="kotlinc.internal.org.apache.log4j.@1"/>
@@ -244,53 +246,56 @@
 
         <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar" />
         <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar" />
-        
+
         <delete file="${output}/kotlin-compiler.jar" failonerror="false"/>
-        <copy file="${output}/kotlin-compiler-clean.jar" tofile="${output}/kotlin-compiler.jar"/>
-        <!--<proguard><![CDATA[-->
-            <!---injars '${output}/kotlin-compiler-clean.jar'-->
-            <!---outjars '${output}/kotlin-compiler.jar'-->
+        <proguard><![CDATA[
+            -injars '${output}/kotlin-compiler-clean.jar'
+            -outjars '${output}/kotlin-compiler.jar'
 
-            <!---libraryjars '${rtjar}'-->
+            -libraryjars '${rtjar}'
 
-            <!---target 1.6-->
-            <!---dontoptimize-->
-            <!---dontobfuscate-->
+            -target 1.6
+            -dontoptimize
+            -dontobfuscate
 
-            <!--# Keep application classes, along with their 'main' methods.-->
-            <!---keepclasseswithmembers public class * {-->
-                <!--public static void main(java.lang.String[]);-->
-            <!--}-->
+            # Keep application classes, along with their 'main' methods.
+            -keepclasseswithmembers public class * {
+                public static void main(java.lang.String[]);
+            }
 
-            <!---keepclasseswithmembers class * {-->
-                <!--# Various dynamically called methods-->
+            -keepclasseswithmembers class * {
+                # Various dynamically called methods
 
-                <!--void start();-->
-                <!--void stop();-->
-                <!--void dispose();-->
-                <!--** getFileSystem();-->
-                <!--** isVarArgs();-->
-                <!--** getApplication();-->
-                <!--** executeOnPooledThread(java.lang.Runnable);-->
-                <!--int getBooleanAttributes(java.io.File);-->
-                <!--<init>(kotlinc.internal.com.intellij.lang.ASTNode);-->
-            <!--}-->
+                void start();
+                void stop();
+                void dispose();
+                ** getFileSystem();
+                ** isVarArgs();
+                ** getApplication();
+                ** finalizeReferent();
+                ** newBuilder();
+                ** startFinalizer(java.lang.Class,java.lang.Object);
+                ** executeOnPooledThread(java.lang.Runnable);
+                ** getUserData(java.lang.String);
+                int getBooleanAttributes(java.io.File);
+                <init>(kotlinc.internal.com.intellij.lang.ASTNode);
+            }
 
-            <!--# Keep the special static methods that are required in enumeration classes.-->
-            <!---keepclassmembers enum * {-->
-                <!--public static **[] values();-->
-                <!--public static ** valueOf(java.lang.String);-->
-            <!--}-->
+            # Keep the special static methods that are required in enumeration classes.
+            -keepclassmembers enum * {
+                public static **[] values();
+                public static ** valueOf(java.lang.String);
+            }
 
-            <!---keepclassmembers class * {-->
-                <!--** toString();-->
-                <!--** hashCode();-->
-                <!--** project();-->
+            -keepclassmembers class * {
+                ** toString();
+                ** hashCode();
+                ** project();
 
-                <!--** TYPE;-->
-                <!--** ourInstance;-->
-            <!--}-->
-        <!--]]></proguard>-->
+                ** TYPE;
+                ** ourInstance;
+            }
+        ]]></proguard>
         <delete file="${output}/kotlin-compiler-clean.jar" />
     </target>
 
