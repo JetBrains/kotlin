@@ -239,7 +239,8 @@ public class ErrorUtils {
     public static boolean isErrorType(@NotNull JetType type) {
         return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
                (
-                    (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+                    (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
+                                                      || isErrorType(((DeferredType) type).getActualType()))) ||
                     type instanceof ErrorTypeImpl ||
                     isError(type.getConstructor())
                );
