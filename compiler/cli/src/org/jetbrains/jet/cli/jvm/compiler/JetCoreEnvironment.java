@@ -48,6 +48,16 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     private final List<JetFile> sourceFiles = new ArrayList<JetFile>();
 
     @NotNull
+    public static JetCoreEnvironment getCoreEnvironmentForJS(Disposable disposable) {
+        return new JetCoreEnvironment(disposable, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.JS));
+    }
+
+    @NotNull
+    public static JetCoreEnvironment getCoreEnvironmentForJVM(Disposable disposable, @NotNull CompilerDependencies dependencies) {
+        return new JetCoreEnvironment(disposable, dependencies);
+    }
+
+    @NotNull
     private final CompilerDependencies compilerDependencies;
 
     public JetCoreEnvironment(Disposable parentDisposable, @NotNull CompilerDependencies compilerDependencies) {
@@ -89,7 +99,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
     }
 
     private void addSources(File file) {
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
                 for (File child : files) {
@@ -101,15 +111,15 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             VirtualFile fileByPath = getLocalFileSystem().findFileByPath(file.getAbsolutePath());
             if (fileByPath != null) {
                 PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(fileByPath);
-                if(psiFile instanceof JetFile) {
-                    sourceFiles.add((JetFile)psiFile);
+                if (psiFile instanceof JetFile) {
+                    sourceFiles.add((JetFile) psiFile);
                 }
             }
         }
     }
 
     public void addSources(VirtualFile vFile) {
-        if  (vFile.isDirectory())  {
+        if (vFile.isDirectory()) {
             for (VirtualFile virtualFile : vFile.getChildren()) {
                 addSources(virtualFile);
             }
@@ -118,15 +128,16 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
             if (vFile.getFileType() == JetFileType.INSTANCE) {
                 PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(vFile);
                 if (psiFile instanceof JetFile) {
-                    sourceFiles.add((JetFile)psiFile);
+                    sourceFiles.add((JetFile) psiFile);
                 }
             }
         }
     }
 
     public void addSources(String path) {
-        if(path == null)
+        if (path == null) {
             return;
+        }
 
         VirtualFile vFile = getLocalFileSystem().findFileByPath(path);
         if (vFile == null) {
@@ -145,14 +156,16 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
     public void addToClasspathFromClassLoader(ClassLoader loader) {
         ClassLoader parent = loader.getParent();
-        if(parent != null)
+        if (parent != null) {
             addToClasspathFromClassLoader(parent);
+        }
 
-        if(loader instanceof URLClassLoader) {
+        if (loader instanceof URLClassLoader) {
             for (URL url : ((URLClassLoader) loader).getURLs()) {
                 File file = new File(url.getPath());
-                if(file.exists() && (!file.isFile() || file.getPath().endsWith(".jar")))
+                if (file.exists() && (!file.isFile() || file.getPath().endsWith(".jar"))) {
                     addToClasspath(file);
+                }
             }
         }
     }
