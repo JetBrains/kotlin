@@ -179,8 +179,8 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
             @NotNull K2JVMCompilerArguments arguments) {
         super.configureEnvironment(configuration, arguments);
 
-        if (configuration.getCompilerDependencies().getRuntimeJar() != null) {
-            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getCompilerDependencies().getRuntimeJar());
+        if (configuration.getEnvironment().getCompilerDependencies().getRuntimeJar() != null) {
+            CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies().getRuntimeJar());
         }
 
         if (arguments.classpath != null) {

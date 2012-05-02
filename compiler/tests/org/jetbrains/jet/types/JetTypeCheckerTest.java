@@ -66,6 +66,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
+        super.createEnvironmentWithMockJdk();
+
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();
 
@@ -587,7 +590,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true), getProject());
+                myEnvironment.getCompilerDependencies(), getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());

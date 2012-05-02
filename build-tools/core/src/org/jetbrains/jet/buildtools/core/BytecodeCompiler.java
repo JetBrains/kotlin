@@ -51,8 +51,8 @@ public class BytecodeCompiler {
      */
     private CompileEnvironmentConfiguration env( String stdlib, String[] classpath ) {
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
-        JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(CompileEnvironmentUtil.createMockDisposable(), dependencies);
-        CompileEnvironmentConfiguration env = new CompileEnvironmentConfiguration(environment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
+        CompileEnvironmentConfiguration env = new CompileEnvironmentConfiguration(environment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         if (( stdlib != null ) && ( stdlib.trim().length() > 0 )) {
             File file = new File(stdlib);

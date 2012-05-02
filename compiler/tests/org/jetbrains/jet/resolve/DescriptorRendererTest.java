@@ -41,6 +41,14 @@ import java.util.List;
  * @since 4/6/12
  */
 public class DescriptorRendererTest extends JetLiteFixture {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdk();
+    }
+
+
     public void testGlobalProperties() throws IOException {
         doTest();
     }
@@ -72,7 +80,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         AnalyzeExhaust analyzeExhaust =
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                         (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                        CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
+                        myEnvironment.getCompilerDependencies());
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.acceptChildren(new JetVisitorVoid() {

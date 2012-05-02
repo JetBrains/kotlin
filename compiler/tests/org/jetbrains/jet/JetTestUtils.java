@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -163,9 +163,7 @@ public class JetTestUtils {
 
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile namespace, @NotNull JetControlFlowDataTraceFactory flowDataTraceFactory) {
         return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(namespace, flowDataTraceFactory,
-                                                                      CompileCompilerDependenciesTest
-                                                                              .compilerDependenciesForTests(CompilerSpecialMode.REGULAR,
-                                                                                                            true));
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
@@ -173,8 +171,10 @@ public class JetTestUtils {
     }
 
     public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        return JetCoreEnvironment.getCoreEnvironmentForJVM(disposable, CompileCompilerDependenciesTest
-                .compilerDependenciesForTests(compilerSpecialMode, true));
+        JetCoreEnvironment environment =
+                new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+        environment.addToClasspath(getAnnotationsJar());
+        return environment;
     }
 
     public static File findMockJdkRtJar() {
@@ -234,7 +234,7 @@ public class JetTestUtils {
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
 
     public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
-        return JetCoreEnvironment.getCoreEnvironmentForJVM(disposable,
+        return new JetCoreEnvironment(disposable,
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
     }
 

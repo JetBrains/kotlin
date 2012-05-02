@@ -25,10 +25,9 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
         return new TemporaryBindingTrace(trace);
     }
 
-    private final BindingTrace trace;
+    protected final BindingTrace trace;
 
-
-    private TemporaryBindingTrace(BindingTrace trace) {
+    protected TemporaryBindingTrace(BindingTrace trace) {
         super(trace.getBindingContext());
         this.trace = trace;
     }

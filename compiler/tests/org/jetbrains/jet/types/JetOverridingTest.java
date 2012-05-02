@@ -40,6 +40,7 @@ public class JetOverridingTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        createEnvironmentWithMockJdk();
         InjectorForTests injector = new InjectorForTests(getProject());
         library = injector.getJetStandardLibrary();
         descriptorResolver = injector.getDescriptorResolver();

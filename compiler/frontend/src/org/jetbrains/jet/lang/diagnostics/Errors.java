@@ -51,7 +51,7 @@ public interface Errors {
     //Elements with "INVISIBLE_REFERENCE" error are marked as unresolved, unlike elements with "INVISIBLE_MEMBER" error
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory2.create(ERROR, PositioningStrategies.CALL_ELEMENT);
 
     RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(ERROR);
     RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(WARNING);
@@ -247,12 +247,12 @@ public interface Errors {
                                                public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
                                                    JetExpression bodyExpression = element.getBodyExpression();
                                                    if (!(bodyExpression instanceof JetBlockExpression)) {
-                                                       return Collections.emptyList();
+                                                       return markElement(element);
                                                    }
                                                    JetBlockExpression blockExpression = (JetBlockExpression)bodyExpression;
                                                    TextRange lastBracketRange = blockExpression.getLastBracketRange();
                                                    if (lastBracketRange == null) {
-                                                       return Collections.emptyList();
+                                                       return markElement(element);
                                                    }
                                                    return markRange(lastBracketRange);
                                                }
@@ -288,7 +288,6 @@ public interface Errors {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetWhenExpression element) {
-            if (hasSyntaxError(element)) return Collections.emptyList();
             return markElement(element.getWhenKeywordElement());
         }
     });
@@ -403,7 +402,7 @@ public interface Errors {
                         JetClass klass = (JetClass)jetDeclaration;
                         PsiElement nameAsDeclaration = klass.getNameIdentifier();
                         if (nameAsDeclaration == null) {
-                            return markRange(klass.getTextRange());
+                            return markElement(klass);
                         }
                         PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
                         if (primaryConstructorParameterList == null) {
@@ -416,7 +415,7 @@ public interface Errors {
                     }
                     else {
                         // safe way
-                        return markRange(jetDeclaration.getTextRange());
+                        return markElement(jetDeclaration);
                     }
                 }
             });
@@ -449,7 +448,7 @@ public interface Errors {
     class Initializer {
         static {
             for (Field field : Errors.class.getFields()) {
-                if ((field.getModifiers() & Modifier.STATIC) != 0) {
+                if (Modifier.isStatic(field.getModifiers())) {
                     try {
                         Object value = field.get(null);
                         if (value instanceof AbstractDiagnosticFactory) {

@@ -26,7 +26,7 @@ import java.util.Collection;
 /**
  * @author svtk
  */
-public interface MemberPrioritizer<D extends CallableDescriptor> {
+public interface CallableDescriptorCollector<D extends CallableDescriptor> {
     @NotNull
     Collection<D> getNonExtensionsByName(JetScope scope, String name);
 
@@ -34,5 +34,5 @@ public interface MemberPrioritizer<D extends CallableDescriptor> {
     Collection<D> getMembersByName(@NotNull JetType receiver, String name);
 
     @NotNull
-    Collection<D> getExtensionsByName(JetScope scope, String name);
+    Collection<D> getNonMembersByName(JetScope scope, String name);
 }

@@ -23,6 +23,7 @@ classpath="$classpath:$root/out/production/stdlib"
 classpath="$classpath:$root/lib/*:$ideaRoot/lib/*:$ideaRoot/lib/rt/*"
 
 exec java $JAVA_OPTS \
+    -ea \
     -classpath "$classpath" \
     org.jetbrains.jet.cli.jvm.K2JVMCompiler \
     "$@"
