@@ -155,6 +155,10 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doDirectoryTest(new OverrideMethodsHandler(), memberToImplement);
     }
 
+    public void testSameTypeName() {
+        doDirectoryTest(new OverrideMethodsHandler());
+    }
+
     private void doFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
         doOverrideImplement(handler, null);
