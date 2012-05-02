@@ -114,8 +114,6 @@ public class QuickFixes {
         factories.put(REDUNDANT_MODIFIER_IN_GETTER, removeRedundantModifierFactory);
         factories.put(ILLEGAL_MODIFIER, removeModifierFactory);
 
-        factories.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, AddReturnTypeFix.createFactory());
-
         JetIntentionActionFactory changeToBackingFieldFactory = ChangeToBackingFieldFix.createFactory();
         factories.put(INITIALIZATION_USING_BACKING_FIELD_CUSTOM_SETTER, changeToBackingFieldFactory);
         factories.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER, changeToBackingFieldFactory);
