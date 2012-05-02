@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerVersion;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
 
 import java.io.PrintStream;
@@ -130,7 +129,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
             @NotNull MessageRenderer messageRenderer) {
         if (arguments.isVersion()) {
             String versionMessage = messageRenderer.render(CompilerMessageSeverity.INFO,
-                                                           "Kotlin Compiler version " + K2JVMCompilerVersion.VERSION,
+                                                           "Kotlin Compiler version " + CompilerVersion.VERSION,
                                                            CompilerMessageLocation.NO_LOCATION);
             errStream.println(versionMessage);
         }
