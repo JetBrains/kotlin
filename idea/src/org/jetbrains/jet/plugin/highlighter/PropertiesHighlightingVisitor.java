@@ -36,9 +36,6 @@ class PropertiesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             return;
         }
         DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
-        if (target instanceof VariableAsFunctionDescriptor) {
-            target = ((VariableAsFunctionDescriptor)target).getVariableDescriptor();
-        }
         if (!(target instanceof PropertyDescriptor)) {
             return;
         }

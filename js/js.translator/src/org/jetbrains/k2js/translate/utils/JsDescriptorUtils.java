@@ -126,17 +126,17 @@ public final class JsDescriptorUtils {
         return (ClassDescriptor)superClassDescriptor;
     }
 
-    @NotNull
-    public static VariableDescriptor getVariableDescriptorForVariableAsFunction
-        (@NotNull VariableAsFunctionDescriptor descriptor) {
-        VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
-        assert functionVariable != null;
-        return functionVariable;
-    }
+    //@NotNull
+    //public static VariableDescriptor getVariableDescriptorForVariableAsFunction
+    //    (@NotNull VariableAsFunctionDescriptor descriptor) {
+    //    VariableDescriptor functionVariable = descriptor.getVariableDescriptor();
+    //    assert functionVariable != null;
+    //    return functionVariable;
+    //}
 
 
     public static boolean isVariableAsFunction(@Nullable DeclarationDescriptor referencedDescriptor) {
-        return referencedDescriptor instanceof VariableAsFunctionDescriptor;
+        return false;//referencedDescriptor instanceof VariableAsFunctionDescriptor;
     }
 
     @NotNull

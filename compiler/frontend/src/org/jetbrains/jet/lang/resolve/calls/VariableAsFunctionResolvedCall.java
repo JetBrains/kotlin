@@ -17,11 +17,13 @@
 package org.jetbrains.jet.lang.resolve.calls;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.List;
 import java.util.Map;
@@ -32,18 +34,11 @@ import java.util.Map;
 public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<FunctionDescriptor> {
     private final ResolvedCallWithTrace<FunctionDescriptor> functionCall;
     private final ResolvedCallWithTrace<VariableDescriptor> variableCall;
-    private final VariableAsFunctionDescriptor variableAsFunctionDescriptor;
 
     public VariableAsFunctionResolvedCall(@NotNull ResolvedCallWithTrace<FunctionDescriptor> functionCall,
             @NotNull ResolvedCallWithTrace<VariableDescriptor> variableCall) {
         this.functionCall = functionCall;
         this.variableCall = variableCall;
-        if (JetStandardClasses.isFunctionType(variableCall.getResultingDescriptor().getType())) {
-            variableAsFunctionDescriptor = VariableAsFunctionDescriptor.create(variableCall.getResultingDescriptor());
-        }
-        else {
-            variableAsFunctionDescriptor = null;
-        }
     }
 
     public ResolvedCallWithTrace<FunctionDescriptor> getFunctionCall() {
@@ -57,20 +52,19 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @NotNull
     @Override
     public FunctionDescriptor getCandidateDescriptor() {
-        return variableAsFunctionDescriptor != null ? variableAsFunctionDescriptor : functionCall.getResultingDescriptor();
+        return functionCall.getResultingDescriptor();
     }
 
     @NotNull
     @Override
     public FunctionDescriptor getResultingDescriptor() {
-        return variableAsFunctionDescriptor != null ? variableAsFunctionDescriptor : functionCall.getResultingDescriptor();
+        return functionCall.getResultingDescriptor();
     }
 
     @NotNull
     @Override
     public ReceiverDescriptor getReceiverArgument() {
-        ReceiverDescriptor receiverArgument = variableCall.getReceiverArgument();
-        return receiverArgument.exists() ? receiverArgument : functionCall.getReceiverArgument();
+        return variableCall.getReceiverArgument();
     }
 
     @NotNull

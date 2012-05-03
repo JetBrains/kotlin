@@ -21,12 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
@@ -78,9 +78,9 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) {
             return translateExpressionAsFunction();
         }
-        if (candidateDescriptor instanceof VariableAsFunctionDescriptor) {
-            return translateVariableAsFunction();
-        }
+        //if (candidateDescriptor instanceof VariableAsFunctionDescriptor) {
+        //    return translateVariableAsFunction();
+        //}
         return null;
     }
 

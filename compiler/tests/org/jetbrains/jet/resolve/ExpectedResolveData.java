@@ -279,10 +279,6 @@ public abstract class ExpectedResolveData {
 
 
                 DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
-                if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
-                    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
-                    actualDescriptor = descriptor.getVariableDescriptor();
-                }
 
                 assertEquals(
                         "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",

@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem;
 import gnu.trove.THashSet;
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
@@ -126,6 +127,19 @@ public class TestlibTest extends CodegenTestCase {
                                                 suite.addTestSuite(aClass);
                                             }
                                         }
+                                        catch (final VerifyError e) {
+                                            suite.addTest(new TestCase(aClass.getName()) {
+                                                @Override
+                                                public int countTestCases() {
+                                                    return 1;
+                                                }
+
+                                                @Override
+                                                public void run(TestResult result) {
+                                                    result.addError(this, new RuntimeException(e));
+                                                }
+                                            });
+                                        }
                                         catch (NoSuchMethodException e) {
                                         }
                                     }
@@ -141,7 +155,6 @@ public class TestlibTest extends CodegenTestCase {
             }
 
             return suite;
-
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable e) {

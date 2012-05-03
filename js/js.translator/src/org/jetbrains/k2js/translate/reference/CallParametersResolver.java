@@ -81,12 +81,12 @@ public final class CallParametersResolver {
         if (!isVariableAsFunction(descriptor)) {
             return ReferenceTranslator.translateAsLocalNameReference(descriptor, context);
         }
-        VariableDescriptor variableDescriptor =
-            getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)descriptor);
-        if (variableDescriptor instanceof PropertyDescriptor) {
-            return getterCall((PropertyDescriptor)variableDescriptor);
-        }
-        return ReferenceTranslator.translateAsLocalNameReference(variableDescriptor, context);
+        //VariableDescriptor variableDescriptor =
+        //    getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)descriptor);
+        //if (variableDescriptor instanceof PropertyDescriptor) {
+        //    return getterCall((PropertyDescriptor)variableDescriptor);
+        //}
+        return ReferenceTranslator.translateAsLocalNameReference(descriptor, context);
     }
 
     //TODO: inspect
