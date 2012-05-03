@@ -47,7 +47,6 @@ import java.util.Collections;
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     private JetType targetType;
-    private boolean isFunction;
 
     private boolean disabledForError;
 
@@ -57,17 +56,6 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     public SpecifyTypeExplicitlyAction(boolean disabledForError) {
         this.disabledForError = disabledForError;
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-        if (isFunction) {
-            return JetBundle.message("specify.type.explicitly.add.return.type.action.name");
-        }
-        else {
-            return targetType == null ? JetBundle.message("specify.type.explicitly.remove.action.name") : JetBundle.message("specify.type.explicitly.add.action.name");
-        }
     }
 
     @NotNull
@@ -97,15 +85,18 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         if (element.getParent() instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) element.getParent()).getInitializer(), element, false)) {
-            isFunction = false;
             if (((JetProperty)element.getParent()).getPropertyTypeRef() != null) {
                 targetType = null;
+                setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
+            }
+            else {
+                setText(JetBundle.message("specify.type.explicitly.add.action.name"));
             }
         }
         else if (element.getParent() instanceof JetNamedFunction && ((JetNamedFunction) element.getParent()).getReturnTypeRef() == null
                  && !((JetNamedFunction) element.getParent()).hasBlockBody()) {
-            isFunction = true;
+            setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else {
             return false;
