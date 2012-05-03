@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
                 myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);

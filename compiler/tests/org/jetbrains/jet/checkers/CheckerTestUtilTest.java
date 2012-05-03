@@ -43,7 +43,7 @@ public class CheckerTestUtilTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
     }
 
 

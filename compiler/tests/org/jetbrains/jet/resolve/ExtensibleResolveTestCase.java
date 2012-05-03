@@ -34,7 +34,7 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     protected void setUp() throws Exception {
         super.setUp();
 
-        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
 
         expectedResolveData = getExpectedResolveData();
     }
