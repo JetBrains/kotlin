@@ -92,11 +92,7 @@ import org.jetbrains.jet.lang.resolve.constants.NullValue;
 import org.jetbrains.jet.lang.resolve.constants.ShortValue;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
-import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.rt.signature.JetSignatureAdapter;
@@ -1583,7 +1579,7 @@ public class JavaDescriptorResolver {
     private TypeSubstitutor createSubstitutorForGenericSupertypes(@Nullable ClassDescriptor classDescriptor) {
         TypeSubstitutor typeSubstitutor;
         if (classDescriptor != null) {
-            typeSubstitutor = TypeUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
+            typeSubstitutor = SubstitutionUtils.buildDeepSubstitutor(classDescriptor.getDefaultType());
         }
         else {
             typeSubstitutor = TypeSubstitutor.EMPTY;

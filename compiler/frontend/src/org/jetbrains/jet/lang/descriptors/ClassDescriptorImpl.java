@@ -97,7 +97,8 @@ public class ClassDescriptorImpl extends DeclarationDescriptorImpl implements Cl
         if (typeConstructor.getParameters().isEmpty()) {
             return  memberDeclarations;
         }
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
+        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils
+                .buildSubstitutionContext(typeConstructor.getParameters(), typeArguments);
         return new SubstitutingScope(memberDeclarations, TypeSubstitutor.create(substitutionContext));
     }
 
