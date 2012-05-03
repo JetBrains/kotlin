@@ -25,6 +25,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -63,14 +65,26 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             JetProperty property = (JetProperty) parent;
             if (property.getPropertyTypeRef() == null) {
                 addTypeAnnotation(project, property, type);
-            } else {
-                removeTypeAnnotation(project, property);
             }
-        } else if (parent instanceof JetNamedFunction) {
+            else {
+                removeTypeAnnotation(property);
+            }
+        }
+        else if (parent instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) parent;
+            if (parameter.getTypeReference() == null) {
+                addTypeAnnotation(project, parameter, type);
+            }
+            else {
+                removeTypeAnnotation(parameter);
+            }
+        }
+        else if (parent instanceof JetNamedFunction) {
             JetNamedFunction function = (JetNamedFunction) parent;
             assert function.getReturnTypeRef() == null;
             addTypeAnnotation(project, function, type);
-        } else {
+        }
+        else {
             assert false;
         }
     }
@@ -94,6 +108,16 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         else if (declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).getReturnTypeRef() == null
                  && !((JetNamedFunction) declaration).hasBlockBody()) {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
+        }
+        else if (declaration instanceof JetParameter && JetNodeTypes.LOOP_PARAMETER == declaration.getNode().getElementType())
+        {
+            if (((JetParameter) declaration).getTypeReference() != null) {
+                setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
+                return true;
+            }
+            else {
+                setText(JetBundle.message("specify.type.explicitly.add.action.name"));
+            }
         }
         else {
             return false;
@@ -176,15 +200,29 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(function));
     }
 
-    public static void removeTypeAnnotation(Project project, JetProperty property) {
-        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
-        if (propertyTypeRef == null) return;
+    public static void addTypeAnnotation(Project project, JetParameter parameter, @NotNull JetType exprType) {
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        parameter.addAfter(typeReference, parameter.getNameIdentifier());
+        parameter.addRangeAfter(colon.getFirst(), colon.getSecond(), parameter.getNameIdentifier());
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(parameter));
+    }
+
+    private static void removeTypeAnnotation(@NotNull JetNamedDeclaration property, @Nullable JetTypeReference typeReference) {
+        if (typeReference == null) return;
         PsiElement identifier = property.getNameIdentifier();
         if (identifier == null) return;
         PsiElement sibling = identifier.getNextSibling();
         if (sibling == null) return;
-        PsiElement nextSibling = propertyTypeRef.getNextSibling();
-        if (nextSibling == null) return;
-        sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling.getNode());
+        PsiElement nextSibling = typeReference.getNextSibling();
+        sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
+    }
+
+    public static void removeTypeAnnotation(JetProperty property) {
+        removeTypeAnnotation(property, property.getPropertyTypeRef());
+    }
+
+    public static void removeTypeAnnotation(JetParameter parameter) {
+        removeTypeAnnotation(parameter, parameter.getTypeReference());
     }
 }
