@@ -221,7 +221,7 @@ public class CallResolver {
                 }
                 
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), "[for expression " + calleeExpression.getText() + "]");
-                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER);
+                FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER, Modality.FINAL, Visibilities.LOCAL);
                 ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor);
                 resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
                 resolutionCandidate.setExplicitReceiverKind(ExplicitReceiverKind.RECEIVER_ARGUMENT);

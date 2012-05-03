@@ -201,7 +201,7 @@ public class JetStandardClasses {
                     typeParameters,
                     Collections.singleton(getAnyType()), scopeForInvoke, Collections.<ConstructorDescriptor>emptySet(), null);
             FUNCTION_TYPE_CONSTRUCTORS.add(FUNCTION[i].getTypeConstructor());
-            FunctionDescriptorUtil.initializeFromFunctionType(invoke, function.getDefaultType(), new ClassReceiver(FUNCTION[i]));
+            FunctionDescriptorUtil.initializeFromFunctionType(invoke, function.getDefaultType(), new ClassReceiver(FUNCTION[i]), Modality.ABSTRACT, Visibilities.PUBLIC);
 
             ClassDescriptorImpl receiverFunction = new ClassDescriptorImpl(
                     STANDARD_CLASSES_NAMESPACE,
@@ -219,7 +219,7 @@ public class JetStandardClasses {
                     parameters,
                     Collections.singleton(getAnyType()), scopeForInvokeWithReceiver, Collections.<ConstructorDescriptor>emptySet(), null);
             RECEIVER_FUNCTION_TYPE_CONSTRUCTORS.add(RECEIVER_FUNCTION[i].getTypeConstructor());
-            FunctionDescriptorUtil.initializeFromFunctionType(invokeWithReceiver, receiverFunction.getDefaultType(), new ClassReceiver(RECEIVER_FUNCTION[i]));
+            FunctionDescriptorUtil.initializeFromFunctionType(invokeWithReceiver, receiverFunction.getDefaultType(), new ClassReceiver(RECEIVER_FUNCTION[i]), Modality.ABSTRACT, Visibilities.PUBLIC);
         }
     }
 
