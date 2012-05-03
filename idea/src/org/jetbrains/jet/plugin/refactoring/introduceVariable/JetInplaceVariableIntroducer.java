@@ -100,7 +100,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                                 SpecifyTypeExplicitlyAction.addTypeAnnotation(myProject, myProperty, myExprType);
                             }
                             else {
-                                SpecifyTypeExplicitlyAction.removeTypeAnnotation(myProject, myProperty);
+                                SpecifyTypeExplicitlyAction.removeTypeAnnotation(myProperty);
                             }
                         }
                     }.execute();
