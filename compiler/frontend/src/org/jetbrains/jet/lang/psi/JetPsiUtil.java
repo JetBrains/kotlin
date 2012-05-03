@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
@@ -307,5 +308,10 @@ public class JetPsiUtil {
         }
 
         return "Unit".equals(typeReference.getText());
+    }
+
+    public static boolean isSafeCall(@NotNull Call call) {
+        ASTNode callOperationNode = call.getCallOperationNode();
+        return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
 }

@@ -184,6 +184,9 @@ public class CallResolver {
                         return checkArgumentTypesAndFail(context);
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates = TaskPrioritizer.<CallableDescriptor>convertWithImpliedThis(context.scope, Collections.<ReceiverDescriptor>singletonList(NO_RECEIVER), constructors);
+                    for (ResolutionCandidate<CallableDescriptor> candidate : candidates) {
+                        candidate.setSafeCall(JetPsiUtil.isSafeCall(context.call));
+                    }
                     prioritizedTasks.add(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context));  // !! DataFlowInfo.EMPTY
                 }
                 else {
@@ -205,7 +208,7 @@ public class CallResolver {
                     context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(context);
                 }
-                List<ResolutionCandidate<CallableDescriptor>> candidates = ResolutionCandidate.<CallableDescriptor>convertCollection(constructors);
+                List<ResolutionCandidate<CallableDescriptor>> candidates = ResolutionCandidate.<CallableDescriptor>convertCollection(constructors, JetPsiUtil.isSafeCall(context.call));
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context)); // !! DataFlowInfo.EMPTY
             }
             else if (calleeExpression != null) {
@@ -222,7 +225,7 @@ public class CallResolver {
                 
                 FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), "[for expression " + calleeExpression.getText() + "]");
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER, Modality.FINAL, Visibilities.LOCAL);
-                ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor);
+                ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor, JetPsiUtil.isSafeCall(context.call));
                 resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
                 resolutionCandidate.setExplicitReceiverKind(ExplicitReceiverKind.RECEIVER_ARGUMENT);
 
@@ -328,7 +331,7 @@ public class CallResolver {
             // Now, we try to remove this argument and see if it helps
             Collection<ResolutionCandidate<D>> newCandidates = Lists.newArrayList();
             for (ResolutionCandidate<D> candidate : task.getCandidates()) {
-                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor(), candidate.getExplicitReceiverKind()));
+                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor(), candidate.isSafeCall())); //todo check receivers are not necessary
             }
             ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(newCandidates, task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
                             @NotNull
@@ -628,31 +631,30 @@ public class CallResolver {
 
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkAllValueArguments(CallResolutionContext<D, F> context) {
         ResolutionStatus result = checkValueArgumentTypes(context);
-        ResolvedCall candidateCall = context.candidateCall;
+        ResolvedCall<D> candidateCall = context.candidateCall;
 
         // Comment about a very special case.
         // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
         // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
         // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
 
-        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
+        result = result.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
                                               candidateCall.getExplicitReceiverKind().isReceiver(), false));
 
-        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
+        result = result.combine(checkReceiver(context, candidateCall, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
                                               candidateCall.getExplicitReceiverKind().isThisObject(),
-                                              // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' as callOperationNode if necessary
+                                              // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' if there is unsafe call error
                                               context.call instanceof CallTransformer.CallForImplicitInvoke));
         return result;
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
+    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ResolvedCall<D> candidateCall,
+            ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
             boolean isExplicitReceiver, boolean implicitInvokeCheck) {
 
         ResolutionStatus result = SUCCESS;
         if (receiverParameter.exists() && receiverArgument.exists()) {
-            ASTNode callOperationNode = context.call.getCallOperationNode();
-
-            boolean safeAccess = !implicitInvokeCheck && isExplicitReceiver && callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
+            boolean safeAccess = isExplicitReceiver && !implicitInvokeCheck && candidateCall.isSafeCall();
             JetType receiverArgumentType = receiverArgument.getType();
             AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.candidateCall.getTrace().getBindingContext());
             if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
@@ -897,7 +899,7 @@ public class CallResolver {
                                                                                       String name, List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> result = Lists.newArrayList();
         if (receiver.exists()) {
-            Collection<ResolutionCandidate<FunctionDescriptor>> extensionFunctionDescriptors = ResolutionCandidate.convertCollection(scope.getFunctions(name));
+            Collection<ResolutionCandidate<FunctionDescriptor>> extensionFunctionDescriptors = ResolutionCandidate.convertCollection(scope.getFunctions(name), false);
             List<ResolutionCandidate<FunctionDescriptor>> nonlocal = Lists.newArrayList();
             List<ResolutionCandidate<FunctionDescriptor>> local = Lists.newArrayList();
             TaskPrioritizer.splitLexicallyLocalDescriptors(extensionFunctionDescriptors, scope.getContainingDeclaration(), local, nonlocal);
@@ -907,7 +909,7 @@ public class CallResolver {
                 return result;
             }
 
-            Collection<ResolutionCandidate<FunctionDescriptor>> functionDescriptors = ResolutionCandidate.convertCollection(receiver.getType().getMemberScope().getFunctions(name));
+            Collection<ResolutionCandidate<FunctionDescriptor>> functionDescriptors = ResolutionCandidate.convertCollection(receiver.getType().getMemberScope().getFunctions(name), false);
             if (lookupExactSignature(functionDescriptors, parameterTypes, result)) {
                 return result;
 
@@ -916,7 +918,7 @@ public class CallResolver {
             return result;
         }
         else {
-            lookupExactSignature(ResolutionCandidate.convertCollection(scope.getFunctions(name)), parameterTypes, result);
+            lookupExactSignature(ResolutionCandidate.convertCollection(scope.getFunctions(name), false), parameterTypes, result);
             return result;
         }
     }
