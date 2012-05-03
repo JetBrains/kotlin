@@ -926,7 +926,7 @@ public class DescriptorResolver {
         assert typeReferences.size() == arguments.size() : typeElement.getText();
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (int i = 0, projectionsSize = typeReferences.size(); i < projectionsSize; i++) {
+        for (int i = 0; i < typeReferences.size(); i++) {
             JetTypeReference argumentTypeReference = typeReferences.get(i);
 
             if (argumentTypeReference == null) continue;
