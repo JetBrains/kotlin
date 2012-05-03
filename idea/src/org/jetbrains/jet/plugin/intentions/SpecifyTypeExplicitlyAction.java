@@ -142,15 +142,24 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         PsiElement anchor = property.getNameIdentifier();
         if (anchor == null) return;
         anchor = anchor.getNextSibling();
-        if (anchor == null || !(anchor instanceof PsiWhiteSpace)) return;
+        if (anchor != null) {
+            if (!(anchor instanceof PsiWhiteSpace)) {
+                return;
+            }
+        }
         JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         ASTNode colon = JetPsiFactory.createColonNode(project);
-        ASTNode anchorNode = anchor.getNode().getTreeNext();
+        ASTNode anchorNode = anchor == null ? null : anchor.getNode().getTreeNext();
+        if (anchor == null) {
+            property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        }
         property.getNode().addChild(colon, anchorNode);
         property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
         property.getNode().addChild(typeReference.getNode(), anchorNode);
         property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
-        anchor.delete();
+        if (anchor != null) {
+            anchor.delete();
+        }
         ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
     }
 
