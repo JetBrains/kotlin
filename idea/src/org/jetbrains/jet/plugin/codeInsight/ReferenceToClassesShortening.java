@@ -90,7 +90,10 @@ public class ReferenceToClassesShortening {
                         parent = parent.getContainingDeclaration();
                     }
                     JetTypeArgumentList typeArgumentList = userType.getTypeArgumentList();
-                    userType.replace(JetPsiFactory.createType(userType.getProject(), name + (typeArgumentList == null ? "" : typeArgumentList.getText())));
+                    JetTypeElement typeElement = JetPsiFactory.createType(userType.getProject(),
+                            name + (typeArgumentList == null ? "" : typeArgumentList.getText())).getTypeElement();
+                    assert typeElement != null;
+                    userType.replace(typeElement);
                 }
             });
         }
