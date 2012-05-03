@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 /**
  * @author svtk
@@ -105,7 +106,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
             newElement.deleteChildInternal(setter.getNode());
         }
         JetExpression initializer = newElement.getInitializer();
-        boolean needImport = false;
+        JetType typeToAdd = null;
         if (removeInitializer && initializer != null) {
             PsiElement nameIdentifier = newElement.getNameIdentifier();
             assert nameIdentifier != null;
@@ -114,14 +115,13 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
             newElement.deleteChildRange(nextSibling, initializer);
 
             if (newElement.getPropertyTypeRef() == null && type != null) {
-                newElement = AddReturnTypeFix.addPropertyType(project, newElement, type);
-                needImport = true;
+                typeToAdd = type;
             }
         }
-        if (needImport) {
-            ImportInsertHelper.addImportDirectivesIfNeeded(type, (JetFile)file);
+        element = (JetProperty) element.replace(newElement);
+        if (typeToAdd != null) {
+            SpecifyTypeExplicitlyAction.addTypeAnnotation(project, element, typeToAdd);
         }
-        element.replace(newElement);
     }
 
     public static JetIntentionActionFactory createFactory() {

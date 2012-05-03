@@ -6,6 +6,6 @@ import java.util.List
 
 class M {
     trait A {
-        abstract val l : <caret>List<Int>?
+        abstract val l<caret> : List<Int>?
     }
 }
