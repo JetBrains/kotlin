@@ -149,14 +149,12 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     }
 
     public static void addTypeAnnotation(Project project, JetFunction function, @NotNull JetType exprType) {
-        JetFunction newFunction = (JetFunction) function.copy();
         JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
         Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
-        JetParameterList valueParameterList = newFunction.getValueParameterList();
+        JetParameterList valueParameterList = function.getValueParameterList();
         assert valueParameterList != null;
-        newFunction.addAfter(typeReference, valueParameterList);
-        newFunction.addRangeAfter(colon.getFirst(), colon.getSecond(), valueParameterList);
-        function = (JetFunction) function.replace(newFunction);
+        function.addAfter(typeReference, valueParameterList);
+        function.addRangeAfter(colon.getFirst(), colon.getSecond(), valueParameterList);
         ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(function));
     }
 
