@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -36,7 +37,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
-import org.jetbrains.jet.plugin.quickfix.AddReturnTypeFix;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.util.Collections;
@@ -88,7 +88,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             }
         } else if (parent instanceof JetNamedFunction) {
             assert targetType != null;
-            parent.replace(AddReturnTypeFix.addFunctionType(project, (JetFunction) parent, targetType));
+            addTypeAnnotation(project, (JetFunction) parent, targetType);
         } else {
             assert false;
         }
@@ -152,6 +152,18 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
         anchor.delete();
         ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+    }
+
+    public static void addTypeAnnotation(Project project, JetFunction function, @NotNull JetType exprType) {
+        JetFunction newFunction = (JetFunction) function.copy();
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        JetParameterList valueParameterList = newFunction.getValueParameterList();
+        assert valueParameterList != null;
+        newFunction.addAfter(typeReference, valueParameterList);
+        newFunction.addRangeAfter(colon.getFirst(), colon.getSecond(), valueParameterList);
+        function = (JetFunction) function.replace(newFunction);
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(function));
     }
 
     public static void removeTypeAnnotation(Project project, JetProperty property) {
