@@ -1,4 +1,4 @@
-// "Specify Type Explicitly" "true"
+// "Specify type explicitly" "true"
 package a
 
 import java.util.List
