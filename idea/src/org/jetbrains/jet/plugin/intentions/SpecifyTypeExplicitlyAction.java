@@ -17,9 +17,11 @@
 package org.jetbrains.jet.plugin.intentions;
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -27,17 +29,17 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetFunction;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.plugin.quickfix.AddReturnTypeFix;
-import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyActions;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import java.util.Collections;
 
 /**
  * @author Evgeny Gerashchenko
@@ -80,9 +82,9 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         if (parent instanceof JetProperty) {
             JetProperty property = (JetProperty) parent;
             if (targetType == null) {
-                JetChangePropertyActions.removeTypeAnnotation(project, property);
+                removeTypeAnnotation(project, property);
             } else {
-                JetChangePropertyActions.addTypeAnnotation(project, property, targetType);
+                addTypeAnnotation(project, property, targetType);
             }
         } else if (parent instanceof JetNamedFunction) {
             assert targetType != null;
@@ -133,5 +135,34 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
             }
         }
         return true;
+    }
+
+    public static void addTypeAnnotation(Project project, JetProperty property, @NotNull JetType exprType) {
+        if (property.getPropertyTypeRef() != null) return;
+        PsiElement anchor = property.getNameIdentifier();
+        if (anchor == null) return;
+        anchor = anchor.getNextSibling();
+        if (anchor == null || !(anchor instanceof PsiWhiteSpace)) return;
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        ASTNode colon = JetPsiFactory.createColonNode(project);
+        ASTNode anchorNode = anchor.getNode().getTreeNext();
+        property.getNode().addChild(colon, anchorNode);
+        property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        property.getNode().addChild(typeReference.getNode(), anchorNode);
+        property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        anchor.delete();
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+    }
+
+    public static void removeTypeAnnotation(Project project, JetProperty property) {
+        JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+        if (propertyTypeRef == null) return;
+        PsiElement identifier = property.getNameIdentifier();
+        if (identifier == null) return;
+        PsiElement sibling = identifier.getNextSibling();
+        if (sibling == null) return;
+        PsiElement nextSibling = propertyTypeRef.getNextSibling();
+        if (nextSibling == null) return;
+        sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling.getNode());
     }
 }

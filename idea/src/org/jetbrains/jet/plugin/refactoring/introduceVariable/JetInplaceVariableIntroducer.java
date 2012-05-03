@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,10 +97,10 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                         protected void run(Result result) throws Throwable {
                             PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
                             if (myExprTypeCheckbox.isSelected()) {
-                                JetChangePropertyActions.addTypeAnnotation(myProject, myProperty, myExprType);
+                                SpecifyTypeExplicitlyAction.addTypeAnnotation(myProject, myProperty, myExprType);
                             }
                             else {
-                                JetChangePropertyActions.removeTypeAnnotation(myProject, myProperty);
+                                SpecifyTypeExplicitlyAction.removeTypeAnnotation(myProject, myProperty);
                             }
                         }
                     }.execute();
