@@ -27,7 +27,6 @@ import com.intellij.psi.PsiFileFactory;
 import junit.framework.Test;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -57,7 +56,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     @Override

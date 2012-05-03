@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -67,7 +66,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     public void setUp() throws Exception {
         super.setUp();
 
-        super.createEnvironmentWithMockJdk();
+        super.createEnvironmentWithMockJdkAndIdeaAnnotations();
 
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();

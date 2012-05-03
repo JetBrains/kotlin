@@ -28,7 +28,7 @@ public class JdkHeadersTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     public void testArrayList() {

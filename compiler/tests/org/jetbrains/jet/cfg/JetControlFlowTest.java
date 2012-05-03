@@ -55,7 +55,7 @@ public class JetControlFlowTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk(CompilerSpecialMode.STDLIB);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     @Override

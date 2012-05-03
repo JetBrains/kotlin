@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -50,7 +49,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     private void compileFileResolveDescriptor(@NotNull String fileRelativePath, @NotNull FqName fqName) throws IOException {
         compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(

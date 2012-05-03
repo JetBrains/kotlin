@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
 
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
         CompilerDependencies dependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(CompileEnvironmentUtil.createMockDisposable(), dependencies);
