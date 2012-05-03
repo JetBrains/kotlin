@@ -107,7 +107,7 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER),
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, false),
                                                    TemporaryBindingTrace.create(new BindingTraceContext())); //todo
         }
         if (descriptor == null) {

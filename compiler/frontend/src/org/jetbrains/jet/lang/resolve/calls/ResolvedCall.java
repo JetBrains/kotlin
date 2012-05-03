@@ -61,4 +61,6 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     /** What's substituted for type parameters */
     @NotNull
     Map<TypeParameterDescriptor, JetType> getTypeArguments();
+
+    boolean isSafeCall();
 }

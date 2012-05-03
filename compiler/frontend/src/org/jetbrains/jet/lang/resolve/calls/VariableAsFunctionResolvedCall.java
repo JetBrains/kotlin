@@ -116,4 +116,9 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
         //functionCall.trace is temporary trace above variableCall.trace and is committed already
         return variableCall.getTrace();
     }
+
+    @Override
+    public boolean isSafeCall() {
+        return variableCall.isSafeCall();
+    }
 }

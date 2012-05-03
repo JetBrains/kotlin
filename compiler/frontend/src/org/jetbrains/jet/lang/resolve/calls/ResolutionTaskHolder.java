@@ -21,9 +21,12 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +38,7 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     private final JetReferenceExpression reference;
     private final BasicResolutionContext basicResolutionContext;
     private final Predicate<ResolutionCandidate<D>> visibleStrategy;
+    private final boolean isSafeCall;
 
     private final Collection<Collection<ResolutionCandidate<D>>> localExtensions = Sets.newLinkedHashSet();
     private final Collection<Collection<ResolutionCandidate<D>>> members = Sets.newLinkedHashSet();
@@ -48,23 +52,31 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
         this.reference = reference;
         this.basicResolutionContext = basicResolutionContext;
         this.visibleStrategy = visibleStrategy;
+        this.isSafeCall = JetPsiUtil.isSafeCall(basicResolutionContext.call);
+    }
+
+    public Collection<ResolutionCandidate<D>> setIsSafeCall(@NotNull Collection<ResolutionCandidate<D>> candidates) {
+        for (ResolutionCandidate<D> candidate : candidates) {
+            candidate.setSafeCall(isSafeCall);
+        }
+        return candidates;
     }
 
     public void addLocalExtensions(@NotNull Collection<ResolutionCandidate<D>> candidates) {
         if (!candidates.isEmpty()) {
-            localExtensions.add(candidates);
+            localExtensions.add(setIsSafeCall(candidates));
         }
     }
 
     public void addMembers(@NotNull Collection<ResolutionCandidate<D>> candidates) {
         if (!candidates.isEmpty()) {
-            members.add(candidates);
+            members.add(setIsSafeCall(candidates));
         }
     }
 
     public void addNonLocalExtensions(@NotNull Collection<ResolutionCandidate<D>> candidates) {
         if (!candidates.isEmpty()) {
-            nonLocalExtensions.add(candidates);
+            nonLocalExtensions.add(setIsSafeCall(candidates));
         }
     }
 

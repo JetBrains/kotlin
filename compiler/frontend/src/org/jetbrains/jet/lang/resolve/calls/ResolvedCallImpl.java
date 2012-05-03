@@ -61,6 +61,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final ReceiverDescriptor thisObject; // receiver object of a method
     private final ReceiverDescriptor receiverArgument; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
+    private final boolean isSafeCall;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
@@ -74,6 +75,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.thisObject = candidate.getThisObject();
         this.receiverArgument = candidate.getReceiverArgument();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
+        this.isSafeCall = candidate.isSafeCall();
         this.trace = trace;
     }
 
@@ -185,5 +187,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return typeArguments;
+    }
+
+    @Override
+    public boolean isSafeCall() {
+        return isSafeCall;
     }
 }

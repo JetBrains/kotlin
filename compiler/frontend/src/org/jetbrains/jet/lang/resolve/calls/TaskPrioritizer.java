@@ -96,7 +96,7 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
             }
         };
 
-        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, visibleStrategy );
+        ResolutionTaskHolder<D, F> result = new ResolutionTaskHolder<D, F>(functionReference, context, visibleStrategy);
         for (CallableDescriptorCollector<? extends D> callableDescriptorCollector : callableDescriptorCollectors) {
             doComputeTasks(scope, explicitReceiver, name, result, context, callableDescriptorCollector);
         }
