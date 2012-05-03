@@ -46,9 +46,7 @@ import java.util.Collections;
  * @since 4/20/12
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
-    private JetType targetType;
-
-    @NotNull
+     @NotNull
     @Override
     public String getFamilyName() {
         return JetBundle.message("specify.type.explicitly.action.family.name");
@@ -57,16 +55,21 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
         PsiElement parent = element.getParent();
+        JetType type = getTypeForDeclaration((JetNamedDeclaration) parent);
+        if (ErrorUtils.isErrorType(type)) {
+            return;
+        }
         if (parent instanceof JetProperty) {
             JetProperty property = (JetProperty) parent;
-            if (targetType == null) {
-                removeTypeAnnotation(project, property);
+            if (property.getPropertyTypeRef() == null) {
+                addTypeAnnotation(project, property, type);
             } else {
-                addTypeAnnotation(project, property, targetType);
+                removeTypeAnnotation(project, property);
             }
         } else if (parent instanceof JetNamedFunction) {
-            assert targetType != null;
-            addTypeAnnotation(project, (JetFunction) parent, targetType);
+            JetNamedFunction function = (JetNamedFunction) parent;
+            assert function.getReturnTypeRef() == null;
+            addTypeAnnotation(project, function, type);
         } else {
             assert false;
         }
@@ -74,9 +77,13 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (element.getParent() instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) element.getParent()).getInitializer(), element, false)) {
-            if (((JetProperty)element.getParent()).getPropertyTypeRef() != null) {
-                targetType = null;
+        PsiElement parent = element.getParent();
+        if (!(parent instanceof JetNamedDeclaration)) {
+            return false;
+        }
+        JetNamedDeclaration declaration = (JetNamedDeclaration) parent;
+        if (declaration instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) declaration).getInitializer(), element, false)) {
+            if (((JetProperty) declaration).getPropertyTypeRef() != null) {
                 setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
                 return true;
             }
@@ -84,38 +91,49 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
                 setText(JetBundle.message("specify.type.explicitly.add.action.name"));
             }
         }
-        else if (element.getParent() instanceof JetNamedFunction && ((JetNamedFunction) element.getParent()).getReturnTypeRef() == null
-                 && !((JetNamedFunction) element.getParent()).hasBlockBody()) {
+        else if (declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).getReturnTypeRef() == null
+                 && !((JetNamedFunction) declaration).hasBlockBody()) {
             setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
         }
         else {
             return false;
         }
 
-        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)element.getContainingFile());
-        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element.getParent());
-
-        if (descriptor instanceof VariableDescriptor) {
-            targetType = ((VariableDescriptor) descriptor).getType();
-        }
-        else if (descriptor instanceof SimpleFunctionDescriptor) {
-            targetType = ((SimpleFunctionDescriptor) descriptor).getReturnType();
-        }
-        else {
-            assert false;
-        }
-
-        if (targetType == null || ErrorUtils.isErrorType(targetType)) {
+        if (ErrorUtils.isErrorType(getTypeForDeclaration(declaration))) {
             return false;
         }
-        if (isDisabledForError()) {
-            for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-                if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && element.getParent() == diagnostic.getPsiElement()) {
-                    return false;
-                }
+        return !isDisabledForError() || !hasPublicMemberDiagnostic(declaration);
+    }
+
+
+    private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            //noinspection ConstantConditions
+            if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
+                return true;
             }
         }
-        return true;
+        return false;
+    }
+
+    @NotNull
+    private static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+
+        JetType type;
+        if (descriptor instanceof VariableDescriptor) {
+            type = ((VariableDescriptor) descriptor).getType();
+        }
+        else if (descriptor instanceof SimpleFunctionDescriptor) {
+            type = ((SimpleFunctionDescriptor) descriptor).getReturnType();
+        }
+        else {
+            return ErrorUtils.createErrorType("unknown declaration type");
+        }
+
+        return type == null ? ErrorUtils.createErrorType("null type") : type;
     }
 
     protected boolean isDisabledForError() {
