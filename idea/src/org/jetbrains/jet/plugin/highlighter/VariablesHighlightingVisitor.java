@@ -92,7 +92,7 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                 JetPsiChecker.highlightName(holder, elementToHighlight, JetHighlightingColors.MUTABLE_VARIABLE);
             }
 
-            if (Boolean.TRUE.equals(bindingContext.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor))) {
+            if (Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor))) {
                 holder.createInfoAnnotation(elementToHighlight, "Wrapped into a reference object to be modified when captured in a closure").setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
