@@ -332,16 +332,33 @@ public class DescriptorResolver {
         return typeParameterDescriptor;
     }
 
+    final class UpperBoundCheckerTask {
+        JetTypeReference upperBound;
+        JetType upperBoundType;
+        boolean isClassObjectConstraint;
+
+        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType, boolean classObjectConstraint) {
+            this.upperBound = upperBound;
+            this.upperBoundType = upperBoundType;
+            isClassObjectConstraint = classObjectConstraint;
+        }
+    }
     public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters, BindingTrace trace) {
+        List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
+
         List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+        for (int i = 0; i < typeParameters.size(); i++) {
             JetTypeParameter jetTypeParameter = typeParameters.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
+
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(resolveAndCheckUpperBoundType(extendsBound, scope, false, trace));
+                JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
+                typeParameterDescriptor.addUpperBound(type);
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type, false));
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstaints()) {
@@ -355,7 +372,12 @@ public class DescriptorResolver {
             }
             TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
             JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-            JetType bound = boundTypeReference != null ? resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint(), trace) : null;
+            JetType bound = null;
+            if (boundTypeReference != null) {
+                bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectContraint()));
+            }
+
             if (typeParameterDescriptor == null) {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
@@ -400,19 +422,21 @@ public class DescriptorResolver {
                 }
             }
         }
+
+        for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
+            checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+        }
     }
 
-    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstraint, BindingTrace trace) {
-        JetType jetType = typeResolver.resolveType(scope, upperBound, trace, false);
-        if (!TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, jetType)) {
-            if (classObjectConstraint) {
-                trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
+    private static void checkUpperBoundType(JetTypeReference upperBound, JetType upperBoundType, boolean isClassObjectConstraint, BindingTrace trace) {
+        if (!TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, upperBoundType)) {
+            if (isClassObjectConstraint) {
+                trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, upperBoundType));
             }
             else {
-                trace.report(FINAL_UPPER_BOUND.on(upperBound, jetType));
+                trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
             }
         }
-        return jetType;
     }
 
     @NotNull
