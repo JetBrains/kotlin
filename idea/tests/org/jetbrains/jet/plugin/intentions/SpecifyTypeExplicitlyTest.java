@@ -49,6 +49,10 @@ public class SpecifyTypeExplicitlyTest extends LightIntentionActionTestCase {
         doTest();
     }
 
+    public void testLoopParameter() {
+        doTest();
+    }
+
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/intentions/";
