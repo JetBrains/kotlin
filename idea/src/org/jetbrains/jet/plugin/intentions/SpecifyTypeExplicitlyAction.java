@@ -56,6 +56,10 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
+        if (typeRefParent != null) {
+            element = typeRefParent;
+        }
         PsiElement parent = element.getParent();
         JetType type = getTypeForDeclaration((JetNamedDeclaration) parent);
         if (ErrorUtils.isErrorType(type)) {
@@ -91,6 +95,10 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
+        if (typeRefParent != null) {
+            element = typeRefParent;
+        }
         PsiElement parent = element.getParent();
         if (!(parent instanceof JetNamedDeclaration)) {
             return false;
