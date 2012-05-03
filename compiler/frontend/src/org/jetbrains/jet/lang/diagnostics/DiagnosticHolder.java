@@ -37,7 +37,7 @@ public interface DiagnosticHolder {
             if (diagnostic.getSeverity() == Severity.ERROR) {
                 PsiFile psiFile = diagnostic.getPsiFile();
                 List<TextRange> textRanges = diagnostic.getTextRanges();
-                throw new IllegalStateException(diagnostic.getFactory().getName() + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
+                throw new IllegalStateException(diagnostic.getFactory().getName() + " " + psiFile.getName() + " " + DiagnosticUtils.atLocation(psiFile, textRanges.get(0)));
             }
         }
     };
