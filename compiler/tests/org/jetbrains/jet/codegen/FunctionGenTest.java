@@ -87,7 +87,7 @@ public class FunctionGenTest extends CodegenTestCase {
     }
 
     public void testKt785 () {
-//        blackBoxFile("regressions/kt785.jet");
+        blackBoxFile("regressions/kt785.jet");
     }
 
     public void testKt873 () {
