@@ -2,10 +2,12 @@ package test.collections
 
 import kotlin.test.*
 
+import java.util.ArrayList
 import org.junit.Test
 
 class ListTest {
   val data = arrayList("foo", "bar")
+  val emptyData = ArrayList<String>()
 
   Test fun headAndTail() {
     val h = data.head
@@ -32,5 +34,11 @@ class ListTest {
       index++
     }
     assertEquals(data.size(), index)
+  }
+
+  Test fun lastIndex() {
+    assertEquals(-1, emptyData.lastIndex)
+
+    assertEquals(1, data.lastIndex)
   }
 }
