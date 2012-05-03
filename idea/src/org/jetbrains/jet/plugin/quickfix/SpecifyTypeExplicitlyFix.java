@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 /**
@@ -24,6 +26,12 @@ import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
  */
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends SpecifyTypeExplicitlyAction {
+    @NotNull
+    @Override
+    public String getText() {
+        return StringUtil.capitalize(super.getText().toLowerCase());
+    }
+
     @Override
     protected boolean isDisabledForError() {
         return false;
