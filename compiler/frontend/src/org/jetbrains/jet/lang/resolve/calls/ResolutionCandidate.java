@@ -33,6 +33,7 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     private final D candidateDescriptor;
     private ReceiverDescriptor thisObject; // receiver object of a method
     private ReceiverDescriptor receiverArgument; // receiver of an extension function
+    private ExplicitReceiverKind explicitReceiverKind;
 
     private ResolutionCandidate(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
         this.candidateDescriptor = descriptor;
@@ -44,8 +45,16 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER);
     }
 
-    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
-        return new ResolutionCandidate<D>(descriptor, thisObject, receiverArgument);
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ExplicitReceiverKind explicitReceiverKind) {
+        ResolutionCandidate<D> candidate = new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER);
+        candidate.setExplicitReceiverKind(explicitReceiverKind);
+        return candidate;
+    }
+
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind) {
+        ResolutionCandidate<D> resolutionCandidate = new ResolutionCandidate<D>(descriptor, thisObject, receiverArgument);
+        resolutionCandidate.setExplicitReceiverKind(explicitReceiverKind);
+        return resolutionCandidate;
     }
 
     public void setThisObject(@NotNull ReceiverDescriptor thisObject) {
@@ -54,6 +63,10 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
 
     public void setReceiverArgument(@NotNull ReceiverDescriptor receiverArgument) {
         this.receiverArgument = receiverArgument;
+    }
+
+    public void setExplicitReceiverKind(@NotNull ExplicitReceiverKind explicitReceiverKind) {
+        this.explicitReceiverKind = explicitReceiverKind;
     }
 
     @NotNull
@@ -70,12 +83,19 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     public ReceiverDescriptor getReceiverArgument() {
         return receiverArgument;
     }
-    
+
+    @NotNull
+    public ExplicitReceiverKind getExplicitReceiverKind() {
+        return explicitReceiverKind;
+    }
+
     @NotNull
     public static <D extends CallableDescriptor> List<ResolutionCandidate<D>> convertCollection(@NotNull Collection<? extends D> descriptors) {
         List<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (D descriptor : descriptors) {
-            result.add(create(descriptor));
+            ResolutionCandidate<D> candidate = create(descriptor);
+            candidate.setExplicitReceiverKind(ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
+            result.add(candidate);
         }
         return result;
     }

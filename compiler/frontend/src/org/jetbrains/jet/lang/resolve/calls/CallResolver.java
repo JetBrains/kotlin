@@ -224,6 +224,7 @@ public class CallResolver {
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER);
                 ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor);
                 resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
+                resolutionCandidate.setExplicitReceiverKind(ExplicitReceiverKind.RECEIVER_ARGUMENT);
 
                 // strictly speaking, this is a hack:
                 // we need to pass a reference, but there's no reference in the PSI,
@@ -327,7 +328,7 @@ public class CallResolver {
             // Now, we try to remove this argument and see if it helps
             Collection<ResolutionCandidate<D>> newCandidates = Lists.newArrayList();
             for (ResolutionCandidate<D> candidate : task.getCandidates()) {
-                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor()));
+                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor(), candidate.getExplicitReceiverKind()));
             }
             ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(newCandidates, task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
                             @NotNull
@@ -628,20 +629,35 @@ public class CallResolver {
     private <D extends CallableDescriptor, F extends D> ResolutionStatus checkAllValueArguments(CallResolutionContext<D, F> context) {
         ResolutionStatus result = checkValueArgumentTypes(context);
         ResolvedCall candidateCall = context.candidateCall;
-        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument()));
-        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject()));
+
+        // Comment about a very special case.
+        // Call 'b.foo(1)' where class 'Foo' has an extension member 'fun B.invoke(Int)' should be checked two times for safe call (in 'checkReceiver'), because
+        // both 'b' (receiver) and 'foo' (this object) might be nullable. In the first case we mark dot, in the second 'foo'.
+        // Class 'CallForImplicitInvoke' helps up to recognise this case, and parameter 'implicitInvokeCheck' helps us to distinguish whether we check receiver or this object.
+
+        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getReceiverParameter(), candidateCall.getReceiverArgument(),
+                                              candidateCall.getExplicitReceiverKind().isReceiver(), false));
+
+        result = result.combine(checkReceiver(context, candidateCall.getResultingDescriptor().getExpectedThisObject(), candidateCall.getThisObject(),
+                                              candidateCall.getExplicitReceiverKind().isThisObject(),
+                                              // for the invocation 'foo(1)' where foo is a variable of function type we should mark 'foo' as callOperationNode if necessary
+                                              context.call instanceof CallTransformer.CallForImplicitInvoke));
         return result;
     }
 
-    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument) {
+    private <D extends CallableDescriptor, F extends D> ResolutionStatus checkReceiver(CallResolutionContext<D, F> context, ReceiverDescriptor receiverParameter, ReceiverDescriptor receiverArgument,
+            boolean isExplicitReceiver, boolean implicitInvokeCheck) {
+
         ResolutionStatus result = SUCCESS;
         if (receiverParameter.exists() && receiverArgument.exists()) {
             ASTNode callOperationNode = context.call.getCallOperationNode();
-            boolean safeAccess = callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
+
+            boolean safeAccess = !implicitInvokeCheck && isExplicitReceiver && callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
             JetType receiverArgumentType = receiverArgument.getType();
             AutoCastServiceImpl autoCastService = new AutoCastServiceImpl(context.dataFlowInfo, context.candidateCall.getTrace().getBindingContext());
             if (!safeAccess && !receiverParameter.getType().isNullable() && !autoCastService.isNotNull(receiverArgument)) {
-                context.tracing.unsafeCall(context.candidateCall.getTrace(), receiverArgumentType);
+
+                context.tracing.unsafeCall(context.candidateCall.getTrace(), receiverArgumentType, implicitInvokeCheck);
                 result = UNSAFE_CALL_ERROR;
             }
             else {
@@ -653,7 +669,6 @@ public class CallResolver {
                     result = OTHER_ERROR;
                 }
             }
-
             if (safeAccess && (receiverParameter.getType().isNullable() || !receiverArgumentType.isNullable())) {
                 context.tracing.unnecessarySafeCall(context.candidateCall.getTrace(), receiverArgumentType);
             }
@@ -840,9 +855,6 @@ public class CallResolver {
             TemporaryBindingTrace temporaryTrace = result.getTrace();
             temporaryTrace.commit();
 
-            if (result instanceof VariableAsFunctionResolvedCall) {
-                ((VariableAsFunctionResolvedCall)result).getVariableCall().getTrace().commit();
-            }
             return OverloadResolutionResultsImpl.success(result);
         }
     }

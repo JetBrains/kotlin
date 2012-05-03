@@ -53,18 +53,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @NotNull
     public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
-        return create(candidate.getDescriptor(), candidate.getThisObject(), candidate.getReceiverArgument(), trace);
-    }
-
-    @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull D descriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument, @NotNull TemporaryBindingTrace trace) {
-        return new ResolvedCallImpl<D>(descriptor, thisObject, receiverArgument, trace);
+        return new ResolvedCallImpl<D>(candidate, trace);
     }
 
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverDescriptor thisObject; // receiver object of a method
     private final ReceiverDescriptor receiverArgument; // receiver of an extension function
+    private final ExplicitReceiverKind explicitReceiverKind;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
@@ -73,13 +69,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
 
-    private ResolvedCallImpl(@NotNull D candidateDescriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument, @NotNull TemporaryBindingTrace trace) {
-        this.candidateDescriptor = candidateDescriptor;
-        this.thisObject = thisObject;
-        this.receiverArgument = receiverArgument;
+    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
+        this.candidateDescriptor = candidate.getDescriptor();
+        this.thisObject = candidate.getThisObject();
+        this.receiverArgument = candidate.getReceiverArgument();
+        this.explicitReceiverKind = candidate.getExplicitReceiverKind();
         this.trace = trace;
     }
 
+    @Override
     @NotNull
     public ResolutionStatus getStatus() {
         return status;
@@ -89,6 +87,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.status = this.status.combine(status);
     }
 
+    @Override
     @NotNull
     public TemporaryBindingTrace getTrace() {
         return trace;
@@ -140,6 +139,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Override
     @NotNull
+    public ExplicitReceiverKind getExplicitReceiverKind() {
+        return explicitReceiverKind;
+    }
+
+    @Override
+    @NotNull
     public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
         return valueArguments;
     }
@@ -171,6 +176,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.someArgumentHasNoType = true;
     }
 
+    @Override
     public boolean isDirty() {
         return someArgumentHasNoType;
     }
