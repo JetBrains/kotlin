@@ -122,8 +122,16 @@ public class TypeSubstitutor {
         return create(new CompositeTypeSubstitution(substitutions));
     }
 
+    /** No assertion for immediate recursion */
+    public static TypeSubstitutor createUnsafe(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
+        return create(new MapToTypeSubstitutionAdapter(cleanContext));
+    }
+
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return create(new MapToTypeSubstitutionAdapter(substitutionContext));
+        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
+        SubstitutionUtils.assertNotImmediatelyRecursive(cleanContext);
+        return createUnsafe(cleanContext);
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
