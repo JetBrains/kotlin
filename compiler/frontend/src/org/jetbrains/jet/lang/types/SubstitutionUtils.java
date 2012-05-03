@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.CommonSuppliers;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +119,21 @@ public class SubstitutionUtils {
         }
 
         return false;
+    }
+
+    public static Map<TypeConstructor, TypeProjection> removeTrivialSubstitutions(Map<TypeConstructor, TypeProjection> context) {
+        Map<TypeConstructor, TypeProjection> clean = Maps.newHashMap(context);
+        boolean changed = false;
+        for (Iterator<Map.Entry<TypeConstructor, TypeProjection>> iterator = clean.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<TypeConstructor, TypeProjection> entry = iterator.next();
+            TypeConstructor key = entry.getKey();
+            TypeProjection value = entry.getValue();
+            if (key == value.getType().getConstructor() && value.getProjectionKind() == Variance.INVARIANT) {
+                iterator.remove();
+                changed = true;
+            }
+        }
+        return changed ? clean : context;
     }
 
     public static void assertNotImmediatelyRecursive(Map<TypeConstructor, TypeProjection> context) {

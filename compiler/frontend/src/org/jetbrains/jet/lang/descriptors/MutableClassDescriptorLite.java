@@ -140,7 +140,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
         Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
-        return new SubstitutingScope(scopeForMemberLookup, TypeSubstitutor.create(substitutionContext));
+
+        // Unsafe substitutor is OK, because no recursion can hurt us upon a trivial substitution:
+        // all the types are written explicitly in the code already, they can not get infinite.
+        // One exception is *-projections, but they need to be handled separately anyways.
+        TypeSubstitutor substitutor = TypeSubstitutor.createUnsafe(substitutionContext);
+        return new SubstitutingScope(scopeForMemberLookup, substitutor);
     }
 
 
