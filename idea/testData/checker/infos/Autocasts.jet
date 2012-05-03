@@ -184,31 +184,31 @@ fun vars(a: Any?) {
         b = <info descr="Automatically cast to jet.Int"><warning>a</warning></info>
     }
 }
-fun tuples(a: Any?) {
-    if (a != null) {
-        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.String was expected">a</error>)
+fun tuples(<info>a</info>: Any?) {
+    if (<info>a</info> != null) {
+        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any"><info>a</info></info>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.String was expected">a</error>)
     }
-    if (a is String) {
-        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <info descr="Automatically cast to jet.String">a</info>)
+    if (<info>a</info> is String) {
+        val <warning>s</warning>: #(Any, String) = #(<info descr="Automatically cast to jet.Any"><info>a</info></info>, <info descr="Automatically cast to jet.String"><info>a</info></info>)
     }
     fun illegalTupleReturnType(): #(Any, String) = #(<error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Any was expected">a</error>, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.String was expected">a</error>)
-    if (a is String) {
-        fun legalTupleReturnType(): #(Any, String) = #(<info descr="Automatically cast to jet.Any">a</info>, <info descr="Automatically cast to jet.String">a</info>)
+    if (<info>a</info> is String) {
+        fun legalTupleReturnType(): #(Any, String) = #(<info descr="Automatically cast to jet.Any"><info>a</info></info>, <info descr="Automatically cast to jet.String"><info>a</info></info>)
     }
     val <warning>illegalFunctionLiteral</warning>: Function0<Int> = <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is () -> jet.Any? but () -> jet.Int was expected">{ <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Int was expected">a</error> }</error>
     val <warning>illegalReturnValueInFunctionLiteral</warning>: Function0<Int> = { (): Int -> <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any? but jet.Int was expected">a</error> }
 
-    if (a is Int) {
-        val <warning>legalFunctionLiteral</warning>: Function0<Int> = { <info descr="Automatically cast to jet.Int">a</info> }
-        val <warning>alsoLegalFunctionLiteral</warning>: Function0<Int> = { (): Int -> <info descr="Automatically cast to jet.Int">a</info> }
+    if (<info>a</info> is Int) {
+        val <warning>legalFunctionLiteral</warning>: Function0<Int> = { <info><info descr="Automatically cast to jet.Int">a</info></info> }
+        val <warning>alsoLegalFunctionLiteral</warning>: Function0<Int> = { (): Int -> <info descr="Automatically cast to jet.Int"><info>a</info></info> }
     }
 }
-fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
-    if (a is Int) return { <info descr="Automatically cast to jet.Int">a</info> }
+fun returnFunctionLiteralBlock(<info>a</info>: Any?): Function0<Int> {
+    if (<info>a</info> is Int) return { <info><info descr="Automatically cast to jet.Int">a</info></info> }
     else return { 1 }
 }
-fun returnFunctionLiteral(a: Any?): Function0<Int> =
-    if (a is Int) { (): Int -> <info descr="Automatically cast to jet.Int">a</info> }
+fun returnFunctionLiteral(<info>a</info>: Any?): Function0<Int> =
+    if (<info>a</info> is Int) { (): Int -> <info descr="Automatically cast to jet.Int"><info>a</info></info> }
     else { () -> 1 }
 
 fun illegalTupleReturnType(a: Any): #(Any, String) = #(a, <error descr="[TYPE_MISMATCH] Type mismatch: inferred type is jet.Any but jet.String was expected">a</error>)

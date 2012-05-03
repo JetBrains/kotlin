@@ -943,7 +943,7 @@ public class JetTypeMapper {
         }
         else if (descriptor instanceof VariableDescriptor) {
             Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
-            if (aBoolean != null && aBoolean) {
+            if (aBoolean != null && aBoolean && ((VariableDescriptor) descriptor).isVar()) {
                 JetType outType = ((VariableDescriptor) descriptor).getType();
                 return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
             }
