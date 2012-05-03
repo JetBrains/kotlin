@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -599,7 +599,7 @@ public class JetFlowInformationProvider {
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
                 VariableStatus variableStatus = enterData.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
-                    if (trace.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor)) return;
+                    if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor)) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
                     if (variableStatus != VariableStatus.READ) {
                         if (element instanceof JetBinaryExpression && ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {

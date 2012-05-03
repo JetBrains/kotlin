@@ -137,7 +137,7 @@ public class ExpressionTypingUtils {
         if (variable != null) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
             if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
-                context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
+                context.trace.record(CAPTURED_IN_CLOSURE, variable);
             }
         }
     }

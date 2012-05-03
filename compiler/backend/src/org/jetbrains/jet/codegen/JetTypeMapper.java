@@ -942,9 +942,10 @@ public class JetTypeMapper {
             return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof VariableDescriptor) {
-            Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
-            if (aBoolean != null && aBoolean && ((VariableDescriptor) descriptor).isVar()) {
-                JetType outType = ((VariableDescriptor) descriptor).getType();
+            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+            Boolean aBoolean = bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor);
+            if (aBoolean != null && aBoolean && variableDescriptor.isVar()) {
+                JetType outType = variableDescriptor.getType();
                 return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
             }
             else {
