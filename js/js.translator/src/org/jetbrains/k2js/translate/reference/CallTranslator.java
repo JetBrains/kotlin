@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -95,8 +94,8 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExpressionAsFunction() {
-        return descriptor instanceof ExpressionAsFunctionDescriptor ||
-               descriptor instanceof VariableAsFunctionDescriptor;
+        return descriptor instanceof ExpressionAsFunctionDescriptor;// ||
+               //descriptor instanceof VariableAsFunctionDescriptor;
     }
 
     @NotNull
@@ -142,8 +141,8 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunctionLiteral() {
-        boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
-                            || descriptor instanceof ExpressionAsFunctionDescriptor;
+        boolean isLiteral = //descriptor instanceof VariableAsFunctionDescriptor ||
+                            descriptor instanceof ExpressionAsFunctionDescriptor;
         return isExtensionFunction() && isLiteral;
     }
 

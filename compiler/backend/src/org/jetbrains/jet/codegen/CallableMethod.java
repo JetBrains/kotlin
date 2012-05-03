@@ -79,7 +79,7 @@ public class CallableMethod implements Callable {
     }
 
     public void setNeedsReceiver(@Nullable CallableDescriptor receiverClass) {
-        this.receiverFunction = receiverClass;
+        this.receiverFunction = receiverClass.getOriginal();
     }
 
     public JetType getThisType() {

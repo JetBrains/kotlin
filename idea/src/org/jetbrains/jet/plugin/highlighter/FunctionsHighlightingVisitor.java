@@ -72,7 +72,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 if (calleeDescriptor instanceof ConstructorDescriptor) {
                     JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.CONSTRUCTOR_CALL);
                 }
-                else if (calleeDescriptor instanceof FunctionDescriptor && !(calleeDescriptor instanceof VariableAsFunctionDescriptor)) {
+                else if (calleeDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor fun = (FunctionDescriptor)calleeDescriptor;
                     JetPsiChecker.highlightName(holder, callee, JetHighlightingColors.FUNCTION_CALL);
                     if (fun.getContainingDeclaration() instanceof NamespaceDescriptor) {

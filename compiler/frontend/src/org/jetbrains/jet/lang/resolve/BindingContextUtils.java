@@ -49,12 +49,12 @@ public class BindingContextUtils {
                     throw new IllegalStateException("non-declaration descriptors should be filtered out earler: " + callable);
                 }
             }
-            if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
-                VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
-                if (descriptor.getOriginal() != descriptor) {
-                    throw new IllegalStateException("original should be resolved earlier: " + descriptor);
-                }
-            }
+            //if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
+            //    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
+            //    if (descriptor.getOriginal() != descriptor) {
+            //        throw new IllegalStateException("original should be resolved earlier: " + descriptor);
+            //    }
+            //}
             return declarationDescriptor.getOriginal();
         }
     };
@@ -117,9 +117,6 @@ public class BindingContextUtils {
         }
         if (descriptor instanceof VariableDescriptor) {
             return (VariableDescriptor) descriptor;
-        }
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            return ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
         }
         return null;
     }

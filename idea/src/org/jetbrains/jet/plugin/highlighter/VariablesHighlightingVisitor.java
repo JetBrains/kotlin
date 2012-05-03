@@ -86,11 +86,6 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     private void highlightVariable(@NotNull PsiElement elementToHighlight, @NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            descriptor = ((VariableAsFunctionDescriptor)descriptor).getVariableDescriptor();
-            //noinspection ConstantConditions
-            if (descriptor == null) return;
-        }
         if (descriptor instanceof VariableDescriptor) {
             VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
             if (variableDescriptor.isVar()) {
