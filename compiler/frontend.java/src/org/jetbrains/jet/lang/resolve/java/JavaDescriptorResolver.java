@@ -1156,7 +1156,7 @@ public class JavaDescriptorResolver {
 
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
-            varargElementType = JetStandardLibrary.getInstance().getArrayElementType(outType);
+            varargElementType = JetStandardLibrary.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
         }
         else {
             varargElementType = null;
