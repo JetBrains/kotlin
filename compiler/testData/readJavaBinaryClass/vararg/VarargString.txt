@@ -1,0 +1,6 @@
+namespace test
+
+open class test.VarargString : java.lang.Object {
+    final /*constructor*/ fun <init>(): test.VarargString
+    open fun vararg(/*0*/ vararg p0: jet.String?): jet.Tuple0
+}
