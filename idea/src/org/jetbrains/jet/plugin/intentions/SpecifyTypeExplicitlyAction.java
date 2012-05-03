@@ -48,16 +48,6 @@ import java.util.Collections;
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
     private JetType targetType;
 
-    private boolean disabledForError;
-
-    public SpecifyTypeExplicitlyAction() {
-        this(true);
-    }
-
-    public SpecifyTypeExplicitlyAction(boolean disabledForError) {
-        this.disabledForError = disabledForError;
-    }
-
     @NotNull
     @Override
     public String getFamilyName() {
@@ -118,13 +108,17 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
         if (targetType == null || ErrorUtils.isErrorType(targetType)) {
             return false;
         }
-        if (disabledForError) {
+        if (isDisabledForError()) {
             for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
                 if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && element.getParent() == diagnostic.getPsiElement()) {
                     return false;
                 }
             }
         }
+        return true;
+    }
+
+    protected boolean isDisabledForError() {
         return true;
     }
 
