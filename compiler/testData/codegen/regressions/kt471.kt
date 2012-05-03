@@ -51,31 +51,36 @@ fun test6() : Boolean {
 }
 
 // ArrayList without jdk-headers cannot be used in these tests
-class MyArrayList<T>(var value: T) {
+class MyArrayList<T>() {
+    private var value17: T? = null
+    private var value39: T? = null
     fun get(index: Int): T {
-        if (index != 17)
-            throw Exception()
-        return value
+        if (index == 17) return value17!!
+        if (index == 39) return value39!!
+        throw Exception()
     }
-    fun set(index: Int, value: T): Unit {
-        if (index != 17)
-            throw Exception()
-        this.value = value
+    fun set(index: Int, value: T): T? {
+        if (index == 17) value17 = value
+        else if (index == 39) value39 = value
+        else throw Exception()
+        return null
     }
 }
 
 fun test7() : Boolean {
-    var mnr  = MyArrayList<MyNumber>(MyNumber(42))
+    var mnr  = MyArrayList<MyNumber>()
+    mnr[17] = MyNumber(42)
     mnr[17]++
     if (mnr[17].i  != 43) return false
     return true
 }
 
 fun test8() : Boolean {
-    var mnr  = MyArrayList<MyNumber>(MyNumber(42))
-    val old = mnr[17]++
-    if (old.i != 42) return false
+    var mnr  = MyArrayList<MyNumber>()
+    mnr[17] = MyNumber(42)
+    mnr[39] = mnr[17]++
     if (mnr[17].i  != 43) return false
+    if (mnr[39].i  != 42) return false
     return true
 }
 
