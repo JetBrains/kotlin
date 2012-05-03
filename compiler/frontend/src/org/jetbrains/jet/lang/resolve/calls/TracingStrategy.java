@@ -72,7 +72,7 @@ import java.util.List;
         public void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status) {}
 
         @Override
-        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
+        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {}
 
         @Override
         public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
@@ -108,7 +108,7 @@ import java.util.List;
 
     void typeInferenceFailed(@NotNull BindingTrace trace, SolutionStatus status);
 
-    void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
+    void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
 
     void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
 

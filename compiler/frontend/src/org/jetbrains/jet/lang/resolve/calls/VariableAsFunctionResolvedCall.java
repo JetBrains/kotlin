@@ -75,6 +75,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
 
     @NotNull
     @Override
+    public ExplicitReceiverKind getExplicitReceiverKind() {
+        return variableCall.getExplicitReceiverKind();
+    }
+
+    @NotNull
+    @Override
     public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
         return functionCall.getValueArguments();
     }

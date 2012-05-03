@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -195,9 +194,9 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
         }
 
         @Override
-        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
+        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {
             ASTNode callOperationNode = call.getCallOperationNode();
-            if (callOperationNode != null) {
+            if (callOperationNode != null && !isCallForImplicitInvoke) {
                 trace.report(UNSAFE_CALL.on(callOperationNode.getPsi(), type));
             }
             else {

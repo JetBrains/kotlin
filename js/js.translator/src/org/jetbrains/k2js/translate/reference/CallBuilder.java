@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
@@ -106,7 +107,7 @@ public final class CallBuilder {
     private CallTranslator finish() {
         if (resolvedCall == null) {
             assert descriptor != null;
-            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor),
+            resolvedCall = ResolvedCallImpl.create(ResolutionCandidate.create(descriptor, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER),
                                                    TemporaryBindingTrace.create(new BindingTraceContext())); //todo
         }
         if (descriptor == null) {

@@ -46,6 +46,10 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     @NotNull
     ReceiverDescriptor getThisObject();
 
+    /** Determines whether receiver argument or this object is substituted for explicit receiver */
+    @NotNull
+    ExplicitReceiverKind getExplicitReceiverKind();
+
     /** Values (arguments) for value parameters */
     @NotNull
     Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments();

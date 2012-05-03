@@ -101,7 +101,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     candidate, variableCall, temporaryTrace, task);
 
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
-                    candidate.getDescriptor(), candidate.getThisObject(), ReceiverDescriptor.NO_RECEIVER);
+                    candidate.getDescriptor(), candidate.getThisObject(), ReceiverDescriptor.NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER);
 
             CallResolutionContext<CallableDescriptor, FunctionDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, temporaryTrace, task);
@@ -203,7 +203,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             final JetSimpleNameExpression invokeExpression = (JetSimpleNameExpression) JetPsiFactory.createExpression(
                     task.call.getCallElement().getProject(), "invoke");
 
-            return new DelegatingCall(task.call) {
+            return new CallForImplicitInvoke(task.call) {
                 @NotNull
                 @Override
                 public ReceiverDescriptor getExplicitReceiver() {
@@ -236,4 +236,10 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             };
         }
     };
+
+    public static class CallForImplicitInvoke extends DelegatingCall {
+        public CallForImplicitInvoke(@NotNull Call delegate) {
+            super(delegate);
+        }
+    }
 }
