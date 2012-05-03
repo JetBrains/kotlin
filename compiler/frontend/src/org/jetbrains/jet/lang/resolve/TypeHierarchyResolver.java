@@ -29,10 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -379,7 +376,8 @@ public class TypeHierarchyResolver {
 
     private void checkSupertypesForConsistency() {
         for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
-            Multimap<TypeConstructor, TypeProjection> multimap = TypeUtils.buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
+            Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
+                    .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
             for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
                 Collection<TypeProjection> projections = entry.getValue();
                 if (projections.size() > 1) {

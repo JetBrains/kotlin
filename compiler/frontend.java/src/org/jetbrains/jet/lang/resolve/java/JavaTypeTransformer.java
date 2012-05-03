@@ -79,7 +79,7 @@ public class JavaTypeTransformer {
             @Override
             public TypeProjection visitWildcardType(PsiWildcardType wildcardType) {
                 if (!wildcardType.isBounded()) {
-                    return TypeUtils.makeStarProjection(typeParameterDescriptor);
+                    return SubstitutionUtils.makeStarProjection(typeParameterDescriptor);
                 }
                 Variance variance = wildcardType.isExtends() ? Variance.OUT_VARIANCE : Variance.IN_VARIANCE;
 
@@ -174,7 +174,7 @@ public class JavaTypeTransformer {
                     if (classType.isRaw()) {
                         List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         for (TypeParameterDescriptor parameter : parameters) {
-                            arguments.add(TypeUtils.makeStarProjection(parameter));
+                            arguments.add(SubstitutionUtils.makeStarProjection(parameter));
                         }
                     }
                     else {

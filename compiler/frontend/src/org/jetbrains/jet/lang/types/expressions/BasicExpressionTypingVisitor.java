@@ -285,7 +285,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         {
             Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetType);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetType);
 
             for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
                 TypeProjection actualTypeParameter = actualType.getArguments().get(i);
@@ -310,7 +310,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
 
             Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
 
             Set<JetType> clearSubstituted = new HashSet<JetType>();
 
@@ -332,7 +332,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 // "is List<*>"
-                if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
+                if (typeProjection.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
                     continue;
                 }
 
