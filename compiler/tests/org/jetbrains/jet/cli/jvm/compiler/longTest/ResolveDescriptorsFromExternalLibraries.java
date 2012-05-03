@@ -49,19 +49,10 @@ import java.util.zip.ZipInputStream;
  */
 public class ResolveDescriptorsFromExternalLibraries {
 
-    @NotNull
-    private final CompilerDependencies compilerDependencies;
-
 
     public static void main(String[] args) throws Exception {
         new ResolveDescriptorsFromExternalLibraries().run();
         System.out.println("$");
-    }
-
-
-    public ResolveDescriptorsFromExternalLibraries() {
-        System.out.println("Getting compiler dependencies");
-        compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
     }
 
     private void run() throws Exception {
@@ -95,17 +86,17 @@ public class ResolveDescriptorsFromExternalLibraries {
 
         JetCoreEnvironment jetCoreEnvironment;
         if (jar != null) {
-            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(junk);
+            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(junk, CompilerSpecialMode.STDLIB);
             jetCoreEnvironment.addToClasspath(jar);
         }
         else {
-            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.STDLIB, false);
             jetCoreEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(junk, compilerDependencies);
             jar = compilerDependencies.getJdkJar();
         }
 
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(compilerDependencies, jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
 
         FileInputStream is = new FileInputStream(jar);
         try {
