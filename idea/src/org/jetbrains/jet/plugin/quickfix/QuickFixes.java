@@ -20,10 +20,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler;
-import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 import java.util.Collection;
 
@@ -136,6 +134,6 @@ public class QuickFixes {
 
         actions.put(UNNECESSARY_SAFE_CALL, new ReplaceCallFix(false));
         actions.put(UNSAFE_CALL, new ReplaceCallFix(true));
-        actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyAction(false));
+        actions.put(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE, new SpecifyTypeExplicitlyFix());
     }
 }
