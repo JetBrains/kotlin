@@ -1,5 +1,8 @@
 <project name="Kotlin" default="dist">
 
+    <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
+    <property name="shrink" value="false" />
+
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
@@ -87,6 +90,7 @@
     <target name="compiler">
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
+        <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
         <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
@@ -131,25 +135,6 @@
             <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
             <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
             <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
-        </jarjar>
-
-        <delete failonerror="false" dir="${output}/kotlin-compiler.exploded"/>
-        <mkdir dir="${output}/kotlin-compiler.exploded"/>
-        <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
-
-        <delete file="${output}/kotlin-compiler-jarjar.jar"/>
-
-        <!-- Clean JarJar result -->
-        <delete file="${output}/kotlin-compiler-before-proguard.jar.jar" failonerror="false"/>
-        <jar jarfile="${output}/kotlin-compiler-before-proguard.jar.jar">
-            <fileset dir="${output}/kotlin-compiler.exploded">
-                <include name="**/*.class"/>
-                <include name="**/*.jet"/>
-                <include name="**/*.jet.src"/>
-                <include name="**/*.kt"/>
-                <include name="META-INF/services/**"/>
-                <include name="messages/**"/>
-            </fileset>
 
             <manifest>
                 <attribute name="Built-By" value="JetBrains"/>
@@ -160,76 +145,105 @@
 
                 <attribute name="Main-Class" value="org.jetbrains.jet.cli.jvm.K2JVMCompiler"/>
             </manifest>
-        </jar>
-        <delete dir="${output}/kotlin-compiler.exploded"/>
-
-        <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar"/>
-        <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar"/>
+        </jarjar>
 
         <delete file="${kotlin-home}/lib/kotlin-compiler.jar" failonerror="false"/>
-        <proguard><![CDATA[
-            -injars '${output}/kotlin-compiler-before-proguard.jar.jar'
-            -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
-            -libraryjars '${rtjar}'
+        <if>
+            <isfalse value="${shrink}" />
 
-            -target 1.6
-            -dontoptimize
-            -dontobfuscate
+            <then>
+                <copy file="${output}/kotlin-compiler-jarjar.jar"
+                      tofile="${kotlin-home}/lib/kotlin-compiler.jar" />
+            </then>
 
-            -keepclasseswithmembers public class * {
-                public static void main(java.lang.String[]);
-            }
+            <else>
+                <cleandir dir="${output}/kotlin-compiler.exploded"/>
+                <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
 
-            -keep class org.jetbrains.annotations.** {
-                public protected *;
-            }
+                <!-- Clean JarJar result -->
+                <delete file="${output}/kotlin-compiler-before-proguard.jar" failonerror="false"/>
+                <jar jarfile="${output}/kotlin-compiler-before-proguard.jar"
+                     manifest="${output}/kotlin-compiler.exploded/META-INF/MANIFEST.MF">
 
-            -keep class org.jetbrains.k2js.** {
-                public protected *;
-            }
+                    <fileset dir="${output}/kotlin-compiler.exploded">
+                        <include name="**/*.class"/>
+                        <include name="**/*.jet"/>
+                        <include name="**/*.jet.src"/>
+                        <include name="**/*.kt"/>
+                        <include name="META-INF/services/**"/>
+                        <include name="messages/**"/>
+                    </fileset>
+                </jar>
+                <delete dir="${output}/kotlin-compiler.exploded"/>
 
-            -keep class org.jetbrains.jet.** {
-                public protected *;
-            }
+                <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar"/>
+                <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar"/>
 
-            -keep class jet.** {
-                public protected *;
-            }
+                <proguard><![CDATA[
+                    -injars '${output}/kotlin-compiler-before-proguard.jar'
+                    -outjars '${kotlin-home}/lib/kotlin-compiler.jar'
 
-            -keepclasseswithmembers class * { void start(); }
+                    -libraryjars '${rtjar}'
 
-            -keepclasseswithmembers class * { void stop(); }
-            -keepclasseswithmembers class * { void dispose(); }
+                    -target 1.6
+                    -dontoptimize
+                    -dontobfuscate
 
-            -keepclasseswithmembers class * { ** getFileSystem(); }
-            -keepclasseswithmembers class * { ** isVarArgs(); }
-            -keepclasseswithmembers class * { ** getApplication(); }
-            -keepclasseswithmembers class * { ** finalizeReferent(); }
-            -keepclasseswithmembers class * { ** newBuilder(); }
-            -keepclasseswithmembers class * { ** startFinalizer(java.lang.Class,java.lang.Object); }
-            -keepclasseswithmembers class * { ** executeOnPooledThread(java.lang.Runnable); }
-            -keepclasseswithmembers class * { ** getUserData(java.lang.String); }
-            -keepclasseswithmembers class * { int getBooleanAttributes(java.io.File); }
+                    -keepclasseswithmembers public class * {
+                        public static void main(java.lang.String[]);
+                    }
 
-            -keepclasseswithmembers class * { ** project(); }
+                    -keep class org.jetbrains.annotations.** {
+                        public protected *;
+                    }
 
-            -keepclasseswithmembers class * { ** TYPE; }
-            -keepclasseswithmembers class * { ** ourInstance; }
+                    -keep class org.jetbrains.k2js.** {
+                        public protected *;
+                    }
 
-            -keepclasseswithmembers class * { <init>(kotlinc.internal.com.intellij.lang.ASTNode); }
+                    -keep class org.jetbrains.jet.** {
+                        public protected *;
+                    }
 
-            -keepclassmembers enum * {
-                public static **[] values();
-                public static ** valueOf(java.lang.String);
-            }
+                    -keep class jet.** {
+                        public protected *;
+                    }
 
-            -keepclassmembers class * {
-                ** toString();
-                ** hashCode();
-            }
-        ]]></proguard>
-        <!--<delete file="${output}/kotlin-compiler-before-proguard.jar"/>-->
+                    -keepclasseswithmembers class * { void start(); }
+
+                    -keepclasseswithmembers class * { void stop(); }
+                    -keepclasseswithmembers class * { void dispose(); }
+
+                    -keepclasseswithmembers class * { ** getFileSystem(); }
+                    -keepclasseswithmembers class * { ** isVarArgs(); }
+                    -keepclasseswithmembers class * { ** getApplication(); }
+                    -keepclasseswithmembers class * { ** finalizeReferent(); }
+                    -keepclasseswithmembers class * { ** newBuilder(); }
+                    -keepclasseswithmembers class * { ** startFinalizer(java.lang.Class,java.lang.Object); }
+                    -keepclasseswithmembers class * { ** executeOnPooledThread(java.lang.Runnable); }
+                    -keepclasseswithmembers class * { ** getUserData(java.lang.String); }
+                    -keepclasseswithmembers class * { int getBooleanAttributes(java.io.File); }
+
+                    -keepclasseswithmembers class * { ** project(); }
+
+                    -keepclasseswithmembers class * { ** TYPE; }
+                    -keepclasseswithmembers class * { ** ourInstance; }
+
+                    -keepclasseswithmembers class * { <init>(kotlinc.internal.com.intellij.lang.ASTNode); }
+
+                    -keepclassmembers enum * {
+                        public static **[] values();
+                        public static ** valueOf(java.lang.String);
+                    }
+
+                    -keepclassmembers class * {
+                        ** toString();
+                        ** hashCode();
+                    }
+                ]]></proguard>
+            </else>
+        </if>
     </target>
 
     <target name="antTools">
@@ -248,6 +262,7 @@
             </classpath>
         </javac>
 
+        <delete file="${kotlin-home}/lib/kotlin-ant.jar" failonerror="false" />
         <jar destfile="${kotlin-home}/lib/kotlin-ant.jar">
             <fileset dir="${output}/classes/buildTools"/>
             <fileset dir="${basedir}/build-tools/ant/src" includes="**/*.xml"/>
@@ -269,6 +284,7 @@
             <arg value="jdkHeaders"/>
         </java>
 
+        <delete file="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar" failonerror="false" />
         <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
             <fileset dir="${output}/classes/jdk-headers"/>
         </jar>
@@ -296,6 +312,7 @@
             <arg value="${output}/classes/runtime"/>
         </java>
 
+        <delete file="${kotlin-home}/lib/kotlin-runtime.jar" failonerror="false" />
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>

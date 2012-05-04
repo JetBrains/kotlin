@@ -24,6 +24,17 @@
             <mapper type="flatten"/>
         </unzip>
 
+        <!-- ant contrib -->
+        <get src="http://heanet.dl.sourceforge.net/project/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip" dest="dependencies/download/ant-contrib-1.0b3-bin.zip" usetimestamp="true"/>
+
+        <delete file="dependencies/ant-contrib.jar" failonerror="false"/>
+        <unzip src="dependencies/download/ant-contrib-1.0b3-bin.zip" dest="dependencies">
+            <patternset>
+                <include name="ant-contrib/ant-contrib-1.0b3.jar"/>
+            </patternset>
+            <mapper type="merge" to="ant-contrib.jar"/>
+        </unzip>
+
         <!-- JarJar -->
         <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
         <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true" />
