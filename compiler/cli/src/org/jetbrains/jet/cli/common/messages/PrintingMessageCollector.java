@@ -31,7 +31,8 @@ import java.util.Collection;
  * @author Pavel Talanov
  */
 public class PrintingMessageCollector implements MessageCollector {
-    private final boolean verbose;
+
+    private boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;
 
@@ -69,5 +70,13 @@ public class PrintingMessageCollector implements MessageCollector {
                 }
             }
         }
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 }

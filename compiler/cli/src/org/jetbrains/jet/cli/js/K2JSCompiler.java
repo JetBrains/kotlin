@@ -24,20 +24,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
-import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.facade.K2JSTranslator;
 
-import java.io.PrintStream;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
@@ -60,39 +55,42 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
     @NotNull
     @Override
-    protected ExitCode doExecute(PrintStream stream, K2JSCompilerArguments arguments, MessageRenderer renderer) {
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(stream, renderer, true);
-        if (arguments.module != null) {
-            stream.print(renderer.render(CompilerMessageSeverity.ERROR, "Module arg is not supported", NO_LOCATION));
-            return ExitCode.INTERNAL_ERROR;
-        }
+    protected ExitCode doExecute(K2JSCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         if (arguments.srcdir == null) {
-            stream.print(renderer.render(CompilerMessageSeverity.ERROR, "Specify sources location via -srcdir", NO_LOCATION));
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify sources location via -srcdir", NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
 
-        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
         environmentForJS.addSources(arguments.srcdir);
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
         final List<JetFile> sources = environmentForJS.getSourceFiles();
+        final Config config = Config.getEmptyConfig(environmentForJS.getProject());
         analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
                 BindingContext context = AnalyzerFacadeForJS
-                        .analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), new Config(environmentForJS.getProject()) {
-                            @NotNull
-                            @Override
-                            protected List<JetFile> generateLibFiles() {
-                                return Collections.emptyList();
-                            }
-                        });
+                        .analyzeFiles(sources, Predicates.<PsiFile>alwaysTrue(), config);
                 return AnalyzeExhaust.success(context, JetStandardLibrary.getInstance());
             }
         }, sources);
+        if (analyzerWithCompilerReport.hasErrors()) {
 
-        stream.print(renderer.render(CompilerMessageSeverity.ERROR, "Greeting", NO_LOCATION));
+            return ExitCode.COMPILATION_ERROR;
+        }
+
+        if (arguments.outputDir != null) {
+            try {
+                K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), arguments.outputDir, config, environmentForJS.getProject());
+            }
+            catch (Exception e) {
+                return ExitCode.INTERNAL_ERROR;
+            }
+        } else {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output directory via -output", CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.INTERNAL_ERROR;
+        }
         return ExitCode.OK;
     }
 }

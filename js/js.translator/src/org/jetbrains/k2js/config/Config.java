@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,6 +31,17 @@ import java.util.List;
  *         Base class representing a configuration of translator.
  */
 public abstract class Config {
+
+    @NotNull
+    public static Config getEmptyConfig(@NotNull Project project) {
+        return new Config(project) {
+            @NotNull
+            @Override
+            protected List<JetFile> generateLibFiles() {
+                return Collections.emptyList();
+            }
+        };
+    }
 
     @NotNull
     protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
