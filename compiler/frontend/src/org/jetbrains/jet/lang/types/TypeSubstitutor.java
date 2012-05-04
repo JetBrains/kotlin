@@ -39,7 +39,7 @@ public class TypeSubstitutor {
         }
         final TypeProjection projection = new TypeProjection(type);
 
-        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 if (constructors.contains(key)) {
@@ -58,29 +58,6 @@ public class TypeSubstitutor {
                 return "TypeConstructor.makeConstantSubstitutor(" + constructors + " -> " + projection + ")";
             }
         });
-    }
-
-    public interface TypeSubstitution {
-        TypeSubstitution EMPTY = new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "Empty TypeSubstitution";
-            }
-        };
-        
-        @Nullable
-        TypeProjection get(TypeConstructor key);
-        boolean isEmpty();
     }
 
     public static class MapToTypeSubstitutionAdapter implements TypeSubstitution {

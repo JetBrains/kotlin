@@ -36,7 +36,7 @@ public class DescriptorSubstitutor {
             @NotNull DeclarationDescriptor newContainingDeclaration,
             @NotNull List<TypeParameterDescriptor> result) {
         final Map<TypeConstructor, TypeProjection> mutableSubstitution = Maps.newHashMap();
-        TypeSubstitutor substitutor = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        TypeSubstitutor substitutor = TypeSubstitutor.create(new TypeSubstitution() {
 
             @Override
             public TypeProjection get(TypeConstructor key) {
