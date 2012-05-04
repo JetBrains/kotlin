@@ -93,7 +93,10 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (Boolean.TRUE.equals(bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor))) {
-                holder.createInfoAnnotation(elementToHighlight, "Wrapped into a reference object to be modified when captured in a closure").setTextAttributes(
+                String msg = ((VariableDescriptor) descriptor).isVar()
+                             ? "Wrapped into a reference object to be modified when captured in a closure"
+                             : "Value captured in a closure";
+                holder.createInfoAnnotation(elementToHighlight, msg).setTextAttributes(
                     JetHighlightingColors.WRAPPED_INTO_REF);
             }
 
