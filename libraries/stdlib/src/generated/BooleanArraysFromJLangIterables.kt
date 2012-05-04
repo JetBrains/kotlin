@@ -83,7 +83,7 @@ public inline fun <C: Collection<Boolean>> BooleanArray.filterTo(result: C, pred
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <L: List<Boolean>> BooleanArray.filterNotTo(result: L, predicate: (Boolean) -> Boolean) : L {
+public inline fun <C: Collection<Boolean>> BooleanArray.filterNotTo(result: C, predicate: (Boolean) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -93,7 +93,7 @@ public inline fun <L: List<Boolean>> BooleanArray.filterNotTo(result: L, predica
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <L: List<Boolean>> BooleanArray?.filterNotNullTo(result: L) : L {
+public inline fun <C: Collection<Boolean>> BooleanArray?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -176,7 +176,7 @@ public inline fun BooleanArray.makeString(separator: String = ", ", prefix: Stri
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <L: List<Boolean>> BooleanArray.takeWhileTo(result: L, predicate: (Boolean) -> Boolean) : L {
+public inline fun <C: Collection<Boolean>> BooleanArray.takeWhileTo(result: C, predicate: (Boolean) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }

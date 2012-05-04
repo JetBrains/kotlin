@@ -83,7 +83,7 @@ public inline fun <C: Collection<Short>> ShortArray.filterTo(result: C, predicat
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotIntoLinkedList
  */
-public inline fun <L: List<Short>> ShortArray.filterNotTo(result: L, predicate: (Short) -> Boolean) : L {
+public inline fun <C: Collection<Short>> ShortArray.filterNotTo(result: C, predicate: (Short) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
 }
@@ -93,7 +93,7 @@ public inline fun <L: List<Short>> ShortArray.filterNotTo(result: L, predicate: 
  *
  * @includeFunctionBody ../../test/CollectionTest.kt filterNotNullIntoLinkedList
  */
-public inline fun <L: List<Short>> ShortArray?.filterNotNullTo(result: L) : L {
+public inline fun <C: Collection<Short>> ShortArray?.filterNotNullTo(result: C) : C {
     if (this != null) {
         for (element in this) if (element != null) result.add(element)
     }
@@ -176,7 +176,7 @@ public inline fun ShortArray.makeString(separator: String = ", ", prefix: String
 }
 
 /** Returns a list containing the first elements that satisfy the given *predicate* */
-public inline fun <L: List<Short>> ShortArray.takeWhileTo(result: L, predicate: (Short) -> Boolean) : L {
+public inline fun <C: Collection<Short>> ShortArray.takeWhileTo(result: C, predicate: (Short) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
 }
