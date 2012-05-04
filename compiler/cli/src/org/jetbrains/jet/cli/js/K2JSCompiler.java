@@ -76,19 +76,20 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             }
         }, sources);
         if (analyzerWithCompilerReport.hasErrors()) {
-
             return ExitCode.COMPILATION_ERROR;
         }
 
         if (arguments.outputDir != null) {
             try {
-                K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), arguments.outputDir, config, environmentForJS.getProject());
+                K2JSTranslator.translateWithCallToMainAndSaveToFile(sources, arguments.outputDir, config, environmentForJS.getProject());
             }
             catch (Exception e) {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
+                                        CompilerMessageLocation.NO_LOCATION);
                 return ExitCode.INTERNAL_ERROR;
             }
         } else {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output directory via -output", CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
             return ExitCode.INTERNAL_ERROR;
         }
         return ExitCode.OK;

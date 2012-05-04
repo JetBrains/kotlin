@@ -28,6 +28,7 @@ import com.intellij.util.Chunk;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 import java.io.PrintStream;
@@ -90,20 +91,21 @@ public final class K2JSCompiler implements TranslatingCompiler {
                                    -1);
                 return -1;
             }
-            String[] commandLineArgs = constructArguments(context.getModuleOutputDirectory(module), roots[0]);
+            String[] commandLineArgs = constructArguments(context.getProject(), context.getModuleOutputDirectory(module), roots[0]);
             Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
             return CompilerUtils.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
-             context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing: " + e.getMessage(), null, -1, -1);
+             context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing compiler: " + e.getMessage(), null, -1, -1);
         }
         return -1;
     }
 
-    private static String[] constructArguments(@NotNull VirtualFile outDir, @NotNull VirtualFile srcDir) {
+    private static String[] constructArguments(@NotNull Project project, @NotNull VirtualFile outDir, @NotNull VirtualFile srcDir) {
         String srcPath = srcDir.getPath();
         String outPath = outDir.getPath();
-        return new String[] {"-tags", "-verbose", "-version", "-srcdir", srcPath, "-output", outPath};
+        String outFile = K2JSRunnerUtils.constructPathToGeneratedFile(project, outPath);
+        return new String[] {"-tags", "-verbose", "-version", "-srcdir", srcPath, "-output", outFile};
     }
 
     @NotNull
