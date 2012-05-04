@@ -18,19 +18,24 @@ package org.jetbrains.jet.cli.js;
 
 import com.google.common.base.Predicates;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
-import org.jetbrains.jet.cli.common.messages.*;
+import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.jet.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.util.List;
@@ -62,11 +67,46 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
             return ExitCode.INTERNAL_ERROR;
         }
 
+        final JetCoreEnvironment environmentForJS = getEnvironment(arguments, rootDisposable);
+        final Config config = getConfig(arguments, environmentForJS.getProject());
+        if (analyzeAndReportErrors(messageCollector, environmentForJS.getSourceFiles(), config)) {
+            return ExitCode.COMPILATION_ERROR;
+        }
+
+        String outputFile = arguments.outputFile;
+        if (outputFile == null) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.INTERNAL_ERROR;
+        }
+
+        return translateAndGenerateOutputFile(messageCollector, environmentForJS, config, outputFile);
+    }
+
+    @NotNull
+    private static JetCoreEnvironment getEnvironment(K2JSCompilerArguments arguments, Disposable rootDisposable) {
         final JetCoreEnvironment environmentForJS = JetCoreEnvironment.getCoreEnvironmentForJS(rootDisposable);
         environmentForJS.addSources(arguments.srcdir);
+        return environmentForJS;
+    }
+
+    @NotNull
+    private static ExitCode translateAndGenerateOutputFile(@NotNull PrintingMessageCollector messageCollector,
+            @NotNull JetCoreEnvironment environmentForJS, @NotNull Config config, @NotNull String outputFile) {
+        try {
+            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config,
+                                                                environmentForJS.getProject());
+        }
+        catch (Exception e) {
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
+                                    CompilerMessageLocation.NO_LOCATION);
+            return ExitCode.INTERNAL_ERROR;
+        }
+        return ExitCode.OK;
+    }
+
+    private static boolean analyzeAndReportErrors(@NotNull PrintingMessageCollector messageCollector,
+            @NotNull final List<JetFile> sources, @NotNull final Config config) {
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(messageCollector);
-        final List<JetFile> sources = environmentForJS.getSourceFiles();
-        final Config config = Config.getEmptyConfig(environmentForJS.getProject());
         analyzerWithCompilerReport.analyzeAndReport(new Function0<AnalyzeExhaust>() {
             @Override
             public AnalyzeExhaust invoke() {
@@ -75,23 +115,14 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
                 return AnalyzeExhaust.success(context, JetStandardLibrary.getInstance());
             }
         }, sources);
-        if (analyzerWithCompilerReport.hasErrors()) {
-            return ExitCode.COMPILATION_ERROR;
-        }
+        return analyzerWithCompilerReport.hasErrors();
+    }
 
-        if (arguments.outputDir != null) {
-            try {
-                K2JSTranslator.translateWithCallToMainAndSaveToFile(sources, arguments.outputDir, config, environmentForJS.getProject());
-            }
-            catch (Exception e) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
-                                        CompilerMessageLocation.NO_LOCATION);
-                return ExitCode.INTERNAL_ERROR;
-            }
-        } else {
-            messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.INTERNAL_ERROR;
+    @NotNull
+    private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
+        if (arguments.libzip == null) {
+            return Config.getEmptyConfig(project);
         }
-        return ExitCode.OK;
+        return new ZippedLibrarySourcesConfig(project, arguments.libzip);
     }
 }
