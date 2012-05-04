@@ -258,8 +258,11 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
-        return new String[]{"-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version", "-mode",
-                "idea"};
+        return new String[]{
+                "-module", scriptFile.getAbsolutePath(),
+                "-output", path(outputDir),
+                "-tags", "-verbose", "-version",
+                "-mode", "idea"};
     }
 
     private static void runOutOfProcess(final CompileContext compileContext,
