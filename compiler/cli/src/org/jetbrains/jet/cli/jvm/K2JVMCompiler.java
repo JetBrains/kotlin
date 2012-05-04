@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
@@ -53,9 +52,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
 
     @Override
     @NotNull
-    protected ExitCode doExecute(PrintStream errStream,
-            K2JVMCompilerArguments arguments,
-            MessageRenderer messageRenderer) {
+    protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
         File jdkHeadersJar;
@@ -85,9 +82,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
         }
 
         CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
-        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
-
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
         CompileEnvironmentConfiguration configuration =
                 new CompileEnvironmentConfiguration(environment, dependencies, messageCollector);
@@ -99,8 +93,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
 
             boolean noErrors;
             if (arguments.module != null) {
+                boolean oldVerbose = messageCollector.isVerbose();
+                messageCollector.setVerbose(false);
                 List<Module> modules = CompileEnvironmentUtil
-                        .loadModuleScript(arguments.module, new PrintingMessageCollector(errStream, messageRenderer, false));
+                        .loadModuleScript(arguments.module, messageCollector);
+                messageCollector.setVerbose(oldVerbose);
                 File directory = new File(arguments.module).getParentFile();
                 noErrors = KotlinToJVMBytecodeCompiler.compileModules(configuration, modules,
                                                                       directory, arguments.jar, arguments.outputDir,
@@ -131,10 +128,6 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
             messageCollector.report(CompilerMessageSeverity.EXCEPTION, MessageRenderer.PLAIN.renderException(t),
                                     CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
-        }
-        finally {
-            Disposer.dispose(rootDisposable);
-            messageCollector.printToErrStream();
         }
     }
 

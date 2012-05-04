@@ -86,17 +86,24 @@ public final class K2JSCompiler implements TranslatingCompiler {
         try {
             VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
             if (roots.length != 1) {
-                context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support module source roots.", null, -1, -1);
+                context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple module source roots.", null, -1,
+                                   -1);
                 return -1;
             }
-            String[] commandLineArgs = {"-tags", "-verbose", "-version", "-srcdir", roots[0].getPath()};
+            String[] commandLineArgs = constructArguments(context.getModuleOutputDirectory(module), roots[0]);
             Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
             return CompilerUtils.getReturnCodeFromObject(rc);
         }
         catch (Throwable e) {
-            context.addMessage(CompilerMessageCategory.ERROR, "Fail!", null, -1, -1);
+             context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing: " + e.getMessage(), null, -1, -1);
         }
         return -1;
+    }
+
+    private static String[] constructArguments(@NotNull VirtualFile outDir, @NotNull VirtualFile srcDir) {
+        String srcPath = srcDir.getPath();
+        String outPath = outDir.getPath();
+        return new String[] {"-tags", "-verbose", "-version", "-srcdir", srcPath, "-output", outPath};
     }
 
     @NotNull
