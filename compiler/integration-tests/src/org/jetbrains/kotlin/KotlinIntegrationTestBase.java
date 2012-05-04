@@ -29,12 +29,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
+import org.junit.ComparisonFailure;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import sun.misc.JarFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,13 +73,7 @@ public abstract class KotlinIntegrationTestBase {
     protected int runCompiler(String logName, String... arguments) throws Exception {
         final File lib = getCompilerLib();
 
-        final File[] jars = lib.listFiles(new JarFilter());
-        final String classpath = StringUtil.join(jars, new Function<File, String>() {
-            @Override
-            public String fun(File file) {
-                return file.getAbsolutePath();
-            }
-        }, File.pathSeparator);
+        final String classpath = lib.getAbsolutePath() + File.separator + "kotlin-compiler.jar";
 
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");
@@ -122,9 +115,11 @@ public abstract class KotlinIntegrationTestBase {
             final String goldContent = Files.toString(expectedFile, UTF_8);
             try {
                 assertEquals(goldContent, content.toString());
-            }
-            finally {
                 tmpFile.delete();
+            }
+            catch (ComparisonFailure e) {
+                Files.write(content, tmpFile, Charsets.UTF_8);
+                throw e;
             }
         }
     }

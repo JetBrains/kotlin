@@ -12,7 +12,7 @@ import java.util.List
 import java.util.HashSet
 import java.util.Collection
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContext.*
 import org.jetbrains.jet.cli.common.CompilerPlugin

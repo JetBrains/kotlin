@@ -25,102 +25,13 @@
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
         </dependency>
-
-        <!--
-                <dependency>
-                    <groupId>org.apache.maven</groupId>
-                    <artifactId>maven-project</artifactId>
-                    <version>${maven.version}</version>
-                </dependency>
-        -->
-
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>intellij-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>intellij-annotations</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- TODO Req. only for K2JSTranslator, move it to compiler -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-build-tools</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Shall be transitive dependencies of Kotlin compiler -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>${asm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-tree</artifactId>
-            <version>${asm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>${asm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-util</artifactId>
-            <version>${asm.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>trove4j</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!--
-                <dependency>
-                    <groupId>net.sf.trove4j</groupId>
-                    <artifactId>trove4j</artifactId>
-                    <version>3.0.2</version>
-                </dependency>
-        -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>picocontainer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <!--
-                <dependency>
-                    <groupId>org.picocontainer</groupId>
-                    <artifactId>picocontainer</artifactId>
-                    <version>2.9</version>
-                </dependency>
-        -->
-
-
-        <!-- for JS generation -->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>dartc</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
+
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
@@ -143,31 +54,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>2.9</version>
-            </plugin>
-
-            <!-- Get rid of it right after compiler careful packaging -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>org.jetbrains.kotlin:*</include>
-                                </includes>
-                                <excludes>
-                                    <exclude>org.jetbrains.kotlin:stdlib</exclude>
-                                </excludes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

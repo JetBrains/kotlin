@@ -21,25 +21,11 @@ if "%_JAVACMD%"=="" set _JAVACMD=java
 rem We use the value of the JAVA_OPTS environment variable if defined
 set _JAVA_OPTS=-Xmx256M -Xms32M
 
-set _TOOL_CLASSPATH=
-if "%_TOOL_CLASSPATH%"=="" (
-  for %%f in ("%_KOTLIN_HOME%\lib\*") do call :add_cpath "%%f"
-  for /d %%f in ("%_KOTLIN_HOME%\lib\*") do call :add_cpath "%%f"
-)
-
-"%_JAVACMD%" %_JAVA_OPTS% -cp "%_TOOL_CLASSPATH%" org.jetbrains.jet.cli.jvm.K2JVMCompiler  %*
+"%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" org.jetbrains.jet.cli.jvm.K2JVMCompiler  %*
 goto end
 
 rem ##########################################################################
 rem # subroutines
-
-:add_cpath
-  if "%_TOOL_CLASSPATH%"=="" (
-    set _TOOL_CLASSPATH=%~1
-  ) else (
-    set _TOOL_CLASSPATH=%_TOOL_CLASSPATH%;%~1
-  )
-goto :eof
 
 :set_home
   set _BIN_DIR=

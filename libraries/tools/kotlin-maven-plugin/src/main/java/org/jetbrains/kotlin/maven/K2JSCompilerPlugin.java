@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.io.Files;
-import com.intellij.openapi.project.Project;
+import org.jetbrains.jet.internal.com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
@@ -28,7 +28,6 @@ import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.Override;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
