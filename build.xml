@@ -135,6 +135,11 @@
             <rule pattern="org.picocontainer.**" result="org.jetbrains.jet.internal.org.picocontainer.@1"/>
             <rule pattern="gnu.trove.**" result="org.jetbrains.jet.internal.gnu.trove.@1"/>
             <rule pattern="javax.inject.**" result="org.jetbrains.jet.internal.javax.inject.@1"/>
+            <rule pattern="com.thoughtworks.xstream.**" result="org.jetbrains.jet.internal.com.thoughtworks.xstream.@1"/>
+            <rule pattern="org.json.**" result="org.jetbrains.jet.internal.org.json.@1"/>
+            <rule pattern="org.mozilla.**" result="org.jetbrains.jet.internal.org.mozilla.@1"/>
+            <rule pattern="org.xmlpull.**" result="org.jetbrains.jet.internal.org.xmlpull.@1"/>
+            <rule pattern="org.kohsuke.args4j.**" result="org.jetbrains.jet.internal.org.kohsuke.args4j.@1"/>
 
             <manifest>
                 <attribute name="Built-By" value="JetBrains"/>
