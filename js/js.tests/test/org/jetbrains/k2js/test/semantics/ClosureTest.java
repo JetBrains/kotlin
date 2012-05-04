@@ -28,6 +28,6 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }
 
     public void testIteratingCallbacks() throws Exception {
-        //checkFooBoxIsTrue("iteratingCallbacks.kt");
+        checkFooBoxIsTrue("iteratingCallbacks.kt");
     }
 }

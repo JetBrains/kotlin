@@ -16,15 +16,11 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-import closurecompiler.internal.com.google.common.collect.Sets;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.translate.context.Namer;
-
-import java.io.File;
-import java.io.FilenameFilter;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class ExamplesTest extends SingleFileTranslationTest {
@@ -44,13 +40,7 @@ public final class ExamplesTest extends SingleFileTranslationTest {
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", true, new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return !Sets.newHashSet("closureWithParameter.jet", "closureWithParameterAndBoxing.jet", "doubleEnclosedLocalVariable.jet", "enclosingLocalVariable.jet", "extensionClosure.jet",
-                                       "simplestClosure.jet", "simplestClosureAndBoxing.jet").contains(name);
-            }
-        }, new TranslatorTestCaseBuilder.NamedTestFactory() {
+        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String filename) {

@@ -50,6 +50,6 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
     }
 
     protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
+        myEnvironment = JetCoreEnvironment.getCoreEnvironmentForJS(getTestRootDisposable());
     }
 }

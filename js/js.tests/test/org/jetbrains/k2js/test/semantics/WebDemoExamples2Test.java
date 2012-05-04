@@ -33,11 +33,11 @@ public final class WebDemoExamples2Test extends SingleFileTranslationTest {
     }
 
     public void testLife() throws Exception {
-        //performTestWithMain("life", "", "2");
+        performTestWithMain("life", "", "2");
     }
 
     public void testBuilder() throws Exception {
-        //performTestWithMain("builder", "");
-        //performTestWithMain("builder", "1", "over9000");
+        performTestWithMain("builder", "");
+        performTestWithMain("builder", "1", "over9000");
     }
 }
