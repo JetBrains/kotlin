@@ -83,9 +83,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileModules(
             K2JVMCompileEnvironmentConfiguration configuration,
-
             @NotNull List<Module> modules,
-
             @NotNull File directory,
             @Nullable String jarPath,
             @Nullable String outputDir,

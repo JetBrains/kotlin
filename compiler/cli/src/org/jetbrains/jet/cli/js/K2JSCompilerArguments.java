@@ -58,4 +58,9 @@ public class K2JSCompilerArguments extends CompilerArguments {
     public boolean isVersion() {
         return version;
     }
+
+    @Override
+    public boolean isVerbose() {
+        return verbose;
+    }
 }
