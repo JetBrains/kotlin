@@ -24,8 +24,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -43,18 +43,8 @@ public class JetIconProvider extends IconProvider {
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
             JetFile file = (JetFile) psiElement;
-            List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
-                @Override
-                public boolean value(JetDeclaration jetDeclaration) {
-                    return jetDeclaration instanceof JetClassOrObject;
-                }
-            });
-            if (classes.size() == 1) {
-                if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
-                    return getIcon(classes.get(0), flags);
-                }
-            }
-            return JetIcons.FILE;
+            JetClassOrObject mainClass = getMainClass(file);
+            return mainClass != null ? getIcon(mainClass, flags) : JetIcons.FILE;
         }
         if (psiElement instanceof JetNamespaceHeader) {
             return (flags & Iconable.ICON_FLAG_OPEN) != 0 ? PlatformIcons.PACKAGE_OPEN_ICON : PlatformIcons.PACKAGE_ICON;
@@ -95,6 +85,22 @@ public class JetIconProvider extends IconProvider {
         if (psiElement instanceof JetProperty) {
             JetProperty property = (JetProperty)psiElement;
             return property.isVar() ? JetIcons.FIELD_VAR : JetIcons.FIELD_VAL;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static JetClassOrObject getMainClass(@NotNull JetFile file) {
+        List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
+            @Override
+            public boolean value(JetDeclaration jetDeclaration) {
+                return jetDeclaration instanceof JetClassOrObject;
+            }
+        });
+        if (classes.size() == 1) {
+            if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
+                return (JetClassOrObject) classes.get(0);
+            }
         }
         return null;
     }
