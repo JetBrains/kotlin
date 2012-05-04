@@ -72,8 +72,6 @@ public class KotlinToJVMBytecodeCompiler {
             configuration.getEnvironment().addToClasspath(new File(classpathRoot));
         }
 
-        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies());
-
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
             return null;
@@ -129,8 +127,6 @@ public class KotlinToJVMBytecodeCompiler {
                 break;
             }
         }
-
-        CompileEnvironmentUtil.ensureRuntime(configuration.getEnvironment(), configuration.getEnvironment().getCompilerDependencies());
 
         GenerationState generationState = analyzeAndGenerate(configuration);
         if (generationState == null) {
