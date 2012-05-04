@@ -1,0 +1,7 @@
+#!/bin/sh -e
+
+cd $(dirname $0)/..
+
+exec java -classpath 'dist/classes/tests:compiler/frontend/src:dist/classes/runtime:dist/classes/compiler:lib/*:ideaSDL/core/*:ideaSDK/lib/*' "$@"
+
+# vim: set ts=4 sw=4 et ft=sh:
