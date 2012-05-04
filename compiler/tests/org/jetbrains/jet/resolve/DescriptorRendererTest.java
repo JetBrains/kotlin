@@ -18,7 +18,6 @@ package org.jetbrains.jet.resolve;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.DocumentImpl;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +39,14 @@ import java.util.List;
  * @since 4/6/12
  */
 public class DescriptorRendererTest extends JetLiteFixture {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
+    }
+
+
     public void testGlobalProperties() throws IOException {
         doTest();
     }
@@ -72,7 +78,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         AnalyzeExhaust analyzeExhaust =
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                         (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                        CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
+                        myEnvironment.getCompilerDependencies());
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
         psiFile.acceptChildren(new JetVisitorVoid() {

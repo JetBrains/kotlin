@@ -18,16 +18,15 @@
 package org.jetbrains.jet.cli.jvm;
 
 import com.sampullara.cli.Argument;
-import org.jetbrains.jet.cli.common.CompilerPlugin;
+import org.jetbrains.jet.cli.common.CompilerArguments;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Command line arguments for the {@link K2JVMCompiler}
  */
-public class K2JVMCompilerArguments {
-    private List<CompilerPlugin> compilerPlugins = new ArrayList<CompilerPlugin>();
+public class K2JVMCompilerArguments extends CompilerArguments {
+
 
     // TODO ideally we'd unify this with 'src' to just having a single field that supports multiple files/dirs
     private List<String> sourceDirs;
@@ -40,17 +39,11 @@ public class K2JVMCompilerArguments {
         this.sourceDirs = sourceDirs;
     }
 
-    @Argument(value = "output", description = "output directory")
-    public String outputDir;
-
     @Argument(value = "jar", description = "jar file name")
     public String jar;
 
     @Argument(value = "src", description = "source file or directory")
     public String src;
-
-    @Argument(value = "module", description = "module to compile")
-    public String module;
 
     @Argument(value = "classpath", description = "classpath to use when compiling")
     public String classpath;
@@ -64,11 +57,14 @@ public class K2JVMCompilerArguments {
     @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
     public String jdkHeaders;
 
-    @Argument(value = "help", alias = "h", description = "show help")
-    public boolean help;
-
     @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
     public String mode;
+
+    @Argument(value = "output", description = "output directory")
+    public String outputDir;
+
+    @Argument(value = "module", description = "module to compile")
+    public String module;
 
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
@@ -79,6 +75,8 @@ public class K2JVMCompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
+    @Argument(value = "help", alias = "h", description = "show help")
+    public boolean help;
 
     public String getClasspath() {
         return classpath;
@@ -88,6 +86,7 @@ public class K2JVMCompilerArguments {
         this.classpath = classpath;
     }
 
+    @Override
     public boolean isHelp() {
         return help;
     }
@@ -144,22 +143,17 @@ public class K2JVMCompilerArguments {
         this.stdlib = stdlib;
     }
 
+    @Override
     public boolean isTags() {
         return tags;
     }
 
+    @Override
+    public boolean isVersion() {
+        return version;
+    }
+
     public void setTags(boolean tags) {
         this.tags = tags;
-    }
-
-    public List<CompilerPlugin> getCompilerPlugins() {
-        return compilerPlugins;
-    }
-
-    /**
-     * Sets the compiler plugins to be used when working with the {@link K2JVMCompiler}
-     */
-    public void setCompilerPlugins(List<CompilerPlugin> compilerPlugins) {
-        this.compilerPlugins = compilerPlugins;
     }
 }

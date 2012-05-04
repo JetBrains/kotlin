@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -47,7 +48,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
 
     protected Modality modality;
     protected Visibility visibility;
-    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet();
+    protected final Set<FunctionDescriptor> overriddenFunctions = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
     private final FunctionDescriptor original;
     private final Kind kind;
 
@@ -230,7 +231,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         );
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {
-                substitutedDescriptor.addOverriddenDescriptor(overriddenFunction.substitute(substitutor));
+                OverridingUtil.bindOverride(substitutedDescriptor, overriddenFunction.substitute(substitutor));
             }
         }
         return substitutedDescriptor;

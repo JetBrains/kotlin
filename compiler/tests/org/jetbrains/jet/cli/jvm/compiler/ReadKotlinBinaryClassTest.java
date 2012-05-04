@@ -25,7 +25,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Assert;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -63,7 +62,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
     @Override
     public void runTest() throws Exception {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         String text = FileUtil.loadFile(testFile);
 
@@ -84,13 +83,13 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         Disposer.dispose(myTestRootDisposable);
 
 
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true), jetCoreEnvironment.getProject());
+                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         

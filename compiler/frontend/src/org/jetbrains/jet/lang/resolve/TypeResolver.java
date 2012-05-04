@@ -69,6 +69,7 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
+        trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
 
         return type;
     }
@@ -243,7 +244,7 @@ public class TypeResolver {
                 List<TypeParameterDescriptor> parameters = constructor.getParameters();
                 if (parameters.size() > i) {
                     TypeParameterDescriptor parameterDescriptor = parameters.get(i);
-                    arguments.add(TypeUtils.makeStarProjection(parameterDescriptor));
+                    arguments.add(SubstitutionUtils.makeStarProjection(parameterDescriptor));
                 }
                 else {
                     arguments.add(new TypeProjection(Variance.OUT_VARIANCE, ErrorUtils.createErrorType("*")));

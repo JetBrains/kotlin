@@ -16,9 +16,46 @@
 
 package org.jetbrains.jet.cli.js;
 
+import com.sampullara.cli.Argument;
+import org.jetbrains.jet.cli.common.CompilerArguments;
+
 /**
  * @author Pavel Talanov
  */
-//TODO
-public class K2JSCompilerArguments {
+public class K2JSCompilerArguments extends CompilerArguments {
+    @Argument(value = "output", description = "Output directory")
+    public String outputDir;
+
+    @Argument(value = "module", description = "Module to compile")
+    public String module;
+
+    @Argument(value = "srcdir", description = "Sources directory")
+    public String srcdir;
+
+    @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
+    public boolean tags;
+
+    @Argument(value = "verbose", description = "Enable verbose logging output")
+    public boolean verbose;
+
+    @Argument(value = "version", description = "Display compiler version")
+    public boolean version;
+
+    @Argument(value = "help", alias = "h", description = "show help")
+    public boolean help;
+
+    @Override
+    public boolean isHelp() {
+        return help;
+    }
+
+    @Override
+    public boolean isTags() {
+        return tags;
+    }
+
+    @Override
+    public boolean isVersion() {
+        return version;
+    }
 }

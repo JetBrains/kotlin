@@ -166,12 +166,15 @@ public class JetTestUtils {
                 CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true));
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable) {
-        return createEnvironmentWithMockJdk(disposable, CompilerSpecialMode.REGULAR);
+    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable) {
+        return createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, CompilerSpecialMode.REGULAR);
     }
 
-    public static JetCoreEnvironment createEnvironmentWithMockJdk(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
-        return new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+    public static JetCoreEnvironment createEnvironmentWithMockJdkAndIdeaAnnotations(Disposable disposable, @NotNull CompilerSpecialMode compilerSpecialMode) {
+        JetCoreEnvironment environment =
+                new JetCoreEnvironment(disposable, CompileCompilerDependenciesTest.compilerDependenciesForTests(compilerSpecialMode, true));
+        environment.addToClasspath(getAnnotationsJar());
+        return environment;
     }
 
     public static File findMockJdkRtJar() {
@@ -229,6 +232,11 @@ public class JetTestUtils {
     }
 
     public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+
+    public static JetCoreEnvironment createEnvironmentWithFullJdk(Disposable disposable) {
+        return new JetCoreEnvironment(disposable,
+                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false));
+    }
 
     public interface TestFileFactory<F> {
         F create(String fileName, String text);

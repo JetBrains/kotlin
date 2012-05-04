@@ -72,28 +72,37 @@ public class IdeErrorMessages {
                 }
             };
 
+    private static final Renderer<JetType> HTML_RENDER_TYPE = new Renderer<JetType>() {
+        @NotNull
+        @Override
+        public String render(@NotNull JetType type) {
+            return DescriptorRenderer.HTML.renderType(type);
+        }
+    };
+
     static {
-        MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
+                HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "<html>Assignment operators ambiguity. All these functions match.<ul>{0}</ul></table></html>",
                 HTML_AMBIGUOUS_CALLS);
 
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "<html>Setter parameter type must be equal to the type of the property." +
                                              "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
-                                             "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                             "<tr><td>Found:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "<html>Getter return type must be equal to the type of the property." +
                                           "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
-                                          "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                          "<tr><td>Found:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(ITERATOR_AMBIGUITY, "<html>Method ''iterator()'' is ambiguous for this expression.<ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
 
         MAP.put(UPPER_BOUND_VIOLATED, "<html>Type argument is not within its bounds." +
                                       "<table><tr><td>Expected:</td><td>{0}</td></tr>" +
-                                      "<tr><td>Found:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                      "<tr><td>Found:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "<html>Loop parameter type mismatch." +
                                            "<table><tr><td>Iterated values:</td><td>{0}</td></tr>" +
-                                           "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", RENDER_TYPE, RENDER_TYPE);
+                                           "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
                                                   "{1}</html>",
@@ -118,7 +127,7 @@ public class IdeErrorMessages {
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +
-                                      "<tr><td>Found:</td><td>{2}</td></tr></table></html>", TO_STRING, RENDER_TYPE, RENDER_TYPE);
+                                      "<tr><td>Found:</td><td>{2}</td></tr></table></html>", TO_STRING, HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "<html>Overload resolution ambiguity. All these functions match. <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
         MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>",

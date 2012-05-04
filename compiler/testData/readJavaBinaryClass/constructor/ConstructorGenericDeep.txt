@@ -1,0 +1,5 @@
+namespace test
+
+open class test.ConstructorGenericDeep : java.lang.Object {
+    final /*constructor*/ fun <init>(/*0*/ p0: java.lang.Class<jet.Any?>?): test.ConstructorGenericDeep
+}

@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.util.List;
 
@@ -32,6 +33,9 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
+
         expectedResolveData = getExpectedResolveData();
     }
 

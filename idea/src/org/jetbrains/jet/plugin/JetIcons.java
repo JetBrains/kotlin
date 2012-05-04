@@ -24,10 +24,10 @@ import javax.swing.*;
  * @author Nikolay Krasko
  */
 public interface JetIcons {
-    Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin16x16.png");
+    Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin.png");
 
     Icon CLASS = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/class_kotlin.png");
-    Icon FILE = SMALL_LOGO; // TODO: Add file icon
+    Icon FILE = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin_file.png");
     Icon OBJECT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/object.png");
     Icon TRAIT = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/trait.png");
     Icon FUNCTION = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/function.png");

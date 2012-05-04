@@ -16,24 +16,19 @@
 
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentConfiguration;
-import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
 import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
-import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
-        CompilerDependencies dependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, false);
-        JetCoreEnvironment environment = new JetCoreEnvironment(CompileEnvironmentUtil.createMockDisposable(), dependencies);
-        CompileEnvironmentConfiguration configuration = new CompileEnvironmentConfiguration(environment, dependencies, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
+                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
         configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
         ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");

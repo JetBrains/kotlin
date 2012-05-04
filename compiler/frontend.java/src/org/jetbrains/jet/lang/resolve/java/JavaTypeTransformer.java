@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,16 +26,16 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.jet.rt.signature.JetSignatureReader;
 
 import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.jetbrains.jet.lang.resolve.java.JavaTypeTransformer.TypeUsage.*;
 
 /**
  * @author abreslav
@@ -63,9 +64,11 @@ public class JavaTypeTransformer {
 
 
     @NotNull
-    public TypeProjection transformToTypeProjection(@NotNull final PsiType javaType,
+    private TypeProjection transformToTypeProjection(@NotNull final PsiType javaType,
             @NotNull final TypeParameterDescriptor typeParameterDescriptor,
-            @NotNull final TypeVariableResolver typeVariableByPsiResolver) {
+            @NotNull final TypeVariableResolver typeVariableByPsiResolver,
+            @NotNull final TypeUsage howThisTypeIsUsed
+    ) {
         TypeProjection result = javaType.accept(new PsiTypeVisitor<TypeProjection>() {
 
             @Override
@@ -76,18 +79,18 @@ public class JavaTypeTransformer {
             @Override
             public TypeProjection visitWildcardType(PsiWildcardType wildcardType) {
                 if (!wildcardType.isBounded()) {
-                    return TypeUtils.makeStarProjection(typeParameterDescriptor);
+                    return SubstitutionUtils.makeStarProjection(typeParameterDescriptor);
                 }
                 Variance variance = wildcardType.isExtends() ? Variance.OUT_VARIANCE : Variance.IN_VARIANCE;
 
                 PsiType bound = wildcardType.getBound();
                 assert bound != null;
-                return new TypeProjection(variance, transformToType(bound, TypeUsage.UPPER_BOUND, typeVariableByPsiResolver));
+                return new TypeProjection(variance, transformToType(bound, UPPER_BOUND, typeVariableByPsiResolver));
             }
 
             @Override
             public TypeProjection visitType(PsiType type) {
-                return new TypeProjection(transformToType(type, TypeUsage.TYPE_ARGUMENT, typeVariableByPsiResolver));
+                return new TypeProjection(transformToType(type, howThisTypeIsUsed, typeVariableByPsiResolver));
             }
         });
         return result;
@@ -126,22 +129,39 @@ public class JavaTypeTransformer {
 
                 if (psiClass instanceof PsiTypeParameter) {
                     PsiTypeParameter typeParameter = (PsiTypeParameter) psiClass;
+
+                    PsiTypeParameterListOwner typeParameterListOwner = typeParameter.getOwner();
+                    if (typeParameterListOwner instanceof PsiMethod) {
+                        PsiMethod psiMethod = (PsiMethod) typeParameterListOwner;
+                        if (psiMethod.isConstructor()) {
+                            Set<JetType> supertypesJet = Sets.newHashSet();
+                            for (PsiClassType supertype : typeParameter.getExtendsListTypes()) {
+                                supertypesJet.add(transformToType(supertype, UPPER_BOUND, typeVariableResolver));
+                            }
+                            return TypeUtils.intersect(JetTypeChecker.INSTANCE, supertypesJet);
+                        }
+                    }
+
                     TypeParameterDescriptor typeParameterDescriptor = typeVariableResolver.getTypeVariable(typeParameter.getName());
 
-                    if (howThisTypeIsUsed == TypeUsage.TYPE_ARGUMENT || howThisTypeIsUsed == TypeUsage.UPPER_BOUND) {
-                        // In Java: ArrayList<T>
-                        // In Kotlin: ArrayList<T>, not ArrayList<T?>
-                        // nullability will be taken care of in individual member signatures
-                        return typeParameterDescriptor.getDefaultType();
+                    // In Java: ArrayList<T>
+                    // In Kotlin: ArrayList<T>, not ArrayList<T?>
+                    // nullability will be taken care of in individual member signatures
+                    boolean nullable = !EnumSet.of(TYPE_ARGUMENT, UPPER_BOUND, SUPERTYPE_ARGUMENT).contains(howThisTypeIsUsed);
+                    if (nullable) {
+                        return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
                     }
                     else {
-                        return TypeUtils.makeNullable(typeParameterDescriptor.getDefaultType());
+                        return typeParameterDescriptor.getDefaultType();
                     }
                 }
                 else {
+                    // 'L extends List<T>' in Java is a List<T> in Kotlin, not a List<T?>
+                    boolean nullable = !EnumSet.of(SUPERTYPE_ARGUMENT, SUPERTYPE).contains(howThisTypeIsUsed);
+
                     JetType jetAnalog = getKotlinAnalog(new FqName(psiClass.getQualifiedName()));
                     if (jetAnalog != null) {
-                        return jetAnalog;
+                        return TypeUtils.makeNullableAsSpecified(jetAnalog, nullable);
                     }
 
                     final ClassDescriptor classData =
@@ -154,7 +174,7 @@ public class JavaTypeTransformer {
                     if (classType.isRaw()) {
                         List<TypeParameterDescriptor> parameters = classData.getTypeConstructor().getParameters();
                         for (TypeParameterDescriptor parameter : parameters) {
-                            arguments.add(TypeUtils.makeStarProjection(parameter));
+                            arguments.add(SubstitutionUtils.makeStarProjection(parameter));
                         }
                     }
                     else {
@@ -171,13 +191,15 @@ public class JavaTypeTransformer {
                             PsiType psiArgument = psiArguments[i];
                             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
 
-                            arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableResolver));
+                            TypeUsage howTheProjectionIsUsed = howThisTypeIsUsed == SUPERTYPE ? SUPERTYPE_ARGUMENT : TYPE_ARGUMENT;
+                            arguments.add(transformToTypeProjection(psiArgument, typeParameterDescriptor, typeVariableResolver, howTheProjectionIsUsed));
                         }
                     }
+
                     return new JetTypeImpl(
                             Collections.<AnnotationDescriptor>emptyList(),
                             classData.getTypeConstructor(),
-                            true,
+                            nullable,
                             arguments,
                             classData.getMemberScope(arguments));
                 }
@@ -275,6 +297,7 @@ public class JavaTypeTransformer {
         MEMBER_SIGNATURE_COVARIANT,
         MEMBER_SIGNATURE_CONTRAVARIANT,
         MEMBER_SIGNATURE_INVARIANT,
-        SUPERTYPE
+        SUPERTYPE,
+        SUPERTYPE_ARGUMENT
     }
 }

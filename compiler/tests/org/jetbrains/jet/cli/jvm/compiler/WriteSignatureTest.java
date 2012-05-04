@@ -72,7 +72,7 @@ public class WriteSignatureTest extends TestCaseWithTmpdir {
 
     @Override
     protected void runTest() throws Throwable {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
 
 
         String text = FileUtil.loadFile(ktFile);

@@ -23,7 +23,6 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
@@ -44,6 +43,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,11 +59,11 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
     private final File javaFile;
     private final File txtFile;
 
-    public ReadJavaBinaryClassTest(File ktFile) {
-        this.ktFile = ktFile;
-        Assert.assertTrue(ktFile.getName().endsWith(".kt"));
-        this.javaFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".java"));
-        this.txtFile = new File(ktFile.getPath().replaceFirst("\\.kt$", ".txt"));
+    public ReadJavaBinaryClassTest(@NotNull File javaFile) {
+        this.javaFile = javaFile;
+        Assert.assertTrue(javaFile.getName().endsWith(".java"));
+        this.ktFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".kt"));
+        this.txtFile = new File(javaFile.getPath().replaceFirst("\\.java$", ".txt"));
         setName(javaFile.getName());
     }
 
@@ -75,8 +75,9 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
         NamespaceComparator.compareNamespaces(nsa, nsb, false, txtFile);
     }
 
+    @NotNull
     private NamespaceDescriptor compileKotlin() throws Exception {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         String text = FileUtil.loadFile(ktFile);
 
@@ -86,7 +87,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 psiFile, JetControlFlowDataTraceFactory.EMPTY,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true))
+                jetCoreEnvironment.getCompilerDependencies())
                     .getBindingContext();
         return bindingContext.get(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, FqName.topLevel("test"));
     }
@@ -108,19 +109,26 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
             fileManager.close();
         }
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.JDK_HEADERS, true), jetCoreEnvironment.getProject());
+                jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         return javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
     }
 
     public static Test suite() {
-        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readJavaBinaryClass", true, new JetTestCaseBuilder.NamedTestFactory() {
+        class JavaFilter implements FilenameFilter {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".java");
+            }
+        }
+
+        return JetTestCaseBuilder.suiteForDirectory(JetTestCaseBuilder.getTestDataPathBase(), "/readJavaBinaryClass", true, new JavaFilter(), new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {

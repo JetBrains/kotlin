@@ -21,15 +21,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
+import org.jetbrains.k2js.translate.utils.PsiUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +46,9 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
 
     @NotNull
     public static JsExpression translate(@NotNull JetCallExpression expression,
-                                         @Nullable JsExpression receiver,
-                                         @NotNull CallType callType,
-                                         @NotNull TranslationContext context) {
+            @Nullable JsExpression receiver,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
         if (InlinedCallExpressionTranslator.shouldBeInlined(expression, context)) {
             return InlinedCallExpressionTranslator.translate(expression, receiver, callType, context);
         }
@@ -55,8 +58,8 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     private final boolean isNativeFunctionCall;
 
     private CallExpressionTranslator(@NotNull JetCallExpression expression,
-                                     @Nullable JsExpression receiver,
-                                     @NotNull CallType callType, @NotNull TranslationContext context) {
+            @Nullable JsExpression receiver,
+            @NotNull CallType callType, @NotNull TranslationContext context) {
         super(expression, receiver, callType, context);
         this.isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor());
     }
@@ -64,12 +67,28 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     @NotNull
     private JsExpression translate() {
         return CallBuilder.build(context())
-            .receiver(receiver)
-            .callee(getCalleeExpression())
-            .args(translateArguments())
-            .resolvedCall(resolvedCall)
-            .type(callType)
-            .translate();
+                .receiver(getReceiver())
+                .callee(getCalleeExpression())
+                .args(translateArguments())
+                .resolvedCall(getResolvedCall())
+                .type(callType)
+                .translate();
+    }
+
+    @NotNull
+    private ResolvedCall<?> getResolvedCall() {
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
+        }
+        return resolvedCall;
+    }
+
+    @Nullable
+    private JsExpression getReceiver() {
+        if (receiver != null) {
+            return receiver;
+        }
+        return null;
     }
 
     @Nullable
@@ -78,17 +97,21 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) {
             return translateExpressionAsFunction();
         }
-        if (candidateDescriptor instanceof VariableAsFunctionDescriptor) {
-            return translateVariableAsFunction();
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return translateVariableForVariableAsFunctionResolvedCall();
         }
         return null;
     }
 
     @NotNull
-    private JsExpression translateVariableAsFunction() {
-        JetExpression callee = getCallee(expression);
-        assert callee instanceof JetSimpleNameExpression;
-        return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression)callee, receiver, context()).translateAsGet();
+    //TODO: looks hacky and should be modified soon
+    private JsExpression translateVariableForVariableAsFunctionResolvedCall() {
+        JetExpression callee = PsiUtils.getCallee(expression);
+        if (callee instanceof JetSimpleNameExpression) {
+            return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression) callee, receiver, context()).translateAsGet();
+        }
+        assert receiver != null;
+        return Translation.translateAsExpression(callee, context());
     }
 
     @NotNull

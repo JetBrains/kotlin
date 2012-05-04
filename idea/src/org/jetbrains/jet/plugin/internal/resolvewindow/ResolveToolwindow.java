@@ -192,9 +192,9 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         StringBuilder result = new StringBuilder();
         
         if (debugInfo != null) {
-            List<? extends ResolutionTask<? extends CallableDescriptor>> resolutionTasks = debugInfo.get(TASKS);
-            for (ResolutionTask<? extends CallableDescriptor> resolutionTask : resolutionTasks) {
-                for (ResolvedCallImpl<? extends CallableDescriptor> resolvedCall : resolutionTask.getResolvedCallMap().values()) {
+            List<? extends ResolutionTask<? extends CallableDescriptor, ?>> resolutionTasks = debugInfo.get(TASKS);
+            for (ResolutionTask<? extends CallableDescriptor, ?> resolutionTask : resolutionTasks) {
+                for (ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall : resolutionTask.getResolvedCalls()) {
                     renderResolutionLogForCall(debugInfo, resolvedCall, result);
                 }
             }
@@ -212,7 +212,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         return result.toString();
     }
 
-    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallImpl<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
+    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {

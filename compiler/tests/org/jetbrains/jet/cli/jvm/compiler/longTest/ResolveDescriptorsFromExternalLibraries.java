@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.cli.jvm.compiler.longTest;
 
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
@@ -24,6 +25,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TimeUtils;
@@ -38,7 +40,10 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -47,31 +52,63 @@ import java.util.zip.ZipInputStream;
  */
 public class ResolveDescriptorsFromExternalLibraries {
 
-    @NotNull
-    private final CompilerDependencies compilerDependencies;
-
 
     public static void main(String[] args) throws Exception {
-        new ResolveDescriptorsFromExternalLibraries().run();
+        boolean hasErrors = new ResolveDescriptorsFromExternalLibraries().run();
         System.out.println("$");
+        if (hasErrors) {
+            System.exit(1);
+        }
     }
 
+    private static List<File> findJarsInDirectory(@NotNull File directory) {
+        List<File> r = Lists.newArrayList();
 
-    public ResolveDescriptorsFromExternalLibraries() {
-        System.out.println("Getting compiler dependencies");
-        compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true);
+        List<File> stack = Lists.newArrayList();
+        stack.add(directory);
+        while (!stack.isEmpty()) {
+            File file = stack.get(stack.size() - 1);
+            stack.remove(stack.size() - 1);
+            if (file.isFile() && file.getName().endsWith(".jar")) {
+                r.add(file);
+            }
+            File[] children = file.listFiles();
+            if (children != null) {
+                stack.addAll(Arrays.asList(children));
+            }
+        }
+        return r;
     }
 
-    private void run() throws Exception {
-        testLibrary("com.google.guava", "guava", "12.0-rc2");
-        testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE");
+    private boolean run() throws Exception {
+        boolean hasErrors = false;
+
+        hasErrors |= testLibraryFile(null, "rt.jar");
+
+        for (File jar : findJarsInDirectory(new File("ideaSDK"))) {
+            hasErrors |= testLibraryFile(jar, jar.getPath());
+        }
+
+        hasErrors |= testLibrary("com.google.guava", "guava", "12.0-rc2");
+        hasErrors |= testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE");
+        return hasErrors;
     }
 
-    private void testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev) throws Exception {
+    private boolean testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev) throws Exception {
         LibFromMaven lib = new LibFromMaven(org, module, rev);
         File jar = getLibrary(lib);
-        System.out.println("Testing library " + lib + "...");
-        System.out.println("Using file " + jar);
+
+        return testLibraryFile(jar, lib.toString());
+    }
+
+    private boolean testLibraryFile(@Nullable File jar, @NotNull String libDescription) throws IOException {
+        System.out.println("Testing library " + libDescription + "...");
+        if (jar != null) {
+            System.out.println("Using file " + jar);
+        }
+        else {
+            System.out.println("Using rt.jar");
+        }
 
         long start = System.currentTimeMillis();
 
@@ -80,16 +117,28 @@ public class ResolveDescriptorsFromExternalLibraries {
             public void dispose() { }
         };
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(junk);
-        jetCoreEnvironment.addToClasspath(jar);
+        JetCoreEnvironment jetCoreEnvironment;
+        if (jar != null) {
+            jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(junk, CompilerSpecialMode.STDLIB);
+            jetCoreEnvironment.addToClasspath(jar);
+        }
+        else {
+            CompilerDependencies compilerDependencies = CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.STDLIB, false);
+            jetCoreEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(junk, compilerDependencies);
+            jar = compilerDependencies.getJdkJar();
+        }
 
 
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(compilerDependencies, jetCoreEnvironment.getProject());
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
 
         FileInputStream is = new FileInputStream(jar);
+        boolean hasErrors;
         try {
             ZipInputStream zip = new ZipInputStream(is);
-            for (;;) {
+
+            hasErrors = false;
+
+            for (; ; ) {
                 ZipEntry entry = zip.getNextEntry();
                 if (entry == null) {
                     break;
@@ -105,14 +154,23 @@ public class ResolveDescriptorsFromExternalLibraries {
                     continue;
                 }
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
-                ClassDescriptor clazz = injector.getJavaDescriptorResolver().resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-                if (clazz == null) {
-                    throw new IllegalStateException("class not found by name " + className + " in " + lib);
-                }
-                clazz.getDefaultType().getMemberScope().getAllDescriptors();
-            }
 
-        } finally {
+                try {
+                    ClassDescriptor clazz = injector.getJavaDescriptorResolver().resolveClass(new FqName(className), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+                    if (clazz == null) {
+                        throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
+                    }
+                    clazz.getDefaultType().getMemberScope().getAllDescriptors();
+                }
+                catch (Exception e) {
+                    System.err.println("failed to resolve " + className);
+                    e.printStackTrace();
+                    //throw new RuntimeException("failed to resolve " + className + ": " + e, e);
+                    hasErrors = true;
+                }
+            }
+        }
+        finally {
             try {
                 is.close();
             }
@@ -121,7 +179,9 @@ public class ResolveDescriptorsFromExternalLibraries {
             Disposer.dispose(junk);
         }
 
-        System.out.println("Testing library " + lib + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s");
+        System.out.println("Testing library " + libDescription + " done in " + TimeUtils.millisecondsToSecondsString(System.currentTimeMillis() - start) + "s " + (hasErrors ? "with" : "without") + " errors");
+
+        return hasErrors;
     }
 
     @NotNull

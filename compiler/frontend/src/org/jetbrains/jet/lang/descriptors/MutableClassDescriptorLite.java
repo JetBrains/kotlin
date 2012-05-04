@@ -127,7 +127,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-    public WritableScope getScopeForMemberLookupAsWritableScope() {
+    private WritableScope getScopeForMemberLookupAsWritableScope() {
         // hack
         return (WritableScope) scopeForMemberLookup;
     }
@@ -139,7 +139,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         if (typeArguments.isEmpty()) return scopeForMemberLookup;
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
+        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
         return new SubstitutingScope(scopeForMemberLookup, TypeSubstitutor.create(substitutionContext));
     }
 

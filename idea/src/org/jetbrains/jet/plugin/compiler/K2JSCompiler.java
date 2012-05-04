@@ -22,11 +22,18 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
+
+import java.io.PrintStream;
+
+import static org.jetbrains.jet.plugin.compiler.CompilerUtils.invokeExecMethod;
+import static org.jetbrains.jet.plugin.compiler.CompilerUtils.outputCompilerMessagesAndHandleExitCode;
 
 /**
  * @author Pavel Talanov
@@ -47,8 +54,49 @@ public final class K2JSCompiler implements TranslatingCompiler {
 
     @Override
     public void compile(final CompileContext context, Chunk<Module> moduleChunk, final VirtualFile[] files, OutputSink sink) {
-        context.addMessage(CompilerMessageCategory.INFORMATION, "Some useful code will be there", null, -1, -1);
-        //TODO:
+        if (files.length == 0) {
+            return;
+        }
+
+        if (moduleChunk.getNodes().size() != 1) {
+            context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple modules.", null, -1, -1);
+            return;
+        }
+
+        final Module module = moduleChunk.getNodes().iterator().next();
+        final CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
+        if (!environment.success()) {
+            environment.reportErrorsTo(context);
+            return;
+        }
+
+        CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
+        outputCompilerMessagesAndHandleExitCode(context, collector, new Function1<PrintStream, Integer>() {
+            @Override
+            public Integer invoke(PrintStream stream) {
+                return execInProcess(context, environment, stream, module);
+            }
+        });
+        sink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
+    }
+
+    @NotNull
+    private static Integer execInProcess(@NotNull CompileContext context,
+            @NotNull CompilerEnvironment environment, @NotNull PrintStream out, @NotNull Module module) {
+        try {
+            VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
+            if (roots.length != 1) {
+                context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support module source roots.", null, -1, -1);
+                return -1;
+            }
+            String[] commandLineArgs = {"-tags", "-verbose", "-version", "-srcdir", roots[0].getPath()};
+            Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
+            return CompilerUtils.getReturnCodeFromObject(rc);
+        }
+        catch (Throwable e) {
+            context.addMessage(CompilerMessageCategory.ERROR, "Fail!", null, -1, -1);
+        }
+        return -1;
     }
 
     @NotNull

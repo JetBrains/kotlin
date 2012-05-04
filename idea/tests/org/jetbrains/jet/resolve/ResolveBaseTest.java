@@ -90,7 +90,7 @@ public class ResolveBaseTest extends LightCodeInsightTestCase {
 
         JetTestCaseBuilder.appendTestsInDirectory(
                 PluginTestCaseBase.getTestDataPathBase(), "/resolve/", false,
-                JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+                JetTestCaseBuilder.kotlinFilter, new JetTestCaseBuilder.NamedTestFactory() {
 
 
             @NotNull

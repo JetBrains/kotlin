@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,9 +79,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
         D candidate = candidateCall.getCandidateDescriptor();
 
-        D base = getDescriptorForValueArgumentsResolving(candidate);
-
-        List<ValueParameterDescriptor> valueParameters = base.getValueParameters();
+        List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
         Map<String, ValueParameterDescriptor> parameterByName = Maps.newHashMap();
         for (ValueParameterDescriptor valueParameter : valueParameters) {
@@ -241,33 +238,5 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             candidateCall.recordValueArgument(valueParameterDescriptor, argument);
         }
         return error;
-    }
-
-    /**
-     * Descriptor used to resolve parameter names and default parameter values.
-     */
-    @NotNull
-    private static <D extends CallableDescriptor> D getDescriptorForValueArgumentsResolving(D descriptor) {
-        Set<D> allBases = new HashSet<D>();
-        getAllDescriptorsForValueArgumentsResolving(descriptor, allBases);
-        
-        if (allBases.size() == 1) {
-            return allBases.iterator().next();
-        }
-        else {
-            // TODO remove parameter names and parameter default values
-            return descriptor;
-        }
-    }
-    
-    private static <D extends CallableDescriptor> void getAllDescriptorsForValueArgumentsResolving(D descriptor, Set<D> dest) {
-        if (descriptor.getOverriddenDescriptors().isEmpty()) {
-            dest.add(descriptor);
-        }
-        else {
-            for (CallableDescriptor overriden : descriptor.getOverriddenDescriptors()) {
-                getAllDescriptorsForValueArgumentsResolving((D) overriden, dest);
-            }
-        }
     }
 }

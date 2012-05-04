@@ -50,6 +50,6 @@ public class ForTestCompileJdkHeaders {
 
     @NotNull
     public static File jdkHeadersForTests() {
-        return JdkHeaders.jdkHeaders.getJarFile();
+        return ForTestCompileSomething.ACTUALLY_COMPILE ? JdkHeaders.jdkHeaders.getJarFile() : new File("dist/kotlinc/lib/alt/kotlin-jdk-headers.jar");
     }
 }

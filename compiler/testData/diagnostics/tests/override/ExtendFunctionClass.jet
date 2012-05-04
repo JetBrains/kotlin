@@ -1,0 +1,9 @@
+package extendFunctionClass
+
+class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>A<!> : (Int) -> Int {
+
+}
+
+class B : Function1<Int, Int> {
+    override fun invoke(p0 : Int) = p0
+}

@@ -82,7 +82,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
     }
 
     private void compileA() throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
 
         String text = FileUtil.loadFile(ktAFile);
 
@@ -98,7 +98,7 @@ public class CompileKotlinAgainstKotlinTest extends TestCaseWithTmpdir  {
     }
 
     private void compileB() throws IOException {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdk(myTestRootDisposable);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable);
 
         jetCoreEnvironment.addToClasspath(aDir);
 

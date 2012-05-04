@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import jet.Tuple2;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.lang.reflect.Method;
 
@@ -24,6 +25,13 @@ import java.lang.reflect.Method;
  * @author yole
  */
 public class PatternMatchingTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+    }
+
     @Override
     protected String getPrefix() {
         return "patternMatching";

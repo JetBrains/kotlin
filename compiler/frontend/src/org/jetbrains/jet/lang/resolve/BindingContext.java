@@ -61,6 +61,7 @@ public interface BindingContext {
     WritableSlice<JetExpression, JetType> AUTOCAST = Slices.createSimpleSlice();
 
     /** A scope where type of expression has been resolved */
+    WritableSlice<JetTypeReference, JetScope> TYPE_RESOLUTION_SCOPE = Slices.createSimpleSlice();
     WritableSlice<JetExpression, JetScope> RESOLUTION_SCOPE = Slices.createSimpleSlice();
 
     /** Collected during analyze, used in IDE in auto-cast completion */
@@ -75,7 +76,7 @@ public interface BindingContext {
     WritableSlice<JetElement, Boolean> STATEMENT = Slices.createRemovableSetSlice();
     WritableSlice<CallableMemberDescriptor, Boolean> DELEGATED = Slices.createRemovableSetSlice();
 
-    WritableSlice<VariableDescriptor, Boolean> MUST_BE_WRAPPED_IN_A_REF = Slices.createSimpleSetSlice();
+    WritableSlice<VariableDescriptor, Boolean> CAPTURED_IN_CLOSURE = Slices.createSimpleSetSlice();
     
 //    enum DeferredTypeKey {DEFERRED_TYPE_KEY}
 //    WritableSlice<DeferredTypeKey, Collection<DeferredType>> DEFERRED_TYPES = Slices.createSimpleSlice();

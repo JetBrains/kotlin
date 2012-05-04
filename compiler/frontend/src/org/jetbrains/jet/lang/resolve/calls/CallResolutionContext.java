@@ -20,21 +20,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 /**
 * @author svtk
 */
-public final class CallResolutionContext<D extends CallableDescriptor> extends ResolutionContext {
+public final class CallResolutionContext<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     /*package*/ final ResolvedCallImpl<D> candidateCall;
     /*package*/ final TracingStrategy tracing;
+    /*package*/ ReceiverDescriptor receiverForVariableAsFunctionSecondCall = ReceiverDescriptor.NO_RECEIVER;
 
-    public CallResolutionContext(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
+    private CallResolutionContext(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
         super(trace, task.scope, call, task.expectedType, task.dataFlowInfo);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
     }
 
-    public CallResolutionContext(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing) {
-        this(candidateCall, task, trace, tracing, task.call);
+    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing, @NotNull Call call) {
+        return new CallResolutionContext<D, F>(candidateCall, task, trace, tracing, call);
+    }
+
+    public static <D extends CallableDescriptor, F extends D> CallResolutionContext<D, F> create(@NotNull ResolvedCallImpl<D> candidateCall, @NotNull ResolutionTask<D, F> task, @NotNull BindingTrace trace, @NotNull TracingStrategy tracing) {
+        return create(candidateCall, task, trace, tracing, task.call);
     }
 }

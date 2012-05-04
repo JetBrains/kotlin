@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -42,7 +43,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private Visibility visibility;
     private final boolean isVar;
     private final boolean isObject;
-    private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
+    private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
     private final PropertyDescriptor original;
     private final Kind kind;
 
@@ -268,7 +269,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
         if (copyOverrides) {
             for (PropertyDescriptor propertyDescriptor : overriddenProperties) {
-                substitutedDescriptor.addOverriddenDescriptor(propertyDescriptor.substitute(substitutor));
+                OverridingUtil.bindOverride(substitutedDescriptor, propertyDescriptor.substitute(substitutor));
             }
         }
 

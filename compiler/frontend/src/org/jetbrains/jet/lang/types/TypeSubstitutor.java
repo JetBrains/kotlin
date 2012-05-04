@@ -127,7 +127,7 @@ public class TypeSubstitutor {
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
-        return create(TypeUtils.buildSubstitutionContext(context));
+        return create(SubstitutionUtils.buildSubstitutionContext(context));
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ public class TypeSubstitutor {
             assert typeToSubstituteIn.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
 
             if (!allows(parameterVariance, passedProjectionKind)) {
-                return TypeUtils.makeStarProjection(correspondingTypeParameter);
+                return SubstitutionUtils.makeStarProjection(correspondingTypeParameter);
             }
 
             return substitutionResult(correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue, recursionDepth + 1);

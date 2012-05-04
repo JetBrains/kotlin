@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.cli.common;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A simple interface for compiler plugins to run after the compiler has finished such as for things like
  * generating documentation or code generation etc
  */
 public interface CompilerPlugin {
-    void processFiles(CompilerPluginContext context);
+    void processFiles(@NotNull CompilerPluginContext context);
 }

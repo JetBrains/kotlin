@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,10 +59,9 @@ public class PositioningStrategies {
                 returnTypeRef = accessor.getReturnTypeReference();
                 nameNode = accessor.getNamePlaceholder().getNode();
             }
-            if (returnTypeRef != null) return Collections.singletonList(returnTypeRef.getTextRange());
-            if (nameNode != null) return Collections.singletonList(nameNode.getTextRange());
-            return super.mark(declaration);
-
+            if (returnTypeRef != null) return markElement(returnTypeRef);
+            if (nameNode != null) return markNode(nameNode);
+            return markElement(declaration);
         }
 
         private ASTNode getNameNode(JetNamedDeclaration function) {
@@ -76,14 +74,11 @@ public class PositioningStrategies {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
-            if (element.getLastChild() instanceof PsiErrorElement) {
-                return Collections.emptyList();
-            }
             PsiElement nameIdentifier = element.getNameIdentifier();
             if (nameIdentifier != null) {
                 return markElement(nameIdentifier);
             }
-            return Collections.emptyList();
+            return markElement(element);
         }
     };
 
@@ -101,9 +96,9 @@ public class PositioningStrategies {
                     assert modifierList != null;
                     ASTNode node = modifierList.getModifierNode(token);
                     assert node != null;
-                    return Collections.singletonList(node.getTextRange());
+                    return markNode(node);
                 }
-                return Collections.emptyList();
+                return markElement(modifierListOwner);
             }
         };
     }
@@ -142,6 +137,28 @@ public class PositioningStrategies {
         @Override
         public List<TextRange> mark(@NotNull JetTypeProjection element) {
             return markNode(element.getProjectionNode());
+        }
+    };
+
+    public static PositioningStrategy<JetParameter> PARAMETER_DEFAULT_VALUE = new PositioningStrategy<JetParameter>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetParameter element) {
+            return markNode(element.getDefaultValue().getNode());
+        }
+    };
+
+    public static PositioningStrategy<PsiElement> CALL_ELEMENT = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement callElement) {
+            if (callElement instanceof JetCallElement) {
+                JetExpression calleeExpression = ((JetCallElement) callElement).getCalleeExpression();
+                if (calleeExpression != null) {
+                    return markElement(calleeExpression);
+                }
+            }
+            return markElement(callElement);
         }
     };
 }

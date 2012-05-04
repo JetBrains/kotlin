@@ -20,14 +20,10 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
@@ -53,12 +49,12 @@ public class BindingContextUtils {
                     throw new IllegalStateException("non-declaration descriptors should be filtered out earler: " + callable);
                 }
             }
-            if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
-                VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
-                if (descriptor.getOriginal() != descriptor) {
-                    throw new IllegalStateException("original should be resolved earlier: " + descriptor);
-                }
-            }
+            //if (declarationDescriptor instanceof VariableAsFunctionDescriptor) {
+            //    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) declarationDescriptor;
+            //    if (descriptor.getOriginal() != descriptor) {
+            //        throw new IllegalStateException("original should be resolved earlier: " + descriptor);
+            //    }
+            //}
             return declarationDescriptor.getOriginal();
         }
     };
@@ -68,7 +64,7 @@ public class BindingContextUtils {
 
     @Nullable
     public static PsiElement resolveToDeclarationPsiElement(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        DeclarationDescriptor declarationDescriptor = referenceToDescriptor(bindingContext, referenceExpression);
         if (declarationDescriptor == null) {
             return bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression);
         }
@@ -88,7 +84,7 @@ public class BindingContextUtils {
 
     @NotNull
     public static List<PsiElement> resolveToDeclarationPsiElements(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression referenceExpression) {
-        DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression);
+        DeclarationDescriptor declarationDescriptor = referenceToDescriptor(bindingContext, referenceExpression);
         if (declarationDescriptor == null) {
             return Lists.newArrayList(bindingContext.get(BindingContext.LABEL_TARGET, referenceExpression));
         }
@@ -114,7 +110,7 @@ public class BindingContextUtils {
             descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
         }
         else if (element instanceof JetSimpleNameExpression) {
-            descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetSimpleNameExpression) element);
+            descriptor = referenceToDescriptor(bindingContext, (JetSimpleNameExpression) element);
         }
         else if (element instanceof JetQualifiedExpression) {
             descriptor = extractVariableDescriptorIfAny(bindingContext, ((JetQualifiedExpression) element).getSelectorExpression(), onlyReference);
@@ -122,10 +118,17 @@ public class BindingContextUtils {
         if (descriptor instanceof VariableDescriptor) {
             return (VariableDescriptor) descriptor;
         }
-        if (descriptor instanceof VariableAsFunctionDescriptor) {
-            return ((VariableAsFunctionDescriptor) descriptor).getVariableDescriptor();
-        }
         return null;
+    }
+
+    @Nullable
+    public static DeclarationDescriptor referenceToDescriptor(@NotNull BindingContext bindingContext, @Nullable JetReferenceExpression element) {
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, element);
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, element);
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
+        }
+        return descriptor;
     }
 
     // TODO these helper methods are added as a workaround to some compiler bugs in Kotlin...
@@ -178,7 +181,7 @@ public class BindingContextUtils {
                 // TODO evil code
                 throw new IllegalStateException(
                         "cannot find declaration: fake descriptor" +
-                                " has more then one overriden descriptor: " + callable);
+                                " has more then one overridden descriptor: " + callable);
             }
 
             return callableDescriptorToDeclaration(context, overriddenDescriptors.iterator().next());
@@ -190,9 +193,9 @@ public class BindingContextUtils {
     private static List<PsiElement> callableDescriptorToDeclarations(@NotNull BindingContext context, @NotNull CallableMemberDescriptor callable) {
         if (callable.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             List<PsiElement> r = new ArrayList<PsiElement>();
-            Set<? extends CallableMemberDescriptor> overridenDescriptors = callable.getOverriddenDescriptors();
-            for (CallableMemberDescriptor overriden : overridenDescriptors) {
-                r.addAll(callableDescriptorToDeclarations(context, overriden));
+            Set<? extends CallableMemberDescriptor> overriddenDescriptors = callable.getOverriddenDescriptors();
+            for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+                r.addAll(callableDescriptorToDeclarations(context, overridden));
             }
             return r;
         }

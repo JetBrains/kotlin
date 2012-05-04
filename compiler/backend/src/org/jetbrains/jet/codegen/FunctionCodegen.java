@@ -159,7 +159,7 @@ public class FunctionCodegen {
                         JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
                         av.writeName(parameterDescriptor.getName());
-                        av.writeHasDefaultValue(parameterDescriptor.hasDefaultValue());
+                        av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
                         av.writeNullable(parameterDescriptor.getType().isNullable());
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
                             av.writeType(jvmSignature.getKotlinParameterTypes().get(i + start).getKotlinSignature());
@@ -312,7 +312,7 @@ public class FunctionCodegen {
         boolean needed = false;
         if(functionDescriptor != null) {
             for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-                if(parameterDescriptor.hasDefaultValue()) {
+                if(parameterDescriptor.declaresDefaultValue()) {
                     needed = true;
                     break;
                 }
@@ -398,7 +398,7 @@ public class FunctionCodegen {
 
                     Type t = argumentTypes[extra + index];
                     Label endArg = null;
-                    if (parameterDescriptor.hasDefaultValue()) {
+                    if (parameterDescriptor.declaresDefaultValue()) {
                         iv.load(maskIndex, Type.INT_TYPE);
                         iv.iconst(1 << index);
                         iv.and(Type.INT_TYPE);
@@ -418,7 +418,7 @@ public class FunctionCodegen {
                     iv.load(var, t);
                     var += t.getSize();
 
-                    if (parameterDescriptor.hasDefaultValue()) {
+                    if (parameterDescriptor.declaresDefaultValue()) {
                         iv.mark(endArg);
                     }
                 }
@@ -446,22 +446,22 @@ public class FunctionCodegen {
         }
     }
 
-    private static boolean differentMethods(Method method, Method overriden) {
-        if(!method.getReturnType().equals(overriden.getReturnType()))
+    private static boolean differentMethods(Method method, Method overridden) {
+        if(!method.getReturnType().equals(overridden.getReturnType()))
             return true;
         Type[] methodArgumentTypes = method.getArgumentTypes();
-        Type[] overridenArgumentTypes = overriden.getArgumentTypes();
-        if(methodArgumentTypes.length != overridenArgumentTypes.length)
+        Type[] overriddenArgumentTypes = overridden.getArgumentTypes();
+        if(methodArgumentTypes.length != overriddenArgumentTypes.length)
             return true;
         for(int i = 0; i != methodArgumentTypes.length; ++i)
-            if(!methodArgumentTypes[i].equals(overridenArgumentTypes[i]))
+            if(!methodArgumentTypes[i].equals(overriddenArgumentTypes[i]))
                 return true;
         return false;
     }
     
     private static void checkOverride(CodegenContext owner, GenerationState state, ClassBuilder v, Method jvmSignature, FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenFunction) {
         Method method = state.getInjector().getJetTypeMapper().mapSignature(functionDescriptor.getName(), functionDescriptor).getAsmMethod();
-        Method overriden = state.getInjector().getJetTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
+        Method overridden = state.getInjector().getJetTypeMapper().mapSignature(overriddenFunction.getName(), overriddenFunction.getOriginal()).getAsmMethod();
 
         if(overriddenFunction.getModality() == Modality.ABSTRACT) {
             Set<? extends FunctionDescriptor> overriddenFunctions = overriddenFunction.getOverriddenDescriptors();
@@ -470,17 +470,17 @@ public class FunctionCodegen {
             }
         }
 
-        if(differentMethods(method, overriden)) {
+        if(differentMethods(method, overridden)) {
             int flags = ACC_PUBLIC | ACC_BRIDGE; // TODO.
 
-            final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overriden.getDescriptor(), null, null);
+            final MethodVisitor mv = v.newMethod(null, flags, jvmSignature.getName(), overridden.getDescriptor(), null, null);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                 StubCodegen.generateStubCode(mv);
             }
             else if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
                 mv.visitCode();
 
-                Type[] argTypes = overriden.getArgumentTypes();
+                Type[] argTypes = overridden.getArgumentTypes();
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 iv.load(0, JetTypeMapper.TYPE_OBJECT);
                 for (int i = 0, reg = 1; i < argTypes.length; i++) {
@@ -495,11 +495,11 @@ public class FunctionCodegen {
                 }
 
                 iv.invokevirtual(state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) owner.getContextDescriptor()).getDefaultType(), MapTypeMode.VALUE).getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
-                if(JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overriden.getReturnType()))
+                if(JetTypeMapper.isPrimitive(jvmSignature.getReturnType()) && !JetTypeMapper.isPrimitive(overridden.getReturnType()))
                     StackValue.valueOf(iv, jvmSignature.getReturnType());
                 if(jvmSignature.getReturnType() == Type.VOID_TYPE)
                     iv.aconst(null);
-                iv.areturn(overriden.getReturnType());
+                iv.areturn(overridden.getReturnType());
                 endVisit(mv, "bridge method", BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
             }
         }

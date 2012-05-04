@@ -17,23 +17,32 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author abreslav
  */
 public class ValueParameterDescriptorImpl extends VariableDescriptorImpl implements MutableValueParameterDescriptor {
-    private final boolean hasDefaultValue;
+    private Boolean hasDefaultValue;
+    private final boolean declaresDefaultValue;
+
     private final JetType varargElementType;
     private final boolean isVar;
     private final int index;
     private final ValueParameterDescriptor original;
+
+    private final Set<ValueParameterDescriptor> overriddenDescriptors = Sets.newLinkedHashSet(); // Linked is essential
+    private boolean overriddenDescriptorsLocked = false;
+    private final Set<? extends ValueParameterDescriptor> readOnlyOverriddenDescriptors = Collections.unmodifiableSet(overriddenDescriptors);
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -42,12 +51,12 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @NotNull String name,
             boolean isVar,
             @NotNull JetType outType,
-            boolean hasDefaultValue,
+            boolean declaresDefaultValue,
             @Nullable JetType varargElementType) {
         super(containingDeclaration, annotations, name, outType);
         this.original = this;
         this.index = index;
-        this.hasDefaultValue = hasDefaultValue;
+        this.declaresDefaultValue = declaresDefaultValue;
         this.varargElementType = varargElementType;
         this.isVar = isVar;
     }
@@ -59,11 +68,11 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             boolean isVar,
             @NotNull JetType outType,
             @Nullable JetType varargElementType
-            ) {
+    ) {
         super(containingDeclaration, annotations, original.getName(), outType);
         this.original = original;
         this.index = original.getIndex();
-        this.hasDefaultValue = original.hasDefaultValue();
+        this.declaresDefaultValue = original.declaresDefaultValue();
         this.varargElementType = varargElementType;
         this.isVar = isVar;
     }
@@ -80,12 +89,30 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     @Override
     public boolean hasDefaultValue() {
+        computeDefaultValuePresence();
         return hasDefaultValue;
     }
 
     @Override
-    public boolean isRef() {
-        throw new UnsupportedOperationException(); // TODO
+    public boolean declaresDefaultValue() {
+        return declaresDefaultValue && ((CallableMemberDescriptor) getContainingDeclaration()).getKind().isReal();
+    }
+
+    private void computeDefaultValuePresence() {
+        if (hasDefaultValue != null) return;
+        overriddenDescriptorsLocked = true;
+        if (declaresDefaultValue) {
+            hasDefaultValue = true;
+        }
+        else {
+            for (ValueParameterDescriptor descriptor : overriddenDescriptors) {
+                if (descriptor.hasDefaultValue()) {
+                    hasDefaultValue = true;
+                    return;
+                }
+            }
+            hasDefaultValue = false;
+        }
     }
 
     @Nullable
@@ -130,5 +157,18 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @Override
     public Visibility getVisibility() {
         return Visibilities.LOCAL;
+    }
+
+    @NotNull
+    @Override
+    public Set<? extends ValueParameterDescriptor> getOverriddenDescriptors() {
+        return readOnlyOverriddenDescriptors;
+    }
+
+    @Override
+    public void addOverriddenDescriptor(@NotNull ValueParameterDescriptor overridden) {
+        assert !overriddenDescriptorsLocked : "Adding more overridden descriptors is not allowed at this point: " +
+                                              "the presence of the default value has already been calculated";
+        overriddenDescriptors.add(overridden);
     }
 }

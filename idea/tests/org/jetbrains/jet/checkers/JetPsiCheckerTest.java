@@ -71,21 +71,21 @@ public class JetPsiCheckerTest extends LightDaemonAnalyzerTestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/", false, JetTestCaseBuilder.kotlinFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }, suite);
-        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/regression/", false, JetTestCaseBuilder.kotlinFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
                 return new JetPsiCheckerTest(dataPath, name);
             }
         }, suite);
-        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/infos/", false, JetTestCaseBuilder.emptyFilter, new JetTestCaseBuilder.NamedTestFactory() {
+        JetTestCaseBuilder.appendTestsInDirectory(PluginTestCaseBase.getTestDataPathBase(), "/checker/infos/", false, JetTestCaseBuilder.kotlinFilter, new JetTestCaseBuilder.NamedTestFactory() {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {

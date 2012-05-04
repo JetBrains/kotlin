@@ -285,7 +285,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         {
             Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetType);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetType);
 
             for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
                 TypeProjection actualTypeParameter = actualType.getArguments().get(i);
@@ -310,7 +310,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
 
             Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
 
             Set<JetType> clearSubstituted = new HashSet<JetType>();
 
@@ -332,7 +332,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 // "is List<*>"
-                if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
+                if (typeProjection.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
                     continue;
                 }
 
@@ -472,6 +472,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (result != null) {
                 context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
                 context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
+                if (superTypeQualifier != null) {
+                    context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
+                }
             }
         }
         return DataFlowUtils.checkType(result, expression, context);
@@ -956,7 +959,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
     }
 
-    private boolean isSenselessComparisonWithNull(JetType firstType, JetExpression secondExpression) {
+    private boolean isSenselessComparisonWithNull(@Nullable JetType firstType, @NotNull JetExpression secondExpression) {
+        if (firstType == null) return false;
         return !firstType.isNullable() && secondExpression instanceof JetConstantExpression && secondExpression.getNode().getElementType() == JetNodeTypes.NULL;
     }
 

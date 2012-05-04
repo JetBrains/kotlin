@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.translate.reference;
 
+import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
@@ -26,9 +27,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsic;
@@ -38,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.reference.CallParametersResolver.resolveCallParameters;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isConstructorDescriptor;
 
 /**
  * @author Pavel Talanov
@@ -58,11 +59,11 @@ public final class CallTranslator extends AbstractTranslator {
     private final CallParameters callParameters;
 
     /*package*/ CallTranslator(@Nullable JsExpression receiver, @Nullable JsExpression callee,
-                               @NotNull List<JsExpression> arguments,
-                               @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
-                               @NotNull CallableDescriptor descriptorToCall,
-                               @NotNull CallType callType,
-                               @NotNull TranslationContext context) {
+            @NotNull List<JsExpression> arguments,
+            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull CallableDescriptor descriptorToCall,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
         super(context);
         this.arguments = arguments;
         this.resolvedCall = resolvedCall;
@@ -91,12 +92,29 @@ public final class CallTranslator extends AbstractTranslator {
         if (isExpressionAsFunction()) {
             return expressionAsFunctionCall();
         }
+        if (isInvoke()) {
+            return invokeCall();
+        }
         return methodCall(getThisObjectOrQualifier());
+    }
+
+    //TODO:
+    private boolean isInvoke() {
+        return descriptor.getName().equals("invoke");
+    }
+
+    @NotNull
+    private JsExpression invokeCall() {
+        JsInvocation callMethodInvocation = generateCallMethodInvocation();
+        List<JsExpression> parameters = Lists.<JsExpression>newArrayList(context().program().getNullLiteral());
+        parameters.addAll(arguments);
+        setArguments(callMethodInvocation, parameters);
+        return callMethodInvocation;
     }
 
     private boolean isExpressionAsFunction() {
         return descriptor instanceof ExpressionAsFunctionDescriptor ||
-               descriptor instanceof VariableAsFunctionDescriptor;
+               resolvedCall instanceof VariableAsFunctionResolvedCall;
     }
 
     @NotNull
@@ -111,7 +129,7 @@ public final class CallTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
-        Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor)descriptor);
+        Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
         return intrinsic.apply(callParameters.getThisObject(), arguments, context());
     }
 
@@ -142,7 +160,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunctionLiteral() {
-        boolean isLiteral = descriptor instanceof VariableAsFunctionDescriptor
+        boolean isLiteral = isInvoke()
                             || descriptor instanceof ExpressionAsFunctionDescriptor;
         return isExtensionFunction() && isLiteral;
     }

@@ -34,12 +34,14 @@ import java.util.List;
 public class Concat implements IntrinsicMethod {
     @Override
     public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
-        codegen.generateStringBuilderConstructor();
         if (receiver == null || receiver == StackValue.none()) {                                                     // LHS + RHS
+            codegen.generateStringBuilderConstructor();
             codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
+            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.generateStringBuilderConstructor();
             v.swap();                                                              // StringBuilder LHS
             codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));

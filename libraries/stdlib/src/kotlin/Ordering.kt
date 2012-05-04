@@ -54,7 +54,7 @@ public inline fun <T> comparator(vararg functions: Function1<T,Any?>): Comparato
 
 private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  Comparator<T> {
 
-    public fun toString(): String {
+    public override fun toString(): String {
         return "FunctionComparator${functions.toList()}"
     }
 
@@ -75,7 +75,7 @@ public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
 }
 private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T> {
 
-    public fun toString(): String {
+    public override fun toString(): String {
         return "Function2Comparator${compareFn}"
     }
 

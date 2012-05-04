@@ -22,8 +22,8 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}/src</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/test</testSourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
 
         <plugins>
             <plugin>

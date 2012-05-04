@@ -17,7 +17,9 @@
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.diagnostics.AbstractDiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
@@ -25,6 +27,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -385,7 +389,38 @@ public class DefaultErrorMessages {
 
         MAP.put(NOT_AN_ANNOTATION_CLASS, "''{0}'' is not an annotation class", TO_STRING);
 
+        MAP.put(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, "An overriding function is not allowed to specify default values for its parameters");
+
+
+        String multipleDefaultsMessage = "More than one overridden descriptor declares a default value for ''{0}''. " +
+                                         "As the compiler can not make sure these values agree, this is not allowed.";
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES, multipleDefaultsMessage, TO_STRING);
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE, multipleDefaultsMessage, TO_STRING);
+
+        MAP.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, "The corresponding parameter in the supertype ''{0}'' is named ''{1}''. " +
+                                                    "This may cause problems when calling this function with named arguments.", NAME, NAME);
+
+        MAP.put(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
+                    "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''" +
+                    "This may cause problems when calling this function with named arguments.", commaSeparated(TO_STRING), TO_STRING);
+
         MAP.setImmutable();
+
+        for (Field field : Errors.class.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                try {
+                    Object fieldValue = field.get(null);
+                    if (fieldValue instanceof AbstractDiagnosticFactory) {
+                        if (MAP.get((AbstractDiagnosticFactory) fieldValue) == null) {
+                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((AbstractDiagnosticFactory)fieldValue).getName());
+                        }
+                    }
+                }
+                catch (IllegalAccessException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
     }
 
     private DefaultErrorMessages() {

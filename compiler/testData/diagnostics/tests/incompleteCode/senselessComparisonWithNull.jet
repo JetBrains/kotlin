@@ -1,0 +1,5 @@
+package d
+
+fun foo(<!UNUSED_PARAMETER!>a<!> : IntArray) {
+    if (null == <!UNRESOLVED_REFERENCE!>a<!>()<!SYNTAX!><!>
+<!SYNTAX!><!>}

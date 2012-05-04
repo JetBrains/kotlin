@@ -21,10 +21,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -34,6 +32,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -132,8 +131,7 @@ public class DeclarationsChecker {
     }
 
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
-        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
-
+        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
             JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));

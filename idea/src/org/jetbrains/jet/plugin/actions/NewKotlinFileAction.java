@@ -16,9 +16,15 @@
 
 package org.jetbrains.jet.plugin.actions;
 
+import com.intellij.ide.IdeView;
 import com.intellij.ide.actions.CreateFileFromTemplateAction;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -46,6 +52,22 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction {
     @Override
     protected String getActionName(PsiDirectory directory, String newName, String templateName) {
         return JetBundle.message("new.kotlin.file.action");
+    }
+
+    @Override
+    protected boolean isAvailable(DataContext dataContext) {
+        if (super.isAvailable(dataContext)) {
+            IdeView ideView = LangDataKeys.IDE_VIEW.getData(dataContext);
+            Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+            assert ideView != null && project != null;
+            ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+            for (PsiDirectory dir : ideView.getDirectories()) {
+                if (projectFileIndex.isInSourceContent(dir.getVirtualFile())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

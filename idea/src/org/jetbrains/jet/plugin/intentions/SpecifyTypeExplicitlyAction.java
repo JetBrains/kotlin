@@ -17,38 +17,38 @@
 package org.jetbrains.jet.plugin.intentions;
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.Errors;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceToClassesShortening;
 import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
-import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetChangePropertyActions;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
+
+import java.util.Collections;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 4/20/12
  */
 public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
-    private JetType targetType;
-
-    @NotNull
-    @Override
-    public String getText() {
-        return targetType == null ? JetBundle.message("specify.type.explicitly.remove.action.name") : JetBundle.message("specify.type.explicitly.add.action.name");
-    }
-
-    @NotNull
+     @NotNull
     @Override
     public String getFamilyName() {
         return JetBundle.message("specify.type.explicitly.action.family.name");
@@ -56,33 +56,181 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        JetProperty property = (JetProperty)element.getParent();
-        if (targetType == null) {
-            JetChangePropertyActions.removeTypeAnnotation(project, property);
-        } else {
-            JetChangePropertyActions.addTypeAnnotation(project, property, targetType);
+        JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
+        if (typeRefParent != null) {
+            element = typeRefParent;
+        }
+        PsiElement parent = element.getParent();
+        JetType type = getTypeForDeclaration((JetNamedDeclaration) parent);
+        if (ErrorUtils.isErrorType(type)) {
+            return;
+        }
+        if (parent instanceof JetProperty) {
+            JetProperty property = (JetProperty) parent;
+            if (property.getPropertyTypeRef() == null) {
+                addTypeAnnotation(project, property, type);
+            }
+            else {
+                removeTypeAnnotation(property);
+            }
+        }
+        else if (parent instanceof JetParameter) {
+            JetParameter parameter = (JetParameter) parent;
+            if (parameter.getTypeReference() == null) {
+                addTypeAnnotation(project, parameter, type);
+            }
+            else {
+                removeTypeAnnotation(parameter);
+            }
+        }
+        else if (parent instanceof JetNamedFunction) {
+            JetNamedFunction function = (JetNamedFunction) parent;
+            assert function.getReturnTypeRef() == null;
+            addTypeAnnotation(project, function, type);
+        }
+        else {
+            assert false;
         }
     }
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        if (!(element.getParent() instanceof JetProperty) || PsiTreeUtil.isAncestor(((JetProperty)element.getParent()).getInitializer(), element, false)) {
+        JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
+        if (typeRefParent != null) {
+            element = typeRefParent;
+        }
+        PsiElement parent = element.getParent();
+        if (!(parent instanceof JetNamedDeclaration)) {
+            return false;
+        }
+        JetNamedDeclaration declaration = (JetNamedDeclaration) parent;
+        if (declaration instanceof JetProperty && !PsiTreeUtil.isAncestor(((JetProperty) declaration).getInitializer(), element, false)) {
+            if (((JetProperty) declaration).getPropertyTypeRef() != null) {
+                setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
+                return true;
+            }
+            else {
+                setText(JetBundle.message("specify.type.explicitly.add.action.name"));
+            }
+        }
+        else if (declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).getReturnTypeRef() == null
+                 && !((JetNamedFunction) declaration).hasBlockBody()) {
+            setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
+        }
+        else if (declaration instanceof JetParameter && JetNodeTypes.LOOP_PARAMETER == declaration.getNode().getElementType())
+        {
+            if (((JetParameter) declaration).getTypeReference() != null) {
+                setText(JetBundle.message("specify.type.explicitly.remove.action.name"));
+                return true;
+            }
+            else {
+                setText(JetBundle.message("specify.type.explicitly.add.action.name"));
+            }
+        }
+        else {
             return false;
         }
 
-        JetProperty property = (JetProperty)element.getParent();
-        boolean hasTypeSpecified = property.getPropertyTypeRef() != null;
-        if (hasTypeSpecified) {
-            targetType = null;
-        } else {
-            BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)element.getContainingFile());
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-            assert descriptor instanceof VariableDescriptor;
-            targetType = ((VariableDescriptor)descriptor).getType();
-            if (ErrorUtils.isErrorType(targetType)) {
-                return false;
+        if (ErrorUtils.isErrorType(getTypeForDeclaration(declaration))) {
+            return false;
+        }
+        return !isDisabledForError() || !hasPublicMemberDiagnostic(declaration);
+    }
+
+
+    private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+            //noinspection ConstantConditions
+            if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
+                return true;
             }
         }
+        return false;
+    }
+
+    @NotNull
+    private static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)declaration.getContainingFile());
+        DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+
+        JetType type;
+        if (descriptor instanceof VariableDescriptor) {
+            type = ((VariableDescriptor) descriptor).getType();
+        }
+        else if (descriptor instanceof SimpleFunctionDescriptor) {
+            type = ((SimpleFunctionDescriptor) descriptor).getReturnType();
+        }
+        else {
+            return ErrorUtils.createErrorType("unknown declaration type");
+        }
+
+        return type == null ? ErrorUtils.createErrorType("null type") : type;
+    }
+
+    protected boolean isDisabledForError() {
         return true;
+    }
+
+    public static void addTypeAnnotation(Project project, JetProperty property, @NotNull JetType exprType) {
+        if (property.getPropertyTypeRef() != null) return;
+        PsiElement anchor = property.getNameIdentifier();
+        if (anchor == null) return;
+        anchor = anchor.getNextSibling();
+        if (anchor != null) {
+            if (!(anchor instanceof PsiWhiteSpace)) {
+                return;
+            }
+        }
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        ASTNode colon = JetPsiFactory.createColonNode(project);
+        ASTNode anchorNode = anchor == null ? null : anchor.getNode().getTreeNext();
+        if (anchor == null) {
+            property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        }
+        property.getNode().addChild(colon, anchorNode);
+        property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        property.getNode().addChild(typeReference.getNode(), anchorNode);
+        property.getNode().addChild(JetPsiFactory.createWhiteSpace(project).getNode(), anchorNode);
+        if (anchor != null) {
+            anchor.delete();
+        }
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(property));
+    }
+
+    public static void addTypeAnnotation(Project project, JetFunction function, @NotNull JetType exprType) {
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        JetParameterList valueParameterList = function.getValueParameterList();
+        assert valueParameterList != null;
+        function.addAfter(typeReference, valueParameterList);
+        function.addRangeAfter(colon.getFirst(), colon.getSecond(), valueParameterList);
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(function));
+    }
+
+    public static void addTypeAnnotation(Project project, JetParameter parameter, @NotNull JetType exprType) {
+        JetTypeReference typeReference = JetPsiFactory.createType(project, DescriptorRenderer.TEXT.renderType(exprType));
+        Pair<PsiElement, PsiElement> colon = JetPsiFactory.createColon(project);
+        parameter.addAfter(typeReference, parameter.getNameIdentifier());
+        parameter.addRangeAfter(colon.getFirst(), colon.getSecond(), parameter.getNameIdentifier());
+        ReferenceToClassesShortening.compactReferenceToClasses(Collections.singletonList(parameter));
+    }
+
+    private static void removeTypeAnnotation(@NotNull JetNamedDeclaration property, @Nullable JetTypeReference typeReference) {
+        if (typeReference == null) return;
+        PsiElement identifier = property.getNameIdentifier();
+        if (identifier == null) return;
+        PsiElement sibling = identifier.getNextSibling();
+        if (sibling == null) return;
+        PsiElement nextSibling = typeReference.getNextSibling();
+        sibling.getParent().getNode().removeRange(sibling.getNode(), nextSibling == null ? null : nextSibling.getNode());
+    }
+
+    public static void removeTypeAnnotation(JetProperty property) {
+        removeTypeAnnotation(property, property.getPropertyTypeRef());
+    }
+
+    public static void removeTypeAnnotation(JetParameter parameter) {
+        removeTypeAnnotation(parameter, parameter.getTypeReference());
     }
 }

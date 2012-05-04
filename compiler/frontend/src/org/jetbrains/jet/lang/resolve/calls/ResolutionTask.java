@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -39,6 +37,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -48,9 +47,9 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
  *
  * @author abreslav
  */
-public class ResolutionTask<D extends CallableDescriptor> extends ResolutionContext {
+public class ResolutionTask<D extends CallableDescriptor, F extends D> extends ResolutionContext {
     private final Collection<ResolutionCandidate<D>> candidates;
-    private final Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> resolvedCallMap = LinkedHashMultimap.create();
+    private final Set<ResolvedCallWithTrace<F>> resolvedCalls = Sets.newLinkedHashSet();
     /*package*/ final JetReferenceExpression reference;
     private DescriptorCheckStrategy checkingStrategy;
 
@@ -71,8 +70,8 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
     }
 
     @NotNull
-    public Multimap<ResolutionCandidate<D>, ResolvedCallImpl<D>> getResolvedCallMap() {
-        return resolvedCallMap;
+    public Set<ResolvedCallWithTrace<F>> getResolvedCalls() {
+        return resolvedCalls;
     }
 
     public void setCheckingStrategy(DescriptorCheckStrategy strategy) {
@@ -86,8 +85,8 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
         return true;
     }
 
-    public ResolutionTask<D> withTrace(BindingTrace newTrace) {
-        ResolutionTask<D> newTask = new ResolutionTask<D>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo);
+    public ResolutionTask<D, F> withTrace(BindingTrace newTrace) {
+        ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(candidates, reference, newTrace, scope, call, expectedType, dataFlowInfo);
         newTask.setCheckingStrategy(checkingStrategy);
         return newTask;
     }
@@ -98,22 +97,19 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
 
     public final TracingStrategy tracing = new TracingStrategy() {
         @Override
-        public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallImpl<D> resolvedCall) {
-            D descriptor = resolvedCall.getCandidateDescriptor();
-            //                if (descriptor instanceof VariableAsFunctionDescriptor) {
-            //                    VariableAsFunctionDescriptor variableAsFunctionDescriptor = (VariableAsFunctionDescriptor) descriptor;
-            //                    trace.record(REFERENCE_TARGET, reference, variableAsFunctionDescriptor.getVariableDescriptor());
-            //                }
-            //                else {
-            //                }
-            trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
+        public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
+            CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+                descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getResultingDescriptor();
+            }
             trace.record(REFERENCE_TARGET, reference, descriptor);
+            trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
         }
 
         @Override
-        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallImpl<D>> candidates) {
+        public <D extends CallableDescriptor> void recordAmbiguity(BindingTrace trace, Collection<ResolvedCallWithTrace<D>> candidates) {
             Collection<D> descriptors = Sets.newHashSet();
-            for (ResolvedCallImpl<D> candidate : candidates) {
+            for (ResolvedCallWithTrace<D> candidate : candidates) {
                 descriptors.add(candidate.getCandidateDescriptor());
             }
             trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, descriptors);
@@ -155,7 +151,14 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
 
         @Override
         public void noReceiverAllowed(@NotNull BindingTrace trace) {
-            trace.report(NO_RECEIVER_ADMITTED.on(reference));
+            if (reference instanceof JetSimpleNameExpression) {
+                //todo temporary hack
+                //should be stored that the reference is unresolved (and not trace the candidate descriptor)
+                trace.report(UNRESOLVED_REFERENCE.on(reference));
+            }
+            else {
+                trace.report(NO_RECEIVER_ADMITTED.on(reference));
+            }
         }
 
         @Override
@@ -170,12 +173,12 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
         }
 
         @Override
-        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
             trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(call.getCallElement(), descriptors));
         }
 
         @Override
-        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallImpl<D>> descriptors) {
+        public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
             trace.report(NONE_APPLICABLE.on(reference, descriptors));
         }
 
@@ -191,9 +194,9 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
         }
 
         @Override
-        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {
+        public void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke) {
             ASTNode callOperationNode = call.getCallOperationNode();
-            if (callOperationNode != null) {
+            if (callOperationNode != null && !isCallForImplicitInvoke) {
                 trace.report(UNSAFE_CALL.on(callOperationNode.getPsi(), type));
             }
             else {
@@ -233,8 +236,7 @@ public class ResolutionTask<D extends CallableDescriptor> extends ResolutionCont
 
         @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor descriptor) {
-            JetExpression expression = call.getCalleeExpression();
-            trace.report(INVISIBLE_MEMBER.on(expression != null ? expression : call.getCallElement(), descriptor, descriptor.getContainingDeclaration()));
+            trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getContainingDeclaration()));
         }
     };
 }

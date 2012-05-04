@@ -28,6 +28,7 @@ import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.Override;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,32 +39,31 @@ import java.util.List;
 public class K2JSCompilerPlugin implements CompilerPlugin {
     private String outFile = "target/js/program.js";
 
-    public void processFiles(CompilerPluginContext context) {
-        if (context != null) {
-            Project project = context.getProject();
-            BindingContext bindingContext = context.getContext();
-            List<JetFile> sources = context.getFiles();
+    @Override
+    public void processFiles(@NotNull CompilerPluginContext context) {
+        Project project = context.getProject();
+        BindingContext bindingContext = context.getContext();
+        List<JetFile> sources = context.getFiles();
 
-            if (bindingContext != null && sources != null && project != null) {
-                Config config = new Config(project) {
-                    @NotNull
-                    @Override
-                    protected List<JetFile> generateLibFiles() {
-                        return new ArrayList<JetFile>();
-                    }
-                };
-
-                K2JSTranslator translator = new K2JSTranslator(config);
-                final String code = translator.generateProgramCode(sources);
-
-                File file = new File(outFile);
-
-                try {
-                    Files.createParentDirs(file);
-                    Files.write(code, file, Charset.forName("UTF-8"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+        if (bindingContext != null && sources != null && project != null) {
+            Config config = new Config(project) {
+                @NotNull
+                @Override
+                protected List<JetFile> generateLibFiles() {
+                    return new ArrayList<JetFile>();
                 }
+            };
+
+            K2JSTranslator translator = new K2JSTranslator(config);
+            final String code = translator.generateProgramCode(sources);
+
+            File file = new File(outFile);
+
+            try {
+                Files.createParentDirs(file);
+                Files.write(code, file, Charset.forName("UTF-8"));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

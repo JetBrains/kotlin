@@ -54,6 +54,7 @@ public class JetTypeMapper {
     public static final Type TYPE_NOTHING = Type.getObjectType("jet/Nothing");
     public static final Type JL_NUMBER_TYPE = Type.getObjectType("java/lang/Number");
     public static final Type JL_STRING_BUILDER = Type.getObjectType("java/lang/StringBuilder");
+    public static final Type JL_ARRAY_LIST = Type.getObjectType("java/util/ArrayList");
     public static final Type JL_STRING_TYPE = Type.getObjectType("java/lang/String");
     public static final Type JL_CHAR_SEQUENCE_TYPE = Type.getObjectType("java/lang/CharSequence");
     private static final Type JL_COMPARABLE_TYPE = Type.getObjectType("java/lang/Comparable");
@@ -941,9 +942,10 @@ public class JetTypeMapper {
             return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
         }
         else if (descriptor instanceof VariableDescriptor) {
-            Boolean aBoolean = bindingContext.get(BindingContext.MUST_BE_WRAPPED_IN_A_REF, (VariableDescriptor) descriptor);
-            if (aBoolean != null && aBoolean) {
-                JetType outType = ((VariableDescriptor) descriptor).getType();
+            VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+            Boolean aBoolean = bindingContext.get(BindingContext.CAPTURED_IN_CLOSURE, variableDescriptor);
+            if (aBoolean != null && aBoolean && variableDescriptor.isVar()) {
+                JetType outType = variableDescriptor.getType();
                 return StackValue.sharedTypeForType(mapType(outType, MapTypeMode.VALUE));
             }
             else {

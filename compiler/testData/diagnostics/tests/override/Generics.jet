@@ -30,14 +30,14 @@ class MyChildClass2<T>(t : T) : MyGenericClass<T>(t) {
 }
 
 open class MyClass() : MyTrait<Int>, MyAbstractClass<String>() {
-    override fun foo(i: Int) = i
-    override fun bar(s: String) = s
+    override fun foo(t: Int) = t
+    override fun bar(t: String) = t
     override val pr : String = "1"
 }
 
 abstract class MyAbstractClass1 : MyTrait<Int>, MyAbstractClass<String>() {
-    override fun foo(i: Int) = i
-    override fun bar(s: String) = s
+    override fun foo(t: Int) = t
+    override fun bar(t: String) = t
 }
 
 class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>MyIllegalGenericClass1<!><T> : MyTrait<T>, MyAbstractClass<T>() {}

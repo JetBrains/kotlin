@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.calls;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -37,31 +35,33 @@ import static org.jetbrains.jet.lang.resolve.calls.ResolutionStatus.UNKNOWN_STAT
 /**
  * @author abreslav
  */
-public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCall<D> {
+public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallWithTrace<D> {
 
-    public static final Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallImpl<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall) {
             return resolvedCall.getCandidateDescriptor();
         }
     };
 
-    public static final Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallImpl<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallImpl<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall) {
             return resolvedCall.getResultingDescriptor();
         }
     };
 
     @NotNull
-    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate) {
-        return new ResolvedCallImpl<D>(candidate.getDescriptor(), candidate.getThisObject(), candidate.getReceiverArgument());
+    public static <D extends CallableDescriptor> ResolvedCallImpl<D> create(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
+        return new ResolvedCallImpl<D>(candidate, trace);
     }
 
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverDescriptor thisObject; // receiver object of a method
     private final ReceiverDescriptor receiverArgument; // receiver of an extension function
+    private final ExplicitReceiverKind explicitReceiverKind;
+    private final boolean isSafeCall;
 
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, JetType> autoCasts = Maps.newHashMap();
@@ -70,12 +70,16 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private TemporaryBindingTrace trace;
     private ResolutionStatus status = UNKNOWN_STATUS;
 
-    private ResolvedCallImpl(@NotNull D candidateDescriptor, @NotNull ReceiverDescriptor thisObject, @NotNull ReceiverDescriptor receiverArgument) {
-        this.candidateDescriptor = candidateDescriptor;
-        this.thisObject = thisObject;
-        this.receiverArgument = receiverArgument;
+    private ResolvedCallImpl(@NotNull ResolutionCandidate<D> candidate, @NotNull TemporaryBindingTrace trace) {
+        this.candidateDescriptor = candidate.getDescriptor();
+        this.thisObject = candidate.getThisObject();
+        this.receiverArgument = candidate.getReceiverArgument();
+        this.explicitReceiverKind = candidate.getExplicitReceiverKind();
+        this.isSafeCall = candidate.isSafeCall();
+        this.trace = trace;
     }
 
+    @Override
     @NotNull
     public ResolutionStatus getStatus() {
         return status;
@@ -85,13 +89,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.status = this.status.combine(status);
     }
 
+    @Override
     @NotNull
     public TemporaryBindingTrace getTrace() {
         return trace;
-    }
-
-    public void setTrace(@NotNull TemporaryBindingTrace trace) {
-        this.trace = trace;
     }
 
     @Override
@@ -140,6 +141,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
 
     @Override
     @NotNull
+    public ExplicitReceiverKind getExplicitReceiverKind() {
+        return explicitReceiverKind;
+    }
+
+    @Override
+    @NotNull
     public Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments() {
         return valueArguments;
     }
@@ -171,6 +178,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         this.someArgumentHasNoType = true;
     }
 
+    @Override
     public boolean isDirty() {
         return someArgumentHasNoType;
     }
@@ -179,5 +187,10 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     @Override
     public Map<TypeParameterDescriptor, JetType> getTypeArguments() {
         return typeArguments;
+    }
+
+    @Override
+    public boolean isSafeCall() {
+        return isSafeCall;
     }
 }

@@ -1,8 +1,8 @@
 namespace test
 
-open class test.Outer</*0*/ P : jet.Any?> : jet.Any {
+open class test.Outer</*0*/ P : jet.Any?> : java.lang.Object {
     final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.Outer<P>
-    open class test.Outer.Inner</*0*/ Q : P> : jet.Any {
+    open class test.Outer.Inner</*0*/ Q : P> : java.lang.Object {
         final /*constructor*/ fun </*0*/ Q : P><init>(): test.Outer.Inner<Q>
     }
 }

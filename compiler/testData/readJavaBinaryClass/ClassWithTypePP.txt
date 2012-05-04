@@ -1,5 +1,5 @@
 namespace test
 
-final class test.ClassWithTypeParameter</*0*/ P : jet.Any?, /*1*/ Q : P> : jet.Any {
+final class test.ClassWithTypeParameter</*0*/ P : jet.Any?, /*1*/ Q : P> : java.lang.Object {
     final /*constructor*/ fun </*0*/ P : jet.Any?, /*1*/ Q : P><init>(): test.ClassWithTypeParameter<P, Q>
 }

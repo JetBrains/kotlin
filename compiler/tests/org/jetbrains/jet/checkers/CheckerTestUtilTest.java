@@ -40,6 +40,13 @@ public class CheckerTestUtilTest extends JetLiteFixture {
         super("diagnostics/checkerTestUtil");
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
+    }
+
+
     protected void doTest(TheTest theTest) throws Exception {
         prepareForTest("test");
         theTest.test(myFile);

@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
@@ -114,6 +115,14 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doMultiOverrideFileTest();
     }
 
+    public void testOverrideExplicitFunction() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideExplicitProperty() {
+        doOverrideFileTest();
+    }
+
     public void testComplexMultiOverride() {
         doMultiOverrideFileTest();
     }
@@ -123,7 +132,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     public void testOverrideJavaMethod() {
-        doOverrideDirectoryTest();
+        doOverrideDirectoryTest("getAnswer");
     }
 
     public void testInheritVisibilities() {
@@ -150,13 +159,17 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doDirectoryTest(new ImplementMethodsHandler());
     }
 
-    private void doOverrideDirectoryTest() {
+    private void doOverrideDirectoryTest(@Nullable String memberToImplement) {
+        doDirectoryTest(new OverrideMethodsHandler(), memberToImplement);
+    }
+
+    public void testSameTypeName() {
         doDirectoryTest(new OverrideMethodsHandler());
     }
 
     private void doFileTest(OverrideImplementMethodsHandler handler) {
         myFixture.configureByFile(getTestName(true) + ".kt");
-        doOverrideImplement(handler);
+        doOverrideImplement(handler, null);
         myFixture.checkResultByFile(getTestName(true) + ".kt.after");
     }
 
@@ -167,24 +180,49 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
     }
 
     private void doDirectoryTest(OverrideImplementMethodsHandler handler) {
+        doDirectoryTest(handler, null);
+    }
+
+    private void doDirectoryTest(OverrideImplementMethodsHandler handler, @Nullable String memberToOverride) {
         myFixture.copyDirectoryToProject(getTestName(true), "");
         myFixture.configureFromTempProjectFile("foo/Impl.kt");
-        doOverrideImplement(handler);
+        doOverrideImplement(handler, memberToOverride);
         myFixture.checkResultByFile(getTestName(true) + "/foo/Impl.kt.after");
     }
 
-    private void doOverrideImplement(OverrideImplementMethodsHandler handler) {
+    private void doOverrideImplement(OverrideImplementMethodsHandler handler, @Nullable String memberToOverride) {
         final PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
         final Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject);
-        assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
+
+        final CallableMemberDescriptor singleToOverride;
+        if (memberToOverride == null) {
+            assertEquals("Invalid number of available descriptors for override", 1, descriptors.size());
+            singleToOverride = descriptors.iterator().next();
+        }
+        else {
+            CallableMemberDescriptor candidateToOverride = null;
+            for (CallableMemberDescriptor callable : descriptors) {
+                if (callable.getName().equals(memberToOverride)) {
+                    if (candidateToOverride != null) {
+                        throw new IllegalStateException("more then one descriptor with name " + memberToOverride);
+                    }
+                    candidateToOverride = callable;
+                }
+            }
+            if (candidateToOverride == null) {
+                throw new IllegalStateException("no descriptors to override with name " + memberToOverride + " found");
+            }
+            singleToOverride = candidateToOverride;
+        }
+
         new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
             @Override
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
-                        OverrideImplementMethodsHandler.membersFromDescriptors(descriptors));
+                        myFixture.getEditor(), classOrObject,
+                        OverrideImplementMethodsHandler.membersFromDescriptors(Collections.singletonList(singleToOverride)));
             }
         }.execute();
     }
@@ -207,7 +245,7 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
             @Override
             protected void run(Result result) throws Throwable {
                 OverrideImplementMethodsHandler.generateMethods(
-                        myFixture.getProject(), myFixture.getEditor(), classOrObject,
+                        myFixture.getEditor(), classOrObject,
                         OverrideImplementMethodsHandler.membersFromDescriptors(descriptorsList));
             }
         }.execute();

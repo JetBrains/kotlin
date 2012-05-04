@@ -1,0 +1,16 @@
+OUT Usage: org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments
+OUT   -jar [String] jar file name
+OUT   -src [String] source file or directory
+OUT   -classpath [String] classpath to use when compiling
+OUT   -includeRuntime [flag]
+OUT   -stdlib [String] Path to the stdlib.jar
+OUT   -jdkHeaders [String] Path to the kotlin-jdk-headers.jar
+OUT   -mode [String] Special compiler modes: stubs or jdkHeaders
+OUT   -output [String] output directory
+OUT   -module [String] module to compile
+OUT   -tags [flag]
+OUT   -verbose [flag]
+OUT   -version [flag]
+OUT   -help (-h) [flag]
+ERR exec() finished with INTERNAL_ERROR return code
+Return code: 2

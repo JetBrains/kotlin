@@ -27,7 +27,6 @@ import com.intellij.psi.PsiFileFactory;
 import junit.framework.Test;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -52,6 +51,12 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     public JetDiagnosticsTest(@NonNls String dataPath, String name) {
         super(dataPath);
         this.name = name;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     @Override
@@ -169,7 +174,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
-                CompileCompilerDependenciesTest.compilerDependenciesForTests(CompilerSpecialMode.REGULAR, true))
+                myEnvironment.getCompilerDependencies())
                     .getBindingContext();
 
         boolean ok = true;

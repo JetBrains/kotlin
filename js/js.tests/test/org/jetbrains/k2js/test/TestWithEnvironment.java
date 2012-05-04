@@ -40,7 +40,7 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
         super.tearDown();
     }
 
-    protected void createEnvironmentWithMockJdk() {
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
+        myEnvironment = JetCoreEnvironment.getCoreEnvironmentForJS(getTestRootDisposable());
     }
 }

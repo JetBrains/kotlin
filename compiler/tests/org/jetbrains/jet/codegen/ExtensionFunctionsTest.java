@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 import java.lang.reflect.Method;
 
 /**
@@ -29,6 +31,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testSimple() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
         final Method foo = generateFunction("foo");
         final Character c = (Character) foo.invoke(null);
@@ -36,6 +39,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testWhenFail() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         Method foo = generateFunction("foo");
@@ -43,15 +47,18 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testVirtual() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("extensionFunctions/virtual.jet");
     }
 
     public void testShared() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("extensionFunctions/shared.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt475() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt475.jet");
     }
 
@@ -63,5 +70,14 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     public void testKt865() throws Exception {
         createEnvironmentWithFullJdk();
         blackBoxFile("regressions/kt865.jet");
+    }
+
+    public void testKtNested2() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
+        blackBoxFile("extensionFunctions/nested2.kt");
+    }
+    public void testKt606() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
+        blackBoxFile("regressions/kt606.kt");
     }
 }
