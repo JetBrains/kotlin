@@ -188,6 +188,11 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             }
             bodyBuilder.append("> ");
         }
+
+        if(descriptor.getReceiverParameter().exists()) {
+            bodyBuilder.append(descriptor.getReceiverParameter().getType()).append(".");
+        }
+
         bodyBuilder.append(descriptor.getName()).append("(");
         boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
         StringBuilder delegationBuilder = new StringBuilder();
