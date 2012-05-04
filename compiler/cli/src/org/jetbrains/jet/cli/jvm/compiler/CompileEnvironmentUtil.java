@@ -145,6 +145,9 @@ public class CompileEnvironmentUtil {
         else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
             // nop
         }
+        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.IDEA) {
+            // nop
+        }
         else {
             throw new IllegalStateException("unknown mode: " + compilerDependencies.getCompilerSpecialMode());
         }

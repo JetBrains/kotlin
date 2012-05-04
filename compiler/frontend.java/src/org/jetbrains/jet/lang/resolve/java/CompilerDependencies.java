@@ -45,6 +45,11 @@ public class CompilerDependencies {
         this.jdkHeadersJar = jdkHeadersJar;
         this.runtimeJar = runtimeJar;
 
+        if (compilerSpecialMode.includeJdk()) {
+            if (jdkJar == null) {
+                throw new IllegalArgumentException("jdk must be included for mode " + compilerSpecialMode);
+            }
+        }
         if (compilerSpecialMode.includeJdkHeaders()) {
             if (jdkHeadersJar == null) {
                 throw new IllegalArgumentException("jdkHeaders must be included for mode " + compilerSpecialMode);
@@ -101,7 +106,7 @@ public class CompilerDependencies {
     public static CompilerDependencies compilerDependenciesForProduction(@NotNull CompilerSpecialMode compilerSpecialMode) {
         return new CompilerDependencies(
                 compilerSpecialMode,
-                findRtJar(),
+                compilerSpecialMode.includeJdk() ? findRtJar() : null,
                 compilerSpecialMode.includeJdkHeaders() ? PathUtil.getAltHeadersPath() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? PathUtil.getDefaultRuntimePath() : null);
     }

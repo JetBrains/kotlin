@@ -52,7 +52,7 @@ public class CompileCompilerDependenciesTest {
     public static CompilerDependencies compilerDependenciesForTests(@NotNull CompilerSpecialMode compilerSpecialMode, boolean mockJdk) {
         return new CompilerDependencies(
                 compilerSpecialMode,
-                mockJdk ? JetTestUtils.findMockJdkRtJar() : CompilerDependencies.findRtJar(),
+                compilerSpecialMode.includeJdk() ? (mockJdk ? JetTestUtils.findMockJdkRtJar() : CompilerDependencies.findRtJar()) : null,
                 compilerSpecialMode.includeJdkHeaders() ? ForTestCompileJdkHeaders.jdkHeadersForTests() : null,
                 compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
     }
