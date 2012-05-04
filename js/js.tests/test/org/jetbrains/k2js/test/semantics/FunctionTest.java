@@ -36,36 +36,36 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testFunctionLiteral() throws Exception {
-        //checkFooBoxIsTrue("functionLiteral.kt");
+        checkFooBoxIsTrue("functionLiteral.kt");
     }
 
     public void testAdderClosure() throws Exception {
-        //checkFooBoxIsTrue("adderClosure.kt");
+        checkFooBoxIsTrue("adderClosure.kt");
     }
 
     public void testLoopClosure() throws Exception {
-        //checkFooBoxIsTrue("loopClosure.kt");
+        checkFooBoxIsTrue("loopClosure.kt");
     }
 
     public void testFunctionLiteralAsParameter() throws Exception {
-        //checkFooBoxIsTrue("functionLiteralAsParameter.kt");
+        checkFooBoxIsTrue("functionLiteralAsParameter.kt");
     }
 
     public void testClosureWithParameter() throws Exception {
-        //checkFooBoxIsOk("closureWithParameter.kt");
+        checkFooBoxIsOk("closureWithParameter.kt");
     }
 
     public void testClosureWithParameterAndBoxing() throws Exception {
-        //checkFooBoxIsOk("closureWithParameterAndBoxing.jet");
+        checkFooBoxIsOk("closureWithParameterAndBoxing.jet");
     }
 
     public void testEnclosingThis() throws Exception {
-        //runFunctionOutputTest("enclosingThis.kt", Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest("enclosingThis.kt", Namer.getRootNamespaceName(), "box", "OK");
     }
 
 
     public void testImplicitItParameter() throws Exception {
-        //checkFooBoxIsTrue("implicitItParameter.kt");
+        checkFooBoxIsTrue("implicitItParameter.kt");
     }
 
 
@@ -75,7 +75,7 @@ public class FunctionTest extends AbstractExpressionTest {
 
 
     public void testFunctionLiteralAsLastParameter() throws Exception {
-        //checkFooBoxIsTrue("functionLiteralAsLastParameter.kt");
+        checkFooBoxIsTrue("functionLiteralAsLastParameter.kt");
     }
 
 

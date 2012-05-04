@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -190,15 +191,11 @@ public final class BindingUtils {
         return referencedDescriptor;
     }
 
+    //TODO: remove?
     @Nullable
     public static DeclarationDescriptor getNullableDescriptorForReferenceExpression(@NotNull BindingContext context,
                                                                                     @NotNull JetReferenceExpression reference) {
-        DeclarationDescriptor referencedDescriptor = context.get(BindingContext.REFERENCE_TARGET, reference);
-        //if (isVariableAsFunction(referencedDescriptor)) {
-        //    assert referencedDescriptor != null;
-        //    return getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)referencedDescriptor);
-        //}
-        return referencedDescriptor;
+        return context.get(BindingContext.REFERENCE_TARGET, reference);
     }
 
     public static boolean isNotAny(@NotNull DeclarationDescriptor superClassDescriptor) {
@@ -210,6 +207,17 @@ public final class BindingUtils {
                                                   @NotNull JetExpression expression) {
         ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
         assert resolvedCall != null : "Must resolve to a call.";
+        return resolvedCall;
+    }
+
+    @NotNull
+    public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context,
+                                                  @NotNull JetExpression expression) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
+        assert resolvedCall != null : "Must resolve to a call.";
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+            return ((VariableAsFunctionResolvedCall)resolvedCall).getVariableCall();
+        }
         return resolvedCall;
     }
 

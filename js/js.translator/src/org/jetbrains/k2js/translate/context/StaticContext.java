@@ -412,15 +412,6 @@ public final class StaticContext {
                     return true;
                 }
             };
-            Rule<Boolean> variableAsFunctionsHaveNoQualifiers = new Rule<Boolean>() {
-                @Override
-                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!isVariableAsFunction(descriptor)) {
-                        return null;
-                    }
-                    return true;
-                }
-            };
             //TODO: hack!
             Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
                 @Override
@@ -445,7 +436,6 @@ public final class StaticContext {
             };
             addRule(topLevelNamespaceHaveNoQualifier);
             addRule(propertiesHaveNoQualifiers);
-            addRule(variableAsFunctionsHaveNoQualifiers);
             addRule(nativeObjectsHaveNoQualifiers);
         }
     }

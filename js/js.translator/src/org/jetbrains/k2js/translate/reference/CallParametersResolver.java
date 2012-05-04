@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
@@ -78,22 +80,11 @@ public final class CallParametersResolver {
         if (callee != null) {
             return callee;
         }
-        if (!isVariableAsFunction(descriptor)) {
+        if (!(resolvedCall instanceof VariableAsFunctionResolvedCall)) {
             return ReferenceTranslator.translateAsLocalNameReference(descriptor, context);
         }
-        //VariableDescriptor variableDescriptor =
-        //    getVariableDescriptorForVariableAsFunction((VariableAsFunctionDescriptor)descriptor);
-        //if (variableDescriptor instanceof PropertyDescriptor) {
-        //    return getterCall((PropertyDescriptor)variableDescriptor);
-        //}
-        return ReferenceTranslator.translateAsLocalNameReference(descriptor, context);
-    }
-
-    //TODO: inspect
-    @NotNull
-    private JsExpression getterCall(@NotNull PropertyDescriptor variableDescriptor) {
-        //TODO: call type?
-        return PropertyAccessTranslator.translateAsPropertyGetterCall(variableDescriptor, resolvedCall, context);
+        ResolvedCallWithTrace<FunctionDescriptor> call = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
+        return CallBuilder.build(context).resolvedCall(call).translate();
     }
 
     @Nullable
