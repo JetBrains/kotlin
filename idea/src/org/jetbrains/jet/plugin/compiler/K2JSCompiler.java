@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -24,14 +25,17 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
 import jet.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 
 import static org.jetbrains.jet.plugin.compiler.CompilerUtils.invokeExecMethod;
 import static org.jetbrains.jet.plugin.compiler.CompilerUtils.outputCompilerMessagesAndHandleExitCode;
@@ -59,18 +63,22 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return;
         }
 
-        if (moduleChunk.getNodes().size() != 1) {
-            context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple modules.", null, -1, -1);
+        final Module module = getModule(context, moduleChunk);
+        if (module == null) {
             return;
         }
 
-        final Module module = moduleChunk.getNodes().iterator().next();
         final CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
         if (!environment.success()) {
             environment.reportErrorsTo(context);
             return;
         }
 
+        doCompile(context, sink, module, environment);
+    }
+
+    private static void doCompile(@NotNull final CompileContext context, @NotNull OutputSink sink, @NotNull final Module module,
+            @NotNull final CompilerEnvironment environment) {
         CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
         outputCompilerMessagesAndHandleExitCode(context, collector, new Function1<PrintStream, Integer>() {
             @Override
@@ -81,31 +89,70 @@ public final class K2JSCompiler implements TranslatingCompiler {
         sink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
     }
 
+    @Nullable
+    private static Module getModule(@NotNull CompileContext context, @NotNull Chunk<Module> moduleChunk) {
+        if (moduleChunk.getNodes().size() != 1) {
+            context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple modules.", null, -1, -1);
+            return null;
+        }
+        return moduleChunk.getNodes().iterator().next();
+    }
+
     @NotNull
     private static Integer execInProcess(@NotNull CompileContext context,
             @NotNull CompilerEnvironment environment, @NotNull PrintStream out, @NotNull Module module) {
         try {
-            VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
-            if (roots.length != 1) {
-                context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple module source roots.", null, -1,
-                                   -1);
-                return -1;
-            }
-            String[] commandLineArgs = constructArguments(context.getProject(), context.getModuleOutputDirectory(module), roots[0]);
-            Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
-            return CompilerUtils.getReturnCodeFromObject(rc);
+            return doExec(context, environment, out, module);
         }
         catch (Throwable e) {
-             context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing compiler: " + e.getMessage(), null, -1, -1);
+            context.addMessage(CompilerMessageCategory.ERROR, "Exception while executing compiler:\n" + e.getMessage(), null, -1, -1);
         }
         return -1;
     }
 
-    private static String[] constructArguments(@NotNull Project project, @NotNull VirtualFile outDir, @NotNull VirtualFile srcDir) {
+    @NotNull
+    private static Integer doExec(@NotNull CompileContext context, @NotNull CompilerEnvironment environment, @NotNull PrintStream out,
+            @NotNull Module module) throws Exception {
+        VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
+        if (roots.length != 1) {
+            context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple module source roots.", null, -1, -1);
+            return -1;
+        }
+        String[] commandLineArgs = constructArguments(context.getProject(), context.getModuleOutputDirectory(module), roots[0]);
+        Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
+        return CompilerUtils.getReturnCodeFromObject(rc);
+    }
+
+    @NotNull
+    private static String[] constructArguments(@NotNull Project project, @Nullable VirtualFile outDir, @NotNull VirtualFile srcDir) {
+        ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
+        addPathToSourcesDir(args, srcDir);
+        addOutputPath(project, outDir, args);
+        addPathToZippedLib(project, args);
+        return ArrayUtil.toStringArray(args);
+    }
+
+    private static void addPathToSourcesDir(@NotNull ArrayList<String> args, @NotNull VirtualFile srcDir) {
         String srcPath = srcDir.getPath();
-        String outPath = outDir.getPath();
-        String outFile = K2JSRunnerUtils.constructPathToGeneratedFile(project, outPath);
-        return new String[] {"-tags", "-verbose", "-version", "-srcdir", srcPath, "-output", outFile};
+        args.add("-srcdir");
+        args.add(srcPath);
+    }
+
+    private static void addOutputPath(@NotNull Project project, @Nullable VirtualFile outDir, @NotNull ArrayList<String> args) {
+        if (outDir != null) {
+            String outPath = outDir.getPath();
+            String outFile = K2JSRunnerUtils.constructPathToGeneratedFile(project, outPath);
+            args.add("-output");
+            args.add(outFile);
+        }
+    }
+
+    private static void addPathToZippedLib(@NotNull Project project, @NotNull ArrayList<String> args) {
+        String libLocationForProject = JsModuleDetector.getLibLocationForProject(project);
+        if (libLocationForProject != null) {
+            args.add("-libzip");
+            args.add(libLocationForProject);
+        }
     }
 
     @NotNull
