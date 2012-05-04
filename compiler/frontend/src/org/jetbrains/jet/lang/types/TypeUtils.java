@@ -369,7 +369,7 @@ public class TypeUtils {
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         if (ErrorUtils.isError(classDescriptor)) {
-            return ErrorUtils.createErrorType("This is very helpful diagnostics message");
+            return ErrorUtils.createErrorType("Unsubstituted type for " + classDescriptor);
         }
         List<TypeProjection> arguments = getDefaultTypeProjections(classDescriptor.getTypeConstructor().getParameters());
         return new JetTypeImpl(
