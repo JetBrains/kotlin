@@ -103,6 +103,7 @@ public final class CallTranslator extends AbstractTranslator {
         return descriptor.getName().equals("invoke");
     }
 
+    @NotNull
     private JsExpression invokeCall() {
         JsInvocation callMethodInvocation = generateCallMethodInvocation();
         List<JsExpression> parameters = Lists.<JsExpression>newArrayList(context().program().getNullLiteral());
