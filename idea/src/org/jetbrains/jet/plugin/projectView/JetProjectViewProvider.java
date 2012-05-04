@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetIconProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,17 +58,9 @@ public class JetProjectViewProvider implements SelectableTreeStructureProvider, 
                 JetFile file = (JetFile) childValue;
                 List<JetDeclaration> declarations = file.getDeclarations();
 
-                ArrayList<JetClassOrObject> classDeclarations = new ArrayList<JetClassOrObject>();
-                for (JetDeclaration declaration : declarations) {
-                    if (declaration instanceof JetClassOrObject) {
-                        classDeclarations.add((JetClassOrObject) declaration);
-                    }
-                }
-                VirtualFile virtualFile = file.getVirtualFile();
-                String nameWithoutExtension = virtualFile != null ? virtualFile.getNameWithoutExtension() : file.getName();
-                if (classDeclarations.size() == 1 && (!settings.isShowMembers() || declarations.size() == 1) &&
-                    nameWithoutExtension.equals(classDeclarations.get(0).getName())) {
-                    result.add(new JetClassOrObjectTreeNode(file.getProject(), classDeclarations.get(0), settings));
+                JetClassOrObject mainClass = JetIconProvider.getMainClass(file);
+                if (mainClass != null && (!settings.isShowMembers() || declarations.size() == 1)) {
+                    result.add(new JetClassOrObjectTreeNode(file.getProject(), mainClass, settings));
                 }
                 else {
                     result.add(new JetFileTreeNode(file.getProject(), file, settings));
