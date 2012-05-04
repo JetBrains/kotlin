@@ -22,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
@@ -95,9 +98,20 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
             return translateExpressionAsFunction();
         }
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return Translation.translateAsExpression(PsiUtils.getCallee(expression), context());
+            return translateVariableForVariableAsFunctionResolvedCall();
         }
         return null;
+    }
+
+    @NotNull
+    //TODO: looks hacky and should be modified soon
+    private JsExpression translateVariableForVariableAsFunctionResolvedCall() {
+        JetExpression callee = PsiUtils.getCallee(expression);
+        if (callee instanceof JetSimpleNameExpression) {
+            return ReferenceTranslator.getAccessTranslator((JetSimpleNameExpression) callee, receiver, context()).translateAsGet();
+        }
+        assert receiver != null;
+        return Translation.translateAsExpression(callee, context());
     }
 
     @NotNull
