@@ -147,8 +147,8 @@
                 <include name="**/*.jet"/>
                 <include name="**/*.jet.src"/>
                 <include name="**/*.kt"/>
-                <include name="/META-INF/services/**"/>
-                <include name="/messages/**"/>
+                <include name="META-INF/services/**"/>
+                <include name="messages/**"/>
             </fileset>
 
             <manifest>
