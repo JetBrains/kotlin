@@ -39,18 +39,6 @@ if $cygwin; then
     KOTLIN_HOME=`cygpath --unix "$KOTLIN_HOME"`
 fi
 
-# Constructing the extension classpath
-TOOL_CLASSPATH=""
-if [ -z "$TOOL_CLASSPATH" ] ; then
-    for ext in "$KOTLIN_HOME"/lib/* ; do
-        if [ -z "$TOOL_CLASSPATH" ] ; then
-            TOOL_CLASSPATH="$ext"
-        else
-            TOOL_CLASSPATH="$TOOL_CLASSPATH:$ext"
-        fi
-    done
-fi
-
 [ -n "$JAVA_OPTS" ] || JAVA_OPTS="-Xmx256M -Xms32M"
 
 # break out -D and -J options and add them to JAVA_OPTS as well
@@ -69,7 +57,7 @@ while [ $# -gt 0 ]; do
       shift
       ;;
     -J*)
-      # as with -D, pass to scala even though it will almost
+      # as with -D, pass to kotlin even though it will almost
       # never be used.
       java_args=("${java_args[@]}" "${1:2}")
       kotlin_args=("${kotlin_args[@]}" "$1")
@@ -94,5 +82,5 @@ CPSELECT="-cp "
 "${JAVACMD:=java}" \
   $JAVA_OPTS \
   "${java_args[@]}" \
-  ${CPSELECT}${TOOL_CLASSPATH} \
+  ${CPSELECT}${KOTLIN_HOME}"/lib/kotlin-compiler.jar" \
    org.jetbrains.jet.cli.jvm.K2JVMCompiler  "$@"

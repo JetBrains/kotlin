@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -57,21 +56,6 @@ public final class CompilerUtils {
     private CompilerUtils() {
     }
 
-    private static List<File> getJarsInDirectory(File dir) {
-        List<File> r = Lists.newArrayList();
-
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File jar : files) {
-                if (jar.isFile() && jar.getName().endsWith(".jar")) {
-                    r.add(jar);
-                }
-            }
-        }
-
-        return r;
-    }
-
     public static List<File> kompilerClasspath(File kotlinHome, CompileContext context) {
         File libs = new File(kotlinHome, "lib");
 
@@ -81,10 +65,8 @@ public final class CompilerUtils {
             return Collections.emptyList();
         }
 
-
         ArrayList<File> answer = new ArrayList<File>();
-        answer.addAll(getJarsInDirectory(libs));
-        answer.addAll(getJarsInDirectory(new File(libs, "guice"))); // TODO: flatten at artifact build
+        answer.add(new File(libs, "kotlin-compiler.jar"));
         return answer;
     }
 

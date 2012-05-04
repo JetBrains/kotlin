@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-maven-plugin</artifactId>
+            <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
 
