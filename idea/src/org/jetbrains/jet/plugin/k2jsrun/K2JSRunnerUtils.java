@@ -70,7 +70,7 @@ public final class K2JSRunnerUtils {
         notifySuccess(outputDirPath);
     }
 
-    private static String constructPathToGeneratedFile(Project project, String outputDirPath) {
+    public static String constructPathToGeneratedFile(@NotNull Project project, @NotNull String outputDirPath) {
         return outputDirPath + "/" + project.getName() + ".js";
     }
 
