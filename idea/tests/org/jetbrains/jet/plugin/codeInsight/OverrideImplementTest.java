@@ -115,6 +115,14 @@ public class OverrideImplementTest extends LightCodeInsightFixtureTestCase {
         doMultiOverrideFileTest();
     }
 
+    public void testOverrideExplicitFunction() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideExplicitProperty() {
+        doOverrideFileTest();
+    }
+
     public void testComplexMultiOverride() {
         doMultiOverrideFileTest();
     }
