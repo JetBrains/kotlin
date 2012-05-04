@@ -71,7 +71,7 @@ public class DescriptorUtils {
             typeConstructors.put(typeParameter.getTypeConstructor(), typeParameter);
         }
         //noinspection unchecked
-        return (Descriptor) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitutor.TypeSubstitution.EMPTY) {
+        return (Descriptor) functionDescriptor.substitute(new TypeSubstitutor(TypeSubstitution.EMPTY) {
             @Override
             public boolean inRange(@NotNull TypeConstructor typeConstructor) {
                 return typeConstructors.containsKey(typeConstructor);
