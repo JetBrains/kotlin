@@ -81,7 +81,7 @@ public class TypeSubstitutor {
 
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
         Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
-        SubstitutionUtils.assertNotImmediatelyRecursive(cleanContext);
+        //SubstitutionUtils.assertNotImmediatelyRecursive(cleanContext);
         return createUnsafe(cleanContext);
     }
 
