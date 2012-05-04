@@ -17,12 +17,15 @@
 package org.jetbrains.jet.plugin.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.JetIconProvider;
 
 import java.util.Collection;
 
@@ -48,11 +51,27 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
         return getClassOrObjectChildren(getValue(), getProject(), getSettings());
     }
 
+    private void update(AbstractTreeNode node) {
+        ProjectView.getInstance(getProject()).getCurrentProjectViewPane().getTreeBuilder().addSubtreeToUpdateByElement(node);
+    }
+
     @Override
     protected void updateImpl(PresentationData data) {
-        JetClassOrObject value = getValue();
-        if (value != null) {
-            data.setPresentableText(value.getName());
+        JetClassOrObject classOrObject = getValue();
+        if (classOrObject != null) {
+            data.setPresentableText(classOrObject.getName());
+
+            AbstractTreeNode parent = getParent();
+            if (JetIconProvider.getMainClass((JetFile) classOrObject.getContainingFile()) != null) {
+                if (parent instanceof JetFileTreeNode) {
+                    update(parent.getParent());
+                }
+            }
+            else {
+                if (!(parent instanceof JetClassOrObjectTreeNode) && !(parent instanceof JetFileTreeNode)) {
+                    update(parent);
+                }
+            }
         }
     }
 
