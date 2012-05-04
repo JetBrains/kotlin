@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -137,6 +138,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else {
             bodyBuilder.append("val ");
         }
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
         bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
                 descriptor.getType()));
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
@@ -188,6 +192,9 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             }
             bodyBuilder.append("> ");
         }
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
         bodyBuilder.append(descriptor.getName()).append("(");
         boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
         StringBuilder delegationBuilder = new StringBuilder();
@@ -232,6 +239,13 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");
 
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
+    }
+
+    private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
+        ReceiverDescriptor receiverParameter = descriptor.getReceiverParameter();
+        if (receiverParameter.exists()) {
+            bodyBuilder.append(receiverParameter.getType()).append(".");
+        }
     }
 
     private static String defaultInitializer(JetType returnType, JetStandardLibrary stdlib) {
