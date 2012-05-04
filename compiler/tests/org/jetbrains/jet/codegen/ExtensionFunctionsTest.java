@@ -76,8 +76,24 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
         blackBoxFile("extensionFunctions/nested2.kt");
     }
+
     public void testKt606() throws Exception {
         createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
         blackBoxFile("regressions/kt606.kt");
+    }
+
+    public void testKt1061() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
+        blackBoxFile("regressions/kt1061.kt");
+    }
+
+    public void testKt1249() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
+        blackBoxFile("regressions/kt1249.kt");
+    }
+
+    public void testKt1290() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.BUILTINS);
+        blackBoxFile("regressions/kt1290.kt");
     }
 }
