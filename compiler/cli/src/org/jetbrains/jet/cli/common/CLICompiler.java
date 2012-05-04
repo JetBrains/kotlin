@@ -108,7 +108,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
         final MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
         printVersionIfNeeded(errStream, arguments, messageRenderer);
-        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, true);
+        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
         Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {
             return doExecute(arguments, messageCollector, rootDisposable);
