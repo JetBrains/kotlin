@@ -17,11 +17,14 @@
 package org.jetbrains.jet.plugin;
 
 import com.intellij.ide.IconProvider;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -40,22 +43,16 @@ public class JetIconProvider extends IconProvider {
     public Icon getIcon(@NotNull PsiElement psiElement, int flags) {
         if (psiElement instanceof JetFile) {
             JetFile file = (JetFile) psiElement;
-            List<JetDeclaration> declarations = file.getDeclarations();
-            JetClassOrObject mostImportantClass = null;
-            String nameWithoutExtension = StringUtil.getPackageName(file.getName());
-            for (JetDeclaration declaration : declarations) {
-                if (mostImportantClass == null && declaration instanceof JetClassOrObject) {
-                    mostImportantClass = (JetClassOrObject) declaration;
+            List<JetDeclaration> classes = ContainerUtil.filter(file.getDeclarations(), new Condition<JetDeclaration>() {
+                @Override
+                public boolean value(JetDeclaration jetDeclaration) {
+                    return jetDeclaration instanceof JetClassOrObject;
                 }
-                else if (declaration instanceof JetClassOrObject) {
-                    JetClassOrObject object = (JetClassOrObject) declaration;
-                    if (nameWithoutExtension.equals(object.getName())) {
-                        mostImportantClass = object;
-                    }
+            });
+            if (classes.size() == 1) {
+                if (StringUtil.getPackageName(file.getName()).equals(classes.get(0).getName())) {
+                    return getIcon(classes.get(0), flags);
                 }
-            }
-            if (mostImportantClass != null) {
-                return getIcon(mostImportantClass, flags);
             }
             return JetIcons.FILE;
         }
