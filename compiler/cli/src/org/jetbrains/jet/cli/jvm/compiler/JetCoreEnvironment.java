@@ -80,7 +80,9 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
 
         CompilerSpecialMode compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
 
-        addToClasspath(compilerDependencies.getJdkJar());
+        if (compilerSpecialMode.includeJdk()) {
+            addToClasspath(compilerDependencies.getJdkJar());
+        }
 
         if (compilerSpecialMode.includeJdkHeaders()) {
             for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
