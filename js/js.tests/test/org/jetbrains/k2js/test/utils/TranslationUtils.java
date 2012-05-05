@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.test.config.TestConfig;
 
@@ -44,19 +45,21 @@ public final class TranslationUtils {
     private static /*var*/ K2JSTranslator translator = null;
 
     public static void translateFile(@NotNull Project project, @NotNull String inputFile,
-                                     @NotNull String outputFile) throws Exception {
-        translateFiles(project, Collections.singletonList(inputFile), outputFile);
+            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters) throws Exception {
+        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters);
     }
 
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
-                                      @NotNull String outputFile) throws Exception {
+            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters) throws Exception {
+
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = getTranslator(project).generateProgram(psiFiles);
+        JsProgram program = getTranslator(project).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
             writer.write("\"use strict\";\n");
             writer.write(CodeGenerator.toString(program));
-        } finally {
+        }
+        finally {
             writer.close();
         }
     }

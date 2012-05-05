@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
 import java.util.List;
@@ -36,11 +37,11 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
 
     protected void generateJsFromDir(@NotNull String dirName) throws Exception {
         List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
-        translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"));
+        translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"), MainCallParameters.noCall());
     }
 
     protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
-                                    @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
+            @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
         generateJsFromDir(dirName);
         runRhinoTest(withAdditionalFiles(getOutputFilePath(dirName + ".kt")),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
