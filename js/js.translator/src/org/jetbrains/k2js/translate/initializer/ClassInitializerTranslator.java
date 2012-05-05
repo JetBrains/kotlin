@@ -58,7 +58,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     public JsPropertyInitializer generateInitializeMethod() {
-        //TODO: it's inconsistent that we scope for class and function for constructor, currently have problems implementing better way
+        //TODO: it's inconsistent that we have scope for class and function for constructor, currently have problems implementing better way
         ConstructorDescriptor primaryConstructor = getConstructor(bindingContext(), classDeclaration);
         JsFunction result = context().getFunctionObject(primaryConstructor);
         //NOTE: while we translate constructor parameters we also add property initializer statements
