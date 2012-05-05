@@ -129,4 +129,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testKt1865() throws Exception {
         checkFooBoxIsTrue("KT-1865.kt");
     }
+
+    public void testMainFunInNestedNamespace() throws Exception {
+        checkOutput("mainFunInNestedNamespace.kt", "ayee");
+    }
 }
