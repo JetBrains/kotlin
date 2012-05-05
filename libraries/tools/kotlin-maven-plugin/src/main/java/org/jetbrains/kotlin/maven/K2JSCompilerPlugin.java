@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.exceptions.TranslationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +56,12 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
             };
 
             K2JSTranslator translator = new K2JSTranslator(config);
-            final String code = translator.generateProgramCode(sources, MainCallParameters.noCall());
+            final String code;
+            try {
+                code = translator.generateProgramCode(sources, MainCallParameters.noCall());
+            } catch (TranslationException e) {
+                throw new RuntimeException(e);
+            }
 
             File file = new File(outFile);
 
