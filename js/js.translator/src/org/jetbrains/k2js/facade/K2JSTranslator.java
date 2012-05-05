@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetFileUtils;
@@ -75,7 +76,7 @@ public final class K2JSTranslator {
     //TODO: web demo related method
     @SuppressWarnings("UnusedDeclaration")
     @NotNull
-    public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) {
+    public String translateStringWithCallToMain(@NotNull String programText, @NotNull String argumentsString) throws TranslationException {
         JetFile file = JetFileUtils.createPsiFile("test", programText, getProject());
         String programCode = generateProgramCode(file, MainCallParameters.mainWithArguments(parseString(argumentsString))) + "\n";
         String flushOutput = "Kotlin.System.flush();\n";
@@ -84,21 +85,23 @@ public final class K2JSTranslator {
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters) {
+    public String generateProgramCode(@NotNull JetFile file, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
         JsProgram program = generateProgram(Arrays.asList(file), mainCallParameters);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
 
     @NotNull
-    public String generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters) {
+    public String generateProgramCode(@NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters)
+            throws TranslationException {
         JsProgram program = generateProgram(files, mainCallParameters);
         CodeGenerator generator = new CodeGenerator();
         return generator.generateToString(program);
     }
 
     @NotNull
-    public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate, @NotNull MainCallParameters mainCallParameters) {
+    public JsProgram generateProgram(@NotNull List<JetFile> filesToTranslate, @NotNull MainCallParameters mainCallParameters)
+            throws TranslationException {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
         Collection<JetFile> files = AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config);
