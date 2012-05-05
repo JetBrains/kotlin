@@ -27,12 +27,13 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
-import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyForDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.newNamedMethod;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.backingFieldReference;
 
@@ -51,7 +52,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private final JetProperty declaration;
 
     static public List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
-                                                                 @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         PropertyTranslator propertyTranslator = new PropertyTranslator(descriptor, context);
         return propertyTranslator.translate();
     }
@@ -59,7 +60,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private PropertyTranslator(@NotNull PropertyDescriptor property, @NotNull TranslationContext context) {
         super(context);
         this.property = property;
-        this.declaration = BindingUtils.getPropertyForDescriptor(bindingContext(), property);
+        this.declaration = getPropertyForDescriptor(bindingContext(), property);
     }
 
     @NotNull
@@ -90,11 +91,11 @@ public final class PropertyTranslator extends AbstractTranslator {
     }
 
     private boolean hasCustomGetter() {
-        return ((declaration != null) && (declaration.getGetter() != null));
+        return ((declaration != null) && (declaration.getGetter() != null) && getCustomGetterDeclaration().getBodyExpression() != null);
     }
 
     private boolean hasCustomSetter() {
-        return ((declaration != null) && (declaration.getSetter() != null));
+        return ((declaration != null) && (declaration.getSetter() != null) && getCustomSetterDeclaration().getBodyExpression() != null);
     }
 
     @NotNull

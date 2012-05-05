@@ -133,4 +133,9 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testMainFunInNestedNamespace() throws Exception {
         checkOutput("mainFunInNestedNamespace.kt", "ayee");
     }
+
+
+    public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
+        checkFooBoxIsTrue("propertiesWithExplicitlyDefinedAccessorsWithoutBodies.kt");
+    }
 }
