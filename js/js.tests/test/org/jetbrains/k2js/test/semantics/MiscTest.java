@@ -125,4 +125,8 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
         checkFooBoxIsTrue("extensionLiteralCalledInsideExtensionFunction.kt");
     }
+
+    public void testKt1865() throws Exception {
+        checkFooBoxIsTrue("KT-1865.kt");
+    }
 }
