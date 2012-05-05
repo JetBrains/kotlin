@@ -36,12 +36,12 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        checkFooBoxIsTrue("intRange.kt");
+        fooBoxTest();
     }
 
 
     public void testSafecallComputesExpressionOnlyOnce() throws Exception {
-        checkFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
+        fooBoxTest();
     }
 
     public void testClassWithoutNamespace() throws Exception {
@@ -50,7 +50,7 @@ public final class MiscTest extends AbstractExpressionTest {
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
         try {
-            checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            fooBoxTest();
             fail();
         }
         catch (JavaScriptException e) {
@@ -91,39 +91,39 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testFunInConstructor() throws Exception {
-        checkFooBoxIsTrue("funInConstructor.kt");
+        fooBoxTest();
     }
 
     public void testFunInConstructorBlock() throws Exception {
-        checkFooBoxIsTrue("funInConstructorBlock.kt");
+        fooBoxTest();
     }
 
     public void testPropertyAsFunCalledOnConstructor() throws Exception {
-        checkFooBoxIsTrue("propertyAsFunCalledOnConstructor.kt");
+        fooBoxTest();
     }
 
     public void testNamespacePropertyCalledAsFun() throws Exception {
-        checkFooBoxIsTrue("namespacePropertyCalledAsFun.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralCreatedAtNamespaceLevel.kt");
+        fooBoxTest();
     }
 
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
-        checkFooBoxIsTrue("temporaryVariableCreatedInNamespaceInitializer.kt");
+        fooBoxTest();
     }
 
     public void testWhenReturnedWithoutBlock() throws Exception {
-        checkFooBoxIsTrue("whenReturnedWithoutBlock.kt");
+        fooBoxTest();
     }
 
     public void testElvis() throws Exception {
-        checkFooBoxIsTrue("elvis.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralCalledInsideExtensionFunction.kt");
+        fooBoxTest();
     }
 
     public void testKt1865() throws Exception {
@@ -136,6 +136,6 @@ public final class MiscTest extends AbstractExpressionTest {
 
 
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
-        checkFooBoxIsTrue("propertiesWithExplicitlyDefinedAccessorsWithoutBodies.kt");
+        fooBoxTest();
     }
 }

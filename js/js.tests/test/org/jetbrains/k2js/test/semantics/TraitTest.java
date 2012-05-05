@@ -28,32 +28,32 @@ public final class TraitTest extends SingleFileTranslationTest {
     }
 
     public void testTraitAddsFunctionsToClass() throws Exception {
-        checkFooBoxIsTrue("traitAddsFunctionsToClass.kt");
+        fooBoxTest();
     }
 
 
     public void testClassDerivesFromClassAndTrait() throws Exception {
-        checkFooBoxIsTrue("classDerivesFromClassAndTrait.kt");
+        fooBoxTest();
     }
 
 
     public void testClassDerivesFromTraitAndClass() throws Exception {
-        checkFooBoxIsTrue("classDerivesFromTraitAndClass.kt");
+        fooBoxTest();
     }
 
 
     public void testExample() throws Exception {
-        checkFooBoxIsTrue("example.kt");
+        fooBoxTest();
     }
 
 
     public void testTraitExtendsTrait() throws Exception {
-        checkFooBoxIsTrue("traitExtendsTrait.kt");
+        fooBoxTest();
     }
 
 
     public void testTraitExtendsTwoTraits() throws Exception {
-        checkFooBoxIsTrue("traitExtendsTwoTraits.kt");
+        fooBoxTest();
     }
 
 
@@ -63,6 +63,6 @@ public final class TraitTest extends SingleFileTranslationTest {
 
 
     public void testDefinitionOrder() throws Exception {
-        checkFooBoxIsTrue("definitionOrder.kt");
+        fooBoxTest();
     }
 }

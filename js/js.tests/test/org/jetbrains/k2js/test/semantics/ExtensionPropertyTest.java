@@ -28,14 +28,14 @@ public final class ExtensionPropertyTest extends SingleFileTranslationTest {
     }
 
     public void testSimplePropertyWithGetter() throws Exception {
-        checkFooBoxIsTrue("simplePropertyWithGetter.kt");
+        fooBoxTest();
     }
 
     public void testPropertyWithGetterAndSetter() throws Exception {
-        checkFooBoxIsTrue("propertyWithGetterAndSetter.kt");
+        fooBoxTest();
     }
 
     public void testAbsExtension() throws Exception {
-        checkFooBoxIsTrue("absExtension.kt");
+        fooBoxTest();
     }
 }

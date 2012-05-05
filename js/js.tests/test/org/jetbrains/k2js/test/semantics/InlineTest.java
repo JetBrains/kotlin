@@ -67,7 +67,7 @@ public final class InlineTest extends SingleFileTranslationTest {
     }
 
     private void checkFooBoxIsTrueAndFunctionNameIsNotReferenced(@NotNull String filename, String funName) throws Exception {
-        checkFooBoxIsTrue(filename);
+        fooBoxTest();
         String generatedJSFilePath = getOutputFilePath(filename);
         String outputFileText = FileUtil.loadFile(new File(generatedJSFilePath));
         assertTrue(countOccurrences(outputFileText, funName) == 1);
