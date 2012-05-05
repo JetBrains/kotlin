@@ -47,7 +47,7 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
-    @Argument(value = "help", alias = "h", description = "show help")
+    @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
 
     @Override
