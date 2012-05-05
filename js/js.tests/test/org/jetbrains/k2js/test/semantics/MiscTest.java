@@ -27,7 +27,6 @@ import org.mozilla.javascript.JavaScriptException;
  */
 public final class MiscTest extends AbstractExpressionTest {
 
-
     public MiscTest() {
         super("misc/");
     }
@@ -121,5 +120,9 @@ public final class MiscTest extends AbstractExpressionTest {
 
     public void testElvis() throws Exception {
         checkFooBoxIsTrue("elvis.kt");
+    }
+
+    public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
+        checkFooBoxIsTrue("extensionLiteralCalledInsideExtensionFunction.kt");
     }
 }
