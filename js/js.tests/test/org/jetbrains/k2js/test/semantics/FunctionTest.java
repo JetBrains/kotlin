@@ -93,14 +93,18 @@ public class FunctionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    //TODO: disabled. Probable cause : vars in closures.
+    public void testKT921() throws Exception {
 
-    //public void testKT921() throws Exception {
-    //
-    //    checkOutput("KT-921.kt", "1,\n" +
-    //                             "1, 2,\n" +
-    //                             "2, ");
-    //}
+        checkOutput("KT-921.kt", "1, end\n" +
+                                 "1, 2, end\n" +
+                                 "1, 2, 3, end\n" +
+                                 "2, 3, end\n" +
+                                 "!\n" +
+                                 "3, end\n" +
+                                 "!\n" +
+                                 "end\n" +
+                                 "!");
+    }
 
     public void testFunctionInsideFunction() throws Exception {
         fooBoxTest();

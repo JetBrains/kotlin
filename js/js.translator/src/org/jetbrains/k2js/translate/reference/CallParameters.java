@@ -56,4 +56,13 @@ public final class CallParameters {
     public JsExpression getReceiver() {
         return receiver;
     }
+
+    @Nullable
+    public JsExpression getThisOrReceiverOrNull() {
+        if (thisObject == null) {
+            return receiver;
+        }
+        assert receiver == null;
+        return thisObject;
+    }
 }

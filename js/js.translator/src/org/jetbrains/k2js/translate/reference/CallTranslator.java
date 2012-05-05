@@ -130,7 +130,7 @@ public final class CallTranslator extends AbstractTranslator {
     private JsExpression intrinsicInvocation() {
         assert descriptor instanceof FunctionDescriptor;
         Intrinsic intrinsic = context().intrinsics().getFunctionIntrinsic((FunctionDescriptor) descriptor);
-        return intrinsic.apply(callParameters.getThisObject(), arguments, context());
+        return intrinsic.apply(callParameters.getThisOrReceiverOrNull(), arguments, context());
     }
 
     private boolean isConstructor() {
@@ -244,7 +244,7 @@ public final class CallTranslator extends AbstractTranslator {
     }
 
     @Nullable
-    JsExpression getThisObjectOrQualifier() {
+    private JsExpression getThisObjectOrQualifier() {
         JsExpression thisObject = callParameters.getThisObject();
         if (thisObject != null) {
             return thisObject;
