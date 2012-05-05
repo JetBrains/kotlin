@@ -21,17 +21,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Pavel Talanov
  */
-public class TranslationException extends Exception {
-
-    public TranslationException(@NotNull String message) {
+public class MainFunctionNotFoundException extends TranslationException {
+    public MainFunctionNotFoundException(@NotNull String message) {
         super(message);
-    }
-
-    public TranslationException(@NotNull Throwable cause) {
-        super(cause);
-    }
-
-    public TranslationException(@NotNull String message, @NotNull Exception cause) {
-        super(message, cause);
     }
 }

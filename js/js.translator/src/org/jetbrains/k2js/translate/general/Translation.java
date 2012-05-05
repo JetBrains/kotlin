@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
 import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
@@ -155,7 +156,7 @@ public final class Translation {
 
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files,
-            @NotNull MainCallParameters mainCallParameters) {
+            @NotNull MainCallParameters mainCallParameters) throws MainFunctionNotFoundException {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
@@ -172,10 +173,11 @@ public final class Translation {
 
     @NotNull
     private static JsStatement generateCallToMain(@NotNull TranslationContext context, @NotNull List<JetFile> files,
-            @NotNull List<String> arguments) {
+            @NotNull List<String> arguments) throws MainFunctionNotFoundException {
         JetNamedFunction mainFunction = getMainFunction(files);
-        //TODO: throw correct exception
-        assert mainFunction != null;
+        if (mainFunction == null) {
+            throw new MainFunctionNotFoundException("Main function was not found. Please check compiler arguments");
+        }
         JsInvocation translatedCall = generateInvocation(context, mainFunction);
         setArguments(context, arguments, translatedCall);
         return translatedCall.makeStmt();
