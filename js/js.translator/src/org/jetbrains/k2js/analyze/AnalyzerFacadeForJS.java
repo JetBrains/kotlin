@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +66,7 @@ public final class AnalyzerFacadeForJS {
 
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
-        Predicate<PsiFile> completely = Predicates.<PsiFile>and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
@@ -113,25 +112,6 @@ public final class AnalyzerFacadeForJS {
             result.add(file);
         }
         return result;
-    }
-
-    //TODO: exclude?
-    @NotNull
-    public static BindingContext analyzeNamespace(@NotNull JetFile file) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        Project project = file.getProject();
-
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false);
-
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
-
-        injector.getTopDownAnalyzer().analyzeFiles(Collections.singletonList(file));
-        return bindingTraceContext.getBindingContext();
     }
 
     private static final class JsConfiguration implements ModuleConfiguration {

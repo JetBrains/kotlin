@@ -36,8 +36,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-//TODO: clean up the code
-
 /**
  * @author Pavel Talanov
  *         <p/>

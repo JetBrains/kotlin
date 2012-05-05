@@ -49,7 +49,6 @@ public final class TestConfig extends Config {
         List<JetFile> libFiles = new ArrayList<JetFile>();
         for (String libFileName : LIB_FILE_NAMES) {
             JetFile file = null;
-            //TODO: close stream?
             try {
                 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
                 InputStream stream = new FileInputStream(LIBRARIES_LOCATION + libFileName);
@@ -70,6 +69,7 @@ public final class TestConfig extends Config {
         return libFiles;
     }
 
+    @Override
     @NotNull
     public List<JetFile> generateLibFiles() {
         if (jsLibFiles == null) {
