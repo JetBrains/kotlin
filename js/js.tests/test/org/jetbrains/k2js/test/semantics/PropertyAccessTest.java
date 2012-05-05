@@ -28,12 +28,12 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testAccessToInstanceProperty() throws Exception {
-        checkFooBoxIsTrue("accessToInstanceProperty.kt");
+        fooBoxTest();
     }
 
 
     public void testTwoClassesWithProperties() throws Exception {
-        checkFooBoxIsTrue("twoClassesWithProperties.kt");
+        fooBoxTest();
     }
 
 
@@ -43,34 +43,34 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
 
     public void testCustomGetter() throws Exception {
-        checkFooBoxIsTrue("customGetter.kt");
+        fooBoxTest();
     }
 
 
     public void testCustomSetter() throws Exception {
-        checkFooBoxIsTrue("customSetter.kt");
+        fooBoxTest();
     }
 
     public void testNamespacePropertyInitializer() throws Exception {
-        checkFooBoxIsTrue("namespacePropertyInitializer.kt");
+        fooBoxTest();
     }
 
 
     public void testNamespacePropertySet() throws Exception {
-        checkFooBoxIsTrue("namespacePropertySet.kt");
+        fooBoxTest();
     }
 
     public void testNamespaceCustomAccessors() throws Exception {
-        checkFooBoxIsTrue("namespaceCustomAccessors.kt");
+        fooBoxTest();
     }
 
 
     public void testClassUsesNamespaceProperties() throws Exception {
-        checkFooBoxIsTrue("classUsesNamespaceProperties.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralSafeCall() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralSafeCall.kt");
+        fooBoxTest();
     }
 
 }

@@ -51,6 +51,10 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTest(filename, "foo", "box", true);
     }
 
+    public void fooBoxTest() throws Exception {
+        checkFooBoxIsTrue(getTestName(true) + ".kt");
+    }
+
     public void checkFooBoxIsOk(@NotNull String filename) throws Exception {
         runFunctionOutputTest(filename, "foo", "box", "OK");
     }

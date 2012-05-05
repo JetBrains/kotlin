@@ -28,22 +28,22 @@ public final class ObjectTest extends SingleFileTranslationTest {
     }
 
     public void testObjectWithMethods() throws Exception {
-        checkFooBoxIsTrue("objectWithMethods.kt");
+        fooBoxTest();
     }
 
 
     public void testObjectDeclaration() throws Exception {
-        checkFooBoxIsTrue("objectDeclaration.kt");
+        fooBoxTest();
     }
 
 
     public void testObjectInMethod() throws Exception {
-        checkFooBoxIsTrue("objectInMethod.kt");
+        fooBoxTest();
     }
 
 
     public void testObjectInheritingFromATrait() throws Exception {
-        checkFooBoxIsTrue("objectInheritingFromATrait.kt");
+        fooBoxTest();
     }
 
 }
