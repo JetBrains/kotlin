@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
+import org.jetbrains.k2js.facade.exceptions.TranslationException;
+import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.declaration.ClassTranslator;
@@ -138,7 +141,21 @@ public final class Translation {
 
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters) {
+            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
+        try {
+            return doGenerateAst(bindingContext, files, mainCallParameters);
+        }
+        catch (UnsupportedOperationException e) {
+            throw new UnsupportedFeatureException("Unsupported feature used.", e);
+        }
+        catch (Throwable e) {
+            throw new TranslationInternalException(e);
+        }
+    }
+
+    @NotNull
+    private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files,
+            @NotNull MainCallParameters mainCallParameters) {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
