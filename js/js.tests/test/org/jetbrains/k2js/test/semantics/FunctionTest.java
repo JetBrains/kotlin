@@ -94,13 +94,13 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     //TODO: disabled. Probable cause : vars in closures.
-//
-//    public void testKT921() throws Exception {
-//
-//        checkOutput("KT-921.kt", "1,\n" +
-//                                 "1, 2,\n" +
-//                                 "2, ");
-//    }
+
+    //public void testKT921() throws Exception {
+    //
+    //    checkOutput("KT-921.kt", "1,\n" +
+    //                             "1, 2,\n" +
+    //                             "2, ");
+    //}
 
     public void testFunctionInsideFunction() throws Exception {
         fooBoxTest();
