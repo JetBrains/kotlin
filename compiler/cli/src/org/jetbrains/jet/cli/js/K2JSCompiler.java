@@ -93,8 +93,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static ExitCode translateAndGenerateOutputFile(@NotNull PrintingMessageCollector messageCollector,
             @NotNull JetCoreEnvironment environmentForJS, @NotNull Config config, @NotNull String outputFile) {
         try {
-            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config,
-                                                                environmentForJS.getProject());
+            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config
+            );
         }
         catch (Exception e) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),

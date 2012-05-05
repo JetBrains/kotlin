@@ -16,12 +16,12 @@
 
 package org.jetbrains.k2js.test;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
-
-import java.util.Arrays;
 
 import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
@@ -37,14 +37,14 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     }
 
     public void runFunctionOutputTest(String filename, String namespaceName,
-                                      String functionName, Object expectedResult) throws Exception {
-        generateJsFromFile(filename);
+            String functionName, Object expectedResult) throws Exception {
+        generateJsFromFile(filename, MainCallParameters.noCall());
         runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    protected void generateJsFromFile(@NotNull String filename) throws Exception {
-        TranslationUtils.translateFile(getProject(), getInputFilePath(filename), getOutputFilePath(filename));
+    protected void generateJsFromFile(@NotNull String filename, @NotNull MainCallParameters mainCallParameters) throws Exception {
+        TranslationUtils.translateFile(getProject(), getInputFilePath(filename), getOutputFilePath(filename), mainCallParameters);
     }
 
     public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
@@ -56,9 +56,9 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     }
 
     protected void checkOutput(@NotNull String filename, @NotNull String expectedResult, @NotNull String... args) throws Exception {
-        generateJsFromFile(filename);
+        generateJsFromFile(filename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)));
         runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
-                     new RhinoSystemOutputChecker(expectedResult, Arrays.asList(args)));
+                     new RhinoSystemOutputChecker(expectedResult));
     }
 
     protected void performTestWithMain(@NotNull String testName, @NotNull String testId, @NotNull String... args) throws Exception {
