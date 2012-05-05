@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.maven;
 
 import com.google.common.io.Files;
-import org.jetbrains.jet.internal.com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
+import org.jetbrains.jet.internal.com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
@@ -28,7 +28,6 @@ import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,15 +53,17 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
                 }
             };
 
-            K2JSTranslator translator = new K2JSTranslator(config);
-            final String code = translator.generateProgramCode(sources, MainCallParameters.noCall());
-
-            File file = new File(outFile);
-
             try {
+
+                K2JSTranslator translator = new K2JSTranslator(config);
+
+                final String code = translator.generateProgramCode(sources, MainCallParameters.noCall());
+
+                File file = new File(outFile);
                 Files.createParentDirs(file);
                 Files.write(code, file, Charset.forName("UTF-8"));
-            } catch (IOException e) {
+            }
+            catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
