@@ -91,6 +91,8 @@
 
       <codeInsight.parameterInfo language="jet" implementationClass="org.jetbrains.jet.plugin.parameterInfo.JetFunctionParameterInfoHandler"/>
 
+      <codeInsight.gotoSuper language="jet" implementationClass="org.jetbrains.jet.plugin.codeInsight.GotoSuperActionHandler" />
+
       <completion.contributor language="jet" id="JetKeywordCompletionContributor" order="first"
                               implementationClass="org.jetbrains.jet.plugin.completion.JetKeywordCompletionContributor"/>
 
