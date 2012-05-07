@@ -52,9 +52,15 @@ public abstract class KotlinIntegrationTestBase {
     public TestRule watchman = new TestWatcher() {
         @Override
         protected void starting(Description description) {
-            tempDir = Files.createTempDir();
+            try {
+                tempDir = Files.createTempDir().getCanonicalFile();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-            final File baseTestDataDir = new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+            final File baseTestDataDir =
+                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
             testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
 
@@ -111,7 +117,10 @@ public abstract class KotlinIntegrationTestBase {
         final File actualFile = new File(testDataDir, baseName + ".actual");
         final File expectedFile = new File(testDataDir, baseName + ".expected");
 
-        final String normalizedContent = StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true);
+        final String normalizedContent =
+                StringUtil.replace(
+                        StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true),
+                        tempDir.getAbsolutePath(), "[Temp]", true);
 
         if (!expectedFile.isFile()) {
             Files.write(normalizedContent, actualFile, Charsets.UTF_8);
