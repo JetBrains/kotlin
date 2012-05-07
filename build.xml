@@ -340,6 +340,14 @@
 
         <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
             <fileset dir="${output}/classes/jdk-headers"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler JDK Headers"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
         </jar>
     </target>
 
@@ -370,6 +378,14 @@
             <fileset dir="${output}/classes/stdlib"/>
             <fileset dir="${basedir}/runtime" includes="src/**/*"/>
             <fileset dir="${basedir}/libraries/stdlib" includes="src/**/*"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler Runtime + StdLib"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
         </jar>
     </target>
 
