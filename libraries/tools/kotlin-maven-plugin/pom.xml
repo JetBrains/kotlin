@@ -66,7 +66,7 @@
                         <pomInclude>*/pom.xml</pomInclude>
                     </pomIncludes>
                     <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
-                    <settingsFile>src/it/settings.xml</settingsFile>
+                    <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <postBuildHookScript>verify.bsh</postBuildHookScript>
                 </configuration>
