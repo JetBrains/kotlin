@@ -1,8 +1,8 @@
 OUT Buildfile: build.xml
 OUT 
 OUT build:
-OUT   [kotlinc] Compiling [[TestData]\hello.kt] => [[Temp]\hello.jar]
-OUT   [kotlinc] LOGGING: For source: [TestData]\hello.kt
+OUT   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
+OUT   [kotlinc] LOGGING: For source: [TestData]/hello.kt
 OUT   [kotlinc] LOGGING: Emitting: Hello/namespace.class
 OUT 
 OUT BUILD SUCCESSFUL
