@@ -101,28 +101,30 @@ public abstract class KotlinIntegrationTestBase {
             assertEquals("Non-zero exit code", 0, exitCode);
         }
         else {
-            check(logName, executionLog);
+            check(logName, executionLog.toString());
         }
 
         return exitCode;
     }
 
-    protected void check(String baseName, StringBuilder content) throws IOException {
+    protected void check(String baseName, String content) throws IOException {
         final File actualFile = new File(testDataDir, baseName + ".actual");
         final File expectedFile = new File(testDataDir, baseName + ".expected");
 
+        final String normalizedContent = StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true);
+
         if (!expectedFile.isFile()) {
-            Files.write(content, actualFile, Charsets.UTF_8);
+            Files.write(normalizedContent, actualFile, Charsets.UTF_8);
             fail("No .expected file " + expectedFile);
         }
         else {
             final String goldContent = Files.toString(expectedFile, UTF_8);
             try {
-                assertEquals(goldContent, content.toString());
+                assertEquals(goldContent, normalizedContent);
                 actualFile.delete();
             }
             catch (ComparisonFailure e) {
-                Files.write(content, actualFile, Charsets.UTF_8);
+                Files.write(normalizedContent, actualFile, Charsets.UTF_8);
                 throw e;
             }
         }
