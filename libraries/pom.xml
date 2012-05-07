@@ -31,16 +31,16 @@
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-release</id>
-            <name>jetbrains-kotlin-release</name>
-            <url>http://repository.jetbrains.com/kotlin-release</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </repository>
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-snapshots</id>
-            <name>jetbrains-kotlin-snapshots</name>
-            <url>http://repository.jetbrains.com/kotlin-snapshots</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </snapshotRepository>
     </distributionManagement>
