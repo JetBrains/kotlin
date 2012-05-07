@@ -113,10 +113,20 @@ public abstract class KotlinIntegrationTestBase {
         return exitCode;
     }
 
+    private static String replacePath(String content, File path, String pathId) {
+        final String absolutePath = path.getAbsolutePath();
+
+        return content
+                .replace(absolutePath + "/", pathId + "/")
+                .replace(absolutePath + "\\", pathId + "/")
+                .replace(absolutePath, pathId);
+    }
+
     protected String normalizeOutput(String content) {
-        return StringUtil.replace(
-                StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true),
-                tempDir.getAbsolutePath(), "[Temp]", true);
+        content = replacePath(content, testDataDir, "[TestData]");
+        content = replacePath(content, tempDir, "[Temp]");
+        content = replacePath(content, getCompilerLib(), "[CompilerLib]");
+        return content;
     }
 
     protected void check(String baseName, String content) throws IOException {
