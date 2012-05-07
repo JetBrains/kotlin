@@ -34,14 +34,6 @@
     <echoprop prop="user.home"/>
     <echoprop prop="user.dir"/>
 
-    <target name="unzipDependencies">
-        <unzip dest="ideaSDK">
-            <fileset dir="ideaSDK" includes="ideaIC*.zip"/>
-        </unzip>
-
-        <delete dir="ideaSDK" includes="ideaIC*.zip"/>
-    </target>
-
     <target name="cleanupArtifacts">
         <delete dir="${artifact.output.path}" includes="*"/>
     </target>
@@ -100,7 +92,7 @@
       <delete file="${compiler.version.java.bk}" quiet="true"/>
   </target>
 
-    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts, unzipDependencies, dist, generateInjectors">
+    <target name="pre_build" depends="writeVersionToTemplateFiles, cleanupArtifacts, dist, generateInjectors">
     </target>
 
     <target name="zipArtifact">
