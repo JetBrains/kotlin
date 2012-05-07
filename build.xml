@@ -22,19 +22,21 @@
         <fileset dir="${basedir}/js/js.translator/lib" includes="*.jar"/>
     </path>
 
-    <path id="sourcepath">
-        <dirset dir="${basedir}/">
-            <include name="compiler/frontend/src"/>
-            <include name="compiler/frontend.java/src"/>
-            <include name="compiler/backend/src"/>
-            <include name="compiler/cli/src"/>
-            <include name="compiler/util/src"/>
-            <include name="compiler/jet.as.java.psi/src"/>
+    <dirset id="compilerSources.dirset" dir="${basedir}/">
+        <include name="compiler/frontend/src"/>
+        <include name="compiler/frontend.java/src"/>
+        <include name="compiler/backend/src"/>
+        <include name="compiler/cli/src"/>
+        <include name="compiler/util/src"/>
+        <include name="compiler/jet.as.java.psi/src"/>
 
-            <include name="runtime/src"/>
+        <include name="runtime/src"/>
 
-            <include name="js/js.translator/src"/>
-        </dirset>
+        <include name="js/js.translator/src"/>
+    </dirset>
+
+    <path id="compilerSources.path">
+        <dirset refid="compilerSources.dirset"/>
     </path>
 
     <macrodef name="cleandir">
@@ -75,7 +77,7 @@
         <cleandir dir="${output}/classes/injectorsGenerator"/>
         <javac destdir="${output}/classes/injectorsGenerator" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <src path="injector-generator/src"/>
-            <src refid="sourcepath"/>
+            <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac>
     </target>
@@ -87,6 +89,46 @@
         </java>
     </target>
 
+    <target name="compilerSources">
+        <jar jarfile="${output}/kotlin-compiler-sources.jar">
+            <!-- TODO How to convert it from pathset or dirset ? -->
+            <fileset dir="compiler/frontend/src"/>
+            <fileset dir="compiler/frontend.java/src"/>
+            <fileset dir="compiler/backend/src"/>
+            <fileset dir="compiler/cli/src"/>
+            <fileset dir="compiler/util/src"/>
+            <fileset dir="compiler/jet.as.java.psi/src"/>
+            <fileset dir="runtime/src"/>
+            <fileset dir="js/js.translator/src"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+
+        <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false" />
+        <javadoc destdir="${output}/kotlin-compiler-javadoc"
+                 sourcepathref="compilerSources.path"
+                 classpathref="classpath"
+                 linksource="yes"
+                 windowtitle="Kotlin Compiler" />
+        <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
+            <fileset dir="${output}/kotlin-compiler-javadoc"/>
+
+            <manifest>
+                <attribute name="Built-By" value="JetBrains"/>
+
+                <attribute name="Implementation-Vendor" value="JetBrains"/>
+                <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
+    </target>
+
     <target name="compiler">
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
@@ -94,12 +136,11 @@
 
         <cleandir dir="${output}/classes/compiler"/>
         <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
-            <src refid="sourcepath"/>
+            <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac>
 
         <!-- JarJar Kotlin compiler & dependencies -->
-        <delete file="${output}/kotlin-compiler-jarjar.jar" failonerror="false"/>
         <jarjar jarfile="${output}/kotlin-compiler-jarjar.jar">
             <fileset dir="${output}/classes/compiler"/>
             <fileset dir="${basedir}/compiler/frontend/src" includes="jet/**"/>
@@ -167,7 +208,6 @@
                 <unzip src="${output}/kotlin-compiler-jarjar.jar" dest="${output}/kotlin-compiler.exploded"/>
 
                 <!-- Clean JarJar result -->
-                <delete file="${output}/kotlin-compiler-before-proguard.jar" failonerror="false"/>
                 <jar jarfile="${output}/kotlin-compiler-before-proguard.jar"
                      manifest="${output}/kotlin-compiler.exploded/META-INF/MANIFEST.MF">
 
@@ -267,7 +307,6 @@
             </classpath>
         </javac>
 
-        <delete file="${kotlin-home}/lib/kotlin-ant.jar" failonerror="false"/>
         <jar destfile="${kotlin-home}/lib/kotlin-ant.jar">
             <fileset dir="${output}/classes/buildTools"/>
             <fileset dir="${basedir}/build-tools/ant/src" includes="**/*.xml"/>
@@ -299,7 +338,6 @@
             <arg value="jdkHeaders"/>
         </java>
 
-        <delete file="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar" failonerror="false"/>
         <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">
             <fileset dir="${output}/classes/jdk-headers"/>
         </jar>
@@ -327,7 +365,6 @@
             <arg value="${output}/classes/runtime"/>
         </java>
 
-        <delete file="${kotlin-home}/lib/kotlin-runtime.jar" failonerror="false"/>
         <jar destfile="${kotlin-home}/lib/kotlin-runtime.jar">
             <fileset dir="${output}/classes/runtime"/>
             <fileset dir="${output}/classes/stdlib"/>
@@ -359,7 +396,7 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,antTools,jdkHeaders,runtime,lang"/>
+            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkHeaders,runtime,lang"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">

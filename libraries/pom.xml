@@ -19,7 +19,8 @@
         <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project-root}/dist/kotlinc</kotlin-sdk>
+        <kotlin-dist>${project-root}/dist</kotlin-dist>
+        <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>

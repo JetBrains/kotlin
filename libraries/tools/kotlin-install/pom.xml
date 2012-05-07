@@ -39,6 +39,8 @@
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
                             <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
+                            <sources>${kotlin-dist}/kotlin-compiler-sources.jar</sources>
+                            <javadoc>${kotlin-dist}/kotlin-compiler-javadoc.jar</javadoc>
                             <createChecksum>true</createChecksum>
                             <generatePom>true</generatePom>
                         </configuration>
@@ -61,6 +63,8 @@
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
                             <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
+                            <sources>${kotlin-dist}/kotlin-compiler-sources.jar</sources>
+                            <javadoc>${kotlin-dist}/kotlin-compiler-javadoc.jar</javadoc>
                             <generatePom>true</generatePom>
                             <repositoryId>jetbrains-kotlin</repositoryId>
                             <url>http://repository.jetbrains.com/kotlin</url>
