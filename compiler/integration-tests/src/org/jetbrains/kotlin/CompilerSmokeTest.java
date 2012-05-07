@@ -35,4 +35,12 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar));
         runJava("hello.run", "-cp", jar, "Hello.namespace");
     }
+
+    @Test
+    public void compileAndRunModule() throws Exception {
+        final String jar = tempDir.getAbsolutePath() + File.separator + "smoke.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("Smoke.compile", "-module", "Smoke.kts", "-jar", jar));
+        runJava("Smoke.run", "-cp", jar + File.pathSeparator + getKotlinRuntimePath(), "Smoke.namespace", "1", "2", "3");
+    }
 }
