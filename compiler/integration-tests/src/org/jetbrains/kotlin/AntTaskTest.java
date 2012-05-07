@@ -31,6 +31,12 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
         runJava("hello.run", "-cp", jar, "Hello.namespace");
     }
 
+    @Override
+    protected String normalizeOutput(String content) {
+        return super.normalizeOutput(content)
+                .replaceAll("Total time: .+\n", "Total time: [time]\n");
+    }
+
     private int runAnt(String logName, String scriptName) throws Exception {
         return runJava(logName, "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                        "-Dkotlin.lib=" + getCompilerLib(),

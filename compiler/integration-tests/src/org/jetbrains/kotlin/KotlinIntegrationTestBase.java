@@ -113,14 +113,17 @@ public abstract class KotlinIntegrationTestBase {
         return exitCode;
     }
 
+    protected String normalizeOutput(String content) {
+        return StringUtil.replace(
+                StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true),
+                tempDir.getAbsolutePath(), "[Temp]", true);
+    }
+
     protected void check(String baseName, String content) throws IOException {
         final File actualFile = new File(testDataDir, baseName + ".actual");
         final File expectedFile = new File(testDataDir, baseName + ".expected");
 
-        final String normalizedContent =
-                StringUtil.replace(
-                        StringUtil.replace(content, testDataDir.getAbsolutePath(), "[TestData]", true),
-                        tempDir.getAbsolutePath(), "[Temp]", true);
+        final String normalizedContent = normalizeOutput(content);
 
         if (!expectedFile.isFile()) {
             Files.write(normalizedContent, actualFile, Charsets.UTF_8);
