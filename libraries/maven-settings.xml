@@ -14,7 +14,7 @@
 
     <servers>
         <server>
-            <id>jetbrains-kotlin-snapshots</id>
+            <id>jetbrains-kotlin</id>
             <username>tc-kotlin</username>
             <password>${tc-kotlin.password}</password>
         </server>
