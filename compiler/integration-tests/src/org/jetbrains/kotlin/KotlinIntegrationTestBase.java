@@ -46,12 +46,16 @@ import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
     protected File tempDir;
+    protected File testDataDir;
 
     @Rule
     public TestRule watchman = new TestWatcher() {
         @Override
         protected void starting(Description description) {
             tempDir = Files.createTempDir();
+
+            final File baseTestDataDir = new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+            testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
 
         @Override
@@ -86,7 +90,7 @@ public abstract class KotlinIntegrationTestBase {
 
     protected int runJava(String logName, String... arguments) throws Exception {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setWorkDirectory(getTestDataDirectory());
+        commandLine.setWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -104,27 +108,27 @@ public abstract class KotlinIntegrationTestBase {
     }
 
     protected void check(String baseName, StringBuilder content) throws IOException {
-        final File tmpFile = new File(getTestDataDirectory(), baseName + ".tmp");
-        final File expectedFile = new File(getTestDataDirectory(), baseName + ".expected");
+        final File actualFile = new File(testDataDir, baseName + ".actual");
+        final File expectedFile = new File(testDataDir, baseName + ".expected");
 
         if (!expectedFile.isFile()) {
-            Files.write(content, tmpFile, Charsets.UTF_8);
+            Files.write(content, actualFile, Charsets.UTF_8);
             fail("No .expected file " + expectedFile);
         }
         else {
             final String goldContent = Files.toString(expectedFile, UTF_8);
             try {
                 assertEquals(goldContent, content.toString());
-                tmpFile.delete();
+                actualFile.delete();
             }
             catch (ComparisonFailure e) {
-                Files.write(content, tmpFile, Charsets.UTF_8);
+                Files.write(content, actualFile, Charsets.UTF_8);
                 throw e;
             }
         }
     }
 
-    protected int runProcess(final GeneralCommandLine commandLine, final StringBuilder executionLog) throws ExecutionException {
+    protected static int runProcess(final GeneralCommandLine commandLine, final StringBuilder executionLog) throws ExecutionException {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
@@ -179,8 +183,10 @@ public abstract class KotlinIntegrationTestBase {
         return file;
     }
 
-    protected static File getTestDataDirectory() {
-        return new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+    protected static String getKotlinRuntimePath() {
+        final File file = new File(getCompilerLib(), "kotlin-runtime.jar");
+        assertTrue("no kotlin runtime at " + file, file.isFile());
+        return file.getAbsolutePath();
     }
 
     protected static File getKotlinProjectHome() {
