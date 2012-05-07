@@ -6,5 +6,5 @@ OUT   [kotlinc] LOGGING: For source: [TestData]\hello.kt
 OUT   [kotlinc] LOGGING: Emitting: Hello/namespace.class
 OUT 
 OUT BUILD SUCCESSFUL
-OUT Total time: 2 seconds
+OUT Total time: [time]
 Return code: 0

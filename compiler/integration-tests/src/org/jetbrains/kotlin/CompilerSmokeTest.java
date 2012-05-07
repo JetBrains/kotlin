@@ -48,6 +48,6 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void compilationFailed() throws Exception {
         final String jar = tempDir.getAbsolutePath() + File.separator + "smoke.jar";
 
-        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar));
+        runCompiler("hello.compile", "-src", "hello.kt", "-jar", jar);
     }
 }
