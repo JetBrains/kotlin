@@ -215,7 +215,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
             VirtualFile baseDir = myProject.getBaseDir();
             if (baseDir != null) {
-                myPathField.setText(baseDir.getPath() + File.separatorChar + "lib");
+                myPathField.setText(baseDir.getPath().replace('/', File.separatorChar) + File.separatorChar + "lib");
             }
 
             return myPathField;
