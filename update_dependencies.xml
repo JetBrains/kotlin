@@ -57,9 +57,8 @@
         </untar>
 
         <delete dir="dependencies/ant" failonerror="false"/>
-        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies/ant" compression="gzip">
-            <cutdirsmapper dirs="1"/>
-        </untar>
+        <untar src="dependencies/download/apache-ant-1.7.0-bin.tar.gz" dest="dependencies" compression="gzip" />
+        <rename src="dependencies/apache-ant-1.7.0" dest="dependencies/ant" />
     </target>
 
     <macrodef name="execute_update">
