@@ -18,6 +18,9 @@
       <component>
           <implementation-class>org.jetbrains.jet.plugin.caches.JetCacheManager</implementation-class>
       </component>
+      <component>
+          <implementation-class>org.jetbrains.jet.plugin.references.StandardLibraryReferenceResolver</implementation-class>
+      </component>
   </project-components>
 
   <actions>
