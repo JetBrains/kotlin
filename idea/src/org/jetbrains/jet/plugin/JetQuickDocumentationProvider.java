@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -47,16 +48,24 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         else {
             ref = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class);
         }
-        if (ref != null) {
-            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) ref.getContainingFile())
-                    .getBindingContext();
-            DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
-            if (declarationDescriptor != null) {
-                return render(declarationDescriptor, bindingContext, element, originalElement, mergeKotlinAndJava);
+        PsiElement declarationPsiElement = PsiTreeUtil.getParentOfType(originalElement, JetDeclaration.class);
+        if (ref != null || declarationPsiElement != null) {
+            BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
+                    (JetFile) originalElement.getContainingFile()).getBindingContext();
+
+            if (ref != null) {
+                DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, ref);
+                if (declarationDescriptor != null) {
+                    return render(declarationDescriptor, bindingContext, element, originalElement, mergeKotlinAndJava);
+                }
+                if (declarationPsiElement != null) {
+                    declarationPsiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, ref);
+                }
             }
-            PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, ref);
-            if (psiElement != null) {
-                declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement);
+
+            if (declarationPsiElement != null) {
+                DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR,
+                                                                                 declarationPsiElement);
                 if (declarationDescriptor != null) {
                     return render(declarationDescriptor, bindingContext, element, originalElement, mergeKotlinAndJava);
                 }
