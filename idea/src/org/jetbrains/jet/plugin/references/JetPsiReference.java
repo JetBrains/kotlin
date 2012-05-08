@@ -110,6 +110,13 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
         if (psiElement.size() > 1) {
             return null;
         }
+        if (psiElement.isEmpty()) {
+            PsiElement stdlibSymbol = myExpression.getProject().getComponent(StandardLibraryReferenceResolver.class)
+                    .resolveStandardLibrarySymbol(bindingContext, myExpression);
+            if (stdlibSymbol != null) {
+                return stdlibSymbol;
+            }
+        }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
 
