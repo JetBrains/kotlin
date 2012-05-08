@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.facade.exceptions.TranslationException;
 
 import java.io.File;
 import java.nio.charset.Charset;
