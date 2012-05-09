@@ -5,7 +5,7 @@ fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">global</info>() {
     <info textAttributesKey="KOTLIN_FUNCTION_CALL">inner</info>()
 }
 
-fun Int.<info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">ext</info>() {
+fun <info textAttributesKey="KOTLIN_CLASS">Int</info>.<info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">ext</info>() {
 }
 
 <info textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">open</info> class <info textAttributesKey="KOTLIN_CLASS">Container</info> {
