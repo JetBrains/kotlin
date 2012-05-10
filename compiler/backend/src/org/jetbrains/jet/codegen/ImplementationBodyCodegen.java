@@ -90,7 +90,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         int access = 0;
-        access |= ACC_PUBLIC;
+        access |= ACC_PUBLIC | ACC_FINAL;
         if (isAbstract) {
             access |= ACC_ABSTRACT;
         }
