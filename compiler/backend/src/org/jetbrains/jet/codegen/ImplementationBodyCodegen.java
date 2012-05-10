@@ -98,12 +98,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         int access = 0;
-        access |= ACC_PUBLIC | ACC_SUPER;
+        access |= ACC_PUBLIC;
         if (isAbstract) {
             access |= ACC_ABSTRACT;
         }
         if (isInterface) {
             access |= ACC_INTERFACE; // ACC_SUPER
+        }
+        else {
+            access |= ACC_SUPER;
         }
         if (isFinal) {
             access |= ACC_FINAL;
