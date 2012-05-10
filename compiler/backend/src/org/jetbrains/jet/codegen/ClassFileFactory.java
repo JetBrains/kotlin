@@ -64,7 +64,7 @@ public class ClassFileFactory {
         FqName fqName = JetPsiUtil.getFQName(file);
         NamespaceCodegen codegen = ns2codegen.get(fqName);
         if (codegen == null) {
-            final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName) + ".class");
+            final ClassBuilder builder = newVisitor(NamespaceCodegen.getJVMClassNameForKotlinNs(fqName).getInternalName() + ".class");
             codegen = new NamespaceCodegen(builder, fqName, state, file.getContainingFile());
             ns2codegen.put(fqName, codegen);
         }
