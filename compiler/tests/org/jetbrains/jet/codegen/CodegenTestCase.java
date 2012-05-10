@@ -16,9 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
@@ -26,19 +26,30 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author yole
  */
 public abstract class CodegenTestCase extends JetLiteFixture {
+
+    // for environment and classloader
+    private List<File> extraClasspath = Lists.newArrayList();
+
+    protected void addToClasspath(@NotNull File file) {
+        myEnvironment.addToClasspath(file);
+        extraClasspath.add(file);
+    }
 
     protected static void assertThrows(Method foo, Class<? extends Throwable> exceptionClass, Object instance, Object... args) throws IllegalAccessException {
         boolean caught = false;
@@ -108,7 +119,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
+            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).replace("/", ".");
             Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box");
             return (String) method.invoke(null);
@@ -118,7 +129,12 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected GeneratedClassLoader createClassLoader(ClassFileFactory codegens) throws MalformedURLException {
-        return new GeneratedClassLoader(codegens);
+        List<URL> urls = Lists.newArrayList();
+        for (File file : extraClasspath) {
+            urls.add(file.toURI().toURL());
+        }
+        ClassLoader parentClassLoader = new URLClassLoader(urls.toArray(new URL[0]), CodegenTestCase.class.getClassLoader());
+        return new GeneratedClassLoader(codegens, parentClassLoader);
     }
 
     protected String generateToText() {
@@ -147,7 +163,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
-        String fqName = NamespaceCodegen.getJVMClassName(JetPsiUtil.getFQName(myFile), true).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).replace("/", ".");
         try {
             return createClassLoader(state).loadClass(fqName);
         } catch (ClassNotFoundException e) {

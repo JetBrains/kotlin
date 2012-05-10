@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -184,28 +185,64 @@ public class JetTypeMapper {
         }
     }
 
-    private String jvmClassNameForNamespace(NamespaceDescriptor namespace) {
-        FqName fqName = DescriptorUtils.getFQName(namespace).toSafe();
-        JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, namespace);
-        Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, namespace);
+    @NotNull
+    private JavaNamespaceKind getNsKind(@NotNull NamespaceDescriptor ns) {
+        JavaNamespaceKind javaNamespaceKind = bindingContext.get(JavaBindingContext.JAVA_NAMESPACE_KIND, ns);
+        Boolean src = bindingContext.get(BindingContext.NAMESPACE_IS_SRC, ns);
 
         if (javaNamespaceKind == null && src == null) {
-            throw new IllegalStateException("unknown namespace origin: " + fqName);
+            throw new IllegalStateException("unknown namespace origin: " + ns);
         }
 
-        boolean classStatics;
         if (javaNamespaceKind != null) {
             if (javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS && src != null) {
                 throw new IllegalStateException(
-                        "conflicting namespace " + fqName + ": it is both java statics and from src");
+                        "conflicting namespace " + ns + ": it is both java statics and from src");
             }
-            classStatics = javaNamespaceKind == JavaNamespaceKind.CLASS_STATICS;
+            return javaNamespaceKind;
         }
         else {
-            classStatics = false;
+            return JavaNamespaceKind.PROPER;
+        }
+    }
+
+    @NotNull
+    private String jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace) {
+
+        StringBuilder r = new StringBuilder();
+
+        List<DeclarationDescriptor> path = DescriptorUtils.getPathWithoutRootNsAndModule(namespace);
+
+        for (DeclarationDescriptor pathElement : path) {
+            NamespaceDescriptor ns = (NamespaceDescriptor) pathElement;
+            if (r.length() > 0) {
+                JavaNamespaceKind nsKind = getNsKind((NamespaceDescriptor) ns.getContainingDeclaration());
+                if (nsKind == JavaNamespaceKind.PROPER) {
+                    r.append("/");
+                }
+                else if (nsKind == JavaNamespaceKind.CLASS_STATICS) {
+                    r.append("$");
+                }
+            }
+            if (ns.getName().length() == 0) {
+                throw new IllegalStateException(
+                        "name must not be empty at this point when generating for " + namespace);
+            }
+            r.append(ns.getName());
         }
 
-        return NamespaceCodegen.getJVMClassName(fqName, !classStatics);
+        if (getNsKind(namespace) == JavaNamespaceKind.PROPER) {
+            if (r.length() > 0) {
+                r.append("/");
+            }
+            r.append("namespace");
+        }
+
+        if (r.length() == 0) {
+            throw new IllegalStateException("internal error: failed to generate classname for " + namespace);
+        }
+
+        return r.toString();
     }
 
     @NotNull public Type mapReturnType(@NotNull final JetType jetType) {

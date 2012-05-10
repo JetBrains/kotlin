@@ -314,6 +314,19 @@ public class DescriptorUtils {
         return namespaceDescriptor.getContainingDeclaration() instanceof ModuleDescriptor;
     }
 
+    @NotNull
+    public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull DeclarationDescriptor descriptor) {
+        List<DeclarationDescriptor> path = Lists.newArrayList();
+        DeclarationDescriptor current = descriptor;
+        for (;;) {
+            if (current instanceof NamespaceDescriptor && isRootNamespace((NamespaceDescriptor) current)) {
+                return Lists.reverse(path);
+            }
+            path.add(current);
+            current = current.getContainingDeclaration();
+        }
+    }
+
     public static boolean isClassObject(@NotNull DeclarationDescriptor descriptor) {
         if(descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;

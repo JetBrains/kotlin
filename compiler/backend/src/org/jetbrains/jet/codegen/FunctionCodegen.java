@@ -333,7 +333,7 @@ public class FunctionCodegen {
 
             String ownerInternalName;
             if (contextClass instanceof NamespaceDescriptor) {
-                ownerInternalName = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(contextClass).toSafe(), true);
+                ownerInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(DescriptorUtils.getFQName(contextClass).toSafe());
             }
             else {
                 ownerInternalName = state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), MapTypeMode.IMPL).getInternalName();
