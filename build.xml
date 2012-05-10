@@ -91,7 +91,7 @@
         </java>
     </target>
 
-    <target name="compilerSources" unless="generate.javadoc">
+    <target name="compilerSources" if="generate.javadoc">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
             <fileset dir="compiler/frontend/src"/>
