@@ -26,14 +26,8 @@ import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.junit.Assert;
 
-import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * @author Stepan Koltsov
@@ -47,7 +41,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
     }
 
     private void compileFileResolveDescriptor(@NotNull String fileRelativePath, @NotNull FqName fqName) throws IOException {
-        compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
+        JetTestUtils.compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
 
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
         jetCoreEnvironment.addToClasspath(tmpdir);
@@ -57,21 +51,5 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         Assert.assertNotNull(classDescriptor);
-    }
-
-    private static void compileJavaFile(@NotNull File file, @NotNull File outputDirectory) throws IOException {
-        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
-        try {
-            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
-            List<String> options = Arrays.asList(
-                    "-d", outputDirectory.getPath()
-            );
-            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
-
-            Assert.assertTrue(task.call());
-        } finally {
-            fileManager.close();
-        }
     }
 }
