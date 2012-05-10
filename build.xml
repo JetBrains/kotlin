@@ -2,6 +2,8 @@
 
     <!-- Set to false to disable proguard run on kotlin-compiler.jar. Speeds up the build -->
     <property name="shrink" value="true"/>
+    <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
+    <property name="generate.javadoc" value="true"/>
 
     <property name="output" value="${basedir}/dist"/>
     <property name="kotlin-home" value="${output}/kotlinc"/>
@@ -89,7 +91,7 @@
         </java>
     </target>
 
-    <target name="compilerSources">
+    <target name="compilerSources" unless="generate.javadoc">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
             <fileset dir="compiler/frontend/src"/>
@@ -115,7 +117,7 @@
                  sourcepathref="compilerSources.path"
                  classpathref="classpath"
                  linksource="yes"
-                 windowtitle="Kotlin Compiler" />
+                 windowtitle="Kotlin Compiler"/>
         <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
             <fileset dir="${output}/kotlin-compiler-javadoc"/>
 
