@@ -71,7 +71,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
     public static <D extends CallableDescriptor> Status mapValueArgumentsToParameters(
             @NotNull Call call,
             @NotNull TracingStrategy tracing,
-            @NotNull ResolvedCallImpl<D> candidateCall
+            @NotNull ResolvedCallImpl<D> candidateCall,
+            @NotNull Set<ValueArgument> unmappedArguments
     ) {
         TemporaryBindingTrace temporaryTrace = candidateCall.getTrace();
         Map<ValueParameterDescriptor, VarargValueArgument> varargs = Maps.newHashMap();
@@ -99,14 +100,19 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedName());
                 if (valueParameterDescriptor == null) {
                     temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
+                    unmappedArguments.add(valueArgument);
                     status = ERROR;
                 }
                 else {
+                    temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
                     if (!usedParameters.add(valueParameterDescriptor)) {
                         temporaryTrace.report(ARGUMENT_PASSED_TWICE.on(nameReference));
+                        unmappedArguments.add(valueArgument);
+                        status = WEAK_ERROR;
                     }
-                    temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
-                    status = status.compose(put(candidateCall, valueParameterDescriptor, valueArgument, varargs));
+                    else {
+                        status = status.compose(put(candidateCall, valueParameterDescriptor, valueArgument, varargs));
+                    }
                 }
                 if (somePositioned) {
                     temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameReference));
@@ -134,12 +140,14 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                         }
                         else {
                             temporaryTrace.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
-                            status = ERROR;
+                            unmappedArguments.add(valueArgument);
+                            status = WEAK_ERROR;
                         }
                     }
                     else {
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
-                        status = ERROR;
+                        unmappedArguments.add(valueArgument);
+                        status = WEAK_ERROR;
                     }
                 }
             }

@@ -1,0 +1,8 @@
+package a
+
+fun foo(<!UNUSED_PARAMETER!>i<!>: Int, <!UNUSED_PARAMETER!>s<!>: String) {
+}
+
+fun test() {
+    foo(<!TYPE_MISMATCH!>""<!>, <!ERROR_COMPILE_TIME_VALUE!>1<!>, <!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
+}

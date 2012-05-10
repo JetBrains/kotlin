@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -407,15 +406,17 @@ public class CallResolver {
             return;
         }
 
+        Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
         ValueArgumentsToParametersMapper.Status
                 argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
-                                                                                                        candidateCall);
+                                                                                                        candidateCall, unmappedArguments);
         if (!argumentMappingStatus.isSuccess()) {
             candidateCall.addStatus(OTHER_ERROR);
             if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR) {
                 checkTypesWithNoCallee(context.toBasic());
                 return;
             }
+            checkUnknownArgumentTypes(context.toBasic(), unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
@@ -607,6 +608,15 @@ public class CallResolver {
             }
             else {
                 typeResolver.resolveType(context.scope, typeReference, context.trace, true);
+            }
+        }
+    }
+
+    private void checkUnknownArgumentTypes(BasicResolutionContext context, Set<ValueArgument> unknownArguments) {
+        for (ValueArgument valueArgument : unknownArguments) {
+            JetExpression argumentExpression = valueArgument.getArgumentExpression();
+            if (argumentExpression != null) {
+                expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.trace);
             }
         }
     }
