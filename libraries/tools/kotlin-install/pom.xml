@@ -19,16 +19,16 @@
     <artifactId>kotlin-install</artifactId>
     <packaging>pom</packaging>
 
-    <description>Installs the Kotlin runtime dependencies into the local maven repo</description>
+    <description>Installs and deploys the Kotlin compiler</description>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
                 <executions>
                     <execution>
-                        <id>org.jetbrains.kotlin:kotlin-compiler</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>install-file</goal>
@@ -39,104 +39,36 @@
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
                             <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
+                            <sources>${kotlin-dist}/kotlin-compiler-sources.jar</sources>
+                            <javadoc>${kotlin-dist}/kotlin-compiler-javadoc.jar</javadoc>
                             <createChecksum>true</createChecksum>
                             <generatePom>true</generatePom>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
                     <execution>
-                        <id>org.jetbrains.kotlin:kotlin-build-tools</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
-                            <goal>install-file</goal>
+                            <goal>deploy-file</goal>
                         </goals>
                         <configuration>
                             <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>kotlin-build-tools</artifactId>
+                            <artifactId>kotlin-compiler</artifactId>
                             <version>${project.version}</version>
                             <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/kotlin-build-tools.jar</file>
-                            <createChecksum>true</createChecksum>
+                            <file>${kotlin-sdk}/lib/kotlin-compiler.jar</file>
+                            <sources>${kotlin-dist}/kotlin-compiler-sources.jar</sources>
+                            <javadoc>${kotlin-dist}/kotlin-compiler-javadoc.jar</javadoc>
                             <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>org.jetbrains.kotlin:intellij-core</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>intellij-core</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/intellij-core.jar</file>
-                            <createChecksum>true</createChecksum>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>org.jetbrains.kotlin:intellij-annotations</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>intellij-annotations</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/annotations.jar</file>
-                            <createChecksum>true</createChecksum>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>org.jetbrains.kotlin:trove4j</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>trove4j</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/trove4j.jar</file>
-                            <createChecksum>true</createChecksum>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>org.jetbrains.kotlin:picocontainer</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>picocontainer</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/picocontainer.jar</file>
-                            <createChecksum>true</createChecksum>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>org.jetbrains.kotlin:dartc</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.jetbrains.kotlin</groupId>
-                            <artifactId>dartc</artifactId>
-                            <version>${project.version}</version>
-                            <packaging>jar</packaging>
-                            <file>${kotlin-sdk}/lib/js/${dart.name}.jar</file>
-                            <createChecksum>true</createChecksum>
-                            <generatePom>true</generatePom>
+                            <repositoryId>jetbrains-kotlin</repositoryId>
+                            <url>http://repository.jetbrains.com/kotlin</url>
+                            <uniqueVersion>false</uniqueVersion>
                         </configuration>
                     </execution>
                 </executions>

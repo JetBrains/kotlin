@@ -23,7 +23,6 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
-import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.IconLoader;
@@ -35,12 +34,12 @@ import com.intellij.util.PsiNavigateUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.plugin.codeInsight.JetFunctionPsiElementCellRenderer;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -128,19 +127,9 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                             PsiNavigateUtil.navigate(list.iterator().next());
                         }
                         else {
-                            final JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list), new DefaultPsiElementCellRenderer() {
-                                        @Override
-                                        public String getElementText(PsiElement element) {
-                                            if (element instanceof JetNamedFunction) {
-                                                JetNamedFunction function = (JetNamedFunction) element;
-                                                SimpleFunctionDescriptor fd =
-                                                        bindingContext.get(BindingContext.FUNCTION, function);
-                                                assert fd != null;
-                                                return DescriptorRenderer.HTML.render(fd);
-                                            }
-                                            return super.getElementText(element);
-                                        }
-                                    }, DescriptorRenderer.HTML.render(descriptor));
+                            JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
+                                                                                    new JetFunctionPsiElementCellRenderer(bindingContext),
+                                                                                    DescriptorRenderer.TEXT.render(descriptor));
                             if (event != null) {
                                 popup.show(new RelativePoint(event));
                             }

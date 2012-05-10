@@ -35,14 +35,15 @@ import org.jetbrains.kotlin.doc.templates.KDocTemplate
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 import org.jetbrains.jet.lang.descriptors.Visibility
 import org.jetbrains.jet.lang.descriptors.ClassKind
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFile
+import org.jetbrains.jet.internal.com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils.LineAndColumn
-import com.intellij.psi.PsiFileSystemItem
+import org.jetbrains.jet.internal.com.intellij.psi.PsiFileSystemItem
 import java.io.File
+import org.jetbrains.jet.internal.com.intellij.psi.PsiElement
 
 
 /**

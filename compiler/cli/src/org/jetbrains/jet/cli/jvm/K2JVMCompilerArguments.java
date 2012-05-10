@@ -153,6 +153,11 @@ public class K2JVMCompilerArguments extends CompilerArguments {
         return version;
     }
 
+    @Override
+    public boolean isVerbose() {
+        return verbose;
+    }
+
     public void setTags(boolean tags) {
         this.tags = tags;
     }

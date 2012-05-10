@@ -24,15 +24,20 @@ public enum CompilerSpecialMode {
     BUILTINS,
     JDK_HEADERS,
     STDLIB,
-    JS
+    IDEA,
+    JS,
     ;
 
     public boolean includeJdkHeaders() {
-        return this == REGULAR || this == STDLIB;
+        return this == REGULAR || this == STDLIB || this == IDEA;
     }
 
     public boolean includeKotlinRuntime() {
         return this == REGULAR;
+    }
+
+    public boolean includeJdk() {
+        return this != IDEA;
     }
 
     public boolean isStubs() {

@@ -131,25 +131,6 @@ public class CompileEnvironmentUtil {
         return null;
     }
 
-    public static void ensureRuntime(JetCoreEnvironment environment, CompilerDependencies compilerDependencies) {
-        if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.REGULAR) {
-            ensureJdkRuntime(environment);
-            ensureKotlinRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.JDK_HEADERS) {
-            ensureJdkRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.STDLIB) {
-            ensureJdkRuntime(environment);
-        }
-        else if (compilerDependencies.getCompilerSpecialMode() == CompilerSpecialMode.BUILTINS) {
-            // nop
-        }
-        else {
-            throw new IllegalStateException("unknown mode: " + compilerDependencies.getCompilerSpecialMode());
-        }
-    }
-
     public static List<Module> loadModuleScript(String moduleScriptFile, MessageCollector messageCollector) {
         Disposable disposable = new Disposable() {
             @Override
@@ -159,7 +140,6 @@ public class CompileEnvironmentUtil {
         };
         CompilerDependencies dependencies = CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR);
         JetCoreEnvironment scriptEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(disposable, dependencies);
-        ensureRuntime(scriptEnvironment, dependencies);
         scriptEnvironment.addSources(moduleScriptFile);
 
         GenerationState generationState = KotlinToJVMBytecodeCompiler

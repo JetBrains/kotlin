@@ -126,7 +126,7 @@ public class TypeResolver {
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
                         if (ErrorUtils.isError(typeConstructor)) {
-                            result[0] = ErrorUtils.createErrorType("??");
+                            result[0] = ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]");
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {

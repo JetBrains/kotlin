@@ -912,7 +912,7 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    public void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
+    public static void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
         if (ErrorUtils.isErrorType(type)) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();
@@ -922,32 +922,32 @@ public class DescriptorResolver {
         List<TypeProjection> arguments = type.getArguments();
         assert parameters.size() == arguments.size();
 
-        List<JetTypeReference> typeReferences = typeElement.getTypeArgumentsAsTypes();
-        assert typeReferences.size() == arguments.size() : typeElement.getText();
+        List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
+        assert jetTypeArguments.size() == arguments.size() : typeElement.getText();
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (int i = 0, projectionsSize = typeReferences.size(); i < projectionsSize; i++) {
-            JetTypeReference argumentTypeReference = typeReferences.get(i);
+        for (int i = 0; i < jetTypeArguments.size(); i++) {
+            JetTypeReference jetTypeArgument = jetTypeArguments.get(i);
 
-            if (argumentTypeReference == null) continue;
+            if (jetTypeArgument == null) continue;
 
             JetType typeArgument = arguments.get(i).getType();
-            checkBounds(argumentTypeReference, typeArgument, trace);
+            checkBounds(jetTypeArgument, typeArgument, trace);
 
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            checkBounds(jetTypeArgument, typeArgument, typeParameterDescriptor, substitutor, trace);
         }
     }
 
-    public void checkBounds(
-            @NotNull JetTypeReference argumentTypeReference,
+    public static void checkBounds(
+            @NotNull JetTypeReference jetTypeArgument,
             @NotNull JetType typeArgument,
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
             @NotNull TypeSubstitutor substitutor, BindingTrace trace) {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound, typeArgument));
+                trace.report(UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument));
             }
         }
     }

@@ -49,7 +49,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
         }
         final TypeProjection projection = new TypeProjection(type);
 
-        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        return TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 if (constructors.contains(key)) {
@@ -484,7 +484,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
     }
 
     public class Solution implements ConstraintSystemSolution {
-        private final TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+        private final TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(new TypeSubstitution() {
             @Override
             public TypeProjection get(TypeConstructor key) {
                 DeclarationDescriptor declarationDescriptor = key.getDeclarationDescriptor();

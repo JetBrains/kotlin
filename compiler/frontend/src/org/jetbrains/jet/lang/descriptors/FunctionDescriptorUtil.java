@@ -33,7 +33,7 @@ import java.util.*;
  * @author abreslav
  */
 public class FunctionDescriptorUtil {
-    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
 
         @Override
         public TypeProjection get(TypeConstructor key) {

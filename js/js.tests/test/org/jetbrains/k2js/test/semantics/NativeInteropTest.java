@@ -43,19 +43,19 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testSimple() throws Exception {
-        checkFooBoxIsTrue("simple.kt");
+        fooBoxTest();
     }
 
     public void testClass() throws Exception {
-        checkFooBoxIsTrue("class.kt");
+        fooBoxTest();
     }
 
     public void testVararg() throws Exception {
-        checkFooBoxIsTrue("vararg.kt");
+        fooBoxTest();
     }
 
     public void testUndefined() throws Exception {
-        checkFooBoxIsTrue("undefined.kt");
+        fooBoxTest();
     }
 
     public void testKt1519() throws Exception {

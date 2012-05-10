@@ -28,10 +28,10 @@ public class RTTITest extends SingleFileTranslationTest {
     }
 
     public void testIsSameClass() throws Exception {
-        checkFooBoxIsTrue("isSameClass.kt");
+        fooBoxTest();
     }
 
     public void testNotIsOtherClass() throws Exception {
-        checkFooBoxIsTrue("notIsOtherClass.kt");
+        fooBoxTest();
     }
 }

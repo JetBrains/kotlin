@@ -491,6 +491,11 @@ public class JetTypeMapper {
             return null;
 
         final DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
+
+        while(functionDescriptor.getKind()==CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            functionDescriptor = functionDescriptor.getOverriddenDescriptors().iterator().next();
+        }
+
         JvmMethodSignature descriptor = mapSignature(functionDescriptor.getOriginal(), true, kind);
         String owner;
         String ownerForDefaultImpl;

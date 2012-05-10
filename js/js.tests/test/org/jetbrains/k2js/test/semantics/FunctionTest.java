@@ -28,27 +28,27 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testFunctionUsedBeforeDeclaration() throws Exception {
-        checkFooBoxIsTrue("functionUsedBeforeDeclaration.kt");
+        fooBoxTest();
     }
 
     public void testFunctionWithTwoParametersCall() throws Exception {
-        checkFooBoxIsTrue("functionWithTwoParametersCall.kt");
+        fooBoxTest();
     }
 
     public void testFunctionLiteral() throws Exception {
-        checkFooBoxIsTrue("functionLiteral.kt");
+        fooBoxTest();
     }
 
     public void testAdderClosure() throws Exception {
-        checkFooBoxIsTrue("adderClosure.kt");
+        fooBoxTest();
     }
 
     public void testLoopClosure() throws Exception {
-        checkFooBoxIsTrue("loopClosure.kt");
+        fooBoxTest();
     }
 
     public void testFunctionLiteralAsParameter() throws Exception {
-        checkFooBoxIsTrue("functionLiteralAsParameter.kt");
+        fooBoxTest();
     }
 
     public void testClosureWithParameter() throws Exception {
@@ -65,44 +65,48 @@ public class FunctionTest extends AbstractExpressionTest {
 
 
     public void testImplicitItParameter() throws Exception {
-        checkFooBoxIsTrue("implicitItParameter.kt");
+        fooBoxTest();
     }
 
 
     public void testDefaultParameters() throws Exception {
-        checkFooBoxIsTrue("defaultParameters.kt");
+        fooBoxTest();
     }
 
 
     public void testFunctionLiteralAsLastParameter() throws Exception {
-        checkFooBoxIsTrue("functionLiteralAsLastParameter.kt");
+        fooBoxTest();
     }
 
 
     public void testNamedArguments() throws Exception {
-        checkFooBoxIsTrue("namedArguments.kt");
+        fooBoxTest();
     }
 
 
     public void testExpressionAsFunction() throws Exception {
-        checkFooBoxIsTrue("expressionAsFunction.kt");
+        fooBoxTest();
     }
 
 
     public void testVararg() throws Exception {
-        checkFooBoxIsTrue("vararg.kt");
+        fooBoxTest();
     }
 
-    //TODO: disabled. Probable cause : vars in closures.
-//
-//    public void testKT921() throws Exception {
-//
-//        checkOutput("KT-921.kt", "1,\n" +
-//                                 "1, 2,\n" +
-//                                 "2, ");
-//    }
+    public void testKT921() throws Exception {
+
+        checkOutput("KT-921.kt", "1, end\n" +
+                                 "1, 2, end\n" +
+                                 "1, 2, 3, end\n" +
+                                 "2, 3, end\n" +
+                                 "!\n" +
+                                 "3, end\n" +
+                                 "!\n" +
+                                 "end\n" +
+                                 "!");
+    }
 
     public void testFunctionInsideFunction() throws Exception {
-        checkFooBoxIsTrue("functionInsideFunction.kt");
+        fooBoxTest();
     }
 }

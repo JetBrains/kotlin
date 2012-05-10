@@ -19,7 +19,8 @@
         <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <kotlin-sdk>${project-root}/dist/kotlinc</kotlin-sdk>
+        <kotlin-dist>${project-root}/dist</kotlin-dist>
+        <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
@@ -31,16 +32,16 @@
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-release</id>
-            <name>jetbrains-kotlin-release</name>
-            <url>http://repository.jetbrains.com/kotlin-release</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </repository>
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
-            <id>jetbrains-kotlin-snapshots</id>
-            <name>jetbrains-kotlin-snapshots</name>
-            <url>http://repository.jetbrains.com/kotlin-snapshots</url>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
             <layout>default</layout>
         </snapshotRepository>
     </distributionManagement>

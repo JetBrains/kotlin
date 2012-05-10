@@ -91,12 +91,18 @@ public class ResolveDescriptorsFromExternalLibraries {
 
         hasErrors |= testLibrary("com.google.guava", "guava", "12.0-rc2");
         hasErrors |= testLibrary("org.springframework", "spring-core", "3.1.1.RELEASE");
+        hasErrors |= testLibrary("com.vaadin", "vaadin", "6.6.8");
+        hasErrors |= testLibraryFromUrl("http://mcvaadin.googlecode.com/files/mcvaadin.jar");
         return hasErrors;
+    }
+
+    private boolean testLibraryFromUrl(@NotNull String urlJar) throws Exception {
+        return testLibraryFile(getLibraryFromUrl(urlJar), urlJar);
     }
 
     private boolean testLibrary(@NotNull String org, @NotNull String module, @NotNull String rev) throws Exception {
         LibFromMaven lib = new LibFromMaven(org, module, rev);
-        File jar = getLibrary(lib);
+        File jar = getLibraryFromMaven(lib);
 
         return testLibraryFile(jar, lib.toString());
     }
@@ -185,22 +191,40 @@ public class ResolveDescriptorsFromExternalLibraries {
     }
 
     @NotNull
-    private File getLibrary(@NotNull LibFromMaven lib) throws Exception {
-        File userHome = new File(System.getProperty("user.home"));
-        String fileName = lib.getModule() + "-" + lib.getRev() + ".jar";
+    private File getLibraryFromUrl(@NotNull String url) throws Exception {
 
-        File dir = new File(userHome, ".kotlin-project/resolve-libraries/" + lib.getOrg() + "/" + lib.getModule());
+        String fileName = url
+                .replaceAll("^http://", "")
+                .replaceAll("/", "_")
+                ;
+        File dir = new File(userHome(), ".kotlin-project/resolve-libraries");
 
         File file = new File(dir, fileName);
+
+        return getFileFromUrl(url, file, url);
+    }
+
+    @NotNull
+    private File getLibraryFromMaven(@NotNull LibFromMaven lib) throws Exception {
+        String fileName = lib.getModule() + "-" + lib.getRev() + ".jar";
+
+        File dir = new File(userHome(), ".kotlin-project/resolve-libraries/" + lib.getOrg() + "/" + lib.getModule());
+
+        File file = new File(dir, fileName);
+        String uri = url(lib);
+
+        return getFileFromUrl(lib.toString(), file, uri);
+    }
+
+    private File getFileFromUrl(@NotNull String lib, @NotNull File file, @NotNull String uri) throws IOException {
         if (file.exists()) {
             return file;
         }
 
-        JetTestUtils.mkdirs(dir);
+        JetTestUtils.mkdirs(file.getParentFile());
 
-        File tmp = new File(dir, fileName + "~");
+        File tmp = new File(file.getPath() + "~");
 
-        String uri = url(lib);
         GetMethod method = new GetMethod(uri);
 
         FileOutputStream os = null;
@@ -251,6 +275,8 @@ public class ResolveDescriptorsFromExternalLibraries {
             tmp.delete();
         }
     }
+
+    private static File userHome() {return new File(System.getProperty("user.home"));}
 
     private static String url(LibFromMaven lib) {
         return "http://repo1.maven.org/maven2/" + lib.getOrg().replace(".", "/") + "/" + lib.getModule() + "/" + lib.getRev()

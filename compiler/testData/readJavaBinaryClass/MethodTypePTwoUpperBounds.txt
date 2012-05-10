@@ -1,0 +1,10 @@
+namespace test
+
+abstract trait test.Foo : java.lang.Object {
+}
+abstract trait test.Bar : java.lang.Object {
+}
+open class test.MethodTypePTwoUpperBounds : java.lang.Object {
+    final /*constructor*/ fun <init>(): test.MethodTypePTwoUpperBounds
+    open fun </*0*/ T : test.Bar? & test.Foo?>foo(): jet.Tuple0
+}

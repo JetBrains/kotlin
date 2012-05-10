@@ -26,10 +26,10 @@ public final class ForeachTest extends AbstractExpressionTest {
     }
 
     public void testForIteratesOverArray() throws Exception {
-        checkFooBoxIsTrue("forIteratesOverArray.kt");
+        fooBoxTest();
     }
 
     public void testForOnEmptyArray() throws Exception {
-        checkFooBoxIsTrue("forOnEmptyArray.kt");
+        fooBoxTest();
     }
 }

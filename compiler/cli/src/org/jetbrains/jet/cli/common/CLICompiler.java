@@ -16,12 +16,13 @@
 
 package org.jetbrains.jet.cli.common;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
-import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
-import org.jetbrains.jet.cli.common.messages.MessageRenderer;
+import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentUtil;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -107,20 +108,25 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
         final MessageRenderer messageRenderer = getMessageRenderer(arguments);
         errStream.print(messageRenderer.renderPreamble());
         printVersionIfNeeded(errStream, arguments, messageRenderer);
+        PrintingMessageCollector messageCollector = new PrintingMessageCollector(errStream, messageRenderer, arguments.isVerbose());
+        Disposable rootDisposable = CompileEnvironmentUtil.createMockDisposable();
         try {
-            return doExecute(errStream, arguments, messageRenderer);
+            return doExecute(arguments, messageCollector, rootDisposable);
         }
         finally {
+            messageCollector.printToErrStream();
             errStream.print(messageRenderer.renderConclusion());
+            Disposer.dispose(rootDisposable);
         }
     }
 
     //TODO: can't declare parameters as not null due to KT-1863
     @NotNull
-    protected abstract ExitCode doExecute(PrintStream stream, A arguments, MessageRenderer renderer);
+    protected abstract ExitCode doExecute(A arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable);
 
+    //TODO: can we make it private?
     @NotNull
-    private MessageRenderer getMessageRenderer(@NotNull A arguments) {
+    protected MessageRenderer getMessageRenderer(@NotNull A arguments) {
         return arguments.isTags() ? MessageRenderer.TAGS : MessageRenderer.PLAIN;
     }
 

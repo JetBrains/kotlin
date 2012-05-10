@@ -51,20 +51,20 @@ public abstract class AbstractCallExpressionTranslator extends AbstractTranslato
     protected final CallType callType;
 
     protected AbstractCallExpressionTranslator(@NotNull JetCallExpression expression,
-                                               @Nullable JsExpression receiver,
-                                               @NotNull CallType type, @NotNull TranslationContext context) {
+            @Nullable JsExpression receiver,
+            @NotNull CallType type, @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
         this.resolvedCall = getResolvedCallForCallExpression(bindingContext(), expression);
         this.receiver = receiver;
-        callType = type;
+        this.callType = type;
     }
 
     abstract public boolean shouldWrapVarargInArray();
 
     @NotNull
     protected List<JsExpression> translateSingleArgument(@NotNull ResolvedValueArgument actualArgument,
-                                                         @NotNull ValueParameterDescriptor parameterDescriptor) {
+            @NotNull ValueParameterDescriptor parameterDescriptor) {
         List<ValueArgument> valueArguments = actualArgument.getArguments();
         if (actualArgument instanceof VarargValueArgument) {
             return translateVarargArgument(valueArguments);

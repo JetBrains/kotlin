@@ -28,35 +28,35 @@ public final class ExtensionFunctionTest extends SingleFileTranslationTest {
     }
 
     public void testIntExtension() throws Exception {
-        checkFooBoxIsTrue("intExtension.kt");
+        fooBoxTest();
     }
 
     public void testExtensionWithImplicitReceiver() throws Exception {
-        checkFooBoxIsTrue("extensionWithImplicitReceiver.kt");
+        fooBoxTest();
     }
 
     public void testExtensionFunctionOnExpression() throws Exception {
-        checkFooBoxIsTrue("extensionFunctionOnExpression.kt");
+        fooBoxTest();
     }
 
     public void testExtensionUsedInsideClass() throws Exception {
-        checkFooBoxIsTrue("extensionUsedInsideClass.kt");
+        fooBoxTest();
     }
 
     public void testVirtualExtension() throws Exception {
-        checkFooBoxIsTrue("virtualExtension.kt");
+        fooBoxTest();
     }
 
     public void testVirtualExtensionOverride() throws Exception {
-        checkFooBoxIsTrue("virtualExtensionOverride.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralPassedToFunction() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralPassedToFunction.kt");
+        fooBoxTest();
     }
 
     public void testExtensionInsideFunctionLiteral() throws Exception {
-        checkFooBoxIsTrue("extensionInsideFunctionLiteral.kt");
+        fooBoxTest();
     }
 
     public void testGenericExtension() throws Exception {
@@ -64,6 +64,6 @@ public final class ExtensionFunctionTest extends SingleFileTranslationTest {
     }
 
     public void testExtensionFunctionCalledFromExtensionFunction() throws Exception {
-        checkFooBoxIsTrue("extensionFunctionCalledFromExtensionFunction.kt");
+        fooBoxTest();
     }
 }

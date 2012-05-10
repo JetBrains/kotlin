@@ -29,12 +29,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
+import org.junit.ComparisonFailure;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import sun.misc.JarFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,12 +46,22 @@ import static org.junit.Assert.*;
 
 public abstract class KotlinIntegrationTestBase {
     protected File tempDir;
+    protected File testDataDir;
 
     @Rule
     public TestRule watchman = new TestWatcher() {
         @Override
         protected void starting(Description description) {
-            tempDir = Files.createTempDir();
+            try {
+                tempDir = Files.createTempDir().getCanonicalFile();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            final File baseTestDataDir =
+                    new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+            testDataDir = new File(baseTestDataDir, description.getMethodName());
         }
 
         @Override
@@ -74,13 +83,7 @@ public abstract class KotlinIntegrationTestBase {
     protected int runCompiler(String logName, String... arguments) throws Exception {
         final File lib = getCompilerLib();
 
-        final File[] jars = lib.listFiles(new JarFilter());
-        final String classpath = StringUtil.join(jars, new Function<File, String>() {
-            @Override
-            public String fun(File file) {
-                return file.getAbsolutePath();
-            }
-        }, File.pathSeparator);
+        final String classpath = lib.getAbsolutePath() + File.separator + "kotlin-compiler.jar";
 
         Collection<String> javaArgs = new ArrayList<String>();
         javaArgs.add("-cp");
@@ -93,7 +96,7 @@ public abstract class KotlinIntegrationTestBase {
 
     protected int runJava(String logName, String... arguments) throws Exception {
         GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.setWorkDirectory(getTestDataDirectory());
+        commandLine.setWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -104,32 +107,52 @@ public abstract class KotlinIntegrationTestBase {
             assertEquals("Non-zero exit code", 0, exitCode);
         }
         else {
-            check(logName, executionLog);
+            check(logName, executionLog.toString());
         }
 
         return exitCode;
     }
 
-    protected void check(String baseName, StringBuilder content) throws IOException {
-        final File tmpFile = new File(getTestDataDirectory(), baseName + ".tmp");
-        final File expectedFile = new File(getTestDataDirectory(), baseName + ".expected");
+    private static String replacePath(String content, File path, String pathId) {
+        final String absolutePath = path.getAbsolutePath();
+
+        return content
+                .replace(absolutePath + "/", pathId + "/")
+                .replace(absolutePath + "\\", pathId + "/")
+                .replace(absolutePath, pathId);
+    }
+
+    protected String normalizeOutput(String content) {
+        content = replacePath(content, testDataDir, "[TestData]");
+        content = replacePath(content, tempDir, "[Temp]");
+        content = replacePath(content, getCompilerLib(), "[CompilerLib]");
+        return content;
+    }
+
+    protected void check(String baseName, String content) throws IOException {
+        final File actualFile = new File(testDataDir, baseName + ".actual");
+        final File expectedFile = new File(testDataDir, baseName + ".expected");
+
+        final String normalizedContent = normalizeOutput(content);
 
         if (!expectedFile.isFile()) {
-            Files.write(content, tmpFile, Charsets.UTF_8);
+            Files.write(normalizedContent, actualFile, Charsets.UTF_8);
             fail("No .expected file " + expectedFile);
         }
         else {
             final String goldContent = Files.toString(expectedFile, UTF_8);
             try {
-                assertEquals(goldContent, content.toString());
+                assertEquals(goldContent, normalizedContent);
+                actualFile.delete();
             }
-            finally {
-                tmpFile.delete();
+            catch (ComparisonFailure e) {
+                Files.write(normalizedContent, actualFile, Charsets.UTF_8);
+                throw e;
             }
         }
     }
 
-    protected int runProcess(final GeneralCommandLine commandLine, final StringBuilder executionLog) throws ExecutionException {
+    protected static int runProcess(final GeneralCommandLine commandLine, final StringBuilder executionLog) throws ExecutionException {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
@@ -184,8 +207,10 @@ public abstract class KotlinIntegrationTestBase {
         return file;
     }
 
-    protected static File getTestDataDirectory() {
-        return new File(getKotlinProjectHome(), "compiler" + File.separator + "integration-tests" + File.separator + "data");
+    protected static String getKotlinRuntimePath() {
+        final File file = new File(getCompilerLib(), "kotlin-runtime.jar");
+        assertTrue("no kotlin runtime at " + file, file.isFile());
+        return file.getAbsolutePath();
     }
 
     protected static File getKotlinProjectHome() {

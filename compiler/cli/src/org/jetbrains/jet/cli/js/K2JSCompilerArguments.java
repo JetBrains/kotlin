@@ -22,12 +22,18 @@ import org.jetbrains.jet.cli.common.CompilerArguments;
 /**
  * @author Pavel Talanov
  */
-public class K2JSCompilerArguments extends CompilerArguments {
-    @Argument(value = "output", description = "Output directory")
-    public String outputDir;
 
-    @Argument(value = "module", description = "Module to compile")
-    public String module;
+/**
+ * NOTE: for now K2JSCompiler supports only minimal amount of parameters required to launch it from the plugin.
+ * You can specify only one source folder, path to the file where generated file will be stored, path to zipped library sources.
+ */
+public class K2JSCompilerArguments extends CompilerArguments {
+    @Argument(value = "output", description = "Output file path")
+    public String outputFile;
+
+    //NOTE: may well be a subject to change soon
+    @Argument(value = "libzip", description = "Path to zipped lib sources")
+    public String libzip;
 
     @Argument(value = "srcdir", description = "Sources directory")
     public String srcdir;
@@ -41,7 +47,7 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "version", description = "Display compiler version")
     public boolean version;
 
-    @Argument(value = "help", alias = "h", description = "show help")
+    @Argument(value = "help", alias = "h", description = "Show help")
     public boolean help;
 
     @Override
@@ -57,5 +63,10 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Override
     public boolean isVersion() {
         return version;
+    }
+
+    @Override
+    public boolean isVerbose() {
+        return verbose;
     }
 }

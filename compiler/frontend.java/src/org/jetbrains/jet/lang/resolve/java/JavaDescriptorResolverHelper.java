@@ -70,7 +70,7 @@ class JavaDescriptorResolverHelper {
                 return false;
             }
 
-            if (!staticMembers && member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
+            if (member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
                 return false;
             }
             
