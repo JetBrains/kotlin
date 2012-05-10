@@ -149,7 +149,7 @@ public class JetTypeMapper {
         String owner;
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration instanceof NamespaceDescriptor) {
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration);
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) containingDeclaration).getInternalName();
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
@@ -207,7 +207,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private String jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace) {
+    private JvmClassName jvmClassNameForNamespace(@NotNull NamespaceDescriptor namespace) {
 
         StringBuilder r = new StringBuilder();
 
@@ -242,7 +242,7 @@ public class JetTypeMapper {
             throw new IllegalStateException("internal error: failed to generate classname for " + namespace);
         }
 
-        return r.toString();
+        return JvmClassName.byInternalName(r.toString());
     }
 
     @NotNull public Type mapReturnType(@NotNull final JetType jetType) {
@@ -541,7 +541,7 @@ public class JetTypeMapper {
         ClassDescriptor thisClass;
         if (functionParent instanceof NamespaceDescriptor) {
             assert !superCall;
-            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent);
+            owner = jvmClassNameForNamespace((NamespaceDescriptor) functionParent).getInternalName();
             ownerForDefaultImpl = ownerForDefaultParam = owner;
             invokeOpcode = INVOKESTATIC;
             thisClass = null;

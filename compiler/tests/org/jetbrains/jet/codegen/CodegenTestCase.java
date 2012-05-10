@@ -119,7 +119,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
         GeneratedClassLoader loader = createClassLoader(codegens);
 
         try {
-            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).replace("/", ".");
+            String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
             Class<?> namespaceClass = loader.loadClass(fqName);
             Method method = namespaceClass.getMethod("box");
             return (String) method.invoke(null);
@@ -163,7 +163,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected Class loadRootNamespaceClass(@NotNull ClassFileFactory state) {
-        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).replace("/", ".");
+        String fqName = NamespaceCodegen.getJVMClassNameForKotlinNs(JetPsiUtil.getFQName(myFile)).getFqName().getFqName();
         try {
             return createClassLoader(state).loadClass(fqName);
         } catch (ClassNotFoundException e) {

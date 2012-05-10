@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -44,7 +45,7 @@ public class NamespaceCodegen {
 
         v.defineClass(sourceFile, V1_6,
                       ACC_PUBLIC/*|ACC_SUPER*/,
-                      getJVMClassNameForKotlinNs(fqName),
+                      getJVMClassNameForKotlinNs(fqName).getInternalName(),
                       null,
                       //"jet/lang/Namespace",
                       "java/lang/Object",
@@ -137,9 +138,10 @@ public class NamespaceCodegen {
         v.done();
     }
 
-    public static String getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
+    @NotNull
+    public static JvmClassName getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
-            return JvmAbi.PACKAGE_CLASS;
+            return JvmClassName.byInternalName(JvmAbi.PACKAGE_CLASS);
         }
 
         String name = fqName.getFqName().replace('.', '/');
@@ -147,6 +149,6 @@ public class NamespaceCodegen {
             name = name.substring(JavaDescriptorResolver.JAVA_ROOT.length() + 1, name.length());
         }
         name += "/" + JvmAbi.PACKAGE_CLASS;
-        return name;
+        return JvmClassName.byInternalName(name);
     }
 }
