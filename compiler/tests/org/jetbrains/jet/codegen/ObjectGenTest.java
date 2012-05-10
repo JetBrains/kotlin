@@ -75,4 +75,8 @@ public class ObjectGenTest extends CodegenTestCase {
     public void testKt1186() throws Exception {
         blackBoxFile("regressions/kt1186.kt");
     }
+
+    public void testKt1600() throws Exception {
+        blackBoxFile("regressions/kt1600.kt");
+    }
 }
