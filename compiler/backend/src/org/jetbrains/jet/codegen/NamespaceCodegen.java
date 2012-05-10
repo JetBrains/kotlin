@@ -44,7 +44,7 @@ public class NamespaceCodegen {
 
         v.defineClass(sourceFile, V1_6,
                       ACC_PUBLIC/*|ACC_SUPER*/,
-                      getJVMClassName(fqName, true),
+                      getJVMClassNameForKotlinNs(fqName),
                       null,
                       //"jet/lang/Namespace",
                       "java/lang/Object",
@@ -137,10 +137,7 @@ public class NamespaceCodegen {
         v.done();
     }
 
-    /**
-     * @param namespace true for "namespace" suffix 
-     */
-    public static String getJVMClassName(@NotNull FqName fqName, boolean namespace) {
+    public static String getJVMClassNameForKotlinNs(@NotNull FqName fqName) {
         if (fqName.isRoot()) {
             return JvmAbi.PACKAGE_CLASS;
         }
@@ -149,9 +146,7 @@ public class NamespaceCodegen {
         if (name.startsWith(JavaDescriptorResolver.JAVA_ROOT)) {
             name = name.substring(JavaDescriptorResolver.JAVA_ROOT.length() + 1, name.length());
         }
-        if (namespace) {
-            name += "/" + JvmAbi.PACKAGE_CLASS;
-        }
+        name += "/" + JvmAbi.PACKAGE_CLASS;
         return name;
     }
 }

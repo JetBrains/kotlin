@@ -16,8 +16,12 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -113,4 +117,25 @@ public class FunctionGenTest extends CodegenTestCase {
     public void testInvoke() {
         blackBoxFile("functions/invoke.kt");
     }
+
+    private void blackBoxFileWithJava(@NotNull String ktFile) throws Exception {
+        File javaClassesTempDirectory = new File(FileUtil.getTempDirectory(), "java-classes");
+        JetTestUtils.mkdirs(javaClassesTempDirectory);
+        JetTestUtils.compileJavaFile(
+                new File("compiler/testData/codegen/" + ktFile.replaceFirst("\\.kt$", ".java")),
+                javaClassesTempDirectory);
+
+        addToClasspath(javaClassesTempDirectory);
+
+        blackBoxFile(ktFile);
+    }
+
+    public void testReferencesStaticInnerClassMethod() throws Exception {
+        blackBoxFileWithJava("functions/referencesStaticInnerClassMethod.kt");
+    }
+
+    public void testReferencesStaticInnerClassMethodTwoLevels() throws Exception {
+        blackBoxFileWithJava("functions/referencesStaticInnerClassMethodL2.kt");
+    }
+
 }
