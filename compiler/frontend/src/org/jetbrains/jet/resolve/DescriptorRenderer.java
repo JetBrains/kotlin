@@ -46,6 +46,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
 
     public static final DescriptorRenderer TEXT = new DescriptorRenderer();
 
+    public static final DescriptorRenderer DEBUG_TEXT = new DescriptorRenderer() {
+        @Override
+        protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
+            // hasDefaultValue() has effects
+            return descriptor.declaresDefaultValue();
+        }
+    };
+
     public static final DescriptorRenderer HTML = new DescriptorRenderer() {
 
         @Override
@@ -79,7 +87,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
             super.visitVariableDescriptor(descriptor, builder, true);
-            if (descriptor.hasDefaultValue()) {
+            if (hasDefaultValue(descriptor)) {
                 builder.append(" = ...");
             }
             return null;
@@ -87,6 +95,10 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     };
 
     private DescriptorRenderer() {
+    }
+
+    protected boolean hasDefaultValue(ValueParameterDescriptor descriptor) {
+        return descriptor.hasDefaultValue();
     }
 
     protected String renderKeyword(String keyword) {
