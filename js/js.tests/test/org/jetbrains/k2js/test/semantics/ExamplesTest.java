@@ -20,6 +20,7 @@ import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.k2js.translate.context.Namer;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class ExamplesTest extends SingleFileTranslationTest {
@@ -35,7 +36,7 @@ public final class ExamplesTest extends SingleFileTranslationTest {
 
     @Override
     public void runTest() throws Exception {
-        runFunctionOutputTest(filename, "Anonymous", "box", "OK");
+        runFunctionOutputTest(filename, Namer.getRootNamespaceName(), "box", "OK");
     }
 
     public static Test suite() throws Exception {

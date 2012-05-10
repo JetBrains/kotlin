@@ -1,4 +1,4 @@
-// "Add return type declaration" "false"
+// "Specify Return Type Explicitly" "true"
 package a
 
 class A() {

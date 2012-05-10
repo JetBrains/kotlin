@@ -91,7 +91,8 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
             // Insert () if it's not already exist
             document.insertString(endOffset, "()");
             bothParentheses = true;
-        } else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset + 1) == ')') {
+        }
+        else if (endOffset + 1 < documentText.length() && documentText.charAt(endOffset + 1) == ')') {
             bothParentheses = true;
         }
 
@@ -99,7 +100,8 @@ public class JetFunctionInsertHandler implements InsertHandler<LookupElement> {
         if (caretPosition == CaretPosition.IN_BRACKETS || !bothParentheses) {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 1);
             AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, offsetElement);
-        } else {
+        }
+        else {
             editor.getCaretModel().moveToOffset(editor.getCaretModel().getOffset() + 2);
         }
 

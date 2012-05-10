@@ -30,13 +30,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -51,6 +51,12 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     public JetDiagnosticsTest(@NonNls String dataPath, String name) {
         super(dataPath);
         this.name = name;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     @Override
@@ -72,7 +78,8 @@ public class JetDiagnosticsTest extends JetLiteFixture {
                 // TODO: check there's not syntax errors
                 this.jetFile = null;
                 this.expectedText = this.clearText = textWithMarkers;
-            } else {
+            }
+            else {
                 expectedText = textWithMarkers;
                 clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
                 this.javaFile = null;
@@ -165,7 +172,10 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             }
         }
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
+                myEnvironment.getCompilerDependencies())
+                    .getBindingContext();
 
         boolean ok = true;
 

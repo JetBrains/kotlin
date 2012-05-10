@@ -51,6 +51,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorImpl i
         super(containingDeclaration, annotations, name);
     }
 
+    @NotNull
     @Override
     public JetType getType() {
         return outType;

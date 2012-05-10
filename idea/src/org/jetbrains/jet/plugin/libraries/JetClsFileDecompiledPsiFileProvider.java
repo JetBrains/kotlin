@@ -31,6 +31,10 @@ public class JetClsFileDecompiledPsiFileProvider implements ClsFileDecompiledPsi
     @Nullable
     @Override
     public PsiFile getDecompiledPsiFile(@NotNull PsiJavaFile psiFile) {
-        return JetDecompiledData.getDecompiledData((ClsFileImpl) psiFile).getJetFile();
+        ClsFileImpl clsFile = (ClsFileImpl)psiFile;
+        if (JetDecompiledData.isKotlinFile(clsFile)) {
+            return JetDecompiledData.getDecompiledData(clsFile).getJetFile();
+        }
+        return null;
     }
 }

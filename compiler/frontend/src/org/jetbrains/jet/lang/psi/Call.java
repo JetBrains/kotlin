@@ -36,6 +36,9 @@ public interface Call {
     @NotNull
     ReceiverDescriptor getExplicitReceiver();
 
+    @NotNull
+    ReceiverDescriptor getThisObject();
+
     @Nullable
     JetExpression getCalleeExpression();
 

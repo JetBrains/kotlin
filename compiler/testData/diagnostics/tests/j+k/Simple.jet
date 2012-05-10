@@ -2,7 +2,7 @@
 package aa;
 
 public class A {
-    void f() { }
+    public void f() { }
 }
 
 // FILE: B.kt

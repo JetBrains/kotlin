@@ -17,15 +17,19 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.util.containers.MultiMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -39,13 +43,26 @@ public class ClosureAnnotator {
     private final Map<DeclarationDescriptor,ClassDescriptor> enclosing = new HashMap<DeclarationDescriptor, ClassDescriptor>();
 
     private final MultiMap<FqName, JetFile> namespaceName2Files = MultiMap.create();
-    private final BindingContext bindingContext;
 
-    public ClosureAnnotator(BindingContext bindingContext, Collection<JetFile> files) {
+    private BindingContext bindingContext;
+    private List<JetFile> files;
+
+    @Inject
+    public void setBindingContext(BindingContext bindingContext) {
         this.bindingContext = bindingContext;
+    }
+
+    @Inject
+    public void setFiles(List<JetFile> files) {
+        this.files = files;
+    }
+
+    @PostConstruct
+    public void init() {
         mapFilesToNamespaces(files);
         prepareAnonymousClasses();
     }
+
 
     public ClassDescriptor classDescriptorForFunctionDescriptor(FunctionDescriptor funDescriptor, String name) {
         ClassDescriptorImpl classDescriptor = classesForFunctions.get(funDescriptor);
@@ -102,7 +119,7 @@ public class ClosureAnnotator {
     }
 
     public boolean hasThis0(ClassDescriptor classDescriptor) {
-        if(CodegenUtil.isClassObject(classDescriptor))
+        if(DescriptorUtils.isClassObject(classDescriptor))
             return false;
 
         ClassDescriptor other = enclosing.get(classDescriptor);
@@ -242,9 +259,16 @@ public class ClosureAnnotator {
             classStack.pop();
         }
 
-        private void recordName(ClassDescriptor classDescriptor, String name) {
+        // TODO: please insert either @NotNull or @Nullable here
+        // stepan.koltsov@ 2012-04-08
+        private void recordName(ClassDescriptor classDescriptor, @NotNull String name) {
             String old = classNamesForClassDescriptor.put(classDescriptor, name);
-            assert old == null;
+            if (old == null) {
+                // TODO: fix this assertion
+                // previosly here was incorrect assert that was ignored without -ea
+                // stepan.koltsov@ 2012-04-08
+                //throw new IllegalStateException("rewrite at key " + classDescriptor);
+            }
         }
 
         @Override

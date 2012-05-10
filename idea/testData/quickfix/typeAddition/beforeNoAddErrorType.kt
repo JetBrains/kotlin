@@ -1,4 +1,4 @@
-// "Add return type declaration" "false"
+// "Specify type explicitly" "false"
 
 class A() {
     public val <caret>t = foo()

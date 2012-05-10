@@ -30,6 +30,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.project.IDEAConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
 import java.util.Collection;
@@ -64,11 +65,12 @@ public final class K2JSRunnerUtils {
         String outputFilePath = constructPathToGeneratedFile(project, outputDirPath);
         K2JSTranslator.translateWithCallToMainAndSaveToFile(kotlinFiles,
                                                             outputFilePath,
-                                                            project);
+                                                            new IDEAConfig(project)
+        );
         notifySuccess(outputDirPath);
     }
 
-    private static String constructPathToGeneratedFile(Project project, String outputDirPath) {
+    public static String constructPathToGeneratedFile(@NotNull Project project, @NotNull String outputDirPath) {
         return outputDirPath + "/" + project.getName() + ".js";
     }
 
@@ -85,14 +87,14 @@ public final class K2JSRunnerUtils {
 
     @NotNull
     private static List<JetFile> getJetFiles(@NotNull Collection<VirtualFile> virtualFiles,
-                                             @NotNull Project project) {
+            @NotNull Project project) {
         List<JetFile> kotlinFiles = Lists.newArrayList();
 
         PsiManager psiManager = PsiManager.getInstance(project);
         for (VirtualFile virtualFile : virtualFiles) {
             PsiFile psiFile = psiManager.findFile(virtualFile);
             if (psiFile instanceof JetFile) {
-                kotlinFiles.add((JetFile)psiFile);
+                kotlinFiles.add((JetFile) psiFile);
             }
         }
         return kotlinFiles;

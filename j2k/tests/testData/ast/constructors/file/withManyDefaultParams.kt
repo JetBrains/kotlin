@@ -18,11 +18,11 @@ f = _f
 g = _g
 }
 class object {
-open public fun init() : Test {
+public open fun init() : Test {
 val __ = Test(null, false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
 return __
 }
-open public fun init(name : String?) : Test {
+public open fun init(name : String?) : Test {
 val __ = Test(foo(name), false, 0.toDouble(), 0.toFloat(), 0, 0, 0, ' ')
 return __
 }
@@ -33,7 +33,7 @@ return ""
 }
 public open class User() {
 class object {
-open public fun main() : Unit {
+public open fun main() : Unit {
 var t : Test? = Test.init("name")
 }
 }

@@ -27,7 +27,7 @@ fun main(args : Array<String>) {
             println(event)
             if (event is VirtualFileChangedEvent) {
                 // FIXME explicit type casting to avoid overload ambiguity (KT-1461)
-                println("new file size is ${(event as VirtualFileChangedEvent).file.size()}")
+                println("new file size is ${(event as VirtualFileChangedEvent).file.size}")
             }
     }
 

@@ -143,6 +143,10 @@ public class JetClass extends JetTypeParameterListOwner
         return findChildByType(JetTokens.TRAIT_KEYWORD) != null;
     }
 
+    public boolean isAnnotation() {
+        return hasModifier(JetTokens.ANNOTATION_KEYWORD);
+    }
+
     @Override
     public IStubElementType getElementType() {
         // TODO (stubs)

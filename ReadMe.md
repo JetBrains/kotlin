@@ -74,7 +74,7 @@ You can now run the various Run/Debug Configurations such as
 * All IDEA Plugin Tests
 
 
-## If you want to work on the Kotiln libraries
+## If you want to work on the Kotlin libraries
 
 * download a clean [IDEA 11 EAP build](http://confluence.jetbrains.net/display/IDEADEV/IDEA+11.1+EAP)
 * Preferences -> Plugins -> Browse Repositories -> Manage Repositories... -> + to add a new repository URL
@@ -89,13 +89,18 @@ Then build via
 
 ## Contributing
 
-We love contributions! There's [lots to do](http://youtrack.jetbrains.com/issues/KT) so why not chat
-with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
+We love contributions! There's [lots to do on kotlin](http://youtrack.jetbrains.com/issues/KT) and on the [standard library](http://youtrack.jetbrains.com/issues/KT?q=%23%7BStandard+Library%7D+-Resolved) so why not chat with us on the [forum](http://devnet.jetbrains.net/community/kotlin?view=discussions) about what you're interested in doing?
 
 If you want to find some issues to start off with, try [this query](http://youtrack.jetbrains.com/issues/KT?q=-Resolved+%23Kontributor) which should find all issues that are not resolved assigned to Kontributor.
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 
-The best way to contribute is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
+A nice gentle way to contribute would be to review the [API docs](http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/index.html) and find classes or functions which are not documented very well and submit a patch.
+
+In particular it'd be great if all functions included a nice example of how to use it such as for the <a href="http://jetbrains.github.com/kotlin/versions/snapshot/apidocs/kotlin/java/util/Collection-extensions.html#filter(jet.Function1)">filter()</a> function on Collection. This is implemented using the <a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/JLangIterablesLazy.kt#L17">@includeFunctionBody</a> macro to include code from a test function. This serves as a double win; the API gets better documented with nice examples to help new users and the code gets more test coverage.
+
+## Submitting patchces
+
+The best way to submit a patch is to [fork the project on github](http://help.github.com/fork-a-repo/) then send us a
 [pull request](http://help.github.com/send-pull-requests/) via [github](http://github.com).
 
 If you create your own fork, it might help to [enable rebase by default when you pull](http://d.strelau.net/post/47338904/git-pull-rebase-by-default)

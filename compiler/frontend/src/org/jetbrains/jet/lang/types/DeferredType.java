@@ -86,7 +86,8 @@ public class DeferredType implements JetType {
         try {
             if (lazyValue.isComputed()) {
                 return getActualType().toString();
-            } else {
+            }
+            else {
                 return "<Not computed yet>";
             }
         }

@@ -8,7 +8,8 @@ JetFile: SimpleModifiers.jet
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('bar')
     PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('goo')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST

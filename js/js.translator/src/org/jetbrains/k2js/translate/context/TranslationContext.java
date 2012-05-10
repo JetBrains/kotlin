@@ -22,8 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
+
+import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
 
@@ -86,6 +89,16 @@ public final class TranslationContext {
     }
 
     @NotNull
+    public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsName> aliases) {
+        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withAliasesForExpressions(aliases));
+    }
+
+    @NotNull
+    public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsName> aliases) {
+        return new TranslationContext(staticContext, dynamicContext, aliasingContext.withDescriptorsAliased(aliases));
+    }
+
+    @NotNull
     public JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableDescriptor) {
             return getFunctionObject((CallableDescriptor)descriptor).getBody();
@@ -118,6 +131,10 @@ public final class TranslationContext {
 
     @NotNull
     public JsName getNameForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        JsName alias = aliasingContext.getAliasForDescriptor(descriptor);
+        if (alias != null) {
+            return alias;
+        }
         return staticContext.getNameForDescriptor(descriptor);
     }
 

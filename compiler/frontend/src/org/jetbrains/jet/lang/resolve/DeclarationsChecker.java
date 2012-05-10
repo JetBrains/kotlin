@@ -21,10 +21,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -34,6 +32,7 @@ import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class DeclarationsChecker {
             if (!context.completeAnalysisNeeded(aClass)) continue;
 
             checkClass(aClass, classDescriptor);
-            checkModifiers(aClass.getModifierList());
+            checkModifiers(aClass.getModifierList(), classDescriptor);
         }
 
         Map<JetObjectDeclaration, MutableClassDescriptor> objects = context.getObjects();
@@ -90,7 +89,7 @@ public class DeclarationsChecker {
 
             if (!context.completeAnalysisNeeded(function)) continue;
             checkFunction(function, functionDescriptor);
-            checkModifiers(function.getModifierList());
+            checkModifiers(function.getModifierList(), functionDescriptor);
         }
 
         Map<JetProperty, PropertyDescriptor> properties = context.getProperties();
@@ -100,7 +99,7 @@ public class DeclarationsChecker {
 
             if (!context.completeAnalysisNeeded(property)) continue;
             checkProperty(property, propertyDescriptor);
-            checkModifiers(property.getModifierList());
+            checkModifiers(property.getModifierList(), propertyDescriptor);
         }
 
     }
@@ -132,9 +131,8 @@ public class DeclarationsChecker {
     }
 
     private void checkOpenMembers(MutableClassDescriptor classDescriptor) {
-        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getCallableMembers()) {
-
-            JetNamedDeclaration member = (JetNamedDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, memberDescriptor);
+        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
+            JetNamedDeclaration member = (JetNamedDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), memberDescriptor);
             if (member != null && classDescriptor.getModality() == Modality.FINAL && member.hasModifier(JetTokens.OPEN_KEYWORD)) {
                 trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
             }
@@ -162,7 +160,7 @@ public class DeclarationsChecker {
             JetFunction function = (JetFunction) member;
             hasDeferredType = function.getReturnTypeRef() == null && function.getBodyExpression() != null && !function.hasBlockBody();
         }
-        if ((memberDescriptor.getVisibility() == Visibility.PUBLIC || memberDescriptor.getVisibility() == Visibility.PROTECTED) && hasDeferredType) {
+        if ((memberDescriptor.getVisibility().isPublicAPI()) && memberDescriptor.getOverriddenDescriptors().size() == 0 && hasDeferredType) {
             trace.report(PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE.on(member));
         }
     }
@@ -179,10 +177,9 @@ public class DeclarationsChecker {
                 return;
             }
             if (!(classDescriptor.getModality() == Modality.ABSTRACT) && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
-                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
-                assert classElement instanceof JetClass;
+                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
                 String name = property.getName();
-                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor, (JetClass) classElement));
+                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
                 return;
             }
             if (classDescriptor.getKind() == ClassKind.TRAIT) {
@@ -252,9 +249,8 @@ public class DeclarationsChecker {
             boolean inEnum = classDescriptor.getKind() == ClassKind.ENUM_CLASS;
             boolean inAbstractClass = classDescriptor.getModality() == Modality.ABSTRACT;
             if (hasAbstractModifier && !inAbstractClass && !inTrait && !inEnum) {
-                PsiElement classElement = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, classDescriptor);
-                assert classElement instanceof JetClass;
-                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor, (JetClass) classElement));
+                JetClass classElement = (JetClass) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName(), classDescriptor));
             }
             if (hasAbstractModifier && inTrait) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(function));
@@ -297,9 +293,9 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkModifiers(@Nullable JetModifierList modifierList) {
+    private void checkModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
         checkModalityModifiers(modifierList);
-        checkVisibilityModifiers(modifierList);
+        checkVisibilityModifiers(modifierList, descriptor);
     }
 
     private void checkModalityModifiers(@Nullable JetModifierList modifierList) {
@@ -310,8 +306,15 @@ public class DeclarationsChecker {
                            Lists.<JetToken>newArrayList(JetTokens.ABSTRACT_KEYWORD, JetTokens.OPEN_KEYWORD));
     }
 
-    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList) {
+    private void checkVisibilityModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
         if (modifierList == null) return;
+
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof NamespaceDescriptor) {
+            if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
+                trace.report(Errors.PACKAGE_MEMBER_CANNOT_BE_PROTECTED.on(modifierList.getModifierNode(JetTokens.PROTECTED_KEYWORD).getPsi()));
+            }
+        }
 
         checkCompatibility(modifierList, Lists.newArrayList(JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD),
                            Lists.<JetToken>newArrayList(JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD));

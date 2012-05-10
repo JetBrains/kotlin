@@ -65,6 +65,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
+        super.createEnvironmentWithMockJdkAndIdeaAnnotations();
+
         library          = JetStandardLibrary.getInstance();
         classDefinitions = new ClassDefinitions();
 
@@ -585,7 +588,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     private WritableScopeImpl addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING);
         writableScope.importScope(library.getLibraryScope());
-        JavaDescriptorResolver javaDescriptorResolver = new InjectorForJavaSemanticServices(getProject()).getJavaDescriptorResolver();
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                myEnvironment.getCompilerDependencies(), getProject());
+        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(FqName.ROOT,
                 DescriptorSearchRule.INCLUDE_KOTLIN).getMemberScope());
         writableScope.importScope(javaDescriptorResolver.resolveNamespace(new FqName("java.lang"),
@@ -664,9 +669,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             @Override
             public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
                 Set<FunctionDescriptor> writableFunctionGroup = Sets.newLinkedHashSet();
-                ModuleDescriptor module = new ModuleDescriptor("TypeCheckerTest");
                 for (String funDecl : FUNCTION_DECLARATIONS) {
-                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(module, this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);
+                    FunctionDescriptor functionDescriptor = descriptorResolver.resolveFunctionDescriptor(this.getContainingDeclaration(), this, JetPsiFactory.createFunction(getProject(), funDecl), JetTestUtils.DUMMY_TRACE);
                     if (name.equals(functionDescriptor.getName())) {
                         writableFunctionGroup.add(functionDescriptor);
                     }
@@ -716,7 +720,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     public void visitProperty(JetProperty property) {
                         if (property.getPropertyTypeRef() != null) {
                             memberDeclarations.addPropertyDescriptor(descriptorResolver.resolvePropertyDescriptor(classDescriptor, parameterScope, property, JetTestUtils.DUMMY_TRACE));
-                        } else {
+                        }
+                        else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
                         }
@@ -726,7 +731,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                     public void visitNamedFunction(JetNamedFunction function) {
                         if (function.getReturnTypeRef() != null) {
                             memberDeclarations.addFunctionDescriptor(descriptorResolver.resolveFunctionDescriptor(classDescriptor, parameterScope, function, JetTestUtils.DUMMY_TRACE));
-                        } else {
+                        }
+                        else {
                             // TODO : Caution: a cyclic dependency possible
                             throw new UnsupportedOperationException();
                         }

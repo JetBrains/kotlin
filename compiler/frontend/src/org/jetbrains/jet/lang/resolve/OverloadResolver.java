@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import javax.inject.Inject;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -27,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
@@ -101,10 +101,12 @@ public class OverloadResolver {
             if (containingDeclaration instanceof NamespaceDescriptor) {
                 NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) containingDeclaration;
                 inNamespaces.put(new Key(namespaceDescriptor, klass.getName()), klass.getConstructors());
-            } else if (containingDeclaration instanceof ClassDescriptor) {
+            }
+            else if (containingDeclaration instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
                 inClasses.put(classDescriptor, klass.getConstructors());
-            } else {
+            }
+            else {
                 throw new IllegalStateException();
             }
         }
@@ -157,11 +159,11 @@ public class OverloadResolver {
 
     private void checkOverloadsInAClass(
             MutableClassDescriptor classDescriptor, JetClassOrObject klass,
-            Collection<ConstructorDescriptor> nestedClassConstructors)
-    {
+            Collection<ConstructorDescriptor> nestedClassConstructors
+    ) {
         MultiMap<String, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
-        for (CallableMemberDescriptor function : classDescriptor.getCallableMembers()) {
+        for (CallableMemberDescriptor function : classDescriptor.getDeclaredCallableMembers()) {
             functionsByName.putValue(function.getName(), function);
         }
         
@@ -173,8 +175,6 @@ public class OverloadResolver {
             checkOverloadsWithSameName(e.getKey(), e.getValue(), nameForErrorMessage(classDescriptor, klass));
         }
 
-        // properties are checked elsewhere
-
         // Kotlin has no secondary constructors at this time
 
     }
@@ -185,24 +185,25 @@ public class OverloadResolver {
             return;
         }
         
-        for (CallableMemberDescriptor function : functions) {
-            for (CallableMemberDescriptor function2 : functions) {
-                if (function == function2) {
+        for (CallableMemberDescriptor member : functions) {
+            for (CallableMemberDescriptor member2 : functions) {
+                if (member == member2) {
                     continue;
                 }
 
-                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(function, function2);
+                OverloadUtil.OverloadCompatibilityInfo overloadable = OverloadUtil.isOverloadable(member, member2);
                 if (!overloadable.isSuccess()) {
-                    JetDeclaration member = (JetDeclaration) trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, function);
-                    if (member == null) {
-                        assert trace.get(DELEGATED, function);
+                    JetDeclaration jetDeclaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member);
+                    if (jetDeclaration == null) {
+                        assert trace.get(DELEGATED, member);
                         return;
                     }
 
-                    if (function instanceof PropertyDescriptor) {
-                        trace.report(Errors.REDECLARATION.on(function, trace.getBindingContext()));
-                    } else {
-                        trace.report(Errors.CONFLICTING_OVERLOADS.on(member, function, functionContainer));
+                    if (member instanceof PropertyDescriptor) {
+                        trace.report(Errors.REDECLARATION.on(BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), member), member.getName()));
+                    }
+                    else {
+                        trace.report(Errors.CONFLICTING_OVERLOADS.on(jetDeclaration, member, functionContainer));
                     }
                 }
             }

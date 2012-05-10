@@ -28,13 +28,13 @@ import java.util.List;
 */
 class Field {
 
-    public static Field create(boolean isPublic, Class<?> type, String name, @Nullable Expression init) {
+    public static Field create(boolean isPublic, DiType type, String name, @Nullable Expression init) {
         Field field = new Field(isPublic, type, name);
         field.initialization = init;
         return field;
     }
 
-    private final Class<?> type;
+    private final DiType type;
     private final String name;
     private final boolean isPublic;
 
@@ -43,13 +43,13 @@ class Field {
 
     private final List<SetterDependency> dependencies = Lists.newArrayList();
 
-    Field(boolean isPublic, Class<?> type, String name) {
+    Field(boolean isPublic, DiType type, String name) {
         this.isPublic = isPublic;
         this.type = type;
         this.name = name;
     }
 
-    public Class<?> getType() {
+    public DiType getType() {
         return type;
     }
 
@@ -58,12 +58,12 @@ class Field {
     }
 
     public String getTypeName() {
-        return type.getSimpleName();
+        return type.getClazz().getSimpleName();
     }
 
     public String getGetterName() {
         String prefix;
-        if (getType() == boolean.class || getType() == Boolean.class) {
+        if (getType().getClazz() == boolean.class || getType().getClazz() == Boolean.class) {
             prefix = "is";
         }
         else {

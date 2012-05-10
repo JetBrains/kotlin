@@ -7,64 +7,75 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-project</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project-root>../../..</project-root>
+
+        <asm.version>3.3.1</asm.version>
+        <dart.name>dart-r3300</dart.name>
+        <guava.version>11.0.2</guava.version>
         <junit-version>4.10</junit-version>
         <kotlin-maven-plugin.version>0.2.3.8</kotlin-maven-plugin.version>
-        <project-root>${project.basedir}/..</project-root>
-        <kotlin-sdk>${project-root}/../dist/kotlinc</kotlin-sdk>
+        <kotlin-dist>${project-root}/dist</kotlin-dist>
+        <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
+        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.5</surefire-version>
-        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
     </properties>
 
-
-    <repositories>
+    <distributionManagement>
         <repository>
-            <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo/</url>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
+            <layout>default</layout>
         </repository>
-    </repositories>
-
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>evgenyg.artifactoryonline.com</id>
-            <url>http://evgenyg.artifactoryonline.com/evgenyg/repo/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jetbrains-kotlin</id>
+            <name>jetbrains-kotlin</name>
+            <url>http://repository.jetbrains.com/kotlin</url>
+            <layout>default</layout>
+        </snapshotRepository>
+    </distributionManagement>
 
     <modules>
-        <module>kunit</module>
-        <module>stdlib</module>
-        <module>kdoc</module>
-        <module>kotlin-jdbc</module>
-        <module>website</module>
-        <module>kotlin-java</module>
-        <module>kotlin-maven-plugin</module>
-    </modules>
+        <module>tools/kotlin-install</module>
+        <module>tools/runtime</module>
+        <module>tools/kotlin-maven-plugin</module>
+        <module>tools/kdoc</module>
+        <module>tools/kdoc-maven-plugin</module>
 
+        <module>stdlib</module>
+        <module>kunit</module>
+        <module>kotlin-jdbc</module>
+        <module>kotlin-swing</module>
+
+        <module>docs/apidoc</module>
+        <module>docs/website</module>
+
+        <module>examples/kotlin-java-example</module>
+        <module>examples/js-example</module>
+    </modules>
 
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit-version}</version>
-            <scope>compile</scope>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
 
     <build>
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
-
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -80,50 +91,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>com.github.goldin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile-kotlin-sources</id>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <runIf>{{ new File( project.build.sourceDirectory ).directory }}</runIf>
-                    <verbose>false</verbose>
-                    <kotlinJars>
-                        <jar>${kotlin-sdk}/lib/kotlin-build-tools.jar</jar>
-                        <jar>${kotlin-sdk}/lib/kotlin-compiler.jar</jar>
-                        <jar>${kotlin-sdk}/lib/kotlin-runtime.jar</jar>
-                        <jar>${kotlin-sdk}/lib/intellij-core.jar</jar>
-                        <jar>${kotlin-sdk}/lib/picocontainer.jar</jar>
-                        <jar>${kotlin-sdk}/lib/trove4j.jar</jar>
-                        <jar>${kotlin-sdk}/lib/guava-11.0.1.jar</jar>
-                        <jar>${kotlin-sdk}/lib/asm-commons.jar</jar>
-                        <jar>${kotlin-sdk}/lib/asm.jar</jar>
-                    </kotlinJars>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven-jar-plugin.version}</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-version}</version>
@@ -144,5 +111,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

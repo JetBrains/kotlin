@@ -19,27 +19,28 @@ package org.jetbrains.jet.plugin.codeInsight;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
-import com.intellij.openapi.application.Result;
-import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
-import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.resolve.DescriptorRenderer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author yole
@@ -53,84 +54,198 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         return members;
     }
 
-    public Set<CallableMemberDescriptor> collectMethodsToGenerate(JetClassOrObject classOrObject) {
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) classOrObject.getContainingFile());
+    @NotNull
+    public Set<CallableMemberDescriptor> collectMethodsToGenerate(@NotNull JetClassOrObject classOrObject) {
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)classOrObject.getContainingFile())
+                .getBindingContext();
         final DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, classOrObject);
         if (descriptor instanceof MutableClassDescriptor) {
-            return collectMethodsToGenerate((MutableClassDescriptor) descriptor);
+            return collectMethodsToGenerate((MutableClassDescriptor)descriptor);
         }
         return Collections.emptySet();
     }
 
     protected abstract Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor);
 
-    public static void generateMethods(Project project, Editor editor, JetClassOrObject classOrObject, List<DescriptorClassMember> selectedElements) {
+    public static void generateMethods(Editor editor,
+            JetClassOrObject classOrObject,
+            List<DescriptorClassMember> selectedElements) {
         final JetClassBody body = classOrObject.getBody();
         if (body == null) {
             return;
         }
 
-       for (DescriptorClassMember selectedElement : selectedElements) {
-           final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
-           JetFile containingFile = (JetFile) classOrObject.getContainingFile();
-           if (descriptor instanceof SimpleFunctionDescriptor) {
-               JetElement target = overrideFunction(project, containingFile, (SimpleFunctionDescriptor) descriptor);
-               body.addBefore(target, body.getRBrace());
-           }
-           else if (descriptor instanceof PropertyDescriptor) {
-               JetElement target = overrideProperty(project, containingFile, (PropertyDescriptor) descriptor);
-               body.addBefore(target, body.getRBrace());
-           }
-       }
+        PsiElement afterAnchor = findInsertAfterAnchor(editor, body);
+
+        if (afterAnchor == null) {
+            return;
+        }
+
+        List<JetElement> elementsToCompact = new ArrayList<JetElement>();
+        final JetFile file = (JetFile)classOrObject.getContainingFile();
+        for (JetElement element : generateOverridingMembers(selectedElements, file)) {
+            PsiElement added = body.addAfter(element, afterAnchor);
+            afterAnchor = added;
+            elementsToCompact.add((JetElement)added);
+        }
+        ReferenceToClassesShortening.compactReferenceToClasses(elementsToCompact);
     }
 
-    private static JetElement overrideProperty(Project project, JetFile file, PropertyDescriptor descriptor) {
-        StringBuilder bodyBuilder = new StringBuilder("override ");
+
+    @Nullable
+    private static PsiElement findInsertAfterAnchor(Editor editor, final JetClassBody body) {
+        PsiElement afterAnchor = body.getLBrace();
+        if (afterAnchor == null) {
+            return null;
+        }
+
+        int offset = editor.getCaretModel().getOffset();
+        PsiElement offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset),
+                                                                     new Condition<PsiElement>() {
+                                                                         @Override
+                                                                         public boolean value(PsiElement element) {
+                                                                             return element.getParent() == body;
+                                                                         }
+                                                                     });
+
+        if (offsetCursorElement != null && offsetCursorElement != body.getRBrace()) {
+            afterAnchor = offsetCursorElement;
+        }
+
+        return afterAnchor;
+    }
+
+    private static List<JetElement> generateOverridingMembers(List<DescriptorClassMember> selectedElements, JetFile file) {
+        List<JetElement> overridingMembers = new ArrayList<JetElement>();
+        for (DescriptorClassMember selectedElement : selectedElements) {
+            final DeclarationDescriptor descriptor = selectedElement.getDescriptor();
+            if (descriptor instanceof SimpleFunctionDescriptor) {
+                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor)descriptor));
+            }
+            else if (descriptor instanceof PropertyDescriptor) {
+                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor)descriptor));
+            }
+        }
+        return overridingMembers;
+    }
+
+    private static JetElement overrideProperty(Project project, PropertyDescriptor descriptor) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor)).append("override ");
         if (descriptor.isVar()) {
             bodyBuilder.append("var ");
         }
         else {
             bodyBuilder.append("val ");
         }
-        bodyBuilder.append(descriptor.getName()).append(":").append(descriptor.getType());
-        ImportInsertHelper.addImportDirectiveIfNeeded(descriptor.getType(), file);
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
+        bodyBuilder.append(descriptor.getName()).append(" : ").append(DescriptorRenderer.COMPACT.renderTypeWithShortNames(
+                descriptor.getType()));
         String initializer = defaultInitializer(descriptor.getType(), JetStandardLibrary.getInstance());
         if (initializer != null) {
-            bodyBuilder.append("=").append(initializer);
+            bodyBuilder.append(" = ").append(initializer);
         }
         else {
-            bodyBuilder.append("= ?");
+            bodyBuilder.append(" = ?");
         }
         return JetPsiFactory.createProperty(project, bodyBuilder.toString());
     }
 
-    private static JetElement overrideFunction(Project project, JetFile file, SimpleFunctionDescriptor descriptor) {
-        StringBuilder bodyBuilder = new StringBuilder("override fun ");
-        bodyBuilder.append(descriptor.getName());
-        bodyBuilder.append("(");
+    private static String renderType(JetType type) {
+        return DescriptorRenderer.TEXT.renderType(type);
+    }
+
+    private static JetElement overrideFunction(Project project, SimpleFunctionDescriptor descriptor) {
+        StringBuilder bodyBuilder = new StringBuilder();
+        bodyBuilder.append(displayableVisibility(descriptor));
+        bodyBuilder.append("override fun ");
+
+        List<String> whereRestrictions = new ArrayList<String>();
+        if (!descriptor.getTypeParameters().isEmpty()) {
+            bodyBuilder.append("<");
+            boolean first = true;
+            for (TypeParameterDescriptor param : descriptor.getTypeParameters()) {
+                if (!first) {
+                    bodyBuilder.append(", ");
+                }
+
+                bodyBuilder.append(param.getName());
+                Set<JetType> upperBounds = param.getUpperBounds();
+                if (!upperBounds.isEmpty()) {
+                    boolean firstUpperBound = true;
+                    for (JetType upperBound : upperBounds) {
+                        String upperBoundText = " : " + renderType(upperBound);
+                        if (upperBound != JetStandardClasses.getDefaultBound()) {
+                            if (firstUpperBound) {
+                                bodyBuilder.append(upperBoundText);
+                            } else {
+                                whereRestrictions.add(param.getName() + upperBoundText);
+                            }
+                        }
+                        firstUpperBound = false;
+                    }
+                }
+
+                first = false;
+            }
+            bodyBuilder.append("> ");
+        }
+
+        addReceiverParameter(descriptor, bodyBuilder);
+
+        bodyBuilder.append(descriptor.getName()).append("(");
+        boolean isAbstractFun = descriptor.getModality() == Modality.ABSTRACT;
+        StringBuilder delegationBuilder = new StringBuilder();
+        if (isAbstractFun) {
+            delegationBuilder.append("throw UnsupportedOperationException()");
+        }
+        else {
+            delegationBuilder.append("super<").append(descriptor.getContainingDeclaration().getName());
+            delegationBuilder.append(">.").append(descriptor.getName()).append("(");
+        }
         boolean first = true;
         for (ValueParameterDescriptor parameterDescriptor : descriptor.getValueParameters()) {
             if (!first) {
                 bodyBuilder.append(",");
+                if (!isAbstractFun) {
+                    delegationBuilder.append(",");
+                }
             }
             first = false;
             bodyBuilder.append(parameterDescriptor.getName());
-            bodyBuilder.append(":");
-            bodyBuilder.append(parameterDescriptor.getType().toString());
+            bodyBuilder.append(" : ");
+            bodyBuilder.append(renderType(parameterDescriptor.getType()));
 
-            ImportInsertHelper.addImportDirectiveIfNeeded(parameterDescriptor.getType(), file);
+            if (!isAbstractFun) {
+                delegationBuilder.append(parameterDescriptor.getName());
+            }
         }
         bodyBuilder.append(")");
+        if (!isAbstractFun) {
+            delegationBuilder.append(")");
+        }
         final JetType returnType = descriptor.getReturnType();
         final JetStandardLibrary stdlib = JetStandardLibrary.getInstance();
-        if (!returnType.equals(stdlib.getTuple0Type())) {
-            bodyBuilder.append(":").append(returnType.toString());
-            ImportInsertHelper.addImportDirectiveIfNeeded(returnType, file);
-        }
 
-        bodyBuilder.append("{").append("throw UnsupportedOperationException()").append("}");
+        boolean returnsNotUnit = returnType != null && !stdlib.getTuple0Type().equals(returnType);
+        if (returnsNotUnit) {
+            bodyBuilder.append(" : ").append(renderType(returnType));
+        }
+        if (!whereRestrictions.isEmpty()) {
+            bodyBuilder.append("\n").append("where ").append(StringUtil.join(whereRestrictions, ", "));
+        }
+        bodyBuilder.append("{").append(returnsNotUnit && !isAbstractFun ? "return " : "").append(delegationBuilder.toString()).append("}");
 
         return JetPsiFactory.createFunction(project, bodyBuilder.toString());
+    }
+
+    private static void addReceiverParameter(CallableDescriptor descriptor, StringBuilder bodyBuilder) {
+        ReceiverDescriptor receiverParameter = descriptor.getReceiverParameter();
+        if (receiverParameter.exists()) {
+            bodyBuilder.append(receiverParameter.getType()).append(".");
+        }
     }
 
     private static String defaultInitializer(JetType returnType, JetStandardLibrary stdlib) {
@@ -145,11 +260,17 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         else if (returnType.equals(stdlib.getBooleanType())) {
             return "false";
         }
+
         return null;
     }
 
+    private static String displayableVisibility(MemberDescriptor descriptor) {
+        Visibility visibility = descriptor.getVisibility();
+        return visibility != Visibilities.INTERNAL ? visibility.toString() + " ": "";
+    }
+
     private MemberChooser<DescriptorClassMember> showOverrideImplementChooser(Project project,
-                                                                                     DescriptorClassMember[] members) {
+                                                                              DescriptorClassMember[] members) {
         final MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(members, true, true, project);
         chooser.setTitle(getChooserTitle());
         chooser.show();
@@ -171,10 +292,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
 
     protected abstract String getNoMethodsFoundHint();
 
-    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file,
-                       boolean implementAll) {
+    public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, boolean implementAll) {
         final PsiElement elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset());
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
+
+        assert classOrObject != null : "ClassObject should be checked in isValidFor method";
+
         Set<CallableMemberDescriptor> missingImplementations = collectMethodsToGenerate(classOrObject);
         if (missingImplementations.isEmpty() && !implementAll) {
             HintManager.getInstance().showErrorHint(editor, getNoMethodsFoundHint());
@@ -185,9 +308,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         final List<DescriptorClassMember> selectedElements;
         if (implementAll) {
             selectedElements = members;
-        } else {
-            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(project,
-                                                                                              members.toArray(new DescriptorClassMember[members.size()]));
+        }
+        else {
+            final MemberChooser<DescriptorClassMember> chooser = showOverrideImplementChooser(
+                    project,
+                    members.toArray(new DescriptorClassMember[members.size()]));
+
             if (chooser == null) {
                 return;
             }
@@ -196,12 +322,12 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
             if (selectedElements == null || selectedElements.isEmpty()) return;
         }
 
-        new WriteCommandAction(project, file) {
-          protected void run(final Result result) throws Throwable {
-            generateMethods(project, editor, classOrObject, selectedElements);
-          }
-        }.execute();
-
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                generateMethods(editor, classOrObject, selectedElements);
+            }
+        });
     }
 
     @Override

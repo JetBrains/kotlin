@@ -17,13 +17,15 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.InnerClassesScopeWrapper;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
@@ -58,7 +60,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     private ClassReceiver implicitReceiver;
 
-    public MutableClassDescriptorLite(DeclarationDescriptor containingDeclaration, ClassKind kind) {
+    public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration, ClassKind kind) {
         super(containingDeclaration);
         this.kind = kind;
     }
@@ -67,10 +69,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
     private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor instanceof NamespaceDescriptor) {
             return true;
-        } else if (declarationDescriptor instanceof ClassDescriptor) {
+        }
+        else if (declarationDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
             return classDescriptor.getKind() == ClassKind.OBJECT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -123,7 +127,7 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-    public WritableScope getScopeForMemberLookupAsWritableScope() {
+    private WritableScope getScopeForMemberLookupAsWritableScope() {
         // hack
         return (WritableScope) scopeForMemberLookup;
     }
@@ -135,8 +139,13 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         if (typeArguments.isEmpty()) return scopeForMemberLookup;
 
         List<TypeParameterDescriptor> typeParameters = getTypeConstructor().getParameters();
-        Map<TypeConstructor, TypeProjection> substitutionContext = TypeUtils.buildSubstitutionContext(typeParameters, typeArguments);
-        return new SubstitutingScope(scopeForMemberLookup, TypeSubstitutor.create(substitutionContext));
+        Map<TypeConstructor, TypeProjection> substitutionContext = SubstitutionUtils.buildSubstitutionContext(typeParameters, typeArguments);
+
+        // Unsafe substitutor is OK, because no recursion can hurt us upon a trivial substitution:
+        // all the types are written explicitly in the code already, they can not get infinite.
+        // One exception is *-projections, but they need to be handled separately anyways.
+        TypeSubstitutor substitutor = TypeSubstitutor.createUnsafe(substitutionContext);
+        return new SubstitutingScope(scopeForMemberLookup, substitutor);
     }
 
 
@@ -277,10 +286,10 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
 
     public void addSupertype(@NotNull JetType supertype) {
         if (!ErrorUtils.isErrorType(supertype)) {
-            if (!(supertype.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor)) {
-                throw new IllegalStateException();
+            if (TypeUtils.getClassDescriptor(supertype) != null) {
+                // See the Errors.SUPERTYPE_NOT_A_CLASS_OR_TRAIT
+                supertypes.add(supertype);
             }
-            supertypes.add(supertype);
         }
     }
 
@@ -301,7 +310,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
     }
 
-
     @NotNull
     @Override
     public ReceiverDescriptor getImplicitReceiver() {
@@ -310,7 +318,6 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor imp
         }
         return implicitReceiver;
     }
-
 
     @Override
     public String toString() {

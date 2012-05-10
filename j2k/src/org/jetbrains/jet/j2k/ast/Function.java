@@ -88,6 +88,11 @@ public class Function extends Member {
     String modifiersToKotlin() {
         List<String> modifierList = new LinkedList<String>();
 
+        String accessModifier = accessModifier();
+        if (!accessModifier.isEmpty()) {
+            modifierList.add(accessModifier);
+        }
+
         if (isAbstract()) {
             modifierList.add(Modifier.ABSTRACT);
         }
@@ -96,17 +101,12 @@ public class Function extends Member {
             modifierList.add(Modifier.OVERRIDE);
         }
 
-        if (!myModifiers.contains(Modifier.OVERRIDE) && !myModifiers.contains(Modifier.FINAL)) {
+        if (!myModifiers.contains(Modifier.ABSTRACT) && !myModifiers.contains(Modifier.OVERRIDE) && !myModifiers.contains(Modifier.FINAL)) {
             modifierList.add(Modifier.OPEN);
         }
 
         if (myModifiers.contains(Modifier.NOT_OPEN)) {
             modifierList.remove(Modifier.OPEN);
-        }
-
-        String accessModifier = accessModifier();
-        if (!accessModifier.isEmpty()) {
-            modifierList.add(accessModifier);
         }
 
         if (modifierList.size() > 0) {

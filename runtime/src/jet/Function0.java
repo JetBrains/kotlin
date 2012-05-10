@@ -19,7 +19,10 @@
  */
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /** A function with no arguments */
+@AssertInvisibleInResolver
 public abstract class Function0<R> extends DefaultJetObject {
     public abstract R invoke();
 

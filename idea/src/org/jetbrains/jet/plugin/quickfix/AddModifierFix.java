@@ -85,11 +85,11 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        element.replace(addModifier(element, modifier, modifiersThanCanBeReplaced, project));
+        element.replace(addModifier(element, modifier, modifiersThanCanBeReplaced, project, false));
     }
 
     @NotNull
-    private static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThanCanBeReplaced, @NotNull Project project) {
+    /*package*/ static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThatCanBeReplaced, @NotNull Project project, boolean toBeginning) {
         JetModifierListOwner newElement = (JetModifierListOwner) (element.copy());
 
         JetModifierList modifierList = newElement.getModifierList();
@@ -102,20 +102,39 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         }
         else {
             boolean replaced = false;
-            if (modifiersThanCanBeReplaced != null) {
-                for (JetToken modifierThanCanBeReplaced : modifiersThanCanBeReplaced) {
-                    if (modifierList.hasModifier(modifierThanCanBeReplaced)) {
-                        PsiElement openModifierPsi = modifierList.getModifierNode(modifierThanCanBeReplaced).getPsi();
-                        assert openModifierPsi != null;
-                        openModifierPsi.replace(listWithModifier.getFirstChild());
-                        replaced = true;
+            if (modifiersThatCanBeReplaced != null) {
+                PsiElement toBeReplaced = null;
+                PsiElement toReplace = null;
+                for (JetToken modifierThatCanBeReplaced : modifiersThatCanBeReplaced) {
+                    if (modifierList.hasModifier(modifierThatCanBeReplaced)) {
+                        PsiElement modifierElement = modifierList.getModifierNode(modifierThatCanBeReplaced).getPsi();
+                        assert modifierElement != null;
+                        if (!replaced) {
+                            toBeReplaced = modifierElement;
+                            toReplace = listWithModifier.getFirstChild();
+                            //modifierElement.replace(listWithModifier.getFirstChild());
+                            replaced = true;
+                        }
+                        else {
+                            modifierList.deleteChildInternal(modifierElement.getNode());
+                        }
                     }
+                }
+                if (toBeReplaced != null && toReplace != null) {
+                    toBeReplaced.replace(toReplace);
                 }
             }
             if (!replaced) {
-                PsiElement lastChild = modifierList.getLastChild();
-                modifierList.addAfter(listWithModifier.getFirstChild(), lastChild);
-                modifierList.addAfter(whiteSpace, lastChild);
+                if (toBeginning) {
+                    PsiElement firstChild = modifierList.getFirstChild();
+                    modifierList.addBefore(listWithModifier.getFirstChild(), firstChild);
+                    modifierList.addBefore(whiteSpace, firstChild);
+                }
+                else {
+                    PsiElement lastChild = modifierList.getLastChild();
+                    modifierList.addAfter(listWithModifier.getFirstChild(), lastChild);
+                    modifierList.addAfter(whiteSpace, lastChild);
+                }
             }
         }
         return newElement;

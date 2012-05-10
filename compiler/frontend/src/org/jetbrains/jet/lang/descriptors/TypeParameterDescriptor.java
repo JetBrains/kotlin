@@ -95,23 +95,26 @@ public class TypeParameterDescriptor extends DeclarationDescriptorImpl implement
                 upperBounds);
     }
 
-    public void setInitialized() {
-        if (initialized) {
-            throw new IllegalStateException();
-        }
-        initialized = true;
-    }
-
     private void checkInitialized() {
         if (!initialized) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Type parameter descriptor in not initialized: " + nameForAssertions());
         }
     }
 
     private void checkUninitialized() {
         if (initialized) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Type parameter descriptor is already initialized: " + nameForAssertions());
         }
+    }
+
+    private String nameForAssertions() {
+        DeclarationDescriptor owner = getContainingDeclaration();
+        return getName() + " declared in " + (owner == null ? "<no owner>" : owner.getName());
+    }
+
+    public void setInitialized() {
+        checkUninitialized();
+        initialized = true;
     }
 
     public boolean isReified() {

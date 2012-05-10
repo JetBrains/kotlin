@@ -16,6 +16,9 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
+@AssertInvisibleInResolver
 public class Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Tuple {
     public final T1 _1;
     public final T2 _2;

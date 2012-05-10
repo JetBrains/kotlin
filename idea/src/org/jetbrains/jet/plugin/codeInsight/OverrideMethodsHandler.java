@@ -27,9 +27,10 @@ import java.util.Set;
  * @author yole
  */
 public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
+    @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(MutableClassDescriptor descriptor) {
         final Set<CallableMemberDescriptor> superMethods = OverrideResolver.collectSuperMethods(descriptor).keySet();
-        for (CallableMemberDescriptor member : descriptor.getCallableMembers()) {
+        for (CallableMemberDescriptor member : descriptor.getDeclaredCallableMembers()) {
             superMethods.removeAll(member.getOverriddenDescriptors());
         }
         Set<CallableMemberDescriptor> result = new HashSet<CallableMemberDescriptor>();
@@ -41,6 +42,7 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         return result;
     }
 
+    @Override
     protected String getChooserTitle() {
         return "Override Members";
     }

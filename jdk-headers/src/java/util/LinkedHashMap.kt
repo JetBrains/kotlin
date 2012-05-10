@@ -7,9 +7,9 @@ public open class LinkedHashMap<erased K, erased V>(m : java.util.Map<out K, out
     public this(initialCapacity : Int) {}
     public this() {}
 
-    override public fun containsValue(value : Any?) : Boolean {}
-    override public fun get(key : Any?) : V? {}
-    override public fun clear() : Unit {}
+    public override fun containsValue(value : Any?) : Boolean {}
+    public override fun get(key : Any?) : V? {}
+    public override fun clear() : Unit {}
     open protected fun removeEldestEntry(eldest : Entry<K, V>) : Boolean {}
     //class object {
     //open public fun init<K, V>(initialCapacity : Int, loadFactor : Float) : LinkedHashMap<K, V> {

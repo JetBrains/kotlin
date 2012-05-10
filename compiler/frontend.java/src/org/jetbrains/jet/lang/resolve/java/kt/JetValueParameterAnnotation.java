@@ -80,7 +80,7 @@ public class JetValueParameterAnnotation extends PsiAnnotationWrapper {
     }
     
     public static JetValueParameterAnnotation get(PsiParameter psiParameter) {
-        return new JetValueParameterAnnotation(psiParameter.getModifierList().findAnnotation(JvmStdlibNames.JET_VALUE_PARAMETER.getFqName()));
+        return new JetValueParameterAnnotation(psiParameter.getModifierList().findAnnotation(JvmStdlibNames.JET_VALUE_PARAMETER.getFqName().getFqName()));
     }
     
 }

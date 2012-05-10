@@ -56,8 +56,8 @@ public class OverridingUtil {
             for (D otherD : candidates) {
                 CallableDescriptor other = transform.fun(otherD);
                 if (me.getOriginal() == other.getOriginal()
-                    && isOverridableBy(other, me).isOverridable() == OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE
-                    && isOverridableBy(me, other).isOverridable() == OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE) {
+                    && isOverridableBy(other, me).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
+                    && isOverridableBy(me, other).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                     continue outerLoop;
                 }
             }
@@ -123,7 +123,8 @@ public class OverridingUtil {
     private static int compiledValueParameterCount(CallableDescriptor callableDescriptor) {
         if (callableDescriptor.getReceiverParameter().exists()) {
             return 1 + callableDescriptor.getValueParameters().size();
-        } else {
+        }
+        else {
             return callableDescriptor.getValueParameters().size();
         }
     }
@@ -152,7 +153,7 @@ public class OverridingUtil {
                         return OverrideCompatibilityInfo.typeParameterNumberMismatch();
                     }
                 }
-                return OverrideCompatibilityInfo.valueParameterTypeMismatch(null, null, OverrideCompatibilityInfo.ErrorKind.CONFLICT);
+                return OverrideCompatibilityInfo.valueParameterTypeMismatch(null, null, OverrideCompatibilityInfo.Result.CONFLICT);
             }
         }
 
@@ -182,18 +183,19 @@ public class OverridingUtil {
                 JetType subValueParameter = subValueParameters.get(i);
 
                 if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, axioms)) {
-                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, OverrideCompatibilityInfo.ErrorKind.INCOMPATIBLE);
+                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }
             }
 
-        } else {
+        }
+        else {
 
             for (int i = 0; i < superValueParameters.size(); ++i) {
                 JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
                 JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
                 // TODO: compare erasure
                 if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
-                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, OverrideCompatibilityInfo.ErrorKind.INCOMPATIBLE);
+                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }
             }
             
@@ -209,9 +211,11 @@ public class OverridingUtil {
     private static JetType getUpperBound(JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
-        } else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
+        }
+        else if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             return ((TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor()).getUpperBoundsAsType();
-        } else {
+        }
+        else {
             throw new IllegalStateException("unknown type constructor: " + type.getConstructor().getClass().getName());
         }
     }
@@ -240,38 +244,50 @@ public class OverridingUtil {
     }
 
     /**
-     * Get overriden descriptors that are declarations or delegations.
+     * Get overridden descriptors that are declarations or delegations.
      *
      * @see CallableMemberDescriptor.Kind#isReal()
      */
-    public static Collection<CallableMemberDescriptor> getOverridenDeclarations(CallableMemberDescriptor descriptor) {
+    public static Collection<CallableMemberDescriptor> getOverriddenDeclarations(CallableMemberDescriptor descriptor) {
         Map<ClassDescriptor, CallableMemberDescriptor> result = Maps.newHashMap();
-        getOverridenDeclarations(descriptor, result);
+        getOverriddenDeclarations(descriptor, result);
         return result.values();
     }
 
-    private static void getOverridenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
+    private static void getOverriddenDeclarations(CallableMemberDescriptor descriptor, Map<ClassDescriptor, CallableMemberDescriptor> r) {
         if (descriptor.getKind().isReal()) {
             r.put((ClassDescriptor) descriptor.getContainingDeclaration(), descriptor);
-        } else {
+        }
+        else {
             if (descriptor.getOverriddenDescriptors().isEmpty()) {
                 throw new IllegalStateException();
             }
-            for (CallableMemberDescriptor overriden : descriptor.getOverriddenDescriptors()) {
-                getOverridenDeclarations(overriden, r);
+            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+                getOverriddenDeclarations(overridden, r);
             }
+        }
+    }
+
+    public static void bindOverride(CallableMemberDescriptor fromCurrent, CallableMemberDescriptor fromSupertype) {
+        fromCurrent.addOverriddenDescriptor(fromSupertype);
+
+        for (ValueParameterDescriptor parameterFromCurrent : fromCurrent.getValueParameters()) {
+            assert parameterFromCurrent.getIndex() < fromSupertype.getValueParameters().size()
+                    : "An override relation between functions implies that they have the same number of value parameters";
+            ValueParameterDescriptor parameterFromSupertype = fromSupertype.getValueParameters().get(parameterFromCurrent.getIndex());
+            parameterFromCurrent.addOverriddenDescriptor(parameterFromSupertype);
         }
     }
 
     public static class OverrideCompatibilityInfo {
 
-        public enum ErrorKind {
+        public enum Result {
             OVERRIDABLE,
             INCOMPATIBLE,
             CONFLICT,
         }
 
-        private static final OverrideCompatibilityInfo SUCCESS = new OverrideCompatibilityInfo(ErrorKind.OVERRIDABLE, "SUCCESS");
+        private static final OverrideCompatibilityInfo SUCCESS = new OverrideCompatibilityInfo(Result.OVERRIDABLE, "SUCCESS");
 
         @NotNull
         public static OverrideCompatibilityInfo success() {
@@ -280,55 +296,55 @@ public class OverridingUtil {
 
         @NotNull
         public static OverrideCompatibilityInfo nameMismatch() {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "nameMismatch"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "nameMismatch"); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo typeParameterNumberMismatch() {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "typeParameterNumberMismatch"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "typeParameterNumberMismatch"); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo valueParameterNumberMismatch() {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "valueParameterNumberMismatch"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "valueParameterNumberMismatch"); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo boundsMismatch(TypeParameterDescriptor superTypeParameter, TypeParameterDescriptor subTypeParameter) {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "boundsMismatch"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "boundsMismatch"); // TODO
         }
 
         @NotNull
-        public static OverrideCompatibilityInfo valueParameterTypeMismatch(JetType superValueParameter, JetType subValueParameter, ErrorKind errorKind) {
-            return new OverrideCompatibilityInfo(errorKind, "valueParameterTypeMismatch"); // TODO
+        public static OverrideCompatibilityInfo valueParameterTypeMismatch(JetType superValueParameter, JetType subValueParameter, Result result) {
+            return new OverrideCompatibilityInfo(result, "valueParameterTypeMismatch"); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo memberKindMismatch() {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "memberKindMismatch"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "memberKindMismatch"); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo returnTypeMismatch(JetType substitutedSuperReturnType, JetType unsubstitutedSubReturnType) {
-            return new OverrideCompatibilityInfo(ErrorKind.CONFLICT, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
+            return new OverrideCompatibilityInfo(Result.CONFLICT, "returnTypeMismatch: " + unsubstitutedSubReturnType + " >< " + substitutedSuperReturnType); // TODO
         }
 
         @NotNull
         public static OverrideCompatibilityInfo varOverriddenByVal() {
-            return new OverrideCompatibilityInfo(ErrorKind.INCOMPATIBLE, "varOverriddenByVal"); // TODO
+            return new OverrideCompatibilityInfo(Result.INCOMPATIBLE, "varOverriddenByVal"); // TODO
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private final ErrorKind overridable;
+        private final Result overridable;
         private final String message;
 
-        public OverrideCompatibilityInfo(ErrorKind success, String message) {
+        public OverrideCompatibilityInfo(Result success, String message) {
             this.overridable = success;
             this.message = message;
         }
 
-        public ErrorKind isOverridable() {
+        public Result getResult() {
             return overridable;
         }
 

@@ -25,10 +25,10 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 import java.util.Set;
@@ -39,23 +39,23 @@ import java.util.Set;
 public class OverloadingConflictResolver {
 
     @Nullable
-    public <D extends CallableDescriptor> ResolvedCallImpl<D> findMaximallySpecific(Set<ResolvedCallImpl<D>> candidates, boolean discriminateGenericDescriptors) {
+    public <D extends CallableDescriptor> ResolvedCallWithTrace<D> findMaximallySpecific(Set<ResolvedCallWithTrace<D>> candidates, boolean discriminateGenericDescriptors) {
         // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
-        Set<ResolvedCallImpl<D>> maximallySpecific = new THashSet<ResolvedCallImpl<D>>(new TObjectHashingStrategy<ResolvedCallImpl<D>>() {
+        Set<ResolvedCallWithTrace<D>> maximallySpecific = new THashSet<ResolvedCallWithTrace<D>>(new TObjectHashingStrategy<ResolvedCallWithTrace<D>>() {
                     @Override
-                    public boolean equals(ResolvedCallImpl<D> o1, ResolvedCallImpl<D> o2) {
+                    public boolean equals(ResolvedCallWithTrace<D> o1, ResolvedCallWithTrace<D> o2) {
                         return o1 == null ? o2 == null : o1.getResultingDescriptor().equals(o2.getResultingDescriptor());
                     }
 
                     @Override
-                    public int computeHashCode(ResolvedCallImpl<D> object) {
+                    public int computeHashCode(ResolvedCallWithTrace<D> object) {
                         return object == null ? 0 : object.getResultingDescriptor().hashCode();
                     }
                 });
         meLoop:
-        for (ResolvedCallImpl<D> candidateCall : candidates) {
+        for (ResolvedCallWithTrace<D> candidateCall : candidates) {
             D me = candidateCall.getResultingDescriptor();
-            for (ResolvedCallImpl<D> otherCall : candidates) {
+            for (ResolvedCallWithTrace<D> otherCall : candidates) {
                 D other = otherCall.getResultingDescriptor();
                 if (other == me) continue;
                 if (!moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors)) {
@@ -65,7 +65,7 @@ public class OverloadingConflictResolver {
             maximallySpecific.add(candidateCall);
         }
         if (maximallySpecific.size() == 1) {
-            ResolvedCallImpl<D> result = maximallySpecific.iterator().next();
+            ResolvedCallWithTrace<D> result = maximallySpecific.iterator().next();
             result.getTrace().commit();
             return result;
         }
@@ -94,16 +94,74 @@ public class OverloadingConflictResolver {
         List<ValueParameterDescriptor> gParams = g.getValueParameters();
 
         int fSize = fParams.size();
-        if (fSize != gParams.size()) return false;
-        for (int i = 0; i < fSize; i++) {
-            JetType fParamType = fParams.get(i).getType();
-            JetType gParamType = gParams.get(i).getType();
+        int gSize = gParams.size();
 
-            if (!typeMoreSpecific(fParamType, gParamType)) {
-                return false;
+        boolean fIsVararg = isVariableArity(fParams);
+        boolean gIsVararg = isVariableArity(gParams);
+
+        if (!fIsVararg && gIsVararg) return true;
+        if (fIsVararg && !gIsVararg) return false;
+
+        if (!fIsVararg && !gIsVararg) {
+            if (fSize != gSize) return false;
+
+            for (int i = 0; i < fSize; i++) {
+                ValueParameterDescriptor fParam = fParams.get(i);
+                ValueParameterDescriptor gParam = gParams.get(i);
+
+                JetType fParamType = fParam.getType();
+                JetType gParamType = gParam.getType();
+
+                if (!typeMoreSpecific(fParamType, gParamType)) {
+                    return false;
+                }
             }
         }
-        
+
+        if (fIsVararg && gIsVararg) {
+            // Check matching parameters
+            int minSize = Math.min(fSize, gSize);
+            for (int i = 0; i < minSize - 1; i++) {
+                ValueParameterDescriptor fParam = fParams.get(i);
+                ValueParameterDescriptor gParam = gParams.get(i);
+
+                JetType fParamType = fParam.getType();
+                JetType gParamType = gParam.getType();
+
+                if (!typeMoreSpecific(fParamType, gParamType)) {
+                    return false;
+                }
+            }
+
+            // Check the non-matching parameters of one function against the vararg parameter of the other funciton
+            // Example:
+            //   f(a : A, vararg vf : T)
+            //   g(vararg vg : T)
+            // here we check that typeof(a) < typeof(vg) and elementTypeOf(vf) < elementTypeOf(vg)
+            if (fSize < gSize) {
+                ValueParameterDescriptor fParam = fParams.get(fSize - 1);
+                JetType fParamType = fParam.getVarargElementType();
+                assert fParamType != null : "fIsVararg guarantees this";
+                for (int i = fSize - 1; i < gSize; i++) {
+                    ValueParameterDescriptor gParam = gParams.get(i);
+                    if (!typeMoreSpecific(fParamType, gParam.getType())) {
+                        return false;
+                    }
+                }
+            }
+            else {
+                ValueParameterDescriptor gParam = gParams.get(gSize - 1);
+                JetType gParamType = gParam.getVarargElementType();
+                assert gParamType != null : "gIsVararg guarantees this";
+                for (int i = gSize - 1; i < fSize; i++) {
+                    ValueParameterDescriptor fParam = fParams.get(i);
+                    if (!typeMoreSpecific(fParam.getType(), gParamType)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         if (discriminateGenericDescriptors && isGeneric(f)) {
             if (!isGeneric(g)) {
                 return false;
@@ -116,7 +174,12 @@ public class OverloadingConflictResolver {
 
         return true;
     }
-    
+
+    private boolean isVariableArity(List<ValueParameterDescriptor> fParams) {
+        int fSize = fParams.size();
+        return fSize > 0 && fParams.get(fSize - 1).getVarargElementType() != null;
+    }
+
     private boolean isGeneric(CallableDescriptor f) {
         return !f.getOriginal().getTypeParameters().isEmpty();
     }

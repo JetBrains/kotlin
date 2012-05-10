@@ -139,7 +139,7 @@ public abstract class CodegenContext {
     public ConstructorContext intoConstructor(ConstructorDescriptor descriptor, JetTypeMapper typeMapper) {
         if(descriptor == null) {
             descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Collections.<AnnotationDescriptor>emptyList(), true)
-                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibility.PUBLIC);
+                    .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(), Visibilities.PUBLIC);
         }
         return new ConstructorContext(descriptor, getContextKind(), this, typeMapper);
     }
@@ -157,7 +157,7 @@ public abstract class CodegenContext {
 
         CallableDescriptor receiverDescriptor = getReceiverDescriptor();
         if (receiverDescriptor != null) {
-            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType());
+            Type type = mapper.mapType(receiverDescriptor.getReceiverParameter().getType(), MapTypeMode.VALUE);
             frameMap.enterTemp(type.getSize());  // Next slot for fake this
         }
 
@@ -167,18 +167,6 @@ public abstract class CodegenContext {
     @Nullable
     public CodegenContext getParentContext() {
         return parentContext;
-    }
-
-    public Type jvmType(JetTypeMapper mapper) {
-        if (contextType instanceof ClassDescriptor) {
-            return mapper.mapType(((ClassDescriptor) contextType).getDefaultType(), contextKind);
-        }
-        else if (closure != null) {
-            return Type.getObjectType(closure.name);
-        }
-        else {
-            return parentContext != null ? parentContext.jvmType(mapper) : JetTypeMapper.TYPE_OBJECT;
-        }
     }
 
     public StackValue lookupInContext(DeclarationDescriptor d, InstructionAdapter v, StackValue result) {
@@ -200,7 +188,7 @@ public abstract class CodegenContext {
         while(cur != null && !(cur.getContextDescriptor() instanceof ClassDescriptor))
             cur = cur.getParentContext();
 
-        return cur == null ? null : typeMapper.mapType(((ClassDescriptor)cur.getContextDescriptor()).getDefaultType());
+        return cur == null ? null : typeMapper.mapType(((ClassDescriptor) cur.getContextDescriptor()).getDefaultType(), MapTypeMode.IMPL);
     }
     
     public int getTypeInfoConstantIndex(JetType type) {
@@ -242,7 +230,8 @@ public abstract class CodegenContext {
                                   fd.getValueParameters(),
                                   fd.getReturnType(),
                                   fd.getModality(),
-                                  fd.getVisibility());
+                                  fd.getVisibility(),
+                                  /*isInline = */ false);
             accessor = myAccessor;
         }
         else if(descriptor instanceof PropertyDescriptor) {
@@ -281,7 +270,7 @@ public abstract class CodegenContext {
 
     public StackValue getReceiverExpression(JetTypeMapper typeMapper) {
         assert getReceiverDescriptor() != null;
-        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType());
+        Type asmType = typeMapper.mapType(getReceiverDescriptor().getReceiverParameter().getType(), MapTypeMode.VALUE);
         return getThisDescriptor() != null ? StackValue.local(1, asmType) : StackValue.local(0, asmType);
     }
 
@@ -389,8 +378,9 @@ public abstract class CodegenContext {
             super(contextType, contextKind, parentContext, closure);
             
             final Type type = enclosingClassType(typeMapper);
+            Type owner = closure.state.getInjector().getJetTypeMapper().mapType(contextType.getDefaultType(), MapTypeMode.IMPL);
             outerExpression = type != null
-                        ? StackValue.field(type, closure.state.getTypeMapper().mapType(contextType.getDefaultType(), OwnerKind.IMPLEMENTATION).getInternalName(), "this$0", false)
+                        ? StackValue.field(type, owner.getInternalName(), "this$0", false)
                         : null;
         }
 

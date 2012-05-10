@@ -26,6 +26,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
+import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -51,7 +52,8 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             if (!isFirstPartInQualifiedExpression(qualifiedExpression)) {
                 return qualifiedExpression.getReceiverExpression();
             }
-        } else if (parent instanceof JetCallExpression) {
+        }
+        else if (parent instanceof JetCallExpression) {
             //This is in case `a().b()`
             JetCallExpression callExpression = (JetCallExpression) parent;
             parent = callExpression.getParent();
@@ -97,6 +99,11 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
         }
 
         return this;
+    }
+
+    @Nullable
+    public PsiElement getIdentifier() {
+        return findChildByType(JetTokens.IDENTIFIER);
     }
 
     @Nullable @IfNotParsed

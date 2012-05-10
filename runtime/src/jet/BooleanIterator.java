@@ -16,9 +16,12 @@
 
 package jet;
 
+import org.jetbrains.jet.rt.annotation.AssertInvisibleInResolver;
+
 /**
  * @author alex.tkachman
  */
+@AssertInvisibleInResolver
 public abstract class BooleanIterator implements Iterator<Boolean> {
     public final Boolean next() {
         return nextBoolean();

@@ -28,8 +28,10 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,16 +50,27 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
     private JavaSemanticServices javaSemanticServices;
     @NotNull
     private ModuleConfiguration delegateConfiguration;
+    @NotNull
+    private CompilerSpecialMode mode;
 
     @Inject
     public void setProject(@NotNull Project project) {
         this.project = project;
-        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project);
     }
 
     @Inject
     public void setJavaSemanticServices(@NotNull JavaSemanticServices javaSemanticServices) {
         this.javaSemanticServices = javaSemanticServices;
+    }
+
+    @Inject
+    public void setMode(@NotNull CompilerSpecialMode mode) {
+        this.mode = mode;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.delegateConfiguration = DefaultModuleConfiguration.createStandardConfiguration(project, mode == CompilerSpecialMode.BUILTINS);
     }
 
 
@@ -72,7 +85,10 @@ public class JavaBridgeConfiguration implements ModuleConfiguration {
 
     @Override
     public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor, @NotNull WritableScope namespaceMemberScope) {
-        namespaceMemberScope.importScope(javaSemanticServices.getDescriptorResolver().createJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor));
+        JetScope javaPackageScope = javaSemanticServices.getDescriptorResolver().getJavaPackageScope(DescriptorUtils.getFQName(namespaceDescriptor).toSafe(), namespaceDescriptor);
+        if (javaPackageScope != null) {
+            namespaceMemberScope.importScope(javaPackageScope);
+        }
         delegateConfiguration.extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
     }
 

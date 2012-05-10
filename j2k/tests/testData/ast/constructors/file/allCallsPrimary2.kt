@@ -24,7 +24,7 @@ return __
 }
 public open class User() {
 class object {
-open public fun main() : Unit {
+public open fun main() : Unit {
 var c1 : C? = C.init(100, 100, 100)
 var c2 : C? = C.init(100, 100)
 var c3 : C? = C(100)

@@ -30,14 +30,17 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
-import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.ArrayList;
@@ -131,10 +134,10 @@ public class ExpressionTypingUtils {
 
     public static void checkWrappingInRef(JetSimpleNameExpression expression, ExpressionTypingContext context) {
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorIfAny(context.trace.getBindingContext(), expression, true);
-        if (variable != null && variable.isVar()) {
+        if (variable != null) {
             DeclarationDescriptor containingDeclaration = variable.getContainingDeclaration();
             if (context.scope.getContainingDeclaration() != containingDeclaration && containingDeclaration instanceof CallableDescriptor) {
-                context.trace.record(MUST_BE_WRAPPED_IN_A_REF, variable);
+                context.trace.record(CAPTURED_IN_CLOSURE, variable);
             }
         }
     }
@@ -209,6 +212,12 @@ public class ExpressionTypingUtils {
             @NotNull CallableDescriptor receiverArgument
     ) {
         JetType type = expectedReceiver.getType();
+
+        if (type instanceof NamespaceType) {
+            // This fake class ruins standard algorithms
+            return false;
+        }
+
         if (checkReceiverResolution(expectedReceiver, type, receiverArgument)) return true;
         if (type.isNullable()) {
             JetType notNullableType = TypeUtils.makeNotNullable(type);
@@ -222,7 +231,7 @@ public class ExpressionTypingUtils {
             @NotNull JetType receiverType,
             @NotNull CallableDescriptor receiverArgument
     ) {
-        ConstraintSystem constraintSystem = new ConstraintSystemImpl(ConstraintResolutionListener.DO_NOTHING);
+        ConstraintSystem constraintSystem = new ConstraintSystemWithPriorities(ConstraintResolutionListener.DO_NOTHING);
         for (TypeParameterDescriptor typeParameterDescriptor : receiverArgument.getTypeParameters()) {
             constraintSystem.registerTypeVariable(typeParameterDescriptor, Variance.INVARIANT);
         }

@@ -20,7 +20,6 @@ package org.jetbrains.jet.lang.diagnostics;
  * @author abreslav
  */
 public enum Severity {
-    LOGGING,
     INFO,
     ERROR,
     WARNING

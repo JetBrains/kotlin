@@ -18,38 +18,55 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Pavel Talanov
  *         <p/>
- *         Base class reprenting a configuration of translator.
+ *         Base class representing a configuration of translator.
  */
 public abstract class Config {
 
     @NotNull
+    public static Config getEmptyConfig(@NotNull Project project) {
+        return new Config(project) {
+            @NotNull
+            @Override
+            protected List<JetFile> generateLibFiles() {
+                return Collections.emptyList();
+            }
+        };
+    }
+
+    @NotNull
     protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
-            "/core/annotations.kt",
-            "/jquery/common.kt",
-            "/jquery/ui.kt",
-            "/core/javautil.kt",
-            "/core/javalang.kt",
-            "/core/core.kt",
-            "/core/math.kt",
-            "/core/json.kt",
-            "/raphael/raphael.kt",
-            "/html5/canvas.kt",
-            "/html5/files.kt",
-            "/html5/image.kt"
+        "/core/annotations.kt",
+        "/jquery/common.kt",
+        "/jquery/ui.kt",
+        "/core/javautil.kt",
+        "/core/javalang.kt",
+        "/core/date.kt",
+        "/core/core.kt",
+        "/core/math.kt",
+        "/core/json.kt",
+        "/raphael/raphael.kt",
+        "/html5/canvas.kt",
+        "/html5/files.kt",
+        "/html5/image.kt",
+        "/stdlib/JUMaps.kt"
     );
 
     protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
 
     @NotNull
     private final Project project;
+    @Nullable
+    private List<JetFile> libFiles = null;
 
     public Config(@NotNull Project project) {
         this.project = project;
@@ -61,5 +78,13 @@ public abstract class Config {
     }
 
     @NotNull
-    public abstract List<JetFile> getLibFiles();
+    protected abstract List<JetFile> generateLibFiles();
+
+    @NotNull
+    public final List<JetFile> getLibFiles() {
+        if (libFiles == null) {
+            libFiles = generateLibFiles();
+        }
+        return libFiles;
+    }
 }

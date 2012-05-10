@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
@@ -268,7 +269,8 @@ public class JetPsiUtil {
         List<JetDeclaration> declarations = file.getDeclarations();
         if (declarations.size() == 1) {
             file.delete();
-        } else {
+        }
+        else {
             PsiElement parent = clazz.getParent();
             CodeEditUtil.removeChild(parent.getNode(), clazz.getNode());
         }
@@ -298,5 +300,18 @@ public class JetPsiUtil {
             return (JetSimpleNameExpression)importedReference;
         }
         return null;
+    }
+
+    public static boolean isVoidType(@Nullable JetTypeReference typeReference) {
+        if (typeReference == null) {
+            return false;
+        }
+
+        return "Unit".equals(typeReference.getText());
+    }
+
+    public static boolean isSafeCall(@NotNull Call call) {
+        ASTNode callOperationNode = call.getCallOperationNode();
+        return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
 }

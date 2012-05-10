@@ -75,8 +75,11 @@ public class JetArrayAccessExpression extends JetReferenceExpression {
     }
     
     public List<TextRange> getBracketRanges() {
-        TextRange lBracket = getIndicesNode().findChildByType(JetTokens.LBRACKET).getTextRange();
-        TextRange rBracket = getIndicesNode().findChildByType(JetTokens.RBRACKET).getTextRange();
-        return Lists.newArrayList(lBracket, rBracket);
+        PsiElement lBracket = getIndicesNode().findChildByType(JetTokens.LBRACKET);
+        PsiElement rBracket = getIndicesNode().findChildByType(JetTokens.RBRACKET);
+        if (lBracket == null || rBracket == null) {
+            return Collections.emptyList();
+        }
+        return Lists.newArrayList(lBracket.getTextRange(), rBracket.getTextRange());
     }
 }

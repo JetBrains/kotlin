@@ -20,26 +20,27 @@ import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.JetLanguage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
- * @see Block for good JavaDoc documentation
  * @author yole
+ * @see Block for good JavaDoc documentation
  */
 public class JetBlock extends AbstractBlock {
     private Indent myIndent;
     private CodeStyleSettings mySettings;
     private final SpacingBuilder mySpacingBuilder;
-    
+
     private List<Block> mySubBlocks;
 
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
@@ -47,10 +48,6 @@ public class JetBlock extends AbstractBlock {
             JetNodeTypes.CLASS_BODY,
             JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
 
-    private static final TokenSet STATEMENT_PARTS = TokenSet.create(
-            JetNodeTypes.THEN,
-            JetNodeTypes.ELSE);
-    
     // private static final List<IndentWhitespaceRule>
 
     public JetBlock(@NotNull ASTNode node,
@@ -78,9 +75,12 @@ public class JetBlock extends AbstractBlock {
         }
         return new ArrayList<Block>(mySubBlocks);
     }
-    
+
     private List<Block> buildSubBlocks() {
         List<Block> blocks = new ArrayList<Block>();
+
+        Map<ASTNode, Alignment> childrenAlignments = createChildrenAlignments();
+
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
             IElementType childType = child.getElementType();
 
@@ -90,77 +90,31 @@ public class JetBlock extends AbstractBlock {
                 continue;
             }
 
-            blocks.add(buildSubBlock(child));
+            Alignment childAlignment = childrenAlignments.containsKey(child) ? childrenAlignments.get(child) : null;
+            blocks.add(buildSubBlock(child, childAlignment));
         }
         return Collections.unmodifiableList(blocks);
     }
 
     @NotNull
-    private Block buildSubBlock(@NotNull ASTNode child) {
+    private Block buildSubBlock(@NotNull ASTNode child, Alignment childAlignment) {
         Wrap wrap = null;
-        Indent childIndent = Indent.getNoneIndent();
-        Alignment childAlignment = null;
 
+        // Affects to spaces around operators...
         if (child.getElementType() == JetNodeTypes.OPERATION_REFERENCE) {
             ASTNode operationNode = child.getFirstChildNode();
             if (operationNode != null) {
-                return new JetBlock(operationNode, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
+                return new JetBlock(operationNode, childAlignment, Indent.getNoneIndent(), wrap, mySettings, mySpacingBuilder);
             }
         }
 
-        ASTNode childParent = child.getTreeParent();
-
-        if (CODE_BLOCKS.contains(myNode.getElementType())) {
-            childIndent = indentIfNotBrace(child);
-        }
-        else if (childParent != null &&
-                 childParent.getElementType() == JetNodeTypes.BODY &&
-                 child.getElementType() != JetNodeTypes.BLOCK) {
-
-            // For a single statement if 'for'
-            childIndent = Indent.getNormalIndent();
-        }
-        else if (child.getElementType() == JetNodeTypes.WHEN_ENTRY) {
-            // For the entry in when
-            // TODO: Add an option for configuration?
-            childIndent = Indent.getNormalIndent();
-        }
-        else if (childParent != null && childParent.getElementType() == JetNodeTypes.WHEN_ENTRY) {
-            ASTNode prev = getPrevWithoutWhitespace(child);
-            if (prev != null && prev.getText().equals("->")) {
-                childIndent = indentIfNotBrace(child);
-            }
-        }
-        else if (STATEMENT_PARTS.contains(myNode.getElementType()) && child.getElementType() != JetNodeTypes.BLOCK) {
-            childIndent = Indent.getNormalIndent();
-        }
-        else if (childParent != null && childParent.getElementType() == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
-            if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
-                childIndent = Indent.getContinuationWithoutFirstIndent(false);
-            }
-        }
-        else if (childParent != null && childParent.getElementType() == JetNodeTypes.VALUE_PARAMETER_LIST) {
-            String childText = child.getText();
-
-            if (!(childText.equals("(") || childText.equals(")"))) {
-                childIndent = Indent.getContinuationWithoutFirstIndent(false);
-            }
-        }
-        else if (childParent != null && childParent.getElementType() == JetNodeTypes.TYPE_PARAMETER_LIST) {
-            String childText = child.getText();
-
-            if (!(childText.equals("<") || childText.equals(">"))) {
-                childIndent = Indent.getContinuationWithoutFirstIndent(false);
-            }
-        }
-
-        return new JetBlock(child, childAlignment, childIndent, wrap, mySettings, mySpacingBuilder);
+        return new JetBlock(child, childAlignment, createChildIndent(child), wrap, mySettings, mySpacingBuilder);
     }
 
     private static Indent indentIfNotBrace(@NotNull ASTNode child) {
         return child.getElementType() == JetTokens.RBRACE || child.getElementType() == JetTokens.LBRACE
-                ? Indent.getNoneIndent()
-                : Indent.getNormalIndent();
+               ? Indent.getNoneIndent()
+               : Indent.getNormalIndent();
     }
 
     private static ASTNode getPrevWithoutWhitespace(ASTNode node) {
@@ -176,22 +130,31 @@ public class JetBlock extends AbstractBlock {
     public Spacing getSpacing(Block child1, Block child2) {
         return mySpacingBuilder.getSpacing(this, child1, child2);
     }
-    
+
     @NotNull
     @Override
     public ChildAttributes getChildAttributes(int newChildIndex) {
         final IElementType type = getNode().getElementType();
         if (CODE_BLOCKS.contains(type) ||
-                type == JetNodeTypes.WHEN ||
-                type == JetNodeTypes.IF ||
-                type == JetNodeTypes.FOR ||
-                type == JetNodeTypes.WHILE ||
-                type == JetNodeTypes.DO_WHILE) {
+            type == JetNodeTypes.WHEN ||
+            type == JetNodeTypes.IF ||
+            type == JetNodeTypes.FOR ||
+            type == JetNodeTypes.WHILE ||
+            type == JetNodeTypes.DO_WHILE) {
 
             return new ChildAttributes(Indent.getNormalIndent(), null);
         }
         else if (type == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
             return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
+        }
+        else if (type == JetNodeTypes.VALUE_PARAMETER_LIST || type == JetNodeTypes.VALUE_ARGUMENT_LIST) {
+            // Child index 1 - cursor is after ( - parameter alignment should be recreated
+            // Child index 0 - before expression - know nothing about it
+            if (newChildIndex != 1 && newChildIndex != 0 && newChildIndex < getSubBlocks().size()) {
+                Block block = getSubBlocks().get(newChildIndex);
+                return new ChildAttributes(block.getIndent(), block.getAlignment());
+            }
+            return new ChildAttributes(Indent.getContinuationIndent(), null);
         }
 
         return new ChildAttributes(Indent.getNoneIndent(), null);
@@ -200,5 +163,155 @@ public class JetBlock extends AbstractBlock {
     @Override
     public boolean isLeaf() {
         return myNode.getFirstChildNode() == null;
+    }
+
+    @NotNull
+    protected Map<ASTNode, Alignment> createChildrenAlignments() {
+        CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+
+        // Prepare default null strategy
+        ASTAlignmentStrategy strategy = ASTAlignmentStrategy.getNullStrategy();
+
+        // Redefine list of strategies for some special elements
+        IElementType parentType = myNode.getElementType();
+        if (parentType == JetNodeTypes.VALUE_PARAMETER_LIST) {
+            strategy = getAlignmentForChildInParenthesis(
+                    jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, JetNodeTypes.VALUE_PARAMETER, JetTokens.COMMA,
+                    jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, JetTokens.LPAR, JetTokens.RPAR);
+        }
+        else if (parentType == JetNodeTypes.VALUE_ARGUMENT_LIST) {
+            strategy = getAlignmentForChildInParenthesis(
+                    jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, JetNodeTypes.VALUE_ARGUMENT, JetTokens.COMMA,
+                    jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, JetTokens.LPAR, JetTokens.RPAR);
+        }
+
+        // Construct information about children alignment
+        HashMap<ASTNode, Alignment> result = new HashMap<ASTNode, Alignment>();
+
+        for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
+            IElementType childType = child.getElementType();
+
+            if (child.getTextRange().getLength() == 0) continue;
+
+            if (childType == TokenType.WHITE_SPACE) {
+                continue;
+            }
+
+            Alignment childAlignment = strategy.getAlignment(child);
+            if (childAlignment != null) {
+                result.put(child, childAlignment);
+            }
+        }
+
+        return result;
+    }
+
+    private static ASTAlignmentStrategy getAlignmentForChildInParenthesis(
+            boolean shouldAlignChild, final IElementType parameter, final IElementType delimiter,
+            boolean shouldAlignParenthesis, final IElementType openParenth, final IElementType closeParenth
+    ) {
+        // TODO: Check this approach in other situations and refactor
+        final Alignment parameterAlignment = shouldAlignChild ? Alignment.createAlignment() : null;
+        final Alignment parenthesisAlignment = shouldAlignParenthesis ? Alignment.createAlignment() : null;
+
+        return new ASTAlignmentStrategy() {
+            @Override
+            public Alignment getAlignment(ASTNode node) {
+                IElementType childNodeType = node.getElementType();
+
+                ASTNode prev = getPrevWithoutWhitespace(node);
+                if ((prev != null && prev.getElementType() == TokenType.ERROR_ELEMENT) || childNodeType == TokenType.ERROR_ELEMENT) {
+                    return parameterAlignment;
+                }
+
+                if (childNodeType == openParenth || childNodeType == closeParenth) {
+                    return parenthesisAlignment;
+                }
+
+                if (childNodeType == parameter || childNodeType == delimiter) {
+                    return parameterAlignment;
+                }
+
+                return null;
+            }
+        };
+    }
+
+    static ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
+            ASTIndentStrategy.forNode("No indent for braces in blocks")
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
+                    .forType(JetTokens.RBRACE, JetTokens.LBRACE)
+                    .set(Indent.getNoneIndent()),
+
+            ASTIndentStrategy.forNode("Indent for block content")
+                    .in(JetNodeTypes.BLOCK, JetNodeTypes.CLASS_BODY, JetNodeTypes.FUNCTION_LITERAL_EXPRESSION)
+                    .notForType(JetTokens.RBRACE, JetTokens.LBRACE)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("Indent for property accessors")
+                    .in(JetNodeTypes.PROPERTY)
+                    .forType(JetNodeTypes.PROPERTY_ACCESSOR)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For a single statement if 'for'")
+                    .in(JetNodeTypes.BODY)
+                    .notForType(JetNodeTypes.BLOCK)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For the entry in when")
+                    .forType(JetNodeTypes.WHEN_ENTRY)
+                    .set(Indent.getNormalIndent()),
+
+            ASTIndentStrategy.forNode("For single statement in THEN and ELSE")
+                    .in(JetNodeTypes.THEN, JetNodeTypes.ELSE)
+                    .notForType(JetNodeTypes.BLOCK)
+                    .set(Indent.getNormalIndent())
+    };
+
+    @Nullable
+    protected static Indent createChildIndent(@NotNull ASTNode child) {
+        ASTNode childParent = child.getTreeParent();
+        IElementType childType = child.getElementType();
+
+        for (ASTIndentStrategy strategy : INDENT_RULES) {
+            Indent indent = strategy.getIndent(child);
+            if (indent != null) {
+                return indent;
+            }
+        }
+
+        // TODO: Try to rewrite other rules to declarative style
+
+        if (childParent != null && childParent.getElementType() == JetNodeTypes.WHEN_ENTRY) {
+            ASTNode prev = getPrevWithoutWhitespace(child);
+            if (prev != null && prev.getText().equals("->")) {
+                return indentIfNotBrace(child);
+            }
+        }
+
+        if (childParent != null && childParent.getElementType() == JetNodeTypes.DOT_QUALIFIED_EXPRESSION) {
+            if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
+                return Indent.getContinuationWithoutFirstIndent(false);
+            }
+        }
+
+        if (childParent != null) {
+            IElementType parentType = childParent.getElementType();
+
+            if (parentType == JetNodeTypes.VALUE_PARAMETER_LIST || parentType == JetNodeTypes.VALUE_ARGUMENT_LIST) {
+                ASTNode prev = getPrevWithoutWhitespace(child);
+                if (childType == JetTokens.RPAR && (prev == null || prev.getElementType() != TokenType.ERROR_ELEMENT)) {
+                    return Indent.getNoneIndent();
+                }
+
+                return Indent.getContinuationWithoutFirstIndent();
+            }
+
+            if (parentType == JetNodeTypes.TYPE_PARAMETER_LIST || parentType == JetNodeTypes.TYPE_ARGUMENT_LIST) {
+                return Indent.getContinuationWithoutFirstIndent();
+            }
+        }
+
+        return Indent.getNoneIndent();
     }
 }

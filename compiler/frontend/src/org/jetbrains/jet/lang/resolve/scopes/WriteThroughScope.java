@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.scopes;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -255,6 +256,12 @@ public class WriteThroughScope extends WritableScopeWithImports {
         checkMayRead();
 
         return writableWorker.getDeclaredNamespace(name);
+    }
+
+    @NotNull
+    @Override
+    public Multimap<String, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName() {
+        return writableWorker.getDeclaredDescriptorsAccessibleBySimpleName();
     }
 
     @Override

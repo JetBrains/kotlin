@@ -1,13 +1,13 @@
 package something
 
 class SomeTempClass {
-    fun testSome() {
+    fun helloWorld() {
 
     }
 
     fun test() {
-        test<caret>()
+        hello<caret>()
     }
 }
 
-// EXIST: test, testSome
+// EXIST: helloWorld

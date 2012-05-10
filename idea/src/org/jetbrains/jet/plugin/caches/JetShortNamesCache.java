@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.stubindex.JetExtensionFunctionNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
@@ -129,8 +129,8 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     @NotNull
-    public Collection<FqName> getFQNamesByName(@NotNull final String name, @NotNull GlobalSearchScope scope) {
-        BindingContext context = getResolutionContext(scope);
+    public Collection<FqName> getFQNamesByName(@NotNull final String name, JetFile file, @NotNull GlobalSearchScope scope) {
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
         return Collections2.filter(context.getKeys(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR), new Predicate<FqName>() {
             @Override
             public boolean apply(@Nullable FqName fqName) {
@@ -163,7 +163,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         HashSet<FunctionDescriptor> result = new HashSet<FunctionDescriptor>();
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
         JetScope jetScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
 
         if (jetScope == null) {
@@ -193,11 +193,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return result;
-    }
-
-    @NotNull
-    public BindingContext getResolutionContext(@NotNull GlobalSearchScope scope) {
-        return WholeProjectAnalyzerFacade.analyzeProjectWithCache(project, scope);
     }
 
     /**
@@ -234,7 +229,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
 
         JetFile jetFile = (JetFile) expression.getContainingFile();
 
-        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile);
+        BindingContext context = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(jetFile).getBindingContext();
         JetExpression receiverExpression = expression.getReceiverExpression();
 
         if (receiverExpression != null) {
@@ -277,14 +272,6 @@ public class JetShortNamesCache extends PsiShortNamesCache {
         }
 
         return resultDescriptors;
-    }
-
-    public Collection<JetNamedFunction> getJetFunctionsByName(@NonNls @NotNull String name, @NotNull GlobalSearchScope scope) {
-        return JetShortFunctionNameIndex.getInstance().get(name, project, scope);
-    }
-
-    public Collection<String> getAllJetOnlyTopFunctionsNames() {
-        return JetShortFunctionNameIndex.getInstance().getAllKeys(project);
     }
 
     @NotNull

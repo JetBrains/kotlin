@@ -21,7 +21,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.codeInsight.daemon.QuickFixBundle;
 import com.intellij.codeInsight.daemon.impl.ShowAutoImportPass;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.HighPriorityAction;
@@ -48,12 +47,16 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetCacheManager;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Check possibility and perform fix for unresolved references.
@@ -85,7 +88,7 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
         assert referenceName != null;
 
         List<FqName> result = Lists.newArrayList();
-        result.addAll(getClassNames(referenceName, file.getProject()));
+        result.addAll(getClassNames(referenceName, (JetFile) file));
         result.addAll(getJetTopLevelFunctions(referenceName, element, file.getProject()));
         result.addAll(getJetExtensionFunctions(referenceName, element, file.getProject()));
 
@@ -105,13 +108,13 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 expression,
                 GlobalSearchScope.allScope(project));
 
-        return Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {
+        return Sets.newHashSet(Collections2.transform(topLevelFunctions, new Function<DeclarationDescriptor, FqName>() {
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
                 return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
             }
-        });
+        }));
     }
 
     private static Collection<FqName> getJetExtensionFunctions(
@@ -130,23 +133,23 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
                 expression,
                 GlobalSearchScope.allScope(project));
 
-        return Collections2.transform(jetCallableExtensions, new Function<DeclarationDescriptor, FqName>() {
+        return Sets.newHashSet(Collections2.transform(jetCallableExtensions, new Function<DeclarationDescriptor, FqName>() {
             @Override
             public FqName apply(@Nullable DeclarationDescriptor declarationDescriptor) {
                 assert declarationDescriptor != null;
                 return DescriptorUtils.getFQName(declarationDescriptor).toSafe();
             }
-        });
+        }));
     }
 
     /*
      * Searches for possible class names in kotlin context and java facade.
      */
-    public static ArrayList<FqName> getClassNames(@NotNull String referenceName, @NotNull Project project) {
-        final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
+    public static Collection<FqName> getClassNames(@NotNull String referenceName, @NotNull JetFile file) {
+        final GlobalSearchScope scope = GlobalSearchScope.allScope(file.getProject());
         Set<FqName> possibleResolveNames = Sets.newHashSet();
-        possibleResolveNames.addAll(JetCacheManager.getInstance(project).getNamesCache().getFQNamesByName(referenceName, scope));
-        possibleResolveNames.addAll(getJavaClasses(referenceName, project, scope));
+        possibleResolveNames.addAll(JetCacheManager.getInstance(file.getProject()).getNamesCache().getFQNamesByName(referenceName, file, scope));
+        possibleResolveNames.addAll(getJavaClasses(referenceName, file.getProject(), scope));
 
         // TODO: Do appropriate sorting
         return Lists.newArrayList(possibleResolveNames);
@@ -202,13 +205,13 @@ public class ImportClassAndFunFix extends JetHintAction<JetSimpleNameExpression>
     @Override
     @NotNull
     public String getText() {
-        return QuickFixBundle.message("import.class.fix");
+        return JetBundle.message("import.fix");
     }
 
     @Override
     @NotNull
     public String getFamilyName() {
-        return QuickFixBundle.message("import.class.fix");
+        return JetBundle.message("import.fix");
     }
 
     @Override

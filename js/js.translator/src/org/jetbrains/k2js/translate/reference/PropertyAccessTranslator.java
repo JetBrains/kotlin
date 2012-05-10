@@ -30,7 +30,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCall;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getResolvedCallForProperty;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReference;
 
@@ -39,10 +39,11 @@ import static org.jetbrains.k2js.translate.utils.PsiUtils.isBackingFieldReferenc
  */
 public abstract class PropertyAccessTranslator extends AbstractTranslator implements AccessTranslator {
 
+    //TODO: is it really called?
     @NotNull
     private static PropertyAccessTranslator newInstance(@NotNull PropertyDescriptor descriptor,
-                                                        @NotNull ResolvedCall<?> resolvedCall,
-                                                        @NotNull TranslationContext context) {
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull TranslationContext context) {
         if (isNativeObject(descriptor)) {
             return new NativePropertyAccessTranslator(descriptor, /*qualifier = */ null, context);
         }
@@ -53,16 +54,16 @@ public abstract class PropertyAccessTranslator extends AbstractTranslator implem
 
     @NotNull
     public static PropertyAccessTranslator newInstance(@NotNull JetSimpleNameExpression expression,
-                                                       @Nullable JsExpression qualifier,
-                                                       @NotNull CallType callType,
-                                                       @NotNull TranslationContext context) {
+            @Nullable JsExpression qualifier,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
         PropertyAccessTranslator result;
         PropertyDescriptor propertyDescriptor = getPropertyDescriptor(expression, context);
         if (isNativeObject(propertyDescriptor) || isBackingFieldReference(expression)) {
             result = new NativePropertyAccessTranslator(propertyDescriptor, qualifier, context);
         }
         else {
-            ResolvedCall<?> resolvedCall = getResolvedCall(context.bindingContext(), expression);
+            ResolvedCall<?> resolvedCall = getResolvedCallForProperty(context.bindingContext(), expression);
             result = new KotlinPropertyAccessTranslator(propertyDescriptor, qualifier, resolvedCall, context);
         }
         result.setCallType(callType);
@@ -71,7 +72,7 @@ public abstract class PropertyAccessTranslator extends AbstractTranslator implem
 
     @NotNull
     private static PropertyDescriptor getPropertyDescriptor(@NotNull JetSimpleNameExpression expression,
-                                                            @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         DeclarationDescriptor descriptor =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression);
         assert descriptor instanceof PropertyDescriptor : "Must be a property descriptor.";
@@ -82,37 +83,37 @@ public abstract class PropertyAccessTranslator extends AbstractTranslator implem
     @NotNull
     /*package*/
     static JsExpression translateAsPropertyGetterCall(@NotNull PropertyDescriptor descriptor,
-                                                      @NotNull ResolvedCall<?> resolvedCall,
-                                                      @NotNull TranslationContext context) {
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull TranslationContext context) {
         return (newInstance(descriptor, resolvedCall, context))
                 .translateAsGet();
     }
 
     @NotNull
     public static JsExpression translateAsPropertyGetterCall(@NotNull JetSimpleNameExpression expression,
-                                                             @Nullable JsExpression qualifier,
-                                                             @NotNull CallType callType,
-                                                             @NotNull TranslationContext context) {
+            @Nullable JsExpression qualifier,
+            @NotNull CallType callType,
+            @NotNull TranslationContext context) {
         return (newInstance(expression, qualifier, callType, context))
                 .translateAsGet();
     }
 
 
     private static boolean canBePropertyGetterCall(@NotNull JetQualifiedExpression expression,
-                                                   @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JetSimpleNameExpression selector = getSelectorAsSimpleName(expression);
         assert selector != null : "Only names are allowed after the dot";
         return canBePropertyGetterCall(selector, context);
     }
 
     public static boolean canBePropertyGetterCall(@NotNull JetSimpleNameExpression expression,
-                                                  @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return (getDescriptorForReferenceExpression
-                (context.bindingContext(), expression) instanceof PropertyDescriptor);
+                        (context.bindingContext(), expression) instanceof PropertyDescriptor);
     }
 
     public static boolean canBePropertyGetterCall(@NotNull JetExpression expression,
-                                                  @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         if (expression instanceof JetQualifiedExpression) {
             return canBePropertyGetterCall((JetQualifiedExpression) expression, context);
         }
@@ -123,7 +124,7 @@ public abstract class PropertyAccessTranslator extends AbstractTranslator implem
     }
 
     public static boolean canBePropertyAccess(@NotNull JetExpression expression,
-                                              @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return canBePropertyGetterCall(expression, context);
     }
 

@@ -29,31 +29,31 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     }
 
     public void testWhenType() throws Exception {
-        checkFooBoxIsTrue("whenType.kt");
+        fooBoxTest();
     }
 
     public void testWhenNotType() throws Exception {
-        checkFooBoxIsTrue("whenNotType.kt");
+        fooBoxTest();
     }
 
     public void testWhenExecutesOnlyOnce() throws Exception {
-        checkFooBoxIsTrue("whenExecutesOnlyOnce.kt");
+        fooBoxTest();
     }
 
     public void testWhenValue() throws Exception {
-        checkFooBoxIsTrue("whenValue.kt");
+        fooBoxTest();
     }
 
     public void testWhenNotValue() throws Exception {
-        checkFooBoxIsTrue("whenNotValue.kt");
+        fooBoxTest();
     }
 
     public void testWhenValueOrType() throws Exception {
-        checkFooBoxIsTrue("whenValueOrType.kt");
+        fooBoxTest();
     }
 
     public void testWhenWithIf() throws Exception {
-        checkFooBoxIsTrue("whenWithIf.kt");
+        fooBoxTest();
     }
 
     public void testMultipleCases() throws Exception {
@@ -61,18 +61,27 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     }
 
     public void testMatchNullableType() throws Exception {
-        checkFooBoxIsTrue("matchNullableType.kt");
+        fooBoxTest();
     }
 
     public void testWhenAsExpression() throws Exception {
-        checkFooBoxIsTrue("whenAsExpression.kt");
+        fooBoxTest();
     }
 
     public void testWhenAsExpressionWithThrow() throws Exception {
         try {
-            checkFooBoxIsTrue("whenAsExpressionWithThrow.kt");
+            fooBoxTest();
             fail();
-        } catch (JavaScriptException e) {
         }
+        catch (JavaScriptException e) {
+        }
+    }
+
+    public void testKT1665() throws Exception {
+        checkOutput("kt1665.kt", "a", "");
+    }
+
+    public void testWhenWithoutExpression() throws Exception {
+        fooBoxTest();
     }
 }

@@ -16,60 +16,56 @@
 
 package org.jetbrains.jet.plugin.compiler;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.ModuleChunk;
-import com.intellij.compiler.impl.javaCompiler.OutputItemImpl;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.SimpleJavaParameters;
-import com.intellij.execution.process.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.compiler.ex.CompileContextEx;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.SystemProperties;
+import jet.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.plugin.project.JsModuleDetector;
 
-import java.io.*;
-import java.lang.ref.SoftReference;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.charset.Charset;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static com.intellij.openapi.compiler.CompilerMessageCategory.*;
+import static com.intellij.openapi.compiler.CompilerMessageCategory.ERROR;
+import static com.intellij.openapi.compiler.CompilerMessageCategory.INFORMATION;
 
 /**
  * @author yole
  */
 public class JetCompiler implements TranslatingCompiler {
-    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.compiler.JetCompiler");
 
     private static final boolean RUN_OUT_OF_PROCESS = false;
 
     @Override
     public boolean isCompilableFile(VirtualFile virtualFile, CompileContext compileContext) {
-        return virtualFile.getFileType() instanceof JetFileType;
+        if (!(virtualFile.getFileType() instanceof JetFileType)) {
+            return false;
+        }
+        Project project = compileContext.getProject();
+        if (project == null || JsModuleDetector.isJsProject(project)) {
+            return false;
+        }
+        return true;
     }
 
     @NotNull
@@ -84,7 +80,10 @@ public class JetCompiler implements TranslatingCompiler {
     }
 
     @Override
-    public void compile(final CompileContext compileContext, Chunk<Module> moduleChunk, final VirtualFile[] virtualFiles, OutputSink outputSink) {
+    public void compile(final CompileContext compileContext,
+            Chunk<Module> moduleChunk,
+            final VirtualFile[] virtualFiles,
+            OutputSink outputSink) {
         if (virtualFiles.length == 0) return;
 
         List<VirtualFile> productionFiles = new ArrayList<VirtualFile>();
@@ -105,23 +104,50 @@ public class JetCompiler implements TranslatingCompiler {
         doCompile(compileContext, moduleChunk, testFiles, module, outputSink, true);
     }
 
-    private void doCompile(CompileContext compileContext, Chunk<Module> moduleChunk, List<VirtualFile> files, Module module, OutputSink outputSink, boolean tests) {
+    private void doCompile(CompileContext compileContext,
+            Chunk<Module> moduleChunk,
+            List<VirtualFile> files,
+            Module module,
+            OutputSink outputSink,
+            boolean tests) {
         if (files.isEmpty()) return;
 
-        VirtualFile mainOutput = compileContext.getModuleOutputDirectory(module);
-        final VirtualFile outputDir = tests ? compileContext.getModuleOutputDirectoryForTests(module) : mainOutput;
-        if (outputDir == null) {
-            compileContext.addMessage(ERROR, "[Internal Error] No output directory", "", -1, -1);
+        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(compileContext, module, tests);
+        if (!environment.success()) {
+            environment.reportErrorsTo(compileContext);
             return;
         }
 
-        File kotlinHome = PathUtil.getDefaultCompilerPath();
-        if (kotlinHome == null) {
-            compileContext.addMessage(ERROR, "Cannot find kotlinc home. Make sure plugin is properly installed", "", -1, -1);
-            return;
-        }
+        File scriptFile =
+                tryToWriteScriptFile(compileContext, moduleChunk, files, module, tests, compileContext.getModuleOutputDirectory(module),
+                                     environment.getOutput());
 
-        ModuleChunk chunk = new ModuleChunk((CompileContextEx) compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
+        if (scriptFile == null) return;
+
+        CompilerUtils.OutputItemsCollectorImpl collector = new CompilerUtils.OutputItemsCollectorImpl(environment.getOutput().getPath());
+        runCompiler(compileContext, environment, scriptFile, collector);
+        outputSink.add(environment.getOutput().getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
+    }
+
+    private void runCompiler(CompileContext compileContext,
+            CompilerEnvironment environment,
+            File scriptFile,
+            CompilerUtils.OutputItemsCollectorImpl collector) {
+        if (RUN_OUT_OF_PROCESS) {
+            runOutOfProcess(compileContext, collector, environment, scriptFile);
+        }
+        else {
+            runInProcess(compileContext, collector, environment, scriptFile);
+        }
+    }
+
+    private static File tryToWriteScriptFile(CompileContext compileContext,
+            Chunk<Module> moduleChunk,
+            List<VirtualFile> files,
+            Module module,
+            boolean tests, VirtualFile mainOutput, VirtualFile outputDir) {
+        ModuleChunk
+                chunk = new ModuleChunk((CompileContextEx)compileContext, moduleChunk, Collections.<Module, List<VirtualFile>>emptyMap());
         String moduleName = moduleChunk.getNodes().iterator().next().getName();
 
         // Filter the output we are writing to
@@ -134,26 +160,20 @@ public class JetCompiler implements TranslatingCompiler {
         File scriptFile = new File(path(outputDir), "script.kts");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             compileContext.addMessage(ERROR, "[Internal Error] Cannot write script to " + scriptFile.getAbsolutePath(), "", -1, -1);
-            return;
+            return null;
         }
-
-        OutputItemsCollector collector = new OutputItemsCollector(outputDir.getPath());
-
-        if (RUN_OUT_OF_PROCESS) {
-            runOutOfProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
-        }
-        else {
-            runInProcess(compileContext, collector, outputDir, kotlinHome, scriptFile);
-        }
-
-        outputSink.add(outputDir.getPath(), collector.getOutputs(), collector.getSources().toArray(VirtualFile.EMPTY_ARRAY));
-//        System.out.println("Generated module script:\n" + script.toString());
-//        compileContext.addMessage(INFORMATION, "Generated module script:\n" + script.toString(), "file://" + path(mainOutput), 0, 1);
+        return scriptFile;
     }
 
-    private static CharSequence generateModuleScript(String moduleName, ModuleChunk chunk, List<VirtualFile> files, boolean tests, VirtualFile mainOutput, Set<VirtualFile> directoriesToFilterOut) {
+    private static CharSequence generateModuleScript(String moduleName,
+            ModuleChunk chunk,
+            List<VirtualFile> files,
+            boolean tests,
+            VirtualFile mainOutput,
+            Set<VirtualFile> directoriesToFilterOut) {
         StringBuilder script = new StringBuilder();
 
         if (tests) {
@@ -206,193 +226,101 @@ public class JetCompiler implements TranslatingCompiler {
         return script;
     }
 
-    private static List<File> getJarsInDirectory(File dir) {
-        List<File> r = Lists.newArrayList();
-
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (File jar : files) {
-                if (jar.isFile() && jar.getName().endsWith(".jar")) {
-                    r.add(jar);
-                }
+    private static void runInProcess(final CompileContext compileContext,
+            OutputItemsCollector collector,
+            final CompilerEnvironment environment,
+            final File scriptFile) {
+        CompilerUtils.outputCompilerMessagesAndHandleExitCode(compileContext, collector, new Function1<PrintStream, Integer>() {
+            @Override
+            public Integer invoke(PrintStream stream) {
+                return execInProcess(environment, scriptFile, stream, compileContext);
             }
-        }
-
-        return r;
+        });
     }
 
-    private static List<File> kompilerClasspath(File kotlinHome, CompileContext context) {
-        File libs = new File(kotlinHome, "lib");
-
-        if (!libs.exists() || libs.isFile()) {
-            context.addMessage(ERROR, "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed", "", -1, -1);
-            return Collections.emptyList();
-        }
-
-
-        ArrayList<File> answer = new ArrayList<File>();
-        answer.addAll(getJarsInDirectory(libs));
-        answer.addAll(getJarsInDirectory(new File(libs, "guice"))); // TODO: flatten at artifact build
-        return answer;
-    }
-
-    private void runInProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outputStream);
-
-        int rc = execInProcess(kotlinHome, outputDir, scriptFile, out, compileContext);
-
-        ProcessAdapter listener = createProcessListener(compileContext, collector);
-
-        BufferedReader reader = new BufferedReader(new StringReader(outputStream.toString()));
-        while (true) {
-            try {
-                String line = reader.readLine();
-                if (line == null) break;
-                listener.onTextAvailable(new ProcessEvent(NullProcessHandler.INSTANCE, line + "\n"), ProcessOutputTypes.STDERR);
-            } catch (IOException e) {
-                // Can't be
-                throw new IllegalStateException(e);
-            }
-        }
-
-        ProcessEvent termintationEvent = new ProcessEvent(NullProcessHandler.INSTANCE, rc);
-        listener.processWillTerminate(termintationEvent, false);
-        listener.processTerminated(termintationEvent);
-    }
-
-    private static int execInProcess(File kotlinHome, VirtualFile outputDir, File scriptFile, PrintStream out, CompileContext context) {
-        URLClassLoader loader = getOrCreateClassloader(kotlinHome, context);
+    private static int execInProcess(CompilerEnvironment environment, File scriptFile, PrintStream out, CompileContext context) {
         try {
-            String compilerClassName = "org.jetbrains.jet.cli.KotlinCompiler";
-            Class<?> kompiler = Class.forName(compilerClassName, true, loader);
-            Method exec = kompiler.getDeclaredMethod("exec", PrintStream.class, String[].class);
-
-            String[] arguments = { "-module", scriptFile.getAbsolutePath(), "-output", path(outputDir), "-tags", "-verbose", "-version" };
-
-            context.addMessage(INFORMATION, "Using kotlinHome=" + kotlinHome, "", -1, -1);
-            context.addMessage(INFORMATION, "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1, -1);
-            
-            Object rc = exec.invoke(kompiler.newInstance(), out, arguments);
-            // exec() returns a KotlinCompiler.ExitCode object, that class is not accessible here,
+            String compilerClassName = "org.jetbrains.jet.cli.jvm.K2JVMCompiler";
+            String[] arguments = commandLineArguments(environment.getOutput(), scriptFile);
+            context.addMessage(INFORMATION, "Using kotlinHome=" + environment.getKotlinHome(), "", -1, -1);
+            context.addMessage(INFORMATION,
+                               "Invoking in-process compiler " + compilerClassName + " with arguments " + Arrays.asList(arguments), "", -1,
+                               -1);
+            Object rc = CompilerUtils.invokeExecMethod(environment, out, context, arguments, compilerClassName);
+            // exec() returns a K2JVMCompiler.ExitCode object, that class is not accessible here,
             // so we take it's contents through reflection
-            if ("org.jetbrains.jet.cli.KotlinCompiler.ExitCode".equals(rc.getClass().getCanonicalName())) {
-                return (Integer) rc.getClass().getMethod("getCode").invoke(rc);
-            }
-            else {
-                throw new IllegalStateException("Unexpected return: " + rc);
-            }
-        } catch (Throwable e) {
-            LOG.error(e);
+            return CompilerUtils.getReturnCodeFromObject(rc);
+        }
+        catch (Throwable e) {
+            CompilerUtils.LOG.error(e);
             return -1;
         }
     }
 
-    private static SoftReference<URLClassLoader> ourClassloaderRef = new SoftReference<URLClassLoader>(null);
-
-    private static URLClassLoader getOrCreateClassloader(File kotlinHome, CompileContext context) {
-        URLClassLoader answer = ourClassloaderRef.get();
-        if (answer == null) {
-            answer = createClassloader(kotlinHome, context);
-            ourClassloaderRef = new SoftReference<URLClassLoader>(answer);
-        }
-        return answer;
+    private static String[] commandLineArguments(VirtualFile outputDir, File scriptFile) {
+        return new String[]{
+                "-module", scriptFile.getAbsolutePath(),
+                "-output", path(outputDir),
+                "-tags", "-verbose", "-version",
+                "-mode", "idea"};
     }
 
-    private static URLClassLoader createClassloader(File kotlinHome, CompileContext context) {
-        List<File> jars = kompilerClasspath(kotlinHome, context);
-        URL[] urls = new URL[jars.size()];
-        for (int i = 0; i < urls.length; i++) {
-            try {
-                urls[i] = jars.get(i).toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e); // Checked exceptions are great! I love them, and I love brilliant library designers too!
-            }
-        }
-
-        return new URLClassLoader(urls, null);
-    }
-
-    private static void runOutOfProcess(CompileContext compileContext, OutputItemsCollector collector, VirtualFile outputDir, File kotlinHome, File scriptFile) {
+    private static void runOutOfProcess(final CompileContext compileContext,
+            final OutputItemsCollector collector,
+            CompilerEnvironment environment,
+            File scriptFile) {
         final SimpleJavaParameters params = new SimpleJavaParameters();
         params.setJdk(new SimpleJavaSdkType().createJdk("tmp", SystemProperties.getJavaHome()));
-        params.setMainClass("org.jetbrains.jet.cli.KotlinCompiler");
-        params.getProgramParametersList().add("-module", scriptFile.getAbsolutePath());
-        params.getProgramParametersList().add("-output", path(outputDir));
-        params.getProgramParametersList().add("-tags");
-        params.getProgramParametersList().add("-verbose");
+        params.setMainClass("org.jetbrains.jet.cli.jvm.K2JVMCompiler");
 
-        for (File jar : kompilerClasspath(kotlinHome, compileContext)) {
+        for (String arg : commandLineArguments(environment.getOutput(), scriptFile)) {
+            params.getProgramParametersList().add(arg);
+        }
+
+        for (File jar : CompilerUtils.kompilerClasspath(environment.getKotlinHome(), compileContext)) {
             params.getClassPath().add(jar);
         }
 
         params.getVMParametersList().addParametersString("-Djava.awt.headless=true -Xmx512m");
-//        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
+        //        params.getVMParametersList().addParametersString("-agentlib:yjpagent=sampling");
 
         Sdk sdk = params.getJdk();
 
         final GeneralCommandLine commandLine = JdkUtil.setupJVMCommandLine(
-                ((JavaSdkType) sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
-        
+                ((JavaSdkType)sdk.getSdkType()).getVMExecutablePath(sdk), params, false);
+
         compileContext.addMessage(INFORMATION, "Invoking out-of-process compiler with arguments: " + commandLine, "", -1, -1);
-        
+
         try {
-            final OSProcessHandler processHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString()) {
-              @Override
-              public Charset getCharset() {
-                return commandLine.getCharset();
-              }
-            };
+            final Process process = commandLine.createProcess();
 
-            ProcessAdapter processListener = createProcessListener(compileContext, collector);
-            processHandler.addProcessListener(processListener);
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                @Override
+                public void run() {
+                    CompilerUtils
+                            .parseCompilerMessagesFromReader(compileContext, new InputStreamReader(process.getInputStream()), collector);
+                }
+            });
 
-            processHandler.startNotify();
-            processHandler.waitFor();
-        } catch (Exception e) {
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        FileUtil.loadBytes(process.getErrorStream());
+                    }
+                    catch (IOException e) {
+                        // Don't care
+                    }
+                }
+            });
+
+            int exitCode = process.waitFor();
+            CompilerUtils.handleProcessTermination(exitCode, compileContext);
+        }
+        catch (Exception e) {
             compileContext.addMessage(ERROR, "[Internal Error] " + e.getLocalizedMessage(), "", -1, -1);
             return;
         }
-    }
-
-    private static class OutputItemsCollector {
-        private static final String FOR_SOURCE_PREFIX = "For source: ";
-        private static final String EMITTING_PREFIX = "Emitting: ";
-        private final String outputPath;
-        private VirtualFile currentSource;
-        private List<OutputItem> answer = new ArrayList<OutputItem>();
-        private List<VirtualFile> sources = new ArrayList<VirtualFile>();
-
-        private OutputItemsCollector(String outputPath) {
-            this.outputPath = outputPath;
-        }
-
-        public void learn(String message) {
-            message = message.trim();
-            if (message.startsWith(FOR_SOURCE_PREFIX)) {
-                currentSource = LocalFileSystem.getInstance().findFileByPath(message.substring(FOR_SOURCE_PREFIX.length()));
-                if (currentSource != null) {
-                    sources.add(currentSource);
-                }
-            }
-            else if (message.startsWith(EMITTING_PREFIX)) {
-                if (currentSource != null) {
-                    answer.add(new OutputItemImpl(outputPath + "/" + message.substring(EMITTING_PREFIX.length()), currentSource));
-                }
-            }
-        }
-
-        public List<OutputItem> getOutputs() {
-            return answer;
-        }
-
-        public List<VirtualFile> getSources() {
-            return sources;
-        }
-    }
-
-    private static ProcessAdapter createProcessListener(final CompileContext compileContext, OutputItemsCollector collector) {
-        return new CompilerProcessListener(compileContext, collector);
     }
 
     private static String path(VirtualFile root) {
@@ -402,212 +330,5 @@ public class JetCompiler implements TranslatingCompiler {
         }
 
         return path;
-    }
-
-    private static class NullProcessHandler extends ProcessHandler {
-        public static NullProcessHandler INSTANCE = new NullProcessHandler();
-        @Override
-        protected void destroyProcessImpl() {
-            throw new UnsupportedOperationException("destroyProcessImpl is not implemented");
-        }
-
-        @Override
-        protected void detachProcessImpl() {
-            throw new UnsupportedOperationException("detachProcessImpl is not implemented"); // TODO
-        }
-
-        @Override
-        public boolean detachIsDefault() {
-            throw new UnsupportedOperationException("detachIsDefault is not implemented");
-        }
-
-        @Override
-        public OutputStream getProcessInput() {
-            throw new UnsupportedOperationException("getProcessInput is not implemented");
-        }
-    }
-
-    private static class CompilerProcessListener extends ProcessAdapter {
-        private static final Pattern DIAGNOSTIC_PATTERN = Pattern.compile("<(ERROR|WARNING|INFO|EXCEPTION|LOGGING)", Pattern.MULTILINE);
-        private static final Pattern OPEN_TAG_END_PATTERN = Pattern.compile(">", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern ATTRIBUTE_PATTERN = Pattern.compile("\\s*(path|line|column)\\s*=\\s*\"(.*?)\"", Pattern.MULTILINE | Pattern.DOTALL);
-        private static final Pattern MESSAGE_PATTERN = Pattern.compile("(.*?)</(ERROR|WARNING|INFO|EXCEPTION|LOGGING)>", Pattern.MULTILINE | Pattern.DOTALL);
-
-        private enum State {
-            WAITING, ATTRIBUTES, MESSAGE
-        }
-
-        private static class CompilerMessage {
-            private CompilerMessageCategory messageCategory;
-            private boolean isException;
-            private @Nullable String url;
-            private @Nullable Integer line;
-            private @Nullable Integer column;
-            private String message;
-
-            public void setMessageCategoryFromString(String tagName) {
-                boolean exception = "EXCEPTION".equals(tagName);
-                if (Severity.ERROR.toString().equals(tagName) || exception) {
-                    messageCategory = ERROR;
-                    isException = exception;
-                }
-                else if (Severity.WARNING.toString().equals(tagName)) {
-                    messageCategory = WARNING;
-                }
-                else if (Severity.LOGGING.toString().equals(tagName)) {
-                    messageCategory = STATISTICS;
-                }
-                else {
-                    messageCategory = INFORMATION;
-                }
-            }
-
-            public void setAttributeFromStrings(String name, String value) {
-                if ("path".equals(name)) {
-                    url = "file://" + value.trim();
-                }
-                else if ("line".equals(name)) {
-                    line = safeParseInt(value);
-                }
-                else if ("column".equals(name)) {
-                    column = safeParseInt(value);
-                }
-            }
-
-            @Nullable
-            private static Integer safeParseInt(String value) {
-                try {
-                    return Integer.parseInt(value.trim());
-                }
-                catch (NumberFormatException e) {
-                    return null;
-                }
-            }
-
-            public void setMessage(String message) {
-                this.message = message;
-            }
-
-            public void reportTo(CompileContext compileContext) {
-                if (messageCategory == STATISTICS) {
-                    compileContext.getProgressIndicator().setText(message);
-                }
-                else {
-                    compileContext.addMessage(messageCategory, message, url == null ? "" : url, line == null ? -1 : line,
-                                              column == null
-                                              ? -1
-                                              : column);
-                    if (isException) {
-                        LOG.error(message);
-                    }
-                }
-            }
-        }
-
-        private final CompileContext compileContext;
-        private final OutputItemsCollector collector;
-        private final StringBuilder output = new StringBuilder();
-        private int firstUnprocessedIndex = 0;
-        private State state = State.WAITING;
-        private CompilerMessage currentCompilerMessage;
-
-        public CompilerProcessListener(CompileContext compileContext, OutputItemsCollector collector) {
-            this.compileContext = compileContext;
-            this.collector = collector;
-        }
-
-        @Override
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-            String text = event.getText();
-            if (outputType == ProcessOutputTypes.STDERR) {
-                output.append(text);
-
-                // We loop until the state stabilizes
-                State lastState;
-                do {
-                    lastState = state;
-                    switch (state) {
-                        case WAITING: {
-                            Matcher matcher = matcher(DIAGNOSTIC_PATTERN);
-                            if (find(matcher)) {
-                                currentCompilerMessage = new CompilerMessage();
-                                currentCompilerMessage.setMessageCategoryFromString(matcher.group(1));
-                                state = State.ATTRIBUTES;
-                            }
-                            break;
-                        }
-                        case ATTRIBUTES: {
-                            Matcher matcher = matcher(ATTRIBUTE_PATTERN);
-                            int indexDelta = 0;
-                            while (matcher.find()) {
-                                handleSkippedOutput(output.subSequence(firstUnprocessedIndex + indexDelta, firstUnprocessedIndex + matcher.start()));
-                                currentCompilerMessage.setAttributeFromStrings(matcher.group(1), matcher.group(2));
-                                indexDelta = matcher.end();
-
-                            }
-                            firstUnprocessedIndex += indexDelta;
-
-                            Matcher endMatcher = matcher(OPEN_TAG_END_PATTERN);
-                            if (find(endMatcher)) {
-                                state = State.MESSAGE;
-                            }
-                            break;
-                        }
-                        case MESSAGE: {
-                            Matcher matcher = matcher(MESSAGE_PATTERN);
-                            if (find(matcher)) {
-                                String message = matcher.group(1);
-                                currentCompilerMessage.setMessage(message);
-                                currentCompilerMessage.reportTo(compileContext);
-
-                                if (currentCompilerMessage.messageCategory == STATISTICS) {
-                                    collector.learn(message);
-                                }
-
-                                state = State.WAITING;
-                            }
-                            break;
-                        }
-                    }
-                }
-                while (state != lastState);
-
-            }
-            else {
-                compileContext.addMessage(INFORMATION, text, "", -1, -1);
-            }
-        }
-
-        private boolean find(Matcher matcher) {
-            boolean result = matcher.find();
-            if (result) {
-                handleSkippedOutput(output.subSequence(firstUnprocessedIndex, firstUnprocessedIndex + matcher.start()));
-                firstUnprocessedIndex += matcher.end();
-            }
-            return result;
-        }
-
-        private Matcher matcher(Pattern pattern) {
-            return pattern.matcher(output.subSequence(firstUnprocessedIndex, output.length()));
-        }
-
-        @Override
-        public void processTerminated(ProcessEvent event) {
-            if (firstUnprocessedIndex < output.length()) {
-                handleSkippedOutput(output.substring(firstUnprocessedIndex).trim());
-            }
-            int exitCode = event.getExitCode();
-            // 0 is normal, 1 is "errors found" - handled by the messages above
-            if (exitCode != 0 && exitCode != 1) {
-                compileContext.addMessage(ERROR, "Compiler terminated with exit code: " + exitCode, "", -1, -1);
-            }
-        }
-
-        private void handleSkippedOutput(CharSequence substring) {
-            String message = substring.toString();
-            if (!message.trim().isEmpty()) {
-                compileContext.addMessage(ERROR, message, "", -1, -1);
-            }
-        }
     }
 }

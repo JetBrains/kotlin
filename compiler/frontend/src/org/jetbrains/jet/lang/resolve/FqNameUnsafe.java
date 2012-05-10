@@ -75,7 +75,8 @@ public class FqNameUnsafe {
         if (lastDot >= 0) {
             shortName = fqName.substring(lastDot + 1);
             parent = new FqNameUnsafe(fqName.substring(0, lastDot));
-        } else {
+        }
+        else {
             shortName = fqName;
             parent = FqName.ROOT.toUnsafe();
         }
@@ -121,7 +122,8 @@ public class FqNameUnsafe {
         String childFqName;
         if (isRoot()) {
             childFqName = name;
-        } else {
+        }
+        else {
             childFqName = fqName + "." + name;
         }
         return new FqNameUnsafe(childFqName, this, name);
@@ -214,6 +216,21 @@ public class FqNameUnsafe {
 
             pos = next;
         }
+    }
+
+    public boolean firstSegmentIs(@NotNull String segment) {
+        if (isRoot()) {
+            return false;
+        }
+        List<String> pathSegments = pathSegments();
+        return pathSegments.get(0).equals(segment);
+    }
+
+    public boolean lastSegmentIs(@NotNull String segment) {
+        if (isRoot()) {
+            return false;
+        }
+        return shortName().equals(segment);
     }
 
 

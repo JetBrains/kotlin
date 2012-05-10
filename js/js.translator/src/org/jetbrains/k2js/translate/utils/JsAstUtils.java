@@ -21,10 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Pavel Talanov
@@ -81,11 +78,6 @@ public final class JsAstUtils {
     @NotNull
     public static JsPrefixOperation negated(@NotNull JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
-    }
-
-    @NotNull
-    public static JsStatement newAssignmentStatement(@NotNull JsNameRef nameRef, @NotNull JsExpression expr) {
-        return convertToStatement(new JsBinaryOperation(JsBinaryOperator.ASG, nameRef, expr));
     }
 
     @NotNull
@@ -165,9 +157,9 @@ public final class JsAstUtils {
 
     @NotNull
     public static JsFor generateForExpression(@NotNull JsVars initExpression,
-                                              @NotNull JsExpression condition,
-                                              @NotNull JsExpression incrExpression,
-                                              @NotNull JsStatement body) {
+            @NotNull JsExpression condition,
+            @NotNull JsExpression incrExpression,
+            @NotNull JsStatement body) {
         JsFor result = new JsFor();
         result.setInitVars(initExpression);
         result.setCondition(condition);
@@ -270,5 +262,14 @@ public final class JsAstUtils {
         JsFunction correspondingFunction = new JsFunction(parent);
         correspondingFunction.setBody(new JsBlock());
         return correspondingFunction;
+    }
+
+    @NotNull
+    public static List<JsExpression> toStringLiteralList(@NotNull List<String> strings, @NotNull JsProgram program) {
+        ArrayList<JsExpression> result = Lists.newArrayList();
+        for (String str : strings) {
+            result.add(program.getStringLiteral(str));
+        }
+        return result;
     }
 }

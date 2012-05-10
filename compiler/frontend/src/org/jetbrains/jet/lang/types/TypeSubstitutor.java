@@ -16,14 +16,16 @@
 
 package org.jetbrains.jet.lang.types;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author abreslav
@@ -31,57 +33,6 @@ import java.util.*;
 public class TypeSubstitutor {
 
     private static final int MAX_RECURSION_DEPTH = 100;
-
-    public static TypeSubstitutor makeConstantSubstitutor(Collection<TypeParameterDescriptor> typeParameterDescriptors, JetType type) {
-        final Set<TypeConstructor> constructors = Sets.newHashSet();
-        for (TypeParameterDescriptor typeParameterDescriptor : typeParameterDescriptors) {
-            constructors.add(typeParameterDescriptor.getTypeConstructor());
-        }
-        final TypeProjection projection = new TypeProjection(type);
-
-        return TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                if (constructors.contains(key)) {
-                    return projection;
-                }
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public String toString() {
-                return "TypeConstructor.makeConstantSubstitutor(" + constructors + " -> " + projection + ")";
-            }
-        });
-    }
-
-    public interface TypeSubstitution {
-        TypeSubstitution EMPTY = new TypeSubstitution() {
-            @Override
-            public TypeProjection get(TypeConstructor key) {
-                return null;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return true;
-            }
-
-            @Override
-            public String toString() {
-                return "Empty TypeSubstitution";
-            }
-        };
-        
-        @Nullable
-        TypeProjection get(TypeConstructor key);
-        boolean isEmpty();
-    }
 
     public static class MapToTypeSubstitutionAdapter implements TypeSubstitution {
         private final @NotNull Map<TypeConstructor, TypeProjection> substitutionContext;
@@ -108,7 +59,7 @@ public class TypeSubstitutor {
 
     public static final TypeSubstitutor EMPTY = create(TypeSubstitution.EMPTY);
 
-    public static final class SubstitutionException extends Exception {
+    private static final class SubstitutionException extends Exception {
         public SubstitutionException(String message) {
             super(message);
         }
@@ -122,12 +73,20 @@ public class TypeSubstitutor {
         return create(new CompositeTypeSubstitution(substitutions));
     }
 
+    /** No assertion for immediate recursion */
+    public static TypeSubstitutor createUnsafe(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
+        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
+        return create(new MapToTypeSubstitutionAdapter(cleanContext));
+    }
+
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return create(new MapToTypeSubstitutionAdapter(substitutionContext));
+        Map<TypeConstructor, TypeProjection> cleanContext = SubstitutionUtils.removeTrivialSubstitutions(substitutionContext);
+        //SubstitutionUtils.assertNotImmediatelyRecursive(cleanContext);
+        return createUnsafe(cleanContext);
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
-        return create(TypeUtils.buildSubstitutionContext(context));
+        return create(SubstitutionUtils.buildSubstitutionContext(context));
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +117,7 @@ public class TypeSubstitutor {
         }
 
         try {
-            return unsafeSubstitute(type, howThisTypeIsUsed);
+            return unsafeSubstitute(new TypeProjection(howThisTypeIsUsed, type), 0).getType();
         } catch (SubstitutionException e) {
             return ErrorUtils.createErrorType(e.getMessage());
         }
@@ -171,170 +130,100 @@ public class TypeSubstitutor {
         }
 
         try {
-            return unsafeSubstitute(type, howThisTypeIsUsed);
+            return unsafeSubstitute(new TypeProjection(howThisTypeIsUsed, type), 0).getType();
         } catch (SubstitutionException e) {
             return null;
         }
     }
 
     @NotNull
-    private JetType unsafeSubstitute(@NotNull JetType type, @NotNull Variance howThisTypeIsUsed) throws SubstitutionException {
-        if (ErrorUtils.isErrorType(type)) return type;
+    private TypeProjection unsafeSubstitute(@NotNull TypeProjection originalProjection, int recursionDepth) throws SubstitutionException {
+        assertRecursionDepth(recursionDepth, originalProjection, substitution);
+        // The type is within the substitution range, i.e. T or T?
+        JetType type = originalProjection.getType();
+        if (JetStandardClasses.isNothing(type) || ErrorUtils.isErrorType(type)) return originalProjection;
 
-        TypeProjection value = getValueWithCorrectNullability(substitution, type);
-        if (value != null) {
-            TypeConstructor constructor = type.getConstructor();
-            assert constructor.getDeclarationDescriptor() instanceof TypeParameterDescriptor;
+        TypeProjection replacement = substitution.get(type.getConstructor());
 
-            TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) constructor.getDeclarationDescriptor();
+        if (replacement != null) {
+            // It must be a type parameter: only they can be directly substituted for
+            TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) type.getConstructor().getDeclarationDescriptor();
 
-            TypeProjection result = substitutionResult(typeParameterDescriptor, howThisTypeIsUsed, Variance.INVARIANT, value, 0);
+            switch (conflictType(originalProjection.getProjectionKind(), replacement.getProjectionKind())) {
+                case OUT_IN_IN_POSITION:
+                    throw new SubstitutionException("Out-projection in in-position");
+                case IN_IN_OUT_POSITION:
+                    replacement = SubstitutionUtils.makeStarProjection(typeParameter);
+                    break;
+            }
+            boolean resultingIsNullable = type.isNullable() || replacement.getType().isNullable();
+            JetType substitutedType = TypeUtils.makeNullableAsSpecified(replacement.getType(), resultingIsNullable);
+            Variance resultingProjectionKind = combine(originalProjection.getProjectionKind(), replacement.getProjectionKind());
 
-            return TypeUtils.makeNullableIfNeeded(result.getType(), type.isNullable());
+            return new TypeProjection(resultingProjectionKind, substitutedType);
         }
+        else {
+            // The type is not within the substitution range, i.e. Foo, Bar<T> etc.
+            List<TypeProjection> substitutedArguments = substituteTypeArguments(
+                    type.getConstructor().getParameters(), type.getArguments(), recursionDepth);
 
-        return specializeType(type, howThisTypeIsUsed, 0);
-    }
-
-    private TypeProjection getValueWithCorrectNullability(TypeSubstitution substitution, JetType type) {
-        TypeProjection typeProjection = substitution.get(type.getConstructor());
-        if (typeProjection == null) return null;
-
-        return type.isNullable() ? makeNullableProjection(typeProjection) : typeProjection;
-    }
-
-    @NotNull
-    private static TypeProjection makeNullableProjection(@NotNull TypeProjection value) {
-        return new TypeProjection(value.getProjectionKind(), TypeUtils.makeNullable(value.getType()));
-    }
-
-    private JetType specializeType(JetType subjectType, Variance callSiteVariance, int recursionDepth) throws SubstitutionException {
-        assertRecursionDepth(recursionDepth, subjectType, substitution);
-        if (ErrorUtils.isErrorType(subjectType)) return subjectType;
-
-        List<TypeProjection> newArguments = new ArrayList<TypeProjection>();
-        List<TypeProjection> arguments = subjectType.getArguments();
-        for (int i = 0, argumentsSize = arguments.size(); i < argumentsSize; i++) {
-            TypeProjection argument = arguments.get(i);
-            TypeParameterDescriptor parameterDescriptor = subjectType.getConstructor().getParameters().get(i);
-            newArguments.add(substituteInProjection(
-                    substitution,
-                    argument,
-                    parameterDescriptor,
-                    callSiteVariance, recursionDepth + 1));
+            JetType substitutedType = new JetTypeImpl(type.getAnnotations(),   // Old annotations. This is questionable
+                                               type.getConstructor(),   // The same constructor
+                                               type.isNullable(),       // Same nullability
+                                               substitutedArguments,
+                                               new SubstitutingScope(type.getMemberScope(), this));
+            return new TypeProjection(originalProjection.getProjectionKind(), substitutedType);
         }
-        return new JetTypeImpl(
-                subjectType.getAnnotations(),
-                subjectType.getConstructor(),
-                subjectType.isNullable(),
-                newArguments,
-                new SubstitutingScope(subjectType.getMemberScope(), this));
     }
 
-    @NotNull
-    private TypeProjection substituteInProjection(
-            @NotNull TypeSubstitution substitutionContext,
-            @NotNull TypeProjection passedProjection,
-            @NotNull TypeParameterDescriptor correspondingTypeParameter,
-            @NotNull Variance contextCallSiteVariance,
-            int recursionDepth) throws SubstitutionException {
-        assertRecursionDepth(recursionDepth, correspondingTypeParameter, passedProjection, substitution);
+    private List<TypeProjection> substituteTypeArguments(List<TypeParameterDescriptor> typeParameters, List<TypeProjection> typeArguments, int recursionDepth)
+            throws SubstitutionException {
+        List<TypeProjection> substitutedArguments = Lists.newArrayList();
+        for (int i = 0; i < typeParameters.size(); i++) {
+            TypeParameterDescriptor typeParameter = typeParameters.get(i);
+            TypeProjection typeArgument = typeArguments.get(i);
 
-        JetType typeToSubstituteIn = passedProjection.getType();
-        if (ErrorUtils.isErrorType(typeToSubstituteIn)) return passedProjection;
+            TypeProjection substitutedTypeArgument = unsafeSubstitute(typeArgument, recursionDepth + 1);
 
-        Variance passedProjectionKind = passedProjection.getProjectionKind();
-        Variance parameterVariance = correspondingTypeParameter.getVariance();
-
-        Variance effectiveProjectionKind = asymmetricOr(passedProjectionKind, parameterVariance);
-        Variance effectiveContextVariance = contextCallSiteVariance.superpose(effectiveProjectionKind);
-
-        TypeProjection projectionValue = getValueWithCorrectNullability(substitutionContext, typeToSubstituteIn);
-        if (projectionValue != null) {
-            assert typeToSubstituteIn.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor;
-
-            if (!allows(parameterVariance, passedProjectionKind)) {
-                return TypeUtils.makeStarProjection(correspondingTypeParameter);
+            switch (conflictType(typeParameter.getVariance(), substitutedTypeArgument.getProjectionKind())) {
+                case OUT_IN_IN_POSITION:
+                    substitutedTypeArgument = new TypeProjection(Variance.IN_VARIANCE, typeParameter.getLowerBoundsAsType());
+                    break;
+                case IN_IN_OUT_POSITION:
+                    substitutedTypeArgument = SubstitutionUtils.makeStarProjection(typeParameter);
+                    break;
             }
 
-            return substitutionResult(correspondingTypeParameter, effectiveContextVariance, passedProjectionKind, projectionValue, recursionDepth + 1);
+            substitutedArguments.add(substitutedTypeArgument);
         }
-        return new TypeProjection(
-                passedProjectionKind,
-                specializeType(
-                        typeToSubstituteIn,
-                        effectiveContextVariance, recursionDepth + 1));
+        return substitutedArguments;
     }
 
-    private TypeProjection substitutionResult(
-            TypeParameterDescriptor correspondingTypeParameter,
-            Variance effectiveContextVariance,
-            Variance passedProjectionKind,
-            TypeProjection value,
-            int recursionDepth) throws SubstitutionException {
-        assertRecursionDepth(recursionDepth, correspondingTypeParameter, value, substitution);
+    private static Variance combine(Variance typeParameterVariance, Variance projectionKind) {
+        if (typeParameterVariance == Variance.INVARIANT) return projectionKind;
+        if (projectionKind == Variance.INVARIANT) return typeParameterVariance;
+        return typeParameterVariance.superpose(projectionKind);
+    }
 
-        Variance projectionKindValue = value.getProjectionKind();
-        JetType typeValue = value.getType();
-        Variance effectiveProjectionKindValue = asymmetricOr(passedProjectionKind, projectionKindValue);
-        JetType effectiveTypeValue;
-        switch (effectiveContextVariance) {
-            case INVARIANT:
-                effectiveProjectionKindValue = projectionKindValue;
-                effectiveTypeValue = typeValue;
-                break;
-            case IN_VARIANCE:
-                if (projectionKindValue == Variance.OUT_VARIANCE) {
-                    throw new SubstitutionException(""); // TODO
-//                    effectiveProjectionKindValue = Variance.INVARIANT;
-//                    effectiveTypeValue = JetStandardClasses.getNothingType();
-                }
-                else {
-                    effectiveTypeValue = typeValue;
-                }
-                break;
-            case OUT_VARIANCE:
-                if (projectionKindValue == Variance.IN_VARIANCE) {
-                    effectiveProjectionKindValue = Variance.INVARIANT;
-                    effectiveTypeValue = correspondingTypeParameter.getUpperBoundsAsType();
-                }
-                else {
-                    effectiveTypeValue = typeValue;
-                }
-                break;
-            default:
-                throw new IllegalStateException(effectiveContextVariance.toString());
+    private enum VarianceConflictType {
+        NO_CONFLICT,
+        IN_IN_OUT_POSITION,
+        OUT_IN_IN_POSITION;
+    }
+
+    private static VarianceConflictType conflictType(Variance position, Variance argument) {
+        if (position == Variance.IN_VARIANCE && argument == Variance.OUT_VARIANCE) {
+            return VarianceConflictType.OUT_IN_IN_POSITION;
         }
-
-//            if (!allows(effectiveContextVariance, projectionKindValue)) {
-//                throw new SubstitutionException(""); // TODO : error message
-//            }
-//
-        return new TypeProjection(effectiveProjectionKindValue, specializeType(effectiveTypeValue, effectiveContextVariance, recursionDepth + 1));
-    }
-
-    private static Variance asymmetricOr(Variance a, Variance b) {
-        return a == Variance.INVARIANT ? b : a;
-    }
-
-    private static boolean allows(Variance declarationSiteVariance, Variance callSiteVariance) {
-        switch (declarationSiteVariance) {
-            case INVARIANT: return true;
-            case IN_VARIANCE: return callSiteVariance != Variance.OUT_VARIANCE;
-            case OUT_VARIANCE: return callSiteVariance != Variance.IN_VARIANCE;
+        if (position == Variance.OUT_VARIANCE && argument == Variance.IN_VARIANCE) {
+            return VarianceConflictType.IN_IN_OUT_POSITION;
         }
-        throw new IllegalStateException(declarationSiteVariance.toString());
+        return VarianceConflictType.NO_CONFLICT;
     }
 
-    private static void assertRecursionDepth(int recursionDepth, TypeParameterDescriptor parameter, TypeProjection value, TypeSubstitution substitution) {
+    private static void assertRecursionDepth(int recursionDepth, TypeProjection projection, TypeSubstitution substitution) {
         if (recursionDepth > MAX_RECURSION_DEPTH) {
-            throw new IllegalStateException("Recursion too deep. Most likely infinite loop while substituting " + safeToString(value) + " for " + safeToString(parameter) + "; substitution: " + safeToString(substitution));
-        }
-    }
-
-    private static void assertRecursionDepth(int recursionDepth, JetType type, TypeSubstitution substitution) {
-        if (recursionDepth > MAX_RECURSION_DEPTH) {
-            throw new IllegalStateException("Recursion too deep. Most likely infinite loop while substituting " + safeToString(type) + "; substitution: " + safeToString(substitution));
+            throw new IllegalStateException("Recursion too deep. Most likely infinite loop while substituting " + safeToString(projection) + "; substitution: " + safeToString(substitution));
         }
     }
 

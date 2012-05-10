@@ -53,7 +53,8 @@ public class JetDiagnosticsTestForever {
                 long avg100 = avg(last100) / 1000 / 1000;
                 long minMs = min / 1000 / 1000;
                 System.out.println(dMs + "ms; avg=" + avg + "ms; avg10=" + avg10 + "ms; avg100=" + avg100 + "ms; min=" + minMs + "ms; iteration=" + i);
-            } else {
+            }
+            else {
                 System.out.println(dMs + "ms; iteration=" + i);
             }
         }

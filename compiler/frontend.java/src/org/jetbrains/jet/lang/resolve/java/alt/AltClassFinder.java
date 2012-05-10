@@ -26,18 +26,18 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.utils.PathUtil;
 
 import java.util.List;
 
+// TODO: rename
 public class AltClassFinder {
     private final PsiManager psiManager;
     private final List<VirtualFile> roots;
     
 
-    public AltClassFinder(Project project) {
+    public AltClassFinder(Project project, @NotNull List<VirtualFile> roots) {
         psiManager = PsiManager.getInstance(project);
-        this.roots = PathUtil.getAltHeadersRoots();
+        this.roots = roots;
     }
 
     public PsiClass findClass(@NotNull FqName qualifiedName) {

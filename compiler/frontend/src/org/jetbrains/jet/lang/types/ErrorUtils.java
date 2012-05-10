@@ -153,7 +153,7 @@ public class ErrorUtils {
             ERROR_CLASS,
             Collections.<AnnotationDescriptor>emptyList(),
             Modality.OPEN,
-            Visibility.INTERNAL,
+            Visibilities.INTERNAL,
             true,
             false,
             null,
@@ -172,7 +172,8 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibility.INTERNAL
+                Visibilities.INTERNAL,
+                /*isInline = */ false
         );
         return function;
     }
@@ -182,7 +183,7 @@ public class ErrorUtils {
         r.initialize(
                 Collections.<TypeParameterDescriptor>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
-                Visibility.INTERNAL
+                Visibilities.INTERNAL
         );
         r.setReturnType(createErrorType("<ERROR RETURN TYPE>"));
         return r;
@@ -238,7 +239,8 @@ public class ErrorUtils {
     public static boolean isErrorType(@NotNull JetType type) {
         return type != TypeUtils.NO_EXPECTED_TYPE && !(type instanceof NamespaceType) &&
                (
-                    (type instanceof DeferredType && ((DeferredType) type).getActualType() == null) ||
+                    (type instanceof DeferredType && (((DeferredType) type).getActualType() == null
+                                                      || isErrorType(((DeferredType) type).getActualType()))) ||
                     type instanceof ErrorTypeImpl ||
                     isError(type.getConstructor())
                );

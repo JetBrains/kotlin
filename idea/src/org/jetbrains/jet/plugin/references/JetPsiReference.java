@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.references;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiPolyVariantReference;
@@ -28,15 +29,17 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DESCRIPTOR_TO_DECLARATION;
 
 public abstract class JetPsiReference implements PsiPolyVariantReference {
+
+    private static final Logger LOG = Logger.getInstance("#org.jetbrains.jet.plugin.references.JetPsiReference");
 
     @NotNull
     protected final JetReferenceExpression myExpression;
@@ -99,10 +102,13 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
     @Nullable
     protected PsiElement doResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
-        PsiElement psiElement = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, myExpression);
-        if (psiElement != null) {
-            return psiElement;
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file).getBindingContext();
+        List<PsiElement> psiElement = BindingContextUtils.resolveToDeclarationPsiElements(bindingContext, myExpression);
+        if (psiElement.size() == 1) {
+            return psiElement.iterator().next();
+        }
+        if (psiElement.size() > 1) {
+            return null;
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors != null) return null;
@@ -113,20 +119,25 @@ public abstract class JetPsiReference implements PsiPolyVariantReference {
 
     protected ResolveResult[] doMultiResolve() {
         JetFile file = (JetFile) getElement().getContainingFile();
-        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+        BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file)
+                .getBindingContext();
         Collection<? extends DeclarationDescriptor> declarationDescriptors = bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, myExpression);
         if (declarationDescriptors == null) return ResolveResult.EMPTY_ARRAY;
 
         ArrayList<ResolveResult> results = new ArrayList<ResolveResult>(declarationDescriptors.size());
         
         for (DeclarationDescriptor descriptor : declarationDescriptors) {
-            PsiElement element = bindingContext.get(DESCRIPTOR_TO_DECLARATION, descriptor);
-            if (element == null) {
+            List<PsiElement> elements = BindingContextUtils.descriptorToDeclarations(bindingContext, descriptor);
+            if (elements.isEmpty()) {
                 // TODO: Need a better resolution for Intrinsic function (KT-975)
-                element = file;
+                results.add(new PsiElementResolveResult(file, true));
+            }
+            else {
+                for (PsiElement element : elements) {
+                    results.add(new PsiElementResolveResult(element, true));
+                }
             }
 
-            results.add(new PsiElementResolveResult(element, true));
         }
 
         return results.toArray(new ResolveResult[results.size()]);

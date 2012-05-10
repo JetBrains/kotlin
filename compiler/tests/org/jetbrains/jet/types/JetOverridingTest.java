@@ -40,6 +40,7 @@ public class JetOverridingTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
         InjectorForTests injector = new InjectorForTests(getProject());
         library = injector.getJetStandardLibrary();
         descriptorResolver = injector.getDescriptorResolver();
@@ -155,7 +156,7 @@ public class JetOverridingTest extends JetLiteFixture {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
         OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.isOverridableBy(a, b);
-        assertEquals(overridableWith.getMessage(), expectedIsError, overridableWith.isOverridable() != OverridingUtil.OverrideCompatibilityInfo.ErrorKind.OVERRIDABLE);
+        assertEquals(overridableWith.getMessage(), expectedIsError, overridableWith.getResult() != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE);
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {

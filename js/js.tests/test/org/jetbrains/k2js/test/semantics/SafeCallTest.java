@@ -28,7 +28,7 @@ public final class SafeCallTest extends SingleFileTranslationTest {
     }
 
     public void testSafeAccess() throws Exception {
-        checkFooBoxIsTrue("safeAccess.kt");
+        fooBoxTest();
     }
 
     public void testSafeExtensionFunctionCall() throws Exception {
@@ -36,10 +36,10 @@ public final class SafeCallTest extends SingleFileTranslationTest {
     }
 
     public void testSafeCall() throws Exception {
-        checkFooBoxIsTrue("safeCall.kt");
+        fooBoxTest();
     }
 
     public void testSafeCallReturnsNullIfFails() throws Exception {
-        checkFooBoxIsTrue("safeCallReturnsNullIfFails.kt");
+        fooBoxTest();
     }
 }

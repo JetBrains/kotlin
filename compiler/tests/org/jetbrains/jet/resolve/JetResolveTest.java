@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.PsiClassFinder;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -100,7 +100,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         nameToDeclaration.put("java::java.lang.Number", java_lang_Number);
         nameToDeclaration.put("java::java.lang.Number.intValue()", java_lang_Number.findMethodsByName("intValue", true)[0]);
 
-        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration) {
+        return new ExpectedResolveData(nameToDescriptor, nameToDeclaration, myEnvironment) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
                 return createCheckAndReturnPsiFile(fileName, text);
@@ -123,8 +123,9 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
     @NotNull
     private PsiClass findClass(String qualifiedName) {
         Project project = getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
-        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName));
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                myEnvironment.getCompilerDependencies(), project);
+        return injector.getPsiClassFinderForJvm().findPsiClass(new FqName(qualifiedName), PsiClassFinder.RuntimeClassesHandleMode.THROW);
     }
 
     @NotNull

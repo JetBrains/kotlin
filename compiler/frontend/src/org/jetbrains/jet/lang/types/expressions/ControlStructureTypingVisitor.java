@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -201,7 +202,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 conditionScope = writableScope;
                 context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, function.getFunctionLiteral().getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
-            } else {
+            }
+            else {
                 facade.getType(body, context.replaceScope(context.scope));
             }
         }
@@ -270,7 +272,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
                 VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
                 if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
-                    context.trace.report(Errors.NAME_SHADOWING.on(variableDescriptor, context.trace.getBindingContext()));
+                    PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
+                    context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName()));
                 }
             }
 
@@ -326,9 +329,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
-            } else if (nextResolutionResults.isNothing()) {
+            }
+            else if (nextResolutionResults.isNothing()) {
                 context.trace.report(NEXT_MISSING.on(loopRangeExpression));
-            } else {
+            }
+            else {
                 FunctionDescriptor nextFunction = nextResolutionResults.getResultingCall().getResultingDescriptor();
                 context.trace.record(LOOP_RANGE_NEXT, loopRange.getExpression(), nextFunction);
                 return nextFunction.getReturnType();
@@ -363,9 +368,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
-        } else if (hasNextResolutionResults.isNothing()) {
+        }
+        else if (hasNextResolutionResults.isNothing()) {
             return null;
-        } else {
+        }
+        else {
             assert hasNextResolutionResults.isSuccess();
             JetType hasNextReturnType = hasNextResolutionResults.getResultingDescriptor().getReturnType();
             if (!isBoolean(hasNextReturnType)) {
@@ -380,7 +387,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties("hasNext"));
         if (hasNextProperty == null) {
             return null;
-        } else {
+        }
+        else {
             JetType hasNextReturnType = hasNextProperty.getType();
             if (hasNextReturnType == null) {
                 // TODO : accessibility
@@ -465,12 +473,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
         if (expression.getTargetLabel() == null) {
             if (containingFunctionDescriptor != null) {
-                PsiElement containingFunction = context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor);
+                PsiElement containingFunction = BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
                 assert containingFunction != null;
                 if (containingFunction instanceof JetFunctionLiteralExpression) {
                     do {
                         containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-                        containingFunction = containingFunctionDescriptor != null ? context.trace.get(DESCRIPTOR_TO_DECLARATION, containingFunctionDescriptor) : null;
+                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
                     } while (containingFunction instanceof JetFunctionLiteralExpression);
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                 }

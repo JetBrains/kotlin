@@ -16,26 +16,34 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBridgeConfiguration;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.plugin.JetPluginUtil;
+import org.jetbrains.jet.plugin.references.JetPsiReference;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 /**
  * @author svtk
@@ -50,16 +58,18 @@ public class ImportInsertHelper {
      * @param type type to import
      * @param file file where import directive should be added
      */
-    public static void addImportDirectiveIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
+    public static void addImportDirectivesIfNeeded(@NotNull JetType type, @NotNull JetFile file) {
         if (JetPluginUtil.checkTypeIsStandard(type, file.getProject()) || ErrorUtils.isErrorType(type)) {
             return;
         }
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
-        PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, type.getMemberScope().getContainingDeclaration());
+        BindingContext bindingContext = getContextForSingleFile(file);
+        PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, type.getMemberScope().getContainingDeclaration());
         if (element != null && element.getContainingFile() == file) { //declaration is in the same file, so no import is needed
             return;
         }
-        addImportDirective(JetPluginUtil.computeTypeFullName(type), file);
+        for (ClassDescriptor clazz : TypeUtils.getAllClassDescriptors(type)) {
+            addImportDirective(DescriptorUtils.getFQName(getTopLevelClass(clazz)).toSafe(), file);
+        }
     }
 
     /**
@@ -69,6 +79,24 @@ public class ImportInsertHelper {
      * @param file File where directive should be added.
      */
     public static void addImportDirective(@NotNull FqName importFqn, @NotNull JetFile file) {
+        addImportDirective(new ImportPath(importFqn, false), null, file);
+    }
+
+    public static void addImportDirectiveOrChangeToFqName(@NotNull FqName importFqn, @NotNull JetFile file, int refOffset, @NotNull PsiElement targetElement) {
+        PsiReference reference = file.findReferenceAt(refOffset);
+        if (reference instanceof JetPsiReference) {
+            PsiElement target = reference.resolve();
+            if (target != null) {
+                boolean same = file.getManager().areElementsEquivalent(target, targetElement);
+                same |= target instanceof PsiClass && importFqn.getFqName().equals(((PsiClass)target).getQualifiedName());
+                if (!same) {
+                    Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+                    TextRange refRange = reference.getElement().getTextRange();
+                    document.replaceString(refRange.getStartOffset(), refRange.getEndOffset(), importFqn.getFqName());
+                }
+                return;
+            }
+        }
         addImportDirective(new ImportPath(importFqn, false), null, file);
     }
 
@@ -151,5 +179,16 @@ public class ImportInsertHelper {
         }
 
         return true;
+    }
+
+    public static ClassDescriptor getTopLevelClass(ClassDescriptor classDescriptor) {
+        while (true) {
+            DeclarationDescriptor parent = classDescriptor.getContainingDeclaration();
+            if (parent instanceof ClassDescriptor) {
+                classDescriptor = (ClassDescriptor) parent;
+            } else {
+                return classDescriptor;
+            }
+        }
     }
 }

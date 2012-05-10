@@ -34,9 +34,9 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     private final boolean hasBody;
     private final boolean isDefault;
     private final Modality modality;
-    private final Visibility visibility;
     private final PropertyDescriptor correspondingProperty;
     private final Kind kind;
+    private Visibility visibility;
 
     public PropertyAccessorDescriptor(
             @NotNull Modality modality,
@@ -97,6 +97,10 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
     @Override
     public Visibility getVisibility() {
         return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     @NotNull

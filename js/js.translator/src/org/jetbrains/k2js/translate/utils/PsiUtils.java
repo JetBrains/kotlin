@@ -149,7 +149,7 @@ public final class PsiUtils {
         String name = namespaceHeader.getName();
         assert name != null : "NamespaceHeader must have a name";
         if (name.isEmpty()) {
-            return Namer.getAnonymousNamespaceName();
+            return Namer.getRootNamespaceName();
         }
         return name;
     }

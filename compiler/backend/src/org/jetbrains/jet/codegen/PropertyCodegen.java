@@ -24,6 +24,8 @@ import org.jetbrains.jet.codegen.signature.JvmPropertyAccessorSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
@@ -94,11 +96,12 @@ public class PropertyCodegen {
             if (!propertyDescriptor.isVar()) {
                 modifiers |= Opcodes.ACC_FINAL;
             }
-            if(state.getStandardLibrary().isVolatile(propertyDescriptor)) {
+            if(state.getInjector().getJetStandardLibrary().isVolatile(propertyDescriptor)) {
                 modifiers |= Opcodes.ACC_VOLATILE;
             }
-            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), state.getTypeMapper().mapType(propertyDescriptor.getType()).getDescriptor(), null, value);
-            AnnotationCodegen.forField(fieldVisitor).genAnnotations(propertyDescriptor, state.getTypeMapper());
+            Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+            FieldVisitor fieldVisitor = v.newField(p, modifiers, p.getName(), type.getDescriptor(), null, value);
+            AnnotationCodegen.forField(fieldVisitor, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor);
         }
     }
 
@@ -106,7 +109,7 @@ public class PropertyCodegen {
         final JetPropertyAccessor getter = p.getGetter();
         if (getter != null) {
             if (getter.getBodyExpression() != null) {
-                JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+                JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapGetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(getter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), propertyDescriptor.getGetter());
             }
             else if (isExternallyAccessible(propertyDescriptor)) {
@@ -119,7 +122,7 @@ public class PropertyCodegen {
     }
 
     private static boolean isExternallyAccessible(PropertyDescriptor p) {
-        return p.getVisibility() != Visibility.PRIVATE || CodegenUtil.isClassObject(p.getContainingDeclaration());
+        return p.getVisibility() != Visibilities.PRIVATE || DescriptorUtils.isClassObject(p.getContainingDeclaration());
     }
 
     private void generateSetter(JetProperty p, PropertyDescriptor propertyDescriptor) {
@@ -128,7 +131,7 @@ public class PropertyCodegen {
             if (setter.getBodyExpression() != null) {
                 final PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
                 assert setterDescriptor != null;
-                JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+                JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
                 functionCodegen.generateMethod(setter, signature.getJvmMethodSignature(), true, signature.getPropertyTypeKotlinSignature(), setterDescriptor);
             }
             else if (isExternallyAccessible(propertyDescriptor)) {
@@ -147,6 +150,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultGetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            throw new IllegalStateException("must not generate code for fake overrides");
+        }
+
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;
         }
@@ -155,7 +162,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
@@ -164,7 +171,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_FINAL;
         }
 
-        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapGetterSignature(propertyDescriptor, kind);
+        JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapGetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         String getterName = getterName(propertyDescriptor.getName());
         MethodVisitor mv = v.newMethod(origin, flags, getterName, descriptor, null, null);
@@ -172,20 +179,26 @@ public class PropertyCodegen {
 
         if(propertyDescriptor.getGetter() != null) {
             assert !propertyDescriptor.getGetter().hasBody();
-            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getGetter(), state.getTypeMapper());
+            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getGetter());
         }
 
-        if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
-                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
-                } else {
+                }
+                else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                     }
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
+                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
+
+                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
+                    }
+
                     if (kind instanceof OwnerKind.DelegateKind) {
                         OwnerKind.DelegateKind dk = (OwnerKind.DelegateKind) kind;
                         dk.getDelegate().put(JetTypeMapper.TYPE_OBJECT, iv);
@@ -193,7 +206,7 @@ public class PropertyCodegen {
                     }
                     else {
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.GETSTATIC : Opcodes.GETFIELD,
-                                state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                                 type.getDescriptor());
                     }
                     iv.areturn(type);
@@ -222,6 +235,10 @@ public class PropertyCodegen {
     }
 
     public void generateDefaultSetter(PropertyDescriptor propertyDescriptor, int flags, PsiElement origin) {
+        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            throw new IllegalStateException("must not generate code for fake overrides");
+        }
+
         if (kind == OwnerKind.TRAIT_IMPL) {
             return;
         }
@@ -230,7 +247,7 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_STATIC;
         }
 
-        PsiElement psiElement = state.getBindingContext().get(BindingContext.DESCRIPTOR_TO_DECLARATION, propertyDescriptor.getContainingDeclaration());
+        PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(state.getBindingContext(), propertyDescriptor.getContainingDeclaration());
         boolean isTrait = psiElement instanceof JetClass && ((JetClass) psiElement).isTrait();
         if(isTrait && !(kind instanceof OwnerKind.DelegateKind))
             flags |= Opcodes.ACC_ABSTRACT;
@@ -239,28 +256,33 @@ public class PropertyCodegen {
             flags |= Opcodes.ACC_FINAL;
         }
 
-        JvmPropertyAccessorSignature signature = state.getTypeMapper().mapSetterSignature(propertyDescriptor, kind);
+        JvmPropertyAccessorSignature signature = state.getInjector().getJetTypeMapper().mapSetterSignature(propertyDescriptor, kind);
         final String descriptor = signature.getJvmMethodSignature().getAsmMethod().getDescriptor();
         MethodVisitor mv = v.newMethod(origin, flags, setterName(propertyDescriptor.getName()), descriptor, null, null);
         generateJetPropertyAnnotation(mv, signature.getPropertyTypeKotlinSignature(), signature.getJvmMethodSignature().getKotlinTypeParameter());
 
         if(propertyDescriptor.getSetter() != null) {
             assert !propertyDescriptor.getSetter().hasBody();
-            AnnotationCodegen.forMethod(mv).genAnnotations(propertyDescriptor.getSetter(), state.getTypeMapper());
+            AnnotationCodegen.forMethod(mv, state.getInjector().getJetTypeMapper()).genAnnotations(propertyDescriptor.getSetter());
         }
 
-        if (v.generateCode() != ClassBuilder.Mode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
+        if (state.getClassBuilderMode() != ClassBuilderMode.SIGNATURES && (!isTrait || kind instanceof OwnerKind.DelegateKind)) {
             if(propertyDescriptor.getModality() != Modality.ABSTRACT)  {
                 mv.visitCode();
-                if (v.generateCode() == ClassBuilder.Mode.STUBS) {
+                if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
                     StubCodegen.generateStubThrow(mv);
-                } else {
+                }
+                else {
                     InstructionAdapter iv = new InstructionAdapter(mv);
-                    final Type type = state.getTypeMapper().mapType(propertyDescriptor.getType());
+                    final Type type = state.getInjector().getJetTypeMapper().mapType(propertyDescriptor.getType(), MapTypeMode.VALUE);
                     int paramCode = 0;
                     if (kind != OwnerKind.NAMESPACE) {
                         iv.load(0, JetTypeMapper.TYPE_OBJECT);
                         paramCode = 1;
+                    }
+
+                    if ((kind instanceof OwnerKind.DelegateKind) != (propertyDescriptor.getKind() == FunctionDescriptor.Kind.DELEGATION)) {
+                        throw new IllegalStateException("mismatching kind in " + propertyDescriptor);
                     }
 
                     if (kind instanceof OwnerKind.DelegateKind) {
@@ -274,7 +296,7 @@ public class PropertyCodegen {
                     else {
                         iv.load(paramCode, type);
                         iv.visitFieldInsn(kind == OwnerKind.NAMESPACE ? Opcodes.PUTSTATIC : Opcodes.PUTFIELD,
-                                state.getTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
+                                state.getInjector().getJetTypeMapper().getOwner(propertyDescriptor, kind), propertyDescriptor.getName(),
                                 type.getDescriptor());
                     }
 
@@ -294,11 +316,11 @@ public class PropertyCodegen {
     }
 
     public void genDelegate(PropertyDescriptor declaration, PropertyDescriptor overriddenDescriptor, StackValue field) {
-        JvmPropertyAccessorSignature jvmPropertyAccessorSignature = state.getTypeMapper().mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+        JvmPropertyAccessorSignature jvmPropertyAccessorSignature = state.getInjector().getJetTypeMapper().mapGetterSignature(declaration, OwnerKind.IMPLEMENTATION);
         functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
 
         if(declaration.isVar()) {
-            jvmPropertyAccessorSignature = state.getTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
+            jvmPropertyAccessorSignature = state.getInjector().getJetTypeMapper().mapSetterSignature(declaration, OwnerKind.IMPLEMENTATION);
             functionCodegen.genDelegate(declaration, overriddenDescriptor, field, jvmPropertyAccessorSignature.getJvmMethodSignature());
         }
     }

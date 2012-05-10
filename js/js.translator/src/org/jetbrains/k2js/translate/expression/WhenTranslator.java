@@ -36,17 +36,17 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 /**
  * @author Pavel Talanov
  */
-public class WhenTranslator extends AbstractTranslator {
+public final class WhenTranslator extends AbstractTranslator {
 
     @NotNull
-    static public JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
+    public static JsNode translateWhenExpression(@NotNull JetWhenExpression expression, @NotNull TranslationContext context) {
         WhenTranslator translator = new WhenTranslator(expression, context);
         return translator.translate();
     }
 
     @NotNull
     private final JetWhenExpression whenExpression;
-    @NotNull
+    @Nullable
     private final JsExpression expressionToMatch;
     @NotNull
     private final TemporaryVariable dummyCounter;
@@ -179,7 +179,7 @@ public class WhenTranslator extends AbstractTranslator {
     @NotNull
     private JsExpression translatePatternCondition(@NotNull JetWhenCondition condition) {
         JsExpression patternMatchExpression = Translation.patternTranslator(context()).
-                translatePattern(getPattern(condition), expressionToMatch);
+            translatePattern(getPattern(condition), expressionToMatch);
         if (isNegated(condition)) {
             return negated(patternMatchExpression);
         }
@@ -188,7 +188,7 @@ public class WhenTranslator extends AbstractTranslator {
 
     private static boolean isNegated(@NotNull JetWhenCondition condition) {
         if (condition instanceof JetWhenConditionIsPattern) {
-            return ((JetWhenConditionIsPattern) condition).isNegated();
+            return ((JetWhenConditionIsPattern)condition).isNegated();
         }
         return false;
     }
@@ -197,10 +197,10 @@ public class WhenTranslator extends AbstractTranslator {
     private static JetPattern getPattern(@NotNull JetWhenCondition condition) {
         JetPattern pattern;
         if (condition instanceof JetWhenConditionIsPattern) {
-            pattern = ((JetWhenConditionIsPattern) condition).getPattern();
+            pattern = ((JetWhenConditionIsPattern)condition).getPattern();
         }
         else if (condition instanceof JetWhenConditionWithExpression) {
-            pattern = ((JetWhenConditionWithExpression) condition).getPattern();
+            pattern = ((JetWhenConditionWithExpression)condition).getPattern();
         }
         else {
             throw new AssertionError("Wrong type of JetWhenCondition");
@@ -209,10 +209,12 @@ public class WhenTranslator extends AbstractTranslator {
         return pattern;
     }
 
-    @NotNull
+    @Nullable
     private JsExpression translateExpressionToMatch(@NotNull JetWhenExpression expression) {
         JetExpression subject = expression.getSubjectExpression();
-        assert subject != null : "Subject should not be null.";
+        if (subject == null) {
+            return null;
+        }
         return Translation.translateAsExpression(subject, context());
     }
 }

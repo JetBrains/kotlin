@@ -172,7 +172,7 @@ public class ExpressionTypingContext {
     @Nullable
     public FunctionDescriptor resolveCall(@NotNull ReceiverDescriptor receiver, @Nullable ASTNode callOperationNode, @NotNull JetCallExpression callExpression) {
         OverloadResolutionResults<FunctionDescriptor> results = expressionTypingServices.getCallResolver().resolveFunctionCall(trace, scope, CallMaker.makeCall(receiver, callOperationNode, callExpression), expectedType, dataFlowInfo);
-        return results.singleResult() ? results.getResultingDescriptor() : null;
+        return results.isSingleResult() ? results.getResultingDescriptor() : null;
     }
 
     @NotNull

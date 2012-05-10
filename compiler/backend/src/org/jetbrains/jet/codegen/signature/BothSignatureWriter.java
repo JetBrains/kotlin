@@ -100,7 +100,8 @@ public class BothSignatureWriter {
 
         if (DEBUG_SIGNATURE_WRITER) {
             signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
-        } else {
+        }
+        else {
             signatureVisitor = signatureWriter;
         }
     }
@@ -192,14 +193,16 @@ public class BothSignatureWriter {
         if (nullable) {
             signatureVisitor().visitClassType("java/lang/Object");
             signatureVisitor().visitEnd();
-        } else {
+        }
+        else {
             signatureVisitor().visitBaseType('V');
         }
         jetSignatureWriter.visitClassType("jet/Nothing", nullable, false);
         jetSignatureWriter.visitEnd();
         if (nullable) {
             writeAsmType0(JetTypeMapper.TYPE_OBJECT);
-        } else {
+        }
+        else {
             writeAsmType0(Type.VOID_TYPE);
         }
     }
@@ -513,7 +516,8 @@ public class BothSignatureWriter {
                     makeKotlinParameterTypes(),
                     makeKotlinReturnTypeSignature()
             );
-        } else {
+        }
+        else {
             return new JvmMethodSignature(makeAsmMethod(name), makeKotlinParameterTypes());
         }
     }

@@ -22,51 +22,22 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author svtk
  */
-public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithMessageFormat<E> {
-    private final Renderer<? super A> rendererForA;
-    private final Renderer<? super B> rendererForB;
-    private final Renderer<? super C> rendererForC;
-    
-    protected DiagnosticFactory3(Severity severity, String messageStub, PositioningStrategy<? super E> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        super(severity, messageStub, positioningStrategy);
-        this.rendererForA = rendererForA;
-        this.rendererForB = rendererForB;
-        this.rendererForC = rendererForC;
+public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends DiagnosticFactoryWithPsiElement<E> {
+
+    protected DiagnosticFactory3(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
+        super(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub) {
-        return create(severity, messageStub, PositioningStrategies.DEFAULT);
+    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity) {
+        return create(severity, PositioningStrategies.DEFAULT);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, PositioningStrategy<? super T> positioningStrategy) {
-        return create(severity, messageStub, positioningStrategy, Renderers.TO_STRING, Renderers.TO_STRING, Renderers.TO_STRING);
+    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
+        return new DiagnosticFactory3<T, A, B, C>(severity, positioningStrategy);
     }
 
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        return create(severity, messageStub, PositioningStrategies.DEFAULT, rendererForA, rendererForB, rendererForC);
-    }
-
-    public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, String messageStub, PositioningStrategy<? super T> positioningStrategy, Renderer<? super A> rendererForA, Renderer<? super B> rendererForB, Renderer<? super C> rendererForC) {
-        return new DiagnosticFactory3<T, A, B, C>(severity, messageStub, positioningStrategy, rendererForA, rendererForB, rendererForC);
-    }
-
-    private String makeMessage(@NotNull A a, @NotNull B b, @NotNull C c) {
-        return messageFormat.format(new Object[]{makeMessageForA(a), makeMessageForB(b), makeMessageForC(c)});
-    }
-
-    private String makeMessageForA(@NotNull A a) {
-        return rendererForA.render(a);
-    }
-
-    private String makeMessageForB(@NotNull B b) {
-        return rendererForB.render(b);
-    }
-
-    private String makeMessageForC(@NotNull C c) {
-        return rendererForC.render(c);
-    }
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A a, @NotNull B b, @NotNull C c) {
-        return new DiagnosticWithPsiElement<E>(element, this, severity, makeMessage(a, b, c));
+        return new DiagnosticWithParameters3<E, A, B, C>(element, a, b, c, this, severity);
     }
 }

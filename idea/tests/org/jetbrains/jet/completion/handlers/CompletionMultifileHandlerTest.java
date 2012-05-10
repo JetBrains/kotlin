@@ -30,6 +30,10 @@ public class CompletionMultifileHandlerTest extends CompletionTestCase {
         doTest();
     }
 
+    public void testJetClassCompletionImport() throws Exception {
+        doTest();
+    }
+
     public void testTopLevelFunctionImport() throws Exception {
         doTest();
     }

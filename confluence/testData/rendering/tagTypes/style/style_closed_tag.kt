@@ -1,1 +1,0 @@
-var <style="style"/>allByDefault : Int?

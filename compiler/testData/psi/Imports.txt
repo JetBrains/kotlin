@@ -8,7 +8,8 @@ JetFile: Imports.jet
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('bar')
     PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('goo')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
   IMPORT_DIRECTIVE
     PsiElement(import)('import')

@@ -23,19 +23,26 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
-import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnostic;
+import org.jetbrains.jet.lang.diagnostics.UnresolvedReferenceDiagnosticFactory;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.List;
 import java.util.Map;
@@ -64,6 +71,11 @@ public abstract class ExpectedResolveData {
         public PsiElement getElement() {
             return element;
         }
+
+        @Override
+        public String toString() {
+            return DiagnosticUtils.atLocation(element);
+        }
     }
 
     private final Map<String, Position> declarationToPosition = Maps.newHashMap();
@@ -73,9 +85,13 @@ public abstract class ExpectedResolveData {
     private final Map<String, DeclarationDescriptor> nameToDescriptor;
     private final Map<String, PsiElement> nameToPsiElement;
 
-    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement) {
+    @NotNull
+    private final JetCoreEnvironment jetCoreEnvironment;
+
+    public ExpectedResolveData(Map<String, DeclarationDescriptor> nameToDescriptor, Map<String, PsiElement> nameToPsiElement, @NotNull JetCoreEnvironment environment) {
         this.nameToDescriptor = nameToDescriptor;
         this.nameToPsiElement = nameToPsiElement;
+        jetCoreEnvironment = environment;
     }
 
     public final JetFile createFileFromMarkedUpText(String fileName, String text) {
@@ -136,11 +152,13 @@ public abstract class ExpectedResolveData {
         Project project = files.iterator().next().getProject();
         JetStandardLibrary lib = JetStandardLibrary.getInstance();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY);
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files,
+                Predicates.<PsiFile>alwaysTrue(), JetControlFlowDataTraceFactory.EMPTY,
+                jetCoreEnvironment.getCompilerDependencies());
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            if (diagnostic instanceof UnresolvedReferenceDiagnostic) {
-                UnresolvedReferenceDiagnostic unresolvedReferenceDiagnostic = (UnresolvedReferenceDiagnostic) diagnostic;
-                unresolvedReferences.add(unresolvedReferenceDiagnostic.getPsiElement());
+            if (diagnostic.getFactory() instanceof UnresolvedReferenceDiagnosticFactory) {
+                unresolvedReferences.add(diagnostic.getPsiElement());
             }
         }
 
@@ -152,11 +170,18 @@ public abstract class ExpectedResolveData {
             Position position = entry.getValue();
             PsiElement element = position.getElement();
 
-            PsiElement ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
-            if (ancestorOfType == null) {
-                JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
-                assert header != null : "Not a declaration: " + name;
-                ancestorOfType = header.getContainingFile();
+            PsiElement ancestorOfType;
+
+            if (name.equals("file")) {
+                ancestorOfType = element.getContainingFile();
+            }
+            else {
+                ancestorOfType = getAncestorOfType(JetDeclaration.class, element);
+                if (ancestorOfType == null) {
+                    JetNamespaceHeader header = getAncestorOfType(JetNamespaceHeader.class, element);
+                    assert header != null : "Not a declaration: " + name;
+                    ancestorOfType = element;
+                }
             }
             nameToDeclaration.put(name, ancestorOfType);
             declarationToName.put(ancestorOfType, name);
@@ -172,7 +197,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                         "Must have been unresolved: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         unresolvedReferences.contains(referenceExpression));
                 continue;
             }
@@ -180,7 +205,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                         "Must have been resolved to multiple descriptors: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, referenceExpression) != null);
                 continue;
             }
@@ -188,7 +213,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to null: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                         bindingContext.get(REFERENCE_TARGET, referenceExpression) == null
                 );
                 continue;
@@ -197,7 +222,7 @@ public abstract class ExpectedResolveData {
                 assertTrue(
                        "Must have been resolved to error: " +
                         renderReferenceInContext(referenceExpression) +
-                        " but was resolved to " + DescriptorRenderer.TEXT.render(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
+                        " but was resolved to " + renderNullableDescriptor(bindingContext.get(REFERENCE_TARGET, referenceExpression)),
                        ErrorUtils.isError(bindingContext.get(REFERENCE_TARGET, referenceExpression))
                 );
                 continue;
@@ -233,6 +258,9 @@ public abstract class ExpectedResolveData {
             assert expected != null : "No declaration for " + name;
 
             PsiElement actual = BindingContextUtils.resolveToDeclarationPsiElement(bindingContext, reference);
+            if (actual instanceof JetSimpleNameExpression) {
+                actual = ((JetSimpleNameExpression)actual).getIdentifier();
+            }
 
             String actualName = null;
             if (actual != null) {
@@ -257,10 +285,6 @@ public abstract class ExpectedResolveData {
 
 
                 DeclarationDescriptor actualDescriptor = bindingContext.get(REFERENCE_TARGET, reference);
-                if (actualDescriptor instanceof VariableAsFunctionDescriptor) {
-                    VariableAsFunctionDescriptor descriptor = (VariableAsFunctionDescriptor) actualDescriptor;
-                    actualDescriptor = descriptor.getVariableDescriptor();
-                }
 
                 assertEquals(
                         "Reference `" + name + "`" + renderReferenceInContext(reference) + " is resolved into " + actualName + ".",
@@ -338,5 +362,10 @@ public abstract class ExpectedResolveData {
         @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
         T result = (T) element;
         return result;
+    }
+
+    @NotNull
+    private static String renderNullableDescriptor(@Nullable DeclarationDescriptor d) {
+        return d == null ? "<null>" : DescriptorRenderer.TEXT.render(d);
     }
 }

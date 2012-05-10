@@ -16,16 +16,15 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiMember;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.prop.PropertyNameUtils;
+import org.jetbrains.jet.lang.resolve.java.prop.PropertyParseResult;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +53,9 @@ class JavaDescriptorResolverHelper {
         }
         
         private NamedMembers getNamedMembers(String name) {
+            if (name.length() == 0) {
+                throw new IllegalStateException("Oi! Empty member name in " + psiClass.getPsiClass() + ". How it is possible?");
+            }
             NamedMembers r = namedMembersMap.get(name);
             if (r == null) {
                 r = new NamedMembers();
@@ -68,7 +70,7 @@ class JavaDescriptorResolverHelper {
                 return false;
             }
 
-            if (!staticMembers && member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
+            if (member.getPsiMember().getContainingClass() != psiClass.getPsiClass()) {
                 return false;
             }
             
@@ -101,6 +103,11 @@ class JavaDescriptorResolverHelper {
             
             for (PsiMethod method : psiClass.getPsiClass().getAllMethods()) {
                 getNamedMembers(method.getName());
+
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
+                if (propertyParseResult != null) {
+                    getNamedMembers(propertyParseResult.getPropertyName());
+                }
             }
 
             
@@ -111,11 +118,12 @@ class JavaDescriptorResolverHelper {
                     continue;
                 }
 
-                // TODO: "is" prefix
-                // TODO: remove getJavaClass
-                if (method.getName().startsWith(JvmAbi.GETTER_PREFIX)) {
+                PropertyParseResult propertyParseResult = PropertyNameUtils.parseMethodToProperty(method.getName());
 
-                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.GETTER_PREFIX.length()));
+                // TODO: remove getJavaClass
+                if (propertyParseResult != null && propertyParseResult.isGetter()) {
+
+                    String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(propertyName);
 
                     // TODO: some java properties too
@@ -128,7 +136,8 @@ class JavaDescriptorResolverHelper {
                             PsiParameterWrapper receiverParameter = method.getParameter(i);
                             receiverType = new TypeSource(receiverParameter.getJetValueParameter().type(), receiverParameter.getPsiParameter().getType(), receiverParameter.getPsiParameter());
                             ++i;
-                        } else {
+                        }
+                        else {
                             receiverType = null;
                         }
 
@@ -146,16 +155,18 @@ class JavaDescriptorResolverHelper {
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), method.getReturnType(), method.getPsiMethod());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, receiverType));
-                    } else if (!kotlin && false) {
+                    }
+                    else if (!kotlin && false) {
                         if (method.getParameters().size() == 0) {
                             TypeSource propertyType = new TypeSource("", method.getReturnType(), method.getPsiMethod());
                             members.addPropertyAccessor(new PropertyAccessorData(method, true, propertyType, null));
                         }
                     }
 
-                } else if (method.getName().startsWith(JvmAbi.SETTER_PREFIX)) {
+                }
+                else if (propertyParseResult != null && !propertyParseResult.isGetter()) {
 
-                    String propertyName = StringUtil.decapitalize(method.getName().substring(JvmAbi.SETTER_PREFIX.length()));
+                    String propertyName = propertyParseResult.getPropertyName();
                     NamedMembers members = getNamedMembers(propertyName);
 
                     if (method.getJetMethod().kind() == JvmStdlibNames.JET_METHOD_KIND_PROPERTY) {
@@ -185,7 +196,8 @@ class JavaDescriptorResolverHelper {
                         TypeSource propertyType = new TypeSource(method.getJetMethod().propertyType(), propertyTypeParameter.getPsiParameter().getType(), propertyTypeParameter.getPsiParameter());
 
                         members.addPropertyAccessor(new PropertyAccessorData(method, false, propertyType, receiverType));
-                    } else if (!kotlin && false) {
+                    }
+                    else if (!kotlin && false) {
                         if (method.getParameters().size() == 1) {
                             PsiParameter psiParameter = method.getParameters().get(0).getPsiParameter();
                             TypeSource propertyType = new TypeSource("", psiParameter.getType(), psiParameter);
@@ -203,10 +215,16 @@ class JavaDescriptorResolverHelper {
     }
 
 
-    static Map<String, NamedMembers> getNamedMembers(@NotNull PsiClassWrapper psiClass, boolean staticMembers, boolean kotlin) {
-        Builder builder = new Builder(psiClass, staticMembers, kotlin);
-        builder.run();
-        return builder.namedMembersMap;
+    @NotNull
+    static Map<String, NamedMembers> getNamedMembers(@NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+        if (resolverScopeData.psiClass != null) {
+            Builder builder = new Builder(new PsiClassWrapper(resolverScopeData.psiClass), resolverScopeData.staticMembers, resolverScopeData.kotlin);
+            builder.run();
+            return builder.namedMembersMap;
+        }
+        else {
+            return Collections.emptyMap();
+        }
     }
 
 

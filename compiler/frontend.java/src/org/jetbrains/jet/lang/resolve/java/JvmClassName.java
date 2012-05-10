@@ -17,29 +17,38 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.objectweb.asm.Type;
 
 /**
  * @author Stepan Koltsov
  */
 public class JvmClassName {
-    
-    private final String fqName;
+
+    @NotNull
+    private final FqName fqName;
 
     public JvmClassName(@NotNull String fqName) {
+        this(new FqName(fqName));
+    }
+
+    public JvmClassName(@NotNull FqName fqName) {
         this.fqName = fqName;
     }
-    
+
     public static JvmClassName byInternalName(@NotNull String internalName) {
         JvmClassName r = new JvmClassName(internalName.replace('/', '.'));
         r.internalName = internalName;
         return r;
     }
 
-    public String getFqName() {
+    @NotNull
+    public FqName getFqName() {
         return fqName;
     }
-    
+
+
+
     private String internalName;
     
     public String getInternalName() {
@@ -54,9 +63,9 @@ public class JvmClassName {
 
     public String getDescriptor() {
         if (descriptor == null) {
-            StringBuilder sb = new StringBuilder(fqName.length() + 2);
+            StringBuilder sb = new StringBuilder(fqName.getFqName().length() + 2);
             sb.append('L');
-            sb.append(fqName.replace('.', '/'));
+            sb.append(fqName.getFqName().replace('.', '/'));
             sb.append(';');
             descriptor = sb.toString();
         }

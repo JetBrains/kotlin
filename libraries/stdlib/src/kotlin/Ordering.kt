@@ -3,7 +3,7 @@ package kotlin
 import java.util.Comparator
 
 /**
-* Helper method for implementing [[Comparable<T>]] methods using a list of functions
+* Helper method for implementing [[Comparable]] methods using a list of functions
 * to calculate the values to compare
 */
 inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): Int {
@@ -15,7 +15,7 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): In
         val v1 = fn(a)
         val v2 = fn(b)
         val diff = compareValues(v1, v2)
-        if (diff != null) return diff
+        if (diff != 0) return diff
     }
     return 0
 }
@@ -25,7 +25,8 @@ inline fun <T> compareBy(a: T?, b: T?, vararg functions: Function1<T, Any?>): In
  * they are compared via [[#equals()]] and if they are not the same then
  * the [[#hashCode()]] method is used as the difference
  */
-inline fun <T> compareValues(a: T?, b: T?): Int {
+public inline fun <T> compareValues(a: T?, b: T?): Int {
+    if (a === b) return 0
     if (a == null) return - 1
     if (b == null) return 1
     if (a is Comparable<T>) {
@@ -44,23 +45,48 @@ inline fun <T> compareValues(a: T?, b: T?): Int {
 }
 
 /**
- * Creates a comparator using the sequence of functions used to calcualte a value to compare on
+ * Creates a comparator using the sequence of functions used to calculate a value to compare on
  */
-inline fun <T> comparator(vararg functions: Function1<T,Any?>): Comparator<T> {
+public inline fun <T> comparator(vararg functions: Function1<T,Any?>): Comparator<T> {
     return FunctionComparator<T>(functions)
 }
 
+
 private class FunctionComparator<T>(val functions: Array<Function1<T,Any?>>):  Comparator<T> {
 
-    fun toString(): String {
+    public override fun toString(): String {
         return "FunctionComparator${functions.toList()}"
     }
 
-    override fun compare(o1: T?, o2: T?): Int {
+    public override fun compare(o1: T?, o2: T?): Int {
         return compareBy<T>(o1, o2, *functions)
     }
 
-    override fun equals(obj: Any?): Boolean {
+    public override fun equals(obj: Any?): Boolean {
+        return this == obj
+    }
+}
+
+/**
+ * Creates a comparator using the sequence of functions used to calculate a value to compare on
+ */
+public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {
+    return Function2Comparator<T>(fn)
+}
+private class Function2Comparator<T>(val compareFn: (T,T) -> Int):  Comparator<T> {
+
+    public override fun toString(): String {
+        return "Function2Comparator${compareFn}"
+    }
+
+    public override fun compare(a: T?, b: T?): Int {
+        if (a === b) return 0
+        if (a == null) return - 1
+        if (b == null) return 1
+        return (compareFn)(a, b)
+    }
+
+    public override fun equals(obj: Any?): Boolean {
         return this == obj
     }
 }

@@ -32,14 +32,11 @@ import java.util.List;
 public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
     private JetScope memberScope;
     private final FqName qualifiedName;
-    /** Namespace of class with static methods */
-    private final boolean namespace;
-    
+
     public JavaNamespaceDescriptor(NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations,
-            @NotNull String name, @NotNull FqName qualifiedName, boolean namespace) {
+            @NotNull String name, @NotNull FqName qualifiedName) {
         super(containingDeclaration, annotations, name);
         this.qualifiedName = qualifiedName;
-        this.namespace = namespace;
     }
 
     public void setMemberScope(@NotNull JetScope memberScope) {
@@ -54,9 +51,5 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
 
     public FqName getQualifiedName() {
         return qualifiedName;
-    }
-
-    public boolean isNamespace() {
-        return namespace;
     }
 }

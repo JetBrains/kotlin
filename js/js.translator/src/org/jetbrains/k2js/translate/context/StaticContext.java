@@ -22,19 +22,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
-import org.jetbrains.k2js.translate.utils.DescriptorUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
 
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.*;
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -310,6 +310,7 @@ public final class StaticContext {
                     return getRootScope().innerScope("Namespace " + descriptor.getName());
                 }
             };
+            //TODO: never get there
             Rule<NamingScope> generateInnerScopesForMembers = new Rule<NamingScope>() {
                 @Override
                 public NamingScope apply(@NotNull DeclarationDescriptor descriptor) {
@@ -326,7 +327,7 @@ public final class StaticContext {
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     JsFunction correspondingFunction = JsAstUtils.createFunctionWithEmptyBody(enclosingScope.jsScope());
                     NamingScope newScope = enclosingScope.innerScope(correspondingFunction.getScope());
-                    assert (!scopeToFunction.containsKey(newScope)) : "Scope to function value overriden for " + descriptor;
+                    assert (!scopeToFunction.containsKey(newScope)) : "Scope to function value overridden for " + descriptor;
                     scopeToFunction.put(newScope, correspondingFunction);
                     return newScope;
                 }
@@ -411,15 +412,6 @@ public final class StaticContext {
                     return true;
                 }
             };
-            Rule<Boolean> variableAsFunctionsHaveNoQualifiers = new Rule<Boolean>() {
-                @Override
-                public Boolean apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (!isVariableAsFunction(descriptor)) {
-                        return null;
-                    }
-                    return true;
-                }
-            };
             //TODO: hack!
             Rule<Boolean> nativeObjectsHaveNoQualifiers = new Rule<Boolean>() {
                 @Override
@@ -436,7 +428,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor)descriptor)) {
+                    if (DescriptorUtils.isTopLevelNamespace((NamespaceDescriptor) descriptor)) {
                         return true;
                     }
                     return null;
@@ -444,7 +436,6 @@ public final class StaticContext {
             };
             addRule(topLevelNamespaceHaveNoQualifier);
             addRule(propertiesHaveNoQualifiers);
-            addRule(variableAsFunctionsHaveNoQualifiers);
             addRule(nativeObjectsHaveNoQualifiers);
         }
     }

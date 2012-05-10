@@ -51,7 +51,8 @@ JetFile: ShortAnnotations.jet
     PsiWhiteSpace(' ')
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('aa')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('aa')
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST

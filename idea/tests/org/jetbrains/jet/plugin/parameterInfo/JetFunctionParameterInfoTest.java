@@ -95,7 +95,8 @@ public class JetFunctionParameterInfoTest extends LightCodeInsightFixtureTestCas
         if (lastChild.getNode().getElementType().equals(JetTokens.BLOCK_COMMENT)) {
             String lastChildText = lastChild.getText();
             expectedResultText = lastChildText.substring(2, lastChildText.length() - 2).trim();
-        } else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
+        }
+        else if (lastChild.getNode().getElementType().equals(JetTokens.EOL_COMMENT)) {
             expectedResultText = lastChild.getText().substring(2).trim();
         }
         assert expectedResultText != null;

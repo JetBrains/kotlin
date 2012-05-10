@@ -24,9 +24,9 @@ inline var Thread.contextClassLoader : ClassLoader?
     get() = getContextClassLoader()
     set(loader: ClassLoader?) { setContextClassLoader(loader) }
 
-fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: ()->Unit) : Thread {
+public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: ClassLoader? = null, name: String? = null, priority: Int = -1, block: ()->Unit) : Thread {
     val thread = object: Thread() {
-        override fun run() {
+        public override fun run() {
             block()
         }
     }
@@ -43,10 +43,10 @@ fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLoader: C
     return thread
 }
 
-inline fun Executor.execute(action: ()->Unit) {
-    execute(object: Runnable{
-        override fun run() {
-            action()
-        }
-    })
+/**
+ * Executes the given block on the [[Executor]]
+ */
+public inline fun Executor.execute(action: ()->Unit) {
+    execute(runnable(action))
 }
+

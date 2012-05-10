@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.compiled.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.*;
 
 /**
  * @author Evgeny Gerashchenko
@@ -31,18 +31,47 @@ public class JetClsNavigationPolicy implements ClsCustomNavigationPolicy {
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsClassImpl clsClass) {
-        return getJetDeclarationByClsElement(clsClass);
+        if (clsClass.getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
+        JetClass jetClass = (JetClass) getJetDeclarationByClsElement(clsClass);
+        if (jetClass != null) {
+            JetClassOrObject sourceClass = JetSourceNavigationHelper.getSourceClass(jetClass);
+            if (sourceClass != null) {
+                return sourceClass;
+            }
+        }
+        return jetClass;
     }
 
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsMethodImpl clsMethod) {
-        return getJetDeclarationByClsElement(clsMethod);
+        if (clsMethod.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
+        JetDeclaration jetDeclaration = getJetDeclarationByClsElement(clsMethod);
+        if (jetDeclaration instanceof JetProperty) {
+            JetDeclaration sourceProperty = JetSourceNavigationHelper.getSourceProperty((JetProperty) jetDeclaration);
+            if (sourceProperty != null) {
+                return sourceProperty;
+            }
+        }
+        else if (jetDeclaration instanceof JetFunction) {
+            JetDeclaration sourceFunction = JetSourceNavigationHelper.getSourceFunction((JetFunction) jetDeclaration);
+            if (sourceFunction != null) {
+                return sourceFunction;
+            }
+        }
+        return jetDeclaration;
     }
 
     @Override
     @Nullable
     public PsiElement getNavigationElement(@NotNull ClsFieldImpl clsField) {
+        if (clsField.getParent().getUserData(ClsClassImpl.DELEGATE_KEY) != null) {
+            return null;
+        }
         return getJetDeclarationByClsElement(clsField);
     }
 

@@ -23,13 +23,16 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.types.ErrorUtils;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lexer.JetLexer;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -66,8 +69,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)expression.getContainingFile());
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);
@@ -84,55 +86,75 @@ public class JetNameSuggester {
         if (ErrorUtils.containsErrorType(jetType)) return;
         if (typeChecker.equalTypes(standardLibrary.getBooleanType(), jetType)) {
             addName(result, "b", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getIntType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getIntType(), jetType)) {
             addName(result, "i", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getByteType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getByteType(), jetType)) {
             addName(result, "byte", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getLongType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getLongType(), jetType)) {
             addName(result, "l", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getFloatType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getFloatType(), jetType)) {
             addName(result, "fl", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), jetType)) {
             addName(result, "d", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getShortType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getShortType(), jetType)) {
             addName(result, "sh", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getCharType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getCharType(), jetType)) {
             addName(result, "c", validator);
-        } else if (typeChecker.equalTypes(standardLibrary.getStringType(), jetType)) {
+        }
+        else if (typeChecker.equalTypes(standardLibrary.getStringType(), jetType)) {
             addName(result, "s", validator);
-        } else {
+        }
+        else {
             if (jetType.getArguments().size() == 1) {
                 JetType argument = jetType.getArguments().get(0).getType();
                 if (typeChecker.equalTypes(standardLibrary.getArrayType(argument), jetType)) {
                     if (typeChecker.equalTypes(standardLibrary.getBooleanType(), argument)) {
                         addName(result, "booleans", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getIntType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getIntType(), argument)) {
                         addName(result, "ints", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getByteType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getByteType(), argument)) {
                         addName(result, "bytes", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getLongType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getLongType(), argument)) {
                         addName(result, "longs", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getFloatType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getFloatType(), argument)) {
                         addName(result, "floats", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getDoubleType(), argument)) {
                         addName(result, "doubles", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getShortType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getShortType(), argument)) {
                         addName(result, "shorts", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getCharType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getCharType(), argument)) {
                         addName(result, "chars", validator);
-                    } else if (typeChecker.equalTypes(standardLibrary.getStringType(), argument)) {
+                    }
+                    else if (typeChecker.equalTypes(standardLibrary.getStringType(), argument)) {
                         addName(result, "strings", validator);
-                    } else {
+                    }
+                    else {
                         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(argument);
                         if (classDescriptor != null) {
                             String className = classDescriptor.getName();
                             addName(result, "arrayOf" + StringUtil.capitalize(className) + "s", validator);
                         }
                     }
-                } else {
+                }
+                else {
                     addForClassType(result, jetType, validator);
                 }
-            } else {
+            }
+            else {
                 addForClassType(result, jetType, validator);
             }
         }
@@ -151,12 +173,13 @@ public class JetNameSuggester {
     private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
         if (name == "") return;
         String s = deleteNonLetterFromString(name);
-        if (s.startsWith("get") || s.startsWith("set")) s = s.substring(0, 3);
-        else if (s.startsWith("is")) s = s.substring(0, 2);
+        if (s.startsWith("get") || s.startsWith("set")) s = s.substring(3);
+        else if (s.startsWith("is")) s = s.substring(2);
         for (int i = 0; i < s.length(); ++i) {
             if (i == 0) {
                 addName(result, StringUtil.decapitalize(s), validator);
-            } else if (s.charAt(i) >= 'A' && s.charAt(i) <= 'Z') {
+            }
+            else if (s.charAt(i) >= 'A' && s.charAt(i) <= 'Z') {
                 addName(result, StringUtil.decapitalize(s.substring(i)), validator);
             }
         }
@@ -171,17 +194,30 @@ public class JetNameSuggester {
     private static void addNamesForExpression(ArrayList<String> result, JetExpression expression, JetNameValidator validator) {
         if (expression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) expression;
-            addNamesForExpression(result, qualifiedExpression.getSelectorExpression(), validator);
-        } else if (expression instanceof JetSimpleNameExpression) {
+            JetExpression selectorExpression = qualifiedExpression.getSelectorExpression();
+            addNamesForExpression(result, selectorExpression, validator);
+            if (selectorExpression != null && selectorExpression instanceof JetCallExpression) {
+                JetExpression calleeExpression = ((JetCallExpression)selectorExpression).getCalleeExpression();
+                if (calleeExpression != null && calleeExpression instanceof JetSimpleNameExpression) {
+                    String name = ((JetSimpleNameExpression)calleeExpression).getReferencedName();
+                    if (name != null && name.equals("sure")) {
+                        addNamesForExpression(result, qualifiedExpression.getReceiverExpression(), validator);
+                    }
+                }
+            }
+        }
+        else if (expression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression reference = (JetSimpleNameExpression) expression;
             String referenceName = reference.getReferencedName();
             if (referenceName == null) return;
             if (referenceName.equals(referenceName.toUpperCase())) {
                 addName(result, referenceName, validator);
-            } else {
+            }
+            else {
                 addCamelNames(result, referenceName, validator);
             }
-        } else if (expression instanceof JetCallExpression) {
+        }
+        else if (expression instanceof JetCallExpression) {
             JetCallExpression call = (JetCallExpression) expression;
             addNamesForExpression(result, call.getCalleeExpression(), validator);
         }

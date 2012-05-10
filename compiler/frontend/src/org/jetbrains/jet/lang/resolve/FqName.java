@@ -129,6 +129,15 @@ public class FqName {
         return fqName.pathSegments();
     }
 
+    public boolean firstSegmentIs(@NotNull String segment) {
+        return fqName.firstSegmentIs(segment);
+    }
+
+    public boolean lastSegmentIs(@NotNull String segment) {
+        return fqName.lastSegmentIs(segment);
+    }
+
+
 
     @NotNull
     public static FqName topLevel(@NotNull String shortName) {

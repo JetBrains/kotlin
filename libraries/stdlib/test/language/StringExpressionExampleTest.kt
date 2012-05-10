@@ -17,7 +17,7 @@ fun customerTemplate(customer: Customer) = """
 <body>
 <h1>Hello ${customer.name}</h1>
 <ul>
-${customer.products.map<Product,String>{ productSnippet(it) }.join("\n")}
+${customer.products.map<Product,String>{ productSnippet(it) }.makeString("\n")}
 </ul>
 <p>lets do some kool stuff</p>
 </body>

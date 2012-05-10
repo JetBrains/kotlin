@@ -1,6 +1,6 @@
 namespace test
 
-open class test.MethodWithTypePRefClassP</*0*/ P : jet.Any?> : jet.Any {
+open class test.MethodWithTypePRefClassP</*0*/ P : jet.Any?> : java.lang.Object {
     final /*constructor*/ fun </*0*/ P : jet.Any?><init>(): test.MethodWithTypePRefClassP<P>
     final fun </*0*/ Q : P>f(): jet.Tuple0
 }

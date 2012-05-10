@@ -36,7 +36,7 @@ import org.jetbrains.k2js.translate.utils.ClassSortingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getAllClassesDefinedInNamespace;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getAllClassesDefinedInNamespace;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**

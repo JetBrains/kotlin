@@ -48,37 +48,71 @@ fun main(args: Array<String>) {
     }
     val outDir = File(srcDir, "../generated")
 
-    // JavaIterables - Generic iterable stuff
-    generateFile(File(outDir, "ArraysFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+    val otherArrayNames = arrayList("Boolean", "Byte", "Char", "Short", "Int", "Long", "Float", "Double")
+
+    // JLangIterables - Generic iterable stuff
+    generateFile(File(outDir, "ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
-    generateFile(File(outDir, "ArraysFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
+    generateFile(File(outDir, "ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Array<T").replaceAll("java.lang.Iterable<T", "Array<T")
     }
+    for (arrayName in otherArrayNames) {
+        fun replace(it: String): String {
+            replaceGenerics(arrayName, it.replaceAll("<T> java.lang.Iterable<T>", "${arrayName}Array").
+            replaceAll("<T> java.lang.Iterable<T\\?>", "${arrayName}Array").
+            replaceAll("java.lang.Iterable<T\\?>", "${arrayName}Array").
+            replaceAll("java.lang.Iterable<T>", "${arrayName}Array"))
+        }
 
-    generateFile(File(outDir, "StandardFromJavaIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterables.kt")) {
+        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
+            replace(it)
+        }
+        generateFile(File(outDir, "${arrayName}ArraysFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
+            replace(it)
+        }
+    }
+
+    generateFile(File(outDir, "StandardFromJLangIterables.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
-    generateFile(File(outDir, "StandardFromJavaIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JavaIterablesLazy.kt")) {
+    generateFile(File(outDir, "StandardFromJLangIterablesLazy.kt"), "package kotlin\n\nimport kotlin.util.*", File(srcDir, "JLangIterablesLazy.kt")) {
         it.replaceAll("java.lang.Iterable<T", "Iterable<T")
     }
 
-    generateFile(File(outDir, "JavaUtilIteratorsFromJavaIterables.kt"), "package kotlin", File(srcDir, "JavaIterables.kt")) {
+    generateFile(File(outDir, "JUtilIteratorsFromJLangIterables.kt"), "package kotlin", File(srcDir, "JLangIterables.kt")) {
         it.replaceAll("java.lang.Iterable<T", "java.util.Iterator<T")
     }
 
 
-    // JavaCollections - methods returning a collection of the same input size (if its a collection)
-
-    generateFile(File(outDir, "ArraysFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    // JUtilCollections - methods returning a collection of the same input size (if its a collection)
+    generateFile(File(outDir, "ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "Array<T")
     }
+    for (arrayName in otherArrayNames) {
+        generateFile(File(outDir, "${arrayName}ArraysFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
+            replaceGenerics(arrayName, it.replaceAll("<T> java.util.Collection<T>", "${arrayName}Array").
+            replaceAll("java.util.Collection<T>", "${arrayName}Array"))
+        }
+    }
 
-    generateFile(File(outDir, "JavaUtilIterablesFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    generateFile(File(outDir, "JUtilIterablesFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "java.lang.Iterable<T").replaceAll("(this.size)", "")
     }
 
-    generateFile(File(outDir, "StandardFromJavaCollections.kt"), "package kotlin", File(srcDir, "JavaCollections.kt")) {
+    generateFile(File(outDir, "StandardFromJUtilCollections.kt"), "package kotlin", File(srcDir, "JUtilCollections.kt")) {
         it.replaceAll("java.util.Collection<T", "Iterable<T").replaceAll("(this.size)", "")
     }
 }
+
+// Pretty hacky way to code generate; ideally we'd be using the AST and just changing the function prototypes
+fun replaceGenerics(arrayName: String, it: String): String {
+    return it.replaceAll(" <in T>", " ").replaceAll("<in T, ", "<").replaceAll("<T, ", "<").replaceAll("<T,", "<").
+    replaceAll(" <T> ", " ").
+    replaceAll("<T>", "<${arrayName}>").replaceAll("<in T>", "<${arrayName}>").
+    replaceAll("\\(T\\)", "(${arrayName})").replaceAll("T\\?", "${arrayName}?").
+    replaceAll("T,", "${arrayName},").
+    replaceAll("T\\)", "${arrayName})").
+    replaceAll(" T ", " ${arrayName} ")
+}
+

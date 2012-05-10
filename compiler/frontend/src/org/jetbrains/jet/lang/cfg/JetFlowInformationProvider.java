@@ -41,7 +41,7 @@ import org.jetbrains.jet.plugin.JetMainDetector;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.MUST_BE_WRAPPED_IN_A_REF;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 /**
@@ -361,7 +361,7 @@ public class JetFlowInformationProvider {
         if (variableDescriptor instanceof PropertyDescriptor && !enterInitializers.isInitialized() && exitInitializers.isInitialized()) {
             if (!variableDescriptor.isVar()) return false;
             if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor)) return false;
-            PsiElement property = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
+            PsiElement property = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), variableDescriptor);
             assert property instanceof JetProperty;
             if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.FINAL && ((JetProperty) property).getSetter() == null) return false;
             JetExpression variable = expression;
@@ -395,7 +395,7 @@ public class JetFlowInformationProvider {
             trace.report(Errors.NOT_PROPERTY_BACKING_FIELD.on(element));
             return true;
         }
-        PsiElement property = trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, variableDescriptor);
+        PsiElement property = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), variableDescriptor);
         boolean insideSelfAccessors = PsiTreeUtil.isAncestor(property, element, false);
         if (!trace.get(BindingContext.BACKING_FIELD_REQUIRED, (PropertyDescriptor) variableDescriptor) && !insideSelfAccessors) { // not to generate error in accessors of abstract properties, there is one: declared accessor of abstract property
             if (((PropertyDescriptor) variableDescriptor).getModality() == Modality.ABSTRACT) {
@@ -599,7 +599,7 @@ public class JetFlowInformationProvider {
                     !DescriptorUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) return;
                 VariableStatus variableStatus = enterData.get(variableDescriptor);
                 if (instruction instanceof WriteValueInstruction) {
-                    if (trace.get(MUST_BE_WRAPPED_IN_A_REF, variableDescriptor)) return;
+                    if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor)) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
                     if (variableStatus != VariableStatus.READ) {
                         if (element instanceof JetBinaryExpression && ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.TraceClassVisitor;
 
@@ -26,6 +27,8 @@ import java.io.StringWriter;
  * @author max
  */
 public interface ClassBuilderFactory {
+    @NotNull
+    ClassBuilderMode getClassBuilderMode();
     ClassBuilder newClassBuilder();
     String asText(ClassBuilder builder);
     byte[] asBytes(ClassBuilder builder);

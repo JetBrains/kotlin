@@ -8,7 +8,8 @@ JetFile: TypeDef.jet
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('bar')
     PsiElement(DOT)('.')
-    PsiElement(IDENTIFIER)('goo')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(type)('type')

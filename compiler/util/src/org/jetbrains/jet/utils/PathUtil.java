@@ -77,7 +77,7 @@ public class PathUtil {
         File compilerPath = getDefaultCompilerPath();
         if (compilerPath == null) return null;
 
-        File answer = new File(compilerPath, "lib/alt");
+        File answer = new File(compilerPath, "lib/alt/kotlin-jdk-headers.jar");
         return answer.exists() ? answer : null;
     }
 
@@ -94,10 +94,18 @@ public class PathUtil {
 
         if (alts != null) {
             for (File root : alts.listFiles()) {
-                VirtualFile jarRoot = VirtualFileManager.getInstance().findFileByUrl("jar://" + root.getPath() + "!/");
+                VirtualFile jarRoot = jarFileToVirtualFile(root);
                 roots.add(jarRoot);
             }
         }
         return roots;
+    }
+
+    @NotNull
+    public static VirtualFile jarFileToVirtualFile(@NotNull File file) {
+        if (!file.exists() || !file.isFile()) {
+            throw new IllegalStateException("file must exist and be regular to be converted to virtual file: " + file);
+        }
+        return VirtualFileManager.getInstance().findFileByUrl("jar://" + file.getPath() + "!/");
     }
 }

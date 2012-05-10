@@ -17,7 +17,9 @@
 package org.jetbrains.jet.codegen.intrinsics;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
+import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.codegen.JetTypeMapper;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -31,13 +33,15 @@ import java.util.List;
  */
 public class Concat implements IntrinsicMethod {
     @Override
-    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver) {
-        codegen.generateStringBuilderConstructor();
+    public StackValue generate(ExpressionCodegen codegen, InstructionAdapter v, Type expectedType, PsiElement element, List<JetExpression> arguments, StackValue receiver, @NotNull GenerationState state) {
         if (receiver == null || receiver == StackValue.none()) {                                                     // LHS + RHS
+            codegen.generateStringBuilderConstructor();
             codegen.invokeAppend(arguments.get(0));                                // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(1));
         }
         else {                                    // LHS.plus(RHS)
+            receiver.put(JetTypeMapper.TYPE_OBJECT, v);
+            codegen.generateStringBuilderConstructor();
             v.swap();                                                              // StringBuilder LHS
             codegen.invokeAppendMethod(expectedType);  // StringBuilder(LHS)
             codegen.invokeAppend(arguments.get(0));

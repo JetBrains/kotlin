@@ -16,6 +16,6 @@
 
 package foo;
 
-interface Intf {
+public interface Intf {
     String getFooBar();
 }

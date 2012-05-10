@@ -39,6 +39,8 @@ public final class LastExpressionMutator {
         this.mutator = mutator;
     }
 
+    //TODO: visitor?
+    //TODO: when expression?
     @NotNull
     private JsNode apply(@NotNull JsNode node) {
         if (node instanceof JsBlock) {

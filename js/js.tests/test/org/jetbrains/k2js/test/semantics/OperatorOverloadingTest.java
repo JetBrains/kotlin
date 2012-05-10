@@ -28,76 +28,76 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
     }
 
     public void testPlusOverload() throws Exception {
-        checkFooBoxIsTrue("plusOverload.kt");
+        fooBoxTest();
     }
 
 
     public void testPostfixInc() throws Exception {
-        checkFooBoxIsTrue("postfixIncOverload.kt");
+        fooBoxTest();
     }
 
 
     public void testPrefixDecOverload() throws Exception {
-        checkFooBoxIsTrue("prefixDecOverload.kt");
+        fooBoxTest();
     }
 
 
     public void testPrefixIncReturnsCorrectValue() throws Exception {
-        checkFooBoxIsTrue("prefixIncReturnsCorrectValue.kt");
+        fooBoxTest();
     }
 
 
     public void testOverloadedCallOnProperty() throws Exception {
-        checkFooBoxIsTrue("overloadedCallOnProperty.kt");
+        fooBoxTest();
     }
 
 
     public void testPostfixOnProperty() throws Exception {
-        checkFooBoxIsTrue("postfixOnProperty.kt");
+        fooBoxTest();
     }
 
 
     public void testOperatorOverloadOnPropertyCallGetterAndSetterOnlyOnce() throws Exception {
-        checkFooBoxIsTrue("operatorOverloadOnPropertyCallGetterAndSetterOnlyOnce.kt");
+        fooBoxTest();
     }
 
 
     public void testUnaryOnIntProperty() throws Exception {
-        checkFooBoxIsTrue("unaryOnIntProperty.kt");
+        fooBoxTest();
     }
 
 
     public void testUnaryOnIntPropertyAsStatement() throws Exception {
-        checkFooBoxIsTrue("unaryOnIntProperty2.kt");
+        fooBoxTest();
     }
 
 
     public void testBinaryDivOverload() throws Exception {
-        checkFooBoxIsTrue("binaryDivOverload.kt");
+        fooBoxTest();
     }
 
 
     public void testPlusAssignNoReassign() throws Exception {
-        checkFooBoxIsTrue("plusAssignNoReassign.kt");
+        fooBoxTest();
     }
 
     public void testNotOverload() throws Exception {
-        checkFooBoxIsTrue("notOverload.kt");
+        fooBoxTest();
     }
 
 
     public void testCompareTo() throws Exception {
-        checkFooBoxIsTrue("compareTo.kt");
+        fooBoxTest();
     }
 
 
     public void testPlusAndMinusAsAnExpression() throws Exception {
-        checkFooBoxIsTrue("plusAndMinusAsAnExpression.kt");
+        fooBoxTest();
     }
 
 
     public void testUsingModInCaseModAssignNotAvailable() throws Exception {
-        checkFooBoxIsTrue("usingModInCaseModAssignNotAvailable.kt");
+        fooBoxTest();
     }
 
     public void testOverloadPlusAssignArrayList() throws Exception {

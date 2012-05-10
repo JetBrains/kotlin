@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getExpectedThisDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
 
@@ -34,6 +34,7 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
  *         <p/>
  *         For native apis that use .property notation for access.
  */
+//TODO: test this class
 public final class NativePropertyAccessTranslator extends PropertyAccessTranslator {
 
     @Nullable

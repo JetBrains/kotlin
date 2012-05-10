@@ -25,10 +25,8 @@ import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.testing.InTextDirectivesUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +43,6 @@ public class ExpectedCompletionUtils {
 
         private final String lookupString;
         private final String tailString;
-
-
 
         public CompletionProposal(@NotNull String lookupString, @Nullable String tailString) {
             this.lookupString = lookupString;
@@ -106,7 +102,7 @@ public class ExpectedCompletionUtils {
 
     public static CompletionProposal[] processProposalAssertions(String prefix, String fileText) {
         List<CompletionProposal> proposals = new ArrayList<CompletionProposal>();
-        for (String proposalStr : findListWithPrefix(prefix, fileText)) {
+        for (String proposalStr : InTextDirectivesUtils.findListWithPrefix(prefix, fileText)) {
             int tailChar = proposalStr.indexOf(CompletionProposal.TAIL_FLAG);
 
             if (tailChar > 0) {
@@ -123,74 +119,12 @@ public class ExpectedCompletionUtils {
 
     @Nullable
     public Integer getExpectedNumber(String fileText) {
-        return getPrefixedInt(fileText, numberLinePrefix);
+        return InTextDirectivesUtils.getPrefixedInt(fileText, numberLinePrefix);
     }
 
     @Nullable
     public Integer getExecutionTime(String fileText) {
-        return getPrefixedInt(fileText, executionTimePrefix);
-    }
-
-    @Nullable
-    public static Integer getPrefixedInt(String fileText, String prefix) {
-        final String[] numberStrings = findListWithPrefix(prefix, fileText);
-        if (numberStrings.length > 0) {
-            return Integer.parseInt(numberStrings[0]);
-        }
-
-        return null;
-    }
-
-    @NotNull
-    private static String[] findListWithPrefix(String prefix, String fileText) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        for (String line : findLinesWithPrefixRemoved(prefix, fileText)) {
-            String[] variants = line.split(",");
-
-            for (String variant : variants) {
-                result.add(StringUtil.unquoteString(variant.trim()));
-            }
-        }
-
-        return ArrayUtil.toStringArray(result);
-    }
-
-    @NotNull
-    private static List<String> findLinesWithPrefixRemoved(String prefix, String fileText) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        for (String line : fileNonEmptyLines(fileText)) {
-            if (line.startsWith(prefix)) {
-                result.add(line.substring(prefix.length()).trim());
-            }
-        }
-
-        return result;
-    }
-
-    @NotNull
-    private static List<String> fileNonEmptyLines(String fileText) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        try {
-            BufferedReader reader = new BufferedReader(new StringReader(fileText));
-            try {
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        result.add(line.trim());
-                    }
-                }
-            } finally {
-                reader.close();
-            }
-        } catch(IOException e) {
-            throw new AssertionError(e);
-        }
-
-        return result;
+        return InTextDirectivesUtils.getPrefixedInt(fileText, executionTimePrefix);
     }
 
     protected static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items) {

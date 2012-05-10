@@ -69,7 +69,8 @@ public class NamespaceCodegen {
             else if (declaration instanceof JetNamedFunction) {
                 try {
                     functionCodegen.gen((JetNamedFunction) declaration);
-                } catch (CompilationException e) {
+                }
+                catch (CompilationException e) {
                     throw e;
                 }
                 catch (Exception e) {
@@ -92,7 +93,7 @@ public class NamespaceCodegen {
 
     private void generateStaticInitializers(JetFile namespace) {
         MethodVisitor mv = v.newMethod(namespace, ACC_PUBLIC | ACC_STATIC, "<clinit>", "()V", null, null);
-        if (v.generateCode() == ClassBuilder.Mode.FULL) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
 
             FrameMap frameMap = new FrameMap();

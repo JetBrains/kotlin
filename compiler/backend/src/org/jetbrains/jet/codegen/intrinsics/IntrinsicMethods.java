@@ -36,6 +36,8 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.objectweb.asm.Opcodes;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -57,23 +59,37 @@ public class IntrinsicMethods {
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
+    public static final IdentityEquals IDENTITY_EQUALS = new IdentityEquals();
     public static final IteratorNext ITERATOR_NEXT = new IteratorNext();
     public static final ArraySet ARRAY_SET = new ArraySet();
     public static final ArrayGet ARRAY_GET = new ArrayGet();
     public static final StringPlus STRING_PLUS = new StringPlus();
+    public static final String KOTLIN_JAVA_CLASS_FUNCTION = "kotlin.javaClass.function";
+    public static final String KOTLIN_ARRAYS_ARRAY = "kotlin.arrays.array";
+    public static final String KOTLIN_JAVA_CLASS_PROPERTY = "kotlin.javaClass.property";
 
-    private final Project myProject;
-    private final JetStandardLibrary myStdLib;
+    private Project myProject;
+    private JetStandardLibrary myStdLib;
     private final Map<DeclarationDescriptor, IntrinsicMethod> myMethods = new HashMap<DeclarationDescriptor, IntrinsicMethod>();
     private final Map<String, IntrinsicMethod> namedMethods = new HashMap<String, IntrinsicMethod>();
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
 
-    public IntrinsicMethods(Project project, JetStandardLibrary stdlib) {
-        myProject = project;
-        myStdLib = stdlib;
 
-        namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
-        namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
+    @Inject
+    public void setMyProject(Project myProject) {
+        this.myProject = myProject;
+    }
+
+    @Inject
+    public void setMyStdLib(JetStandardLibrary myStdLib) {
+        this.myStdLib = myStdLib;
+    }
+
+    @PostConstruct
+    public void init() {
+        namedMethods.put(KOTLIN_JAVA_CLASS_FUNCTION, new JavaClassFunction());
+        namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
+        namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
 
         List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (String method : primitiveCastMethods) {
@@ -114,9 +130,9 @@ public class IntrinsicMethods {
 
         declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
         declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, EQUALS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, IDENTITY_EQUALS);
         declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, STRING_PLUS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("Array"), 1, new NewArray());
+        declareOverload(myStdLib.getLibraryScope().getFunctions("arrayOfNulls"), 1, new NewArray());
         declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
         declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 2, new StupidSync());
         declareOverload(myStdLib.getLibraryScope().getFunctions("iterator"), 0, new IteratorIterator());
@@ -235,6 +251,21 @@ public class IntrinsicMethods {
             typeParameters.add(new TypeProjection(JetStandardClasses.getAnyType()));
         }
         return descriptor.getMemberScope(typeParameters);
+    }
+
+    public IntrinsicMethod isIntrinsicMethod(DeclarationDescriptor descriptor) {
+        List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
+        if (annotations != null) {
+            for (AnnotationDescriptor annotation : annotations) {
+                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                    String value = (String) annotation.getValueArguments().get(0).getValue();
+                    IntrinsicMethod intrinsicMethod = namedMethods.get(value);
+                    if(intrinsicMethod != null)
+                        return intrinsicMethod;
+                }
+            }
+        }
+        return null;
     }
 
     public IntrinsicMethod getIntrinsic(DeclarationDescriptor descriptor) {

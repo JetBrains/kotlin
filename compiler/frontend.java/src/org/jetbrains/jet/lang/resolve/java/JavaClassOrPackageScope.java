@@ -16,16 +16,22 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeImpl;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -34,50 +40,90 @@ import java.util.Set;
 public abstract class JavaClassOrPackageScope extends JetScopeImpl {
 
     @NotNull
-    protected final ClassOrNamespaceDescriptor descriptor;
-    @NotNull
     protected final JavaSemanticServices semanticServices;
-    @Nullable
-    protected final PsiClass psiClass;
+    @NotNull
+    protected final JavaDescriptorResolver.ResolverScopeData resolverScopeData;
 
-    protected JavaClassOrPackageScope(@NotNull ClassOrNamespaceDescriptor descriptor, @NotNull JavaSemanticServices semanticServices,
-                                      @Nullable PsiClass psiClass) {
-        this.descriptor = descriptor;
+    // cache
+    private Collection<DeclarationDescriptor> allDescriptors;
+
+    protected JavaClassOrPackageScope(
+            @NotNull JavaSemanticServices semanticServices,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
         this.semanticServices = semanticServices;
-        this.psiClass = psiClass;
-
-        JavaDescriptorResolver.checkPsiClassIsNotJet(psiClass);
+        this.resolverScopeData = resolverScopeData;
     }
 
     @NotNull
     @Override
     public DeclarationDescriptor getContainingDeclaration() {
-        return descriptor;
+        return resolverScopeData.classOrNamespaceDescriptor;
     }
-
-    protected abstract boolean staticMembers();
 
     @NotNull
     @Override
     public Set<VariableDescriptor> getProperties(@NotNull String name) {
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        // TODO: cache
-        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(
-                descriptor, psiClass, name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFieldGroupByName(name, resolverScopeData);
     }
 
     @NotNull
     @Override
     public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
-
-        if (psiClass == null) {
-            return Collections.emptySet();
-        }
-
-        return semanticServices.getDescriptorResolver().resolveFunctionGroup(descriptor, psiClass, name, staticMembers());
+        return semanticServices.getDescriptorResolver().resolveFunctionGroup(name, resolverScopeData);
     }
 
+    @NotNull
+    @Override
+    public Collection<DeclarationDescriptor> getAllDescriptors() {
+        if (allDescriptors == null) {
+            allDescriptors = Sets.newHashSet();
+
+            if (resolverScopeData.psiClass != null) {
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(resolverScopeData));
+
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(resolverScopeData));
+
+                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(
+                        resolverScopeData.classOrNamespaceDescriptor, resolverScopeData.psiClass, resolverScopeData.staticMembers));
+            }
+
+            if (resolverScopeData.psiPackage != null) {
+                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(resolverScopeData.fqName) != null;
+                final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
+
+                for (PsiPackage psiSubPackage : resolverScopeData.psiPackage.getSubPackages()) {
+                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(
+                            new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                    if (childNs != null) {
+                        allDescriptors.add(childNs);
+                    }
+                }
+
+                for (PsiClass psiClass : resolverScopeData.psiPackage.getClasses()) {
+                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                        continue;
+                    }
+
+                    if (psiClass instanceof JetJavaMirrorMarker) {
+                        continue;
+                    }
+
+                    // TODO: Temp hack for collection function descriptors from java
+                    if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
+                        continue;
+                    }
+
+                    if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
+                        ClassDescriptor classDescriptor = descriptorResolver
+                                .resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                        if (classDescriptor != null) {
+                            allDescriptors.add(classDescriptor);
+                        }
+                    }
+                }
+            }
+        }
+
+        return allDescriptors;
+    }
 }

@@ -89,7 +89,7 @@ get() {
     return answer
 }
 set(value) {
-    this.classes = value.join(" ")
+    this.classes = value.makeString(" ")
 }
 
 
@@ -201,14 +201,12 @@ fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
 
 class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
-    override fun computeNext(): Node? {
+    override fun computeNext(): Unit {
         val next = node.getNextSibling()
         if (next != null) {
-            node = next
-            return next
+            setNext(next)
         } else {
             done()
-            return null
         }
     }
 }
@@ -217,14 +215,12 @@ fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
 
 class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
-    override fun computeNext(): Node? {
+    override fun computeNext(): Unit {
         val next = node.getPreviousSibling()
         if (next != null) {
-            node = next
-            return next
+            setNext(next)
         } else {
             done()
-            return null
         }
     }
 }

@@ -41,18 +41,17 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
+import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.resolve.java.JetJavaMirrorMarker;
+import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.plugin.JetLanguage;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
 import javax.swing.*;
@@ -100,8 +99,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     }
 
     private static PsiClass findClass(FqName fqn, StubElement<?> stub) {
-        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub) stub).getQualifiedName())) {
-            return (PsiClass) stub.getPsi();
+        if (stub instanceof PsiClassStub && Comparing.equal(fqn.getFqName(), ((PsiClassStub)stub).getQualifiedName())) {
+            return (PsiClass)stub.getPsi();
         }
 
         for (StubElement child : stub.getChildrenStubs()) {
@@ -117,6 +116,10 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         return qualifiedName.getFqName();
     }
 
+    public FqName getFqName() {
+        return qualifiedName;
+    }
+
     private PsiJavaFileStub getStub() {
         CachedValue<PsiJavaFileStub> answer = file.getUserData(JAVA_API_STUB);
         if (answer == null) {
@@ -128,17 +131,23 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             }, false);
             file.putUserData(JAVA_API_STUB, answer);
         }
-        
+
         return answer.getValue();
     }
-    
+
     private PsiJavaFileStub calcStub() {
         final PsiJavaFileStubImpl answer = new PsiJavaFileStubImpl(JetPsiUtil.getFQName(file).getFqName(), true);
         final Project project = getProject();
-        
+
         final Stack<StubElement> stubStack = new Stack<StubElement>();
 
         final ClassBuilderFactory builderFactory = new ClassBuilderFactory() {
+            @NotNull
+            @Override
+            public ClassBuilderMode getClassBuilderMode() {
+                return ClassBuilderMode.SIGNATURES;
+            }
+
             @Override
             public ClassBuilder newClassBuilder() {
                 return new StubClassBuilder(stubStack);
@@ -155,20 +164,33 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
             }
         };
 
-        final GenerationState state = new GenerationState(project, builderFactory) {
+        // The context must reflect _all files in the module_. not only the current file
+        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
+        // must be loaded from .class files
+        AnalyzeExhaust context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(
+            JetFilesProvider.getInstance(project).sampleToAllFilesInModule().fun(file),
+                // TODO: wrong environment // stepan.koltsov@ 2012-04-09
+                CompilerSpecialMode.REGULAR, CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR));
+
+        if (context.isError()) {
+            throw new IllegalStateException("failed to analyze: " + context.getError(), context.getError());
+        }
+
+        final GenerationState state = new GenerationState(project, builderFactory, context, Collections.singletonList(file)) {
             @Override
             protected void generateNamespace(JetFile namespace) {
                 PsiManager manager = PsiManager.getInstance(project);
                 stubStack.push(answer);
 
                 answer.setPsiFactory(new ClsWrapperStubPsiFactory());
-                final ClsFileImpl fakeFile = new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, file.getVirtualFile())) {
-                    @NotNull
-                    @Override
-                    public PsiClassHolderFileStub getStub() {
-                        return answer;
-                    }
-                };
+                final ClsFileImpl fakeFile =
+                    new ClsFileImpl((PsiManagerImpl)manager, new ClassFileViewProvider(manager, file.getVirtualFile())) {
+                        @NotNull
+                        @Override
+                        public PsiClassHolderFileStub getStub() {
+                            return answer;
+                        }
+                    };
 
                 fakeFile.setPhysical(false);
                 answer.setPsi(fakeFile);
@@ -186,12 +208,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         };
 
 
-        // The context must reflect _all files in the module_. not only the current file
-        // Otherwise, the analyzer gets confused and can't, for example, tell which files come as sources and which
-        // must be loaded from .class files
-        BindingContext context = AnalyzerFacadeForJVM.shallowAnalyzeFiles(WholeProjectAnalyzerFacade.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file));
-
-        state.compileCorrectFiles(context, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
+        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         state.getFactory().files();
 
         return answer;
@@ -204,7 +221,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public boolean isEquivalentTo(PsiElement another) {
-        return another instanceof PsiClass && Comparing.equal(((PsiClass) another).getQualifiedName(), getQualifiedName());
+        return another instanceof PsiClass && Comparing.equal(((PsiClass)another).getQualifiedName(), getQualifiedName());
     }
 
     @Override
@@ -216,7 +233,8 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
     public String toString() {
         try {
             return JetLightClass.class.getSimpleName() + ":" + getQualifiedName();
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             return JetLightClass.class.getSimpleName() + ":" + e.toString();
         }
     }

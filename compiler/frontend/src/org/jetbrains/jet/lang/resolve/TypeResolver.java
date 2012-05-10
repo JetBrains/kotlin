@@ -69,6 +69,7 @@ public class TypeResolver {
         JetTypeElement typeElement = typeReference.getTypeElement();
         JetType type = resolveTypeElement(scope, annotations, typeElement, false, trace, checkBounds);
         trace.record(BindingContext.TYPE, typeReference, type);
+        trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, typeReference, scope);
 
         return type;
     }
@@ -102,7 +103,8 @@ public class TypeResolver {
                         JetScope scopeForTypeParameter = getScopeForTypeParameter(typeParameterDescriptor, checkBounds);
                         if (scopeForTypeParameter instanceof ErrorUtils.ErrorScope) {
                             result[0] = ErrorUtils.createErrorType("?");
-                        } else {
+                        }
+                        else {
                             result[0] = new JetTypeImpl(
                                     annotations,
                                     typeParameterDescriptor.getTypeConstructor(),
@@ -124,16 +126,18 @@ public class TypeResolver {
                         int expectedArgumentCount = parameters.size();
                         int actualArgumentCount = arguments.size();
                         if (ErrorUtils.isError(typeConstructor)) {
-                            result[0] = ErrorUtils.createErrorType("??");
+                            result[0] = ErrorUtils.createErrorType("[Error type: " + typeConstructor + "]");
                         }
                         else {
                             if (actualArgumentCount != expectedArgumentCount) {
                                 if (actualArgumentCount == 0) {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type, expectedArgumentCount));
-                                } else {
+                                }
+                                else {
                                     trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(type.getTypeArgumentList(), expectedArgumentCount));
                                 }
-                            } else {
+                            }
+                            else {
                                 result[0] = new JetTypeImpl(
                                         annotations,
                                         typeConstructor,
@@ -240,7 +244,7 @@ public class TypeResolver {
                 List<TypeParameterDescriptor> parameters = constructor.getParameters();
                 if (parameters.size() > i) {
                     TypeParameterDescriptor parameterDescriptor = parameters.get(i);
-                    arguments.add(TypeUtils.makeStarProjection(parameterDescriptor));
+                    arguments.add(SubstitutionUtils.makeStarProjection(parameterDescriptor));
                 }
                 else {
                     arguments.add(new TypeProjection(Variance.OUT_VARIANCE, ErrorUtils.createErrorType("*")));
@@ -270,8 +274,7 @@ public class TypeResolver {
 
     @Nullable
     public ClassifierDescriptor resolveClass(JetScope scope, JetUserType userType, BindingTrace trace) {
-        Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver
-            .lookupDescriptorsForUserType(userType, scope, trace);
+        Collection<? extends DeclarationDescriptor> descriptors = qualifiedExpressionResolver.lookupDescriptorsForUserType(userType, scope, trace);
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor instanceof ClassifierDescriptor) {
                 return (ClassifierDescriptor) descriptor;

@@ -18,11 +18,12 @@ package org.jetbrains.k2js.analyze;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.DefaultModuleConfiguration;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -37,10 +38,9 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -52,32 +52,33 @@ public final class AnalyzerFacadeForJS {
 
     @NotNull
     public static BindingContext analyzeFilesAndCheckErrors(@NotNull List<JetFile> files,
-                                                            @NotNull Config config) {
-        BindingContext bindingContext = analyzeFiles(files, config);
+            @NotNull Config config) {
+        BindingContext bindingContext = analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
         checkForErrors(withJsLibAdded(files, config), bindingContext);
         return bindingContext;
     }
 
     @NotNull
-    public static BindingContext analyzeFiles(@NotNull List<JetFile> files,
-                                              @NotNull Config config) {
+    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
+            Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         final ModuleDescriptor owner = new ModuleDescriptor("<module>");
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                notLibFiles(config.getLibFiles()), false, false);
+        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
+
+        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(completely, false, false);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
                 project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
                 JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
 
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(withJsLibAdded(files, config));
+        injector.getTopDownAnalyzer().analyzeFiles(withJsLibAdded(files, config));
         return bindingTraceContext.getBindingContext();
     }
 
-    private static void checkForErrors(@NotNull List<JetFile> allFiles, @NotNull BindingContext bindingContext) {
+    private static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
         AnalyzingUtils.throwExceptionOnErrors(bindingContext);
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
@@ -85,10 +86,10 @@ public final class AnalyzerFacadeForJS {
     }
 
     @NotNull
-    public static List<JetFile> withJsLibAdded(@NotNull List<JetFile> files, @NotNull Config config) {
-        List<JetFile> allFiles = new ArrayList<JetFile>();
-        allFiles.addAll(files);
-        allFiles.addAll(config.getLibFiles());
+    public static Collection<JetFile> withJsLibAdded(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        Set<JetFile> allFiles = Sets.newHashSet();
+        allFiles.addAll(toOriginal(files));
+        allFiles.addAll(toOriginal(config.getLibFiles()));
         return allFiles;
     }
 
@@ -104,21 +105,13 @@ public final class AnalyzerFacadeForJS {
         };
     }
 
-    public static BindingContext analyzeNamespace(@NotNull JetFile file) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-        Project project = file.getProject();
-
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
-
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
-                Predicates.<PsiFile>alwaysTrue(), false, false);
-
-        InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                project, topDownAnalysisParameters, new ObservableBindingTrace(bindingTraceContext), owner,
-                JetControlFlowDataTraceFactory.EMPTY, JsConfiguration.jsLibConfiguration(project));
-
-        injector.getTopDownAnalyzer().doAnalyzeFilesWithGivenTrance2(Collections.singletonList(file));
-        return bindingTraceContext.getBindingContext();
+    @NotNull
+    private static Collection<JetFile> toOriginal(@NotNull Collection<JetFile> files) {
+        Collection<JetFile> result = Lists.newArrayList();
+        for (JetFile file : files) {
+            result.add(file);
+        }
+        return result;
     }
 
     private static final class JsConfiguration implements ModuleConfiguration {
@@ -136,15 +129,17 @@ public final class AnalyzerFacadeForJS {
 
         @Override
         public void addDefaultImports(@NotNull Collection<JetImportDirective> directives) {
+            //TODO: these thing should not be hard-coded like that
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("js.*")));
             directives.add(JetPsiFactory.createImportDirective(project, new ImportPath(JetStandardClasses.STANDARD_CLASSES_FQNAME, true)));
+            directives.add(JetPsiFactory.createImportDirective(project, new ImportPath("kotlin.*")));
         }
 
         @Override
         public void extendNamespaceScope(@NotNull BindingTrace trace, @NotNull NamespaceDescriptor namespaceDescriptor,
-                                         @NotNull WritableScope namespaceMemberScope) {
-            DefaultModuleConfiguration.createStandardConfiguration(project).extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
+                @NotNull WritableScope namespaceMemberScope) {
+            DefaultModuleConfiguration.createStandardConfiguration(project, true)
+                    .extendNamespaceScope(trace, namespaceDescriptor, namespaceMemberScope);
         }
-
     }
 }

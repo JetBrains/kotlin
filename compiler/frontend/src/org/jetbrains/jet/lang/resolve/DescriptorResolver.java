@@ -216,9 +216,10 @@ public class DescriptorResolver {
             }
         }
         boolean hasBody = function.getBodyExpression() != null;
-        Modality defaultModality = getDefaultModality(containingDescriptor, hasBody);
-        Modality modality = resolveModalityFromModifiers(function.getModifierList(), defaultModality);
+        Modality modality = resolveModalityFromModifiers(function.getModifierList(), getDefaultModality(containingDescriptor, hasBody));
         Visibility visibility = resolveVisibilityFromModifiers(function.getModifierList());
+        JetModifierList modifierList = function.getModifierList();
+        boolean isInline = (modifierList != null) && modifierList.hasModifier(JetTokens.INLINE_KEYWORD);
         functionDescriptor.initialize(
                 receiverType,
                 DescriptorUtils.getExpectedThisObjectIfNeeded(containingDescriptor),
@@ -226,9 +227,10 @@ public class DescriptorResolver {
                 valueParameterDescriptors,
                 returnType,
                 modality,
-                visibility);
+                visibility,
+                isInline);
 
-        trace.record(BindingContext.FUNCTION, function, functionDescriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, function, functionDescriptor);
         return functionDescriptor;
     }
 
@@ -257,11 +259,12 @@ public class DescriptorResolver {
             if (typeReference == null) {
                 trace.report(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION.on(valueParameter));
                 type = ErrorUtils.createErrorType("Type annotation was missing");
-            } else {
+            }
+            else {
                 type = typeResolver.resolveType(parameterScope, typeReference, trace, true);
             }
 
-            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(functionDescriptor, valueParameter, i, type, trace);
+            ValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(parameterScope, functionDescriptor, valueParameter, i, type, trace);
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
             result.add(valueParameterDescriptor);
         }
@@ -269,7 +272,7 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public MutableValueParameterDescriptor resolveValueParameterDescriptor(DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
+    public MutableValueParameterDescriptor resolveValueParameterDescriptor(JetScope scope, DeclarationDescriptor declarationDescriptor, JetParameter valueParameter, int index, JetType type, BindingTrace trace) {
         JetType varargElementType = null;
         JetType variableType = type;
         if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
@@ -279,7 +282,7 @@ public class DescriptorResolver {
         MutableValueParameterDescriptor valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
                 index,
-                annotationResolver.createAnnotationStubs(valueParameter.getModifierList(), trace),
+                annotationResolver.resolveAnnotations(scope, valueParameter.getModifierList(), trace),
                 JetPsiUtil.safeName(valueParameter.getName()),
                 valueParameter.isMutable(),
                 variableType,
@@ -295,7 +298,8 @@ public class DescriptorResolver {
         JetType arrayType = JetStandardLibrary.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(type);
         if (arrayType != null) {
             return arrayType;
-        } else {
+        }
+        else {
             return JetStandardLibrary.getInstance().getArrayType(type);
         }
     }
@@ -328,16 +332,33 @@ public class DescriptorResolver {
         return typeParameterDescriptor;
     }
 
+    final class UpperBoundCheckerTask {
+        JetTypeReference upperBound;
+        JetType upperBoundType;
+        boolean isClassObjectConstraint;
+
+        private UpperBoundCheckerTask(JetTypeReference upperBound, JetType upperBoundType, boolean classObjectConstraint) {
+            this.upperBound = upperBound;
+            this.upperBoundType = upperBoundType;
+            isClassObjectConstraint = classObjectConstraint;
+        }
+    }
     public void resolveGenericBounds(@NotNull JetTypeParameterListOwner declaration, JetScope scope, List<TypeParameterDescriptor> parameters, BindingTrace trace) {
+        List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
+
         List<JetTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<String, TypeParameterDescriptor> parameterByName = Maps.newHashMap();
-        for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
+        for (int i = 0; i < typeParameters.size(); i++) {
             JetTypeParameter jetTypeParameter = typeParameters.get(i);
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
+
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
+
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                typeParameterDescriptor.addUpperBound(resolveAndCheckUpperBoundType(extendsBound, scope, false, trace));
+                JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
+                typeParameterDescriptor.addUpperBound(type);
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type, false));
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstaints()) {
@@ -351,7 +372,12 @@ public class DescriptorResolver {
             }
             TypeParameterDescriptor typeParameterDescriptor = parameterByName.get(referencedName);
             JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
-            JetType bound = boundTypeReference != null ? resolveAndCheckUpperBoundType(boundTypeReference, scope, constraint.isClassObjectContraint(), trace) : null;
+            JetType bound = null;
+            if (boundTypeReference != null) {
+                bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectContraint()));
+            }
+
             if (typeParameterDescriptor == null) {
                 // To tell the user that we look only for locally defined type parameters
                 ClassifierDescriptor classifier = scope.getClassifier(referencedName);
@@ -396,19 +422,21 @@ public class DescriptorResolver {
                 }
             }
         }
+
+        for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
+            checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+        }
     }
 
-    private JetType resolveAndCheckUpperBoundType(@NotNull JetTypeReference upperBound, @NotNull JetScope scope, boolean classObjectConstaint, BindingTrace trace) {
-        JetType jetType = typeResolver.resolveType(scope, upperBound, trace, false);
-        if (!TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, jetType)) {
-            if (classObjectConstaint) {
-                trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, jetType));
+    private static void checkUpperBoundType(JetTypeReference upperBound, JetType upperBoundType, boolean isClassObjectConstraint, BindingTrace trace) {
+        if (!TypeUtils.canHaveSubtypes(JetTypeChecker.INSTANCE, upperBoundType)) {
+            if (isClassObjectConstraint) {
+                trace.report(FINAL_CLASS_OBJECT_UPPER_BOUND.on(upperBound, upperBoundType));
             }
             else {
-                trace.report(FINAL_UPPER_BOUND.on(upperBound, jetType));
+                trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
             }
         }
-        return jetType;
     }
 
     @NotNull
@@ -426,6 +454,9 @@ public class DescriptorResolver {
         else {
             // Error is reported by the parser
             type = ErrorUtils.createErrorType("Annotation is absent");
+        }
+        if (parameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+            return getVarargParameterType(type);
         }
         return type;
     }
@@ -470,7 +501,8 @@ public class DescriptorResolver {
                     || (containingDeclaration instanceof ClassDescriptor);
         if (isProperty) {
             return resolveObjectDeclarationAsPropertyDescriptor(containingDeclaration, objectDeclaration, classDescriptor, trace);
-        } else {
+        }
+        else {
             return resolveObjectDeclarationAsLocalVariable(containingDeclaration, objectDeclaration, classDescriptor, trace);
         }
     }
@@ -480,12 +512,11 @@ public class DescriptorResolver {
             @NotNull JetClassOrObject objectDeclaration,
             @NotNull ClassDescriptor classDescriptor, BindingTrace trace) {
         JetModifierList modifierList = objectDeclaration.getModifierList();
-        Visibility visibility = resolveVisibilityFromModifiers(objectDeclaration.getModifierList());
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
                 containingDeclaration,
                 annotationResolver.createAnnotationStubs(modifierList, trace),
                 Modality.FINAL,
-                visibility,
+                resolveVisibilityFromModifiers(modifierList),
                 false,
                 true,
                 JetPsiUtil.safeName(objectDeclaration.getName()),
@@ -517,9 +548,8 @@ public class DescriptorResolver {
         return variableDescriptor;
     }
 
-    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope,
-            @NotNull PropertyDescriptor propertyDescriptor, List<TypeParameterDescriptor> typeParameters,
-            ReceiverDescriptor receiver, BindingTrace trace) {
+    public JetScope getPropertyDeclarationInnerScope(@NotNull JetScope outerScope, @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull ReceiverDescriptor receiver, BindingTrace trace) {
         WritableScopeImpl result = new WritableScopeImpl(outerScope, outerScope.getContainingDeclaration(), new TraceBasedRedeclarationHandler(trace)).setDebugName("Property declaration inner scope");
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addTypeParameterDescriptor(typeParameterDescriptor);
@@ -578,7 +608,7 @@ public class DescriptorResolver {
                 ? ReceiverDescriptor.NO_RECEIVER
                 : new ExtensionReceiver(propertyDescriptor, receiverType);
 
-        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, propertyDescriptor, typeParameterDescriptors, receiverDescriptor, trace);
+        JetScope propertyScope = getPropertyDeclarationInnerScope(scope, typeParameterDescriptors, ReceiverDescriptor.NO_RECEIVER, trace);
 
         JetType type = getVariableType(propertyScope, property, DataFlowInfo.EMPTY, true, trace);
 
@@ -621,7 +651,8 @@ public class DescriptorResolver {
                     trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier));
                 }
                 return ErrorUtils.createErrorType("No type, no body");
-            } else {
+            }
+            else {
                 // TODO : a risk of a memory leak
                 LazyValue<JetType> lazyValue = new LazyValueWithDefault<JetType>(ErrorUtils.createErrorType("Recursive dependency")) {
                     @Override
@@ -636,7 +667,8 @@ public class DescriptorResolver {
                     return lazyValue.get();
                 }
             }
-        } else {
+        }
+        else {
             return typeResolver.resolveType(scope, propertyTypeRef, trace, true);
         }
     }
@@ -668,19 +700,23 @@ public class DescriptorResolver {
 
     @NotNull
     /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList) {
-        return resolveVisibilityFromModifiers(modifierList, Visibility.INTERNAL);
+        Visibility defaultVisibility = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD) ? Visibilities.INHERITED : Visibilities.INTERNAL;
+        return resolveVisibilityFromModifiers(modifierList, defaultVisibility);
     }
 
     @NotNull
     /*package*/ static Visibility resolveVisibilityFromModifiers(@Nullable JetModifierList modifierList, @NotNull Visibility defaultVisibility) {
         if (modifierList == null) return defaultVisibility;
-        if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibility.PRIVATE;
-        if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibility.PUBLIC;
+        if (modifierList.hasModifier(JetTokens.PRIVATE_KEYWORD)) return Visibilities.PRIVATE;
+        if (modifierList.hasModifier(JetTokens.PUBLIC_KEYWORD)) return Visibilities.PUBLIC;
         if (modifierList.hasModifier(JetTokens.PROTECTED_KEYWORD)) {
             if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
-                return Visibility.INTERNAL_PROTECTED;
+                return Visibilities.INTERNAL_PROTECTED;
             }
-            return Visibility.PROTECTED;
+            return Visibilities.PROTECTED;
+        }
+        if (modifierList.hasModifier(JetTokens.INTERNAL_KEYWORD)) {
+            return Visibilities.INTERNAL;
         }
         return defaultVisibility;
     }
@@ -715,7 +751,7 @@ public class DescriptorResolver {
                     JetType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
-                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType));
+                            trace.report(WRONG_SETTER_PARAMETER_TYPE.on(typeReference, inType, type));
                         }
                     }
                     else {
@@ -723,7 +759,7 @@ public class DescriptorResolver {
                     }
                 }
 
-                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(setterDescriptor, parameter, 0, type, trace);
+                MutableValueParameterDescriptor valueParameterDescriptor = resolveValueParameterDescriptor(scope, setterDescriptor, parameter, 0, type, trace);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
             else {
@@ -768,7 +804,7 @@ public class DescriptorResolver {
             if (returnTypeReference != null) {
                 returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
-                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType()));
+                    trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }
             }
 
@@ -822,7 +858,7 @@ public class DescriptorResolver {
                         constructorDescriptor,
                         parameterScope,
                         valueParameters, trace),
-                resolveVisibilityFromModifiers(modifierList));
+                resolveVisibilityFromModifiers(modifierList, Visibilities.PUBLIC));
     }
 
     @Nullable
@@ -876,7 +912,7 @@ public class DescriptorResolver {
         return propertyDescriptor;
     }
 
-    public void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
+    public static void checkBounds(@NotNull JetTypeReference typeReference, @NotNull JetType type, BindingTrace trace) {
         if (ErrorUtils.isErrorType(type)) return;
 
         JetTypeElement typeElement = typeReference.getTypeElement();
@@ -886,32 +922,32 @@ public class DescriptorResolver {
         List<TypeProjection> arguments = type.getArguments();
         assert parameters.size() == arguments.size();
 
-        List<JetTypeReference> typeReferences = typeElement.getTypeArgumentsAsTypes();
-        assert typeReferences.size() == arguments.size() : typeElement.getText();
+        List<JetTypeReference> jetTypeArguments = typeElement.getTypeArgumentsAsTypes();
+        assert jetTypeArguments.size() == arguments.size() : typeElement.getText();
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
-        for (int i = 0, projectionsSize = typeReferences.size(); i < projectionsSize; i++) {
-            JetTypeReference argumentTypeReference = typeReferences.get(i);
+        for (int i = 0; i < jetTypeArguments.size(); i++) {
+            JetTypeReference jetTypeArgument = jetTypeArguments.get(i);
 
-            if (argumentTypeReference == null) continue;
+            if (jetTypeArgument == null) continue;
 
             JetType typeArgument = arguments.get(i).getType();
-            checkBounds(argumentTypeReference, typeArgument, trace);
+            checkBounds(jetTypeArgument, typeArgument, trace);
 
             TypeParameterDescriptor typeParameterDescriptor = parameters.get(i);
-            checkBounds(argumentTypeReference, typeArgument, typeParameterDescriptor, substitutor, trace);
+            checkBounds(jetTypeArgument, typeArgument, typeParameterDescriptor, substitutor, trace);
         }
     }
 
-    public void checkBounds(
-            @NotNull JetTypeReference argumentTypeReference,
+    public static void checkBounds(
+            @NotNull JetTypeReference jetTypeArgument,
             @NotNull JetType typeArgument,
             @NotNull TypeParameterDescriptor typeParameterDescriptor,
             @NotNull TypeSubstitutor substitutor, BindingTrace trace) {
         for (JetType bound : typeParameterDescriptor.getUpperBounds()) {
             JetType substitutedBound = substitutor.safeSubstitute(bound, Variance.INVARIANT);
             if (!JetTypeChecker.INSTANCE.isSubtypeOf(typeArgument, substitutedBound)) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReference, substitutedBound));
+                trace.report(UPPER_BOUND_VIOLATED.on(jetTypeArgument, substitutedBound, typeArgument));
             }
         }
     }

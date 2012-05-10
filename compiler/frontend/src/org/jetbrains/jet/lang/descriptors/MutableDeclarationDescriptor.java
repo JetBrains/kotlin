@@ -25,7 +25,7 @@ public abstract class MutableDeclarationDescriptor implements DeclarationDescrip
     private String name;
     private final DeclarationDescriptor containingDeclaration;
 
-    public MutableDeclarationDescriptor(DeclarationDescriptor containingDeclaration) {
+    public MutableDeclarationDescriptor(@NotNull DeclarationDescriptor containingDeclaration) {
         this.containingDeclaration = containingDeclaration;
     }
 

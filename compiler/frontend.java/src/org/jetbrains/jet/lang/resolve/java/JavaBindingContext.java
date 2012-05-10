@@ -31,7 +31,7 @@ public class JavaBindingContext {
     /**
      * @see BindingContext#NAMESPACE_IS_SRC
      */
-    public static final WritableSlice<NamespaceDescriptor, Boolean> NAMESPACE_IS_CLASS_STATICS =
+    public static final WritableSlice<NamespaceDescriptor, JavaNamespaceKind> JAVA_NAMESPACE_KIND =
             Slices.createSimpleSlice();
 
 }

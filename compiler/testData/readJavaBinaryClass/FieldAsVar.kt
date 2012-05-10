@@ -1,5 +1,5 @@
 package test
 
-class FieldAsVar() {
+class FieldAsVar() : java.lang.Object() {
     var f: Int = 1
 }

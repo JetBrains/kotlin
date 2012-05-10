@@ -16,28 +16,35 @@
 
 package org.jetbrains.jet.lang.descriptors;
 
-import java.util.EnumSet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author svtk
  */
-public enum Visibility {
-    PRIVATE(false),
-    PROTECTED(true),
-    INTERNAL(false),
-    PUBLIC(true),
-    INTERNAL_PROTECTED(false),
-    LOCAL(false);
+public abstract class Visibility {
+    private final boolean isPublicAPI;
+    private final String name;
 
-    public static final EnumSet<Visibility> INTERNAL_VISIBILITIES = EnumSet.of(PRIVATE, INTERNAL, INTERNAL_PROTECTED, LOCAL);
-    
-    private final boolean isAPI;
-
-    private Visibility(boolean visibleOutside) {
-        isAPI = visibleOutside;
+    protected Visibility(@NotNull String name, boolean isPublicAPI) {
+        this.isPublicAPI = isPublicAPI;
+        this.name = name;
     }
 
-    public boolean isAPI() {
-        return isAPI;
+    public boolean isPublicAPI() {
+        return isPublicAPI;
     }
+
+    /**
+    * @return null if the answer is unknown
+    */
+    protected Integer compareTo(@NotNull Visibility visibility) {
+        return Visibilities.compareLocal(this, visibility);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    protected abstract boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from);
 }

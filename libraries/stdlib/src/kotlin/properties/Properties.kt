@@ -10,11 +10,11 @@ import java.util.ArrayList
 public class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
     var propogationId: Any? = null
 
-    fun toString() = "ChangeEvent($name, $oldValue, $newValue)"
+    public fun toString() : String = "ChangeEvent($name, $oldValue, $newValue)"
 }
 
 public trait ChangeListener {
-    fun onPropertyChange(event: ChangeEvent): Unit
+    public fun onPropertyChange(event: ChangeEvent): Unit
 }
 
 /**
@@ -27,14 +27,14 @@ public abstract class ChangeSupport {
     private var nameListeners: Map<String, List<ChangeListener>>? = null
 
 
-    fun addChangeListener(listener: ChangeListener) {
+    public fun addChangeListener(listener: ChangeListener) {
         if (allListeners == null) {
             allListeners = ArrayList<ChangeListener>()
         }
         allListeners?.add(listener)
     }
 
-    fun addChangeListener(name: String, listener: ChangeListener) {
+    public fun addChangeListener(name: String, listener: ChangeListener) {
         if (nameListeners == null) {
             nameListeners = HashMap<String, List<ChangeListener>>()
         }
@@ -68,12 +68,12 @@ public abstract class ChangeSupport {
         }
     }
 
-    fun onPropertyChange(fn: (ChangeEvent) -> Unit) {
+    public fun onPropertyChange(fn: (ChangeEvent) -> Unit) {
         // TODO
         //addChangeListener(DelegateChangeListener(fn))
     }
 
-    fun onPropertyChange(name: String, fn: (ChangeEvent) -> Unit) {
+    public fun onPropertyChange(name: String, fn: (ChangeEvent) -> Unit) {
         // TODO
         //addChangeListener(name, DelegateChangeListener(fn))
     }
@@ -89,7 +89,7 @@ see http://youtrack.jetbrains.com/issue/KT-1362
 
     protected fun createChangeListener(fn: (ChangeEvent) -> Unit): ChangeListener {
         return ChangeListener {
-            override fun onPropertyChange(event: ChangeEvent): Unit {
+            public override fun onPropertyChange(event: ChangeEvent): Unit {
                 fn(event)
             }
         }
@@ -99,7 +99,7 @@ see http://youtrack.jetbrains.com/issue/KT-1362
 
 
 class DelegateChangeListener(val f: (ChangeEvent) -> Unit) : ChangeListener {
-    override fun onPropertyChange(event: ChangeEvent): Unit {
+    public override fun onPropertyChange(event: ChangeEvent): Unit {
         f(event)
     }
 }

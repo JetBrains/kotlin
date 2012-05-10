@@ -26,16 +26,17 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.awt.*;
@@ -149,7 +150,7 @@ public class JetFunctionParameterInfoHandler implements
         builder.append(descriptor.getName()).append(": ").
                 append(DescriptorRenderer.TEXT.renderType(getActualParameterType(descriptor)));
         if (descriptor.hasDefaultValue()) {
-            PsiElement element = bindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
             String defaultExpression = "?";
             if (element instanceof JetParameter) {
                 JetParameter parameter = (JetParameter) element;
@@ -188,10 +189,9 @@ public class JetFunctionParameterInfoHandler implements
         if (parameterOwner instanceof JetValueArgumentList) {
             JetValueArgumentList argumentList = (JetValueArgumentList) parameterOwner;
             if (descriptor instanceof FunctionDescriptor) {
-                JetFile file = (JetFile) argumentList.getContainingFile();
-                BindingContext bindingContext =
-                        AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
-                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                JetFile file = (JetFile)argumentList.getContainingFile();
+                BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile(file);
+                FunctionDescriptor functionDescriptor = (FunctionDescriptor)descriptor;
                 StringBuilder builder = new StringBuilder();
                 List<ValueParameterDescriptor> valueParameters = functionDescriptor.getValueParameters();
                 List<JetValueArgument> valueArguments = argumentList.getArguments();
@@ -208,7 +208,8 @@ public class JetFunctionParameterInfoHandler implements
                     JetSimpleNameExpression refExpression = null;
                     if (calleeExpression instanceof JetSimpleNameExpression) {
                         refExpression = (JetSimpleNameExpression) calleeExpression; 
-                    } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+                    }
+                    else if (calleeExpression instanceof JetConstructorCalleeExpression) {
                         JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
                         if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
                             refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
@@ -245,7 +246,8 @@ public class JetFunctionParameterInfoHandler implements
                             JetValueArgument argument = valueArguments.get(i);
                             if (argument.isNamed()) {
                                 namedMode = true;
-                            } else {
+                            }
+                            else {
                                 ValueParameterDescriptor param = valueParameters.get(i);
                                 builder.append(renderParameter(param, false, bindingContext));
                                 if (i < currentParameterIndex) {
@@ -259,7 +261,8 @@ public class JetFunctionParameterInfoHandler implements
                                 }
                                 usedIndexes[i] = true;
                             }
-                        } else {
+                        }
+                        else {
                             ValueParameterDescriptor param = valueParameters.get(i);
                             builder.append(renderParameter(param, false, bindingContext));
                         }
@@ -310,7 +313,8 @@ public class JetFunctionParameterInfoHandler implements
                 if (builder.toString().isEmpty()) context.setUIComponentEnabled(false);
                 else context.setupUIComponentPresentation(builder.toString(), boldStartOffset, boldEndOffset, isGrey,
                                                           isDeprecated, false, color);
-            } else context.setUIComponentEnabled(false);
+            }
+            else context.setUIComponentEnabled(false);
         }
     }
 
@@ -326,16 +330,19 @@ public class JetFunctionParameterInfoHandler implements
         JetValueArgumentList argumentList = (JetValueArgumentList) element;
         JetCallElement callExpression;
         if (element.getParent() instanceof JetCallElement) {
-            callExpression = (JetCallElement) element.getParent();
-        } else return null;
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) file,
-                                                                                  AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+            callExpression = (JetCallElement)element.getParent();
+        }
+        else {
+            return null;
+        }
+        BindingContext bindingContext = AnalyzeSingleFileUtil.getContextForSingleFile((JetFile)file);
         JetExpression calleeExpression = callExpression.getCalleeExpression();
         if (calleeExpression == null) return null;
         JetSimpleNameExpression refExpression = null;
         if (calleeExpression instanceof JetSimpleNameExpression) {
             refExpression = (JetSimpleNameExpression) calleeExpression;
-        } else if (calleeExpression instanceof JetConstructorCalleeExpression) {
+        }
+        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
             JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
             if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
                 refExpression = (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
@@ -360,7 +367,8 @@ public class JetFunctionParameterInfoHandler implements
                         if (placeDescriptor != null && !JetVisibilityChecker.isVisible(placeDescriptor, functionDescriptor)) continue;
                         itemsToShow.add(functionDescriptor);
                     }
-                } else if (variant instanceof ClassDescriptor) {
+                }
+                else if (variant instanceof ClassDescriptor) {
                    ClassDescriptor classDescriptor = (ClassDescriptor) variant;
                     if (classDescriptor.getName().equals(refName)) {
                         //todo: renamed classes?

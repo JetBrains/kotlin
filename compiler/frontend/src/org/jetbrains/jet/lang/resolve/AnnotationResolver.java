@@ -19,9 +19,9 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -82,23 +82,36 @@ public class AnnotationResolver {
     }
 
     public void resolveAnnotationStub(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
-        OverloadResolutionResults<FunctionDescriptor> results = resolveType(scope, entryElement, descriptor, trace);
-        resolveArguments(results, descriptor, trace);
-    }
-
-    @NotNull
-    private OverloadResolutionResults<FunctionDescriptor> resolveType(@NotNull JetScope scope,
-            @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptor descriptor, BindingTrace trace) {
-        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(trace, scope, CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement), NO_EXPECTED_TYPE, DataFlowInfo.EMPTY);
-        JetType annotationType = results.getResultingDescriptor().getReturnType();
+            @NotNull AnnotationDescriptor annotationDescriptor, BindingTrace trace) {
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
+                                                                    trace,
+                                                                    scope,
+                                                                    CallMaker.makeCall(ReceiverDescriptor.NO_RECEIVER, null, entryElement),
+                                                                    NO_EXPECTED_TYPE,
+                                                                    DataFlowInfo.EMPTY);
         if (results.isSuccess()) {
-            descriptor.setAnnotationType(annotationType);
-        } else {
-            descriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
+            FunctionDescriptor descriptor = results.getResultingDescriptor();
+            if (!ErrorUtils.isError(descriptor)) {
+                if (descriptor instanceof ConstructorDescriptor) {
+                    ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
+                    ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+                    if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
+                        trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName()));
+                    }
+                }
+                else {
+                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName()));
+                }
+            }
         }
-        return results;
+        if (results.isSuccess()) {
+            JetType annotationType = results.getResultingDescriptor().getReturnType();
+            annotationDescriptor.setAnnotationType(annotationType);
+            resolveArguments(results, annotationDescriptor, trace);
+        }
+        else {
+            annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type"));
+        }
     }
 
     private void resolveArguments(@NotNull OverloadResolutionResults<FunctionDescriptor> results,

@@ -1,5 +1,5 @@
 fun box() : String {
-    val a = Array<String?>(3)
+    val a = arrayOfNulls<String>(3)
     a[0] = "a"
     a[1] = "b"
     a[2] = "c"

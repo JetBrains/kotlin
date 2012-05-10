@@ -31,7 +31,10 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -59,7 +62,8 @@ class DecompiledDataFactory {
     private DecompiledDataFactory(ClsFileImpl clsFile) {
         myClsFile = clsFile;
         Project project = myClsFile.getProject();
-        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(project);
+        InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
+                CompilerDependencies.compilerDependenciesForProduction(CompilerSpecialMode.REGULAR), project);
         myBindingContext = injector.getBindingTrace().getBindingContext();
         myJavaDescriptorResolver = injector.getJavaDescriptorResolver();
     }
@@ -93,8 +97,9 @@ class DecompiledDataFactory {
                     myBuilder.append("\n");
                 }
             }
-        } else {
-            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(psiClass, DescriptorSearchRule.INCLUDE_KOTLIN);
+        }
+        else {
+            ClassDescriptor cd = myJavaDescriptorResolver.resolveClass(new FqName(psiClass.getQualifiedName()), DescriptorSearchRule.INCLUDE_KOTLIN);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
@@ -116,18 +121,15 @@ class DecompiledDataFactory {
 
     private static List<DeclarationDescriptor> sortDeclarations(Collection<DeclarationDescriptor> input) {
         ArrayList<DeclarationDescriptor> r = new ArrayList<DeclarationDescriptor>(input);
-        Collections.sort(r, new Comparator<DeclarationDescriptor>() {
-            @Override
-            public int compare(DeclarationDescriptor o1, DeclarationDescriptor o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
+        Collections.sort(r, new DeclarationDescriptorComparator());
         return r;
     }
 
-    private void appendDescriptor(DeclarationDescriptor descriptor, String indent) {
+    private void appendDescriptor(@NotNull DeclarationDescriptor descriptor, String indent) {
         int startOffset = myBuilder.length();
-        myBuilder.append(DescriptorRenderer.COMPACT.render(descriptor));
+        String renderedDescriptor = DescriptorRenderer.COMPACT.render(descriptor);
+        renderedDescriptor = renderedDescriptor.replace("= ...", "= " + DECOMPILED_COMMENT);
+        myBuilder.append(renderedDescriptor);
         int endOffset = myBuilder.length();
 
         if (descriptor instanceof FunctionDescriptor || descriptor instanceof PropertyDescriptor) {
@@ -135,13 +137,15 @@ class DecompiledDataFactory {
                 if (descriptor instanceof FunctionDescriptor) {
                     myBuilder.append(" { ").append(DECOMPILED_COMMENT).append(" }");
                     endOffset = myBuilder.length();
-                } else { // descriptor instanceof PropertyDescriptor
+                }
+                else { // descriptor instanceof PropertyDescriptor
                     if (((PropertyDescriptor) descriptor).getModality() != Modality.ABSTRACT) {
                         myBuilder.append(" ").append(DECOMPILED_COMMENT);
                     }
                 }
             }
-        } else if (descriptor instanceof ClassDescriptor) {
+        }
+        else if (descriptor instanceof ClassDescriptor) {
             myBuilder.append(" {\n");
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             boolean firstPassed = false;
@@ -152,22 +156,28 @@ class DecompiledDataFactory {
                 appendDescriptor(classDescriptor.getClassObjectDescriptor(), subindent);
             }
             for (DeclarationDescriptor member : sortDeclarations(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors())) {
-                if (member.getContainingDeclaration() == descriptor) {
-                    if (firstPassed) {
-                        myBuilder.append("\n");
-                    } else {
-                        firstPassed = true;
-                    }
-                    myBuilder.append(subindent);
-                    appendDescriptor(member, subindent);
+                if (member.getContainingDeclaration() != descriptor) {
+                    continue;
                 }
+                if (member instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) member).getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
+                    continue;
+                }
+
+                if (firstPassed) {
+                    myBuilder.append("\n");
+                }
+                else {
+                    firstPassed = true;
+                }
+                myBuilder.append(subindent);
+                appendDescriptor(member, subindent);
             }
             myBuilder.append(indent).append("}");
             endOffset = myBuilder.length();
         }
 
         myBuilder.append("\n");
-        PsiElement clsMember = myBindingContext.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+        PsiElement clsMember = BindingContextUtils.descriptorToDeclaration(myBindingContext, descriptor);
         if (clsMember != null) {
             myClsMembersToRanges.put(clsMember, new TextRange(startOffset, endOffset));
         }

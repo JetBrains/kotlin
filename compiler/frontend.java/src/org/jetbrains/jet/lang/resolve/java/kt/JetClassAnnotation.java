@@ -41,6 +41,6 @@ public class JetClassAnnotation extends PsiAnnotationWrapper {
     
     @NotNull
     public static JetClassAnnotation get(PsiClass psiClass) {
-        return new JetClassAnnotation(psiClass.getModifierList().findAnnotation(JvmStdlibNames.JET_CLASS.getFqName()));
+        return new JetClassAnnotation(psiClass.getModifierList().findAnnotation(JvmStdlibNames.JET_CLASS.getFqName().getFqName()));
     }
 }

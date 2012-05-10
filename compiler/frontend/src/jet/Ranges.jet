@@ -1,109 +1,109 @@
 package jet
 
-trait Range<in T : Comparable<T>> {
-  fun contains(item : T) : Boolean
+public trait Range<in T : Comparable<T>> {
+  public fun contains(item : T) : Boolean
 }
 
-class IntRange(val start : Int, val size : Int) : Range<Int>, IntIterable {
-    override fun iterator () : IntIterator
+public class IntRange(public val start : Int, public val size : Int) : Range<Int>, IntIterable {
+    public override fun iterator () : IntIterator
 
-    override fun contains (elem: Int) : Boolean
+    public override fun contains (elem: Int) : Boolean
 
-    val end : Int
+    public val end : Int
 
-    val iteratorStart : Int
+    public val iteratorStart : Int
 
-    fun minus() : IntRange
+    public fun minus() : IntRange
 
-    fun step(step: Int) : IntIterator
+    public fun step(step: Int) : IntIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class LongRange(val start : Long, val size : Long) : Range<Long>, LongIterable {
-    override fun iterator () : LongIterator
+public class LongRange(public val start : Long, public val size : Long) : Range<Long>, LongIterable {
+    public override fun iterator () : LongIterator
 
-    override fun contains (elem: Long) : Boolean
+    public override fun contains (elem: Long) : Boolean
 
-    val iteratorStart : Long
+    public val iteratorStart : Long
 
-    val end : Long
+    public val end : Long
 
-    fun minus() : LongRange
+    public fun minus() : LongRange
 
-    fun step(step: Long) : LongIterator
+    public fun step(step: Long) : LongIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class ByteRange(val start : Byte, val size : Int) : Range<Byte>, ByteIterable {
-    override fun iterator () : ByteIterator
+public class ByteRange(public val start : Byte, public val size : Int) : Range<Byte>, ByteIterable {
+    public override fun iterator () : ByteIterator
 
-    override fun contains (elem: Byte) : Boolean
+    public override fun contains (elem: Byte) : Boolean
 
-    val end : Byte
+    public val end : Byte
 
-    val iteratorStart : Byte
+    public val iteratorStart : Byte
 
-    fun minus() : ByteRange
+    public fun minus() : ByteRange
 
-    fun step(step: Int) : ByteIterator
+    public fun step(step: Int) : ByteIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class ShortRange(val start : Short, val size : Int) : Range<Short>, ShortIterable {
-    override fun iterator () : ShortIterator
+public class ShortRange(public val start : Short, public val size : Int) : Range<Short>, ShortIterable {
+    public override fun iterator () : ShortIterator
 
-    override fun contains (elem: Short) : Boolean
+    public override fun contains (elem: Short) : Boolean
 
-    val iteratorStart : Short
+    public val iteratorStart : Short
 
-    val end : Short
+    public val end : Short
 
-    fun minus() : ShortRange
+    public fun minus() : ShortRange
 
-    fun step(step: Int) : ShortIterator
+    public fun step(step: Int) : ShortIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class CharRange(val start : Char, val size : Int) : Range<Char>, CharIterable {
-    override fun iterator () : CharIterator
+public class CharRange(public val start : Char, public val size : Int) : Range<Char>, CharIterable {
+    public override fun iterator () : CharIterator
 
-    override fun contains (elem: Char) : Boolean
+    public override fun contains (elem: Char) : Boolean
 
-    val iteratorStart : Char
+    public val iteratorStart : Char
 
-    val end : Char
+    public val end : Char
 
-    fun minus() : CharRange
+    public fun minus() : CharRange
 
-    fun step(step: Int) : CharIterator
+    public fun step(step: Int) : CharIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class FloatRange(val start : Float, val size : Float) : Range<Float> {
-    override fun contains (elem: Float) : Boolean
+public class FloatRange(public val start : Float, public val size : Float) : Range<Float> {
+    public override fun contains (elem: Float) : Boolean
 
-    val end : Float
+    public val end : Float
 
-    fun minus() : FloatRange
+    public fun minus() : FloatRange
 
-    fun step(step: Float) : FloatIterator
+    public fun step(step: Float) : FloatIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }
 
-class DoubleRange(val start : Double, val size : Double) : Range<Double> {
-    override fun contains (elem: Double) : Boolean
+public class DoubleRange(public val start : Double, public val size : Double) : Range<Double> {
+    public override fun contains (elem: Double) : Boolean
 
-    val end : Double
+    public val end : Double
 
-    fun minus() : DoubleRange
+    public fun minus() : DoubleRange
 
-    fun step(step: Double) : DoubleIterator
+    public fun step(step: Double) : DoubleIterator
 
-    val isReversed : Boolean
+    public val isReversed : Boolean
 }

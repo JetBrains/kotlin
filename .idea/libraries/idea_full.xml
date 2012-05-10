@@ -149,6 +149,7 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/antLayout/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/src" />
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/src" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-3.3-src.zip!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" />
   </library>

@@ -36,9 +36,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -90,7 +91,8 @@ public class JetAnonymousSuperMacro extends Macro {
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.getEditor().getDocument());
         if (!(psiFile instanceof JetFile)) return null;
 
-        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+        BindingContext bc = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+                .getBindingContext();
         JetExpression expression = PsiTreeUtil.getParentOfType(psiFile.findElementAt(context.getStartOffset()), JetExpression.class);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, expression);
         if (scope == null) {
@@ -105,7 +107,7 @@ public class JetAnonymousSuperMacro extends Macro {
             if (!classDescriptor.getModality().isOverridable()) continue;
             ClassKind kind = classDescriptor.getKind();
             if (kind == ClassKind.TRAIT || kind == ClassKind.CLASS) {
-                PsiElement declaration = bc.get(BindingContext.DESCRIPTOR_TO_DECLARATION, descriptor);
+                PsiElement declaration = BindingContextUtils.descriptorToDeclaration(bc, descriptor);
                 if (declaration != null) {
                     result.add((PsiNamedElement) declaration);
                 }

@@ -61,7 +61,8 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
             if (descriptor == 'V') {
                 return JetStandardClasses.getUnitType();
             }
-        } else {
+        }
+        else {
             for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
                 if (jvmPrimitiveType.getJvmLetter() == descriptor) {
                     return jetStandardLibrary.getNullablePrimitiveJetType(jvmPrimitiveType.getPrimitiveType());
@@ -93,7 +94,7 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
         
         this.classDescriptor = null;
         if (this.classDescriptor == null && !forceReal) {
-            this.classDescriptor = this.javaSemanticServices.getTypeTransformer().getPrimitiveWrappersClassDescriptorMap().get(ourName.getFqName());
+            this.classDescriptor = this.javaSemanticServices.getTypeTransformer().unwrapPrimitive(ourName);
         }
 
         if (this.classDescriptor == null && ourName.equals(new FqName("java.lang.Object")) && !forceReal) {
@@ -156,7 +157,8 @@ public abstract class JetTypeJetSignatureReader extends JetSignatureExceptionsAd
                 JetType arrayType;
                 if (!nullable) {
                     arrayType = jetStandardLibrary.getPrimitiveArrayJetTypeByPrimitiveJetType(primitiveType);
-                } else {
+                }
+                else {
                     arrayType = TypeUtils.makeNullableAsSpecified(jetStandardLibrary.getArrayType(primitiveType), nullable);
                 }
                 JetTypeJetSignatureReader.this.done(arrayType);

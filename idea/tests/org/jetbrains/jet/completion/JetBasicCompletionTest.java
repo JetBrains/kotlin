@@ -25,6 +25,22 @@ import java.io.File;
  */
 public class JetBasicCompletionTest extends JetCompletionTestBase {
 
+    public void testAutoCastAfterIf() {
+        doTest();
+    }
+
+    public void testAutoCastAfterIfMethod() {
+        doTest();
+    }
+
+    public void testAutoCastForThis() {
+        doTest();
+    }
+
+    public void testAutoCastInWhen() {
+        doTest();
+    }
+
     public void testBasicAny() {
         doTest();
     }
@@ -34,6 +50,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void testBeforeDotInCall() {
+        doTest();
+    }
+
+    public void testCallLocalLambda() {
         doTest();
     }
 
@@ -85,6 +105,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testInPackageBegin() {
+        doTest();
+    }
+
     public void testInTypeAnnotation() {
         doTest();
     }
@@ -98,6 +122,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void testNamedObject() {
+        doTest();
+    }
+
+    public void testNoClassNameDuplication() {
         doTest();
     }
 
@@ -122,6 +150,22 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
     }
 
     public void testVariableClassName() {
+        doTest();
+    }
+
+    public void testVisibilityClassMembersFromExternal() {
+        doTest();
+    }
+
+    public void testVisibilityClassMembersFromExternalForce() {
+        doTest();
+    }
+
+    public void testVisibilityInSubclass() {
+        doTest();
+    }
+
+    public void testVisibilityInSubclassForce() {
         doTest();
     }
 

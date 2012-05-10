@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIf() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 
 //        System.out.println(generateToText());
@@ -40,6 +43,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testSingleBranchIf() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 
 //        System.out.println(generateToText());
@@ -61,6 +65,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     private void factorialTest(final String name) throws IllegalAccessException, InvocationTargetException {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile(name);
 
 //        System.out.println(generateToText());
@@ -70,6 +75,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testContinue() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -78,6 +84,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIfNoElse() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -86,6 +93,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCondJumpOnStack() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("import java.lang.Boolean as jlBoolean; fun foo(a: String): Int = if (jlBoolean.parseBoolean(a)) 5 else 10");
         final Method main = generateFunction();
         assertEquals(5, main.invoke(null, "true"));
@@ -93,6 +101,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testFor() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -101,6 +110,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testIfBlock() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -111,6 +121,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForInArray() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -119,6 +130,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForInRange() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun foo(sb: StringBuilder) { for(x in 1..4) sb.append(x) }");
         final Method main = generateFunction();
         StringBuilder stringBuilder = new StringBuilder();
@@ -127,6 +139,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testThrowCheckedException() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun foo() { throw Exception(); }");
         final Method main = generateFunction();
         boolean caught = false;
@@ -141,6 +154,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testTryCatch() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -149,6 +163,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testTryFinally() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -168,30 +183,37 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testForUserType() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/forUserType.jet");
     }
 
     public void testForIntArray() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/forIntArray.jet");
     }
 
     public void testForPrimitiveIntArray() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/forPrimitiveIntArray.jet");
     }
 
     public void testForNullableIntArray() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/forNullableIntArray.jet");
     }
 
     public void testForIntRange() {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/forIntRange.jet");
     }
 
     public void testKt237() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt237.jet");
     }
 
     public void testCompareToNull() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun foo(a: String?, b: String?): Boolean = a == null && b !== null && null == a && null !== b");
         String text = generateToText();
         assertTrue(!text.contains("java/lang/Object.equals"));
@@ -202,6 +224,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCompareToNonnullableEq() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun foo(a: String?, b: String): Boolean = a == b || b == a");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
@@ -210,6 +233,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testCompareToNonnullableNotEq() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         loadText("fun foo(a: String?, b: String): Boolean = a != b");
         String text = generateToText();
 //        System.out.println(text);
@@ -220,15 +244,18 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testKt299() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt299.jet");
     }
 
     public void testKt416() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt416.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt513() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt513.jet");
     }
 
@@ -238,31 +265,37 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testKt769() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt769.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt773() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt773.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt772() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt772.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt870() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt870.jet");
 //        System.out.println(generateToText());
     }
 
     public void testKt958() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt958.jet");
 //        System.out.println(generateToText());
     }
 
     public void testQuicksort() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("controlStructures/quicksort.jet");
 //        System.out.println(generateToText());
     }
@@ -280,14 +313,22 @@ public class ControlStructuresTest extends CodegenTestCase {
     }
 
     public void testKt1076() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt1076.kt");
     }
 
     public void testKt998() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt998.kt");
     }
 
     public void testKt628() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
         blackBoxFile("regressions/kt628.kt");
+    }
+
+    public void testKt1441() throws Exception {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        blackBoxFile("regressions/kt1441.kt");
     }
 }

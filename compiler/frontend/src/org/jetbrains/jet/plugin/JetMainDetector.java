@@ -29,16 +29,11 @@ public class JetMainDetector {
     private JetMainDetector() {
     }
 
-    public static boolean hasMain(List<JetDeclaration> declarations) {
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetNamedFunction) {
-                if (isMain((JetNamedFunction) declaration)) return true;
-            }
-        }
-        return false;
+    public static boolean hasMain(@NotNull List<JetDeclaration> declarations) {
+        return findMainFunction(declarations) != null;
     }
 
-    public static boolean isMain(JetNamedFunction function) {
+    public static boolean isMain(@NotNull JetNamedFunction function) {
         if ("main".equals(function.getName())) {
             List<JetParameter> parameters = function.getValueParameters();
             if (parameters.size() == 1) {
@@ -52,10 +47,24 @@ public class JetMainDetector {
     }
 
     @Nullable
-    public static JetFile getFileWithMain(@NotNull List<JetFile> files) {
+    public static JetNamedFunction getMainFunction(@NotNull List<JetFile> files) {
         for (JetFile file : files) {
-            if (hasMain(file.getDeclarations())) {
-                return file;
+            JetNamedFunction mainFunction = findMainFunction(file.getDeclarations());
+            if (mainFunction != null) {
+                return mainFunction;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private static JetNamedFunction findMainFunction(@NotNull List<JetDeclaration> declarations) {
+        for (JetDeclaration declaration : declarations) {
+            if (declaration instanceof JetNamedFunction) {
+                JetNamedFunction candidateFunction = (JetNamedFunction) declaration;
+                if (isMain(candidateFunction)) {
+                    return candidateFunction;
+                }
             }
         }
         return null;

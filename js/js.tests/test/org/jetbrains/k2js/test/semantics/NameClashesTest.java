@@ -29,6 +29,6 @@ public final class NameClashesTest extends SingleFileTranslationTest {
     }
 
     public void testMethodOverload() throws Exception {
-        checkFooBoxIsTrue("methodOverload.kt");
+        fooBoxTest();
     }
 }

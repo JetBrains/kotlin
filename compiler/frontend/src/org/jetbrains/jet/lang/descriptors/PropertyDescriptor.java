@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -39,16 +40,16 @@ import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor
 public class PropertyDescriptor extends VariableDescriptorImpl implements CallableMemberDescriptor {
 
     private final Modality modality;
-    private final Visibility visibility;
+    private Visibility visibility;
     private final boolean isVar;
     private final boolean isObject;
-    private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet();
+    private final Set<PropertyDescriptor> overriddenProperties = Sets.newLinkedHashSet(); // LinkedHashSet is essential here
     private final PropertyDescriptor original;
     private final Kind kind;
 
     private ReceiverDescriptor expectedThisObject;
     private ReceiverDescriptor receiver;
-    private List<TypeParameterDescriptor> typeParemeters;
+    private List<TypeParameterDescriptor> typeParameters;
     private PropertyGetterDescriptor getter;
     private PropertySetterDescriptor setter;
     
@@ -120,7 +121,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     public void setType(@NotNull JetType outType, @NotNull List<TypeParameterDescriptor> typeParameters, @NotNull ReceiverDescriptor expectedThisObject, @NotNull ReceiverDescriptor receiver) {
         setOutType(outType);
 
-        this.typeParemeters = typeParameters;
+        this.typeParameters = typeParameters;
 
         this.receiver = receiver;
         this.expectedThisObject = expectedThisObject;
@@ -131,10 +132,14 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
         this.setter = setter;
     }
 
+    public void setVisibility(@NotNull Visibility visibility) {
+        this.visibility = visibility;
+    }
+
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
-        return typeParemeters;
+        return typeParameters;
     }
 
     @NotNull
@@ -264,7 +269,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
 
         if (copyOverrides) {
             for (PropertyDescriptor propertyDescriptor : overriddenProperties) {
-                substitutedDescriptor.addOverriddenDescriptor(propertyDescriptor.substitute(substitutor));
+                OverridingUtil.bindOverride(substitutedDescriptor, propertyDescriptor.substitute(substitutor));
             }
         }
 

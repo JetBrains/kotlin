@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.context;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.NameUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 /**
@@ -54,6 +55,7 @@ public final class NamingScope {
 
     @NotNull
         /*package*/ JsName declareUnobfuscatableName(@NotNull String name) {
+        NameUtils.requireIdentifier(name);
         JsName declaredName = scope.declareName(name);
         declaredName.setObfuscatable(false);
         return declaredName;
@@ -61,26 +63,17 @@ public final class NamingScope {
 
     @NotNull
         /*package*/ JsName declareObfuscatableName(@NotNull String name) {
-        return scope.declareName(mayBeObfuscateName(name, true));
+        return scope.declareName(obfuscateName(name));
     }
 
     //TODO: temporary solution
     @NotNull
-    private String mayBeObfuscateName(@NotNull String name, boolean shouldObfuscate) {
-        if (!shouldObfuscate) {
-            return name;
-        }
-        return doObfuscate(name);
-    }
-
-    //TODO: refactor
-    @NotNull
-    private String doObfuscate(@NotNull String name) {
+    private String obfuscateName(@NotNull String name) {
         int obfuscate = 0;
         String result = name;
         while (true) {
-            JsName existingNameWithSameIdent = scope.findExistingName(result);
-            boolean isDuplicate = (existingNameWithSameIdent != null) && JsAstUtils.ownsName(scope, existingNameWithSameIdent);
+            JsName existingNameWithSameIdent = this.scope.findExistingName(result);
+            boolean isDuplicate = (existingNameWithSameIdent != null) && JsAstUtils.ownsName(this.scope, existingNameWithSameIdent);
 
             if (!isDuplicate) break;
 

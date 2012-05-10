@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock
 Executes given calculation under lock
 Returns result of the calculation
 */
-inline fun <erased T> Lock.withLock(action: ()->T) : T {
+public inline fun <erased T> Lock.withLock(action: ()->T) : T {
     lock()
     try {
         return action()
@@ -23,7 +23,7 @@ inline fun <erased T> Lock.withLock(action: ()->T) : T {
 Executes given calculation under read lock
 Returns result of the calculation
 */
-inline fun <erased T> ReentrantReadWriteLock.read(action: ()->T) : T {
+public inline fun <erased T> ReentrantReadWriteLock.read(action: ()->T) : T {
     val rl = readLock().sure()
     rl.lock()
     try {
@@ -40,7 +40,7 @@ The method does upgrade from read to write lock if needed
 If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races
 Returns result of the calculation
 */
-inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
+public inline fun <erased T> ReentrantReadWriteLock.write(action: ()->T) : T {
     val rl = readLock().sure()
 
     val readCount = if (getWriteHoldCount() == 0) getReadHoldCount() else 0

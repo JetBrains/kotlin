@@ -34,6 +34,11 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
 
     public DeclarationDescriptorImpl(@Nullable DeclarationDescriptor containingDeclaration, @NotNull List<AnnotationDescriptor> annotations, @NotNull String name) {
         super(annotations);
+
+        if (name.length() == 0) {
+            throw new IllegalArgumentException("descriptor name cannot be empty string");
+        }
+
         this.name = name;
         this.containingDeclaration = containingDeclaration;
     }

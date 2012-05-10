@@ -16,18 +16,21 @@
 
 package org.jetbrains.jet.codegen;
 
-import junit.framework.TestCase;
-import org.jetbrains.jet.compiler.CompileEnvironment;
+import org.jetbrains.jet.cli.jvm.compiler.K2JVMCompileEnvironmentConfiguration;
+import org.jetbrains.jet.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class CompileTextTest extends CodegenTestCase {
     public void testMe() throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
         String text = "import org.jetbrains.jet.codegen.CompileTextTest; fun x() = CompileTextTest()";
-        CompileEnvironment compileEnvironment = new CompileEnvironment();
-        compileEnvironment.getMyEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
-        ClassLoader classLoader = compileEnvironment.compileText(text);
+        K2JVMCompileEnvironmentConfiguration configuration = new K2JVMCompileEnvironmentConfiguration(
+                myEnvironment, MessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
+        configuration.getEnvironment().addToClasspathFromClassLoader(getClass().getClassLoader());
+        ClassLoader classLoader = KotlinToJVMBytecodeCompiler.compileText(configuration, text);
         Class<?> namespace = classLoader.loadClass("namespace");
         Method x = namespace.getDeclaredMethod("x");
         Object invoke = x.invoke(null);

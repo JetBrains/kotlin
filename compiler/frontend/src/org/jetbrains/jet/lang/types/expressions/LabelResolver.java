@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.*;
@@ -79,7 +80,7 @@ public class LabelResolver {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
             JetElement element;
             if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-                element = (JetElement) context.trace.get(BindingContext.DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+                element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
             }
             else {
                 throw new UnsupportedOperationException(); // TODO
@@ -139,7 +140,7 @@ public class LabelResolver {
             else {
                 throw new UnsupportedOperationException(); // TODO
             }
-            PsiElement element = context.trace.get(DESCRIPTOR_TO_DECLARATION, declarationDescriptor);
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
             assert element != null;
             context.trace.record(LABEL_TARGET, targetLabel, element);
             context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);

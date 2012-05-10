@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -145,8 +146,17 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         else {
             effectiveReceiverType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
         }
-        functionDescriptor.initialize(effectiveReceiverType, NO_RECEIVER, Collections.<TypeParameterDescriptor>emptyList(), valueParameterDescriptors, null, Modality.FINAL, Visibility.LOCAL);
+        functionDescriptor.initialize(effectiveReceiverType,
+                                      NO_RECEIVER,
+                                      Collections.<TypeParameterDescriptor>emptyList(),
+                                      valueParameterDescriptors,
+                                      /*unsubstitutedReturnType = */ null,
+                                      Modality.FINAL,
+                                      Visibilities.LOCAL,
+                                      /*isInline = */ false
+        );
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor);
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, expression, functionDescriptor);
         return functionDescriptor;
     }
 
@@ -185,7 +195,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                         type = ErrorUtils.createErrorType("Cannot be inferred");
                     }
                 }
-                ValueParameterDescriptor valueParameterDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptor(functionDescriptor, declaredParameter, i, type, context.trace);
+                ValueParameterDescriptor valueParameterDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptor(
+                        context.scope, functionDescriptor, declaredParameter, i, type, context.trace);
                 valueParameterDescriptors.add(valueParameterDescriptor);
             }
         }

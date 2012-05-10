@@ -8,5 +8,5 @@ abstract class Shape {
 	public String getColor() {
 		return color;
 	}
-	abstract public double area();
+	public abstract double area();
 }

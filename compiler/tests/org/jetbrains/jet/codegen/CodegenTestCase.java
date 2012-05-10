@@ -18,16 +18,22 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
 import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.util.Collections;
 
 /**
  * @author yole
@@ -116,11 +122,18 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     }
 
     protected String generateToText() {
-        GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.TEXT);
-        AnalyzingUtils.checkForSyntacticErrors(myFile);
-        state.compile(myFile);
+        return generateCommon(ClassBuilderFactories.TEXT).createText();
+    }
 
-        return state.createText();
+    private GenerationState generateCommon(ClassBuilderFactory classBuilderFactory) {
+        final AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
+                myFile, JetControlFlowDataTraceFactory.EMPTY,
+                myEnvironment.getCompilerDependencies());
+        analyzeExhaust.throwIfError();
+        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
+        GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
+        state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
+        return state;
     }
 
     protected Class generateNamespaceClass() {
@@ -159,11 +172,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
         try {
-            GenerationState state = new GenerationState(getProject(), ClassBuilderFactories.binaries(false));
-            AnalyzingUtils.checkForSyntacticErrors(myFile);
-            state.compile(myFile);
+            ClassBuilderFactory classBuilderFactory = ClassBuilderFactories.binaries(false);
 
-            return state.getFactory();
+            return generateCommon(classBuilderFactory).getFactory();
         } catch (RuntimeException e) {
             System.out.println(generateToText());
             throw e;
@@ -185,8 +196,9 @@ public abstract class CodegenTestCase extends JetLiteFixture {
 
                 r = method;
             }
-            if (r == null)
+            if (r == null) {
                 throw new AssertionError();
+            }
             return r;
         } catch (Error e) {
             System.out.println(generateToText());

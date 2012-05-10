@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationTypeBase;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.JetIcons;
 
 /**
  * @author Pavel Talanov
@@ -29,7 +32,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
     }
 
     public K2JSRunConfigurationType() {
-        super("K2JSConfigurationType", "K2JS", "Kotlin to Javascript configuration", JetFileType.INSTANCE.getIcon());
+        super("K2JSConfigurationType", "Kotlin (JavaScript)", "Kotlin to JavaScript configuration", JetIcons.LAUNCH);
         addFactory(new K2JSConfigurationFactory());
     }
 
@@ -40,7 +43,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
 
         @Override
         public RunConfiguration createTemplateConfiguration(Project project) {
-            return new K2JSRunConfiguration("", new RunConfigurationModule(project), this);
+            return new K2JSRunConfiguration("Kotlin to JavaScript", project, this);
         }
     }
 }

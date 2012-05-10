@@ -29,10 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -190,7 +187,7 @@ public class TypeHierarchyResolver {
                 private void createPrimaryConstructorForObject(@Nullable JetDeclaration object, MutableClassDescriptor mutableClassDescriptor) {
                     ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(mutableClassDescriptor, Collections.<AnnotationDescriptor>emptyList(), true);
                     constructorDescriptor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                            Visibility.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
+                            Visibilities.INTERNAL);//TODO check set mutableClassDescriptor.getVisibility()
                     // TODO : make the constructor private?
                     mutableClassDescriptor.setPrimaryConstructor(constructorDescriptor, trace);
                     if (object != null) {
@@ -350,7 +347,7 @@ public class TypeHierarchyResolver {
             if (!found) continue;
 
             ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
-            PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, classDescriptor);
+            PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
 
             PsiElement elementToMark = null;
             if (psiElement instanceof JetClassOrObject) {
@@ -379,7 +376,8 @@ public class TypeHierarchyResolver {
 
     private void checkSupertypesForConsistency() {
         for (MutableClassDescriptor mutableClassDescriptor : topologicalOrder) {
-            Multimap<TypeConstructor, TypeProjection> multimap = TypeUtils.buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
+            Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
+                    .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
             for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
                 Collection<TypeProjection> projections = entry.getValue();
                 if (projections.size() > 1) {
@@ -410,10 +408,8 @@ public class TypeHierarchyResolver {
                     if (conflictingTypes.size() > 1) {
                         DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                         assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                        PsiElement psiElement = trace.get(DESCRIPTOR_TO_DECLARATION, mutableClassDescriptor);
-                        assert psiElement instanceof JetClassOrObject : psiElement;
-                        JetClassOrObject declaration = (JetClassOrObject) psiElement;
-                        JetDelegationSpecifierList delegationSpecifierList = declaration.getDelegationSpecifierList();
+                        JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), mutableClassDescriptor);
+                        JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
                         assert delegationSpecifierList != null;
 //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
                         trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration, conflictingTypes));

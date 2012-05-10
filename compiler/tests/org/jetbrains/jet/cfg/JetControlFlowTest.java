@@ -31,6 +31,7 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,12 +43,19 @@ public class JetControlFlowTest extends JetLiteFixture {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
-    
+
     private String myName;
 
     public JetControlFlowTest(String dataPath, String name) {
         super(dataPath);
         myName = name;
+    }
+
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.STDLIB);
     }
 
     @Override

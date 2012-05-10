@@ -80,6 +80,6 @@ public class JetMethodAnnotation extends PsiAnnotationWrapper {
     }
 
     public static JetMethodAnnotation get(PsiMethod psiMethod) {
-        return new JetMethodAnnotation(psiMethod.getModifierList().findAnnotation(JvmStdlibNames.JET_METHOD.getFqName()));
+        return new JetMethodAnnotation(psiMethod.getModifierList().findAnnotation(JvmStdlibNames.JET_METHOD.getFqName().getFqName()));
     }
 }

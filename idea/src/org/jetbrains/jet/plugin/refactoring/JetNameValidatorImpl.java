@@ -20,19 +20,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * User: Alefas
@@ -76,7 +72,8 @@ public class JetNameValidatorImpl implements JetNameValidator {
         PsiElement sibling;
         if (myAnchor != null) {
             sibling = myAnchor;
-        } else {
+        }
+        else {
             if (myContainer instanceof JetExpression) {
                 return checkElement(name, myContainer);
             }
@@ -94,7 +91,7 @@ public class JetNameValidatorImpl implements JetNameValidator {
     private boolean checkElement(final String name, PsiElement sibling) {
         if (myBindingContext == null) {
             myBindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                    (JetFile) myContainer.getContainingFile());
+                    (JetFile) myContainer.getContainingFile()).getBindingContext();
         }
         final Ref<Boolean> result = new Ref<Boolean>(true);
         JetVisitorVoid visitor = new JetVisitorVoid() {

@@ -1,7 +1,7 @@
 package demo
 open class Program() {
 class object {
-open public fun main(args : Array<String?>?) : Unit {
+public open fun main(args : Array<String?>?) : Unit {
 System.out?.println("Halo!")
 }
 }

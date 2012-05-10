@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
 
 /**
@@ -26,7 +27,6 @@ import org.mozilla.javascript.JavaScriptException;
  */
 public final class MiscTest extends AbstractExpressionTest {
 
-
     public MiscTest() {
         super("misc/");
     }
@@ -36,23 +36,24 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        checkFooBoxIsTrue("intRange.kt");
+        fooBoxTest();
     }
 
 
     public void testSafecallComputesExpressionOnlyOnce() throws Exception {
-        checkFooBoxIsTrue("safecallComputesExpressionOnlyOnce.kt");
+        fooBoxTest();
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", "Anonymous", "box", true);
+        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
         try {
-            checkFooBoxIsTrue("ifAsExpressionWithThrow.kt");
+            fooBoxTest();
             fail();
-        } catch (JavaScriptException e) {
+        }
+        catch (JavaScriptException e) {
         }
     }
 
@@ -90,26 +91,51 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testFunInConstructor() throws Exception {
-        checkFooBoxIsTrue("funInConstructor.kt");
+        fooBoxTest();
     }
 
     public void testFunInConstructorBlock() throws Exception {
-        checkFooBoxIsTrue("funInConstructorBlock.kt");
+        fooBoxTest();
     }
 
     public void testPropertyAsFunCalledOnConstructor() throws Exception {
-        checkFooBoxIsTrue("propertyAsFunCalledOnConstructor.kt");
+        fooBoxTest();
     }
 
     public void testNamespacePropertyCalledAsFun() throws Exception {
-        checkFooBoxIsTrue("namespacePropertyCalledAsFun.kt");
+        fooBoxTest();
     }
 
     public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
-        checkFooBoxIsTrue("extensionLiteralCreatedAtNamespaceLevel.kt");
+        fooBoxTest();
     }
 
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
-        checkFooBoxIsTrue("temporaryVariableCreatedInNamespaceInitializer.kt");
+        fooBoxTest();
+    }
+
+    public void testWhenReturnedWithoutBlock() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testElvis() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testKt1865() throws Exception {
+        checkFooBoxIsTrue("KT-1865.kt");
+    }
+
+    public void testMainFunInNestedNamespace() throws Exception {
+        checkOutput("mainFunInNestedNamespace.kt", "ayee");
+    }
+
+
+    public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
+        fooBoxTest();
     }
 }

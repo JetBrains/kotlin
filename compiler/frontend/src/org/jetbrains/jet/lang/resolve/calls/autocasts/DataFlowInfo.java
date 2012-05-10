@@ -50,7 +50,9 @@ public class DataFlowInfo {
         }
     };
 
-    public static DataFlowInfo EMPTY = new DataFlowInfo(ImmutableMap.<DataFlowValue, Nullability>of(), Multimaps.newListMultimap(Collections.<DataFlowValue, Collection<JetType>>emptyMap(), CommonSuppliers.<JetType>getArrayListSupplier()));
+    public static DataFlowInfo EMPTY = new DataFlowInfo(
+            ImmutableMap.<DataFlowValue, Nullability>of(),
+            Multimaps.newListMultimap(Collections.<DataFlowValue, Collection<JetType>>emptyMap(), CommonSuppliers.<JetType>getArrayListSupplier()));
 
     private final ImmutableMap<DataFlowValue, Nullability> nullabilityInfo;
     /** Also immutable */
@@ -193,6 +195,10 @@ public class DataFlowInfo {
         }
 
         return new DataFlowInfo(ImmutableMap.copyOf(builder), newTypeInfo);
+    }
+
+    public boolean hasTypeInfoConstraints() {
+        return !typeInfo.isEmpty();
     }
 
 }

@@ -33,7 +33,7 @@ import java.util.*;
  * @author abreslav
  */
 public class FunctionDescriptorUtil {
-    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitutor.TypeSubstitution() {
+    private static final TypeSubstitutor MAKE_TYPE_PARAMETERS_FRESH = TypeSubstitutor.create(new TypeSubstitution() {
 
         @Override
         public TypeProjection get(TypeConstructor key) {
@@ -119,17 +119,30 @@ public class FunctionDescriptorUtil {
         return parameterScope;
     }
 
-    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverDescriptor expectedThisObject) {
+    public static void initializeFromFunctionType(@NotNull FunctionDescriptorImpl functionDescriptor, @NotNull JetType functionType, @NotNull ReceiverDescriptor expectedThisObject,
+            @NotNull Modality modality, @NotNull Visibility visibility) {
+
         assert JetStandardClasses.isFunctionType(functionType);
         functionDescriptor.initialize(JetStandardClasses.getReceiverType(functionType),
                                       expectedThisObject,
                                       Collections.<TypeParameterDescriptor>emptyList(),
                                       JetStandardClasses.getValueParameters(functionDescriptor, functionType),
                                       JetStandardClasses.getReturnTypeFromFunctionType(functionType),
-                                      Modality.FINAL, Visibility.LOCAL);
+                                      modality,
+                                      visibility);
     }
 
     public static <D extends CallableDescriptor> D alphaConvertTypeParameters(D candidate) {
         return (D) candidate.substitute(MAKE_TYPE_PARAMETERS_FRESH);
+    }
+
+    public static FunctionDescriptor getInvokeFunction(@NotNull JetType functionType) {
+        assert JetStandardClasses.isFunctionType(functionType);
+
+        ClassifierDescriptor classDescriptorForFunction = functionType.getConstructor().getDeclarationDescriptor();
+        assert classDescriptorForFunction instanceof ClassDescriptor;
+        Set<FunctionDescriptor> invokeFunctions = ((ClassDescriptor) classDescriptorForFunction).getMemberScope(functionType.getArguments()).getFunctions("invoke");
+        assert invokeFunctions.size() == 1;
+        return invokeFunctions.iterator().next();
     }
 }

@@ -5,27 +5,27 @@ import js.native
 //TODO: declare using number
 native
 class MathClass() {
-    val PI : Double = 1.0;
-    fun random() : Double = 0.0;
-    fun abs(value : Double) = 0.0
-    fun acos(value : Double) = 0.0
-    fun asin(value : Double) = 0.0
-    fun atan(value : Double) = 0.0
-    fun atan2(x : Double, y : Double) = 0.0
-    fun cos(value : Double) = 0.0
-    fun sin(value : Double) = 0.0
-    fun exp(value : Double) = 0.0
-    fun max(vararg values : Double) = 0.0
+    val PI : Double = js.noImpl;
+    fun random() : Double = js.noImpl;
+    fun abs(value : Double) : Double = js.noImpl
+    fun acos(value : Double) : Double = js.noImpl
+    fun asin(value : Double) : Double = js.noImpl
+    fun atan(value : Double) : Double = js.noImpl
+    fun atan2(x : Double, y : Double) : Double = js.noImpl
+    fun cos(value : Double) : Double = js.noImpl
+    fun sin(value : Double) : Double = js.noImpl
+    fun exp(value : Double) : Double = js.noImpl
+    fun max(vararg values : Double) : Double = js.noImpl
     fun max(vararg values : Int) : Int = js.noImpl
     fun min(vararg values : Int) : Int = js.noImpl
-    fun min(vararg values : Double) = 0.0
-    fun sqrt(value : Double) = 0.0
-    fun tan(value : Double) = 0.0
-    fun log(value : Double) = 0.0
-    fun pow(base : Double, exp : Double) = 0.0
-    fun round(value : Number) = 0
-    fun floor(value : Number) = 0
-    fun ceil(value : Number) = 0
+    fun min(vararg values : Double) : Double = js.noImpl
+    fun sqrt(value : Double) : Double = js.noImpl
+    fun tan(value : Double) : Double = js.noImpl
+    fun log(value : Double) : Double = js.noImpl
+    fun pow(base : Double, exp : Double) : Double = js.noImpl
+    fun round(value : Number) : Int = js.noImpl
+    fun floor(value : Number) : Int = js.noImpl
+    fun ceil(value : Number) : Int = js.noImpl
 }
 
 native

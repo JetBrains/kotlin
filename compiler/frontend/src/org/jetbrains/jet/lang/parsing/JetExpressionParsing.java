@@ -483,7 +483,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             if (!at(LBRACE)) {
                 assert _atSet(LABELS);
                 parsePrefixExpression();
-            } else {
+            }
+            else {
                 parseFunctionLiteral();
             }
             success = true;
@@ -704,7 +705,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else if (at(NULL_KEYWORD)) {
             parseOneTokenExpression(NULL);
-        } else {
+        }
+        else {
             return false;
         }
         return true;
@@ -735,7 +737,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 myJetParsing.parseModifierList(MODIFIER_LIST, true);
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
-            } else {
+            }
+            else {
                 parseExpression();
             }
 
@@ -780,13 +783,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
                     error("Expecting an element");
-                } else {
+                }
+                else {
                     parseExpressionPreferringBlocks();
                 }
-            } else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
+            }
+            else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
                  errorAndAdvance("Expecting '->'");
             }
-        } else {
+        }
+        else {
             parseWhenEntryNotElse();
         }
 
@@ -809,7 +815,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         expect(ARROW, "Expecting '->' or 'when'", WHEN_CONDITION_RECOVERY_SET);
         if (atSet(WHEN_CONDITION_RECOVERY_SET)) {
             error("Expecting an element");
-        } else {
+        }
+        else {
             parseExpressionPreferringBlocks();
         }
         // SEMI is consumed in parseWhenEntry
@@ -833,24 +840,29 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an element");
-            } else {
+            }
+            else {
                 parseExpression();
             }
             condition.done(WHEN_CONDITION_IN_RANGE);
-        } else if (at(IS_KEYWORD) || at(NOT_IS)) {
+        }
+        else if (at(IS_KEYWORD) || at(NOT_IS)) {
             advance(); // IS_KEYWORD or NOT_IS
 
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting a type or a decomposer pattern");
-            } else {
+            }
+            else {
                 parsePattern();
             }
             condition.done(WHEN_CONDITION_IS_PATTERN);
-        } else {
+        }
+        else {
             PsiBuilder.Marker expressionPattern = mark();
             if (atSet(WHEN_CONDITION_RECOVERY_SET_WITH_ARROW)) {
                 error("Expecting an expression, is-condition or in-condition");
-            } else {
+            }
+            else {
                 parseExpression();
             }
             expressionPattern.done(EXPRESSION_PATTERN);
@@ -899,27 +911,33 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     rollbackMarker.rollbackTo();
                     parseBinaryExpression(Precedence.ELVIS);
                     pattern.done(DECOMPOSER_PATTERN);
-                } else {
+                }
+                else {
                     rollbackMarker.drop();
                     pattern.done(TYPE_PATTERN);
                 }
             }
-        } else if (at(HASH)) {
+        }
+        else if (at(HASH)) {
             parseTuplePattern(TUPLE_PATTERN_ENTRY);
             pattern.done(TUPLE_PATTERN);
         }
         else if (at(MUL)) {
             advance(); // MUL
             pattern.done(WILDCARD_PATTERN);
-        } else if (at(VAL_KEYWORD)) {
+        }
+        else if (at(VAL_KEYWORD)) {
             parseBindingPattern();
             pattern.done(BINDING_PATTERN);
-        } else if (at(OPEN_QUOTE)) {
+        }
+        else if (at(OPEN_QUOTE)) {
             parseStringTemplate();
             pattern.done(EXPRESSION_PATTERN);
-        } else if (parseLiteralConstant()) {
+        }
+        else if (parseLiteralConstant()) {
             pattern.done(EXPRESSION_PATTERN);
-        } else {
+        }
+        else {
             errorUntil("Pattern expected", TokenSet.create(RBRACE, ARROW));
             pattern.drop();
         }
@@ -997,14 +1015,16 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 parsePattern();
                 subCondition.done(WHEN_CONDITION_IS_PATTERN);
-            } else if (at(IN_KEYWORD) || at(NOT_IN)) {
+            }
+            else if (at(IN_KEYWORD) || at(NOT_IN)) {
                 PsiBuilder.Marker mark = mark();
                 advance(); // IN_KEYWORD ot NOT_IN
                 mark.done(OPERATION_REFERENCE);
 
                 parseExpression();
                 subCondition.done(WHEN_CONDITION_IN_RANGE);
-            } else {
+            }
+            else {
                 subCondition.drop();
             }
         }
@@ -1047,7 +1067,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker simpleName = mark();
         if (at(FIELD_IDENTIFIER)) {
             advance(); //
-        } else {
+        }
+        else {
             expect(IDENTIFIER, "Expecting an identifier");
         }
         simpleName.done(REFERENCE_EXPRESSION);
@@ -1066,7 +1087,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (declType != null) {
             decl.done(declType);
             return true;
-        } else {
+        }
+        else {
             decl.rollbackTo();
             return false;
         }
@@ -1106,27 +1128,20 @@ public class JetExpressionParsing extends AbstractJetParsing {
             //   {(a, b) -> ...}
 
             {
-                PsiBuilder.Marker rollbackMarker = mark();
+                boolean preferParamsToExpressions = isConfirmedParametersByComma();
 
+                PsiBuilder.Marker rollbackMarker = mark();
                 parseFunctionLiteralParametersAndType();
 
-                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+                paramsFound = preferParamsToExpressions ?
+                                    rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+                                    rollbackOrDropAt(rollbackMarker, ARROW);
             }
 
             if (!paramsFound) {
                 // If not found, try a typeRef DOT and then LPAR .. RPAR ARROW
                 //   {((A) -> B).(x) -> ... }
-                PsiBuilder.Marker rollbackMarker = mark();
-                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RPAR)));
-                if (lastDot >= 0) {
-                    createTruncatedBuilder(lastDot).parseTypeRef();
-                    if (at(DOT)) {
-                        advance(); // DOT
-                        parseFunctionLiteralParametersAndType();
-                    }
-                }
-
-                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+                paramsFound = parseFunctionTypeDotParametersAndType();
             }
         }
         else {
@@ -1135,69 +1150,21 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 //   {a -> ...}
                 //   {a, b -> ...}
                 PsiBuilder.Marker rollbackMarker = mark();
+                boolean preferParamsToExpressions = (lookahead(1) == COMMA);
                 parseFunctionLiteralShorthandParameterList();
                 parseOptionalFunctionLiteralType();
-                paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
+
+                paramsFound = preferParamsToExpressions ?
+                              rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+                              rollbackOrDropAt(rollbackMarker, ARROW);
             }
             if (!paramsFound && atSet(JetParsing.TYPE_REF_FIRST)) {
                 // Try to parse a type DOT valueParameterList ARROW
                 //   {A.(b) -> ...}
-                PsiBuilder.Marker rollbackMarker = mark();
-                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RBRACE)));
-                if (lastDot >= 0) { // There is a receiver type
-                    createTruncatedBuilder(lastDot).parseTypeRef();
-                }
-
-                if (at(DOT)) {
-                    advance(); // DOT
-                    parseFunctionLiteralParametersAndType();
-                    paramsFound = rollbackOrDropAt(rollbackMarker, ARROW);
-                }
-                else {
-                    rollbackMarker.rollbackTo();
-                }
+                paramsFound = parseFunctionTypeDotParametersAndType();
             }
-//            int doubleArrowPos = matchTokenStreamPredicate(new FirstBefore(new At(ARROW), new At(RBRACE)) {
-//                @Override
-//                public boolean isTopLevel(int openAngleBrackets, int openBrackets, int openBraces, int openParentheses) {
-//                    return openBraces == 0;
-//                }
-//            });
-//
-//            boolean doubleArrowPresent = doubleArrowPos >= 0;
-//            if (doubleArrowPresent) {
-//                boolean dontExpectParameters = false;
-//
-//                int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtOffset(doubleArrowPos)));
-//                if (lastDot >= 0) { // There is a receiver type
-//                    createTruncatedBuilder(lastDot).parseTypeRef();
-//
-//                    expect(DOT, "Expecting '.'");
-//
-//                    if (!at(LPAR)) {
-//                        int firstLParPos = matchTokenStreamPredicate(new FirstBefore(new At(LPAR), new AtOffset(doubleArrowPos)));
-//
-//                        if (firstLParPos >= 0) {
-//                            errorUntilOffset("Expecting '('", firstLParPos);
-//                        } else {
-//                            errorUntilOffset("To specify a receiver type, use the full notation: {ReceiverType.(parameters) [: ReturnType] -> ...}",
-//                                doubleArrowPos);
-//                            dontExpectParameters = true;
-//                        }
-//                    }
-//
-//                }
-//
-//                if (at(LPAR)) {
-//                    parseFunctionLiteralParametersAndType();
-//                }
-//                else if (!dontExpectParameters) {
-//                    parseFunctionLiteralShorthandParameterList();
-//                }
-//
-//                expectNoAdvance(ARROW, "Expecting '->'");
-//            }
         }
+
         if (!paramsFound) {
             if (preferBlock) {
                 literal.drop();
@@ -1209,6 +1176,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                 return;
             }
         }
+
         PsiBuilder.Marker body = mark();
         parseStatements();
         body.done(BLOCK);
@@ -1229,6 +1197,25 @@ public class JetExpressionParsing extends AbstractJetParsing {
         rollbackMarker.rollbackTo();
         return false;
     }
+
+    private boolean rollbackOrDrop(PsiBuilder.Marker rollbackMarker,
+                                   JetToken expected, String expectMessage,
+                                   IElementType validForDrop) {
+        if (at(expected)) {
+            advance(); // dropAt
+            rollbackMarker.drop();
+            return true;
+        }
+        else if (at(validForDrop)) {
+            rollbackMarker.drop();
+            expect(expected, expectMessage);
+            return true;
+        }
+
+        rollbackMarker.rollbackTo();
+        return false;
+    }
+
 
     /*
      * SimpleName{,}
@@ -1267,9 +1254,45 @@ public class JetExpressionParsing extends AbstractJetParsing {
         parameterList.done(VALUE_PARAMETER_LIST);
     }
 
+    // Check that position is followed by top level comma. It can't be expression and we want it be
+    // parsed as parameters in function literal
+    private boolean isConfirmedParametersByComma() {
+        assert _at(LPAR);
+        PsiBuilder.Marker lparMarker = mark();
+        advance(); // LPAR
+        int comma = matchTokenStreamPredicate(new FirstBefore(new At(COMMA), new AtSet(ARROW, RPAR)));
+        lparMarker.rollbackTo();
+        return comma > 0;
+    }
+
+    private boolean parseFunctionTypeDotParametersAndType() {
+        PsiBuilder.Marker rollbackMarker = mark();
+
+        // True when it's confirmed that body of literal can't be simple expressions and we prefer to parse
+        // it to function params if possible.
+        boolean preferParamsToExpressions = false;
+
+        int lastDot = matchTokenStreamPredicate(new LastBefore(new At(DOT), new AtSet(ARROW, RPAR)));
+        if (lastDot >= 0) {
+            createTruncatedBuilder(lastDot).parseTypeRef();
+            if (at(DOT)) {
+                advance(); // DOT
+
+                if (at(LPAR)) {
+                    preferParamsToExpressions = isConfirmedParametersByComma();
+                }
+
+                parseFunctionLiteralParametersAndType();
+            }
+        }
+
+        return preferParamsToExpressions ?
+                      rollbackOrDrop(rollbackMarker, ARROW, "An -> is expected", RBRACE) :
+                      rollbackOrDropAt(rollbackMarker, ARROW);
+    }
+
     private void parseFunctionLiteralParametersAndType() {
         parseFunctionLiteralParameterList();
-
         parseOptionalFunctionLiteralType();
     }
 
@@ -1343,9 +1366,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             if (at(SEMICOLON)) {
                 while (at(SEMICOLON)) advance(); // SEMICOLON
-            } else if (at(RBRACE)) {
+            }
+            else if (at(RBRACE)) {
                 break;
-            } else if (!myBuilder.newlineBeforeCurrentToken()) {
+            }
+            else if (!myBuilder.newlineBeforeCurrentToken()) {
                 errorUntil("Unexpected tokens (use ';' to separate expressions on the same line)", TokenSet.create(EOL_OR_SEMICOLON));
             }
         }
@@ -1740,7 +1765,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     advance(); // EQ
                     parseExpression();
                     entry.done(LABELED_TUPLE_ENTRY);
-                } else {
+                }
+                else {
                     parseExpression();
                 }
 
@@ -1859,7 +1885,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         parseExpression();
         argument.done(VALUE_ARGUMENT);
     }
-    
+
+    /*
+     * "object" (":" delegationSpecifier{","})? classBody // Cannot make class body optional: foo(object : F, A)
+     */
     public void parseObjectLiteral() {
         PsiBuilder.Marker literal = mark();
         PsiBuilder.Marker declaration = mark();

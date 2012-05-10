@@ -30,11 +30,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.NamespaceType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +41,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jetbrains.jet.plugin.project.AnalyzeSingleFileUtil.getContextForSingleFile;
 
 /**
  * User: Alefas
@@ -66,7 +67,8 @@ public class JetRefactoringUtil {
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionStart))) ++selectionStart;
             while (selectionStart < selectionEnd && Character.isSpaceChar(text.charAt(selectionEnd - 1))) --selectionEnd;
             callback.run(findExpression(editor, file, selectionStart, selectionEnd));
-        } else {
+        }
+        else {
             int offset = editor.getCaretModel().getOffset();
             smartSelectExpression(editor, file, offset, callback);
         }
@@ -92,18 +94,19 @@ public class JetRefactoringUtil {
                     if (qualifiedExpression.getReceiverExpression() != element) {
                         addExpression = false;
                     }
-                } else if (element.getParent() instanceof JetCallElement) {
+                }
+                else if (element.getParent() instanceof JetCallElement) {
                     addExpression = false;
-                } else if (element.getParent() instanceof JetOperationExpression) {
+                }
+                else if (element.getParent() instanceof JetOperationExpression) {
                     JetOperationExpression operationExpression = (JetOperationExpression) element.getParent();
                     if (operationExpression.getOperationReference() == element) {
                         addExpression = false;
                     }
                 }
                 if (addExpression) {
-                    JetExpression expression = (JetExpression) element;
-                    BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache((JetFile) expression.getContainingFile(),
-                                                                                              AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
+                    JetExpression expression = (JetExpression)element;
+                    BindingContext bindingContext = getContextForSingleFile((JetFile)expression.getContainingFile());
                     JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
                     if (expressionType == null || !(expressionType instanceof NamespaceType) &&
                                                   !JetTypeChecker.INSTANCE.equalTypes(JetStandardLibrary.
@@ -183,9 +186,11 @@ public class JetRefactoringUtil {
             element.getTextRange().getEndOffset() != endOffset) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (!(element instanceof JetExpression)) {
+        }
+        else if (!(element instanceof JetExpression)) {
             throw new IntroduceRefactoringException(JetRefactoringBundle.message("cannot.refactor.not.expression"));
-        } else if (element instanceof JetBlockExpression) {
+        }
+        else if (element instanceof JetBlockExpression) {
             List<JetElement> statements = ((JetBlockExpression) element).getStatements();
             if (statements.size() == 1) {
                 JetElement elem = statements.get(0);

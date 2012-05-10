@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import jet.IntRange;
 import jet.Tuple2;
 import jet.Tuple4;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -30,6 +31,13 @@ import java.util.Arrays;
  * @author yole
  */
 public class NamespaceGenTest extends CodegenTestCase {
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+    }
+
     public void testPSVM() throws Exception {
         loadFile("PSVM.jet");
 //        System.out.println(generateToText());
@@ -398,7 +406,7 @@ public class NamespaceGenTest extends CodegenTestCase {
     }
 
     public void testArrayNewNullable() throws Exception {
-        loadText("fun foo() = Array<Int?>(4)");
+        loadText("fun foo() = arrayOfNulls<Int>(4)");
 //        System.out.println(generateToText());
         final Method main = generateFunction();
         Integer[] result = (Integer[]) main.invoke(null);

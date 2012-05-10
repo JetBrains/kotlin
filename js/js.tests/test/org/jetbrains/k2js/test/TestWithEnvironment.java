@@ -20,8 +20,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.CompileCompilerDependenciesTest;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 /**
  * @author Pavel Talanov
@@ -40,7 +41,7 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdk();
+        createEnvironmentWithMockJdkAndIdeaAnnotations();
     }
 
     @Override
@@ -49,7 +50,10 @@ public abstract class TestWithEnvironment extends UsefulTestCase {
         super.tearDown();
     }
 
-    protected void createEnvironmentWithMockJdk() {
-        myEnvironment = JetTestUtils.createEnvironmentWithMockJdk(getTestRootDisposable());
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
+        myEnvironment = JetCoreEnvironment.getCoreEnvironmentForJVM(getTestRootDisposable(),
+                                                                    CompileCompilerDependenciesTest.compilerDependenciesForTests(
+                                                                            CompilerSpecialMode.JS,
+                                                                            true));
     }
 }

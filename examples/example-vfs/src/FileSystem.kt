@@ -23,12 +23,10 @@ public object FileSystem {
     private val lock = ReentrantReadWriteLock()
     internal val watchedDirectories = ArrayList<VirtualFile>
 
-    // FIXME VirtualFiles should be used as hashmap keys themselves,
-    // but overriden hashCode() method fails in runtime with ClassCastException (KT-1134)
     /**
      * Mapping from virtual files to metainformation
      */
-    internal val fileToInfo = HashMap<String, VirtualFileInfo>()
+    internal val fileToInfo = HashMap<VirtualFile, VirtualFileInfo>()
     private val listeners = ArrayList<VirtualFileListener>()
 
     /**
@@ -72,7 +70,7 @@ public object FileSystem {
      */
     public fun addWatchedDirectory(dir : VirtualFile) {
         assertCanRead()
-        if (dir.isDirectory()) {
+        if (dir.isDirectory) {
             watchedDirectories.add(dir)
             scanAndAddRecursivelyNoEvents(dir)
 
@@ -82,19 +80,19 @@ public object FileSystem {
 
     /* Scans file recursively and adds info about it to fileToInfo map */
     private fun scanAndAddRecursivelyNoEvents(file : VirtualFile) {
-        assert(FileSystem.fileToInfo[file.path] == null)
+        require(FileSystem.fileToInfo[file.path] == null)
 
         val fileInfo = VirtualFileInfo(file)
-        FileSystem.fileToInfo[file.path] = fileInfo
-        fileInfo.children.foreach{ scanAndAddRecursivelyNoEvents(it) }
+        FileSystem.fileToInfo[file] = fileInfo
+        fileInfo.children.forEach{ scanAndAddRecursivelyNoEvents(it) }
     }
 
     internal inline fun assertCanRead() {
-        assert(lock.getReadHoldCount() != 0 || lock.isWriteLockedByCurrentThread())
+        check(lock.getReadHoldCount() != 0 || lock.isWriteLockedByCurrentThread())
     }
 
     internal inline fun assertCanWrite() {
-        assert(lock.isWriteLockedByCurrentThread())
+        check(lock.isWriteLockedByCurrentThread())
     }
 
     /**
@@ -107,12 +105,8 @@ public object FileSystem {
     /**
      * Adds file system listener which should be notified about changing of file system.
      */
-    public fun addVirtualFileListener(listener : VirtualFileListener.(VirtualFileEvent)->Unit) : VirtualFileListener {
-        val vfl = object: VirtualFileListener{
-            override fun eventHappened(event: VirtualFileEvent) {
-                listener(event)
-            }
-        }
+    public fun addVirtualFileListener(listener : (VirtualFileEvent)->Unit) : VirtualFileListener {
+        val vfl = SimpleVirtualFileListener(listener)
         addVirtualFileListener(vfl)
         return vfl
     }
@@ -139,7 +133,7 @@ private class VirtualFileInfo(file : VirtualFile) {
     val children : List<VirtualFile> = ArrayList<VirtualFile>;
 
     {
-        children.addAll(file.children())
-        lastModified = file.modificationTime()
+        children.addAll(file.children)
+        lastModified = file.modificationTime
     }
 }

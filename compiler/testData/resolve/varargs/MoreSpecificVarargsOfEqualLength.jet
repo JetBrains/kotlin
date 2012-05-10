@@ -1,0 +1,9 @@
+fun main(d : D) {
+    d.`str`from("")
+    d.`any`from(1)
+}
+
+class D {
+    ~any~fun from(vararg a : Any){}
+    ~str~fun from(vararg a : String){}
+}

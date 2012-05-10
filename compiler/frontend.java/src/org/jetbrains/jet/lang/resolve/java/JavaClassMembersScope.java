@@ -17,14 +17,21 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class static of instance members.
@@ -32,25 +39,19 @@ import java.util.*;
  * @author abreslav
  */
 public class JavaClassMembersScope extends JavaClassOrPackageScope {
-    @NotNull
-    protected final PsiClass psiClass;
-    private final boolean staticMembers;
     private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
-    private Collection<DeclarationDescriptor> allDescriptors;
 
     public JavaClassMembersScope(
-            @NotNull ClassOrNamespaceDescriptor classOrNamespaceDescriptor,
-            @NotNull PsiClass psiClass,
             @NotNull JavaSemanticServices semanticServices,
-            boolean staticMembers) {
-        super(classOrNamespaceDescriptor, semanticServices, psiClass);
-        this.psiClass = psiClass;
-        this.staticMembers = staticMembers;
-    }
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverScopeData) {
+        super(semanticServices, resolverScopeData);
 
-    @Override
-    protected boolean staticMembers() {
-        return staticMembers;
+        if (resolverScopeData.psiClass == null) {
+            throw new IllegalArgumentException("must pass PsiClass here");
+        }
+        if (resolverScopeData.staticMembers) {
+            throw new IllegalArgumentException("static members should be resolved using " + JavaPackageScope.class);
+        }
     }
 
     @NotNull
@@ -80,30 +81,13 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         return Collections.emptySet();
     }
 
-    /**
-     * @see JavaPackageScope#getAllDescriptors()
-     */
-    @NotNull
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers));
-
-            allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveInnerClasses(descriptor, psiClass, staticMembers));
-        }
-        return allDescriptors;
-    }
-
     private ClassifierDescriptor doGetClassifierDescriptor(String name) {
         // TODO : suboptimal, walk the list only once
-        for (PsiClass innerClass : psiClass.getAllInnerClasses()) {
+        for (PsiClass innerClass : resolverScopeData.psiClass.getAllInnerClasses()) {
             if (name.equals(innerClass.getName())) {
-                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != staticMembers) return null;
-                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(innerClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+                if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.staticMembers) return null;
+                ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
+                        .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
                 if (classDescriptor != null) {
                     return classDescriptor;
                 }

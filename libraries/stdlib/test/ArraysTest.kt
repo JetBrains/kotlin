@@ -39,4 +39,22 @@ class ArraysTest() : TestCase() {
         assertFalse(iter.hasNext, "Invalid length (hasNext)")
     }
 
+    fun testEmptyArrayLastIndex() {
+        val arr1 = IntArray(0)
+        assertEquals(-1, arr1.lastIndex)
+
+        val arr2 = Array<String>(0, {"$it"})
+        assertEquals(-1, arr2.lastIndex)
+    }
+
+    fun testArrayLastIndex() {
+        val arr1 = intArray(0, 1, 2, 3, 4)
+        assertEquals(4, arr1.lastIndex)
+        assertEquals(4, arr1[arr1.lastIndex])
+
+        val arr2 = Array<String>(5, {"$it"})
+        assertEquals(4, arr2.lastIndex)
+        assertEquals("4", arr2[arr2.lastIndex])
+    }
+
 }

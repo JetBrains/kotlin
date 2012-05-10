@@ -1,4 +1,4 @@
 // "Remove initializer from property" "true"
 abstract class A {
-    abstract var i : Int<caret>
+    abstract var i<caret> : Int
 }

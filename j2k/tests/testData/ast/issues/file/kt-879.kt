@@ -1,6 +1,6 @@
 open class Test() {
 class object {
-open public fun getInt(i : Int) : Int {
+public open fun getInt(i : Int) : Int {
 when (i) {
 0 -> {
 return 0

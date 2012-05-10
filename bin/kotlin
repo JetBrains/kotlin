@@ -23,8 +23,9 @@ classpath="$classpath:$root/out/production/stdlib"
 classpath="$classpath:$root/lib/*:$ideaRoot/lib/*:$ideaRoot/lib/rt/*"
 
 exec java $JAVA_OPTS \
+    -ea \
     -classpath "$classpath" \
-    org.jetbrains.jet.cli.KotlinCompiler \
+    org.jetbrains.jet.cli.jvm.K2JVMCompiler \
     "$@"
 
 # vim: set ts=4 sw=4 et:

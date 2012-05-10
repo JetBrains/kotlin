@@ -1,5 +1,5 @@
 namespace test
 
-final class test.Simple : jet.Any {
+final class test.Simple : java.lang.Object {
     final /*constructor*/ fun <init>(): test.Simple
 }

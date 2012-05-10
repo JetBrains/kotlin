@@ -1,4 +1,4 @@
-// "Import Class" "true"
+// "Import" "true"
 package some
 
 import kotlin.util.measureTimeNano

@@ -1,6 +1,7 @@
 idea/idea.properties
 examples/.idea/dictionaries
 examples/.idea/workspace.xml
+examples/example-vfs/.idea/workspace.xml
 libraries/.idea/workspace.xml
 confluence/target
 confluence/target
@@ -10,7 +11,7 @@ patches-master
 out
 dist
 ideaSDK
-PluginVerifier
+dependencies
 .idea/dictionaries/yozh.xml
 .idea/workspace.xml
 tmp

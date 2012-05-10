@@ -1,0 +1,10 @@
+trait A {
+    fun foo(value : String) : Unit = 0
+}
+
+class C : A {
+
+    override fun foo(value : String) {
+        super<A>.foo(value)
+    }
+}

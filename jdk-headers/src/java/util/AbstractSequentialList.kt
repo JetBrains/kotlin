@@ -1,10 +1,10 @@
 package java.util
-abstract public open class AbstractSequentialList<erased E> protected () : java.util.AbstractList<E>() {
-    override public fun get(index : Int) : E {}
-    override public fun set(index : Int, element : E) : E {}
-    override public fun add(index : Int, element : E) : Unit {}
-    override public fun remove(index : Int) : E {}
-    override public fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean {}
-    override public fun iterator() : java.util.Iterator<E> {}
-    abstract override public fun listIterator(index : Int) : java.util.ListIterator<E> {}
+public abstract class AbstractSequentialList<erased E> protected () : java.util.AbstractList<E>() {
+    public override fun get(index : Int) : E {}
+    public override fun set(index : Int, element : E) : E {}
+    public override fun add(index : Int, element : E) : Unit {}
+    public override fun remove(index : Int) : E {}
+    public override fun addAll(index : Int, c : java.util.Collection<out E>) : Boolean {}
+    public override fun iterator() : java.util.Iterator<E> {}
+    public abstract override fun listIterator(index : Int) : java.util.ListIterator<E> {}
 }

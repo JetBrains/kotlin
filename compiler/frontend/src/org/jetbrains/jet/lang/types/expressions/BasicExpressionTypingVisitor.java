@@ -285,7 +285,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         {
             Multimap<TypeConstructor, TypeProjection> typeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetType);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetType);
 
             for (int i = 0; i < actualType.getConstructor().getParameters().size(); ++i) {
                 TypeProjection actualTypeParameter = actualType.getArguments().get(i);
@@ -310,7 +310,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     (ClassDescriptor) targetType.getConstructor().getDeclarationDescriptor(), null);
 
             Multimap<TypeConstructor, TypeProjection> clearTypeSubstitutionMap =
-                    TypeUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
+                    SubstitutionUtils.buildDeepSubstitutionMultimap(targetTypeClerared);
 
             Set<JetType> clearSubstituted = new HashSet<JetType>();
 
@@ -332,7 +332,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
 
                 // "is List<*>"
-                if (typeProjection.equals(TypeUtils.makeStarProjection(typeParameter))) {
+                if (typeProjection.equals(SubstitutionUtils.makeStarProjection(typeParameter))) {
                     continue;
                 }
 
@@ -472,6 +472,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (result != null) {
                 context.trace.record(BindingContext.EXPRESSION_TYPE, expression.getInstanceReference(), result);
                 context.trace.record(BindingContext.REFERENCE_TARGET, expression.getInstanceReference(), result.getConstructor().getDeclarationDescriptor());
+                if (superTypeQualifier != null) {
+                    context.trace.record(BindingContext.TYPE_RESOLUTION_SCOPE, superTypeQualifier, context.scope);
+                }
             }
         }
         return DataFlowUtils.checkType(result, expression, context);
@@ -609,10 +612,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 checkSuper(receiver, resultingDescriptor, context.trace, selectorExpression);
                 return resultingDescriptor.getType();
             }
-            if (resolutionResult.isAmbiguity() || resolutionResult.singleResult()) {
+            if (resolutionResult.isSingleResult()) {
+                temporaryTrace.commit();
+                return resolutionResult.getResultingDescriptor().getReturnType();
+            }
+            if (resolutionResult.isAmbiguity()) {
                 temporaryTrace.commit();
                 return null;
             }
+
+            // Uncommitted changes in temp context
+            context.trace.record(RESOLUTION_SCOPE, nameExpression, context.scope);
+            if (context.dataFlowInfo.hasTypeInfoConstraints()) {
+                context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, nameExpression, context.dataFlowInfo);
+            }
+
             ExpressionTypingContext newContext = receiver.exists()
                                                  ? context.replaceScope(receiver.getType().getMemberScope())
                                                  : context;
@@ -620,6 +634,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (jetType == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
             }
+
             return jetType;
         }
         else if (selectorExpression instanceof JetQualifiedExpression) {
@@ -938,7 +953,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, operationSign, leftType, rightType));
                 }
             }
+            if (isSenselessComparisonWithNull(leftType, right) || isSenselessComparisonWithNull(rightType, left)) {
+                context.trace.report(SENSELESS_COMPARISON.on(expression, expression, operationSign.getReferencedNameElementType() == JetTokens.EXCLEQ));
+            }
         }
+    }
+
+    private boolean isSenselessComparisonWithNull(@Nullable JetType firstType, @NotNull JetExpression secondExpression) {
+        if (firstType == null) return false;
+        return !firstType.isNullable() && secondExpression instanceof JetConstantExpression && secondExpression.getNode().getElementType() == JetNodeTypes.NULL;
     }
 
     protected JetType visitAssignmentOperation(JetBinaryExpression expression, ExpressionTypingContext context) {
@@ -1080,14 +1103,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 arrayAccessExpression,
                 isGet ? "get" : "set");
         if (!functionResults.isSuccess()) {
-            traceForResolveResult.report(isGet
-                                         ? NO_GET_METHOD.on(arrayAccessExpression)
-                                         : NO_SET_METHOD.on(arrayAccessExpression));
+            traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return null;
         }
-        traceForResolveResult.record(isGet
-                                     ? INDEXED_LVALUE_GET
-                                     : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
+        traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression, functionResults.getResultingCall());
         return functionResults.getResultingDescriptor().getReturnType();
     }
 }

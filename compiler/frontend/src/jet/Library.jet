@@ -1,66 +1,66 @@
 package jet
 
-annotation class volatile
-annotation class atomic
+public annotation class volatile
+public annotation class atomic
 
-fun <R> synchronized(lock: Any, block : () -> R) : R
+public fun <R> synchronized(lock: Any, block : () -> R) : R
 
-fun Any?.identityEquals(other : Any?) : Boolean // = this === other
+public fun Any?.identityEquals(other : Any?) : Boolean // = this === other
 
 // Can't write a body due to a bootstrapping problem (see JET-74)
-fun Any?.equals(other : Any?) : Boolean// = this === other
+public fun Any?.equals(other : Any?) : Boolean// = this === other
 
 // Returns "null" for null
-fun Any?.toString() : String// = this === other
+public fun Any?.toString() : String// = this === other
 
-fun <T : Any> T?.sure() : T
+public fun <T : Any> T?.sure() : T
 
-fun String?.plus(other: Any?) : String
+public fun String?.plus(other: Any?) : String
 
-trait Comparable<in T> {
-  fun compareTo(other : T) : Int
+public trait Comparable<in T> {
+  public fun compareTo(other : T) : Int
 }
 
-trait Hashable {
-  fun hashCode() : Int
-  fun equals(other : Any?) : Boolean
+public trait Hashable {
+  public fun hashCode() : Int
+  public fun equals(other : Any?) : Boolean
 }
 
-class Boolean : Comparable<Boolean> {
-  fun not() : Boolean
+public class Boolean : Comparable<Boolean> {
+  public fun not() : Boolean
 
-  fun and(other : Boolean) : Boolean
+  public fun and(other : Boolean) : Boolean
 
-  fun or(other : Boolean) : Boolean
+  public fun or(other : Boolean) : Boolean
 
-  fun xor(other : Boolean) : Boolean
+  public fun xor(other : Boolean) : Boolean
 
-  fun equals(other : Any?) : Boolean
+  public fun equals(other : Any?) : Boolean
 
-  override fun compareTo(that : Boolean) : Int
+  public override fun compareTo(that : Boolean) : Int
 }
 
-trait CharSequence {
-  fun get(index : Int) : Char
+public trait CharSequence {
+  public fun get(index : Int) : Char
 
-  val length : Int
+  public val length : Int
 
-  fun toString() : String
+  public fun toString() : String
 }
 
-class String() : Comparable<String>, CharSequence {
-  fun plus(other : Any?) : String
+public class String() : Comparable<String>, CharSequence {
+  public fun plus(other : Any?) : String
 
-  fun equals(other : Any?) : Boolean
+  public fun equals(other : Any?) : Boolean
 
-  override fun compareTo(that : String) : Int
-  override fun get(index : Int) : Char
-  override fun toString() : String
-  override val length: Int
+  public override fun compareTo(that : String) : Int
+  public override fun get(index : Int) : Char
+  public override fun toString() : String
+  public override val length: Int
 }
 
-open class Throwable(message : String? = null, cause: Throwable? = null) {
-    fun getMessage() : String?
-    fun getCause() : Throwable?
-    fun printStackTrace() : Unit
+public open class Throwable(message : String? = null, cause: Throwable? = null) {
+    public fun getMessage() : String?
+    public fun getCause() : Throwable?
+    public fun printStackTrace() : Unit
 }

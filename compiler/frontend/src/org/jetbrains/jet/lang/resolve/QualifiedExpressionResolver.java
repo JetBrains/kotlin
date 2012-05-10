@@ -40,17 +40,15 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> analyseImportReference(@NotNull JetImportDirective importDirective,
-                                                                              @NotNull JetScope scope,
-                                                                              @NotNull BindingTrace trace) {
-        return processImportReference(importDirective, scope, Importer.DO_NOTHING, trace, false);
+            @NotNull JetScope scope, @NotNull BindingTrace trace) {
+
+        return processImportReference(importDirective, scope, scope, Importer.DO_NOTHING, trace, false);
     }
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> processImportReference(@NotNull JetImportDirective importDirective,
-                                                                              @NotNull JetScope scope,
-                                                                              @NotNull Importer importer,
-                                                                              @NotNull BindingTrace trace,
-                                                                              boolean onlyClasses) {
+            @NotNull JetScope scope, @NotNull JetScope scopeToCheckVisibility, @NotNull Importer importer, @NotNull BindingTrace trace, boolean onlyClasses) {
+
         if (importDirective.isAbsoluteInRootNamespace()) {
             trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
             return Collections.emptyList();
@@ -63,11 +61,11 @@ public class QualifiedExpressionResolver {
         Collection<? extends DeclarationDescriptor> descriptors;
         if (importedReference instanceof JetQualifiedExpression) {
             //store result only when we find all descriptors, not only classes on the second phase
-            descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression)importedReference, scope, trace, onlyClasses, !onlyClasses);
+            descriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression)importedReference, scope, scopeToCheckVisibility, trace, onlyClasses, !onlyClasses);
         }
         else {
             assert importedReference instanceof JetSimpleNameExpression;
-            descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression)importedReference, scope, trace, onlyClasses, true, !onlyClasses);
+            descriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression)importedReference, scope, scopeToCheckVisibility, trace, onlyClasses, true, !onlyClasses);
         }
 
         JetSimpleNameExpression referenceExpression = JetPsiUtil.getLastReference(importedReference);
@@ -95,9 +93,8 @@ public class QualifiedExpressionResolver {
     }
 
     private boolean canImportMembersFrom(@NotNull Collection<? extends DeclarationDescriptor> descriptors,
-                                         @NotNull JetSimpleNameExpression reference,
-                                         @NotNull BindingTrace trace,
-                                         boolean onlyClasses) {
+            @NotNull JetSimpleNameExpression reference, @NotNull BindingTrace trace, boolean onlyClasses) {
+
         if (onlyClasses) {
             return true;
         }
@@ -116,9 +113,8 @@ public class QualifiedExpressionResolver {
     }
 
     private boolean canImportMembersFrom(@NotNull DeclarationDescriptor descriptor,
-                                         @NotNull JetSimpleNameExpression reference,
-                                         @NotNull BindingTrace trace,
-                                         boolean onlyClasses) {
+            @NotNull JetSimpleNameExpression reference, @NotNull BindingTrace trace, boolean onlyClasses) {
+
         assert !onlyClasses;
         if (descriptor instanceof NamespaceDescriptor) {
             return true;
@@ -132,8 +128,8 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> lookupDescriptorsForUserType(@NotNull JetUserType userType,
-                                                                                    @NotNull JetScope outerScope,
-                                                                                    @NotNull BindingTrace trace) {
+            @NotNull JetScope outerScope, @NotNull BindingTrace trace) {
+
         if (userType.isAbsoluteInRootNamespace()) {
             trace.report(Errors.UNSUPPORTED.on(userType, "package"));
             return Collections.emptyList();
@@ -144,26 +140,24 @@ public class QualifiedExpressionResolver {
         }
         JetUserType qualifier = userType.getQualifier();
         if (qualifier == null) {
-            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, trace, true, false, true);
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, outerScope, outerScope, trace, true, false, true);
         }
         Collection<? extends DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace);
-        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, true, true);
+        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, outerScope, true, true);
     }
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> lookupDescriptorsForQualifiedExpression(@NotNull JetQualifiedExpression importedReference,
-                                                                                               @NotNull JetScope outerScope,
-                                                                                               @NotNull BindingTrace trace,
-                                                                                               boolean onlyClasses,
-                                                                                               boolean storeResult) {
+            @NotNull JetScope outerScope, @NotNull JetScope scopeToCheckVisibility, @NotNull BindingTrace trace, boolean onlyClasses, boolean storeResult) {
+
         JetExpression receiverExpression = importedReference.getReceiverExpression();
         Collection<? extends DeclarationDescriptor> declarationDescriptors;
         if (receiverExpression instanceof JetQualifiedExpression) {
-            declarationDescriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression)receiverExpression, outerScope, trace, onlyClasses, storeResult);
+            declarationDescriptors = lookupDescriptorsForQualifiedExpression((JetQualifiedExpression)receiverExpression, outerScope, scopeToCheckVisibility, trace, onlyClasses, storeResult);
         }
         else {
             assert receiverExpression instanceof JetSimpleNameExpression;
-            declarationDescriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression)receiverExpression, outerScope, trace, onlyClasses, true, storeResult);
+            declarationDescriptors = lookupDescriptorsForSimpleNameReference((JetSimpleNameExpression)receiverExpression, outerScope, scopeToCheckVisibility, trace, onlyClasses, true, storeResult);
         }
 
         JetExpression selectorExpression = importedReference.getSelectorExpression();
@@ -177,15 +171,14 @@ public class QualifiedExpressionResolver {
             return Collections.emptyList();
         }
 
-        return lookupSelectorDescriptors(selector, declarationDescriptors, trace, onlyClasses, storeResult);
+        return lookupSelectorDescriptors(selector, declarationDescriptors, trace, scopeToCheckVisibility, onlyClasses, storeResult);
     }
 
     @NotNull
     private Collection<? extends DeclarationDescriptor> lookupSelectorDescriptors(@NotNull JetSimpleNameExpression selector,
-                                                                                  @NotNull Collection<? extends DeclarationDescriptor> declarationDescriptors,
-                                                                                  @NotNull BindingTrace trace,
-                                                                                  boolean onlyClasses,
-                                                                                  boolean storeResult) {
+            @NotNull Collection<? extends DeclarationDescriptor> declarationDescriptors, @NotNull BindingTrace trace,
+            @NotNull JetScope scopeToCheckVisibility, boolean onlyClasses, boolean storeResult) {
+
         Set<SuccessfulLookupResult> results = Sets.newHashSet();
         for (DeclarationDescriptor declarationDescriptor : declarationDescriptors) {
             if (declarationDescriptor instanceof NamespaceDescriptor) {
@@ -199,7 +192,7 @@ public class QualifiedExpressionResolver {
                 }
             }
         }
-        return filterAndStoreResolutionResult(results, selector, trace, onlyClasses, storeResult);
+        return filterAndStoreResolutionResult(results, selector, trace, scopeToCheckVisibility, onlyClasses, storeResult);
     }
 
     @NotNull
@@ -215,22 +208,17 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     public Collection<? extends DeclarationDescriptor> lookupDescriptorsForSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
-                                                                                               @NotNull JetScope outerScope,
-                                                                                               @NotNull BindingTrace trace,
-                                                                                               boolean onlyClasses,
-                                                                                               boolean namespaceLevel,
-                                                                                               boolean storeResult) {
+            @NotNull JetScope outerScope, @NotNull JetScope scopeToCheckVisibility, @NotNull BindingTrace trace, boolean onlyClasses, boolean namespaceLevel, boolean storeResult) {
+
         LookupResult lookupResult = lookupSimpleNameReference(referenceExpression, outerScope, onlyClasses, namespaceLevel);
         if (lookupResult == LookupResult.EMPTY) return Collections.emptyList();
-        return filterAndStoreResolutionResult(Collections.singletonList((SuccessfulLookupResult)lookupResult), referenceExpression, trace,
+        return filterAndStoreResolutionResult(Collections.singletonList((SuccessfulLookupResult)lookupResult), referenceExpression, trace, scopeToCheckVisibility,
                                               onlyClasses, storeResult);
     }
 
     @NotNull
     private LookupResult lookupSimpleNameReference(@NotNull JetSimpleNameExpression referenceExpression,
-                                                   @NotNull JetScope outerScope,
-                                                   boolean onlyClasses,
-                                                   boolean namespaceLevel) {
+            @NotNull JetScope outerScope, boolean onlyClasses, boolean namespaceLevel) {
 
         String referencedName = referenceExpression.getReferencedName();
         if (referencedName == null) {
@@ -269,10 +257,9 @@ public class QualifiedExpressionResolver {
 
     @NotNull
     private Collection<? extends DeclarationDescriptor> filterAndStoreResolutionResult(@NotNull Collection<SuccessfulLookupResult> lookupResults,
-                                                                                       @NotNull JetSimpleNameExpression referenceExpression,
-                                                                                       @NotNull BindingTrace trace,
-                                                                                       boolean onlyClasses,
-                                                                                       boolean storeResult) {
+            @NotNull JetSimpleNameExpression referenceExpression, @NotNull BindingTrace trace, @NotNull JetScope scopeToCheckVisibility,
+            boolean onlyClasses, boolean storeResult) {
+
         if (lookupResults.isEmpty()) {
             return Collections.emptyList();
         }
@@ -322,16 +309,17 @@ public class QualifiedExpressionResolver {
             }
         }
         if (storeResult) {
-            storeResolutionResult(descriptors, filteredDescriptors, referenceExpression, possibleResolutionScopes, trace);
+            storeResolutionResult(descriptors, filteredDescriptors, referenceExpression, possibleResolutionScopes, trace, scopeToCheckVisibility);
         }
         return filteredDescriptors;
     }
 
     private void storeResolutionResult(@NotNull Collection<? extends DeclarationDescriptor> descriptors,
-                                       @NotNull Collection<? extends DeclarationDescriptor> canBeImportedDescriptors,
-                                       @NotNull JetSimpleNameExpression referenceExpression,
-                                       @NotNull Collection<JetScope> possibleResolutionScopes,
-                                       @NotNull BindingTrace trace) {
+            @NotNull Collection<? extends DeclarationDescriptor> canBeImportedDescriptors,
+            @NotNull JetSimpleNameExpression referenceExpression,
+            @NotNull Collection<JetScope> possibleResolutionScopes,
+            @NotNull BindingTrace trace,
+            @NotNull JetScope scopeToCheckVisibility) {
 
         assert canBeImportedDescriptors.size() <= descriptors.size();
         assert !possibleResolutionScopes.isEmpty();
@@ -339,7 +327,7 @@ public class QualifiedExpressionResolver {
         JetScope resolutionScope = possibleResolutionScopes.iterator().next();
 
         // A special case - will fill all trace information
-        if (resolveClassNamespaceAmbiguity(canBeImportedDescriptors, referenceExpression, resolutionScope, trace)) {
+        if (resolveClassNamespaceAmbiguity(canBeImportedDescriptors, referenceExpression, resolutionScope, trace, scopeToCheckVisibility)) {
             return;
         }
 
@@ -351,22 +339,30 @@ public class QualifiedExpressionResolver {
         }
 
         // Decide if expression has resolved reference
+        DeclarationDescriptor descriptor = null;
         if (descriptors.size() == 1) {
+            descriptor = descriptors.iterator().next();
             assert canBeImportedDescriptors.size() <= 1;
-            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
-            trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
         }
         else if (canBeImportedDescriptors.size() == 1) {
-            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, canBeImportedDescriptors.iterator().next());
+            descriptor = canBeImportedDescriptors.iterator().next();
+        }
+        if (descriptor != null) {
+            trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptors.iterator().next());
             trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+
+            if (descriptor instanceof DeclarationDescriptorWithVisibility) {
+                checkVisibility((DeclarationDescriptorWithVisibility)descriptor, trace, referenceExpression, scopeToCheckVisibility);
+            }
         }
 
         // Check for more information and additional errors
         if (canBeImportedDescriptors.isEmpty()) {
             assert descriptors.size() >= 1;
             trace.report(CANNOT_BE_IMPORTED.on(referenceExpression, descriptors.iterator().next()));
+            return;
         }
-        else if (canBeImportedDescriptors.size() > 1) {
+        if (canBeImportedDescriptors.size() > 1) {
             trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, descriptors);
         }
     }
@@ -378,9 +374,8 @@ public class QualifiedExpressionResolver {
      * @return <code>true</code> if method has successfully resolved ambiguity
      */
     private boolean resolveClassNamespaceAmbiguity(@NotNull Collection<? extends DeclarationDescriptor> filteredDescriptors,
-                                                   @NotNull JetSimpleNameExpression referenceExpression,
-                                                   @NotNull JetScope resolutionScope,
-                                                   @NotNull BindingTrace trace) {
+        @NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope resolutionScope, @NotNull BindingTrace trace,
+        @NotNull JetScope scopeToCheckVisibility) {
 
         if (filteredDescriptors.size() == 2) {
             NamespaceDescriptor namespaceDescriptor = null;
@@ -399,12 +394,21 @@ public class QualifiedExpressionResolver {
                 if (DescriptorUtils.getFQName(namespaceDescriptor).equals(DescriptorUtils.getFQName(classDescriptor))) {
                     trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classDescriptor);
                     trace.record(BindingContext.RESOLUTION_SCOPE, referenceExpression, resolutionScope);
+                    checkVisibility(classDescriptor, trace, referenceExpression, scopeToCheckVisibility);
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    private void checkVisibility(@NotNull DeclarationDescriptorWithVisibility descriptor, @NotNull BindingTrace trace,
+            @NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope scopeToCheckVisibility) {
+
+        if (!Visibilities.isVisible(descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
+            trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getContainingDeclaration()));
+        }
     }
 
     private interface LookupResult {

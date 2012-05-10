@@ -20,13 +20,13 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.compiler.TipsManager;
+import org.jetbrains.jet.cli.jvm.compiler.TipsManager;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 /**
 * @author yole
@@ -62,7 +62,8 @@ public class JetSimpleNameReference extends JetPsiReference {
     @Override
     public Object[] getVariants() {
         BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(
-                (JetFile) myExpression.getContainingFile());
+                (JetFile) myExpression.getContainingFile())
+                    .getBindingContext();
 
         return DescriptorLookupConverter.collectLookupElements(
                 bindingContext, TipsManager.getReferenceVariants(myExpression, bindingContext));

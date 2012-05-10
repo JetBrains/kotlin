@@ -38,7 +38,8 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
         if (element instanceof JetProperty) {
             JetProperty property = (JetProperty) element;
             if (property.isLocal()) return true;
-        } else if (element instanceof JetFunction) {
+        }
+        else if (element instanceof JetFunction) {
             JetFunction function = (JetFunction) element;
             if (function.isLocal()) return true;
         }

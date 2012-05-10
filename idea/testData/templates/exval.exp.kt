@@ -1,4 +1,4 @@
 val Int.v : Int
-get() {
-    <caret>
-}
+    get() {
+        <caret>
+    }

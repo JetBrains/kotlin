@@ -76,7 +76,8 @@ public class JetTemplateParameterTraversalPolicy implements TemplateParameterTra
                 return PsiTreeUtil.firstChild(root);
             }
             return nextLeaf;
-        } else {
+        }
+        else {
             PsiElement prevLeaf = PsiTreeUtil.prevLeaf(element);
             if (prevLeaf == null) {
                 PsiElement root = PsiTreeUtil.getTopmostParentOfType(element, JetFile.class);

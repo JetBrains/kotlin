@@ -32,7 +32,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.k2js.translate.utils.DescriptorUtils.getClassDescriptorForType;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getClassDescriptorForType;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getLoopRange;
 import static org.jetbrains.k2js.translate.utils.TemporariesUtils.temporariesInitialization;
@@ -82,7 +82,7 @@ public final class ArrayForTranslator extends ForTranslator {
     private JsBlock translate() {
         List<JsStatement> blockStatements = Lists.newArrayList();
         blockStatements.add(temporariesInitialization(loopRange, end).makeStmt());
-        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrExpression(), getBody()));
+        blockStatements.add(generateForExpression(getInitExpression(), getCondition(), getIncrementExpression(), getBody()));
         return newBlock(blockStatements);
     }
 
@@ -106,7 +106,7 @@ public final class ArrayForTranslator extends ForTranslator {
     }
 
     @NotNull
-    private JsExpression getIncrExpression() {
+    private JsExpression getIncrementExpression() {
         return new JsPrefixOperation(JsUnaryOperator.INC, index.reference());
     }
 }

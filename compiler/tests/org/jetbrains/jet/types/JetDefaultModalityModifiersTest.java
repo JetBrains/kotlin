@@ -18,7 +18,9 @@ package org.jetbrains.jet.types;
 
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.di.InjectorForTests;
+import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,6 +43,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        super.createEnvironmentWithMockJdkAndIdeaAnnotations();
         tc.setUp();
     }
 
@@ -61,8 +64,10 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
             List<JetDeclaration> declarations = file.getDeclarations();
             JetDeclaration aClass = declarations.get(0);
             assert aClass instanceof JetClass;
-            BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFileWithCache(file, AnalyzerFacadeForJVM.SINGLE_DECLARATION_PROVIDER);
-            DeclarationDescriptor classDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
+            AnalyzeExhaust bindingContext = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file,
+                                                JetControlFlowDataTraceFactory.EMPTY,
+                                                myEnvironment.getCompilerDependencies());
+            DeclarationDescriptor classDescriptor = bindingContext.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, aClass);
             WritableScopeImpl scope = new WritableScopeImpl(libraryScope, root, RedeclarationHandler.DO_NOTHING);
             assert classDescriptor instanceof ClassifierDescriptor;
             scope.addClassifierDescriptor((ClassifierDescriptor) classDescriptor);

@@ -29,7 +29,11 @@ import java.util.List;
 public abstract class AbstractNamespaceDescriptorImpl extends DeclarationDescriptorImpl implements NamespaceDescriptor {
     private NamespaceType namespaceType;
 
-    public AbstractNamespaceDescriptorImpl(@NotNull NamespaceDescriptorParent containingDeclaration, List<AnnotationDescriptor> annotations, String name) {
+    public AbstractNamespaceDescriptorImpl(
+            @NotNull NamespaceDescriptorParent containingDeclaration,
+            List<AnnotationDescriptor> annotations,
+            @NotNull String name) {
+
         super(containingDeclaration, annotations, name);
 
         boolean rootAccordingToContainer = containingDeclaration instanceof ModuleDescriptor;

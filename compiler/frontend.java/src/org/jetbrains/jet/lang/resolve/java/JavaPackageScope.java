@@ -17,11 +17,11 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Sets;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiModifier;
 import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -36,37 +36,24 @@ import java.util.Collection;
  */
 public class JavaPackageScope extends JavaClassOrPackageScope {
 
-    private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.migration.PsiMigrationImpl");
-
     @NotNull
     private final FqName packageFQN;
 
-    private Collection<DeclarationDescriptor> allDescriptors;
-
     public JavaPackageScope(
             @NotNull FqName packageFQN,
-            @NotNull NamespaceDescriptor containingDescriptor,
-            @NotNull JavaSemanticServices semanticServices) {
-        super(containingDescriptor, semanticServices, getPiClass(packageFQN, semanticServices));
+            @NotNull JavaSemanticServices semanticServices,
+            @NotNull JavaDescriptorResolver.ResolverScopeData resolverNamespaceData) {
+        super(semanticServices, resolverNamespaceData);
         this.packageFQN = packageFQN;
-    }
 
-    private static PsiClass getPiClass(FqName packageFQN, JavaSemanticServices semanticServices) {
-        // TODO: move this check outside
-        // If this package is actually a Kotlin namespace, then we access it through a namespace descriptor, and
-        // Kotlin functions are already there
-        NamespaceDescriptor kotlinNamespaceDescriptor = semanticServices.getKotlinNamespaceDescriptor(packageFQN);
-        if (kotlinNamespaceDescriptor != null) {
-            return null;
-        } else {
-            // TODO: what is GlobalSearchScope
-            return semanticServices.getPsiClassFinder().findPsiClass(getQualifiedName(packageFQN, JvmAbi.PACKAGE_CLASS));
+        if (!resolverNamespaceData.staticMembers) {
+            throw new IllegalArgumentException("instance members should be resolved using " + JavaClassMembersScope.class);
         }
     }
 
     @Override
     public ClassifierDescriptor getClassifier(@NotNull String name) {
-        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(getQualifiedName(packageFQN, name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
+        ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver().resolveClass(packageFQN.child(name), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
         if (classDescriptor == null || DescriptorUtils.isObject(classDescriptor)) {
             // TODO: this is a big hack against several things that I barely understand myself and cannot explain
             // 1. We should not return objects from this method, and maybe JDR.resolveClass should not return too
@@ -84,71 +71,6 @@ public class JavaPackageScope extends JavaClassOrPackageScope {
 
     @Override
     public NamespaceDescriptor getNamespace(@NotNull String name) {
-        return semanticServices.getDescriptorResolver().resolveNamespace(getQualifiedName(packageFQN, name), DescriptorSearchRule.INCLUDE_KOTLIN);
-    }
-
-    @Override
-    protected boolean staticMembers() {
-        return true;
-    }
-
-    /**
-     * @see JavaClassMembersScope#getAllDescriptors()
-     */
-    @NotNull
-    @Override
-    public Collection<DeclarationDescriptor> getAllDescriptors() {
-        if (allDescriptors == null) {
-            allDescriptors = Sets.newHashSet();
-
-            if (psiClass != null) {
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveMethods(psiClass, descriptor));
-
-                allDescriptors.addAll(semanticServices.getDescriptorResolver().resolveFieldGroup(descriptor, psiClass, staticMembers()));
-            }
-
-            final PsiPackage javaPackage = semanticServices.getPsiClassFinder().findPsiPackage(packageFQN);
-
-            if (javaPackage != null) {
-                boolean isKotlinNamespace = semanticServices.getKotlinNamespaceDescriptor(new FqName(javaPackage.getQualifiedName())) != null;
-                final JavaDescriptorResolver descriptorResolver = semanticServices.getDescriptorResolver();
-
-                for (PsiPackage psiSubPackage : javaPackage.getSubPackages()) {
-                    NamespaceDescriptor childNs = descriptorResolver.resolveNamespace(new FqName(psiSubPackage.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                    if (childNs != null) {
-                        allDescriptors.add(childNs);
-                    }
-                }
-
-                for (PsiClass psiClass : javaPackage.getClasses()) {
-                    if (isKotlinNamespace && JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-                    
-                    if (psiClass instanceof JetJavaMirrorMarker) {
-                        continue;
-                    }
-
-                    // TODO: Temp hack for collection function descriptors from java
-                    if (JvmAbi.PACKAGE_CLASS.equals(psiClass.getName())) {
-                        continue;
-                    }
-
-                    if (psiClass.hasModifierProperty(PsiModifier.PUBLIC)) {
-                        ClassDescriptor classDescriptor = descriptorResolver.resolveClass(psiClass, DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
-                        if (classDescriptor != null) {
-                            allDescriptors.add(classDescriptor);
-                        }
-                    }
-                }
-            }
-        }
-
-        return allDescriptors;
-    }
-
-    @NotNull
-    private static FqName getQualifiedName(@NotNull FqName packageFQN, @NotNull String name) {
-        return packageFQN.child(name);
+        return semanticServices.getDescriptorResolver().resolveNamespace(packageFQN.child(name), DescriptorSearchRule.INCLUDE_KOTLIN);
     }
 }

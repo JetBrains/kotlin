@@ -42,6 +42,6 @@ public class JetConstructorAnnotation extends PsiAnnotationWrapper {
     }
     
     public static JetConstructorAnnotation get(PsiMethod constructor) {
-        return new JetConstructorAnnotation(constructor.getModifierList().findAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getFqName()));
+        return new JetConstructorAnnotation(constructor.getModifierList().findAnnotation(JvmStdlibNames.JET_CONSTRUCTOR.getFqName().getFqName()));
     }
 }

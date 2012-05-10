@@ -36,13 +36,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Alarm;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,7 +69,8 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
     public BytecodeToolwindow(Project project) {
         super(new BorderLayout());
         myProject = project;
-        myEditor = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
+        myEditor =
+            EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""), project, JavaFileType.INSTANCE, true);
         add(myEditor.getComponent());
         myUpdateAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, this);
         myUpdateAlarm.addRequest(new Runnable() {
@@ -92,7 +93,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
             setText(DEFAULT_TEXT);
         }
         else {
-            VirtualFile vFile = ((EditorEx) editor).getVirtualFile();
+            VirtualFile vFile = ((EditorEx)editor).getVirtualFile();
             if (vFile == null) {
                 setText(DEFAULT_TEXT);
                 return;
@@ -104,17 +105,21 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                 return;
             }
 
-            if (oldLocation == null || !Comparing.equal(oldLocation.editor, location.editor) || oldLocation.modificationStamp != location.modificationStamp) {
-                setText(generateToText((JetFile) psiFile));
+            if (oldLocation == null ||
+                !Comparing.equal(oldLocation.editor, location.editor) ||
+                oldLocation.modificationStamp != location.modificationStamp) {
+                setText(generateToText((JetFile)psiFile));
             }
 
             Document document = editor.getDocument();
             int startLine = document.getLineNumber(location.startOffset);
             int endLine = document.getLineNumber(location.endOffset);
-            if (endLine > startLine && location.endOffset > 0 && document.getCharsSequence().charAt(location.endOffset - 1) == '\n') endLine--;
+            if (endLine > startLine && location.endOffset > 0 && document.getCharsSequence().charAt(location.endOffset - 1) == '\n') {
+                endLine--;
+            }
 
             Document byteCodeDocument = myEditor.getDocument();
-            
+
             Pair<Integer, Integer> linesRange = mapLines(byteCodeDocument.getText(), startLine, endLine);
             int endSelectionLineIndex = Math.min(linesRange.second + 1, byteCodeDocument.getLineCount());
 
@@ -152,7 +157,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                 break;
             }
         }
-        
+
         for (String line : text.split("\n")) {
             line = line.trim();
 
@@ -163,7 +168,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
                     byteCodeStartLine = byteCodeLine;
                 }
 
-                if (byteCodeStartLine > 0&& ktLineNum > endLine) {
+                if (byteCodeStartLine > 0 && ktLineNum > endLine) {
                     byteCodeEndLine = byteCodeLine - 1;
                     break;
                 }
@@ -179,14 +184,12 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         }
 
 
-
         if (byteCodeStartLine == -1 || byteCodeEndLine == -1) {
             return new Pair<Integer, Integer>(0, 0);
         }
         else {
             return new Pair<Integer, Integer>(byteCodeStartLine, byteCodeEndLine);
         }
-
     }
 
     private void setText(final String text) {
@@ -199,16 +202,18 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
     }
 
     protected String generateToText(JetFile file) {
-        GenerationState state = new GenerationState(myProject, ClassBuilderFactories.TEXT);
+        GenerationState state;
         try {
-            BindingContext binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
+            AnalyzeExhaust binding = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile(file);
 //            AnalyzingUtils.throwExceptionOnErrors(binding);
-            state.compileCorrectFiles(binding, Collections.singletonList(file), CompilationErrorHandler.THROW_EXCEPTION, true);
+            if (binding.isError()) {
+                return printStackTraceToString(binding.getError());
+            }
+            state = new GenerationState(myProject, ClassBuilderFactories.TEXT, binding, Collections.singletonList(file));
+            state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (Exception e) {
-            StringWriter out = new StringWriter(1024);
-            e.printStackTrace(new PrintWriter(out));
-            return out.toString().replaceAll("\r", "");
+            return printStackTraceToString(e);
         }
 
 
@@ -223,6 +228,11 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         }
 
         return answer.toString();
+    }
+
+    private static String printStackTraceToString(Throwable e) {StringWriter out = new StringWriter(1024);
+        e.printStackTrace(new PrintWriter(out));
+        return out.toString().replace("\r", "");
     }
 
     @Override
@@ -268,7 +278,7 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
             if (this == o) return true;
             if (!(o instanceof Location)) return false;
 
-            Location location = (Location) o;
+            Location location = (Location)o;
 
             if (endOffset != location.endOffset) return false;
             if (modificationStamp != location.modificationStamp) return false;
@@ -281,10 +291,10 @@ public class BytecodeToolwindow extends JPanel implements Disposable {
         @Override
         public int hashCode() {
             int result = editor != null ? editor.hashCode() : 0;
-            result = 31 * result + (int) (modificationStamp ^ (modificationStamp >>> 32));
+            result = 31 * result + (int)(modificationStamp ^ (modificationStamp >>> 32));
             result = 31 * result + startOffset;
             result = 31 * result + endOffset;
             return result;
         }
-    }    
+    }
 }

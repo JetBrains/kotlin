@@ -18,19 +18,19 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.search.DelegatingGlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.alt.AltClassFinder;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 /**
@@ -38,30 +38,41 @@ import javax.inject.Inject;
  */
 public class PsiClassFinderForJvm implements PsiClassFinder {
 
+    @NotNull
     private Project project;
+    @NotNull
+    private CompilerDependencies compilerDependencies;
+
     private AltClassFinder altClassFinder;
     private GlobalSearchScope javaSearchScope;
-    private JavaPsiFacade javaFacade;
+    private JavaPsiFacadeKotlinHacks javaFacade;
 
     @Inject
-    public void setProject(Project project) {
+    public void setProject(@NotNull Project project) {
         this.project = project;
-        this.altClassFinder = new AltClassFinder(project);
+    }
+
+    @Inject
+    public void setCompilerDependencies(@NotNull CompilerDependencies compilerDependencies) {
+        this.compilerDependencies = compilerDependencies;
+    }
+
+    @PostConstruct
+    public void initialize() {
+        this.altClassFinder = new AltClassFinder(project, compilerDependencies.getJdkHeaderRoots());
         this.javaSearchScope = new DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
             @Override
             public boolean contains(VirtualFile file) {
                 return myBaseScope.contains(file) && file.getFileType() != JetFileType.INSTANCE;
             }
         };
-        this.javaFacade = JavaPsiFacade.getInstance(project);
+        this.javaFacade = new JavaPsiFacadeKotlinHacks(project);
     }
-
-
 
 
     @Override
     @Nullable
-    public PsiClass findPsiClass(@NotNull FqName qualifiedName) {
+    public PsiClass findPsiClass(@NotNull FqName qualifiedName, @NotNull RuntimeClassesHandleMode runtimeClassesHandleMode) {
         PsiClass original = javaFacade.findClass(qualifiedName.getFqName(), javaSearchScope);
         PsiClass altClass = altClassFinder.findClass(qualifiedName);
         PsiClass result = original;
@@ -76,7 +87,31 @@ public class PsiClassFinderForJvm implements PsiClassFinder {
         if (result != null) {
             FqName actualQualifiedName = new FqName(result.getQualifiedName());
             if (!actualQualifiedName.equals(qualifiedName)) {
-//                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
+                throw new IllegalStateException("requested " + qualifiedName + ", got " + actualQualifiedName);
+            }
+        }
+
+        if (result instanceof JetJavaMirrorMarker) {
+            throw new IllegalStateException("JetJavaMirrorMaker is not possible in resolve.java, resolving: " + qualifiedName);
+        }
+
+        if (result == null) {
+            return null;
+        }
+
+        PsiAnnotation assertInvisibleAnnotation = result.getModifierList().findAnnotation(
+                JvmStdlibNames.ASSERT_INVISIBLE_IN_RESOLVER.getFqName().getFqName());
+        if (assertInvisibleAnnotation != null) {
+            if (runtimeClassesHandleMode == RuntimeClassesHandleMode.IGNORE) {
+                return null;
+            }
+            else if (runtimeClassesHandleMode == RuntimeClassesHandleMode.THROW) {
+                throw new IllegalStateException(
+                        "classpath is configured incorrectly:" +
+                        " class " + qualifiedName + " from runtime must not be loaded by compiler");
+            }
+            else {
+                throw new IllegalStateException("unknown parameter value: " + runtimeClassesHandleMode);
             }
         }
 

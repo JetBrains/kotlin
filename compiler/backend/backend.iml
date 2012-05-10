@@ -12,6 +12,7 @@
     <orderEntry type="library" name="asm" level="project" />
     <orderEntry type="module" module-name="runtime" />
     <orderEntry type="library" scope="PROVIDED" name="intellij-core" level="project" />
+    <orderEntry type="library" name="javax.inject" level="project" />
   </component>
 </module>
 

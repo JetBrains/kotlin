@@ -28,7 +28,7 @@ import java.util.Set;
 /**
 * @author abreslav
 */
-public interface CallableDescriptor extends DeclarationDescriptor {
+public interface CallableDescriptor extends DeclarationDescriptorWithVisibility {
     @NotNull
     ReceiverDescriptor getReceiverParameter();
 

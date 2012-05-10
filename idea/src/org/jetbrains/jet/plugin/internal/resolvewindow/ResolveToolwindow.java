@@ -47,8 +47,8 @@ import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.compiler.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.plugin.internal.codewindow.BytecodeToolwindow;
+import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
@@ -122,7 +122,8 @@ public class ResolveToolwindow extends JPanel implements Disposable {
                     || oldLocation.getStartOffset() != startOffset
                     || oldLocation.getEndOffset() != endOffset) {
 
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile);
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) psiFile)
+                        .getBindingContext();
 
                 
                 PsiElement elementAtOffset;
@@ -191,9 +192,9 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         StringBuilder result = new StringBuilder();
         
         if (debugInfo != null) {
-            List<? extends ResolutionTask<? extends CallableDescriptor>> resolutionTasks = debugInfo.get(TASKS);
-            for (ResolutionTask<? extends CallableDescriptor> resolutionTask : resolutionTasks) {
-                for (ResolvedCallImpl<? extends CallableDescriptor> resolvedCall : resolutionTask.getCandidates()) {
+            List<? extends ResolutionTask<? extends CallableDescriptor, ?>> resolutionTasks = debugInfo.get(TASKS);
+            for (ResolutionTask<? extends CallableDescriptor, ?> resolutionTask : resolutionTasks) {
+                for (ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall : resolutionTask.getResolvedCalls()) {
                     renderResolutionLogForCall(debugInfo, resolvedCall, result);
                 }
             }
@@ -211,7 +212,7 @@ public class ResolveToolwindow extends JPanel implements Disposable {
         return result.toString();
     }
 
-    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallImpl<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
+    private void renderResolutionLogForCall(Data debugInfo, ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall, StringBuilder result) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {
