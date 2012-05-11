@@ -87,7 +87,7 @@ public class TuplesAndFunctionsGenerator {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        File baseDir = new File("compiler/frontend/src/std/");
+        File baseDir = new File("compiler/frontend/src/jet.src/");
         assert baseDir.exists() : "Base dir does not exist: " + baseDir.getAbsolutePath();
 
         PrintStream tuples = new PrintStream(new File(baseDir, "Tuples.jet"));
