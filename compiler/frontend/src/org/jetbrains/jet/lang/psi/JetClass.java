@@ -17,8 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +31,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,11 +46,10 @@ public class JetClass extends JetTypeParameterListOwner
     public JetClass(@NotNull ASTNode node) {
         super(node);
     }
-
     // TODO (stubs)
-//    public JetClass(final PsiJetClassStub stub) {
-//        this.stub = stub;
-//    }
+    //    public JetClass(final PsiJetClassStub stub) {
+    //        this.stub = stub;
+    //    }
 
     @Override
     public List<JetDeclaration> getDeclarations() {
@@ -162,5 +166,36 @@ public class JetClass extends JetTypeParameterListOwner
     @Override
     public void delete() throws IncorrectOperationException {
         JetPsiUtil.deleteClass(this);
+    }
+
+    @Override
+    public boolean isEquivalentTo(PsiElement another) {
+        if (super.isEquivalentTo(another)) {
+            return true;
+        }
+        if (another instanceof JetClass) {
+            String fq1 = getQualifiedName();
+            String fq2 = ((JetClass) another).getQualifiedName();
+            return fq1 != null && fq2 != null && fq1.equals(fq2);
+        }
+        return true;
+    }
+
+    @Nullable
+    private String getQualifiedName() {
+        List<String> parts = new ArrayList<String>();
+        JetClassOrObject current = this;
+        while (current != null) {
+            parts.add(current.getName());
+            current = PsiTreeUtil.getParentOfType(current, JetClassOrObject.class);
+        }
+        PsiFile file = getContainingFile();
+        if (!(file instanceof JetFile)) return null;
+        String fileQualifiedName = ((JetFile) file).getNamespaceHeader().getQualifiedName();
+        if (!fileQualifiedName.isEmpty()) {
+            parts.add(fileQualifiedName);
+        }
+        Collections.reverse(parts);
+        return StringUtil.join(parts, ".");
     }
 }

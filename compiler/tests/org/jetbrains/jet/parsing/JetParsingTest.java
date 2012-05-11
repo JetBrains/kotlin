@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class JetParsingTest extends ParsingTestCase {
     static {
@@ -88,6 +89,7 @@ public class JetParsingTest extends ParsingTestCase {
             String methodName = method.getName();
             if (!methodName.startsWith("get") && !methodName.startsWith("find") || methodName.equals("getReference") ||
                 methodName.equals("getReferences") || methodName.equals("getUseScope")) continue;
+            if (!Modifier.isPublic(method.getModifiers())) continue;
             if (method.getParameterTypes().length > 0) continue;
             Class<?> declaringClass = method.getDeclaringClass();
             if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
