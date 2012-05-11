@@ -222,6 +222,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             status = ERROR;
         }
 
+        assert (candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists()) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
+
         return status;
     }
 
