@@ -105,6 +105,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (isInterface) {
             access |= ACC_INTERFACE; // ACC_SUPER
         }
+        else {
+            access |= ACC_SUPER;
+        }
         if (isFinal) {
             access |= ACC_FINAL;
         }
