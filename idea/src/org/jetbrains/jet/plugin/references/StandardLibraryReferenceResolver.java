@@ -19,8 +19,8 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,19 +95,10 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     }
 
     private List<JetFile> getJetFiles(String dir) {
-        String url = StandardLibraryReferenceResolver.class.getResource("/" + dir + "/").toString();
-        if (url.startsWith("jar:file:")) {
-            url = url.replace("jar:file:", "jar:/");
-        }
-        else if (url.startsWith("file:/")) {
-            url = url.replace("file:/", "file://");
-        }
-        else {
-            assert false;
-        }
-
-        VirtualFile vf = VirtualFileManager.getInstance().findFileByUrl(url);
+        URL url = StandardLibraryReferenceResolver.class.getResource("/" + dir + "/");
+        VirtualFile vf = VfsUtil.findFileByURL(url);
         assert vf != null;
+
         PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(vf);
         assert psiDirectory != null;
         return ContainerUtil.mapNotNull(psiDirectory.getFiles(), new Function<PsiFile, JetFile>() {
