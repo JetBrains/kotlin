@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author abreslav
@@ -39,7 +37,6 @@ public class TopDownAnalysisContext {
 
     private final Map<JetClass, MutableClassDescriptor> classes = Maps.newLinkedHashMap();
     private final Map<JetObjectDeclaration, MutableClassDescriptor> objects = Maps.newLinkedHashMap();
-    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
     private JetScope rootScope;
     protected final Map<JetFile, NamespaceDescriptorImpl> namespaceDescriptors = Maps.newHashMap();
 
@@ -49,6 +46,13 @@ public class TopDownAnalysisContext {
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private Map<JetDeclaration, CallableMemberDescriptor> members = null;
+
+    // File scopes - package scope extended with imports
+    protected final Map<JetFile, WritableScope> namespaceScopes = Maps.newHashMap();
+
+    public final Map<JetDeclarationContainer, WithDeferredResolve> forDeferredResolver = Maps.newHashMap();
+
+    public final Map<JetDeclarationContainer, JetScope> normalScope = Maps.newHashMap();
 
     private StringBuilder debugOutput;
 
@@ -68,7 +72,7 @@ public class TopDownAnalysisContext {
             debugOutput.append(message).append("\n");
         }
     }
-    
+
     /*package*/ void enableDebugOutput() {
         if (debugOutput == null) {
             debugOutput = new StringBuilder();

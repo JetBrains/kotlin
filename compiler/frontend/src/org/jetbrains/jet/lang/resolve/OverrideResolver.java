@@ -138,10 +138,10 @@ public class OverrideResolver {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
                             if (fakeOverride instanceof PropertyDescriptor) {
-                                classDescriptor.addPropertyDescriptor((PropertyDescriptor) fakeOverride);
+                                classDescriptor.getBuilder().addPropertyDescriptor((PropertyDescriptor) fakeOverride);
                             }
                             else if (fakeOverride instanceof SimpleFunctionDescriptor) {
-                                classDescriptor.addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
+                                classDescriptor.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
                             }
                             else {
                                 throw new IllegalStateException(fakeOverride.getClass().getName());

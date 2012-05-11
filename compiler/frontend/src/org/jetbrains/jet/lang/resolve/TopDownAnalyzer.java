@@ -199,7 +199,7 @@ public class TopDownAnalyzer {
         }
 //        context.getDeclaringScopes().put(file, outerScope);
 
-        doProcess(outerScope, standardLibraryNamespace, toAnalyze);
+        doProcess(outerScope, standardLibraryNamespace.getBuilder(), toAnalyze);
     }
 
     public static void processObject(
@@ -207,8 +207,8 @@ public class TopDownAnalyzer {
             @NotNull final BindingTrace trace,
             @NotNull JetScope outerScope,
             @NotNull final DeclarationDescriptor containingDeclaration,
-            @NotNull JetObjectDeclaration object) {
-
+            @NotNull JetObjectDeclaration object
+    ) {
         ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for object>");
 
         TopDownAnalysisParameters topDownAnalysisParameters =

@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.AbstractNamespaceDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -49,6 +48,8 @@ public class JavaNamespaceDescriptor extends AbstractNamespaceDescriptorImpl {
         return memberScope;
     }
 
+    @NotNull
+    @Override
     public FqName getQualifiedName() {
         return qualifiedName;
     }
