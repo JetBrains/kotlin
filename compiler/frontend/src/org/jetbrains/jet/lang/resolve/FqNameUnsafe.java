@@ -196,7 +196,7 @@ public class FqNameUnsafe {
         FqNameUnsafe last = new FqNameUnsafe(firstSegment, FqName.ROOT.toUnsafe(), firstSegment);
         callback.segment(firstSegment, last);
 
-        for (;;) {
+        while (true) {
             int next = fqName.indexOf('.', pos + 1);
             if (next < 0) {
                 if (this.parent == null) {

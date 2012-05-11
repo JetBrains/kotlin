@@ -33,7 +33,7 @@ public class LockPerf {
             for (int i = 0; i < threadNum; ++i) {
                 new Thread(new Runnable() {
                     public void run() {
-                        for (;;) {
+                        while (true) {
                             lock.lock();
                             try {
                                 if (counter.get() == 100000000) {
