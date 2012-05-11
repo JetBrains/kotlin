@@ -27,6 +27,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
+import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -60,10 +61,12 @@ public class PluginJetFilesProvider extends JetFilesProvider {
                 ModuleUtil.getDependencies(rootModule, allModules);
 
                 for (Module module : allModules) {
-                    ModuleRootManager.getInstance(module).getFileIndex().iterateContent(new ContentIterator() {
+                    final ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
+                    index.iterateContent(new ContentIterator() {
                         @Override
                         public boolean processFile(VirtualFile file) {
                             if (file.isDirectory()) return true;
+                            if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
 
                             final FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
                             if (fileType != JetFileType.INSTANCE) return true;
