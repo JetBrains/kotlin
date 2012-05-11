@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
     }
 
 
