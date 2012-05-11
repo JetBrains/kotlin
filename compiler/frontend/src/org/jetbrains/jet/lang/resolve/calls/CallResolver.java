@@ -328,11 +328,7 @@ public class CallResolver {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            Collection<ResolutionCandidate<D>> newCandidates = Lists.newArrayList();
-            for (ResolutionCandidate<D> candidate : task.getCandidates()) {
-                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor(), candidate.isSafeCall())); //todo check receivers are not necessary
-            }
-            ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(newCandidates, task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
+            ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(task.getCandidates(), task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
                             @NotNull
                             @Override
                             public List<JetExpression> getFunctionLiteralArguments() {
