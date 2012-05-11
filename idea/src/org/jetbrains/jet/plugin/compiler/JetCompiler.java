@@ -62,7 +62,7 @@ public class JetCompiler implements TranslatingCompiler {
             return false;
         }
         Project project = compileContext.getProject();
-        if (project == null || JsModuleDetector.isJsProject(project)) {
+        if (project != null && JsModuleDetector.isJsProject(project)) {
             return false;
         }
         return true;
