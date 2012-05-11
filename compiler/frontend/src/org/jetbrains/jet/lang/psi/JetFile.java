@@ -33,11 +33,12 @@ import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.util.List;
 
-public class JetFile extends PsiFileBase {
+public class JetFile extends PsiFileBase implements JetDeclarationContainer {
     public JetFile(FileViewProvider viewProvider) {
         super(viewProvider, JetLanguage.INSTANCE);
     }
 
+    @Override
     @NotNull
     public FileType getFileType() {
         return JetFileType.INSTANCE;
@@ -48,6 +49,8 @@ public class JetFile extends PsiFileBase {
         return "JetFile: " + getName();
     }
 
+    @NotNull
+    @Override
     public List<JetDeclaration> getDeclarations() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
