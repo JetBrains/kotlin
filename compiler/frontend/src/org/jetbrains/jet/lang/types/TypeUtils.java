@@ -193,12 +193,8 @@ public class TypeUtils {
 
 
         List<AnnotationDescriptor> noAnnotations = Collections.<AnnotationDescriptor>emptyList();
-        TypeConstructor constructor = new TypeConstructorImpl(
-                null,
+        TypeConstructor constructor = new IntersectionTypeConstructor(
                 noAnnotations,
-                false,
-                makeDebugNameForIntersectionType(resultingTypes).toString(),
-                Collections.<TypeParameterDescriptor>emptyList(),
                 resultingTypes);
 
         JetScope[] scopes = new JetScope[resultingTypes.size()];
@@ -267,20 +263,6 @@ public class TypeUtils {
                 processAllTypeParameters(projection.getType(), projection.getProjectionKind(), result);
             }
         }
-    }
-
-    private static StringBuilder makeDebugNameForIntersectionType(Iterable<JetType> resultingTypes) {
-        StringBuilder debugName = new StringBuilder("{");
-        for (Iterator<JetType> iterator = resultingTypes.iterator(); iterator.hasNext(); ) {
-            JetType type = iterator.next();
-
-            debugName.append(type.toString());
-            if (iterator.hasNext()) {
-                debugName.append(" & ");
-            }
-        }
-        debugName.append("}");
-        return debugName;
     }
 
     public static boolean canHaveSubtypes(JetTypeChecker typeChecker, JetType type) {
