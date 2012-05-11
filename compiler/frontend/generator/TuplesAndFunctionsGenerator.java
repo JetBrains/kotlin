@@ -65,7 +65,7 @@ public class TuplesAndFunctionsGenerator {
                 out.print(", ");
             }
             out.print("out R> {\n");
-            out.print("  fun " + (extension ? "T." : "") +
+            out.print("  public fun " + (extension ? "T." : "") +
                       "invoke(");
             for (int j = 1; j <= i; j++) {
                 out.print("p" + j + ": " + "P" + j);
