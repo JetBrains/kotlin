@@ -45,7 +45,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
 
     @Override
     public PsiJetClassStub createStub(LighterAST tree, LighterASTNode node, StubElement parentStub) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
