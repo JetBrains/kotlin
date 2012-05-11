@@ -236,11 +236,11 @@ public class JetStandardClasses {
 
     private static List<TypeParameterDescriptor> createTypeParameters(int parameterCount, ClassDescriptorImpl function) {
         List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>();
-        for (int j = 0; j < parameterCount; j++) {
+        for (int j = 1; j <= parameterCount; j++) {
             parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                     function,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    true, Variance.IN_VARIANCE, "P" + j, j + 1));
+                    true, Variance.IN_VARIANCE, "P" + j, j));
         }
         parameters.add(TypeParameterDescriptor.createWithDefaultBound(
                 function,
@@ -462,14 +462,13 @@ public class JetStandardClasses {
     @NotNull
     public static List<ValueParameterDescriptor> getValueParameters(@NotNull FunctionDescriptor functionDescriptor, @NotNull JetType type) {
         assert isFunctionType(type);
-        int receiverOffset = getReceiverType(type) != null ? 1 : 0;
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
         List<TypeProjection> parameterTypes = getParameterTypeProjectionsFromFunctionType(type);
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                     functionDescriptor, i, Collections.<AnnotationDescriptor>emptyList(),
-                    "p" + (i + receiverOffset), false, parameterType.getType(), false, null);
+                    "p" + (i + 1), false, parameterType.getType(), false, null);
             valueParameters.add(valueParameterDescriptor);
         }
         return valueParameters;

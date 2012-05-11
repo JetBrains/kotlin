@@ -5,5 +5,5 @@ class <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>A<!> : (Int) -> Int {
 }
 
 class B : Function1<Int, Int> {
-    override fun invoke(p0 : Int) = p0
+    override fun invoke(p1 : Int) = p1
 }
