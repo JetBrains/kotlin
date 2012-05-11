@@ -134,7 +134,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             }
             String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member))) {
+                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace("jet.Tuple0", "Unit"))) {
                     return member;
                 }
             }
