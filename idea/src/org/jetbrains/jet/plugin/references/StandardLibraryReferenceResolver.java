@@ -146,12 +146,18 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         ensureInitialized();
         DeclarationDescriptor declarationDescriptor = BindingContextUtils.referenceToDescriptor(originalContext, referenceExpression);
 
-        if (declarationDescriptor != null) {
-            declarationDescriptor = declarationDescriptor.getOriginal();
-            declarationDescriptor = findCurrentDescriptor(declarationDescriptor);
-            if (declarationDescriptor != null) {
-                return BindingContextUtils.descriptorToDeclaration(bindingContext, declarationDescriptor);
-            }
+        return declarationDescriptor != null ? resolveStandardLibrarySymbol(declarationDescriptor) : null;
+    }
+
+    @Nullable
+    public PsiElement resolveStandardLibrarySymbol(@NotNull DeclarationDescriptor declarationDescriptor) {
+        ensureInitialized();
+        DeclarationDescriptor descriptor = declarationDescriptor;
+
+        descriptor = descriptor.getOriginal();
+        descriptor = findCurrentDescriptor(descriptor);
+        if (descriptor != null) {
+            return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         }
         return null;
     }
