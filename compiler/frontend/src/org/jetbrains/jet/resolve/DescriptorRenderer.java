@@ -80,7 +80,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     private final DeclarationDescriptorVisitor<Void, StringBuilder> subVisitor = new RenderDeclarationDescriptorVisitor() {
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
-            renderTypeParameter(descriptor, builder);
+            renderTypeParameter(descriptor, builder, false);
             return null;
         }
 
@@ -388,6 +388,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             renderName(descriptor, builder);
             renderValueParameters(descriptor, builder);
             builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
+            renderWhereSuffix(descriptor, builder);
             return null;
         }
 
@@ -401,6 +402,28 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 }
             }
             builder.append(")");
+        }
+
+        private void renderWhereSuffix(@NotNull CallableMemberDescriptor callable, @NotNull StringBuilder builder) {
+            boolean first = true;
+            for (TypeParameterDescriptor typeParameter : callable.getTypeParameters()) {
+                if (typeParameter.getUpperBounds().size() > 1) {
+                    for (JetType upperBound : typeParameter.getUpperBounds()) {
+                        if (first) {
+                            builder.append(" ");
+                            builder.append(renderKeyword("where"));
+                            builder.append(" ");
+                        }
+                        else {
+                            builder.append(", ");
+                        }
+                        builder.append(typeParameter.getName());
+                        builder.append(" : ");
+                        builder.append(escape(renderType(upperBound)));
+                        first = false;
+                    }
+                }
+            }
         }
 
         @Override
@@ -434,7 +457,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         @Override
         public Void visitTypeParameterDescriptor(TypeParameterDescriptor descriptor, StringBuilder builder) {
             builder.append(lt());
-            renderTypeParameter(descriptor, builder);
+            renderTypeParameter(descriptor, builder, true);
             builder.append(">");
             return null;
         }
@@ -513,7 +536,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             stringBuilder.append(escape(descriptor.getName()));
         }
 
-        protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder) {
+        protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {
             if (descriptor.isReified()) {
                 String variance = descriptor.getVariance().toString();
                 if (!variance.isEmpty()) {
@@ -524,14 +547,30 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                 builder.append(renderKeyword("erased")).append(" ");
             }
             renderName(descriptor, builder);
-            if (!descriptor.getUpperBounds().isEmpty()) {
-                JetType bound = descriptor.getUpperBounds().iterator().next();
-                if (bound != JetStandardClasses.getDefaultBound()) {
-                    builder.append(" : ").append(renderType(bound));
-                    if (descriptor.getUpperBounds().size() > 1) {
-                        builder.append(" (...)");
-                    }
+            if (descriptor.getUpperBounds().size() == 1) {
+                JetType upperBound = descriptor.getUpperBounds().iterator().next();
+                if (upperBound != JetStandardClasses.getDefaultBound()) {
+                    builder.append(" : ").append(renderType(upperBound));
                 }
+            }
+            else if (topLevel) {
+                boolean first = true;
+                for (JetType upperBound : descriptor.getUpperBounds()) {
+                    if (upperBound.equals(JetStandardClasses.getDefaultBound())) {
+                        continue;
+                    }
+                    if (first) {
+                        builder.append(" : ");
+                    }
+                    else {
+                        builder.append(" & ");
+                    }
+                    builder.append(renderType(upperBound));
+                    first = false;
+                }
+            }
+            else {
+                // rendered with "where"
             }
         }
     }
