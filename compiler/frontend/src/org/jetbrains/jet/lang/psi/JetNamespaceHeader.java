@@ -81,5 +81,16 @@ public class JetNamespaceHeader extends JetReferenceExpression {
     public boolean isRoot() {
         return getName().length() == 0;
     }
+
+    public String getQualifiedName() {
+        StringBuilder builder = new StringBuilder();
+        for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
+            if (builder.length() > 0) {
+                builder.append(".");
+            }
+            builder.append(e.getName());
+        }
+        return builder.toString();
+    }
 }
 
