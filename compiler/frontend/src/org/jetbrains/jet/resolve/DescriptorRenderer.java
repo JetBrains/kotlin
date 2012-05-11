@@ -306,7 +306,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     type);
             renderName(descriptor, builder);
             builder.append(" : ").append(escape(typeString));
-            return super.visitVariableDescriptor(descriptor, builder);
+            return null;
         }
 
         private String renderPropertyPrefixAndComputeTypeString(
@@ -388,7 +388,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             renderName(descriptor, builder);
             renderValueParameters(descriptor, builder);
             builder.append(" : ").append(escape(renderType(descriptor.getReturnType())));
-            return super.visitFunctionDescriptor(descriptor, builder);
+            return null;
         }
 
         private void renderValueParameters(FunctionDescriptor descriptor, StringBuilder builder) {
@@ -436,14 +436,14 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             builder.append(lt());
             renderTypeParameter(descriptor, builder);
             builder.append(">");
-            return super.visitTypeParameterDescriptor(descriptor, builder);
+            return null;
         }
 
         @Override
         public Void visitNamespaceDescriptor(NamespaceDescriptor namespaceDescriptor, StringBuilder builder) {
             builder.append(renderKeyword(JetTokens.PACKAGE_KEYWORD.getValue())).append(" ");
             renderName(namespaceDescriptor, builder);
-            return super.visitNamespaceDescriptor(namespaceDescriptor, builder);
+            return null;
         }
 
         @Override
@@ -466,7 +466,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
                     keyword = "class";
             }
             renderClassDescriptor(descriptor, builder, keyword);
-            return super.visitClassDescriptor(descriptor, builder);
+            return null;
         }
 
         private boolean isClassObjectDescriptor(ClassDescriptor descriptor) {
