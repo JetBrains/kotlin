@@ -54,6 +54,6 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
 
     @Override
     public PsiClass[] getClasses() {
-        return new PsiClass[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new PsiClass[0];
     }
 }

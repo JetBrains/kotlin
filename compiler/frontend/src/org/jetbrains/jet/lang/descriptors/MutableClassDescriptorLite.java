@@ -69,12 +69,12 @@ public class MutableClassDescriptorLite extends MutableDeclarationDescriptor
 
     @Override
     public void forceResolve() {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public boolean isAlreadyResolved() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     private static boolean isStatic(DeclarationDescriptor declarationDescriptor) {

@@ -49,12 +49,12 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
     @Override
     public PsiJetFunctionStub createStub(LighterAST tree, LighterASTNode node, StubElement parentStub) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public JetNamedFunction createPsi(@NotNull PsiJetFunctionStub stub) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
