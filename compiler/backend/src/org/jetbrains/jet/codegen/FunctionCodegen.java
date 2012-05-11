@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmStdlibNames;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.objectweb.asm.Label;
@@ -331,18 +332,18 @@ public class FunctionCodegen {
 
             int flags = ACC_PUBLIC | ACC_SYNTHETIC; // TODO.
 
-            String ownerInternalName;
+            JvmClassName ownerInternalName;
             if (contextClass instanceof NamespaceDescriptor) {
-                ownerInternalName = NamespaceCodegen.getJVMClassName(DescriptorUtils.getFQName(contextClass).toSafe(), true);
+                ownerInternalName = NamespaceCodegen.getJVMClassNameForKotlinNs(DescriptorUtils.getFQName(contextClass).toSafe());
             }
             else {
-                ownerInternalName = state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), MapTypeMode.IMPL).getInternalName();
+                ownerInternalName = JvmClassName.byType(state.getInjector().getJetTypeMapper().mapType(((ClassDescriptor) contextClass).getDefaultType(), MapTypeMode.IMPL));
             }
 
             String descriptor = jvmSignature.getDescriptor().replace(")","I)");
             boolean isConstructor = "<init>".equals(jvmSignature.getName());
             if(!isStatic && !isConstructor)
-                descriptor = descriptor.replace("(","(L" + ownerInternalName + ";");
+                descriptor = descriptor.replace("(", "(" + ownerInternalName.getDescriptor());
             final MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC), isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor, null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
             if (state.getClassBuilderMode() == ClassBuilderMode.STUBS) {
@@ -425,17 +426,17 @@ public class FunctionCodegen {
 
                 if(!isStatic) {
                     if(kind == OwnerKind.TRAIT_IMPL) {
-                        iv.invokeinterface(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                        iv.invokeinterface(ownerInternalName.getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
                     }
                     else {
                         if(!isConstructor)
-                            iv.invokevirtual(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                            iv.invokevirtual(ownerInternalName.getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
                         else
-                            iv.invokespecial(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                            iv.invokespecial(ownerInternalName.getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
                     }
                 }
                 else {
-                    iv.invokestatic(ownerInternalName, jvmSignature.getName(), jvmSignature.getDescriptor());
+                    iv.invokestatic(ownerInternalName.getInternalName(), jvmSignature.getName(), jvmSignature.getDescriptor());
                 }
 
                 iv.areturn(jvmSignature.getReturnType());

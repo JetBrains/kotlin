@@ -38,13 +38,13 @@ import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.junit.Assert;
 
+import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -304,4 +304,21 @@ public class JetTestUtils {
         result.delete(result.length() - 1, result.length());
         return result.toString();
     }
+
+    public static void compileJavaFile(@NotNull File file, @NotNull File outputDirectory) throws IOException {
+        JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, Locale.ENGLISH, Charset.forName("utf-8"));
+        try {
+            Iterable<? extends JavaFileObject> javaFileObjectsFromFiles = fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
+            List<String> options = Arrays.asList(
+                    "-d", outputDirectory.getPath()
+            );
+            JavaCompiler.CompilationTask task = javaCompiler.getTask(null, fileManager, null, options, null, javaFileObjectsFromFiles);
+
+            Assert.assertTrue(task.call());
+        } finally {
+            fileManager.close();
+        }
+    }
+
 }
