@@ -416,7 +416,7 @@ public class CallResolver {
                 checkTypesWithNoCallee(context.toBasic());
                 return;
             }
-            checkUnknownArgumentTypes(context.toBasic(), unmappedArguments);
+            checkUnmappedArgumentTypes(context.toBasic(), unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
@@ -612,8 +612,8 @@ public class CallResolver {
         }
     }
 
-    private void checkUnknownArgumentTypes(BasicResolutionContext context, Set<ValueArgument> unknownArguments) {
-        for (ValueArgument valueArgument : unknownArguments) {
+    private void checkUnmappedArgumentTypes(BasicResolutionContext context, Set<ValueArgument> unmappedArguments) {
+        for (ValueArgument valueArgument : unmappedArguments) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
                 expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.trace);
