@@ -29,6 +29,26 @@ error:
 sink:
     <SINK>               NEXT:[]                     PREV:[<END>]
 =====================
+== O ==
+object O {
+    val x : Int
+    {
+        $x = 1
+    }
+}
+---------------------
+l0:
+    <START>           NEXT:[v(val x : Int)]    PREV:[]
+    v(val x : Int)    NEXT:[r(1)]              PREV:[<START>]
+    r(1)              NEXT:[w($x)]             PREV:[v(val x : Int)]
+    w($x)             NEXT:[<END>]             PREV:[r(1)]
+l1:
+    <END>             NEXT:[<SINK>]            PREV:[w($x)]
+error:
+    <ERROR>           NEXT:[]                  PREV:[]
+sink:
+    <SINK>            NEXT:[]                  PREV:[<END>]
+=====================
 == null ==
 object {
         val x : Int
@@ -43,26 +63,6 @@ object {
             doSmth(b)
         }
     }
----------------------
-l0:
-    <START>           NEXT:[v(val x : Int)]    PREV:[]
-    v(val x : Int)    NEXT:[r(1)]              PREV:[<START>]
-    r(1)              NEXT:[w($x)]             PREV:[v(val x : Int)]
-    w($x)             NEXT:[<END>]             PREV:[r(1)]
-l1:
-    <END>             NEXT:[<SINK>]            PREV:[w($x)]
-error:
-    <ERROR>           NEXT:[]                  PREV:[]
-sink:
-    <SINK>            NEXT:[]                  PREV:[<END>]
-=====================
-== O ==
-object O {
-    val x : Int
-    {
-        $x = 1
-    }
-}
 ---------------------
 l0:
     <START>           NEXT:[v(val x : Int)]    PREV:[]
