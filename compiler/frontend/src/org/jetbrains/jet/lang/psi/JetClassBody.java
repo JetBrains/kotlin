@@ -30,11 +30,13 @@ import java.util.List;
 /**
  * @author max
  */
-public class JetClassBody extends JetElement {
+public class JetClassBody extends JetElement implements JetDeclarationContainer {
     public JetClassBody(@NotNull ASTNode node) {
         super(node);
     }
 
+    @Override
+    @NotNull
     public List<JetDeclaration> getDeclarations() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
