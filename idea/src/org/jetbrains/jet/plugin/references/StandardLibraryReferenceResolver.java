@@ -48,6 +48,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
     private BindingContext bindingContext = null;
 
+    private final Object lock = new Object();
+
     public StandardLibraryReferenceResolver(Project project) {
         super(project);
     }
@@ -62,36 +64,38 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         });
     }
 
-    private synchronized void ensureInitialized() {
-        if (bindingContext != null) {
-            return;
+    private void ensureInitialized() {
+        synchronized (lock) {
+            if (bindingContext != null) {
+                return;
+            }
+
+            BindingTraceContext context = new BindingTraceContext();
+            NamespaceDescriptorImpl fakeRootNamespace = new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"),
+                                                                                    Collections.<AnnotationDescriptor>emptyList(), "<root>");
+            NamespaceDescriptorImpl jetNamespace = new NamespaceDescriptorImpl(fakeRootNamespace,
+                                                                               Collections.<AnnotationDescriptor>emptyList(), "jet");
+            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, new FqName("jet"), jetNamespace);
+
+            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION)
+                    .setDebugName("Builtin classes scope");
+            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            jetNamespace.initialize(scope);
+
+            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet.src"));
+
+            ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, new FqName("jet.Tuple0"));
+            assert tuple0 != null;
+            scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Builtin classes scope #2");
+            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+            scope.addClassifierAlias("Unit", tuple0);
+            jetNamespace.initialize(scope);
+
+            TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
+            AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
+
+            bindingContext = context.getBindingContext();
         }
-
-        BindingTraceContext context = new BindingTraceContext();
-        NamespaceDescriptorImpl fakeRootNamespace = new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"),
-                                                                                Collections.<AnnotationDescriptor>emptyList(), "<root>");
-        NamespaceDescriptorImpl jetNamespace = new NamespaceDescriptorImpl(fakeRootNamespace,
-                                                                           Collections.<AnnotationDescriptor>emptyList(), "jet");
-        context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, new FqName("jet"), jetNamespace);
-
-        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION)
-                .setDebugName("Builtin classes scope");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        jetNamespace.initialize(scope);
-
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet.src"));
-
-        ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, new FqName("jet.Tuple0"));
-        assert tuple0 != null;
-        scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Builtin classes scope #2");
-        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        scope.addClassifierAlias("Unit", tuple0);
-        jetNamespace.initialize(scope);
-
-        TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
-        AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
-
-        bindingContext = context.getBindingContext();
     }
 
     private List<JetFile> getJetFiles(String dir) {
