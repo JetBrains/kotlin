@@ -73,7 +73,7 @@ public class DiagnosticUtils {
     public static String atLocation(PsiFile file, TextRange textRange, Document document) {
         int offset = textRange.getStartOffset();
         VirtualFile virtualFile = file.getVirtualFile();
-        String pathSuffix = virtualFile == null ? "" : " in " + virtualFile.getPath();
+        String pathSuffix = " in " + (virtualFile == null ? file.getName() : virtualFile.getPath());
         return offsetToLineAndColumn(document, offset).toString() + pathSuffix;
     }
 
