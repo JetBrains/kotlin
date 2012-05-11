@@ -71,16 +71,13 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             }
 
             BindingTraceContext context = new BindingTraceContext();
-            NamespaceDescriptorImpl fakeRootNamespace = new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"),
-                                                                                    Collections.<AnnotationDescriptor>emptyList(), "<root>");
-            NamespaceDescriptorImpl jetNamespace = new NamespaceDescriptorImpl(fakeRootNamespace,
-                                                                               Collections.<AnnotationDescriptor>emptyList(), "jet");
+            FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
             context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, new FqName("jet"), jetNamespace);
 
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION)
                     .setDebugName("Builtin classes scope");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            jetNamespace.initialize(scope);
+            jetNamespace.setMemberScope(scope);
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet.src"));
 
@@ -89,7 +86,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Builtin classes scope #2");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
             scope.addClassifierAlias("Unit", tuple0);
-            jetNamespace.initialize(scope);
+            jetNamespace.setMemberScope(scope);
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
             AnalyzingUtils.throwExceptionOnErrors(context.getBindingContext());
@@ -164,5 +161,25 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             return BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         }
         return null;
+    }
+
+    private static class FakeJetNamespaceDescriptor extends NamespaceDescriptorImpl {
+        private WritableScope memberScope;
+
+        private FakeJetNamespaceDescriptor() {
+            super(new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"),
+                                              Collections.<AnnotationDescriptor>emptyList(),
+                                              "<root>"), Collections.<AnnotationDescriptor>emptyList(), "jet");
+        }
+
+        void setMemberScope(WritableScope memberScope) {
+            this.memberScope = memberScope;
+        }
+
+        @NotNull
+        @Override
+        public WritableScope getMemberScope() {
+            return memberScope;
+        }
     }
 }
