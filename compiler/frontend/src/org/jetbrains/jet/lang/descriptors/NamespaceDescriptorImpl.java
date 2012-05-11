@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
 import java.util.List;
@@ -25,7 +28,7 @@ import java.util.List;
 /**
  * @author abreslav
  */
-public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl implements NamespaceLikeBuilder {
+public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl implements WithDeferredResolve {
 
     private WritableScope memberScope;
 
@@ -36,13 +39,11 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
     }
 
     public void initialize(@NotNull WritableScope memberScope) {
-        this.memberScope = memberScope;
-    }
+        if (this.memberScope != null) {
+            throw new IllegalStateException("Namespace member scope reinitialize");
+        }
 
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOwnerForChildren() {
-        return this;
+        this.memberScope = memberScope;
     }
 
     @Override
@@ -51,37 +52,64 @@ public class NamespaceDescriptorImpl extends AbstractNamespaceDescriptorImpl imp
         return memberScope;
     }
 
-    public NamespaceDescriptorImpl getNamespace(String name) {
-        return (NamespaceDescriptorImpl) memberScope.getDeclaredNamespace(name);
-    }
-
     @Override
     public void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor) {
-        memberScope.addNamespace(namespaceDescriptor);
+        getMemberScope().addNamespace(namespaceDescriptor);
+    }
+
+    @NotNull
+    @Override
+    public FqName getQualifiedName() {
+        return DescriptorUtils.getFQName(this).toSafe();
+    }
+
+    private NamespaceLikeBuilder builder = null;
+    public NamespaceLikeBuilder getBuilder() {
+        if (builder == null) {
+            builder = new NamespaceLikeBuilder() {
+                @Override
+                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                    getMemberScope().addClassifierDescriptor(classDescriptor);
+                }
+
+                @Override
+                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
+                    getMemberScope().addObjectDescriptor(objectDescriptor);
+                }
+
+                @Override
+                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                    getMemberScope().addFunctionDescriptor(functionDescriptor);
+                }
+
+                @Override
+                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                    getMemberScope().addPropertyDescriptor(propertyDescriptor);
+                }
+
+                @NotNull
+                @Override
+                public DeclarationDescriptor getOwnerForChildren() {
+                    return NamespaceDescriptorImpl.this;
+                }
+
+                @Override
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                    throw new IllegalStateException("Must be guaranteed not to happen by the parser");
+                }
+            };
+        }
+
+        return builder;
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-        memberScope.addClassifierDescriptor(classDescriptor);
+    public void forceResolve() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
-        memberScope.addObjectDescriptor(objectDescriptor);
-    }
-
-    @Override
-    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        memberScope.addFunctionDescriptor(functionDescriptor);
-    }
-
-    @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        memberScope.addPropertyDescriptor(propertyDescriptor);
-    }
-
-    @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-        throw new IllegalStateException("Must be guaranteed not to happen by the parser");
+    public boolean isAlreadyResolved() {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -46,8 +46,8 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     private final WritableScope scopeForSupertypeResolution;
     private WritableScope scopeForInitializers = null; //contains members + primary constructor value parameters + map for backing fields
 
-    public MutableClassDescriptor(@NotNull BindingTrace trace, @NotNull DeclarationDescriptor containingDeclaration,
-                                  @NotNull JetScope outerScope, ClassKind kind) {
+    public MutableClassDescriptor(@NotNull DeclarationDescriptor containingDeclaration,
+                                  @NotNull JetScope outerScope, ClassKind kind, String name) {
         super(containingDeclaration, kind);
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
@@ -64,37 +64,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         if (getKind() == ClassKind.TRAIT) {
             setUpScopeForInitializers(this);
         }
+
+        setName(name);
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull final MutableClassDescriptorLite classObjectDescriptor) {
-        ClassObjectStatus r = super.setClassObjectDescriptor(classObjectDescriptor);
-        if (r != ClassObjectStatus.OK) {
-            return r;
-        }
-
-        // Members of the class object are accessible from the class
-        // The scope must be lazy, because classObjectDescriptor may not by fully built yet
-        scopeForMemberResolution.importScope(new AbstractScopeAdapter() {
-            @NotNull
-            @Override
-            protected JetScope getWorkerScope() {
-                return classObjectDescriptor.getDefaultType().getMemberScope();
-            }
-
-            @NotNull
-            @Override
-            public ReceiverDescriptor getImplicitReceiver() {
-                return classObjectDescriptor.getImplicitReceiver();
-            }
-        }
-        );
-
-        return ClassObjectStatus.OK;
-    }
 
     @Override
     public void addConstructor(@NotNull ConstructorDescriptor constructorDescriptor, @NotNull BindingTrace trace) {
@@ -109,28 +84,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
                 }
             }
         }
-    }
-
-    @Override
-    public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
-        super.addPropertyDescriptor(propertyDescriptor);
-        properties.add(propertyDescriptor);
-        if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            declaredCallableMembers.add(propertyDescriptor);
-        }
-        allCallableMembers.add(propertyDescriptor);
-        scopeForMemberResolution.addPropertyDescriptor(propertyDescriptor);
-    }
-
-    @Override
-    public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-        super.addFunctionDescriptor(functionDescriptor);
-        functions.add(functionDescriptor);
-        if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            declaredCallableMembers.add(functionDescriptor);
-        }
-        allCallableMembers.add(functionDescriptor);
-        scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
     }
 
     @NotNull
@@ -154,11 +107,6 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-        super.addClassifierDescriptor(classDescriptor);
-        scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
-    }
-
     public void setTypeParameterDescriptors(List<TypeParameterDescriptor> typeParameters) {
         super.setTypeParameterDescriptors(typeParameters);
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
@@ -207,6 +155,7 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         this.scopeForInitializers = new WritableScopeImpl(scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING).setDebugName("Initializers").changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
+    @Override
     public void lockScopes() {
         super.lockScopes();
         scopeForSupertypeResolution.changeLockLevel(WritableScope.LockLevel.READING);
@@ -214,4 +163,81 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite {
         getWritableScopeForInitializers().changeLockLevel(WritableScope.LockLevel.READING);
     }
 
+    private NamespaceLikeBuilder builder = null;
+
+    @Override
+    public NamespaceLikeBuilder getBuilder() {
+        if (builder == null) {
+            final NamespaceLikeBuilder superBuilder = super.getBuilder();
+            builder = new NamespaceLikeBuilderDummy() {
+                @NotNull
+                @Override
+                public DeclarationDescriptor getOwnerForChildren() {
+                    return superBuilder.getOwnerForChildren();
+                }
+
+                @Override
+                public void addObjectDescriptor(@NotNull MutableClassDescriptorLite objectDescriptor) {
+                    superBuilder.addObjectDescriptor(objectDescriptor);
+                }
+
+                @Override
+                public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                    superBuilder.addClassifierDescriptor(classDescriptor);
+                    scopeForMemberResolution.addClassifierDescriptor(classDescriptor);
+                }
+
+                @Override
+                public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                    superBuilder.addFunctionDescriptor(functionDescriptor);
+                    functions.add(functionDescriptor);
+                    if (functionDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                        declaredCallableMembers.add(functionDescriptor);
+                    }
+                    allCallableMembers.add(functionDescriptor);
+                    scopeForMemberResolution.addFunctionDescriptor(functionDescriptor);
+                }
+
+                @Override
+                public ClassObjectStatus setClassObjectDescriptor(@NotNull final MutableClassDescriptorLite classObjectDescriptor) {
+                    ClassObjectStatus r = superBuilder.setClassObjectDescriptor(classObjectDescriptor);
+                    if (r != ClassObjectStatus.OK) {
+                        return r;
+                    }
+
+                    // Members of the class object are accessible from the class
+                    // The scope must be lazy, because classObjectDescriptor may not by fully built yet
+                    scopeForMemberResolution.importScope(new AbstractScopeAdapter() {
+                        @NotNull
+                        @Override
+                        protected JetScope getWorkerScope() {
+                            return classObjectDescriptor.getDefaultType().getMemberScope();
+                        }
+
+                        @NotNull
+                        @Override
+                        public ReceiverDescriptor getImplicitReceiver() {
+                            return classObjectDescriptor.getImplicitReceiver();
+                        }
+                    }
+                    );
+
+                    return ClassObjectStatus.OK;
+                }
+
+                @Override
+                public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                    superBuilder.addPropertyDescriptor(propertyDescriptor);
+                    properties.add(propertyDescriptor);
+                    if (propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                        declaredCallableMembers.add(propertyDescriptor);
+                    }
+                    allCallableMembers.add(propertyDescriptor);
+                    scopeForMemberResolution.addPropertyDescriptor(propertyDescriptor);
+                }
+            };
+        }
+
+        return builder;
+    }
 }

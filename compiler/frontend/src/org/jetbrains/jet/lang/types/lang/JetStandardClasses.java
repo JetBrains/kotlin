@@ -18,23 +18,17 @@ package org.jetbrains.jet.lang.types.lang;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeImpl;
-import org.jetbrains.jet.lang.types.NamespaceType;
-import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.jet.lang.types.TypeProjection;
-import org.jetbrains.jet.lang.types.Variance;
+import org.jetbrains.jet.lang.types.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -52,13 +46,23 @@ public class JetStandardClasses {
 
     public static final ModuleDescriptor FAKE_STANDARD_CLASSES_MODULE = new ModuleDescriptor("<builtin>");
 
-    private static final NamespaceDescriptorImpl STANDARD_CLASSES_FAKE_ROOT_NS = new NamespaceDescriptorImpl(FAKE_STANDARD_CLASSES_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<root>");
+    private static final NamespaceDescriptorImpl STANDARD_CLASSES_FAKE_ROOT_NS = new NamespaceDescriptorImpl(
+            FAKE_STANDARD_CLASSES_MODULE, Collections.<AnnotationDescriptor>emptyList(), FqNameUnsafe.ROOT_NAME);
 
     static {
         FAKE_STANDARD_CLASSES_MODULE.setRootNs(STANDARD_CLASSES_FAKE_ROOT_NS);
+        //WritableScopeImpl writableScope =
+        //        new WritableScopeImpl(JetScope.EMPTY, FAKE_STANDARD_CLASSES_MODULE, RedeclarationHandler.DO_NOTHING);
+        //STANDARD_CLASSES_FAKE_ROOT_NS.initialize(writableScope);
+        //STANDARD_CLASSES_FAKE_ROOT_NS.getMemberScope().changeLockLevel(WritableScope.LockLevel.BOTH);
     }
 
-    public static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(STANDARD_CLASSES_FAKE_ROOT_NS, Collections.<AnnotationDescriptor>emptyList(), "jet");
+    public static NamespaceDescriptorImpl STANDARD_CLASSES_NAMESPACE = new NamespaceDescriptorImpl(
+            STANDARD_CLASSES_FAKE_ROOT_NS, Collections.<AnnotationDescriptor>emptyList(), "jet");
+    //
+    //static {
+    //    STANDARD_CLASSES_FAKE_ROOT_NS.getMemberScope().addNamespace(STANDARD_CLASSES_NAMESPACE);
+    //}
     
     public static final FqName STANDARD_CLASSES_FQNAME = DescriptorUtils.getFQName(STANDARD_CLASSES_NAMESPACE).toSafe();
 

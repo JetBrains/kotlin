@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class FqNameUnsafe {
 
+    public static final String ROOT_NAME = "<root>";
+
     @NotNull
     private final String fqName;
 
@@ -246,7 +248,7 @@ public class FqNameUnsafe {
 
     @Override
     public String toString() {
-        return isRoot() ? "<root>" : fqName;
+        return isRoot() ? ROOT_NAME : fqName;
     }
 
     @Override
