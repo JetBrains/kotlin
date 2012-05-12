@@ -36,6 +36,34 @@ import java.util.List;
  * @since 5/11/12
  */
 public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
+    public void testAny() throws Exception {
+        doTest();
+    }
+
+    public void testFunction() throws Exception {
+        doTest();
+    }
+
+    public void testInt() throws Exception {
+        doTest();
+    }
+
+    public void testNothing() throws Exception {
+        doTest();
+    }
+
+    public void testSure() throws Exception {
+        doTest();
+    }
+
+    public void testTimes() throws Exception {
+        doTest();
+    }
+
+    public void testTupleElement() throws Exception {
+        doTest();
+    }
+
     public void testUnit() throws Exception {
         doTest();
     }
