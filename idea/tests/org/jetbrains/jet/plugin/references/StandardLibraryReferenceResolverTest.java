@@ -16,21 +16,30 @@
 
 package org.jetbrains.jet.plugin.references;
 
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.PsiCommentImpl;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.ResolveTestCase;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Evgeny Gerashchenko
  * @since 5/11/12
  */
-public class StandardLibraryReferenceResolverTest extends LightCodeInsightTestCase {
+public class StandardLibraryReferenceResolverTest extends ResolveTestCase {
+    public void testUnit() throws Exception {
+        doTest();
+    }
+
     public void testAllReferencesResolved() {
         StandardLibraryReferenceResolver referenceResolver = getProject().getComponent(StandardLibraryReferenceResolver.class);
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors(JetStandardClasses.STANDARD_CLASSES_NAMESPACE)) {
@@ -68,5 +77,30 @@ public class StandardLibraryReferenceResolverTest extends LightCodeInsightTestCa
             }
         });
         return descriptors;
+    }
+
+    private void doTest() throws Exception {
+        JetPsiReference reference = (JetPsiReference) configureByFile(getTestName(true) + ".kt");
+        PsiElement resolved = reference.resolve();
+        assertNotNull(resolved);
+        assertEmpty(reference.multiResolve(false));
+
+        List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(getFile(), PsiComment.class);
+        String[] expectedTarget = comments.get(comments.size() - 1).getText().substring(2).split(":");
+        assertEquals(2, expectedTarget.length);
+        String expectedFile = expectedTarget[0];
+        String expectedName = expectedTarget[1];
+
+        PsiFile targetFile = resolved.getContainingFile();
+        PsiDirectory targetDir = targetFile.getParent();
+        assertNotNull(targetDir);
+        assertEquals(expectedFile, targetDir.getName() + "/" + targetFile.getName());
+        assertInstanceOf(resolved, PsiNamedElement.class);
+        assertEquals(expectedName, ((PsiNamedElement) resolved).getName());
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase() + "/resolve/std/";
     }
 }
