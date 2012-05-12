@@ -301,6 +301,9 @@ class NamespaceComparator {
             sb.append(": ");
             if (valueParameter.getVarargElementType() != null) {
                 new TypeSerializer(sb).serialize(valueParameter.getVarargElementType());
+                sb.append(" /*");
+                new TypeSerializer(sb).serialize(valueParameter.getType());
+                sb.append("*/");
             }
             else {
                 new TypeSerializer(sb).serialize(valueParameter.getType());
