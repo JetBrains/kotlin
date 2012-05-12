@@ -11,7 +11,7 @@ val items: ArrayList<Item> = ArrayList<Item>
 fun test(room : Object) {
   for(val item: Item in items) {
     if (item.room === room) {
-      System.out?.println("You see " + item.name)
+      System.out.println("You see " + item.name)
     }
   }
 }

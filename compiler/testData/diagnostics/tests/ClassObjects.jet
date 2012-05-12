@@ -26,6 +26,6 @@ val d = b.<!UNRESOLVED_REFERENCE!>x<!>
 
 val s = <!NO_CLASS_OBJECT!>System<!>  // error
 fun test() {
-  System.out?.println()
-  java.lang.System.out?.println()
+  System.out.println()
+  java.lang.System.out.println()
 }

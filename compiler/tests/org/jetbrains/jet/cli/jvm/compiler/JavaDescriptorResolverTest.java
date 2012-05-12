@@ -20,14 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.di.InjectorForJavaSemanticServices;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * @author Stepan Koltsov
@@ -40,16 +45,33 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         compileFileResolveDescriptor("inner.java", new FqName("A"));
     }
 
-    private void compileFileResolveDescriptor(@NotNull String fileRelativePath, @NotNull FqName fqName) throws IOException {
+    // We cannot declare class and namespace with same name in Kotlin
+    // http://youtrack.jetbrains.com/issue/KT-1388
+    public void testStaticFinal() throws Exception {
+        JavaDescriptorResolver javaDescriptorResolver = compileFileGetJavaDescriptorResolver("staticFinal.java");
+        NamespaceDescriptor ns = javaDescriptorResolver.resolveNamespace(new FqName("StaticFinal"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        Set<VariableDescriptor> foos = ns.getMemberScope().getProperties("foo");
+        Assert.assertEquals(1, foos.size());
+        VariableDescriptor foo = foos.iterator().next();
+        Assert.assertFalse(foo.getType().isNullable());
+    }
+
+    private ClassDescriptor compileFileResolveDescriptor(@NotNull String fileRelativePath, @NotNull FqName fqName) throws IOException {
+        JavaDescriptorResolver javaDescriptorResolver = compileFileGetJavaDescriptorResolver(fileRelativePath);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        Assert.assertNotNull(classDescriptor);
+        return classDescriptor;
+    }
+
+    private JavaDescriptorResolver compileFileGetJavaDescriptorResolver(String fileRelativePath) throws IOException {
         JetTestUtils.compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
+                myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(fqName, DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
-        Assert.assertNotNull(classDescriptor);
+        return injector.getJavaDescriptorResolver();
     }
 }
