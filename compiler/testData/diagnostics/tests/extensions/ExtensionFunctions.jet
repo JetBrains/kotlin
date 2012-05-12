@@ -57,7 +57,7 @@ import outer.*
 
         fun main(args: Array<String>) {
 
-            System.out?.print(1)
+            System.out.print(1)
 
             val command = parse("")
 

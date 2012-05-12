@@ -1368,6 +1368,10 @@ public class JavaDescriptorResolver {
                 if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                     propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
                 }
+                else if (members.getter == null && members.setter == null && members.field.getMember().isFinal() && members.field.getMember().isStatic()) {
+                    // http://youtrack.jetbrains.com/issue/KT-1388
+                    propertyType = TypeUtils.makeNotNullable(propertyType);
+                }
             }
             
             JetType receiverType;

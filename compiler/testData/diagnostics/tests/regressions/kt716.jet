@@ -12,5 +12,5 @@ fun <T> TypeInfo<T>.getJavaClass() : java.lang.Class<T> {
 fun getJavaClass<T>() = typeinfo<T>.getJavaClass()
 
 fun main(args : Array<String>) {
-    System.out?.println(getJavaClass<String>)
+    System.out.println(getJavaClass<String>)
 }

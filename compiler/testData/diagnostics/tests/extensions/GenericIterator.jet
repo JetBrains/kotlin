@@ -23,6 +23,6 @@ fun <T : Any> T?.iterator() = object {
 fun main(args : Array<String>) {
   val i : Int? = 1
   for (x in i) {
-    System.out?.println(x)
+    System.out.println(x)
   }
 }
