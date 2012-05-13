@@ -107,11 +107,6 @@ public class ExpressionTypingServices {
         this.typeResolver = typeResolver;
     }
 
-    @NotNull
-    public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, BindingTrace trace) {
-        return safeGetType(scope, expression, expectedType, DataFlowInfo.EMPTY, trace);
-    }
-
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, BindingTrace trace) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
         if (type != null) {
