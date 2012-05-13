@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
+import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -44,7 +45,7 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 public final class StaticContext {
 
     public static StaticContext generateStaticContext(@NotNull JetStandardLibrary library,
-                                                      @NotNull BindingContext bindingContext) {
+                                                      @NotNull BindingContext bindingContext, Translation.EcmaVersion ecmaVersion) {
         JsProgram program = new JsProgram("main");
         JsRootScope jsRootScope = program.getRootScope();
         Namer namer = Namer.newInstance(jsRootScope);
@@ -52,7 +53,7 @@ public final class StaticContext {
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
         StandardClasses standardClasses =
             StandardClasses.bindImplementations(namer.getKotlinScope());
-        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, scope);
+        return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, scope, ecmaVersion);
     }
 
     @NotNull
@@ -83,17 +84,24 @@ public final class StaticContext {
     @NotNull
     private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
+    @NotNull
+    private final Translation.EcmaVersion ecmaVersion;
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
-                          @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-                          @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope) {
+            @NotNull Namer namer, @NotNull Intrinsics intrinsics,
+            @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope, @NotNull Translation.EcmaVersion ecmaVersion) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namer = namer;
         this.intrinsics = intrinsics;
         this.rootScope = rootScope;
         this.standardClasses = standardClasses;
+        this.ecmaVersion = ecmaVersion;
+    }
+
+    public boolean isEcma5() {
+        return ecmaVersion == Translation.EcmaVersion.v5;
     }
 
     @NotNull
@@ -219,8 +227,25 @@ public final class StaticContext {
                     if (!(descriptor instanceof PropertyDescriptor)) {
                         return null;
                     }
+
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName()));
+                    if (isEcma5()) {
+                        String name = descriptor.getName();
+                        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+                        if (!isDefaultAccessor(propertyDescriptor.getGetter()) || !isDefaultAccessor(propertyDescriptor.getSetter())) {
+                            // _ is more preferable than $ — should be discussed later
+                            name = '_' + name;
+                        }
+
+                        return enclosingScope.declareUnobfuscatableName(name);
+                    }
+                    else {
+                        return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName()));
+                    }
+                }
+
+                private boolean isDefaultAccessor(PropertyAccessorDescriptor accessorDescriptor) {
+                    return accessorDescriptor == null || accessorDescriptor.isDefault();
                 }
             };
             //TODO: hack!

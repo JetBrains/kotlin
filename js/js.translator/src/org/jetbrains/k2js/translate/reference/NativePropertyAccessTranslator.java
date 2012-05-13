@@ -20,14 +20,13 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.qualified;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 
 /**
  * @author Pavel Talanov
@@ -73,7 +72,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
     @NotNull
     protected JsExpression translateAsSet(@Nullable JsExpression receiver, @NotNull JsExpression setTo) {
         assert receiver != null;
-        return assignment(translateAsGet(getReceiver()), setTo);
+        return assignment(translateAsGet(receiver), setTo);
     }
 
     @NotNull
@@ -83,7 +82,7 @@ public final class NativePropertyAccessTranslator extends PropertyAccessTranslat
     }
 
     @Nullable
-    public JsExpression getReceiver() {
+    private JsExpression getReceiver() {
         if (receiver != null) {
             return receiver;
         }

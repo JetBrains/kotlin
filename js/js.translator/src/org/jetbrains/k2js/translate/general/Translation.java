@@ -61,6 +61,9 @@ import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect
  *         Goal is to simlify interaction between translators.
  */
 public final class Translation {
+    public enum EcmaVersion {
+        v3, v5
+    }
 
     private Translation() {
     }
@@ -142,9 +145,9 @@ public final class Translation {
 
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters) throws TranslationException {
+            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters, EcmaVersion ecmaVersion) throws TranslationException {
         try {
-            return doGenerateAst(bindingContext, files, mainCallParameters);
+            return doGenerateAst(bindingContext, files, mainCallParameters, ecmaVersion);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -156,10 +159,10 @@ public final class Translation {
 
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files,
-            @NotNull MainCallParameters mainCallParameters) throws MainFunctionNotFoundException {
+            @NotNull MainCallParameters mainCallParameters, EcmaVersion ecmaVersion) throws MainFunctionNotFoundException {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
-        StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext);
+        StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
         JsBlock block = staticContext.getProgram().getFragmentBlock(0);
         TranslationContext context = TranslationContext.rootContext(staticContext);
         block.getStatements().addAll(translateFiles(files, context));

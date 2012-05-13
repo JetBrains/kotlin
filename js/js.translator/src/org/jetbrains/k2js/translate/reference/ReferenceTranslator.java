@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -55,8 +56,14 @@ public final class ReferenceTranslator {
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
                                                              @NotNull TranslationContext context) {
-        JsName referencedName = context.getNameForDescriptor(referencedDescriptor);
-        return referencedName.makeRef();
+        DeclarationDescriptor effectiveDescriptor;
+        if (context.isEcma5() && referencedDescriptor instanceof PropertyAccessorDescriptor) {
+            effectiveDescriptor = ((PropertyAccessorDescriptor) referencedDescriptor).getCorrespondingProperty();
+        }
+        else {
+            effectiveDescriptor = referencedDescriptor;
+        }
+        return context.getNameForDescriptor(effectiveDescriptor).makeRef();
     }
 
     @NotNull

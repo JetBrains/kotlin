@@ -29,6 +29,7 @@ import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyForDescriptor;
@@ -53,6 +54,10 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     static public List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
             @NotNull TranslationContext context) {
+        if (context.isEcma5()) {
+            return Collections.emptyList();
+        }
+
         PropertyTranslator propertyTranslator = new PropertyTranslator(descriptor, context);
         return propertyTranslator.translate();
     }
