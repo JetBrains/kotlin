@@ -77,7 +77,9 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         // TODO :change scope according to the bound value in the when header
         final JetExpression subjectExpression = expression.getSubjectExpression();
 
-        final JetType subjectType = subjectExpression != null ? context.expressionTypingServices.safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE, context.trace) : ErrorUtils.createErrorType("Unknown type");
+        final JetType subjectType = subjectExpression != null
+                                    ? context.expressionTypingServices.safeGetType(context.scope, subjectExpression, TypeUtils.NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace)
+                                    : ErrorUtils.createErrorType("Unknown type");
         final DataFlowValue variableDescriptor = subjectExpression != null ? DataFlowValueFactory.INSTANCE.createDataFlowValue(subjectExpression, subjectType, context.trace.getBindingContext()) : DataFlowValue.NULL;
 
         // TODO : exhaustive patterns
