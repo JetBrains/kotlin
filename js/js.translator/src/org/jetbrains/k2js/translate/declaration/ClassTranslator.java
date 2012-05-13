@@ -213,7 +213,10 @@ public final class ClassTranslator extends AbstractTranslator {
         if (!isTrait()) {
             propertyList.add(Translation.generateClassInitializerMethod(classDeclaration, classDeclarationContext));
         }
-        propertyList.addAll(translatePropertiesAsConstructorParameters(classDeclarationContext));
+        // skip for ecma5, because accessors defined via Object.defineProperties
+        if (!context().isEcma5()) {
+            propertyList.addAll(translatePropertiesAsConstructorParameters(classDeclarationContext));
+        }
         propertyList.addAll(declarationBodyVisitor.traverseClass(classDeclaration, classDeclarationContext));
         return JsAstUtils.newObjectLiteral(propertyList);
     }

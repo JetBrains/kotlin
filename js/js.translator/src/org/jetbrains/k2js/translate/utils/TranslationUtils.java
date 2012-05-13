@@ -33,10 +33,9 @@ import java.util.List;
 
 import static com.google.dart.compiler.util.AstUtil.newAssignment;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
 
 /**
  * @author Pavel Talanov
@@ -204,13 +203,6 @@ public final class TranslationUtils {
         return intrinsic.apply(left, Arrays.asList(right), context);
     }
 
-    @NotNull
-    public static JsExpression assignmentToBackingField(@NotNull TranslationContext context, @NotNull JetProperty property,
-                                                        @NotNull JsExpression initExpression) {
-        PropertyDescriptor propertyDescriptor = getPropertyDescriptor(context.bindingContext(), property);
-        return assignmentToBackingField(context, propertyDescriptor, initExpression);
-    }
-
     @Nullable
     public static JsExpression resolveThisObjectForResolvedCall(@NotNull ResolvedCall<?> call,
                                                                 @NotNull TranslationContext context) {
@@ -219,6 +211,6 @@ public final class TranslationUtils {
             return null;
         }
         DeclarationDescriptor expectedThisDescriptor = getDeclarationDescriptorForReceiver(thisObject);
-        return TranslationUtils.getThisObject(context, expectedThisDescriptor);
+        return getThisObject(context, expectedThisDescriptor);
     }
 }

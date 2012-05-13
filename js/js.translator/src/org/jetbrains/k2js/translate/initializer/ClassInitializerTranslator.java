@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,11 +44,12 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateArgum
  * @author Pavel Talanov
  */
 public final class ClassInitializerTranslator extends AbstractTranslator {
-
     @NotNull
     private final JetClassOrObject classDeclaration;
     @NotNull
     private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
+
+    private final JsObjectLiteral propertiesDefinition = new JsObjectLiteral();
 
     public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
         // Note: it's important we use scope for class descriptor because anonymous function used in property initializers
@@ -65,8 +67,12 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         // for properties declared as constructor parameters
         setParameters(result, translatePrimaryConstructorParameters());
         mayBeAddCallToSuperMethod();
-        initializerStatements.addAll((new InitializerVisitor()).traverseClass(classDeclaration, context()));
+        initializerStatements.addAll((InitializerVisitor.create(context())).traverseClass(classDeclaration, context()));
         result.getBody().getStatements().addAll(initializerStatements);
+        if (!propertiesDefinition.getPropertyInitializers().isEmpty()) {
+            result.getBody().getStatements().add(JsAstUtils.defineProperties(propertiesDefinition));
+        }
+
         return InitializerUtils.generateInitializeMethod(result);
     }
 
@@ -123,15 +129,20 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void mayBeAddInitializerStatementForProperty(@NotNull JsParameter jsParameter,
-                                                         @NotNull JetParameter jetParameter) {
+            @NotNull JetParameter jetParameter) {
         PropertyDescriptor propertyDescriptor =
                 getPropertyDescriptorForConstructorParameter(bindingContext(), jetParameter);
-        if (propertyDescriptor != null) {
-            JsStatement assignmentToBackingFieldExpression = assignmentToBackingField
-                    (context(), propertyDescriptor, jsParameter.getName().makeRef()).makeStmt();
+        if (propertyDescriptor == null) {
+            return;
+        }
+
+        final JsNameRef nameRef = jsParameter.getName().makeRef();
+        if (context().isEcma5()) {
+            propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, context(), nameRef));
+        }
+        else {
+            JsStatement assignmentToBackingFieldExpression = assignmentToBackingField(context(), propertyDescriptor, nameRef).makeStmt();
             initializerStatements.add(assignmentToBackingFieldExpression);
         }
     }
-
-
 }

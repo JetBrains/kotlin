@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -60,42 +61,35 @@ public final class JsModuleDetector {
     }
 
     //TODO: refactor
-    @Nullable
-    public static String getLibLocationForProject(@NotNull Project project) {
+    @NotNull
+    public static Pair<String, String> getLibLocationAndTargetForProject(@NotNull Project project) {
         VirtualFile indicationFile = findIndicationFileInContentRoots(project);
         if (indicationFile == null) {
-            return null;
+            return Pair.empty();
         }
+
         try {
             InputStream stream = indicationFile.getInputStream();
-            String path = FileUtil.loadTextAndClose(stream);
-            String pathToLibFile = getFirstLine(path);
-            if (pathToLibFile == null) {
-                return null;
-            }
+            BufferedReader reader = new BufferedReader(new StringReader(FileUtil.loadTextAndClose(stream)));
             try {
+                String pathToLibFile = reader.readLine();
+                if (pathToLibFile == null) {
+                    return Pair.empty();
+                }
+
                 URI pathToLibFileUri = new URI(pathToLibFile);
                 URI pathToIndicationFileUri = new URI(indicationFile.getPath());
-                return pathToIndicationFileUri.resolve(pathToLibFileUri).toString();
+                return new Pair<String, String>(pathToIndicationFileUri.resolve(pathToLibFileUri).toString(), reader.readLine());
             }
             catch (URISyntaxException e) {
-                return null;
+                return Pair.empty();
+            }
+            finally {
+                reader.close();
             }
         }
         catch (IOException e) {
-            return null;
-        }
-    }
-
-    @Nullable
-    private static String getFirstLine(@NotNull String path) throws IOException {
-        BufferedReader reader = new BufferedReader(new StringReader(path));
-        try {
-            return reader.readLine();
-        }
-
-        finally {
-            reader.close();
+            return Pair.empty();
         }
     }
 }

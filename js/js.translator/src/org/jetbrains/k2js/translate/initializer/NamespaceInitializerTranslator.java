@@ -46,11 +46,10 @@ public final class NamespaceInitializerTranslator {
         JsFunction result = JsAstUtils.createFunctionWithEmptyBody(namespaceContext.jsScope());
         TranslationContext namespaceInitializerContext
                 = namespaceContext.innerContextWithGivenScopeAndBlock(result.getScope(), result.getBody());
-        List<JsStatement> initializerStatements =
-                (new InitializerVisitor()).traverseNamespace(namespace, namespaceInitializerContext);
+
+        List<JsStatement> initializerStatements = (InitializerVisitor.create(namespaceContext)).traverseNamespace(namespace,
+                                                                                                                  namespaceInitializerContext);
         result.getBody().getStatements().addAll(initializerStatements);
         return InitializerUtils.generateInitializeMethod(result);
     }
-
-
 }
