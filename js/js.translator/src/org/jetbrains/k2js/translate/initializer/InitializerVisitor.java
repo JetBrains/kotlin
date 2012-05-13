@@ -16,11 +16,9 @@
 
 package org.jetbrains.k2js.translate.initializer;
 
-import com.google.dart.compiler.backend.js.ast.JsExprStmt;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
-import com.google.dart.compiler.backend.js.ast.JsStatement;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -36,6 +34,7 @@ import java.util.List;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsStatement;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDeclarationsForNamespace;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForObjectDeclaration;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getObjectDeclarationForName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
@@ -43,26 +42,25 @@ import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBa
 /**
  * @author Pavel Talanov
  */
-public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
-
-    /*package*/ InitializerVisitor() {
+class InitializerVisitor extends TranslatorVisitor<List<JsStatement>> {
+    static InitializerVisitor create(TranslationContext context) {
+        return context.isEcma5() ? new InitializerEcma5Visitor() : new InitializerVisitor();
     }
 
     @Override
     @NotNull
-    public List<JsStatement> visitProperty(@NotNull JetProperty expression, @NotNull TranslationContext context) {
-        JetExpression initializer = expression.getInitializer();
+    public final List<JsStatement> visitProperty(@NotNull JetProperty property, @NotNull TranslationContext context) {
+        JetExpression initializer = property.getInitializer();
         if (initializer == null) {
-            return new ArrayList<JsStatement>();
+            return Collections.emptyList();
         }
-        return Arrays.asList(translateInitializer(expression, context, initializer));
+        return toStatements(defineMember(context, getPropertyDescriptor(context.bindingContext(), property),
+                                         Translation.translateAsExpression(initializer, context)));
     }
 
-    @NotNull
-    private static JsStatement translateInitializer(@NotNull JetProperty property, @NotNull TranslationContext context,
-                                                    @NotNull JetExpression initializer) {
-        JsExpression initExpression = Translation.translateAsExpression(initializer, context);
-        return assignmentToBackingField(context, property, initExpression).makeStmt();
+    @Nullable
+    protected JsExpression defineMember(TranslationContext context, PropertyDescriptor propertyDescriptor, JsExpression value) {
+        return assignmentToBackingField(context, propertyDescriptor, value);
     }
 
     @Override
@@ -81,32 +79,37 @@ public final class InitializerVisitor extends TranslatorVisitor<List<JsStatement
 
     @Override
     @NotNull
-    public List<JsStatement> visitObjectDeclarationName(@NotNull JetObjectDeclarationName objectName,
-                                                        @NotNull TranslationContext context) {
-        PropertyDescriptor propertyDescriptorForObjectDeclaration
-            = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
+    public final List<JsStatement> visitObjectDeclarationName(@NotNull JetObjectDeclarationName objectName,
+            @NotNull TranslationContext context) {
+        PropertyDescriptor propertyDescriptor = getPropertyDescriptorForObjectDeclaration(context.bindingContext(), objectName);
         JetObjectDeclaration objectDeclaration = getObjectDeclarationForName(objectName);
         JsInvocation objectValue = ClassTranslator.generateClassCreationExpression(objectDeclaration, context);
-        JsExprStmt assignment = assignmentToBackingField(context, propertyDescriptorForObjectDeclaration, objectValue)
-            .makeStmt();
-        return Collections.<JsStatement>singletonList(assignment);
+        return toStatements(defineMember(context, propertyDescriptor, objectValue));
+    }
+
+    private static List<JsStatement> toStatements(@Nullable JsExpression expression) {
+        return expression == null ? Collections.<JsStatement>emptyList() : Collections.<JsStatement>singletonList(expression.makeStmt());
+    }
+
+    protected List<JsStatement> createStatements(List<JetDeclaration> declarations, TranslationContext context) {
+        if (declarations.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<JsStatement> statements = new ArrayList<JsStatement>(declarations.size());
+        for (JetDeclaration declaration : declarations) {
+            statements.addAll(declaration.accept(this, context));
+        }
+        return statements;
     }
 
     @NotNull
-    public List<JsStatement> traverseClass(@NotNull JetClassOrObject expression, @NotNull TranslationContext context) {
-        List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
-        for (JetDeclaration declaration : expression.getDeclarations()) {
-            initializerStatements.addAll(declaration.accept(this, context));
-        }
-        return initializerStatements;
+    public final List<JsStatement> traverseClass(@NotNull JetClassOrObject expression, @NotNull TranslationContext context) {
+        return createStatements(expression.getDeclarations(), context);
     }
 
     @NotNull
-    public List<JsStatement> traverseNamespace(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
-        List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
-        for (JetDeclaration declaration : getDeclarationsForNamespace(context.bindingContext(), namespace)) {
-            initializerStatements.addAll(declaration.accept(this, context));
-        }
-        return initializerStatements;
+    public final List<JsStatement> traverseNamespace(@NotNull NamespaceDescriptor namespace, @NotNull TranslationContext context) {
+        return createStatements(getDeclarationsForNamespace(context.bindingContext(), namespace), context);
     }
 }

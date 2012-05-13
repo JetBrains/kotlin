@@ -121,8 +121,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     @NotNull
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
         if (arguments.libzip == null) {
-            return Config.getEmptyConfig(project);
+            return Config.getEmptyConfig(project, arguments.target);
         }
-        return new ZippedLibrarySourcesConfig(project, arguments.libzip);
+        return new ZippedLibrarySourcesConfig(project, arguments.libzip, arguments.target);
     }
 }

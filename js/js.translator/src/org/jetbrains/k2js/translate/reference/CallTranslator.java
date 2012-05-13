@@ -24,9 +24,7 @@ import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
@@ -238,6 +236,17 @@ public final class CallTranslator extends AbstractTranslator {
                 if (receiver != null) {
                     setQualifier(callee, receiver);
                 }
+
+                if (context().isEcma5()) {
+                    if (descriptor instanceof PropertyGetterDescriptor) {
+                        return callee;
+                    }
+                    else if (descriptor instanceof PropertySetterDescriptor) {
+                        assert arguments.size() == 1;
+                        return assignment(callee, arguments.get(0));
+                    }
+                }
+
                 return newInvocation(callee, arguments);
             }
         }, context());
