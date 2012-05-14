@@ -30,4 +30,9 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testIteratingCallbacks() throws Exception {
         fooBoxTest();
     }
+
+
+    public void testLocalParameterInCallback() throws Exception {
+        fooBoxTest();
+    }
 }
