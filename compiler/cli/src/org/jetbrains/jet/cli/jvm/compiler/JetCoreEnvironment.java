@@ -85,7 +85,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         }
 
         if (compilerSpecialMode.includeJdkHeaders()) {
-            for (VirtualFile root : compilerDependencies.getJdkHeaderRoots()) {
+            for (VirtualFile root : compilerDependencies.getAltHeaderRoots()) {
                 addLibraryRoot(root);
             }
         }

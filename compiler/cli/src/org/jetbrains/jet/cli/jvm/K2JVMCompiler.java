@@ -19,6 +19,10 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
@@ -36,6 +40,7 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
@@ -55,17 +60,18 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
     protected ExitCode doExecute(K2JVMCompilerArguments arguments, PrintingMessageCollector messageCollector, Disposable rootDisposable) {
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
-        File jdkHeadersJar;
+        File[] altHeadersClasspath;
         if (mode.includeJdkHeaders()) {
-            if (arguments.jdkHeaders != null) {
-                jdkHeadersJar = new File(arguments.jdkHeaders);
+            File[] defaultAltHeadersPathArray = {PathUtil.getAltHeadersPath()};
+            if (arguments.altHeaders != null) {
+                altHeadersClasspath = ArrayUtil.mergeArrays(pathsToFiles(arguments.altHeaders), defaultAltHeadersPathArray);
             }
             else {
-                jdkHeadersJar = PathUtil.getAltHeadersPath();
+                altHeadersClasspath = defaultAltHeadersPathArray;
             }
         }
         else {
-            jdkHeadersJar = null;
+            altHeadersClasspath = new File[0];
         }
         File runtimeJar;
 
@@ -81,7 +87,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             runtimeJar = null;
         }
 
-        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), jdkHeadersJar, runtimeJar);
+        CompilerDependencies dependencies = new CompilerDependencies(mode, CompilerDependencies.findRtJar(), altHeadersClasspath, runtimeJar);
         JetCoreEnvironment environment = JetCoreEnvironment.getCoreEnvironmentForJVM(rootDisposable, dependencies);
         K2JVMCompileEnvironmentConfiguration configuration =
                 new K2JVMCompileEnvironmentConfiguration(environment, messageCollector);
@@ -180,5 +186,15 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
             Iterable<String> classpath = Splitter.on(File.pathSeparatorChar).split(arguments.classpath);
             CompileEnvironmentUtil.addToClasspath(configuration.getEnvironment(), Iterables.toArray(classpath, String.class));
         }
+    }
+
+    private static File[] pathsToFiles(String paths) {
+        return ContainerUtil.map(Iterables.toArray(Splitter.on(File.pathSeparatorChar).split(paths), String.class),
+                                 new Function<String, File>() {
+                                     @Override
+                                     public File fun(String s) {
+                                         return new File(s);
+                                     }
+                                 }, new File[0]);
     }
 }
