@@ -8,7 +8,8 @@ fun box() : Boolean {
     }
     val a = ArrayList<()->Int>()
     for (i in oneTwo) {
-        for (j in 1..2) {
+        for (l in 1..2) {
+            val j = l
             a.add({
                 var res = 0
                 for (t in 0..2) {

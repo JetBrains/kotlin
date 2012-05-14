@@ -17,10 +17,13 @@
 package org.jetbrains.k2js.translate.utils.closure;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Pavel Talanov
@@ -28,14 +31,14 @@ import java.util.List;
 public final class ClosureContext {
 
     @NotNull
-    private List<VariableDescriptor> descriptors = Lists.newArrayList();
+    private Set<VariableDescriptor> descriptors = Sets.newHashSet();
 
     /*package*/ void put(@NotNull VariableDescriptor descriptor) {
         descriptors.add(descriptor);
     }
 
     @NotNull
-    public List<VariableDescriptor> getDescriptors() {
+    public Collection<VariableDescriptor> getDescriptors() {
         return descriptors;
     }
 }
