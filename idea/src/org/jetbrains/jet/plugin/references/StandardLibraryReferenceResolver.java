@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
 import java.net.URL;
@@ -49,6 +50,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
     private BindingContext bindingContext = null;
 
     private final Object lock = new Object();
+    private static final FqName TUPLE0_FQ_NAME = DescriptorUtils.getFQName(JetStandardClasses.getTuple(0)).toSafe();
 
     public StandardLibraryReferenceResolver(Project project) {
         super(project);
@@ -72,7 +74,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
             BindingTraceContext context = new BindingTraceContext();
             FakeJetNamespaceDescriptor jetNamespace = new FakeJetNamespaceDescriptor();
-            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, new FqName("jet"), jetNamespace);
+            context.record(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, JetStandardClasses.STANDARD_CLASSES_FQNAME, jetNamespace);
 
             WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, jetNamespace, RedeclarationHandler.THROW_EXCEPTION)
                     .setDebugName("Builtin classes scope");
@@ -81,7 +83,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet.src"));
 
-            ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, new FqName("jet.Tuple0"));
+            ClassDescriptor tuple0 = context.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, TUPLE0_FQ_NAME);
             assert tuple0 != null;
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Builtin classes scope #2");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
@@ -134,7 +136,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             }
             String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace("jet.Tuple0", "Unit"))) {
+                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(), "Unit"))) {
                     return member;
                 }
             }
@@ -167,9 +169,9 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         private WritableScope memberScope;
 
         private FakeJetNamespaceDescriptor() {
-            super(new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"),
-                                              Collections.<AnnotationDescriptor>emptyList(),
-                                              "<root>"), Collections.<AnnotationDescriptor>emptyList(), "jet");
+            super(new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"), Collections.<AnnotationDescriptor>emptyList(), "<root>"),
+                  Collections.<AnnotationDescriptor>emptyList(),
+                  JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getName());
         }
 
         void setMemberScope(WritableScope memberScope) {
