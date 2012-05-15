@@ -307,13 +307,18 @@ public class OverrideResolver {
             else {
                 List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
                 Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+                boolean allSuperAbstract = true;
                 for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
                     if (overridden.getModality() != Modality.ABSTRACT) {
                         nonAbstractManyImpl.add(overridden);
+                        allSuperAbstract = false;
                     }
                 }
                 if (nonAbstractManyImpl.size() > 1) {
                     manyImpl.addAll(nonAbstractManyImpl);
+                }
+                else if (allSuperAbstract) {
+                    abstractNoImpl.addAll(overriddenDeclarations);
                 }
             }
         }
