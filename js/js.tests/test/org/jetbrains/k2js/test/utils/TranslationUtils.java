@@ -16,10 +16,10 @@
 
 package org.jetbrains.k2js.test.utils;
 
+import closurecompiler.internal.com.google.common.collect.Maps;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.k2js.utils.JetFileUtils.createPsiFileList;
 
@@ -42,8 +43,8 @@ public final class TranslationUtils {
     private TranslationUtils() {
     }
 
-    @Nullable
-    private static /*var*/ K2JSTranslator translator = null;
+    @NotNull
+    private static final Map<EcmaVersion, K2JSTranslator> translators = Maps.newHashMap();
 
     public static void translateFile(@NotNull Project project, @NotNull String inputFile,
             @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
@@ -52,9 +53,8 @@ public final class TranslationUtils {
 
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
             @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
-        //TODO: ignoring version for the moment
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
-        JsProgram program = getTranslator(project).generateProgram(psiFiles, mainCallParameters);
+        JsProgram program = getTranslator(project, version).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
         try {
             writer.write("\"use strict\";\n");
@@ -66,9 +66,11 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static K2JSTranslator getTranslator(@NotNull Project project) {
+    private static K2JSTranslator getTranslator(@NotNull Project project, @NotNull EcmaVersion version) {
+        K2JSTranslator translator = translators.get(version);
         if (translator == null) {
-            translator = new K2JSTranslator(new TestConfig(project));
+            translators.put(version, translator);
+            translator = new K2JSTranslator(new TestConfig(project, version));
         }
         return translator;
     }

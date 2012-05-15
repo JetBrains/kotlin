@@ -40,8 +40,8 @@ public final class TestConfig extends Config {
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
 
-    public TestConfig(@NotNull Project project) {
-        super(project, EcmaVersion.v3);
+    public TestConfig(@NotNull Project project, @NotNull EcmaVersion version) {
+        super(project, version);
     }
 
     @NotNull
