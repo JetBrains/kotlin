@@ -17,14 +17,12 @@
 package org.jetbrains.k2js.test;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
-import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
 import java.util.List;
 
-import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.getAllFilesInDir;
-import static org.jetbrains.k2js.test.utils.TranslationUtils.translateFiles;
 
 /**
  * @author Pavel Talanov
@@ -37,14 +35,14 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
 
     protected void generateJsFromDir(@NotNull String dirName) throws Exception {
         List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
-        translateFiles(getProject(), fullFilePaths, getOutputFilePath(dirName + ".kt"), MainCallParameters.noCall());
+        generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), EcmaVersion.all());
     }
 
     protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
             @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
         generateJsFromDir(dirName);
-        runRhinoTest(withAdditionalFiles(getOutputFilePath(dirName + ".kt")),
-                     new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+        //runRhinoTest(withAdditionalFiles(getOutputFilePaths(dirName + ".kt", EcmaVersion.all())),
+        //             new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {
