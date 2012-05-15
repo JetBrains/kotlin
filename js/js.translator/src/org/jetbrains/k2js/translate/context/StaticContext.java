@@ -234,7 +234,7 @@ public final class StaticContext {
                         String name = descriptor.getName();
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                         if (!isDefaultAccessor(propertyDescriptor.getGetter()) || !isDefaultAccessor(propertyDescriptor.getSetter())) {
-                            // _ is more preferable than $ â€” should be discussed later
+                            // _ is more preferable than $ should be discussed later
                             name = '_' + name;
                         }
 
