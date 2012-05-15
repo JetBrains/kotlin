@@ -87,7 +87,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             assert tuple0 != null;
             scope = new WritableScopeImpl(scope, jetNamespace, RedeclarationHandler.THROW_EXCEPTION).setDebugName("Builtin classes scope #2");
             scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            scope.addClassifierAlias("Unit", tuple0);
+            scope.addClassifierAlias(JetStandardClasses.UNIT_ALIAS, tuple0);
             jetNamespace.setMemberScope(scope);
 
             TopDownAnalyzer.processStandardLibraryNamespace(myProject, context, scope, jetNamespace, getJetFiles("jet"));
@@ -136,7 +136,8 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             }
             String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
-                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(), "Unit"))) {
+                if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
+                                                                                           JetStandardClasses.UNIT_ALIAS))) {
                     return member;
                 }
             }

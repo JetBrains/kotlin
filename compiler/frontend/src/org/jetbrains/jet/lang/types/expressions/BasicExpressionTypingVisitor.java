@@ -746,7 +746,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                result = ErrorUtils.createErrorType("Unit");
+                result = ErrorUtils.createErrorType(JetStandardClasses.UNIT_ALIAS);
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -307,7 +308,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return "Unit".equals(typeReference.getText());
+        return JetStandardClasses.UNIT_ALIAS.equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {
