@@ -54,10 +54,10 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "stdlib", description = "Path to the stdlib.jar")
     public String stdlib;
 
-    @Argument(value = "jdkHeaders", description = "Path to the kotlin-jdk-headers.jar")
-    public String jdkHeaders;
+    @Argument(value = "altHeaders", description = "Path to the alternative library headers paths")
+    public String altHeaders;
 
-    @Argument(value = "mode", description = "Special compiler modes: stubs or jdkHeaders")
+    @Argument(value = "mode", description = "Special compiler modes: stubs or altHeaders")
     public String mode;
 
     @Argument(value = "output", description = "output directory")

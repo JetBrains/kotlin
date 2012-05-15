@@ -350,7 +350,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         List<JetExpression> entries = expression.getEntries();
         List<JetType> types = new ArrayList<JetType>();
         for (JetExpression entry : entries) {
-            types.add(context.expressionTypingServices.safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.trace)); // TODO
+            types.add(context.expressionTypingServices.safeGetType(context.scope, entry, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace)); // TODO
         }
         if (context.expectedType != NO_EXPECTED_TYPE && JetStandardClasses.isTupleType(context.expectedType)) {
             List<JetType> enrichedTypes = checkArgumentTypes(types, entries, context.expectedType.getArguments(), context);
@@ -746,7 +746,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                result = ErrorUtils.createErrorType("Unit");
+                result = ErrorUtils.createErrorType(JetStandardClasses.UNIT_ALIAS);
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {

@@ -50,7 +50,7 @@ public class CompileEnvironmentTest extends TestCase {
                                                                    "-module", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kts",
                                                                    "-jar", resultJar.getAbsolutePath(),
                                                                    "-stdlib", stdlib.getAbsolutePath(),
-                                                                   "-jdkHeaders", jdkHeaders.getAbsolutePath());
+                                                                   "-altHeaders", jdkHeaders.getAbsolutePath());
             Assert.assertEquals("compilation completed with non-zero code", ExitCode.OK, rv);
             FileInputStream fileInputStream = new FileInputStream(resultJar);
             try {
@@ -81,7 +81,7 @@ public class CompileEnvironmentTest extends TestCase {
             File jdkHeaders = ForTestCompileJdkHeaders.jdkHeadersForTests();
             ExitCode exitCode = new K2JVMCompiler()
                     .exec(System.out, "-src", JetParsingTest.getTestDataDir() + "/compiler/smoke/Smoke.kt", "-output",
-                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-jdkHeaders", jdkHeaders.getAbsolutePath());
+                          out.getAbsolutePath(), "-stdlib", stdlib.getAbsolutePath(), "-altHeaders", jdkHeaders.getAbsolutePath());
             Assert.assertEquals(ExitCode.OK, exitCode);
             assertEquals(1, out.listFiles().length);
             assertEquals(1, out.listFiles()[0].listFiles().length);

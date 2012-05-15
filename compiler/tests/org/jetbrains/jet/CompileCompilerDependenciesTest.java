@@ -22,8 +22,9 @@ import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileJdkHeaders;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
+
+import java.io.File;
 
 /**
  * @author Stepan Koltsov
@@ -53,7 +54,7 @@ public class CompileCompilerDependenciesTest {
         return new CompilerDependencies(
                 compilerSpecialMode,
                 compilerSpecialMode.includeJdk() ? (mockJdk ? JetTestUtils.findMockJdkRtJar() : CompilerDependencies.findRtJar()) : null,
-                compilerSpecialMode.includeJdkHeaders() ? ForTestCompileJdkHeaders.jdkHeadersForTests() : null,
+                compilerSpecialMode.includeAltHeaders() ? new File[]{ForTestCompileJdkHeaders.jdkHeadersForTests()} : new File[0],
                 compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
     }
 }

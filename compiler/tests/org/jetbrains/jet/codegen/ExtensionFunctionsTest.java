@@ -31,7 +31,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testSimple() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         loadFile();
         final Method foo = generateFunction("foo");
         final Character c = (Character) foo.invoke(null);
@@ -39,7 +39,7 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testWhenFail() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         loadFile();
 //        System.out.println(generateToText());
         Method foo = generateFunction("foo");
@@ -47,18 +47,18 @@ public class ExtensionFunctionsTest extends CodegenTestCase {
     }
 
     public void testVirtual() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         blackBoxFile("extensionFunctions/virtual.jet");
     }
 
     public void testShared() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         blackBoxFile("extensionFunctions/shared.kt");
 //        System.out.println(generateToText());
     }
 
     public void testKt475() throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         blackBoxFile("regressions/kt475.jet");
     }
 

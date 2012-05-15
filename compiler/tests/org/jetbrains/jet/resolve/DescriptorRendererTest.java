@@ -44,7 +44,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
     }
 
 

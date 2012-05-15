@@ -118,7 +118,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
             return escape("[NULL]");
         }
         else if (JetStandardClasses.isUnit(type)) {
-            return escape("Unit" + (type.isNullable() ? "?" : ""));
+            return escape(JetStandardClasses.UNIT_ALIAS + (type.isNullable() ? "?" : ""));
         }
         else if (JetStandardClasses.isTupleType(type)) {
             return escape(renderTupleType(type, shortNamesOnly));

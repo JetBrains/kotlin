@@ -39,7 +39,7 @@ public class ForTestCompileJdkHeaders {
         @Override
         protected void doCompile(@NotNull File classesDir) throws Exception {
             ExitCode exitCode = new K2JVMCompiler().exec(
-                    System.err, "-output", classesDir.getPath(), "-src", "./jdk-headers/src", "-mode", "jdkHeaders");
+                    System.err, "-output", classesDir.getPath(), "-src", "./jdk-headers/src", "-mode", "altHeaders");
             if (exitCode != ExitCode.OK) {
                 throw new IllegalStateException("jdk headers compilation failed: " + exitCode);
             }
