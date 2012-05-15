@@ -34,7 +34,7 @@ public abstract class Config {
 
     @NotNull
     public static Config getEmptyConfig(@NotNull Project project, @Nullable String target) {
-        return new Config(project, target) {
+        return new Config(project, EcmaVersion.fromString(target)) {
             @NotNull
             @Override
             protected List<JetFile> generateLibFiles() {
@@ -70,9 +70,9 @@ public abstract class Config {
     @NotNull
     private final EcmaVersion target;
 
-    public Config(@NotNull Project project, @Nullable String target) {
+    public Config(@NotNull Project project, @NotNull EcmaVersion ecmaVersion) {
         this.project = project;
-        this.target = EcmaVersion.fromString(target);
+        this.target = ecmaVersion;
     }
 
     @NotNull

@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 
@@ -93,8 +94,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
     private static ExitCode translateAndGenerateOutputFile(@NotNull PrintingMessageCollector messageCollector,
             @NotNull JetCoreEnvironment environmentForJS, @NotNull Config config, @NotNull String outputFile) {
         try {
-            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config
-            );
+            K2JSTranslator.translateWithCallToMainAndSaveToFile(environmentForJS.getSourceFiles(), outputFile, config);
         }
         catch (Exception e) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Exception while translating:\n" + e.getMessage(),
@@ -123,6 +123,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
         if (arguments.libzip == null) {
             return Config.getEmptyConfig(project, arguments.target);
         }
-        return new ZippedLibrarySourcesConfig(project, arguments.libzip, arguments.target);
+        return new ZippedLibrarySourcesConfig(project, arguments.libzip, EcmaVersion.fromString(arguments.target));
     }
 }
