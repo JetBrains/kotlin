@@ -77,7 +77,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
 
     @NotNull
     private NamespaceDescriptor compileKotlin() throws Exception {
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
 
         String text = FileUtil.loadFile(ktFile);
 
@@ -109,7 +109,7 @@ public class ReadJavaBinaryClassTest extends TestCaseWithTmpdir {
             fileManager.close();
         }
 
-        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));

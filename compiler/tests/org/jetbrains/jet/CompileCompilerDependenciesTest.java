@@ -54,7 +54,7 @@ public class CompileCompilerDependenciesTest {
         return new CompilerDependencies(
                 compilerSpecialMode,
                 compilerSpecialMode.includeJdk() ? (mockJdk ? JetTestUtils.findMockJdkRtJar() : CompilerDependencies.findRtJar()) : null,
-                compilerSpecialMode.includeJdkHeaders() ? new File[]{ForTestCompileJdkHeaders.jdkHeadersForTests()} : new File[0],
+                compilerSpecialMode.includeAltHeaders() ? new File[]{ForTestCompileJdkHeaders.jdkHeadersForTests()} : new File[0],
                 compilerSpecialMode.includeKotlinRuntime() ? ForTestCompileRuntime.runtimeJarForTests() : null);
     }
 }

@@ -26,12 +26,10 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.types.TypeProjection;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -67,7 +65,7 @@ public class JavaDescriptorResolverTest extends TestCaseWithTmpdir {
         JetTestUtils.compileJavaFile(new File("compiler/testData/javaDescriptorResolver/" + fileRelativePath), tmpdir);
 
         JetCoreEnvironment jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(
-                myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+                myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
         jetCoreEnvironment.addToClasspath(tmpdir);
 
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(

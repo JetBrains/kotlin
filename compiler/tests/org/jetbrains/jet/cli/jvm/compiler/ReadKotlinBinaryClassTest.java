@@ -62,7 +62,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
 
     @Override
     public void runTest() throws Exception {
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
 
         String text = FileUtil.loadFile(testFile);
 
@@ -70,7 +70,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         JetFile psiFile = (JetFile) ((PsiFileFactoryImpl) PsiFileFactory.getInstance(jetCoreEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
 
-        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, CompilerSpecialMode.JDK_HEADERS);
+        GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, CompilerSpecialMode.ALT_HEADERS);
 
         ClassFileFactory classFileFactory = state.getFactory();
 
@@ -83,7 +83,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         Disposer.dispose(myTestRootDisposable);
 
 
-        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.JDK_HEADERS);
+        jetCoreEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(myTestRootDisposable, CompilerSpecialMode.ALT_HEADERS);
 
         jetCoreEnvironment.addToClasspath(tmpdir);
         jetCoreEnvironment.addToClasspath(new File("out/production/runtime"));
