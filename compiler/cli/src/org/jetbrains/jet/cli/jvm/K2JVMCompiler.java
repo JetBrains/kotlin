@@ -19,7 +19,6 @@ package org.jetbrains.jet.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,7 +39,6 @@ import org.jetbrains.jet.utils.PathUtil;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.jetbrains.jet.cli.common.ExitCode.*;
 
@@ -61,7 +59,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
 
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
         File[] altHeadersClasspath;
-        if (mode.includeJdkHeaders()) {
+        if (mode.includeAltHeaders()) {
             File[] defaultAltHeadersPathArray = {PathUtil.getAltHeadersPath()};
             if (arguments.altHeaders != null) {
                 altHeadersClasspath = ArrayUtil.mergeArrays(pathsToFiles(arguments.altHeaders), defaultAltHeadersPathArray);
@@ -144,7 +142,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, CompileEn
         }
         else {
             for (CompilerSpecialMode variant : CompilerSpecialMode.values()) {
-                if (arguments.mode.equalsIgnoreCase(variant.name().replaceAll("_", ""))) {
+                if (arguments.mode.equalsIgnoreCase(variant.name().replace("_", ""))) {
                     return variant;
                 }
             }
