@@ -20,9 +20,13 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
+import org.jetbrains.k2js.config.EcmaVersion;
+import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
@@ -84,6 +88,22 @@ public abstract class BasicTest extends TestWithEnvironment {
         return Collections.singletonList(KOTLIN_JS_LIB);
     }
 
+    protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+        generateJavaScriptFiles(Collections.singletonList(getInputFilePath(kotlinFilename)), kotlinFilename, mainCallParameters,
+                                ecmaVersions);
+    }
+
+    protected void generateJavaScriptFiles(@NotNull List<String> files, @NotNull String testName,
+            @NotNull MainCallParameters mainCallParameters, @NotNull EnumSet<EcmaVersion> ecmaVersions)
+            throws Exception {
+        for (EcmaVersion version : ecmaVersions) {
+            TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version);
+        }
+    }
+
+
     protected static String casesDirectoryName() {
         return CASES;
     }
@@ -129,8 +149,17 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    protected String getOutputFilePath(@NotNull String filename) {
-        return getOutputPath() + convertFileNameToDotJsFile(filename);
+    protected List<String> getOutputFilePaths(@NotNull String filename, @NotNull EnumSet<EcmaVersion> ecmaVersions) {
+        List<String> result = Lists.newArrayList();
+        for (EcmaVersion ecmaVersion : ecmaVersions) {
+            result.add(getOutputFilePath(filename, ecmaVersion));
+        }
+        return result;
+    }
+
+    @NotNull
+    protected String getOutputFilePath(@NotNull String filename, @NotNull EcmaVersion ecmaVersion) {
+        return getOutputPath() + convertFileNameToDotJsFile(filename, ecmaVersion);
     }
 
     @NotNull

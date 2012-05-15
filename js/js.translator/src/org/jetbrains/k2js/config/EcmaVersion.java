@@ -20,6 +20,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+
 /**
  * @author Pavel Talanov
  */
@@ -34,5 +36,10 @@ public enum EcmaVersion {
     @NotNull
     public static EcmaVersion defaultVersion() {
         return v3;
+    }
+
+    @NotNull
+    public static EnumSet<EcmaVersion> all() {
+        return EnumSet.allOf(EcmaVersion.class);
     }
 }

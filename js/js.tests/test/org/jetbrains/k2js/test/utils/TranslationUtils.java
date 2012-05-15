@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.K2JSTranslator;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.generate.CodeGenerator;
@@ -45,13 +46,13 @@ public final class TranslationUtils {
     private static /*var*/ K2JSTranslator translator = null;
 
     public static void translateFile(@NotNull Project project, @NotNull String inputFile,
-            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters) throws Exception {
-        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters);
+            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
+        translateFiles(project, Collections.singletonList(inputFile), outputFile, mainCallParameters, version);
     }
 
     public static void translateFiles(@NotNull Project project, @NotNull List<String> inputFiles,
-            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters) throws Exception {
-
+            @NotNull String outputFile, @NotNull MainCallParameters mainCallParameters, @NotNull EcmaVersion version) throws Exception {
+        //TODO: ignoring version for the moment
         List<JetFile> psiFiles = createPsiFileList(inputFiles, project);
         JsProgram program = getTranslator(project).generateProgram(psiFiles, mainCallParameters);
         FileWriter writer = new FileWriter(new File(outputFile));
