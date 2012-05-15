@@ -19,6 +19,7 @@ package org.jetbrains.k2js.test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
 import java.util.List;
 
@@ -41,8 +42,8 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
     protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
             @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
         generateJsFromDir(dirName);
-        //runRhinoTest(withAdditionalFiles(getOutputFilePaths(dirName + ".kt", EcmaVersion.all())),
-        //             new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+        runRhinoTests(getOutputFilePaths(dirName + ".kt", EcmaVersion.all()),
+                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String dirName) throws Exception {

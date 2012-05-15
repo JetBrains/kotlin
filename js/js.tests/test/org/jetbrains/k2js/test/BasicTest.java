@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
+import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.convertFileNameToDotJsFile;
 
 /**
@@ -100,6 +102,12 @@ public abstract class BasicTest extends TestWithEnvironment {
             throws Exception {
         for (EcmaVersion version : ecmaVersions) {
             TranslationUtils.translateFiles(getProject(), files, getOutputFilePath(testName, version), mainCallParameters, version);
+        }
+    }
+
+    protected void runRhinoTests(@NotNull List<String> outputFilePaths, @NotNull RhinoResultChecker checker) throws Exception {
+        for (String outputFilePath : outputFilePaths) {
+            runRhinoTest(withAdditionalFiles(outputFilePath), checker);
         }
     }
 

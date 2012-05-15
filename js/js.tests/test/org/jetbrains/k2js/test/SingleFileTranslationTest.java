@@ -24,9 +24,7 @@ import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
 
 import java.util.EnumSet;
-import java.util.List;
 
-import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
 
 /**
@@ -39,15 +37,12 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         super(main);
     }
 
-    public void runFunctionOutputTest(String kotlinFilename, String namespaceName,
-            String functionName, Object expectedResult) throws Exception {
+    public void runFunctionOutputTest(@NotNull String kotlinFilename, @NotNull String namespaceName,
+            @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
         EnumSet<EcmaVersion> ecmaVersions = EcmaVersion.all();
         generateJavaScriptFiles(kotlinFilename, MainCallParameters.noCall(), ecmaVersions);
-        List<String> outputFilePaths = getOutputFilePaths(kotlinFilename, ecmaVersions);
-        for (String outputFilePath : outputFilePaths) {
-            runRhinoTest(withAdditionalFiles(outputFilePath),
-                         new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
-        }
+        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions),
+                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
     public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
@@ -65,11 +60,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
     protected void checkOutput(@NotNull String kotlinFilename, @NotNull String expectedResult, @NotNull String... args) throws Exception {
         EnumSet<EcmaVersion> ecmaVersions = EcmaVersion.all();
         generateJavaScriptFiles(kotlinFilename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)), ecmaVersions);
-        List<String> outputFilePaths = getOutputFilePaths(kotlinFilename, ecmaVersions);
-        for (String outputFilePath : outputFilePaths) {
-            runRhinoTest(withAdditionalFiles(outputFilePath),
-                         new RhinoSystemOutputChecker(expectedResult));
-        }
+        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions), new RhinoSystemOutputChecker(expectedResult));
     }
 
     protected void performTestWithMain(@NotNull String testName, @NotNull String testId, @NotNull String... args) throws Exception {
