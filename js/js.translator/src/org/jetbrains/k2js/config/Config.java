@@ -17,7 +17,6 @@
 package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -25,8 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.k2js.translate.general.Translation.EcmaVersion;
 
 /**
  * @author Pavel Talanov
@@ -48,20 +45,20 @@ public abstract class Config {
 
     @NotNull
     protected static final List<String> LIB_FILE_NAMES = Arrays.asList(
-        "/core/annotations.kt",
-        "/jquery/common.kt",
-        "/jquery/ui.kt",
-        "/core/javautil.kt",
-        "/core/javalang.kt",
-        "/core/date.kt",
-        "/core/core.kt",
-        "/core/math.kt",
-        "/core/json.kt",
-        "/raphael/raphael.kt",
-        "/html5/canvas.kt",
-        "/html5/files.kt",
-        "/html5/image.kt",
-        "/stdlib/JUMaps.kt"
+            "/core/annotations.kt",
+            "/jquery/common.kt",
+            "/jquery/ui.kt",
+            "/core/javautil.kt",
+            "/core/javalang.kt",
+            "/core/date.kt",
+            "/core/core.kt",
+            "/core/math.kt",
+            "/core/json.kt",
+            "/raphael/raphael.kt",
+            "/html5/canvas.kt",
+            "/html5/files.kt",
+            "/html5/image.kt",
+            "/stdlib/JUMaps.kt"
     );
 
     protected static final String LIBRARIES_LOCATION = "js/js.libraries/src";
@@ -75,7 +72,7 @@ public abstract class Config {
 
     public Config(@NotNull Project project, @Nullable String target) {
         this.project = project;
-        this.target = StringUtil.compareVersionNumbers(target, "5") >= 0 ? EcmaVersion.v5 : EcmaVersion.v3;
+        this.target = EcmaVersion.fromString(target);
     }
 
     @NotNull
