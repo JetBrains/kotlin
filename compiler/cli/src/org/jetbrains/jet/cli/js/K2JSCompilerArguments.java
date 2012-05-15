@@ -38,6 +38,9 @@ public class K2JSCompilerArguments extends CompilerArguments {
     @Argument(value = "srcdir", description = "Sources directory")
     public String srcdir;
 
+    @Argument(value = "target", description = "Generate js files for specific ECMA version (3 or 5, default ECMA 3)")
+    public String target;
+
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
 

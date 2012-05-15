@@ -41,7 +41,7 @@ public final class TestConfig extends Config {
     private /*var*/ List<JetFile> jsLibFiles = null;
 
     public TestConfig(@NotNull Project project) {
-        super(project);
+        super(project, null);
     }
 
     @NotNull

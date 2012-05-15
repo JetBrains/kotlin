@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -24,6 +25,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.k2js.translate.general.Translation.EcmaVersion;
 
 /**
  * @author Pavel Talanov
@@ -33,8 +36,8 @@ import java.util.List;
 public abstract class Config {
 
     @NotNull
-    public static Config getEmptyConfig(@NotNull Project project) {
-        return new Config(project) {
+    public static Config getEmptyConfig(@NotNull Project project, @Nullable String target) {
+        return new Config(project, target) {
             @NotNull
             @Override
             protected List<JetFile> generateLibFiles() {
@@ -67,14 +70,22 @@ public abstract class Config {
     private final Project project;
     @Nullable
     private List<JetFile> libFiles = null;
+    @NotNull
+    private final EcmaVersion target;
 
-    public Config(@NotNull Project project) {
+    public Config(@NotNull Project project, @Nullable String target) {
         this.project = project;
+        this.target = StringUtil.compareVersionNumbers(target, "5") >= 0 ? EcmaVersion.v5 : EcmaVersion.v3;
     }
 
     @NotNull
     public Project getProject() {
         return project;
+    }
+
+    @NotNull
+    public EcmaVersion getTarget() {
+        return target;
     }
 
     @NotNull

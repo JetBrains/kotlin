@@ -54,6 +54,10 @@ public final class TranslationContext {
                                       rootDynamicContext, rootAliasingContext);
     }
 
+    public boolean isEcma5() {
+        return staticContext.isEcma5();
+    }
+
     private TranslationContext(@NotNull StaticContext staticContext,
                                @NotNull DynamicContext dynamicContext,
                                @NotNull AliasingContext context) {

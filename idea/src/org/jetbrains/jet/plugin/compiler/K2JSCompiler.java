@@ -24,6 +24,7 @@ import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Chunk;
@@ -118,17 +119,33 @@ public final class K2JSCompiler implements TranslatingCompiler {
             context.addMessage(CompilerMessageCategory.ERROR, "K2JSCompiler does not support multiple module source roots.", null, -1, -1);
             return -1;
         }
-        String[] commandLineArgs = constructArguments(context.getProject(), context.getModuleOutputDirectory(module), roots[0]);
+
+        VirtualFile outDir = context.getModuleOutputDirectory(module);
+        String outFile = outDir == null ? null : K2JSRunnerUtils.constructPathToGeneratedFile(context.getProject(), outDir.getPath());
+
+        String[] commandLineArgs = constructArguments(context.getProject(), outFile, roots[0]);
         Object rc = invokeExecMethod(environment, out, context, commandLineArgs, "org.jetbrains.jet.cli.js.K2JSCompiler");
+
+        if (outDir != null) {
+            outDir.refresh(false, true);
+        }
         return CompilerUtils.getReturnCodeFromObject(rc);
     }
 
     @NotNull
-    private static String[] constructArguments(@NotNull Project project, @Nullable VirtualFile outDir, @NotNull VirtualFile srcDir) {
+    private static String[] constructArguments(@NotNull Project project, @Nullable String outFile, @NotNull VirtualFile srcDir) {
         ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
         addPathToSourcesDir(args, srcDir);
-        addOutputPath(project, outDir, args);
-        addPathToZippedLib(project, args);
+        addOutputPath(outFile, args);
+        Pair<String, String> data = JsModuleDetector.getLibLocationAndTargetForProject(project);
+        if (data.first != null) {
+            args.add("-libzip");
+            args.add(data.first);
+        }
+        if (data.second != null) {
+            args.add("-target");
+            args.add(data.second);
+        }
         return ArrayUtil.toStringArray(args);
     }
 
@@ -138,20 +155,10 @@ public final class K2JSCompiler implements TranslatingCompiler {
         args.add(srcPath);
     }
 
-    private static void addOutputPath(@NotNull Project project, @Nullable VirtualFile outDir, @NotNull ArrayList<String> args) {
-        if (outDir != null) {
-            String outPath = outDir.getPath();
-            String outFile = K2JSRunnerUtils.constructPathToGeneratedFile(project, outPath);
+    private static void addOutputPath(@Nullable String outFile, @NotNull ArrayList<String> args) {
+        if (outFile != null) {
             args.add("-output");
             args.add(outFile);
-        }
-    }
-
-    private static void addPathToZippedLib(@NotNull Project project, @NotNull ArrayList<String> args) {
-        String libLocationForProject = JsModuleDetector.getLibLocationForProject(project);
-        if (libLocationForProject != null) {
-            args.add("-libzip");
-            args.add(libLocationForProject);
         }
     }
 

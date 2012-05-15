@@ -20,6 +20,9 @@ import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.*;
 
@@ -27,6 +30,16 @@ import java.util.*;
  * @author Pavel Talanov
  */
 public final class JsAstUtils {
+    private static final JsNameRef VALUE = new JsNameRef("value");
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null) ;
+    private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
+    private static final JsNameRef CREATE = new JsNameRef("create");
+
+    static {
+        JsNameRef nameRef = new JsNameRef("Object");
+        DEFINE_PROPERTIES.setQualifier(nameRef);
+        CREATE.setQualifier(nameRef);
+    }
 
     private JsAstUtils() {
     }
@@ -271,5 +284,39 @@ public final class JsAstUtils {
             result.add(program.getStringLiteral(str));
         }
         return result;
+    }
+
+    @NotNull
+    public static JsStatement defineProperties(JsObjectLiteral propertiesDefinition) {
+        JsInvocation invoke = new JsInvocation();
+        invoke.setQualifier(DEFINE_PROPERTIES);
+        invoke.getArguments().add(new JsThisRef());
+        invoke.getArguments().add(propertiesDefinition);
+        return invoke.makeStmt();
+    }
+
+    @NotNull
+    public static JsPropertyInitializer propertyDescriptor(PropertyDescriptor ktDescriptor,
+            TranslationContext context,
+            JsExpression value) {
+        return propertyDescriptor(ktDescriptor, context, value, ktDescriptor.isVar());
+    }
+
+    @NotNull
+    public static JsPropertyInitializer propertyDescriptor(DeclarationDescriptor ktDescriptor,
+            TranslationContext context,
+            JsExpression value,
+            boolean writable) {
+        JsObjectLiteral descriptor = new JsObjectLiteral();
+        List<JsPropertyInitializer> meta = descriptor.getPropertyInitializers();
+        meta.add(new JsPropertyInitializer(VALUE, value));
+        if (writable) {
+            if (WRITABLE.getValueExpr() == null) {
+                WRITABLE.setValueExpr(context.program().getTrueLiteral());
+            }
+            meta.add(WRITABLE);
+        }
+        // todo accessors
+        return new JsPropertyInitializer(context.getNameForDescriptor(ktDescriptor).makeRef(), descriptor);
     }
 }
