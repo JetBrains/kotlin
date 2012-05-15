@@ -21,6 +21,7 @@ import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.getAllFilesInDir;
@@ -34,15 +35,23 @@ public abstract class MultipleFilesTranslationTest extends BasicTest {
         super(main);
     }
 
-    protected void generateJsFromDir(@NotNull String dirName) throws Exception {
+    protected void generateJsFromDir(@NotNull String dirName, @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
         List<String> fullFilePaths = getAllFilesInDir(getInputFilePath(dirName));
-        generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), EcmaVersion.all());
+        generateJavaScriptFiles(fullFilePaths, dirName, MainCallParameters.noCall(), ecmaVersions);
     }
 
     protected void runMultiFileTest(@NotNull String dirName, @NotNull String namespaceName,
             @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
-        generateJsFromDir(dirName);
-        runRhinoTests(getOutputFilePaths(dirName + ".kt", EcmaVersion.all()),
+        runMultiFileTests(EcmaVersion.all(), dirName, namespaceName, functionName, expectedResult);
+    }
+
+    protected void runMultiFileTests(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull String dirName,
+            @NotNull String namespaceName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult)
+            throws Exception {
+        generateJsFromDir(dirName, ecmaVersions);
+        runRhinoTests(getOutputFilePaths(dirName + ".kt", ecmaVersions),
                       new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 

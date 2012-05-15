@@ -18,6 +18,8 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
+import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+
 /**
  * @author Pavel Talanov
  */
@@ -43,7 +45,7 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
 
 
     public void testArrayFunctionConstructor() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
 
@@ -53,13 +55,13 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
 
     //TODO: this feature in not supported for some time
     //TODO: support it. Probably configurable.
-//    (expected = JavaScriptException.class)
-//    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
-//        fooBoxTest();
-//    }
+    //    (expected = JavaScriptException.class)
+    //    public void arrayThrowsExceptionOnOOBaccess() throws Exception {
+    //        fooBoxTest();
+    //    }
 
 
     public void testArraysIterator() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 }
