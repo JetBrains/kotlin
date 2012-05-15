@@ -48,7 +48,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private final JetClassOrObject classDeclaration;
     @NotNull
     private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
-
+    @NotNull
     private final JsObjectLiteral propertiesDefinition = new JsObjectLiteral();
 
     public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
@@ -135,13 +135,17 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         if (propertyDescriptor == null) {
             return;
         }
+        JsNameRef initialValueForProperty = jsParameter.getName().makeRef();
+        addInitializerOrPropertyDefinition(initialValueForProperty, propertyDescriptor);
+    }
 
-        final JsNameRef nameRef = jsParameter.getName().makeRef();
+    private void addInitializerOrPropertyDefinition(@NotNull JsNameRef initialValue, @NotNull PropertyDescriptor propertyDescriptor) {
         if (context().isEcma5()) {
-            propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, context(), nameRef));
+            propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, initialValue, context()));
         }
         else {
-            JsStatement assignmentToBackingFieldExpression = assignmentToBackingField(context(), propertyDescriptor, nameRef).makeStmt();
+            JsStatement assignmentToBackingFieldExpression =
+                    assignmentToBackingField(context(), propertyDescriptor, initialValue).makeStmt();
             initializerStatements.add(assignmentToBackingFieldExpression);
         }
     }

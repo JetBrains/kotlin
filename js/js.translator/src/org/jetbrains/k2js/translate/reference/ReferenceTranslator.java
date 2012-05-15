@@ -38,13 +38,13 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
-                                                   @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return getAccessTranslator(expression, context).translateAsGet();
     }
 
     @NotNull
     public static JsExpression translateAsFQReference(@NotNull DeclarationDescriptor referencedDescriptor,
-                                                      @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         JsExpression qualifier = context.getQualifierForDescriptor(referencedDescriptor);
         if (qualifier == null) {
             return translateAsLocalNameReference(referencedDescriptor, context);
@@ -55,7 +55,16 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor referencedDescriptor,
-                                                             @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
+        DeclarationDescriptor effectiveDescriptor = getReferencedDescriptor(referencedDescriptor, context);
+        return context.getNameForDescriptor(effectiveDescriptor).makeRef();
+    }
+
+
+    //TODO: should not be doing this
+    @NotNull
+    private static DeclarationDescriptor getReferencedDescriptor(@NotNull DeclarationDescriptor referencedDescriptor,
+            @NotNull TranslationContext context) {
         DeclarationDescriptor effectiveDescriptor;
         if (context.isEcma5() && referencedDescriptor instanceof PropertyAccessorDescriptor) {
             effectiveDescriptor = ((PropertyAccessorDescriptor) referencedDescriptor).getCorrespondingProperty();
@@ -63,19 +72,19 @@ public final class ReferenceTranslator {
         else {
             effectiveDescriptor = referencedDescriptor;
         }
-        return context.getNameForDescriptor(effectiveDescriptor).makeRef();
+        return effectiveDescriptor;
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
-                                                       @NotNull TranslationContext context) {
+            @NotNull TranslationContext context) {
         return getAccessTranslator(referenceExpression, null, context);
     }
 
     @NotNull
     public static AccessTranslator getAccessTranslator(@NotNull JetSimpleNameExpression referenceExpression,
-                                                       @Nullable JsExpression receiver,
-                                                       @NotNull TranslationContext context) {
+            @Nullable JsExpression receiver,
+            @NotNull TranslationContext context) {
         if (isBackingFieldReference(referenceExpression)) {
             return BackingFieldAccessTranslator.newInstance(referenceExpression, context);
         }

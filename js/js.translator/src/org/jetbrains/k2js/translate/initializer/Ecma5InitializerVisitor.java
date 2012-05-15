@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.initializer;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsObjectLiteral;
 import com.google.dart.compiler.backend.js.ast.JsStatement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -27,27 +28,26 @@ import org.jetbrains.k2js.translate.utils.JsAstUtils;
 
 import java.util.List;
 
-final class InitializerEcma5Visitor extends InitializerVisitor {
+public final class Ecma5InitializerVisitor extends InitializerVisitor {
+    @NotNull
     private final JsObjectLiteral propertiesDefinition = new JsObjectLiteral();
 
-    @Nullable
     @Override
-    protected JsExpression defineMember(TranslationContext context, PropertyDescriptor propertyDescriptor, JsExpression value) {
-        propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, context, value));
+    @Nullable
+    protected JsExpression generateInitializerForProperty(@NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
+        propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, value, context));
         return null;
     }
 
+    @NotNull
     @Override
-    protected List<JsStatement> createStatements(List<JetDeclaration> declarations, TranslationContext context) {
-        List<JsStatement> statements = super.createStatements(declarations, context);
+    protected List<JsStatement> generateInitializerStatements(@NotNull List<JetDeclaration> declarations,
+            @NotNull TranslationContext context) {
+        List<JsStatement> statements = super.generateInitializerStatements(declarations, context);
         if (!propertiesDefinition.getPropertyInitializers().isEmpty()) {
             JsStatement statement = JsAstUtils.defineProperties(propertiesDefinition);
-            if (statements.isEmpty()) {
-                statements.add(statement);
-            }
-            else {
-                statements.add(0, statement);
-            }
+            statements.add(0, statement);
         }
         return statements;
     }

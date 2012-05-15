@@ -137,6 +137,11 @@ public final class K2JSCompiler implements TranslatingCompiler {
         ArrayList<String> args = Lists.newArrayList("-tags", "-verbose", "-version");
         addPathToSourcesDir(args, srcDir);
         addOutputPath(outFile, args);
+        addLibLocationAndTarget(project, args);
+        return ArrayUtil.toStringArray(args);
+    }
+
+    private static void addLibLocationAndTarget(@NotNull Project project, @NotNull ArrayList<String> args) {
         Pair<String, String> data = JsModuleDetector.getLibLocationAndTargetForProject(project);
         if (data.first != null) {
             args.add("-libzip");
@@ -146,7 +151,6 @@ public final class K2JSCompiler implements TranslatingCompiler {
             args.add("-target");
             args.add(data.second);
         }
-        return ArrayUtil.toStringArray(args);
     }
 
     private static void addPathToSourcesDir(@NotNull ArrayList<String> args, @NotNull VirtualFile srcDir) {

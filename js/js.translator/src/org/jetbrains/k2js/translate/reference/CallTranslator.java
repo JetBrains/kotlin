@@ -232,24 +232,41 @@ public final class CallTranslator extends AbstractTranslator {
             @NotNull
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
-                JsExpression callee = callParameters.getFunctionReference();
-                if (receiver != null) {
-                    setQualifier(callee, receiver);
+                JsExpression qualifiedCallee = getQualifiedCallee(receiver);
+
+                if (isEcma5PropertyAccess()) {
+                    return ecma5PropertyAccess(qualifiedCallee);
                 }
 
-                if (context().isEcma5()) {
-                    if (descriptor instanceof PropertyGetterDescriptor) {
-                        return callee;
-                    }
-                    else if (descriptor instanceof PropertySetterDescriptor) {
-                        assert arguments.size() == 1;
-                        return assignment(callee, arguments.get(0));
-                    }
-                }
-
-                return newInvocation(callee, arguments);
+                return newInvocation(qualifiedCallee, arguments);
             }
         }, context());
+    }
+
+    @NotNull
+    private JsExpression ecma5PropertyAccess(@NotNull JsExpression callee) {
+        if (descriptor instanceof PropertyGetterDescriptor) {
+            assert arguments.isEmpty();
+            return callee;
+        }
+        else {
+            assert descriptor instanceof PropertySetterDescriptor;
+            assert arguments.size() == 1;
+            return assignment(callee, arguments.get(0));
+        }
+    }
+
+    private boolean isEcma5PropertyAccess() {
+        return context().isEcma5() && descriptor instanceof PropertyAccessorDescriptor;
+    }
+
+    @NotNull
+    private JsExpression getQualifiedCallee(@Nullable JsExpression receiver) {
+        JsExpression callee = callParameters.getFunctionReference();
+        if (receiver != null) {
+            setQualifier(callee, receiver);
+        }
+        return callee;
     }
 
     @Nullable
