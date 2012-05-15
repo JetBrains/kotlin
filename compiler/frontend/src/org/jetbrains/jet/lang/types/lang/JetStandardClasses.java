@@ -258,12 +258,14 @@ public class JetStandardClasses {
     @NotNull
     public static final JetScope STANDARD_CLASSES;
 
+    public static final String UNIT_ALIAS = "Unit";
+
     static {
         WritableScope writableScope = new WritableScopeImpl(JetScope.EMPTY, STANDARD_CLASSES_NAMESPACE, RedeclarationHandler.DO_NOTHING).setDebugName("JetStandardClasses.STANDARD_CLASSES");
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
         STANDARD_CLASSES = writableScope;
-        writableScope.addClassifierAlias("Unit", getTuple(0));
+        writableScope.addClassifierAlias(UNIT_ALIAS, getTuple(0));
 
         Field[] declaredFields = JetStandardClasses.class.getDeclaredFields();
         for (Field field : declaredFields) {
