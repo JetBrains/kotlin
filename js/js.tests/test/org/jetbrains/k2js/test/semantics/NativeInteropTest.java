@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.semantics;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.test.utils.JsTestUtils;
 
@@ -59,6 +60,6 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     }
 
     public void testKt1519() throws Exception {
-        checkFooBoxIsTrue("KT-1519.kt");
+        checkFooBoxIsTrue("KT-1519.kt", EcmaVersion.all());
     }
 }

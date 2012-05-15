@@ -18,6 +18,8 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
+import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+
 /**
  * @author Pavel Talanov
  */
@@ -43,12 +45,12 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
 
     public void testCustomGetter() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
 
     public void testCustomSetter() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
     public void testNamespacePropertyInitializer() throws Exception {
@@ -61,7 +63,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testNamespaceCustomAccessors() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
 
@@ -72,5 +74,4 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     public void testExtensionLiteralSafeCall() throws Exception {
         fooBoxTest();
     }
-
 }

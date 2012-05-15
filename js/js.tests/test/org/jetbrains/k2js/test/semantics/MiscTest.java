@@ -16,8 +16,11 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.mozilla.javascript.JavaScriptException;
+
+import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
 
 /**
  * @author Pavel Talanov
@@ -36,7 +39,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testIntRange() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
 
@@ -45,7 +48,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutNamespace() throws Exception {
-        runFunctionOutputTest("classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
+        runFunctionOutputTest(failsOnEcmaV5(), "classWithoutNamespace.kt", Namer.getRootNamespaceName(), "box", true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -58,7 +61,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1052_2() throws Exception {
-        checkFooBoxIsTrue("KT-1052-2.kt");
+        checkFooBoxIsTrue("KT-1052-2.kt", EcmaVersion.all());
     }
 
     public void testKt1052() throws Exception {
@@ -67,27 +70,27 @@ public final class MiscTest extends AbstractExpressionTest {
 
 
     public void testKt740_1() throws Exception {
-        checkFooBoxIsTrue("KT-740.kt");
+        checkFooBoxIsTrue("KT-740.kt", EcmaVersion.all());
     }
 
     public void testKt740_2() throws Exception {
-        checkFooBoxIsOk("KT-740-2.kt");
+        checkFooBoxIsOk(failsOnEcmaV5(), "KT-740-2.kt");
     }
 
     public void testKt1361_1() throws Exception {
-        checkFooBoxIsTrue("KT-1361-1.kt");
+        checkFooBoxIsTrue("KT-1361-1.kt", EcmaVersion.all());
     }
 
     public void testKt1361_2() throws Exception {
-        checkFooBoxIsTrue("KT-1361-2.kt");
+        checkFooBoxIsTrue("KT-1361-2.kt", EcmaVersion.all());
     }
 
     public void testKt817() throws Exception {
-        checkFooBoxIsTrue("KT-817.kt");
+        checkFooBoxIsTrue("KT-817.kt", EcmaVersion.all());
     }
 
     public void testKt740_3() throws Exception {
-        checkFooBoxIsOk("KT-740-3.kt");
+        checkFooBoxIsOk(failsOnEcmaV5(), "KT-740-3.kt");
     }
 
     public void testFunInConstructor() throws Exception {
@@ -107,11 +110,11 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testExtensionLiteralCreatedAtNamespaceLevel() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
     public void testTemporaryVariableCreatedInNamespaceInitializer() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
     public void testWhenReturnedWithoutBlock() throws Exception {
@@ -127,7 +130,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testKt1865() throws Exception {
-        checkFooBoxIsTrue("KT-1865.kt");
+        checkFooBoxIsTrue("KT-1865.kt", EcmaVersion.all());
     }
 
     public void testMainFunInNestedNamespace() throws Exception {
