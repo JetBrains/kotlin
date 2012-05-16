@@ -56,6 +56,7 @@ public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
         if (!(descriptor instanceof VariableDescriptor)) {
             return null;
         }
+
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
         PsiElement variableDeclaration = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
         if (variableDeclaration == null) {
@@ -69,6 +70,8 @@ public class CaptureClosureVisitor extends JetTreeVisitor<ClosureContext> {
             context.put(variableDescriptor);
             return null;
         }
+
+
         boolean isLoopParameter = variableDeclaration.getNode().getElementType().equals(JetNodeTypes.LOOP_PARAMETER);
         if (isLoopParameter) {
             context.put(variableDescriptor);
