@@ -58,9 +58,17 @@ public final class AnalyzerFacadeForJS {
         return bindingContext;
     }
 
+
+    //NOTE: web demo related method
+    @SuppressWarnings("UnusedDeclaration")
+    @NotNull
+    public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files, @NotNull Config config) {
+        return analyzeFiles(files, Predicates.<PsiFile>alwaysTrue(), config);
+    }
+
     @NotNull
     public static BindingContext analyzeFiles(@NotNull Collection<JetFile> files,
-            Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely, @NotNull Config config) {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 

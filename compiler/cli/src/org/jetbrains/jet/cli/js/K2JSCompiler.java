@@ -120,9 +120,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments, K2JSCompile
 
     @NotNull
     private static Config getConfig(@NotNull K2JSCompilerArguments arguments, @NotNull Project project) {
+        EcmaVersion ecmaVersion = EcmaVersion.fromString(arguments.target);
         if (arguments.libzip == null) {
-            return Config.getEmptyConfig(project, arguments.target);
+            return Config.getEmptyConfig(project, ecmaVersion);
         }
-        return new ZippedLibrarySourcesConfig(project, arguments.libzip, EcmaVersion.fromString(arguments.target));
+        return new ZippedLibrarySourcesConfig(project, arguments.libzip, ecmaVersion);
     }
 }
