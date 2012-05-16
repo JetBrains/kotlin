@@ -20,6 +20,7 @@
 package org.jetbrains.jet.utils;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
@@ -123,5 +124,21 @@ public class PathUtil {
             throw new IllegalStateException("file must exist and be regular to be converted to virtual file: " + file);
         }
         return VirtualFileManager.getInstance().findFileByUrl("jar://" + file.getPath() + "!/");
+    }
+
+    @NotNull
+    public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                return VirtualFileManager.getInstance()
+                        .findFileByUrl("file://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()));
+            }
+            else {
+                return VirtualFileManager.getInstance().findFileByUrl("jar://" + FileUtil.toSystemIndependentName(file.getAbsolutePath()) + "!/");
+            }
+        }
+        else {
+            throw new IllegalStateException("Path " + file + " does not exist.");
+        }
     }
 }
