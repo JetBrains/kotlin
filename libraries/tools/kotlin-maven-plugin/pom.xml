@@ -69,6 +69,7 @@
                     <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <postBuildHookScript>verify.bsh</postBuildHookScript>
+                    <streamLogs>true</streamLogs>
                 </configuration>
                 <executions>
                     <execution>

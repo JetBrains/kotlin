@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.semantics;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
 import java.io.File;
@@ -68,7 +69,7 @@ public final class InlineTest extends SingleFileTranslationTest {
 
     private void checkFooBoxIsTrueAndFunctionNameIsNotReferenced(@NotNull String filename, String funName) throws Exception {
         fooBoxTest();
-        String generatedJSFilePath = getOutputFilePath(filename);
+        String generatedJSFilePath = getOutputFilePath(filename, EcmaVersion.defaultVersion());
         String outputFileText = FileUtil.loadFile(new File(generatedJSFilePath));
         assertTrue(countOccurrences(outputFileText, funName) == 1);
     }

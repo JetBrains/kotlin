@@ -298,22 +298,21 @@ public class OverrideResolver {
             if (overriddenDeclarations.size() == 0) {
                 throw new IllegalStateException("A 'fake override' must override something");
             }
-            else if (overriddenDeclarations.size() == 1) {
-                CallableMemberDescriptor single = overriddenDeclarations.iterator().next();
-                if (single.getModality() == Modality.ABSTRACT) {
-                    abstractNoImpl.add(single);
-                }
-            }
             else {
                 List<CallableMemberDescriptor> nonAbstractManyImpl = Lists.newArrayList();
                 Set<CallableMemberDescriptor> filteredOverriddenDeclarations = OverridingUtil.filterOverrides(Sets.newHashSet(overriddenDeclarations));
+                boolean allSuperAbstract = true;
                 for (CallableMemberDescriptor overridden : filteredOverriddenDeclarations) {
                     if (overridden.getModality() != Modality.ABSTRACT) {
                         nonAbstractManyImpl.add(overridden);
+                        allSuperAbstract = false;
                     }
                 }
                 if (nonAbstractManyImpl.size() > 1) {
                     manyImpl.addAll(nonAbstractManyImpl);
+                }
+                else if (allSuperAbstract) {
+                    abstractNoImpl.addAll(overriddenDeclarations);
                 }
             }
         }

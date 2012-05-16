@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.k2js.test.semantics;
+package org.jetbrains.k2js.config;
 
-import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+import java.util.EnumSet;
 
 /**
  * @author Pavel Talanov
  */
-public final class RangeTest extends SingleFileTranslationTest {
+public enum EcmaVersion {
+    v3, v5;
 
-    public RangeTest() {
-        super("range/");
+    @NotNull
+    public static EcmaVersion fromString(@Nullable String target) {
+        return StringUtil.compareVersionNumbers(target, "5") >= 0 ? v5 : v3;
     }
 
-    public void testExplicitRange() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+    @NotNull
+    public static EcmaVersion defaultVersion() {
+        return v3;
     }
 
-
-    public void testRangeSugarSyntax() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
-    }
-
-
-    public void testIntInRange() throws Exception {
-        fooBoxTest();
-    }
-
-    public void testIteratingOverRanges() throws Exception {
-        fooBoxTest();
+    @NotNull
+    public static EnumSet<EcmaVersion> all() {
+        return EnumSet.allOf(EcmaVersion.class);
     }
 }

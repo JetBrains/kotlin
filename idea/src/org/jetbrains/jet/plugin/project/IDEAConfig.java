@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.project;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.config.ZippedLibrarySourcesConfig;
 
 import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAndTargetForProject;
@@ -26,8 +27,7 @@ import static org.jetbrains.jet.plugin.project.JsModuleDetector.getLibLocationAn
  * @author Pavel Talanov
  */
 public final class IDEAConfig extends ZippedLibrarySourcesConfig {
-
     public IDEAConfig(@NotNull Project project) {
-        super(project, getLibLocationAndTargetForProject(project).first, null);
+        super(project, getLibLocationAndTargetForProject(project).first, EcmaVersion.defaultVersion());
     }
 }

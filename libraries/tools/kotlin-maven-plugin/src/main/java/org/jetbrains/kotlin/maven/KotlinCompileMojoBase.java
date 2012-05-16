@@ -204,7 +204,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.setOutputDir(output);
 
         arguments.altHeaders = getAltHeaders().getPath();
-        log.debug("Using jdk headers from " + arguments.altHeaders);
+        log.debug("Using alt headers from " + arguments.altHeaders);
     }
 
     // TODO: Make a better runtime detection or get rid of it entirely

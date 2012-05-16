@@ -18,9 +18,9 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
@@ -31,14 +31,14 @@ import java.util.*;
  */
 public final class JsAstUtils {
     private static final JsNameRef VALUE = new JsNameRef("value");
-    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null) ;
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
     private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
     private static final JsNameRef CREATE = new JsNameRef("create");
 
     static {
-        JsNameRef nameRef = new JsNameRef("Object");
-        DEFINE_PROPERTIES.setQualifier(nameRef);
-        CREATE.setQualifier(nameRef);
+        JsNameRef globalObjectReference = new JsNameRef("Object");
+        DEFINE_PROPERTIES.setQualifier(globalObjectReference);
+        CREATE.setQualifier(globalObjectReference);
     }
 
     private JsAstUtils() {
@@ -287,36 +287,36 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineProperties(JsObjectLiteral propertiesDefinition) {
-        JsInvocation invoke = new JsInvocation();
-        invoke.setQualifier(DEFINE_PROPERTIES);
-        invoke.getArguments().add(new JsThisRef());
-        invoke.getArguments().add(propertiesDefinition);
-        return invoke.makeStmt();
+    public static JsStatement defineProperties(@NotNull JsObjectLiteral propertiesDefinition) {
+        return AstUtil.newInvocation(DEFINE_PROPERTIES, new JsThisRef(), propertiesDefinition).makeStmt();
     }
 
     @NotNull
-    public static JsPropertyInitializer propertyDescriptor(PropertyDescriptor ktDescriptor,
-            TranslationContext context,
-            JsExpression value) {
-        return propertyDescriptor(ktDescriptor, context, value, ktDescriptor.isVar());
-    }
-
-    @NotNull
-    public static JsPropertyInitializer propertyDescriptor(DeclarationDescriptor ktDescriptor,
-            TranslationContext context,
-            JsExpression value,
-            boolean writable) {
-        JsObjectLiteral descriptor = new JsObjectLiteral();
-        List<JsPropertyInitializer> meta = descriptor.getPropertyInitializers();
+    public static JsPropertyInitializer propertyDescriptor(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
+        JsObjectLiteral jsPropertyDescriptor = new JsObjectLiteral();
+        List<JsPropertyInitializer> meta = jsPropertyDescriptor.getPropertyInitializers();
         meta.add(new JsPropertyInitializer(VALUE, value));
-        if (writable) {
-            if (WRITABLE.getValueExpr() == null) {
-                WRITABLE.setValueExpr(context.program().getTrueLiteral());
-            }
-            meta.add(WRITABLE);
+        if (descriptor.isVar()) {
+            meta.add(getWritable(context));
         }
-        // todo accessors
-        return new JsPropertyInitializer(context.getNameForDescriptor(ktDescriptor).makeRef(), descriptor);
+        // TODO: accessors
+        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), jsPropertyDescriptor);
+    }
+
+    @NotNull
+    private static JsPropertyInitializer getWritable(@NotNull TranslationContext context) {
+        if (WRITABLE.getValueExpr() == null) {
+            WRITABLE.setValueExpr(context.program().getTrueLiteral());
+        }
+        return WRITABLE;
+    }
+
+    @NotNull
+    public static List<JsStatement> nullableExpressionToStatementList(@Nullable JsExpression initalizerForProperty) {
+        if (initalizerForProperty == null) {
+            return Collections.emptyList();
+        }
+        return Collections.<JsStatement>singletonList(initalizerForProperty.makeStmt());
     }
 }

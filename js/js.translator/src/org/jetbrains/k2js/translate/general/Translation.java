@@ -25,10 +25,11 @@ import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.facade.exceptions.MainFunctionNotFoundException;
-import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
+import org.jetbrains.k2js.facade.exceptions.TranslationInternalException;
 import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.k2js.translate.context.StaticContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -58,12 +59,9 @@ import static org.jetbrains.k2js.translate.utils.dangerous.DangerousData.collect
  * @author Pavel Talanov
  *         <p/>
  *         This class provides a interface which all translators use to interact with each other.
- *         Goal is to simlify interaction between translators.
+ *         Goal is to simplify interaction between translators.
  */
 public final class Translation {
-    public enum EcmaVersion {
-        v3, v5
-    }
 
     private Translation() {
     }
@@ -145,7 +143,9 @@ public final class Translation {
 
     @NotNull
     public static JsProgram generateAst(@NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters, EcmaVersion ecmaVersion) throws TranslationException {
+            @NotNull List<JetFile> files, @NotNull MainCallParameters mainCallParameters,
+            @NotNull EcmaVersion ecmaVersion)
+            throws TranslationException {
         try {
             return doGenerateAst(bindingContext, files, mainCallParameters, ecmaVersion);
         }
@@ -159,7 +159,8 @@ public final class Translation {
 
     @NotNull
     private static JsProgram doGenerateAst(@NotNull BindingContext bindingContext, @NotNull List<JetFile> files,
-            @NotNull MainCallParameters mainCallParameters, EcmaVersion ecmaVersion) throws MainFunctionNotFoundException {
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull EcmaVersion ecmaVersion) throws MainFunctionNotFoundException {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);

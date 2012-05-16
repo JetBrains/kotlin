@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.translate.context.generator.Generator;
 import org.jetbrains.k2js.translate.context.generator.Rule;
-import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -45,14 +45,14 @@ import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 public final class StaticContext {
 
     public static StaticContext generateStaticContext(@NotNull JetStandardLibrary library,
-                                                      @NotNull BindingContext bindingContext, Translation.EcmaVersion ecmaVersion) {
+            @NotNull BindingContext bindingContext,
+            @NotNull EcmaVersion ecmaVersion) {
         JsProgram program = new JsProgram("main");
         JsRootScope jsRootScope = program.getRootScope();
         Namer namer = Namer.newInstance(jsRootScope);
         NamingScope scope = NamingScope.rootScope(jsRootScope);
         Intrinsics intrinsics = Intrinsics.standardLibraryIntrinsics(library);
-        StandardClasses standardClasses =
-            StandardClasses.bindImplementations(namer.getKotlinScope());
+        StandardClasses standardClasses = StandardClasses.bindImplementations(namer.getKotlinScope());
         return new StaticContext(program, bindingContext, namer, intrinsics, standardClasses, scope, ecmaVersion);
     }
 
@@ -85,12 +85,12 @@ public final class StaticContext {
     private final Map<NamingScope, JsFunction> scopeToFunction = Maps.newHashMap();
 
     @NotNull
-    private final Translation.EcmaVersion ecmaVersion;
+    private final EcmaVersion ecmaVersion;
 
     //TODO: too many parameters in constructor
     private StaticContext(@NotNull JsProgram program, @NotNull BindingContext bindingContext,
             @NotNull Namer namer, @NotNull Intrinsics intrinsics,
-            @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope, @NotNull Translation.EcmaVersion ecmaVersion) {
+            @NotNull StandardClasses standardClasses, @NotNull NamingScope rootScope, @NotNull EcmaVersion ecmaVersion) {
         this.program = program;
         this.bindingContext = bindingContext;
         this.namer = namer;
@@ -101,7 +101,7 @@ public final class StaticContext {
     }
 
     public boolean isEcma5() {
-        return ecmaVersion == Translation.EcmaVersion.v5;
+        return ecmaVersion == EcmaVersion.v5;
     }
 
     @NotNull
@@ -170,7 +170,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof NamespaceDescriptor)) {
                         return null;
                     }
-                    String nameForNamespace = getNameForNamespace((NamespaceDescriptor)descriptor);
+                    String nameForNamespace = getNameForNamespace((NamespaceDescriptor) descriptor);
                     return getRootScope().declareUnobfuscatableName(nameForNamespace);
                 }
             };
@@ -200,7 +200,7 @@ public final class StaticContext {
                         return null;
                     }
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
-                    String propertyName = ((PropertyAccessorDescriptor)descriptor).getCorrespondingProperty().getName();
+                    String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName();
                     String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     return enclosingScope.declareObfuscatableName(accessorName);
@@ -228,12 +228,13 @@ public final class StaticContext {
                         return null;
                     }
 
+                    //TODO: move somewhere
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
                     if (isEcma5()) {
                         String name = descriptor.getName();
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
                         if (!isDefaultAccessor(propertyDescriptor.getGetter()) || !isDefaultAccessor(propertyDescriptor.getSetter())) {
-                            // _ is more preferable than $ — should be discussed later
+                            // _ is more preferable than $ should be discussed later
                             name = '_' + name;
                         }
 
@@ -258,7 +259,7 @@ public final class StaticContext {
                     if (!descriptor.getName().equals("toString")) {
                         return null;
                     }
-                    if (((FunctionDescriptor)descriptor).getValueParameters().isEmpty()) {
+                    if (((FunctionDescriptor) descriptor).getValueParameters().isEmpty()) {
                         return getEnclosingScope(descriptor).declareUnobfuscatableName("toString");
                     }
                     return null;
@@ -272,7 +273,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof FunctionDescriptor)) {
                         return null;
                     }
-                    FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor((FunctionDescriptor)descriptor);
+                    FunctionDescriptor overriddenDescriptor = getOverriddenDescriptor((FunctionDescriptor) descriptor);
                     if (overriddenDescriptor == null) {
                         return null;
                     }
@@ -307,7 +308,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    if (getSuperclass((ClassDescriptor)descriptor) == null) {
+                    if (getSuperclass((ClassDescriptor) descriptor) == null) {
                         return getRootScope().innerScope("Scope for class " + descriptor.getName());
                     }
                     return null;
@@ -319,7 +320,7 @@ public final class StaticContext {
                     if (!(descriptor instanceof ClassDescriptor)) {
                         return null;
                     }
-                    ClassDescriptor superclass = getSuperclass((ClassDescriptor)descriptor);
+                    ClassDescriptor superclass = getSuperclass((ClassDescriptor) descriptor);
                     if (superclass == null) {
                         return null;
                     }
