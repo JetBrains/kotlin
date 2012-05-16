@@ -29,7 +29,7 @@ import java.util.StringTokenizer;
 /**
  * @author Pavel Talanov
  */
-public class FacadeUtils {
+public final class FacadeUtils {
 
     private FacadeUtils() {
     }
