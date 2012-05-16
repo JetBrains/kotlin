@@ -33,14 +33,21 @@ import java.util.List;
 public abstract class Config {
 
     @NotNull
-    public static Config getEmptyConfig(@NotNull Project project, @Nullable String target) {
-        return new Config(project, EcmaVersion.fromString(target)) {
+    public static Config getEmptyConfig(@NotNull Project project, @NotNull EcmaVersion ecmaVersion) {
+        return new Config(project, ecmaVersion) {
             @NotNull
             @Override
             protected List<JetFile> generateLibFiles() {
                 return Collections.emptyList();
             }
         };
+    }
+
+    //NOTE: used by mvn build
+    @SuppressWarnings("UnusedDeclaration")
+    @NotNull
+    public static Config getEmptyConfig(@NotNull Project project) {
+        return getEmptyConfig(project, EcmaVersion.defaultVersion());
     }
 
     @NotNull
