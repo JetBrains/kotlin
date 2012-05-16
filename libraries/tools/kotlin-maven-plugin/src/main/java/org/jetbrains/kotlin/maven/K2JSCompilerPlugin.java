@@ -45,13 +45,7 @@ public class K2JSCompilerPlugin implements CompilerPlugin {
         List<JetFile> sources = context.getFiles();
 
         if (bindingContext != null && sources != null && project != null) {
-            Config config = new Config(project) {
-                @NotNull
-                @Override
-                protected List<JetFile> generateLibFiles() {
-                    return new ArrayList<JetFile>();
-                }
-            };
+            Config config = Config.getEmptyConfig(project);
 
             try {
 
