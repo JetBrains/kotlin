@@ -164,11 +164,18 @@ public final class Translation {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
-        JsBlock block = staticContext.getProgram().getFragmentBlock(0);
+        JsBlock block = staticContext.getProgram().getGlobalBlock();
+
+        List<JsStatement> statements = block.getStatements();
+        if (ecmaVersion == EcmaVersion.v5) {
+            statements.add(staticContext.getProgram().getStringLiteral("use strict").makeStmt());
+        }
+        statements = JsAstUtils.createPackage(statements, staticContext.getProgram().getRootScope());
+
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        block.getStatements().addAll(translateFiles(files, context));
+        statements.addAll(translateFiles(files, context));
         if (mainCallParameters.shouldBeGenerated()) {
-            block.getStatements().add(generateCallToMain(context, files, mainCallParameters.arguments()));
+            statements.add(generateCallToMain(context, files, mainCallParameters.arguments()));
         }
         JsNamer namer = new JsPrettyNamer();
         namer.exec(context.program());

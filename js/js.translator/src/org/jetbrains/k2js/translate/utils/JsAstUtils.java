@@ -34,6 +34,7 @@ public final class JsAstUtils {
     private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
     private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
     private static final JsNameRef CREATE = new JsNameRef("create");
+    private static final JsNameRef EMPTY_REF = new JsNameRef("");
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
@@ -318,5 +319,21 @@ public final class JsAstUtils {
             return Collections.emptyList();
         }
         return Collections.<JsStatement>singletonList(initalizerForProperty.makeStmt());
+    }
+
+    @NotNull
+    public static List<JsStatement> createPackage(List<JsStatement> to, JsRootScope scope) {
+        JsFunction packageBlockFunction = new JsFunction(scope);
+        packageBlockFunction.setBody(new JsBlock());
+
+        JsInvocation packageBlockFunctionInvocation = new JsInvocation();
+        packageBlockFunctionInvocation.setQualifier(packageBlockFunction);
+
+        JsInvocation packageBlock = new JsInvocation();
+        packageBlock.setQualifier(EMPTY_REF);
+        packageBlock.getArguments().add(packageBlockFunctionInvocation);
+        to.add(packageBlock.makeStmt());
+
+        return packageBlockFunction.getBody().getStatements();
     }
 }
