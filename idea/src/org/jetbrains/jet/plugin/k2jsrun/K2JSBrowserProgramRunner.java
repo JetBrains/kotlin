@@ -23,56 +23,33 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
+
+import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyJSFileFromOutputToDestination;
+import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.openBrowser;
 
 /**
  * @author Pavel Talanov
  */
 public final class K2JSBrowserProgramRunner extends GenericProgramRunner {
     @Override
-    protected RunContentDescriptor doExecute(Project project,
-                                             Executor executor,
-                                             RunProfileState state,
-                                             RunContentDescriptor contentToReuse,
-                                             ExecutionEnvironment env) throws ExecutionException {
+    protected RunContentDescriptor doExecute(final Project project,
+            Executor executor,
+            RunProfileState state,
+            RunContentDescriptor contentToReuse,
+            ExecutionEnvironment env) throws ExecutionException {
         if (project == null) {
             return null;
         }
         try {
-            K2JSConfigurationSettings configurationSettings = getSettings(state);
-            try {
-                K2JSRunnerUtils.translateAndSave(project, configurationSettings.getGeneratedFilePath());
-            }
-            catch (Throwable e) {
-                K2JSRunnerUtils.notifyFailure(e);
-                return null;
-            }
-            openBrowser(configurationSettings);
+            copyJSFileFromOutputToDestination(project, K2JSRunnerUtils.getSettings(state));
+            openBrowser(K2JSRunnerUtils.getSettings(state));
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             throw new ExecutionException(e);
         }
         return null;
-    }
-
-    private static void openBrowser(@NotNull K2JSConfigurationSettings configurationSettings) {
-        if (!configurationSettings.isShouldOpenInBrowserAfterTranslation()) {
-            return;
-        }
-        String filePath = configurationSettings.getPageToOpenFilePath();
-        String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
-        BrowsersConfiguration.launchBrowser(configurationSettings.getBrowserFamily(), url);
-    }
-
-    @NotNull
-    private static K2JSConfigurationSettings getSettings(@NotNull RunProfileState state) {
-        RunProfile profile = state.getRunnerSettings().getRunProfile();
-        assert profile instanceof K2JSRunConfiguration;
-        return ((K2JSRunConfiguration)profile).settings();
     }
 
     @NotNull
