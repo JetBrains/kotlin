@@ -64,12 +64,12 @@ public final class K2JSCompiler implements TranslatingCompiler {
             return;
         }
 
-        final Module module = getModule(context, moduleChunk);
+        Module module = getModule(context, moduleChunk);
         if (module == null) {
             return;
         }
 
-        final CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
+        CompilerEnvironment environment = CompilerEnvironment.getEnvironmentFor(context, module, /*tests = */ false);
         if (!environment.success()) {
             environment.reportErrorsTo(context);
             return;
