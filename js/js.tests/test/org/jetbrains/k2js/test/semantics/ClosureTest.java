@@ -31,8 +31,11 @@ public final class ClosureTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testLocalParameterInCallback() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testClosureReferencingMember() throws Exception {
         fooBoxTest();
     }
 }
