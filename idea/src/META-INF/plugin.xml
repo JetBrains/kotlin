@@ -21,6 +21,9 @@
       <component>
           <implementation-class>org.jetbrains.jet.plugin.references.StandardLibraryReferenceResolver</implementation-class>
       </component>
+      <component>
+          <implementation-class>org.jetbrains.jet.plugin.highlighter.DeclarationHintSupport</implementation-class>
+      </component>
   </project-components>
 
   <actions>

@@ -16,28 +16,22 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
+import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.plugin.project.IDEAConfig;
-import org.jetbrains.k2js.facade.K2JSTranslator;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static org.jetbrains.jet.plugin.actions.JavaToKotlinActionUtil.allVirtualFiles;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Pavel Talanov
@@ -47,57 +41,57 @@ public final class K2JSRunnerUtils {
     private K2JSRunnerUtils() {
     }
 
-    public static void notifyFailure(@NotNull Throwable exception) {
-        Notifications.Bus.notify(new Notification("JsTranslator", "Translation failed.",
-                                                  "Exception: " + exception.getMessage(),
-                                                  NotificationType.ERROR));
-    }
-
-    private static void notifySuccess(@NotNull String outputPath) {
-        Notifications.Bus.notify(new Notification("JsTranslator", "Translation successful.",
-                                                  "Generated file: " + outputPath,
-                                                  NotificationType.INFORMATION));
-    }
-
-    public static void translateAndSave(@NotNull Project project, @NotNull String outputDirPath) throws Exception {
-        Set<VirtualFile> allVirtualFiles = getAllProjectVirtualFiles(project);
-        List<JetFile> kotlinFiles = getJetFiles(allVirtualFiles, project);
-        String outputFilePath = constructPathToGeneratedFile(project, outputDirPath);
-        K2JSTranslator.translateWithCallToMainAndSaveToFile(kotlinFiles,
-                                                            outputFilePath,
-                                                            new IDEAConfig(project)
-        );
-        notifySuccess(outputDirPath);
-    }
-
     @NotNull
     public static String constructPathToGeneratedFile(@NotNull Project project, @NotNull String outputDirPath) {
         return outputDirPath + "/" + project.getName() + ".js";
     }
 
-    @NotNull
-    private static Set<VirtualFile> getAllProjectVirtualFiles(@NotNull Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        Set<VirtualFile> allVirtualFiles = Sets.newHashSet();
-        for (Module module : modules) {
-            VirtualFile[] roots = ModuleRootManager.getInstance(module).getSourceRoots();
-            allVirtualFiles.addAll(allVirtualFiles(roots));
+    public static void copyJSFileFromOutputToDestination(@NotNull Project project,
+            @NotNull K2JSConfigurationSettings configurationSettings) {
+        VirtualFile outputDir = getOutputDir(project);
+        if (outputDir == null) {
+            throw new RuntimeException("Cannot find output dir for project " + project.getName());
         }
-        return allVirtualFiles;
+        String pathToGeneratedJsFile = constructPathToGeneratedFile(project, outputDir.getPath());
+        try {
+            File fileToCopy = new File(pathToGeneratedJsFile);
+            File dirToCopyTo = new File(configurationSettings.getGeneratedFilePath());
+            File fileToCopyTo = new File(dirToCopyTo, fileToCopy.getName());
+            FileUtil.copy(fileToCopy, fileToCopyTo);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Output JavaScript file was not generated or missing.", e);
+        }
+    }
+
+    @Nullable
+    private static VirtualFile getOutputDir(@NotNull Project project) {
+        Module module = getJsModule(project);
+        return CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false);
     }
 
     @NotNull
-    private static List<JetFile> getJetFiles(@NotNull Collection<VirtualFile> virtualFiles,
-            @NotNull Project project) {
-        List<JetFile> kotlinFiles = Lists.newArrayList();
-
-        PsiManager psiManager = PsiManager.getInstance(project);
-        for (VirtualFile virtualFile : virtualFiles) {
-            PsiFile psiFile = psiManager.findFile(virtualFile);
-            if (psiFile instanceof JetFile) {
-                kotlinFiles.add((JetFile) psiFile);
-            }
+    private static Module getJsModule(@NotNull Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        if (modules.length != 1) {
+            throw new UnsupportedOperationException("Kotlin to JavaScript translator temporarily does not support multiple modules.");
         }
-        return kotlinFiles;
+        return modules[0];
+    }
+
+    public static void openBrowser(@NotNull K2JSConfigurationSettings configurationSettings) {
+        if (!configurationSettings.isShouldOpenInBrowserAfterTranslation()) {
+            return;
+        }
+        String filePath = configurationSettings.getPageToOpenFilePath();
+        String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
+        BrowsersConfiguration.launchBrowser(configurationSettings.getBrowserFamily(), url);
+    }
+
+    @NotNull
+    public static K2JSConfigurationSettings getSettings(@NotNull RunProfileState state) {
+        RunProfile profile = state.getRunnerSettings().getRunProfile();
+        assert profile instanceof K2JSRunConfiguration;
+        return ((K2JSRunConfiguration) profile).settings();
     }
 }
