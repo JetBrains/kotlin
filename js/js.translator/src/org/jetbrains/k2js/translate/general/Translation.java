@@ -166,11 +166,10 @@ public final class Translation {
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
         JsBlock block = staticContext.getProgram().getGlobalBlock();
 
-        List<JsStatement> statements = block.getStatements();
+        List<JsStatement> statements = JsAstUtils.createPackage(block.getStatements(), staticContext.getProgram().getRootScope());
         if (ecmaVersion == EcmaVersion.v5) {
             statements.add(staticContext.getProgram().getStringLiteral("use strict").makeStmt());
         }
-        statements = JsAstUtils.createPackage(statements, staticContext.getProgram().getRootScope());
 
         TranslationContext context = TranslationContext.rootContext(staticContext);
         statements.addAll(translateFiles(files, context));
