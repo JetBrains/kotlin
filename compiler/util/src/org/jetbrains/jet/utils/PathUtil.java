@@ -119,14 +119,6 @@ public class PathUtil {
     }
 
     @NotNull
-    public static VirtualFile jarFileToVirtualFile(@NotNull File file) {
-        if (!file.exists() || !file.isFile()) {
-            throw new IllegalStateException("file must exist and be regular to be converted to virtual file: " + file);
-        }
-        return VirtualFileManager.getInstance().findFileByUrl("jar://" + file.getPath() + "!/");
-    }
-
-    @NotNull
     public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
