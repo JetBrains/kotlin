@@ -104,20 +104,6 @@ public class PathUtil {
         return new File(resourceRoot).getAbsoluteFile().getAbsolutePath();
     }
 
-    public static List<VirtualFile> getAltHeadersRoots() {
-        List<VirtualFile> roots = new ArrayList<VirtualFile>();
-
-        File alts = getAltHeadersPath();
-
-        if (alts != null) {
-            for (File root : alts.listFiles()) {
-                VirtualFile jarRoot = jarFileToVirtualFile(root);
-                roots.add(jarRoot);
-            }
-        }
-        return roots;
-    }
-
     @NotNull
     public static VirtualFile jarFileOrDirectoryToVirtualFile(@NotNull File file) {
         if (file.exists()) {
