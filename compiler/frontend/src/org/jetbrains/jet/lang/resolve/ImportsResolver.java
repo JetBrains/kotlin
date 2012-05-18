@@ -76,7 +76,6 @@ public class ImportsResolver {
     }
 
     private void processImports(boolean onlyClasses) {
-        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
             JetScope rootScope = context.getRootScope();
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
@@ -88,6 +87,7 @@ public class ImportsResolver {
             Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
             configuration.addDefaultImports(defaultImportDirectives);
             for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
+                TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
                 qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
             }
 
