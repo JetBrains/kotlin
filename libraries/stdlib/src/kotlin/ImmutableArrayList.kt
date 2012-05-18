@@ -11,24 +11,24 @@ private class ImmutableArrayList<T>(
     {
         // impossible
         if (offset < 0) {
-            throw IllegalArgumentException("negative offset")
+            throw IllegalArgumentException("negative offset ($offset)")
         }
         // impossible
         if (length < 0) {
-            throw IllegalArgumentException("negative length")
+            throw IllegalArgumentException("negative length ($length)")
         }
         // possible when builder is used from different threads
         if (offset + length > array.size) {
-            throw IllegalArgumentException("offset + length > array.length")
+            throw IllegalArgumentException("offset ($offset) + length ($length) > array.length (${array.size})")
         }
     }
 
     protected fun indexInArray(index: Int): Int {
         if (index < 0) {
-            throw IllegalArgumentException("negative index")
+            throw IndexOutOfBoundsException("negative index ($index)")
         }
         if (index >= length) {
-            throw IllegalArgumentException("index > length")
+            throw IndexOutOfBoundsException("index ($index) >= length ($length)")
         }
         return index + offset
     }
@@ -39,13 +39,13 @@ private class ImmutableArrayList<T>(
 
     public override fun subList(fromIndex: Int, toIndex: Int) : List<T> {
         if (fromIndex < 0) {
-            throw IllegalArgumentException("negative from index")
+            throw IndexOutOfBoundsException("negative from index ($fromIndex)")
         }
         if (toIndex < fromIndex) {
-            throw IllegalArgumentException("toIndex < fromIndex")
+            throw IndexOutOfBoundsException("toIndex ($toIndex) < fromIndex ($fromIndex)")
         }
         if (toIndex > length) {
-            throw IllegalArgumentException("fromIndex + toIndex > length")
+            throw IndexOutOfBoundsException("fromIndex ($fromIndex) + toIndex ($toIndex) > length ($length)")
         }
         return ImmutableArrayList(array, offset + fromIndex, toIndex - fromIndex)
     }
