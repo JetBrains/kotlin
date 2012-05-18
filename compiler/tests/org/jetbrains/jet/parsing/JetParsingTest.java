@@ -25,6 +25,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.vcsUtil.VcsFileUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
@@ -47,13 +48,17 @@ public class JetParsingTest extends ParsingTestCase {
 
     private final String name;
 
-    public JetParsingTest(String dataPath, String name) {
-        super(dataPath, "jet", new JetParserDefinition());
-        this.name = name;
+    public JetParsingTest(@NotNull File file) {
+        super(VcsFileUtil.relativePath(new File(getPsiTestDataDir()), file.getParentFile()), file.getName().replaceFirst(".*\\.", ""), new JetParserDefinition());
+        this.name = file.getName().replaceFirst("\\.[^.]*$", "");
     }
 
     @Override
     protected String getTestDataPath() {
+        return getPsiTestDataDir();
+    }
+
+    private static String getPsiTestDataDir() {
         return getTestDataDir() + "/psi";
     }
 
@@ -124,7 +129,7 @@ public class JetParsingTest extends ParsingTestCase {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetParsingTest(dataPath, name);
+                return new JetParsingTest(file);
             }
         };
         String prefix = JetParsingTest.getTestDataDir() + "/psi/";
