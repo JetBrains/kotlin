@@ -42,7 +42,7 @@ class ImmutableArrayListTest() : TestCase() {
         try {
             list[expectedLength]
             fail()
-        } catch (e: IllegalArgumentException) {
+        } catch (e: IndexOutOfBoundsException) {
             // expected
         }
     }
