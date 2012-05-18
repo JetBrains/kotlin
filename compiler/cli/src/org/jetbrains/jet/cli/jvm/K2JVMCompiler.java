@@ -60,9 +60,17 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
         CompilerSpecialMode mode = parseCompilerSpecialMode(arguments);
         File[] altHeadersClasspath;
         if (mode.includeAltHeaders()) {
-            File[] defaultAltHeadersPathArray = {PathUtil.getAltHeadersPath()};
+            File path = PathUtil.getAltHeadersPath();
+            File[] defaultAltHeadersPathArray;
+            if (path != null) {
+                defaultAltHeadersPathArray = new File[] {path};
+            } else {
+                // TODO should we throw an exception here instead?
+                defaultAltHeadersPathArray = new File[0];
+            }
             if (arguments.altHeaders != null) {
-                altHeadersClasspath = ArrayUtil.mergeArrays(pathsToFiles(arguments.altHeaders), defaultAltHeadersPathArray);
+                File[] files = pathsToFiles(arguments.altHeaders);
+                altHeadersClasspath = ArrayUtil.mergeArrays(files, defaultAltHeadersPathArray);
             }
             else {
                 altHeadersClasspath = defaultAltHeadersPathArray;
