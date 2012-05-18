@@ -25,7 +25,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import junit.framework.Test;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestCaseBuilder;
@@ -46,11 +45,13 @@ import java.util.List;
  * @author abreslav
  */
 public class JetDiagnosticsTest extends JetLiteFixture {
-    private String name;
+    @NotNull
+    private final String name;
+    private final File file;
 
-    public JetDiagnosticsTest(@NonNls String dataPath, String name) {
-        super(dataPath);
-        this.name = name;
+    public JetDiagnosticsTest(@NotNull File file) {
+        this.name = file.getName().replaceFirst("\\.[^.]+$", "");
+        this.file = file;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
                 expectedText = textWithMarkers;
                 clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges);
                 this.javaFile = null;
-                this.jetFile = createCheckAndReturnPsiFile(fileName, clearText);
+                this.jetFile = createCheckAndReturnPsiFile(null, fileName, clearText);
                 for (CheckerTestUtil.DiagnosedRange diagnosedRange : diagnosedRanges) {
                     diagnosedRange.setFile(jetFile);
                 }
@@ -144,11 +145,9 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     public void runTest() throws Exception {
         javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
 
-        String testFileName = name + ".jet";
+        String expectedText = doLoadFile(file);
 
-        String expectedText = loadFile(testFileName);
-
-        List<TestFile> testFileFiles = JetTestUtils.createTestFiles(testFileName, expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
+        List<TestFile> testFileFiles = JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
             @Override
             public TestFile create(String fileName, String text) {
                 if (fileName.endsWith(".java")) {
@@ -224,7 +223,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetDiagnosticsTest(dataPath, name);
+                return new JetDiagnosticsTest(file);
             }
         });
     }

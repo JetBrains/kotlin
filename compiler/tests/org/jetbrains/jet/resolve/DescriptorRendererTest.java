@@ -75,7 +75,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
 
     private void doTest() throws IOException {
         String fileName = getTestName(false) + ".kt";
-        JetFile psiFile = createPsiFile(fileName, loadFile(fileName));
+        JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
         AnalyzeExhaust analyzeExhaust =
                 AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
                         (JetFile) psiFile, JetControlFlowDataTraceFactory.EMPTY,
