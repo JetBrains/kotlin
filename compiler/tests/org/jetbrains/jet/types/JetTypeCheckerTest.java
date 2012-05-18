@@ -158,7 +158,8 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
     public void testTry() throws Exception {
         assertType("try {1} finally{2}", "Int");
-        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Int");
+        assertType("try {1} catch (e : Exception) {'a'} finally{2}", "Any");
+        assertType("try {1} catch (e : Exception) {2} finally{'a'}", "Int");
         assertType("try {1} catch (e : Exception) {'a'} finally{'2'}", "Any");
         assertType("try {1} catch (e : Exception) {'a'}", "Any");
         assertType("try {1} catch (e : Exception) {'a'} catch (e : Exception) {null}", "Any?");
