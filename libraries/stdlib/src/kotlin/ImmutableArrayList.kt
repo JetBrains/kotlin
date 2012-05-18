@@ -84,4 +84,4 @@ public class ImmutableArrayListBuilder<T>() {
 }
 
 // default list builder
-fun <T> listBuilder() = ImmutableArrayListBuilder<T>()
+public fun <T> listBuilder(): ImmutableArrayListBuilder<T> = ImmutableArrayListBuilder<T>()
