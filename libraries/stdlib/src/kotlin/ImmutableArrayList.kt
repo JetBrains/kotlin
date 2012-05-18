@@ -47,6 +47,9 @@ private class ImmutableArrayList<T>(
         if (toIndex > length) {
             throw IndexOutOfBoundsException("fromIndex ($fromIndex) + toIndex ($toIndex) > length ($length)")
         }
+        if (fromIndex == 0 && toIndex == length) {
+            return this
+        }
         return ImmutableArrayList(array, offset + fromIndex, toIndex - fromIndex)
     }
 
