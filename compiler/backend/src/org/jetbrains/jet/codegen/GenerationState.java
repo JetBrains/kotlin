@@ -91,10 +91,6 @@ public class GenerationState {
         return classBuilderMode;
     }
 
-    public ClassCodegen forClass() {
-        return new ClassCodegen(this);
-    }
-
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
         return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
     }
