@@ -404,7 +404,8 @@ public class BodyResolver {
         JetExpression bodyExpression = declaration.getBodyExpression();
         if (bodyExpression != null) {
 
-            expressionTypingServices.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, JetStandardClasses.getUnitType(), trace);
+            expressionTypingServices.checkFunctionReturnType(scopeForConstructorBody, declaration, descriptor, DataFlowInfo.EMPTY,
+                                                             JetStandardClasses.getUnitType(), trace);
         }
 
         checkDefaultParameterValues(declaration.getValueParameters(), descriptor.getValueParameters(), scopeForConstructorBody);
@@ -548,7 +549,7 @@ public class BodyResolver {
         JetExpression bodyExpression = function.getBodyExpression();
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(declaringScope, functionDescriptor, trace);
         if (bodyExpression != null) {
-            expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, trace);
+            expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, DataFlowInfo.EMPTY, null, trace);
         }
 
         List<JetParameter> valueParameters = function.getValueParameters();
