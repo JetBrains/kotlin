@@ -163,7 +163,6 @@ public class ExpressionTypingUtils {
                 scope,
                 DataFlowInfo.EMPTY,
                 TypeUtils.NO_EXPECTED_TYPE,
-                TypeUtils.NO_EXPECTED_TYPE,
                 false
         );
         return ControlStructureTypingVisitor.checkIterableConvention(expressionReceiver, context) != null;
