@@ -411,7 +411,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             JetParameter catchParameter = catchClause.getCatchParameter();
             JetExpression catchBody = catchClause.getCatchBody();
             if (catchParameter != null) {
-                VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
+                VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
+                        context.scope.getContainingDeclaration(), context.scope, catchParameter, context.trace);
                 JetType throwableType = JetStandardLibrary.getInstance().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
@@ -425,13 +426,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         if (finallyBlock != null) {
-            types.clear(); // Do not need the list for the check, but need the code above to typecheck catch bodies
-            JetType type = facade.getType(finallyBlock.getFinalExpression(), context.replaceScope(context.scope));
-            if (type != null) {
-                types.add(type);
-            }
+            facade.getType(finallyBlock.getFinalExpression(), context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE));
         }
-        JetType type = facade.getType(tryBlock, context.replaceScope(context.scope));
+        JetType type = facade.getType(tryBlock, context);
         if (type != null) {
             types.add(type);
         }
