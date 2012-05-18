@@ -56,17 +56,17 @@ private class ImmutableArrayList<T>(
     // TODO: efficiently implement iterator and other stuff
 }
 
-// TODO: make val, see http://youtrack.jetbrains.com/issue/KT-2028
-private fun emptyArray(): Array<Any?> = arrayOfNulls(0)
+// TODO: make private val, see http://youtrack.jetbrains.com/issue/KT-2028
+internal val emptyArray = arrayOfNulls<Any?>(0)
 
 public class ImmutableArrayListBuilder<T>() {
 
-    private var array = emptyArray()
+    private var array = emptyArray
     private var length = 0
 
     public fun build(): List<T> {
         val r = ImmutableArrayList<T>(array as Array<T>, 0, length)
-        array = emptyArray()
+        array = emptyArray
         length = 0
         return r
     }
