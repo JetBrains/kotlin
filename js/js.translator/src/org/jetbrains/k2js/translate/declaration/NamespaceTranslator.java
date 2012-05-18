@@ -58,7 +58,7 @@ public final class NamespaceTranslator extends AbstractTranslator {
 
 
     @NotNull
-    public JsStatement getDeclarationAsVar() {
+    public JsVars getDeclarationAsVar() {
         return newVar(namespaceName, getNamespaceDeclaration());
     }
 

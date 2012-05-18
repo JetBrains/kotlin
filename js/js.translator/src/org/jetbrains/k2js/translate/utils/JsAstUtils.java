@@ -322,18 +322,19 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static List<JsStatement> createPackage(List<JsStatement> to, JsRootScope scope) {
+    public static JsFunction createPackage(List<JsStatement> to, JsRootScope scope, JsExpression arg) {
         JsFunction packageBlockFunction = new JsFunction(scope);
         packageBlockFunction.setBody(new JsBlock());
 
         JsInvocation packageBlockFunctionInvocation = new JsInvocation();
-        packageBlockFunctionInvocation.setQualifier(packageBlockFunction);
+        packageBlockFunctionInvocation.setQualifier(EMPTY_REF);
+        packageBlockFunctionInvocation.getArguments().add(packageBlockFunction);
 
         JsInvocation packageBlock = new JsInvocation();
-        packageBlock.setQualifier(EMPTY_REF);
-        packageBlock.getArguments().add(packageBlockFunctionInvocation);
+        packageBlock.setQualifier(packageBlockFunctionInvocation);
+        packageBlock.getArguments().add(arg);
         to.add(packageBlock.makeStmt());
 
-        return packageBlockFunction.getBody().getStatements();
+        return packageBlockFunction;
     }
 }

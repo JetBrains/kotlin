@@ -164,11 +164,21 @@ public final class Translation {
         //TODO: move some of the code somewhere
         JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
         StaticContext staticContext = StaticContext.generateStaticContext(standardLibrary, bindingContext, ecmaVersion);
-        JsBlock block = staticContext.getProgram().getGlobalBlock();
+        JsProgram program = staticContext.getProgram();
+        JsBlock block = program.getGlobalBlock();
 
-        List<JsStatement> statements = JsAstUtils.createPackage(block.getStatements(), staticContext.getProgram().getRootScope());
+        JsInvocation invocation = new JsInvocation();
+        invocation.setQualifier(JsAstUtils.thisQualifiedReference(program.getScope().declareName("hasOwnProperty")));
+        JsName ktDefs = program.getScope().declareName("$ktDefs");
+        invocation.getArguments().add(program.getStringLiteral(ktDefs.getIdent()));
+        JsNameRef ktDefsRef = JsAstUtils.thisQualifiedReference(ktDefs);
+        JsConditional conditional = new JsConditional(invocation, ktDefsRef, JsAstUtils.assignment(ktDefsRef, new JsObjectLiteral()));
+
+        JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getRootScope(), conditional);
+        rootFunction.getParameters().add(new JsParameter(ktDefs));
+        List<JsStatement> statements = rootFunction.getBody().getStatements();
         if (ecmaVersion == EcmaVersion.v5) {
-            statements.add(staticContext.getProgram().getStringLiteral("use strict").makeStmt());
+            statements.add(program.getStringLiteral("use strict").makeStmt());
         }
 
         TranslationContext context = TranslationContext.rootContext(staticContext);
