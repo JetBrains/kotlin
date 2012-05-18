@@ -48,8 +48,6 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private final JetClassOrObject classDeclaration;
     @NotNull
     private final List<JsStatement> initializerStatements = new ArrayList<JsStatement>();
-    @NotNull
-    private final JsObjectLiteral propertiesDefinition = new JsObjectLiteral();
 
     public ClassInitializerTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
         // Note: it's important we use scope for class descriptor because anonymous function used in property initializers
@@ -69,10 +67,6 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
         mayBeAddCallToSuperMethod();
         initializerStatements.addAll((InitializerVisitor.create(context())).traverseClass(classDeclaration, context()));
         result.getBody().getStatements().addAll(initializerStatements);
-        if (!propertiesDefinition.getPropertyInitializers().isEmpty()) {
-            result.getBody().getStatements().add(JsAstUtils.defineProperties(propertiesDefinition));
-        }
-
         return InitializerUtils.generateInitializeMethod(result);
     }
 
@@ -141,7 +135,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     private void addInitializerOrPropertyDefinition(@NotNull JsNameRef initialValue, @NotNull PropertyDescriptor propertyDescriptor) {
         if (context().isEcma5()) {
-            propertiesDefinition.getPropertyInitializers().add(JsAstUtils.propertyDescriptor(propertyDescriptor, initialValue, context()));
+            initializerStatements.add(JsAstUtils.defineProperty(propertyDescriptor, initialValue, context()).makeStmt());
         }
         else {
             JsStatement assignmentToBackingFieldExpression =

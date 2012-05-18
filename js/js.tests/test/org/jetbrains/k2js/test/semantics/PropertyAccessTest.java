@@ -16,7 +16,10 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+
+import java.util.EnumSet;
 
 import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
 
@@ -73,5 +76,9 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
 
     public void testExtensionLiteralSafeCall() throws Exception {
         fooBoxTest();
+    }
+
+    public void testInitInstanceProperties() throws Exception {
+        fooBoxTest(EnumSet.of(EcmaVersion.v5));
     }
 }

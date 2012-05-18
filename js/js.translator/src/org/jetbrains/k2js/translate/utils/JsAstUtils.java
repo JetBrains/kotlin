@@ -33,12 +33,14 @@ public final class JsAstUtils {
     private static final JsNameRef VALUE = new JsNameRef("value");
     private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
     private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
+    private static final JsNameRef DEFINE_PROPERTY = new JsNameRef("defineProperty");
     private static final JsNameRef CREATE = new JsNameRef("create");
     private static final JsNameRef EMPTY_REF = new JsNameRef("");
 
     static {
         JsNameRef globalObjectReference = new JsNameRef("Object");
         DEFINE_PROPERTIES.setQualifier(globalObjectReference);
+        DEFINE_PROPERTY.setQualifier(globalObjectReference);
         CREATE.setQualifier(globalObjectReference);
     }
 
@@ -295,6 +297,19 @@ public final class JsAstUtils {
     @NotNull
     public static JsPropertyInitializer propertyDescriptor(@NotNull PropertyDescriptor descriptor,
             @NotNull JsExpression value, @NotNull TranslationContext context) {
+        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), createPropertyDescriptor(descriptor, value, context));
+    }
+
+    @NotNull
+    public static JsInvocation defineProperty(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
+        return AstUtil.newInvocation(DEFINE_PROPERTY, new JsThisRef(), context.program().getStringLiteral(context.getNameForDescriptor(descriptor).getIdent()),
+                                     createPropertyDescriptor(descriptor, value, context));
+    }
+
+    @NotNull
+    private static JsObjectLiteral createPropertyDescriptor(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
         JsObjectLiteral jsPropertyDescriptor = new JsObjectLiteral();
         List<JsPropertyInitializer> meta = jsPropertyDescriptor.getPropertyInitializers();
         meta.add(new JsPropertyInitializer(VALUE, value));
@@ -302,7 +317,7 @@ public final class JsAstUtils {
             meta.add(getWritable(context));
         }
         // TODO: accessors
-        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), jsPropertyDescriptor);
+        return jsPropertyDescriptor;
     }
 
     @NotNull
