@@ -103,7 +103,7 @@ public class JetResolveTest extends ExtensibleResolveTestCase {
         return new ExpectedResolveData(nameToDescriptor, nameToDeclaration, myEnvironment) {
             @Override
             protected JetFile createJetFile(String fileName, String text) {
-                return createCheckAndReturnPsiFile(fileName, text);
+                return createCheckAndReturnPsiFile(fileName, null, text);
             }
         };
     }
