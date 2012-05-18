@@ -241,6 +241,17 @@ public class JetPsiUtil {
                 return parent;
             }
         }
+        if (parent instanceof JetTryExpression) {
+            JetTryExpression tryExpression = (JetTryExpression) parent;
+            if (tryExpression.getTryBlock() == block) {
+                return parent;
+            }
+            for (JetCatchClause clause : tryExpression.getCatchClauses()) {
+                if (clause.getCatchBody() == block) {
+                    return parent;
+                }
+            }
+        }
         return null;
     }
 
@@ -256,6 +267,9 @@ public class JetPsiUtil {
             }
             if (expression == null) {
                 expression = getDirectParentOfTypeForBlock(block, JetFunctionLiteral.class);
+            }
+            if (expression == null) {
+                expression = getDirectParentOfTypeForBlock(block, JetTryExpression.class);
             }
             if (expression != null) {
                 return isImplicitlyUsed(expression);
