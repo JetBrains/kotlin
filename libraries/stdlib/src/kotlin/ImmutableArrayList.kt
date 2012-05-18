@@ -47,6 +47,9 @@ private class ImmutableArrayList<T>(
         if (toIndex > length) {
             throw IndexOutOfBoundsException("fromIndex ($fromIndex) + toIndex ($toIndex) > length ($length)")
         }
+        if (fromIndex == toIndex) {
+            return emptyImmutableArrayList as List<T>
+        }
         if (fromIndex == 0 && toIndex == length) {
             return this
         }
@@ -58,6 +61,7 @@ private class ImmutableArrayList<T>(
 
 // TODO: make private val, see http://youtrack.jetbrains.com/issue/KT-2028
 internal val emptyArray = arrayOfNulls<Any?>(0)
+internal val emptyImmutableArrayList = ImmutableArrayList<Any?>(emptyArray, 0, 0)
 
 public class ImmutableArrayListBuilder<T>() {
 
@@ -65,10 +69,15 @@ public class ImmutableArrayListBuilder<T>() {
     private var length = 0
 
     public fun build(): List<T> {
-        val r = ImmutableArrayList<T>(array as Array<T>, 0, length)
-        array = emptyArray
-        length = 0
-        return r
+        if (length == 0) {
+            return emptyImmutableArrayList as List<T>
+        }
+        else {
+            val r = ImmutableArrayList<T>(array as Array<T>, 0, length)
+            array = emptyArray
+            length = 0
+            return r
+        }
     }
 
     public fun ensureCapacity(capacity: Int) {
