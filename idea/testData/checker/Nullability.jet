@@ -7,8 +7,8 @@ fun test() {
     a?.plus(1)
   }
 
-  val out : java.io.PrintStream? = null//= System.out
-  val ins = System.`in`
+  val out : java.io.PrintStream? = null
+  val ins : java.io.InputStream? = null
 
   out?.println()
   ins?.read()

@@ -15,7 +15,7 @@ fun foo(){
     }
 
     bar()
-    System.out?.println(local)
+    System.out.println(local)
 }
 
 fun <T> Iterable<T>.foreach(operation: (element: T) -> Unit) {

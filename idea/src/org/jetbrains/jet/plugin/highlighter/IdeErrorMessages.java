@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 
@@ -190,9 +191,12 @@ public class IdeErrorMessages {
                 CallableDescriptor funDescriptor = call.getResultingDescriptor();
                 Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);
 
+                DescriptorRenderer htmlRenderer = DescriptorRenderer.HTML;
+                if (funDescriptor.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
+                    stringBuilder.append(htmlRenderer.renderType(funDescriptor.getReceiverParameter().getType())).append(".");
+                }
                 stringBuilder.append(funDescriptor.getName()).append("(");
                 boolean first = true;
-                DescriptorRenderer htmlRend = DescriptorRenderer.HTML;
                 for (ValueParameterDescriptor parameter : funDescriptor.getValueParameters()) {
                     if (!first) {
                         stringBuilder.append(", ");
@@ -202,7 +206,7 @@ public class IdeErrorMessages {
                     if (varargElementType != null) {
                         type = varargElementType;
                     }
-                    String paramString = (varargElementType != null ? "<b>vararg</b> " : "") + htmlRend.renderType(type);
+                    String paramString = (varargElementType != null ? "<b>vararg</b> " : "") + htmlRenderer.renderType(type);
                     if (parameter.hasDefaultValue()) {
                         paramString += " = ...";
                     }
@@ -214,7 +218,7 @@ public class IdeErrorMessages {
                     first = false;
                 }
                 stringBuilder.append(parametersToHighlight.contains(null) ? String.format(RED_TEMPLATE, ")") : ")");
-                stringBuilder.append(" ").append(htmlRend.renderMessage("defined in")).append(" ");
+                stringBuilder.append(" ").append(htmlRenderer.renderMessage("defined in")).append(" ");
                 DeclarationDescriptor containingDeclaration = funDescriptor.getContainingDeclaration();
                 if (containingDeclaration != null) {
                     FqNameUnsafe fqName = DescriptorUtils.getFQName(containingDeclaration);

@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 
@@ -74,11 +73,6 @@ public class BindingContextUtils {
             return element;
         }
 
-        // TODO: Need to have a valid stubs for standard classes
-        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
-            return referenceExpression.getContainingFile();
-        }
-
         return null;
     }
 
@@ -92,11 +86,6 @@ public class BindingContextUtils {
         List<PsiElement> elements = descriptorToDeclarations(bindingContext, declarationDescriptor);
         if (elements.size() > 0) {
             return elements;
-        }
-
-        // TODO: Need to have a valid stubs for standard classes
-        if (referenceExpression != null && JetStandardClasses.getAllStandardClasses().contains(declarationDescriptor)) {
-            return Lists.<PsiElement>newArrayList(referenceExpression.getContainingFile());
         }
 
         return Lists.newArrayList();

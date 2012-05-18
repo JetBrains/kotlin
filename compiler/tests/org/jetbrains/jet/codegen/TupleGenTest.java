@@ -20,7 +20,7 @@ import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 
 public class TupleGenTest extends CodegenTestCase {
     public void testBasic() {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.JDK_HEADERS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(CompilerSpecialMode.ALT_HEADERS);
         blackBoxFile("/tuples/basic.jet");
 //        System.out.println(generateToText());
     }

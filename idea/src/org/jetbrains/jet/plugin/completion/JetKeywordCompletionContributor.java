@@ -28,9 +28,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.filters.*;
-import com.intellij.psi.filters.position.FilterPattern;
-import com.intellij.psi.filters.position.LeftNeighbour;
-import com.intellij.psi.filters.position.PositionElementFilter;
+import com.intellij.psi.filters.position.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -131,7 +129,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
             //noinspection unchecked
-            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class) != null &&
+            return PsiTreeUtil.getParentOfType(context, JetFile.class, false, JetClassBody.class, JetBlockExpression.class, JetFunction.class) != null &&
                    PsiTreeUtil.getParentOfType(context, JetParameterList.class, JetTypeParameterList.class) == null;
         }
 
@@ -196,15 +194,31 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
         }
     }
 
-    private static class InPropertyFilter implements ElementFilter {
+    private static class InPropertyBodyFilter implements ElementFilter {
         @Override
         public boolean isAcceptable(Object element, PsiElement context) {
-            return PsiTreeUtil.getParentOfType(context, JetProperty.class, false) != null;
+            if (!(element instanceof PsiElement)) return false;
+            JetProperty property = PsiTreeUtil.getParentOfType(context, JetProperty.class, false);
+            return property != null && isAfterName(property, (PsiElement) element);
         }
 
         @Override
         public boolean isClassAcceptable(Class hintClass) {
             return true;
+        }
+
+        private static boolean isAfterName(@NotNull JetProperty property, @NotNull PsiElement element) {
+            for (PsiElement child = property.getFirstChild(); child != null; child = child.getNextSibling()) {
+                if (PsiTreeUtil.isAncestor(child, element, false)) {
+                    break;
+                }
+
+                if (child.getNode().getElementType() == IDENTIFIER) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
@@ -284,7 +298,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         TYPE_KEYWORD,
                                         VARARG_KEYWORD, WHERE_KEYWORD);
 
-        registerScopeKeywordsCompletion(new InPropertyFilter(),
+        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
                                         ELSE_KEYWORD, FALSE_KEYWORD,
                                         NULL_KEYWORD, THIS_KEYWORD, TRUE_KEYWORD);
 
@@ -307,7 +321,7 @@ public class JetKeywordCompletionContributor extends CompletionContributor {
                                         FUN_TEMPLATE, VAL_SIMPLE_TEMPLATE, VAR_SIMPLE_TEMPLATE,
                                         TRAIT_TEMPLATE, CLASS_TEMPLATE, FOR_TEMPLATE,
                                         WHEN_TEMPLATE, WHILE_TEMPLATE, DO_WHILE_TEMPLATE, ENUM_CLASS_TEMPLATE);
-        registerScopeKeywordsCompletion(new InPropertyFilter(),
+        registerScopeKeywordsCompletion(new InPropertyBodyFilter(),
                                         IF_ELSE_ONELINE_TEMPLATE, WHEN_TEMPLATE);
         registerScopeKeywordsCompletion(new AfterClassInClassBodyFilter(), false,
                                         CLASS_OBJECT_WITHOUT_CLASS_TEMPLATE);

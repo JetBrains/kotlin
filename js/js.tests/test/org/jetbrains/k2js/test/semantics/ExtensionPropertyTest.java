@@ -18,6 +18,8 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
+import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+
 /**
  * @author Pavel Talanov
  */
@@ -28,14 +30,14 @@ public final class ExtensionPropertyTest extends SingleFileTranslationTest {
     }
 
     public void testSimplePropertyWithGetter() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
     public void testPropertyWithGetterAndSetter() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 
     public void testAbsExtension() throws Exception {
-        fooBoxTest();
+        fooBoxTest(failsOnEcmaV5());
     }
 }

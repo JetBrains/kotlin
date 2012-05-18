@@ -7,7 +7,7 @@ fun f(s: String?) {
     if (s != null) {
         s.length  //ok
         var <!UNUSED_VARIABLE!>i<!> = s.length //error: Only safe calls are allowed on a nullable receiver
-        System.out?.println(s.length) //error
+        System.out.println(s.length) //error
     }
 }
 

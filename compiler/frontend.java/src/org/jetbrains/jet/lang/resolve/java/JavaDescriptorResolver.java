@@ -21,75 +21,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiAnnotationMethod;
-import com.intellij.psi.PsiAnnotationParameterList;
-import com.intellij.psi.PsiArrayType;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiEllipsisType;
-import com.intellij.psi.PsiLiteralExpression;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiNameValuePair;
-import com.intellij.psi.PsiPackage;
-import com.intellij.psi.PsiPrimitiveType;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiTypeParameter;
-import com.intellij.psi.PsiTypeParameterListOwner;
+import com.intellij.psi.*;
 import jet.typeinfo.TypeInfoVariance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.descriptors.ClassOrNamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.Modality;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.MutableClassDescriptorLite;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
-import org.jetbrains.jet.lang.descriptors.NamespaceDescriptorParent;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.descriptors.Visibilities;
-import org.jetbrains.jet.lang.descriptors.Visibility;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.NamespaceFactory;
-import org.jetbrains.jet.lang.resolve.NamespaceFactoryImpl;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.constants.ByteValue;
-import org.jetbrains.jet.lang.resolve.constants.CharValue;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.DoubleValue;
-import org.jetbrains.jet.lang.resolve.constants.FloatValue;
-import org.jetbrains.jet.lang.resolve.constants.IntValue;
-import org.jetbrains.jet.lang.resolve.constants.LongValue;
-import org.jetbrains.jet.lang.resolve.constants.NullValue;
-import org.jetbrains.jet.lang.resolve.constants.ShortValue;
+import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.types.*;
@@ -101,14 +41,7 @@ import org.jetbrains.jet.rt.signature.JetSignatureReader;
 import org.jetbrains.jet.rt.signature.JetSignatureVisitor;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author abreslav
@@ -541,7 +474,7 @@ public class JavaDescriptorResolver {
 
         MutableClassDescriptorLite classObject = createClassObjectDescriptor(classData.classDescriptor, psiClass);
         if (classObject != null) {
-            classData.classDescriptor.setClassObjectDescriptor(classObject);
+            classData.classDescriptor.getBuilder().setClassObjectDescriptor(classObject);
         }
 
         trace.record(BindingContext.CLASS, psiClass, classData.classDescriptor);
@@ -605,7 +538,8 @@ public class JavaDescriptorResolver {
         checkPsiClassIsNotJet(psiClass);
 
         FqName fqName = new FqName(classObjectPsiClass.getQualifiedName());
-        ResolverBinaryClassData classData = new ResolverBinaryClassData(classObjectPsiClass, fqName, new MutableClassDescriptorLite(containing, ClassKind.OBJECT));
+        ResolverBinaryClassData classData = new ResolverBinaryClassData(classObjectPsiClass, fqName,
+                                                                        new MutableClassDescriptorLite(containing, ClassKind.OBJECT));
 
         classDescriptorCache.put(fqName, classData);
 
@@ -994,7 +928,7 @@ public class JavaDescriptorResolver {
         JavaNamespaceDescriptor ns = new JavaNamespaceDescriptor(
                 parentNs,
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
-                qualifiedName.isRoot() ? "<root>" : qualifiedName.shortName(),
+                qualifiedName.isRoot() ? FqNameUnsafe.ROOT_NAME : qualifiedName.shortName(),
                 qualifiedName
         );
 
@@ -1153,6 +1087,7 @@ public class JavaDescriptorResolver {
         JetType varargElementType;
         if (psiType instanceof PsiEllipsisType) {
             varargElementType = JetStandardLibrary.getInstance().getArrayElementType(TypeUtils.makeNotNullable(outType));
+            outType = TypeUtils.makeNotNullable(outType);
         }
         else {
             varargElementType = null;
@@ -1432,6 +1367,10 @@ public class JavaDescriptorResolver {
                 propertyType = semanticServices.getTypeTransformer().transformToType(anyMember.getType().getPsiType(), typeVariableResolverForPropertyInternals);
                 if (anyMember.getType().getPsiNotNullOwner().getModifierList().findAnnotation(JvmAbi.JETBRAINS_NOT_NULL_ANNOTATION.getFqName().getFqName()) != null) {
                     propertyType = TypeUtils.makeNullableAsSpecified(propertyType, false);
+                }
+                else if (members.getter == null && members.setter == null && members.field.getMember().isFinal() && members.field.getMember().isStatic()) {
+                    // http://youtrack.jetbrains.com/issue/KT-1388
+                    propertyType = TypeUtils.makeNotNullable(propertyType);
                 }
             }
             

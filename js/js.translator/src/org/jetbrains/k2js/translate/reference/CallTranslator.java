@@ -24,9 +24,7 @@ import com.google.dart.compiler.backend.js.ast.JsNew;
 import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.calls.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.VariableAsFunctionResolvedCall;
@@ -234,13 +232,41 @@ public final class CallTranslator extends AbstractTranslator {
             @NotNull
             @Override
             public JsExpression construct(@Nullable JsExpression receiver) {
-                JsExpression callee = callParameters.getFunctionReference();
-                if (receiver != null) {
-                    setQualifier(callee, receiver);
+                JsExpression qualifiedCallee = getQualifiedCallee(receiver);
+
+                if (isEcma5PropertyAccess()) {
+                    return ecma5PropertyAccess(qualifiedCallee);
                 }
-                return newInvocation(callee, arguments);
+
+                return newInvocation(qualifiedCallee, arguments);
             }
         }, context());
+    }
+
+    @NotNull
+    private JsExpression ecma5PropertyAccess(@NotNull JsExpression callee) {
+        if (descriptor instanceof PropertyGetterDescriptor) {
+            assert arguments.isEmpty();
+            return callee;
+        }
+        else {
+            assert descriptor instanceof PropertySetterDescriptor;
+            assert arguments.size() == 1;
+            return assignment(callee, arguments.get(0));
+        }
+    }
+
+    private boolean isEcma5PropertyAccess() {
+        return context().isEcma5() && descriptor instanceof PropertyAccessorDescriptor;
+    }
+
+    @NotNull
+    private JsExpression getQualifiedCallee(@Nullable JsExpression receiver) {
+        JsExpression callee = callParameters.getFunctionReference();
+        if (receiver != null) {
+            setQualifier(callee, receiver);
+        }
+        return callee;
     }
 
     @Nullable

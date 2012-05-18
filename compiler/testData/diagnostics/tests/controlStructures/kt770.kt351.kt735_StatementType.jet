@@ -9,7 +9,7 @@ fun main(args : Array<String>) {
         2 -> i = 2  // i is surrounded by a black border
         else -> <!UNRESOLVED_REFERENCE!>j<!> = 2
     }
-    System.out?.println(i)
+    System.out.println(i)
 }
 
 //KT-351 Distinguish statement and expression positions

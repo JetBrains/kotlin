@@ -252,7 +252,7 @@ public interface Errors {
                                                    JetBlockExpression blockExpression = (JetBlockExpression)bodyExpression;
                                                    TextRange lastBracketRange = blockExpression.getLastBracketRange();
                                                    if (lastBracketRange == null) {
-                                                       return markElement(element);
+                                                       return Collections.emptyList();
                                                    }
                                                    return markRange(lastBracketRange);
                                                }

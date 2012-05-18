@@ -19,7 +19,6 @@ package org.jetbrains.k2js.facade;
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -31,10 +30,12 @@ import org.jetbrains.k2js.generate.CodeGenerator;
 import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static org.jetbrains.k2js.facade.FacadeUtils.parseString;
+import static org.jetbrains.k2js.facade.FacadeUtils.writeCodeToFile;
 
 /**
  * @author Pavel Talanov
@@ -49,18 +50,6 @@ public final class K2JSTranslator {
         K2JSTranslator translator = new K2JSTranslator(config);
         String programCode = translator.generateProgramCode(files, MainCallParameters.mainWithoutArguments()) + "\n";
         writeCodeToFile(outputPath, programCode);
-    }
-
-    private static void writeCodeToFile(@NotNull String outputPath, @NotNull String programCode) throws IOException {
-        File file = new File(outputPath);
-        FileUtil.createParentDirs(file);
-        FileWriter writer = new FileWriter(file);
-        try {
-            writer.write(programCode);
-        }
-        finally {
-            writer.close();
-        }
     }
 
     @NotNull
@@ -103,18 +92,8 @@ public final class K2JSTranslator {
         JetStandardLibrary.initialize(config.getProject());
         BindingContext bindingContext = AnalyzerFacadeForJS.analyzeFilesAndCheckErrors(filesToTranslate, config);
         Collection<JetFile> files = AnalyzerFacadeForJS.withJsLibAdded(filesToTranslate, config);
-        return Translation.generateAst(bindingContext, Lists.newArrayList(files), mainCallParameters);
-    }
 
-    //TODO: util
-    @NotNull
-    private static List<String> parseString(@NotNull String argumentString) {
-        List<String> result = new ArrayList<String>();
-        StringTokenizer stringTokenizer = new StringTokenizer(argumentString);
-        while (stringTokenizer.hasMoreTokens()) {
-            result.add(stringTokenizer.nextToken());
-        }
-        return result;
+        return Translation.generateAst(bindingContext, Lists.newArrayList(files), mainCallParameters, config.getTarget());
     }
 
     @NotNull

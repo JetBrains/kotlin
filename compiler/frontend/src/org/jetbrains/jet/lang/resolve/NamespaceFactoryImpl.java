@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Sets;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.ModuleConfiguration;
@@ -61,14 +62,17 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         this.configuration = configuration;
     }
 
-    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(JetFile file, JetScope outerScope) {
+    @NotNull
+    public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull JetFile file,
+                                                                         @NotNull JetScope outerScope,
+                                                                         @NotNull RedeclarationHandler handler) {
         JetNamespaceHeader namespaceHeader = file.getNamespaceHeader();
 
         if (moduleDescriptor.getRootNs() == null) {
-            createNamespaceDescriptorIfNeeded(null, moduleDescriptor, "<root>", true, null);
+            createRootNamespaceDescriptorIfNeeded(null, moduleDescriptor, null, handler);
         }
 
-        NamespaceDescriptorParent currentOwner = moduleDescriptor.getRootNs();
+        NamespaceDescriptorImpl currentOwner = moduleDescriptor.getRootNs();
         if (currentOwner == null) {
             throw new IllegalStateException("must be initialized 5 lines above");
         }
@@ -77,7 +81,7 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             String namespaceName = JetPsiUtil.safeName(nameExpression.getReferencedName());
 
             NamespaceDescriptorImpl namespaceDescriptor = createNamespaceDescriptorIfNeeded(
-                    null, currentOwner, namespaceName, false, nameExpression);
+                    null, currentOwner, namespaceName, nameExpression, handler);
 
             trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
             trace.record(RESOLUTION_SCOPE, nameExpression, outerScope);
@@ -89,13 +93,14 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
         NamespaceDescriptorImpl namespaceDescriptor;
         String name;
         if (namespaceHeader.isRoot()) {
-            // again to register file in trace
-            namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, moduleDescriptor, "<root>", true, null);
+            // previous call to createRootNamespaceDescriptorIfNeeded couldn't store occurrence for current file.
+            namespaceDescriptor = moduleDescriptor.getRootNs();
+            storeBindingForFileAndExpression(file, null, namespaceDescriptor);
         }
         else {
             name = namespaceHeader.getName();
-            namespaceDescriptor = createNamespaceDescriptorIfNeeded(file, currentOwner, name, namespaceHeader.isRoot(),
-                    namespaceHeader.getLastPartExpression());
+            namespaceDescriptor = createNamespaceDescriptorIfNeeded(
+                    file, currentOwner, name, namespaceHeader.getLastPartExpression(), handler);
 
             trace.record(BindingContext.NAMESPACE_IS_SRC, namespaceDescriptor, true);
             trace.record(RESOLUTION_SCOPE, namespaceHeader, outerScope);
@@ -107,49 +112,95 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
     @Override
     @NotNull
     public NamespaceDescriptorImpl createNamespaceDescriptorPathIfNeeded(@NotNull FqName fqName) {
-        NamespaceDescriptorParent owner = moduleDescriptor;
+        NamespaceDescriptorImpl owner = null;
         for (FqName pathElement : fqName.path()) {
-            owner = createNamespaceDescriptorIfNeeded(null,
-                    owner, pathElement.isRoot() ? "<root>" : pathElement.shortName(), pathElement.isRoot(), null);
+            if (pathElement.isRoot()) {
+                owner = createRootNamespaceDescriptorIfNeeded(null,
+                                                              moduleDescriptor,
+                                                              null,
+                                                              RedeclarationHandler.DO_NOTHING);
+            }
+            else {
+                assert owner != null : "Should never be null as first element in the path must be root";
+                owner = createNamespaceDescriptorIfNeeded(null,
+                                                          owner,
+                                                          pathElement.shortName(),
+                                                          null,
+                                                          RedeclarationHandler.DO_NOTHING);
+            }
+
         }
-        return (NamespaceDescriptorImpl) owner;
+
+        assert owner != null : "Should never be null as first element in the path must be root";
+        return owner;
+    }
+
+    private NamespaceDescriptorImpl createRootNamespaceDescriptorIfNeeded(@Nullable JetFile file,
+                                                                          @NotNull ModuleDescriptor owner,
+                                                                          @Nullable JetReferenceExpression expression,
+                                                                          @NotNull RedeclarationHandler handler) {
+        FqName fqName = FqName.ROOT;
+        NamespaceDescriptorImpl namespaceDescriptor = owner.getRootNs();
+
+        if (namespaceDescriptor == null) {
+            namespaceDescriptor = createNewNamespaceDescriptor(owner, FqNameUnsafe.ROOT_NAME, expression, handler, fqName);
+        }
+
+        storeBindingForFileAndExpression(file, expression, namespaceDescriptor);
+
+        return namespaceDescriptor;
     }
 
     @NotNull
-    public NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file,
-            @NotNull NamespaceDescriptorParent owner, @NotNull String name, boolean root, @Nullable JetReferenceExpression expression) {
-        FqName fqName;
-        NamespaceDescriptorImpl namespaceDescriptor;
-        if (root) {
-            if (!(owner instanceof ModuleDescriptor)) {
-                throw new IllegalStateException();
-            }
-            fqName = FqName.ROOT;
-            namespaceDescriptor = ((ModuleDescriptor) owner).getRootNs();
-        }
-        else {
-            FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
-            fqName = ownerFqName.child(name);
-            namespaceDescriptor = ((NamespaceDescriptorImpl) owner).getNamespace(name);
-        }
+    private NamespaceDescriptorImpl createNamespaceDescriptorIfNeeded(@Nullable JetFile file,
+                                                                      @NotNull NamespaceDescriptorImpl owner,
+                                                                      @NotNull String name,
+                                                                      @Nullable JetReferenceExpression expression,
+                                                                      @NotNull RedeclarationHandler handler) {
+        FqName ownerFqName = DescriptorUtils.getFQName(owner).toSafe();
+        FqName fqName = ownerFqName.child(name);
+        // !!!
+        NamespaceDescriptorImpl namespaceDescriptor = (NamespaceDescriptorImpl) owner.getMemberScope().getDeclaredNamespace(name);
 
         if (namespaceDescriptor == null) {
-            namespaceDescriptor = new NamespaceDescriptorImpl(
-                    owner,
-                    Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
-                    name
-            );
-            trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
-            WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, RedeclarationHandler.DO_NOTHING).setDebugName("Namespace member scope");
-            scope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            namespaceDescriptor.initialize(scope);
-            configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
-            owner.addNamespace(namespaceDescriptor);
-            if (expression != null) {
-                trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);
-            }
+            namespaceDescriptor = createNewNamespaceDescriptor(owner, name, expression, handler, fqName);
         }
 
+        storeBindingForFileAndExpression(file, expression, namespaceDescriptor);
+
+        return namespaceDescriptor;
+    }
+
+    private NamespaceDescriptorImpl createNewNamespaceDescriptor(NamespaceDescriptorParent owner,
+                                                                 String name,
+                                                                 PsiElement expression,
+                                                                 RedeclarationHandler handler,
+                                                                 FqName fqName) {
+        NamespaceDescriptorImpl namespaceDescriptor;
+        namespaceDescriptor = new NamespaceDescriptorImpl(
+                owner,
+                Collections.<AnnotationDescriptor>emptyList(), // TODO: annotations
+                name
+        );
+        trace.record(FQNAME_TO_NAMESPACE_DESCRIPTOR, fqName, namespaceDescriptor);
+
+        WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, namespaceDescriptor, handler).setDebugName("Namespace member scope");
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+
+        namespaceDescriptor.initialize(scope);
+        scope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        //
+        configuration.extendNamespaceScope(trace, namespaceDescriptor, scope);
+        owner.addNamespace(namespaceDescriptor);
+        if (expression != null) {
+            trace.record(BindingContext.NAMESPACE, expression, namespaceDescriptor);
+        }
+        return namespaceDescriptor;
+    }
+
+    private void storeBindingForFileAndExpression(@Nullable JetFile file,
+                                                  @Nullable JetReferenceExpression expression,
+                                                  @NotNull NamespaceDescriptor namespaceDescriptor) {
         if (expression != null) {
             trace.record(REFERENCE_TARGET, expression, namespaceDescriptor);
         }
@@ -166,9 +217,5 @@ public class NamespaceFactoryImpl implements NamespaceFactory {
             files.add(file);
             trace.record(BindingContext.NAMESPACE_TO_FILES, namespaceDescriptor, files);
         }
-
-        return namespaceDescriptor;
     }
-
-
 }

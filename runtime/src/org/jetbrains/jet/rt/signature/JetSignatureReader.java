@@ -181,7 +181,7 @@ public class JetSignatureReader {
                 start = pos;
                 visited = false;
                 inner = false;
-                for (;;) {
+                while (true) {
                     switch (c = signature.charAt(pos++)) {
                         case '.':
                         case ';':
@@ -212,7 +212,7 @@ public class JetSignatureReader {
                                 v.visitClassType(name, nullable, forceReal);
                             }
                             visited = true;
-                            top: for (;;) {
+                            top: while (true) {
                                 switch (c = signature.charAt(pos)) {
                                     case '>':
                                         break top;

@@ -46,7 +46,8 @@ public class JetBlock extends AbstractBlock {
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
             JetNodeTypes.BLOCK,
             JetNodeTypes.CLASS_BODY,
-            JetNodeTypes.FUNCTION_LITERAL_EXPRESSION);
+            JetNodeTypes.FUNCTION_LITERAL_EXPRESSION,
+            JetNodeTypes.FUNCTION_LITERAL);
 
     // private static final List<IndentWhitespaceRule>
 

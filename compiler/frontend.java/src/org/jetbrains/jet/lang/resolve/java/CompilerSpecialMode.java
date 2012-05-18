@@ -22,13 +22,13 @@ package org.jetbrains.jet.lang.resolve.java;
 public enum CompilerSpecialMode {
     REGULAR,
     BUILTINS,
-    JDK_HEADERS,
+    ALT_HEADERS,
     STDLIB,
     IDEA,
     JS,
     ;
 
-    public boolean includeJdkHeaders() {
+    public boolean includeAltHeaders() {
         return this == REGULAR || this == STDLIB || this == IDEA;
     }
 
@@ -41,6 +41,6 @@ public enum CompilerSpecialMode {
     }
 
     public boolean isStubs() {
-        return this == BUILTINS || this == JDK_HEADERS;
+        return this == BUILTINS || this == ALT_HEADERS;
     }
 }

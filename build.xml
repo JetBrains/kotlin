@@ -91,50 +91,56 @@
         </java>
     </target>
 
-    <target name="compilerSources" if="generate.javadoc">
-        <jar jarfile="${output}/kotlin-compiler-sources.jar">
-            <!-- TODO How to convert it from pathset or dirset ? -->
-            <fileset dir="compiler/frontend/src"/>
-            <fileset dir="compiler/frontend.java/src"/>
-            <fileset dir="compiler/backend/src"/>
-            <fileset dir="compiler/cli/src"/>
-            <fileset dir="compiler/util/src"/>
-            <fileset dir="compiler/jet.as.java.psi/src"/>
-            <fileset dir="runtime/src"/>
-            <fileset dir="js/js.translator/src"/>
+    <target name="compilerSources">
+        <if>
+            <istrue value="${generate.javadoc}"/>
 
-            <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+            <then>
+                <jar jarfile="${output}/kotlin-compiler-sources.jar">
+                    <!-- TODO How to convert it from pathset or dirset ? -->
+                    <fileset dir="compiler/frontend/src"/>
+                    <fileset dir="compiler/frontend.java/src"/>
+                    <fileset dir="compiler/backend/src"/>
+                    <fileset dir="compiler/cli/src"/>
+                    <fileset dir="compiler/util/src"/>
+                    <fileset dir="compiler/jet.as.java.psi/src"/>
+                    <fileset dir="runtime/src"/>
+                    <fileset dir="js/js.translator/src"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+                    <manifest>
+                        <attribute name="Built-By" value="JetBrains"/>
 
-        <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false" />
-        <javadoc destdir="${output}/kotlin-compiler-javadoc"
-                 sourcepathref="compilerSources.path"
-                 classpathref="classpath"
-                 linksource="yes"
-                 windowtitle="Kotlin Compiler"/>
-        <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
-            <fileset dir="${output}/kotlin-compiler-javadoc"/>
+                        <attribute name="Implementation-Vendor" value="JetBrains"/>
+                        <attribute name="Implementation-Title" value="Kotlin Compiler Sources"/>
+                        <attribute name="Implementation-Version" value="${build.number}"/>
+                    </manifest>
+                </jar>
 
-            <manifest>
-                <attribute name="Built-By" value="JetBrains"/>
+                <delete dir="${output}/kotlin-compiler-javadoc" failonerror="false" />
+                <javadoc destdir="${output}/kotlin-compiler-javadoc"
+                         sourcepathref="compilerSources.path"
+                         classpathref="classpath"
+                         linksource="yes"
+                         windowtitle="Kotlin Compiler"/>
+                <jar jarfile="${output}/kotlin-compiler-javadoc.jar">
+                    <fileset dir="${output}/kotlin-compiler-javadoc"/>
 
-                <attribute name="Implementation-Vendor" value="JetBrains"/>
-                <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
-                <attribute name="Implementation-Version" value="${build.number}"/>
-            </manifest>
-        </jar>
+                    <manifest>
+                        <attribute name="Built-By" value="JetBrains"/>
+
+                        <attribute name="Implementation-Vendor" value="JetBrains"/>
+                        <attribute name="Implementation-Title" value="Kotlin Compiler Javadoc"/>
+                        <attribute name="Implementation-Version" value="${build.number}"/>
+                    </manifest>
+                </jar>
+            </then>
+        </if>
     </target>
 
     <target name="compiler">
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
-        <taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
 
         <cleandir dir="${output}/classes/compiler"/>
         <javac destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
@@ -337,7 +343,7 @@
             <arg value="-output"/>
             <arg value="${output}/classes/jdk-headers"/>
             <arg value="-mode"/>
-            <arg value="jdkHeaders"/>
+            <arg value="altHeaders"/>
         </java>
 
         <jar destfile="${kotlin-home}/lib/alt/kotlin-jdk-headers.jar">

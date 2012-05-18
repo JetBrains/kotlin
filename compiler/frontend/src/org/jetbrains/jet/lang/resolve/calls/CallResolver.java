@@ -212,7 +212,7 @@ public class CallResolver {
             }
             else if (calleeExpression != null) {
                 // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
-                JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
+                JetType calleeType = expressionTypingServices.safeGetType(context.scope, calleeExpression, NO_EXPECTED_TYPE, context.dataFlowInfo, context.trace); // We are actually expecting a function, but there seems to be no easy way of expressing this
 
                 if (!JetStandardClasses.isFunctionType(calleeType)) {
 //                    checkTypesWithNoCallee(trace, scope, call);
@@ -328,11 +328,7 @@ public class CallResolver {
             // We have some candidates that failed for some reason
             // And we have a suspect: the function literal argument
             // Now, we try to remove this argument and see if it helps
-            Collection<ResolutionCandidate<D>> newCandidates = Lists.newArrayList();
-            for (ResolutionCandidate<D> candidate : task.getCandidates()) {
-                newCandidates.add(ResolutionCandidate.create(candidate.getDescriptor(), candidate.isSafeCall())); //todo check receivers are not necessary
-            }
-            ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(newCandidates, task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
+            ResolutionTask<D, F> newContext = new ResolutionTask<D, F>(task.getCandidates(), task.reference, TemporaryBindingTrace.create(task.trace), task.scope, new DelegatingCall(task.call) {
                             @NotNull
                             @Override
                             public List<JetExpression> getFunctionLiteralArguments() {
@@ -416,7 +412,7 @@ public class CallResolver {
                 checkTypesWithNoCallee(context.toBasic());
                 return;
             }
-            checkUnknownArgumentTypes(context.toBasic(), unmappedArguments);
+            checkUnmappedArgumentTypes(context.toBasic(), unmappedArguments);
         }
 
         List<JetTypeProjection> jetTypeArguments = context.call.getTypeArguments();
@@ -612,8 +608,8 @@ public class CallResolver {
         }
     }
 
-    private void checkUnknownArgumentTypes(BasicResolutionContext context, Set<ValueArgument> unknownArguments) {
-        for (ValueArgument valueArgument : unknownArguments) {
+    private void checkUnmappedArgumentTypes(BasicResolutionContext context, Set<ValueArgument> unmappedArguments) {
+        for (ValueArgument valueArgument : unmappedArguments) {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             if (argumentExpression != null) {
                 expressionTypingServices.getType(context.scope, argumentExpression, NO_EXPECTED_TYPE, context.trace);

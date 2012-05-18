@@ -4,5 +4,5 @@ fun main(args : Array<String>) {
   var s : Int? = Integer.valueOf(100)
 
   val o = i .sure() + s.sure()
-  System.out?.println(o)
+  System.out.println(o)
 }

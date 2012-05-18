@@ -52,7 +52,7 @@ class NamespaceComparator {
             @NotNull File txtFile) {
         String serialized = new NamespaceComparator(includeObject).doCompareNamespaces(nsa, nsb);
         try {
-            for (;;) {
+            while (true) {
                 String expected = Files.toString(txtFile, Charset.forName("utf-8")).replace("\r\n", "\n");
 
                 if (expected.contains("kick me")) {
@@ -301,6 +301,9 @@ class NamespaceComparator {
             sb.append(": ");
             if (valueParameter.getVarargElementType() != null) {
                 new TypeSerializer(sb).serialize(valueParameter.getVarargElementType());
+                sb.append(" /*");
+                new TypeSerializer(sb).serialize(valueParameter.getType());
+                sb.append("*/");
             }
             else {
                 new TypeSerializer(sb).serialize(valueParameter.getType());
@@ -549,7 +552,7 @@ class NamespaceComparator {
         try {
             StringBuilder r = new StringBuilder();
             BufferedReader reader = new BufferedReader(new StringReader(string));
-            for (;;) {
+            while (true) {
                 String line = reader.readLine();
                 if (line == null) {
                     break;

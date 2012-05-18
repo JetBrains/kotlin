@@ -102,14 +102,14 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         if (returnTypeRef != null) {
             returnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
             context.expressionTypingServices.checkFunctionReturnType(expression, context.replaceScope(functionInnerScope).
-                    replaceExpectedType(returnType).replaceExpectedReturnType(returnType).replaceDataFlowInfo(context.dataFlowInfo), context.trace);
+                    replaceExpectedType(returnType).replaceDataFlowInfo(context.dataFlowInfo), context.trace);
         }
         else {
             if (functionTypeExpected) {
                 returnType = JetStandardClasses.getReturnTypeFromFunctionType(expectedType);
             }
             returnType = context.expressionTypingServices.getBlockReturnedType(functionInnerScope, bodyExpression, CoercionStrategy.COERCION_TO_UNIT,
-                    context.replaceExpectedType(returnType).replaceExpectedReturnType(returnType), context.trace);
+                    context.replaceExpectedType(returnType), context.trace);
         }
         JetType safeReturnType = returnType == null ? ErrorUtils.createErrorType("<return type>") : returnType;
         functionDescriptor.setReturnType(safeReturnType);

@@ -25,6 +25,6 @@ val d = b.<error>x</error>
 
 val s = <error>System</error>  // error
 fun test() {
-  System.out?.println()
-  java.lang.System.out?.println()
+  System.out.println()
+  java.lang.System.out.println()
 }

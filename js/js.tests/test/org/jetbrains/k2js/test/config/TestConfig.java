@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.k2js.config.Config;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.FileInputStream;
@@ -36,12 +37,11 @@ import java.util.List;
 //TODO: review/refactor
 public final class TestConfig extends Config {
 
-
     @Nullable
     private /*var*/ List<JetFile> jsLibFiles = null;
 
-    public TestConfig(@NotNull Project project) {
-        super(project);
+    public TestConfig(@NotNull Project project, @NotNull EcmaVersion version) {
+        super(project, version);
     }
 
     @NotNull

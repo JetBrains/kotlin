@@ -23,10 +23,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
-import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
-import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
-import org.jetbrains.jet.cli.common.ExitCode.*;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.cli.jvm.K2JVMCompilerArguments;
 
 import java.io.File;
 import java.io.IOException;
@@ -204,8 +203,8 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         log.info("Classes directory is " + output);
         arguments.setOutputDir(output);
 
-        arguments.jdkHeaders = getJdkHeaders().getPath();
-        log.debug("Using jdk headers from " + arguments.jdkHeaders);
+        arguments.altHeaders = getAltHeaders().getPath();
+        log.debug("Using alt headers from " + arguments.altHeaders);
     }
 
     // TODO: Make a better runtime detection or get rid of it entirely
@@ -223,25 +222,25 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         return null;
     }
 
-    private File jdkHeadersPath;
+    private File altHeadersPath;
 
-    protected File getJdkHeaders() {
-        if (jdkHeadersPath != null)
-            return jdkHeadersPath;
+    protected File getAltHeaders() {
+        if (altHeadersPath != null)
+            return altHeadersPath;
 
         try {
-            jdkHeadersPath = extractJdkHeaders();
+            altHeadersPath = extractAltHeaders();
 
-            if (jdkHeadersPath == null)
-                throw new RuntimeException("Can't find kotlin jdk headers in maven plugin resources");
+            if (altHeadersPath == null)
+                throw new RuntimeException("Can't find kotlin alt headers in maven plugin resources");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return jdkHeadersPath;
+        return altHeadersPath;
     }
 
-    private File extractJdkHeaders() throws IOException {
+    private File extractAltHeaders() throws IOException {
         final String kotlin_jdk_headers = "kotlin-jdk-headers.jar";
 
         final URL jdkHeadersResource = Resources.getResource(kotlin_jdk_headers);

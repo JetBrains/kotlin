@@ -40,8 +40,8 @@ public class ZippedLibrarySourcesConfig extends Config {
     @Nullable
     protected final String pathToLibZip;
 
-    public ZippedLibrarySourcesConfig(@NotNull Project project, @Nullable String pathToZip) {
-        super(project);
+    public ZippedLibrarySourcesConfig(@NotNull Project project, @Nullable String pathToZip, @NotNull EcmaVersion ecmaVersion) {
+        super(project, ecmaVersion);
         pathToLibZip = pathToZip;
     }
 

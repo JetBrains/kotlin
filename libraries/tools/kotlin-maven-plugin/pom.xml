@@ -38,7 +38,7 @@
 
         <resources>
             <resource>
-                <!-- jdkHeaders -->
+                <!-- altHeaders -->
                 <directory>${kotlin-sdk}/lib/alt</directory>
                 <filtering>false</filtering>
             </resource>
@@ -56,7 +56,6 @@
                 <version>2.9</version>
             </plugin>
 
-            <!--
             <plugin>
                 <artifactId>maven-invoker-plugin</artifactId>
                 <version>1.5</version>
@@ -66,15 +65,16 @@
                     <pomIncludes>
                         <pomInclude>*/pom.xml</pomInclude>
                     </pomIncludes>
-                    &lt;!&ndash;This could speed up test by providing local repo as remote repo for test but might be tricky on different OS&ndash;&gt;
-                    &lt;!&ndash;<settingsFile>src/it/settings.xml</settingsFile>&ndash;&gt;
+                    <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
+                    <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <postBuildHookScript>verify.bsh</postBuildHookScript>
+                    <streamLogs>true</streamLogs>
                 </configuration>
                 <executions>
                     <execution>
                         <id>integration-test</id>
-                        <phase>package</phase>
+                        <!--<phase>package</phase>-->
                         <goals>
                             <goal>install</goal>
                             <goal>run</goal>
@@ -82,7 +82,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
         </plugins>
     </build>
 </project>

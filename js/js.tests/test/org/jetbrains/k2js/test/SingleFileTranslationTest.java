@@ -18,12 +18,13 @@ package org.jetbrains.k2js.test;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.k2js.test.rhino.RhinoSystemOutputChecker;
-import org.jetbrains.k2js.test.utils.TranslationUtils;
 
-import static org.jetbrains.k2js.test.rhino.RhinoUtils.runRhinoTest;
+import java.util.EnumSet;
+
 import static org.jetbrains.k2js.test.utils.JsTestUtils.readFile;
 
 /**
@@ -36,36 +37,62 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         super(main);
     }
 
-    public void runFunctionOutputTest(String filename, String namespaceName,
-            String functionName, Object expectedResult) throws Exception {
-        generateJsFromFile(filename, MainCallParameters.noCall());
-        runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
-                     new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
+    public void runFunctionOutputTest(@NotNull String kotlinFilename, @NotNull String namespaceName,
+            @NotNull String functionName, @NotNull Object expectedResult) throws Exception {
+        runFunctionOutputTest(EcmaVersion.all(), kotlinFilename, namespaceName, functionName, expectedResult);
     }
 
-    protected void generateJsFromFile(@NotNull String filename, @NotNull MainCallParameters mainCallParameters) throws Exception {
-        TranslationUtils.translateFile(getProject(), getInputFilePath(filename), getOutputFilePath(filename), mainCallParameters);
+    protected void runFunctionOutputTest(@NotNull EnumSet<EcmaVersion> ecmaVersions, @NotNull String kotlinFilename,
+            @NotNull String namespaceName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult) throws Exception {
+        generateJavaScriptFiles(kotlinFilename, MainCallParameters.noCall(), ecmaVersions);
+        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions),
+                      new RhinoFunctionResultChecker(namespaceName, functionName, expectedResult));
     }
 
-    public void checkFooBoxIsTrue(@NotNull String filename) throws Exception {
-        runFunctionOutputTest(filename, "foo", "box", true);
+    public void checkFooBoxIsTrue(@NotNull String filename, @NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+        runFunctionOutputTest(ecmaVersions, filename, "foo", "box", true);
     }
 
-    public void fooBoxTest() throws Exception {
-        checkFooBoxIsTrue(getTestName(true) + ".kt");
+    protected void fooBoxTest() throws Exception {
+        checkFooBoxIsTrue(getTestName(true) + ".kt", EcmaVersion.all());
     }
 
-    public void checkFooBoxIsOk(@NotNull String filename) throws Exception {
-        runFunctionOutputTest(filename, "foo", "box", "OK");
+    protected void fooBoxTest(@NotNull EnumSet<EcmaVersion> ecmaVersions) throws Exception {
+        checkFooBoxIsTrue(getTestName(true) + ".kt", ecmaVersions);
     }
 
-    protected void checkOutput(@NotNull String filename, @NotNull String expectedResult, @NotNull String... args) throws Exception {
-        generateJsFromFile(filename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)));
-        runRhinoTest(withAdditionalFiles(getOutputFilePath(filename)),
-                     new RhinoSystemOutputChecker(expectedResult));
+    protected void checkFooBoxIsOk(@NotNull String filename) throws Exception {
+        checkFooBoxIsOk(EcmaVersion.all(), filename);
+    }
+
+    protected void checkFooBoxIsOk(@NotNull EnumSet<EcmaVersion> versions, @NotNull String filename) throws Exception {
+        runFunctionOutputTest(versions, filename, "foo", "box", "OK");
+    }
+
+    protected void checkOutput(@NotNull String kotlinFilename,
+            @NotNull String expectedResult,
+            @NotNull String... args) throws Exception {
+        checkOutput(kotlinFilename, expectedResult, EcmaVersion.all(), args);
+    }
+
+    protected void checkOutput(@NotNull String kotlinFilename,
+            @NotNull String expectedResult,
+            @NotNull EnumSet<EcmaVersion> ecmaVersions,
+            String... args) throws Exception {
+        generateJavaScriptFiles(kotlinFilename, MainCallParameters.mainWithArguments(Lists.newArrayList(args)), ecmaVersions);
+        runRhinoTests(getOutputFilePaths(kotlinFilename, ecmaVersions), new RhinoSystemOutputChecker(expectedResult));
+    }
+
+    protected void performTestWithMain(@NotNull EnumSet<EcmaVersion> ecmaVersions,
+            @NotNull String testName,
+            @NotNull String testId,
+            @NotNull String... args) throws Exception {
+        checkOutput(testName + ".kt", readFile(expected(testName + testId)), ecmaVersions, args);
     }
 
     protected void performTestWithMain(@NotNull String testName, @NotNull String testId, @NotNull String... args) throws Exception {
-        checkOutput(testName + ".kt", readFile(expected(testName + testId)), args);
+        performTestWithMain(EcmaVersion.all(), testName, testId, args);
     }
 }

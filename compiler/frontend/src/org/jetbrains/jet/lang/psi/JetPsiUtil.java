@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collection;
@@ -240,6 +241,17 @@ public class JetPsiUtil {
                 return parent;
             }
         }
+        if (parent instanceof JetTryExpression) {
+            JetTryExpression tryExpression = (JetTryExpression) parent;
+            if (tryExpression.getTryBlock() == block) {
+                return parent;
+            }
+            for (JetCatchClause clause : tryExpression.getCatchClauses()) {
+                if (clause.getCatchBody() == block) {
+                    return parent;
+                }
+            }
+        }
         return null;
     }
 
@@ -255,6 +267,9 @@ public class JetPsiUtil {
             }
             if (expression == null) {
                 expression = getDirectParentOfTypeForBlock(block, JetFunctionLiteral.class);
+            }
+            if (expression == null) {
+                expression = getDirectParentOfTypeForBlock(block, JetTryExpression.class);
             }
             if (expression != null) {
                 return isImplicitlyUsed(expression);
@@ -307,7 +322,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return "Unit".equals(typeReference.getText());
+        return JetStandardClasses.UNIT_ALIAS.equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {

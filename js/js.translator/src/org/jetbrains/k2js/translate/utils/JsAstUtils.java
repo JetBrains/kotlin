@@ -18,8 +18,11 @@ package org.jetbrains.k2js.translate.utils;
 
 import com.google.common.collect.Lists;
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import java.util.*;
 
@@ -27,6 +30,16 @@ import java.util.*;
  * @author Pavel Talanov
  */
 public final class JsAstUtils {
+    private static final JsNameRef VALUE = new JsNameRef("value");
+    private static final JsPropertyInitializer WRITABLE = new JsPropertyInitializer(new JsNameRef("writable"), null);
+    private static final JsNameRef DEFINE_PROPERTIES = new JsNameRef("defineProperties");
+    private static final JsNameRef CREATE = new JsNameRef("create");
+
+    static {
+        JsNameRef globalObjectReference = new JsNameRef("Object");
+        DEFINE_PROPERTIES.setQualifier(globalObjectReference);
+        CREATE.setQualifier(globalObjectReference);
+    }
 
     private JsAstUtils() {
     }
@@ -271,5 +284,39 @@ public final class JsAstUtils {
             result.add(program.getStringLiteral(str));
         }
         return result;
+    }
+
+    @NotNull
+    public static JsStatement defineProperties(@NotNull JsObjectLiteral propertiesDefinition) {
+        return AstUtil.newInvocation(DEFINE_PROPERTIES, new JsThisRef(), propertiesDefinition).makeStmt();
+    }
+
+    @NotNull
+    public static JsPropertyInitializer propertyDescriptor(@NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value, @NotNull TranslationContext context) {
+        JsObjectLiteral jsPropertyDescriptor = new JsObjectLiteral();
+        List<JsPropertyInitializer> meta = jsPropertyDescriptor.getPropertyInitializers();
+        meta.add(new JsPropertyInitializer(VALUE, value));
+        if (descriptor.isVar()) {
+            meta.add(getWritable(context));
+        }
+        // TODO: accessors
+        return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), jsPropertyDescriptor);
+    }
+
+    @NotNull
+    private static JsPropertyInitializer getWritable(@NotNull TranslationContext context) {
+        if (WRITABLE.getValueExpr() == null) {
+            WRITABLE.setValueExpr(context.program().getTrueLiteral());
+        }
+        return WRITABLE;
+    }
+
+    @NotNull
+    public static List<JsStatement> nullableExpressionToStatementList(@Nullable JsExpression initalizerForProperty) {
+        if (initalizerForProperty == null) {
+            return Collections.emptyList();
+        }
+        return Collections.<JsStatement>singletonList(initalizerForProperty.makeStmt());
     }
 }

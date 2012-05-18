@@ -18,6 +18,7 @@ package org.jetbrains.k2js.test.semantics;
 
 import junit.framework.Test;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
@@ -38,18 +39,19 @@ public final class SimpleTest extends SingleFileTranslationTest {
 
     @Override
     public void runTest() throws Exception {
-        checkFooBoxIsTrue(filename);
+        checkFooBoxIsTrue(filename, EcmaVersion.all());
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "simple/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String filename) {
-                SimpleTest examplesTest = new SimpleTest(filename);
-                examplesTest.setName(filename);
-                return examplesTest;
-            }
-        });
+        return TranslatorTestCaseBuilder
+                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "simple/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                    @NotNull
+                    @Override
+                    public Test createTest(@NotNull String filename) {
+                        SimpleTest examplesTest = new SimpleTest(filename);
+                        examplesTest.setName(filename);
+                        return examplesTest;
+                    }
+                });
     }
 }

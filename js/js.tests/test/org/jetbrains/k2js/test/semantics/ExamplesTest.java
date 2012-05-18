@@ -22,6 +22,8 @@ import org.jetbrains.k2js.test.BasicTest;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 import org.jetbrains.k2js.translate.context.Namer;
 
+import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class ExamplesTest extends SingleFileTranslationTest {
 
@@ -36,18 +38,19 @@ public final class ExamplesTest extends SingleFileTranslationTest {
 
     @Override
     public void runTest() throws Exception {
-        runFunctionOutputTest(filename, Namer.getRootNamespaceName(), "box", "OK");
+        runFunctionOutputTest(failsOnEcmaV5(), filename, Namer.getRootNamespaceName(), "box", "OK");
     }
 
     public static Test suite() throws Exception {
-        return TranslatorTestCaseBuilder.suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
-            @NotNull
-            @Override
-            public Test createTest(@NotNull String filename) {
-                ExamplesTest examplesTest = new ExamplesTest(filename);
-                examplesTest.setName(filename);
-                return examplesTest;
-            }
-        });
+        return TranslatorTestCaseBuilder
+                .suiteForDirectory(BasicTest.pathToTestFilesRoot() + "examples/cases/", new TranslatorTestCaseBuilder.NamedTestFactory() {
+                    @NotNull
+                    @Override
+                    public Test createTest(@NotNull String filename) {
+                        ExamplesTest examplesTest = new ExamplesTest(filename);
+                        examplesTest.setName(filename);
+                        return examplesTest;
+                    }
+                });
     }
 }

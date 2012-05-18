@@ -25,6 +25,7 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
+import com.intellij.vcsUtil.VcsFileUtil;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NonNls;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class JetParsingTest extends ParsingTestCase {
     static {
@@ -46,13 +48,17 @@ public class JetParsingTest extends ParsingTestCase {
 
     private final String name;
 
-    public JetParsingTest(String dataPath, String name) {
-        super(dataPath, "jet", new JetParserDefinition());
-        this.name = name;
+    public JetParsingTest(@NotNull File file) {
+        super(VcsFileUtil.relativePath(new File(getPsiTestDataDir()), file.getParentFile()), file.getName().replaceFirst(".*\\.", ""), new JetParserDefinition());
+        this.name = file.getName().replaceFirst("\\.[^.]*$", "");
     }
 
     @Override
     protected String getTestDataPath() {
+        return getPsiTestDataDir();
+    }
+
+    private static String getPsiTestDataDir() {
         return getTestDataDir() + "/psi";
     }
 
@@ -88,6 +94,7 @@ public class JetParsingTest extends ParsingTestCase {
             String methodName = method.getName();
             if (!methodName.startsWith("get") && !methodName.startsWith("find") || methodName.equals("getReference") ||
                 methodName.equals("getReferences") || methodName.equals("getUseScope")) continue;
+            if (!Modifier.isPublic(method.getModifiers())) continue;
             if (method.getParameterTypes().length > 0) continue;
             Class<?> declaringClass = method.getDeclaringClass();
             if (!declaringClass.getName().startsWith("org.jetbrains.jet")) continue;
@@ -122,7 +129,7 @@ public class JetParsingTest extends ParsingTestCase {
             @NotNull
             @Override
             public Test createTest(@NotNull String dataPath, @NotNull String name, @NotNull File file) {
-                return new JetParsingTest(dataPath, name);
+                return new JetParsingTest(file);
             }
         };
         String prefix = JetParsingTest.getTestDataDir() + "/psi/";

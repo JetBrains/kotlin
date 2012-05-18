@@ -18,11 +18,13 @@ package org.jetbrains.k2js.test.utils;
 
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -33,8 +35,30 @@ public final class JsTestUtils {
     private JsTestUtils() {
     }
 
-    public static String convertFileNameToDotJsFile(@NotNull String filename) {
-        return filename.substring(0, filename.lastIndexOf('.')) + ".js";
+    @NotNull
+    public static EnumSet<EcmaVersion> failsOn(EcmaVersion... versions) {
+        EnumSet<EcmaVersion> result = EcmaVersion.all();
+        for (EcmaVersion version : versions) {
+            boolean success = result.remove(version);
+            assert success;
+        }
+        return result;
+    }
+
+    @NotNull
+    public static EnumSet<EcmaVersion> failsOnEcmaV5() {
+        return failsOn(EcmaVersion.v5);
+    }
+
+
+    @NotNull
+    public static String convertFileNameToDotJsFile(@NotNull String filename, EcmaVersion ecmaVersion) {
+        String postFix = "_" + ecmaVersion.toString() + ".js";
+        int index = filename.lastIndexOf('.');
+        if (index < 0) {
+            return filename + postFix;
+        }
+        return filename.substring(0, index) + postFix;
     }
 
     @NotNull

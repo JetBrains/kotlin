@@ -109,6 +109,9 @@ public class Visibilities {
 
     public static final Set<Visibility> INTERNAL_VISIBILITIES = Sets.newHashSet(PRIVATE, INTERNAL, INTERNAL_PROTECTED, LOCAL);
 
+    private Visibilities() {
+    }
+
     public static boolean isVisible(DeclarationDescriptorWithVisibility what, DeclarationDescriptor from) {
         DeclarationDescriptorWithVisibility parent = what;
         while (parent != null) {

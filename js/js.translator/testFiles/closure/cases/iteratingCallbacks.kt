@@ -24,7 +24,3 @@ fun box() : Boolean {
     }
     return (sum == 27)
 }
-
-fun main(args : Array<String>) {
-  println(box())
-}

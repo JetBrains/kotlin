@@ -22,10 +22,10 @@ fun main(args : Array<String>) {
     test(al, m)
 }
 fun test(a : List<Int>, m : Map<String, Int>) {
-  System.out?.println(
+  System.out.println(
     a.get(0) + 1
   )
   HashMap<Int, Int>().get(0)
   if (m.get("") != null)
-  System.out?.println(m.get("").sure().plus(1))
+  System.out.println(m.get("").sure().plus(1))
 }

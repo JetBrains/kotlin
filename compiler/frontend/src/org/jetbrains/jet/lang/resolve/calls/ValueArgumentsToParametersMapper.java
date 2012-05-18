@@ -101,7 +101,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 if (valueParameterDescriptor == null) {
                     temporaryTrace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference));
                     unmappedArguments.add(valueArgument);
-                    status = ERROR;
+                    status = WEAK_ERROR;
                 }
                 else {
                     temporaryTrace.record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
@@ -116,14 +116,14 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 }
                 if (somePositioned) {
                     temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(nameReference));
-                    status = ERROR;
+                    status = WEAK_ERROR;
                 }
             }
             else {
                 somePositioned = true;
                 if (someNamed) {
                     temporaryTrace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(valueArgument.asElement()));
-                    status = ERROR;
+                    status = WEAK_ERROR;
                 }
                 else {
                     int parameterCount = valueParameters.size();
@@ -147,7 +147,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                     else {
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(valueArgument.asElement(), candidate));
                         unmappedArguments.add(valueArgument);
-                        status = WEAK_ERROR;
+                        status = ERROR;
                     }
                 }
             }
@@ -179,7 +179,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 else {
                     if (!usedParameters.add(valueParameterDescriptor)) {
                         temporaryTrace.report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
-                        status = ERROR;
+                        status = WEAK_ERROR;
                     }
                     else {
                         status = status.compose(put(candidateCall, valueParameterDescriptor, CallMaker.makeValueArgument(functionLiteral), varargs));
@@ -190,7 +190,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             for (int i = 1; i < functionLiteralArguments.size(); i++) {
                 JetExpression argument = functionLiteralArguments.get(i);
                 temporaryTrace.report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
-                status = ERROR;
+                status = WEAK_ERROR;
             }
         }
 
@@ -221,6 +221,8 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
             tracing.noReceiverAllowed(temporaryTrace);
             status = ERROR;
         }
+
+        assert (candidateCall.getThisObject().exists() == candidateCall.getResultingDescriptor().getExpectedThisObject().exists()) : "Shouldn't happen because of TaskPrioritizer: " + candidateCall.getCandidateDescriptor();
 
         return status;
     }

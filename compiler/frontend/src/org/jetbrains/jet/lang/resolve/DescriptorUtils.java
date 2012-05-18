@@ -318,7 +318,7 @@ public class DescriptorUtils {
     public static List<DeclarationDescriptor> getPathWithoutRootNsAndModule(@NotNull DeclarationDescriptor descriptor) {
         List<DeclarationDescriptor> path = Lists.newArrayList();
         DeclarationDescriptor current = descriptor;
-        for (;;) {
+        while (true) {
             if (current instanceof NamespaceDescriptor && isRootNamespace((NamespaceDescriptor) current)) {
                 return Lists.reverse(path);
             }
