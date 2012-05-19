@@ -26,8 +26,7 @@ import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.*;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,10 @@ import java.util.Map;
 public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
     implements CommonJavaRunConfigurationParameters {
 
-    private JetRunConfigurationSettings settings = new JetRunConfigurationSettings();
+    public String MAIN_CLASS_NAME;
+    public String VM_PARAMETERS;
+    public String PROGRAM_PARAMETERS;
+    public String WORKING_DIRECTORY;
 
     public boolean ALTERNATIVE_JRE_PATH_ENABLED;
     public String ALTERNATIVE_JRE_PATH;
@@ -76,14 +78,20 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         super.readExternal(element);
 
         JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element);
+        DefaultJDOMExternalizer.readExternal(this, element);
+
         readModule(element);
         EnvironmentVariablesComponent.readExternal(element, getEnvs());
 
+        //TODO remove the following code (left for backward compatibility)
         Element settingsElement = element.getChild(JetRunConfigurationSettings.class.getSimpleName());
         if (settingsElement != null) {
-            JetRunConfigurationSettings readSettings = XmlSerializer.deserialize(settingsElement, JetRunConfigurationSettings.class);
-            if (readSettings != null) {
-                settings = readSettings;
+            JetRunConfigurationSettings settings = XmlSerializer.deserialize(settingsElement, JetRunConfigurationSettings.class);
+            if (settings != null) {
+                MAIN_CLASS_NAME = settings.getMainClassName();
+                VM_PARAMETERS = settings.getVmParameters();
+                PROGRAM_PARAMETERS = settings.getProgramParameters();
+                WORKING_DIRECTORY = settings.getWorkingDirectory();
             }
         }
     }
@@ -92,42 +100,41 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     public void writeExternal(final Element element) throws WriteExternalException {
         super.writeExternal(element);
         JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
+        DefaultJDOMExternalizer.writeExternal(this, element);
 
         writeModule(element);
         EnvironmentVariablesComponent.writeExternal(element, getEnvs());
         PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
-
-        element.addContent(XmlSerializer.serialize(settings()));
     }
 
     @Override
     public void setVMParameters(String value) {
-        settings().setVmParameters(value);
+        VM_PARAMETERS = value;
     }
 
     @Override
     public String getVMParameters() {
-        return settings().getVmParameters();
+        return VM_PARAMETERS;
     }
 
     @Override
     public void setProgramParameters(String value) {
-        settings().setProgramParameters(value);
+        PROGRAM_PARAMETERS = value;
     }
 
     @Override
     public String getProgramParameters() {
-        return settings().getProgramParameters();
+        return PROGRAM_PARAMETERS;
     }
 
     @Override
     public void setWorkingDirectory(String value) {
-        settings().setWorkingDirectory(ExternalizablePath.urlValue(value));
+        WORKING_DIRECTORY = ExternalizablePath.urlValue(value);
     }
 
     @Override
     public String getWorkingDirectory() {
-        return ExternalizablePath.localPathValue(settings().getWorkingDirectory());
+        return ExternalizablePath.localPathValue(WORKING_DIRECTORY);
     }
 
     @Override
@@ -153,11 +160,11 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
     @Override
     public String getRunClass() {
-        return settings().getMainClassName();
+        return MAIN_CLASS_NAME;
     }
 
     public void setRunClass(String value) {
-        settings().setMainClassName(value);
+        MAIN_CLASS_NAME = value;
     }
 
     @Override
@@ -185,11 +192,6 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
         ALTERNATIVE_JRE_PATH = path;
     }
 
-    @NotNull
-    public JetRunConfigurationSettings settings() {
-        return settings;
-    }
-
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment)
         throws ExecutionException {
@@ -215,7 +217,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
 
             final int classPathType = JavaParametersUtil.getClasspathType(
                     module,
-                    myConfiguration.settings().getMainClassName(),
+                    myConfiguration.getRunClass(),
                     false);
 
             final String jreHome = myConfiguration.ALTERNATIVE_JRE_PATH_ENABLED ? myConfiguration.ALTERNATIVE_JRE_PATH
@@ -223,7 +225,7 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
             JavaParametersUtil.configureConfiguration(params, myConfiguration);
 
-            params.setMainClass(myConfiguration.settings().getMainClassName());
+            params.setMainClass(myConfiguration.getRunClass());
 
             return params;
         }
