@@ -11,11 +11,11 @@ private class ImmutableArrayList<T>(
     {
         // impossible
         if (offset < 0) {
-            throw IllegalArgumentException("negative offset ($offset)")
+            throw IllegalArgumentException("Negative offset ($offset)")
         }
         // impossible
         if (length < 0) {
-            throw IllegalArgumentException("negative length ($length)")
+            throw IllegalArgumentException("Negative length ($length)")
         }
         // possible when builder is used from different threads
         if (offset + length > array.size) {
@@ -25,7 +25,7 @@ private class ImmutableArrayList<T>(
 
     protected fun indexInArray(index: Int): Int {
         if (index < 0) {
-            throw IndexOutOfBoundsException("negative index ($index)")
+            throw IndexOutOfBoundsException("Negative index ($index)")
         }
         if (index >= length) {
             throw IndexOutOfBoundsException("index ($index) >= length ($length)")
@@ -39,7 +39,7 @@ private class ImmutableArrayList<T>(
 
     public override fun subList(fromIndex: Int, toIndex: Int) : List<T> {
         if (fromIndex < 0) {
-            throw IndexOutOfBoundsException("negative from index ($fromIndex)")
+            throw IndexOutOfBoundsException("Negative from index ($fromIndex)")
         }
         if (toIndex < fromIndex) {
             throw IndexOutOfBoundsException("toIndex ($toIndex) < fromIndex ($fromIndex)")
