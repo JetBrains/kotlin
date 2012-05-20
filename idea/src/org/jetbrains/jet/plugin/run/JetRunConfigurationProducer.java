@@ -109,7 +109,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
             if (existingConfiguration.getType() instanceof JetRunConfigurationType) {
                 JetRunConfiguration jetConfiguration = (JetRunConfiguration)existingConfiguration.getConfiguration();
-                if (Comparing.equal(jetConfiguration.settings().getMainClassName(), startClassFQName.getFqName())) {
+                if (Comparing.equal(jetConfiguration.getRunClass(), startClassFQName.getFqName())) {
                     if (Comparing.equal(location.getModule(), jetConfiguration.getConfigurationModule().getModule())) {
                         return existingConfiguration;
                     }

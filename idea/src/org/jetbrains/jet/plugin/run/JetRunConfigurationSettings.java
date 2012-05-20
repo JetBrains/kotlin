@@ -21,8 +21,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Should be serializable.
  *
+ * @deprecated this class was left just for backward compatibility
  * @author Nikolay Krasko
+ *
+ * TODO remove this class
  */
+@Deprecated
 public class JetRunConfigurationSettings {
     public static String DEFAULT_MAIN_CLASS_NAME = "";
     public static String DEFAULT_VM_PARAMETERS = "";
