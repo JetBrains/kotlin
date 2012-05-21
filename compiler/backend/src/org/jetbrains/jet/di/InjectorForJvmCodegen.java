@@ -79,7 +79,7 @@ public class InjectorForJvmCodegen {
         this.generationState = generationState;
         this.classBuilderFactory = classBuilderFactory;
         this.jetTypeMapper = new JetTypeMapper();
-        this.classCodegen = new ClassCodegen(getGenerationState());
+        this.classCodegen = new ClassCodegen();
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory();
         this.closureAnnotator = new ClosureAnnotator();
@@ -89,6 +89,9 @@ public class InjectorForJvmCodegen {
         this.jetTypeMapper.setClosureAnnotator(closureAnnotator);
         this.jetTypeMapper.setCompilerSpecialMode(compilerSpecialMode);
         this.jetTypeMapper.setStandardLibrary(jetStandardLibrary);
+
+        this.classCodegen.setJetTypeMapper(jetTypeMapper);
+        this.classCodegen.setState(generationState);
 
         this.intrinsics.setMyProject(project);
         this.intrinsics.setMyStdLib(jetStandardLibrary);
