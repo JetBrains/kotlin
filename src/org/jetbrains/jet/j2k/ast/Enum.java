@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.List;

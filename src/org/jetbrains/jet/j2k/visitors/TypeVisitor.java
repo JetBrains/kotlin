@@ -22,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.J2KConverterFlags;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.j2k.ast.types.*;
 import org.jetbrains.jet.j2k.util.AstUtil;
-import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
     private static final String JAVA_LANG_ITERABLE = "java.lang.Iterable";
     private static final String JAVA_UTIL_ITERATOR = "java.util.Iterator";
     private final Converter myConverter;
-    private Type myResult = Type.EMPTY_TYPE;
+    private Type myResult = new EmptyType();
 
     public TypeVisitor(@NotNull Converter myConverter) {
         this.myConverter = myConverter;
@@ -75,8 +75,8 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
 
     @Override
     public Type visitArrayType(@NotNull PsiArrayType arrayType) {
-        if (myResult == Type.EMPTY_TYPE) {
-            myResult = new ArrayType(getConverter().typeToType(arrayType.getComponentType()));
+        if (myResult instanceof EmptyType) {
+            myResult = new ArrayType(getConverter().typeToType(arrayType.getComponentType()), true);
         }
         return super.visitArrayType(arrayType);
     }
@@ -87,10 +87,10 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
         final List<Type> resolvedClassTypeParams = createRawTypesForResolvedReference(classType);
 
         if (classType.getParameterCount() == 0 && resolvedClassTypeParams.size() > 0) {
-            myResult = new ClassType(identifier, resolvedClassTypeParams);
+            myResult = new ClassType(identifier, resolvedClassTypeParams, true);
         }
         else {
-            myResult = new ClassType(identifier, getConverter().typesToTypeList(classType.getParameters()));
+            myResult = new ClassType(identifier, getConverter().typesToTypeList(classType.getParameters()), true);
         }
         return super.visitClassType(classType);
     }

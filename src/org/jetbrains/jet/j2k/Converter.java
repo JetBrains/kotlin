@@ -24,6 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.ast.*;
 import org.jetbrains.jet.j2k.ast.Class;
 import org.jetbrains.jet.j2k.ast.Enum;
+import org.jetbrains.jet.j2k.ast.types.ClassType;
+import org.jetbrains.jet.j2k.ast.types.EmptyType;
+import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.j2k.util.AstUtil;
 import org.jetbrains.jet.j2k.visitors.*;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
@@ -295,7 +298,7 @@ public class Converter {
                     new Constructor(
                             Identifier.EMPTY_IDENTIFIER,
                             Collections.<String>emptySet(),
-                            new ClassType(name),
+                            new ClassType(name, Collections.<Element>emptyList(), false),
                             Collections.<Element>emptyList(),
                             new ParameterList(createParametersFromFields(finalOrWithEmptyInitializer)),
                             new Block(createInitStatementsFromFields(finalOrWithEmptyInitializer)),
@@ -323,7 +326,7 @@ public class Converter {
 
     @NotNull
     public static String getDefaultInitializer(@NotNull Field f) {
-        if (f.getType().isNullable()) {
+        if (f.getType().getNullable()) {
             return "null";
         }
         else {
@@ -602,7 +605,7 @@ public class Converter {
 
     @NotNull
     public Type typeToType(@Nullable PsiType type) {
-        if (type == null) return Type.EMPTY_TYPE;
+        if (type == null) return new EmptyType();
         TypeVisitor typeVisitor = new TypeVisitor(this);
         type.accept(typeVisitor);
         return typeVisitor.getResult();
@@ -619,15 +622,17 @@ public class Converter {
     public Type typeToType(PsiType type, boolean notNull) {
         Type result = typeToType(type);
         if (notNull) {
-            result.convertedToNotNull();
+            return result.convertedToNotNull();
         }
         return result;
     }
 
     @NotNull
     private List<Type> typesToNotNullableTypeList(@NotNull PsiType[] types) {
-        List<Type> result = new LinkedList<Type>(typesToTypeList(types));
-        for (Type p : result) p.convertedToNotNull();
+        List<Type> result = new ArrayList<Type>();
+        for (PsiType type : types) {
+            result.add(typeToType(type).convertedToNotNull());
+        }
         return result;
     }
 

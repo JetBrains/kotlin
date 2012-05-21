@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.J2KConverterFlags;
+import org.jetbrains.jet.j2k.ast.types.ClassType;
+import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.j2k.util.AstUtil;
 
 import java.util.HashSet;
@@ -45,6 +47,9 @@ public class Class extends Member {
     public Class(Converter converter, Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
                  List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {
         super(modifiers);
+        if (extendsTypes.size() > 0) {
+            System.out.println("here");
+        }
         myName = name;
         myBaseClassParams = baseClassParams;
         myTypeParameters = typeParameters;

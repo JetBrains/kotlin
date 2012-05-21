@@ -1,7 +1,9 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.util.AstUtil
+import org.jetbrains.jet.j2k.ast.types.ArrayType
 import java.util.List
+import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class ArrayWithoutInitializationExpression(val `type` : Type, val expressions : List<Expression>) : Expression() {
     public override fun toKotlin() : String {
@@ -19,7 +21,7 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
             return oneDim(hostType, expressions[0])
         }
 
-        var innerType : Type? = hostType.getInnerType()
+        var innerType : Type? = hostType.elementType
         if (expressions.size() > 1 && innerType?.getKind() == INode.Kind.ARRAY_TYPE)
         {
             return oneDim(hostType, expressions[0], "{" + constructInnerType(innerType as ArrayType, expressions.subList(1, expressions.size())) + "}")

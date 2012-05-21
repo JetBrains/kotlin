@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.j2k.ast.types.Type;
 
 /**
  * @author ignatov

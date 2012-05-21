@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ast.*;
+import org.jetbrains.jet.j2k.ast.types.Type;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 
 import java.util.Collections;
@@ -238,7 +239,7 @@ public class ExpressionVisitor extends StatementVisitor {
                             getConverter().expressionToExpression(expression.getMethodExpression()),
                             getConverter().expressionsToExpressionList(expression.getArgumentList().getExpressions()),
                             getConverter().createConversions(expression),
-                            getConverter().typeToType(expression.getType()).isNullable(),
+                            getConverter().typeToType(expression.getType()).getNullable(),
                             getConverter().typesToTypeList(expression.getTypeArguments())
                     );
         }
@@ -348,7 +349,7 @@ public class ExpressionVisitor extends StatementVisitor {
         final boolean insideSecondaryConstructor = isInsideSecondaryConstructor(expression);
         final boolean hasReceiver = isFieldReference && insideSecondaryConstructor;
         final boolean isThis = isThisExpression(expression);
-        final boolean isNullable = getConverter().typeToType(expression.getType()).isNullable();
+        final boolean isNullable = getConverter().typeToType(expression.getType()).getNullable();
         final String className = getClassNameWithConstructor(expression);
 
         Expression identifier = new IdentifierImpl(expression.getReferenceName(), isNullable);

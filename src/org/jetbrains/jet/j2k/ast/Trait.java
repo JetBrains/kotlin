@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast;
 
 import org.jetbrains.jet.j2k.Converter;
+import org.jetbrains.jet.j2k.ast.types.Type;
 
 import java.util.List;
 import java.util.Set;
