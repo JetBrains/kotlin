@@ -35,9 +35,9 @@ public class Field extends Member {
     final Element myInitializer;
 
     public Field(Identifier identifier, Set<String> modifiers, Type type, Element initializer, int writingAccesses) {
+        super(modifiers);
         myIdentifier = identifier;
         myWritingAccesses = writingAccesses;
-        myModifiers = modifiers;
         myType = type;
         myInitializer = initializer;
     }

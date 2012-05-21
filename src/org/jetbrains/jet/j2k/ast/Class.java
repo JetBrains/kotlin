@@ -44,9 +44,9 @@ public class Class extends Member {
 
     public Class(Converter converter, Identifier name, Set<String> modifiers, List<Element> typeParameters, List<Type> extendsTypes,
                  List<Expression> baseClassParams, List<Type> implementsTypes, List<Member> members) {
+        super(modifiers);
         myName = name;
         myBaseClassParams = baseClassParams;
-        myModifiers = modifiers;
         myTypeParameters = typeParameters;
         myExtendsTypes = extendsTypes;
         myImplementsTypes = implementsTypes;
@@ -73,7 +73,7 @@ public class Class extends Member {
     private Constructor getPrimaryConstructor() {
         for (Member m : myMembers)
             if (m.getKind() == Kind.CONSTRUCTOR) {
-                if (((Constructor) m).isPrimary()) {
+                if (((Constructor) m).getIsPrimary()) {
                     return (Constructor) m;
                 }
             }
@@ -131,7 +131,7 @@ public class Class extends Member {
     List<Function> secondaryConstructorsAsStaticInitFunction() {
         final LinkedList<Function> result = new LinkedList<Function>();
         for (Member m : myMembers)
-            if (m.getKind() == Kind.CONSTRUCTOR && !((Constructor) m).isPrimary()) {
+            if (m.getKind() == Kind.CONSTRUCTOR && !((Constructor) m).getIsPrimary()) {
                 Function f = (Function) m;
                 Set<String> modifiers = new HashSet<String>(m.myModifiers);
                 modifiers.add(Modifier.STATIC);

@@ -24,7 +24,11 @@ import java.util.Set;
  * @author ignatov
  */
 public abstract class Member extends Node implements IMember {
-    Set<String> myModifiers;
+    @NotNull protected Set<String> myModifiers;
+
+    protected Member(Set<String> modifiers) {
+        myModifiers = modifiers;
+    }
 
     @NotNull
     String accessModifier() {

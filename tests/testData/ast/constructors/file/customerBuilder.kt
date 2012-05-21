@@ -8,9 +8,9 @@ return _firstName
 public open fun getLastName() : String? {
 return _lastName
 }
-private open fun doSmthBefore() : Unit {
+private fun doSmthBefore() : Unit {
 }
-private open fun doSmthAfter() : Unit {
+private fun doSmthAfter() : Unit {
 }
 {
 doSmthBefore()

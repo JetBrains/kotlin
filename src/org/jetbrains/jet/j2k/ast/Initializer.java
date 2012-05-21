@@ -27,8 +27,8 @@ public class Initializer extends Member {
     private final Block myBlock;
 
     public Initializer(Block block, Set<String> modifiers) {
+        super(modifiers);
         myBlock = block;
-        myModifiers = modifiers;
     }
 
     @NotNull

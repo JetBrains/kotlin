@@ -250,7 +250,7 @@ public class Converter {
                 // and modify secondaries
                 if (m.getKind() == INode.Kind.CONSTRUCTOR) {
                     Function f = (Function) m;
-                    if (!((Constructor) f).isPrimary()) {
+                    if (!((Constructor) f).getIsPrimary()) {
                         for (Field fo : finalOrWithEmptyInitializer) {
                             String init = getDefaultInitializer(fo);
                             initializers.put(fo.getIdentifier().toKotlin(), init);
