@@ -320,7 +320,9 @@ public class JetTypeMapper {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         String name = descriptor.getName();
         if(JetPsiUtil.NO_NAME_PROVIDED.equals(name)) {
-            return closureAnnotator.classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
+            return closureAnnotator
+                    .classNameForAnonymousClass((JetElement) BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor))
+                    .getInternalName();
         }
         if(name.contains("/"))
             return name;
@@ -978,7 +980,7 @@ public class JetTypeMapper {
         }
         else if (descriptor instanceof SimpleFunctionDescriptor && descriptor.getContainingDeclaration() instanceof FunctionDescriptor) {
             PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor);
-            return Type.getObjectType(closureAnnotator.classNameForAnonymousClass((JetElement) psiElement));
+            return closureAnnotator.classNameForAnonymousClass((JetElement) psiElement).getAsmType();
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return StackValue.sharedTypeForType(mapType(((FunctionDescriptor) descriptor).getReceiverParameter().getType(), MapTypeMode.VALUE));
