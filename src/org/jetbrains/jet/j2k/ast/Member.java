@@ -48,4 +48,9 @@ public abstract class Member extends Node implements IMember {
     public boolean isStatic() {
         return myModifiers.contains(Modifier.STATIC);
     }
+
+    @NotNull
+    public Set<String> getModifiers() {
+        return myModifiers;
+    }
 }
