@@ -9,6 +9,6 @@ fun firstFun() {
 
 // RUNTIME: 1
 // TIME: 1
-// EXIST: toLinkedList~() defined in kotlin
-// EXIST: toLinkedList~() defined in kotlin.nullable
+// EXIST: toLinkedList~() in kotlin
+// EXIST: toLinkedList~() in kotlin.nullable
 // NUMBER: 2

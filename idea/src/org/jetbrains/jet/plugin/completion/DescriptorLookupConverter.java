@@ -67,7 +67,7 @@ public final class DescriptorLookupConverter {
             boolean extensionFunction = functionDescriptor.getReceiverParameter().exists();
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (extensionFunction && containingDeclaration != null) {
-                tailText += " defined in " + DescriptorUtils.getFQName(containingDeclaration);
+                tailText += " in " + DescriptorUtils.getFQName(containingDeclaration);
             }
 
             // TODO: A special case when it's impossible to resolve type parameters from arguments. Need '<' caret '>'
