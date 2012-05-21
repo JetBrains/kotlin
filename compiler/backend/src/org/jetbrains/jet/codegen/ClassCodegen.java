@@ -50,7 +50,7 @@ public class ClassCodegen {
                 generate(contextForInners, (JetClass) declaration);
             }
             if(declaration instanceof JetClassObject) {
-                state.getInjector().getClassCodegen().generate(contextForInners, ((JetClassObject)declaration).getObjectDeclaration());
+                generate(contextForInners, ((JetClassObject)declaration).getObjectDeclaration());
             }
         }
 
