@@ -49,7 +49,7 @@ public abstract class CLICompiler<A extends CompilerArguments, C extends Compile
      */
     protected boolean parseArguments(@NotNull PrintStream errStream, @NotNull A arguments, @NotNull String[] args) {
         try {
-            Args.parse(arguments, args);
+            arguments.freeArgs = Args.parse(arguments, args);
             return true;
         }
         catch (IllegalArgumentException e) {

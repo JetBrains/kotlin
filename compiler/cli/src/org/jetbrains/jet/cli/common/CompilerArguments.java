@@ -41,6 +41,8 @@ public abstract class CompilerArguments {
         this.compilerPlugins = compilerPlugins;
     }
 
+    public List<String> freeArgs;
+
     public abstract boolean isHelp();
     public abstract boolean isTags();
     public abstract boolean isVersion();

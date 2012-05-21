@@ -18,6 +18,7 @@ package org.jetbrains.jet.cli.jvm;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -124,8 +125,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                                                                                            arguments.includeRuntime);
                 }
                 else {
+                    List<String> sources = Lists.newArrayList();
+                    if (arguments.src != null) {
+                        sources.add(arguments.src);
+                    }
+                    sources.addAll(arguments.freeArgs);
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                                 arguments.src, arguments.jar, arguments.outputDir,
+                                                                                 sources, arguments.jar, arguments.outputDir,
                                                                                  arguments.includeRuntime);
                 }
             }
