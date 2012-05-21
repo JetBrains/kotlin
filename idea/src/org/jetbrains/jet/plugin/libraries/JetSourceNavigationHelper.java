@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.resolve.DescriptorRenderer;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
@@ -83,13 +84,16 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     private static Tuple2<BindingContext, ClassDescriptor> getBindingContextAndClassDescriptor(@NotNull JetClass decompiledClass) {
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClass, JetPsiUtil.getFQName(decompiledClass));
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, decompiledClass,
+                                                              JetPsiUtil.getFQName(decompiledClass));
     }
 
     @Nullable
-    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(@NotNull JetDeclaration declaration) {
+    private static Tuple2<BindingContext, NamespaceDescriptor> getBindingContextAndNamespaceDescriptor(
+            @NotNull JetDeclaration declaration) {
         JetFile file = (JetFile) declaration.getContainingFile();
-        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration, JetPsiUtil.getFQName(file));
+        return getBindingContextAndClassOrNamespaceDescriptor(BindingContext.FQNAME_TO_NAMESPACE_DESCRIPTOR, declaration,
+                                                              JetPsiUtil.getFQName(file));
     }
 
     @Nullable
@@ -126,7 +130,8 @@ public class JetSourceNavigationHelper {
         Project project = jetDeclaration.getProject();
         CacheManager cacheManager = CacheManager.SERVICE.getInstance(project);
         PsiFile[] filesWithWord = cacheManager.getFilesWithWord(name,
-                                                                UsageSearchContext.IN_CODE, createLibrarySourcesScopeForFile(libraryFile, project),
+                                                                UsageSearchContext.IN_CODE,
+                                                                createLibrarySourcesScopeForFile(libraryFile, project),
                                                                 true);
         List<JetFile> jetFiles = new ArrayList<JetFile>();
         for (PsiFile psiFile : filesWithWord) {
@@ -149,7 +154,8 @@ public class JetSourceNavigationHelper {
 
         PsiElement declarationContainer = decompiledDeclaration.getParent();
         if (declarationContainer instanceof JetFile) {
-            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor = getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
+            Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor =
+                    getBindingContextAndNamespaceDescriptor(decompiledDeclaration);
             if (bindingContextAndNamespaceDescriptor == null) return null;
             BindingContext bindingContext = bindingContextAndNamespaceDescriptor._1;
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
@@ -215,7 +221,8 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetDeclaration getSourceProperty(final @NotNull JetProperty decompiledProperty) {
-        return getSourcePropertyOrFunction(decompiledProperty, decompiledProperty.getReceiverTypeRef(), new Matcher<JetProperty, VariableDescriptor>() {
+        return getSourcePropertyOrFunction(decompiledProperty, decompiledProperty.getReceiverTypeRef(),
+                                           new Matcher<JetProperty, VariableDescriptor>() {
             @Override
             public boolean areSame(JetProperty declaration, VariableDescriptor descriptor) {
                 return true;
@@ -230,7 +237,8 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static JetDeclaration getSourceFunction(final @NotNull JetFunction decompiledFunction) {
-        return getSourcePropertyOrFunction(decompiledFunction, decompiledFunction.getReceiverTypeRef(), new Matcher<JetFunction, FunctionDescriptor>() {
+        return getSourcePropertyOrFunction(decompiledFunction, decompiledFunction.getReceiverTypeRef(),
+                                           new Matcher<JetFunction, FunctionDescriptor>() {
             @Override
             public boolean areSame(JetFunction declaration, FunctionDescriptor descriptor) {
                 List<JetParameter> declarationParameters = declaration.getValueParameters();
