@@ -43,8 +43,6 @@ public open class ArrayWithoutInitializationExpression(val `type` : Type, val ex
             return getConstructorName(`type`) + "(" + size.toKotlin() + commaWithInit + ")"
         }
 
-        private open fun getConstructorName(`type` : Type) : String {
-            return AstUtil.replaceLastQuest(`type`.toKotlin())
-        }
+        private open fun getConstructorName(`type` : Type) : String = `type`.convertedToNotNull().toKotlin()
     }
 }
