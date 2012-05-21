@@ -19,7 +19,7 @@ test -n "$ideaRoot" || die "Idea root not found"
 
 classpath="$root/out/production/cli"
 classpath="$classpath:$root/out/production/backend:$root/out/production/frontend:$root/out/production/frontend.java:$root/out/production/jet.as.java.psi:$root/out/production/util"
-classpath="$classpath:$root/out/production/stdlib"
+classpath="$classpath:$root/out/production/stdlib:$root/out/production/runtime"
 classpath="$classpath:$root/lib/*:$ideaRoot/lib/*:$ideaRoot/lib/rt/*"
 
 exec java $JAVA_OPTS \
