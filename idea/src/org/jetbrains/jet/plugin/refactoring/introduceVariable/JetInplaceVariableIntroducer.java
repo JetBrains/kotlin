@@ -16,20 +16,33 @@
 
 package org.jetbrains.jet.plugin.refactoring.introduceVariable;
 
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateState;
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.ui.NonFocusableCheckBox;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 
 import javax.swing.*;
@@ -93,18 +106,57 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
             myExprTypeCheckbox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    final Ref<Boolean> greedyToRight = new Ref<Boolean>();
                     new WriteCommandAction(myProject, getCommandName(), getCommandName()) {
                         @Override
                         protected void run(Result result) throws Throwable {
                             PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
                             if (myExprTypeCheckbox.isSelected()) {
+                                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
+                                if (identifier != null) {
+                                    TextRange range = identifier.getTextRange();
+                                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
+                                    for (RangeHighlighter highlighter : highlighters) {
+                                        if (highlighter.getStartOffset() == range.getStartOffset()) {
+                                            if (highlighter.getEndOffset() == range.getEndOffset()) {
+                                                greedyToRight.set(highlighter.isGreedyToRight());
+                                                highlighter.setGreedyToRight(false);
+                                            }
+                                        }
+                                    }
+                                }
                                 SpecifyTypeExplicitlyAction.addTypeAnnotation(myProject, myProperty, myExprType);
+                                PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
+                                TemplateState templateState = TemplateManagerImpl.getTemplateState(myEditor);
+                                if (templateState != null) {
+                                    templateState.doReformat(myProperty.getTextRange());
+                                }
                             }
                             else {
                                 SpecifyTypeExplicitlyAction.removeTypeAnnotation(myProperty);
                             }
                         }
                     }.execute();
+                    ApplicationManager.getApplication().runReadAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (myExprTypeCheckbox.isSelected()) {
+                                ASTNode identifier = myProperty.getNode().findChildByType(JetTokens.IDENTIFIER);
+                                if (identifier != null) {
+                                    TextRange range = identifier.getTextRange();
+                                    RangeHighlighter[] highlighters = myEditor.getMarkupModel().getAllHighlighters();
+                                    for (RangeHighlighter highlighter : highlighters) {
+                                        if (highlighter.getStartOffset() == range.getStartOffset()) {
+                                            if (highlighter.getEndOffset() == range.getEndOffset()) {
+                                                highlighter.setGreedyToRight(greedyToRight.get());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                 }
             });
         }
