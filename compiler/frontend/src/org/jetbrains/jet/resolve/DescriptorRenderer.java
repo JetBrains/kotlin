@@ -249,6 +249,12 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         return stringBuilder.toString();
     }
 
+    public String renderFunctionParameters(@NotNull FunctionDescriptor functionDescriptor) {
+        StringBuilder stringBuilder = new StringBuilder();
+        rootVisitor.renderValueParameters(functionDescriptor, stringBuilder);
+        return stringBuilder.toString();
+    }
+
     protected boolean shouldRenderDefinedIn() {
         return true;
     }

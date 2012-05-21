@@ -20,9 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -64,14 +62,7 @@ public final class DescriptorLookupConverter {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             JetType returnType = functionDescriptor.getReturnType();
             typeText = DescriptorRenderer.TEXT.renderType(returnType);
-
-            tailText = "(" + StringUtil.join(functionDescriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
-                @Override
-                public String fun(ValueParameterDescriptor valueParameterDescriptor) {
-                    return valueParameterDescriptor.getName() + ":" +
-                           DescriptorRenderer.TEXT.renderType(valueParameterDescriptor.getType());
-                }
-            }, ",") + ")";
+            tailText = DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
 
             boolean extensionFunction = functionDescriptor.getReceiverParameter().exists();
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();

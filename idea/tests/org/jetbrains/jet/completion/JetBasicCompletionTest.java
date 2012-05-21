@@ -81,6 +81,10 @@ public class JetBasicCompletionTest extends JetCompletionTestBase {
         doTest();
     }
 
+    public void testFunctionCompletionFormatting() {
+        doTest();
+    }
+
     public void testInCallExpression() {
         doTest();
     }
