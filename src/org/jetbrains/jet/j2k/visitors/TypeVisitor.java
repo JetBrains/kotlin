@@ -62,7 +62,7 @@ public class TypeVisitor extends PsiTypeVisitor<Type> implements J2KVisitor {
         final IdentifierImpl identifier = new IdentifierImpl(name);
 
         if (name.equals("void")) {
-            myResult = new PrimitiveType(new IdentifierImpl(JetStandardClasses.UNIT_ALIAS));
+            myResult = new PrimitiveType(new IdentifierImpl("Unit"));
         }
         else if (Node.PRIMITIVE_TYPES.contains(name)) {
             myResult = new PrimitiveType(new IdentifierImpl(AstUtil.upperFirstCharacter(name)));

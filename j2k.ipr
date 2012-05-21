@@ -619,7 +619,7 @@
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-117.117" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-117.418" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -644,9 +644,11 @@
     <library name="KotlinRuntime">
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
+        <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/src" />
         <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/src" />
       </SOURCES>
     </library>

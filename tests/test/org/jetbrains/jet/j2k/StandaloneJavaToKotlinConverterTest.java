@@ -24,6 +24,7 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import kotlinc.internal.com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,7 +87,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
             tmp.delete();
         }
 
-        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(StringUtil.convertLineSeparators(expected), StringUtil.convertLineSeparators(actual));
     }
 
     @NotNull

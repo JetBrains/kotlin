@@ -25,13 +25,6 @@ public class StarProjectionType extends Type {
     @NotNull
     @Override
     public String toKotlin() {
-        G g = new G("");
-        G<String> g2 = new G<String>("");
         return STAR;
-    }
-}
-
-class G<T extends String> {
-    public <T> G(T t) {
     }
 }
