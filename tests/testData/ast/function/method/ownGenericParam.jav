@@ -1,0 +1,1 @@
+<U> void putU(U u) {}

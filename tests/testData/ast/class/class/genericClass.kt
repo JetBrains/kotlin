@@ -1,0 +1,2 @@
+class Entry<K, V>() {
+}

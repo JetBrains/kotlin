@@ -1,0 +1,1 @@
+void fromArrayToCollection(Foo[] a) {}

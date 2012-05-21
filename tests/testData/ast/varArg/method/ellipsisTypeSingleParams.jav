@@ -1,0 +1,1 @@
+void pushAll(Object... objs) {}

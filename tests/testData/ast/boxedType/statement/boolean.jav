@@ -1,0 +1,1 @@
+Boolean i = 10;

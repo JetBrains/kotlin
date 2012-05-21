@@ -1,0 +1,1 @@
+void wtf(Collection<?> w) {}

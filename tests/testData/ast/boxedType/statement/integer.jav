@@ -1,0 +1,1 @@
+Integer i = 10;

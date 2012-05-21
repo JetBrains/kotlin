@@ -1,0 +1,2 @@
+protected open class Test() {
+}
