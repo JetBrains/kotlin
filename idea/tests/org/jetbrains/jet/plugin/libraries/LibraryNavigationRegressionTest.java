@@ -58,6 +58,12 @@ public class LibraryNavigationRegressionTest extends LightCodeInsightFixtureTest
         assertSame(expectedClass, navigationElement.getParent());
     }
 
+
+    public void testRefToFunctionWithVararg() {
+        PsiElement navigationElement = configureAndResolve("val x = <caret>arrayList(\"\", \"\")");
+        assertSame(JetLanguage.INSTANCE, navigationElement.getLanguage());
+    }
+
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
