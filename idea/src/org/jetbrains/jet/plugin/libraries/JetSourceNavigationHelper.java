@@ -254,8 +254,15 @@ public class JetSourceNavigationHelper {
                     if (typeReference == null) {
                         return false;
                     }
+                    JetModifierList modifierList = declarationParameter.getModifierList();
+                    boolean vararg = modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
+                    if (vararg != (descriptorParameter.getVarargElementType() != null)) {
+                        return false;
+                    }
                     String declarationTypeText = typeReference.getText();
-                    String descriptorParameterText = DescriptorRenderer.TEXT.renderType(descriptorParameter.getType());
+                    String descriptorParameterText = DescriptorRenderer.TEXT.renderType(vararg
+                                                                                        ? descriptorParameter.getVarargElementType()
+                                                                                        : descriptorParameter.getType());
                     if (!declarationTypeText.equals(descriptorParameterText)) {
                         return false;
                     }
