@@ -43,10 +43,10 @@ import java.awt.event.ActionListener;
  */
 public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetExpression> {
 
-    private boolean myReplaceOccurrence;
-    private JetProperty myProperty;
-    private boolean isVar;
-    private boolean myDoNotChangeVar;
+    private final boolean myReplaceOccurrence;
+    private final JetProperty myProperty;
+    private final boolean isVar;
+    private final boolean myDoNotChangeVar;
     @Nullable private final JetType myExprType;
     private JCheckBox myVarCheckbox;
     private JCheckBox myExprTypeCheckbox;
@@ -64,6 +64,7 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
         myExprType = exprType;
     }
 
+    @Override
     @Nullable
     protected JComponent getComponent() {
         if (!myDoNotChangeVar) {
