@@ -37,41 +37,37 @@ public class LibraryNavigationRegressionTest extends LightCodeInsightFixtureTest
      * Regression test against KT-1652
      */
     public void testRefToStdlib() {
-        String text = "fun foo() { println() }";
-        myFixture.configureByText(JetFileType.INSTANCE, text);
-        PsiReference ref = myFixture.getFile().findReferenceAt(text.indexOf("println"));
-        //noinspection ConstantConditions
-        assertSame(JetLanguage.INSTANCE, ref.resolve().getNavigationElement().getLanguage());
+        PsiElement navigationElement = configureAndResolve("fun foo() { <caret>println() }");
+        assertSame(JetLanguage.INSTANCE, navigationElement.getLanguage());
     }
 
     /**
      * Regression test against KT-1652
      */
     public void testRefToJdk() {
-        String text = "val x = java.util.HashMap<String, Int>().get(\"\")";
-        myFixture.configureByText(JetFileType.INSTANCE, text);
-        PsiReference ref = myFixture.getFile().findReferenceAt(text.indexOf("get"));
-        //noinspection ConstantConditions
-        ref.resolve().getNavigationElement();
+        configureAndResolve("val x = java.util.HashMap<String, Int>().<caret>get(\"\")");
     }
 
     /**
      * Regression test against KT-1815
      */
     public void testRefToAltHeaders() {
-        String text = "fun foo(e : java.util.Map.Entry<String, String>) { e.getKey(); }";
-        myFixture.configureByText(JetFileType.INSTANCE, text);
-        PsiReference ref = myFixture.getFile().findReferenceAt(text.indexOf("getKey"));
+        PsiElement navigationElement = configureAndResolve("fun foo(e : java.util.Map.Entry<String, String>) { e.<caret>getKey(); }");
         PsiClass expectedClass =
                 JavaPsiFacade.getInstance(getProject()).findClass("java.util.Map.Entry", GlobalSearchScope.allScope(getProject()));
-        //noinspection ConstantConditions
-        PsiElement actualClass = ref.resolve().getNavigationElement().getParent();
-        assertSame(expectedClass, actualClass);
+        assertSame(expectedClass, navigationElement.getParent());
     }
 
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+    }
+
+    private PsiElement configureAndResolve(String text) {
+        myFixture.configureByText(JetFileType.INSTANCE, text);
+        PsiReference ref = myFixture.getFile().findReferenceAt(myFixture.getCaretOffset());
+        //noinspection ConstantConditions
+        return ref.resolve().getNavigationElement();
     }
 }
