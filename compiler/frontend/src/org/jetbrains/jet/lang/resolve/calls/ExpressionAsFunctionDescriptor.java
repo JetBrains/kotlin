@@ -39,7 +39,7 @@ public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
 
     @NotNull
     @Override
-    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public FunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         throw new IllegalStateException();
     }
 }

@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,14 +33,11 @@ public class Visibilities {
     public static final Visibility PRIVATE = new Visibility("private", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (what instanceof CallableMemberDescriptor && ((CallableMemberDescriptor)what).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                return false;
-            }
             DeclarationDescriptor parent = what;
             while (parent != null) {
                 parent = parent.getContainingDeclaration();
                 if ((parent instanceof ClassDescriptor && !DescriptorUtils.isClassObject(parent)) ||
-                        parent instanceof NamespaceDescriptor) {
+                    parent instanceof NamespaceDescriptor) {
                     break;
                 }
             }
@@ -107,6 +105,14 @@ public class Visibilities {
         }
     };
 
+    /* Visibility for fake override invisible members (they are created for better error reporting) */
+    public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
+        @Override
+        protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            return false;
+        }
+    };
+
     public static final Set<Visibility> INTERNAL_VISIBILITIES = Sets.newHashSet(PRIVATE, INTERNAL, INTERNAL_PROTECTED, LOCAL);
 
     private Visibilities() {
@@ -127,6 +133,7 @@ public class Visibilities {
     }
 
     private static final Map<Visibility, Integer> ORDERED_VISIBILITIES = Maps.newHashMap();
+
     static {
         ORDERED_VISIBILITIES.put(PRIVATE, 0);
         ORDERED_VISIBILITIES.put(INTERNAL_PROTECTED, 1);
@@ -135,7 +142,8 @@ public class Visibilities {
         ORDERED_VISIBILITIES.put(PUBLIC, 3);
     }
 
-    /*package*/ static Integer compareLocal(@NotNull Visibility first, @NotNull Visibility second) {
+    /*package*/
+    static Integer compareLocal(@NotNull Visibility first, @NotNull Visibility second) {
         if (first == second) return 0;
         Integer firstIndex = ORDERED_VISIBILITIES.get(first);
         Integer secondIndex = ORDERED_VISIBILITIES.get(second);
