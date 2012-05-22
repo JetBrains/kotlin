@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -54,7 +55,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
     private PropertySetterDescriptor setter;
     
     private PropertyDescriptor() {
-        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), "dummy");
+        super(ErrorUtils.getErrorClass(), Collections.<AnnotationDescriptor>emptyList(), Name.special("<dummy>"));
         this.modality = null;
         this.visibility = null;
         this.isVar = false;
@@ -71,7 +72,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name);
         this.isVar = isVar;
@@ -89,7 +90,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             @NotNull Visibility visibility,
             boolean isVar,
             boolean isObject,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         this(null, containingDeclaration, annotations, modality, visibility, isVar, isObject, name, kind);
     }
@@ -103,7 +104,7 @@ public class PropertyDescriptor extends VariableDescriptorImpl implements Callab
             boolean isObject,
             @Nullable JetType receiverType,
             @NotNull ReceiverDescriptor expectedThisObject,
-            @NotNull String name,
+            @NotNull Name name,
             @NotNull JetType outType,
             Kind kind
         ) {

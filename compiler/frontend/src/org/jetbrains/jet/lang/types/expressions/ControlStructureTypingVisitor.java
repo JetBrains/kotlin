@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -273,7 +274,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 VariableDescriptor olderVariable = context.scope.getLocalVariable(variableDescriptor.getName());
                 if (olderVariable != null && DescriptorUtils.isLocal(context.scope.getContainingDeclaration(), olderVariable)) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), variableDescriptor);
-                    context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName()));
+                    context.trace.report(Errors.NAME_SHADOWING.on(declaration, variableDescriptor.getName().getName()));
                 }
             }
 
@@ -293,7 +294,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetExpression loopRangeExpression = loopRange.getExpression();
 
         // Make a fake call loopRange.iterator(), and try to resolve it
-        String iterator = "iterator";
+        Name iterator = Name.identifier("iterator");
         OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = resolveFakeCall(loopRange, context, iterator);
 
         // We allow the loop range to be null (nothing happens), so we make the receiver type non-null
@@ -326,7 +327,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 context.trace.record(LOOP_RANGE_HAS_NEXT, loopRange.getExpression(), hasNextFunctionSupported ? hasNextFunction : hasNextProperty);
             }
 
-            OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "next", Collections.<JetType>emptyList());
+            OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier("next"), Collections.<JetType>emptyList());
             if (nextResolutionResults.isAmbiguity()) {
                 context.trace.report(NEXT_AMBIGUITY.on(loopRangeExpression));
             }
@@ -356,7 +357,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public static OverloadResolutionResults<FunctionDescriptor> resolveFakeCall(ExpressionReceiver receiver,
-                                                                                ExpressionTypingContext context, String name) {
+                                                                                ExpressionTypingContext context, Name name) {
         JetReferenceExpression fake = JetPsiFactory.createSimpleName(context.expressionTypingServices.getProject(), "fake");
         BindingTrace fakeTrace = new BindingTraceContext();
         Call call = CallMaker.makeCall(fake, receiver, null, fake, Collections.<ValueArgument>emptyList());
@@ -365,7 +366,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Nullable
     private static FunctionDescriptor checkHasNextFunctionSupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), "hasNext", Collections.<JetType>emptyList());
+        OverloadResolutionResults<FunctionDescriptor> hasNextResolutionResults = context.resolveExactSignature(new TransientReceiver(iteratorType), Name.identifier("hasNext"), Collections.<JetType>emptyList());
         if (hasNextResolutionResults.isAmbiguity()) {
             context.trace.report(HAS_NEXT_FUNCTION_AMBIGUITY.on(loopRange));
         }
@@ -384,7 +385,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Nullable
     private static VariableDescriptor checkHasNextPropertySupport(@NotNull JetExpression loopRange, @NotNull JetType iteratorType, ExpressionTypingContext context) {
-        VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties("hasNext"));
+        VariableDescriptor hasNextProperty = DescriptorUtils.filterNonExtensionProperty(iteratorType.getMemberScope().getProperties(Name.identifier("hasNext")));
         if (hasNextProperty == null) {
             return null;
         }

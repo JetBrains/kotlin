@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.k2js.config.Config;
@@ -72,7 +73,7 @@ public final class AnalyzerFacadeForJS {
         Project project = config.getProject();
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
+        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 

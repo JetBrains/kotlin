@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -43,7 +44,7 @@ public abstract class PropertyAccessorDescriptor extends DeclarationDescriptorIm
             @NotNull Visibility visibility,
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             boolean hasBody,
             boolean isDefault,
             Kind kind) {

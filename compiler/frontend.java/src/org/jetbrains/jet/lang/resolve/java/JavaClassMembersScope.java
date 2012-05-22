@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.NamespaceDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -40,7 +41,7 @@ import java.util.Set;
  * @author abreslav
  */
 public class JavaClassMembersScope extends JavaClassOrPackageScope {
-    private final Map<String, ClassifierDescriptor> classifiers = Maps.newHashMap();
+    private final Map<Name, ClassifierDescriptor> classifiers = Maps.newHashMap();
 
     public JavaClassMembersScope(
             @NotNull JavaSemanticServices semanticServices,
@@ -62,7 +63,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     }
 
     @Override
-    public ClassifierDescriptor getClassifier(@NotNull String name) {
+    public ClassifierDescriptor getClassifier(@NotNull Name name) {
         ClassifierDescriptor classifierDescriptor = classifiers.get(name);
         if (classifierDescriptor == null) {
             classifierDescriptor = doGetClassifierDescriptor(name);
@@ -72,7 +73,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     }
 
     @Override
-    public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+    public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
         return null;
     }
 
@@ -82,10 +83,10 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
         return Collections.emptySet();
     }
 
-    private ClassifierDescriptor doGetClassifierDescriptor(String name) {
+    private ClassifierDescriptor doGetClassifierDescriptor(Name name) {
         // TODO : suboptimal, walk the list only once
         for (PsiClass innerClass : resolverScopeData.psiClass.getAllInnerClasses()) {
-            if (name.equals(innerClass.getName())) {
+            if (name.getName().equals(innerClass.getName())) {
                 if (innerClass.hasModifierProperty(PsiModifier.STATIC) != resolverScopeData.staticMembers) return null;
                 ClassDescriptor classDescriptor = semanticServices.getDescriptorResolver()
                         .resolveClass(new FqName(innerClass.getQualifiedName()), DescriptorSearchRule.IGNORE_IF_FOUND_IN_KOTLIN);
@@ -98,7 +99,7 @@ public class JavaClassMembersScope extends JavaClassOrPackageScope {
     }
 
     @Override
-    public NamespaceDescriptor getNamespace(@NotNull String name) {
+    public NamespaceDescriptor getNamespace(@NotNull Name name) {
         return null;
     }
 

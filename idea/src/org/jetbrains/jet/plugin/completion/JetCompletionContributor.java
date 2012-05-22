@@ -354,7 +354,7 @@ public class JetCompletionContributor extends CompletionContributor {
                     return false;
                 }
 
-                return result.getPrefixMatcher().prefixMatches(descriptor.getName()) && isVisibleDescriptor(descriptor, session);
+                return result.getPrefixMatcher().prefixMatches(descriptor.getName().getName()) && isVisibleDescriptor(descriptor, session);
             }
         });
 

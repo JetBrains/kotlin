@@ -1010,7 +1010,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 if(classDescriptor.getKind() == ClassKind.ENUM_ENTRY) {
                     ClassDescriptor containing = (ClassDescriptor) classDescriptor.getContainingDeclaration().getContainingDeclaration();
                     Type type = typeMapper.mapType(containing.getDefaultType(), MapTypeMode.VALUE);
-                    StackValue.field(type, type.getInternalName(), classDescriptor.getName(), true).put(TYPE_OBJECT, v);
+                    StackValue.field(type, type.getInternalName(), classDescriptor.getName().getName(), true).put(TYPE_OBJECT, v);
 
                     // todo: for now we don't generate classes for enum entries, so we need this hack
                     type = typeMapper.mapType(classDescriptor.getDefaultType(), MapTypeMode.VALUE);
@@ -1148,7 +1148,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             isInterface = CodegenUtil.isInterface(containingDeclaration);
         }
 
-        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());
+        v.visitMethodInsn(isStatic ? Opcodes.INVOKESTATIC : isInterface ? Opcodes.INVOKEINTERFACE : Opcodes.INVOKEVIRTUAL, owner, functionDescriptor.getName().getName(), typeMapper.mapSignature(functionDescriptor.getName(),functionDescriptor).getAsmMethod().getDescriptor());
         StackValue.onStack(asmType(functionDescriptor.getReturnType())).coerce(type, v);
     }
 
@@ -1238,7 +1238,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
             ownerParam = callableMethod.getDefaultImplParam();
         }
 
-        return StackValue.property(propertyDescriptor.getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);
+        return StackValue.property(propertyDescriptor.getName().getName(), owner, ownerParam, asmType(propertyDescriptor.getType()), isStatic, isInterface, isSuper, getter, setter, invokeOpcode);
     }
 
     @Override
@@ -1951,7 +1951,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;
         }
-        String className = descriptor.getName();
+        String className = descriptor.getName().getName();
         return className.equals("Int") || className.equals("Long") || className.equals("Short") ||
                className.equals("Byte") || className.equals("Char") || className.equals("Float") ||
                className.equals("Double");
@@ -1961,7 +1961,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (!(descriptor instanceof ClassDescriptor)) {
             return false;
         }
-        String className = descriptor.getName();
+        String className = descriptor.getName().getName();
         return className.equals(name);
     }
 
@@ -2113,7 +2113,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         else {
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (isNumberPrimitive(cls) || !(op.getName().equals("inc") || op.getName().equals("dec")) ) {
+            if (isNumberPrimitive(cls) || !(op.getName().getName().equals("inc") || op.getName().getName().equals("dec")) ) {
                 return invokeOperation(expression, (FunctionDescriptor) op, (CallableMethod) callable);
             }
             else {
@@ -2165,14 +2165,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         if (op instanceof FunctionDescriptor) {
             final Type asmType = expressionType(expression);
             DeclarationDescriptor cls = op.getContainingDeclaration();
-            if (op.getName().equals("inc") || op.getName().equals("dec")) {
+            if (op.getName().getName().equals("inc") || op.getName().getName().equals("dec")) {
                 if (isNumberPrimitive(cls)) {
                     receiver.put(receiver.type, v);
                     JetExpression operand = expression.getBaseExpression();
                     if (operand instanceof JetReferenceExpression) {
                         final int index = indexOfLocal((JetReferenceExpression) operand);
                         if (index >= 0 && isIntPrimitive(asmType)) {
-                            int increment = op.getName().equals("inc") ? 1 : -1;
+                            int increment = op.getName().getName().equals("inc") ? 1 : -1;
                             return StackValue.postIncrement(index, increment);
                         }
                     }
@@ -2230,7 +2230,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
     }
 
     private void generateIncrement(DeclarationDescriptor op, Type asmType, JetExpression operand, StackValue receiver) {
-        int increment = op.getName().equals("inc") ? 1 : -1;
+        int increment = op.getName().getName().equals("inc") ? 1 : -1;
         if (operand instanceof JetReferenceExpression) {
             final int index = indexOfLocal((JetReferenceExpression) operand);
             if (index >= 0 && isIntPrimitive(asmType)) {

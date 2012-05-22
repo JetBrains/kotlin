@@ -57,7 +57,7 @@ public class InjectorForJavaSemanticServices {
         this.bindingTrace = new org.jetbrains.jet.lang.resolve.BindingTraceContext();
         this.javaBridgeConfiguration = new JavaBridgeConfiguration();
         this.psiClassFinderForJvm = new PsiClassFinderForJvm();
-        this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor("<dummy>");
+        this.moduleDescriptor = new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special("<dummy>"));
         this.compilerDependencies = compilerDependencies;
         this.compilerSpecialMode = compilerDependencies.getCompilerSpecialMode();
         this.project = project;

@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.util.QualifiedNamesUtil;
 
@@ -204,11 +205,11 @@ public class JetImportOptimizer implements ImportOptimizer {
                     }
 
                     FqName classFQN = new FqName(classFQNStr);
-                    if (classFQN.shortName().equals(JvmAbi.PACKAGE_CLASS)) {
-                        return QualifiedNamesUtil.combine(classFQN.parent(), method.getName());
+                    if (classFQN.shortName().getName().equals(JvmAbi.PACKAGE_CLASS)) {
+                        return QualifiedNamesUtil.combine(classFQN.parent(), Name.identifier(method.getName()));
                     }
                     else {
-                        return QualifiedNamesUtil.combine(classFQN, method.getName());
+                        return QualifiedNamesUtil.combine(classFQN, Name.identifier(method.getName()));
                     }
                 }
             }

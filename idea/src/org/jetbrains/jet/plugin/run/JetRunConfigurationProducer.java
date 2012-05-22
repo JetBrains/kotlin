@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetMainDetector;
 
 /**
@@ -73,7 +74,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             if (JetMainDetector.hasMain(jetFile.getDeclarations())) {
                 mySourceElement = jetFile;
                 FqName fqName = JetPsiUtil.getFQName(jetFile);
-                return fqName.child(JvmAbi.PACKAGE_CLASS);
+                return fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
             }
         }
 

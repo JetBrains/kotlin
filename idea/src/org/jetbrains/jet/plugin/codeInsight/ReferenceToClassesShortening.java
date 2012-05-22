@@ -83,7 +83,7 @@ public class ReferenceToClassesShortening {
                         // do not replace "Unit" with "Tuple0"
                         return;
                     }
-                    String name = targetClass.getName();
+                    String name = targetClass.getName().getName();
                     DeclarationDescriptor parent = targetClass.getContainingDeclaration();
                     while (parent instanceof ClassDescriptor) {
                         name = parent.getName() + "." + name;

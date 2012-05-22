@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 
@@ -28,7 +29,7 @@ import java.util.Collections;
  * @author alex.tkachman
  */
 public class ExpressionAsFunctionDescriptor extends FunctionDescriptorImpl {
-    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, String name) {
+    public ExpressionAsFunctionDescriptor(DeclarationDescriptor containingDeclaration, Name name) {
         super(containingDeclaration, Collections.<AnnotationDescriptor>emptyList(), name, Kind.DECLARATION);
     }
 

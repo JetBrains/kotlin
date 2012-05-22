@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 /**
  * Common methods for working with qualified names.
@@ -54,12 +55,12 @@ public final class QualifiedNamesUtil {
     }
 
     @NotNull
-    public static String fqnToShortName(@NotNull FqName fqn) {
+    public static Name fqnToShortName(@NotNull FqName fqn) {
         return getLastSegment(fqn);
     }
 
     @NotNull
-    public static String getLastSegment(@NotNull FqName fqn) {
+    public static Name getLastSegment(@NotNull FqName fqn) {
         return fqn.shortName();
     }
 
@@ -85,7 +86,7 @@ public final class QualifiedNamesUtil {
     }
 
     @NotNull
-    public static FqName combine(@NotNull FqName first, @NotNull String second) {
+    public static FqName combine(@NotNull FqName first, @NotNull Name second) {
         return first.child(second);
     }
 
@@ -123,7 +124,7 @@ public final class QualifiedNamesUtil {
         final String nextSegment = getFirstSegment(tail(fqn, fullFQN));
 
         if (isOneSegmentFQN(nextSegment)) {
-            return combine(fqn, nextSegment);
+            return combine(fqn, Name.guess(nextSegment));
         }
 
         return null;

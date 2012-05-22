@@ -134,7 +134,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
     private static List<String> getOuterClassesNames(ClassDescriptor cd) {
         ArrayList<String> result = new ArrayList<String>();
         while (cd.getContainingDeclaration() instanceof ClassifierDescriptor) {
-            result.add(cd.getName());
+            result.add(cd.getName().getName());
             cd = (ClassDescriptor)cd.getContainingDeclaration();
         }
         return result;
@@ -539,7 +539,7 @@ public class DescriptorRenderer implements Renderer<DeclarationDescriptor> {
         }
 
         protected void renderName(DeclarationDescriptor descriptor, StringBuilder stringBuilder) {
-            stringBuilder.append(escape(descriptor.getName()));
+            stringBuilder.append(escape(descriptor.getName().getName()));
         }
 
         protected void renderTypeParameter(TypeParameterDescriptor descriptor, StringBuilder builder, boolean topLevel) {

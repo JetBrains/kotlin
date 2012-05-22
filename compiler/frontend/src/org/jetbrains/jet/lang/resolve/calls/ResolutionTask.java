@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.SolutionStatus;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -205,13 +206,13 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends R
                     JetBinaryExpression binaryExpression = (JetBinaryExpression)callElement;
                     JetSimpleNameExpression operationReference = binaryExpression.getOperationReference();
 
-                    String operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ?
-                            operationReference.getText() :
+                    Name operationString = operationReference.getReferencedNameElementType() == JetTokens.IDENTIFIER ?
+                            Name.identifier(operationReference.getText()) :
                             OperatorConventions.getNameForOperationSymbol((JetToken)operationReference.getReferencedNameElementType());
 
                     JetExpression right = binaryExpression.getRight();
                     if (right != null) {
-                        trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString, right.getText()));
+                        trace.report(UNSAFE_INFIX_CALL.on(reference, binaryExpression.getLeft().getText(), operationString.getName(), right.getText()));
                     }
                 }
                 else {

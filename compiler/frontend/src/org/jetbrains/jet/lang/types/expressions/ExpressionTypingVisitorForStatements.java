@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -116,7 +117,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             VariableDescriptor olderVariable = scope.getLocalVariable(propertyDescriptor.getName());
             if (olderVariable != null && DescriptorUtils.isLocal(propertyDescriptor.getContainingDeclaration(), olderVariable)) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), propertyDescriptor);
-                context.trace.report(Errors.NAME_SHADOWING.on(declaration, propertyDescriptor.getName()));
+                context.trace.report(Errors.NAME_SHADOWING.on(declaration, propertyDescriptor.getName().getName()));
             }
         }
 
@@ -189,13 +190,13 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         // We check that defined only one of '+=' and '+' operations, and call it (in the case '+' we then also assign)
         // Check for '+='
-        String name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
+        Name name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
         TemporaryBindingTrace assignmentOperationTrace = TemporaryBindingTrace.create(context.trace);
         OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = basic.getResolutionResultsForBinaryCall(scope, name, context.replaceBindingTrace(assignmentOperationTrace), expression, receiver);
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultType(assignmentOperationDescriptors);
 
         // Check for '+'
-        String counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
+        Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
         TemporaryBindingTrace binaryOperationTrace = TemporaryBindingTrace.create(context.trace);
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = basic.getResolutionResultsForBinaryCall(scope, counterpartName, context.replaceBindingTrace(binaryOperationTrace), expression, receiver);
         JetType binaryOperationType = OverloadResolutionResultsUtil.getResultType(binaryOperationDescriptors);

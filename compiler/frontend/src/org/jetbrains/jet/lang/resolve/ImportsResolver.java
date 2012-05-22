@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.ModuleConfiguration;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 
@@ -125,7 +126,7 @@ public class ImportsResolver {
         if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {
             return;
         }
-        String aliasName = JetPsiUtil.getAliasName(importDirective);
+        Name aliasName = JetPsiUtil.getAliasName(importDirective);
         if (aliasName == null) {
             return;
         }

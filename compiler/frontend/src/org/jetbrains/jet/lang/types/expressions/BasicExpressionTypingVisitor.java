@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -76,7 +77,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return type; // TODO : Extensions to this
     }
 
-    private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, String referencedName, ExpressionTypingContext context) {
+    private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, Name referencedName, ExpressionTypingContext context) {
         ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
             JetType classObjectType = classifier.getClassObjectType();
@@ -111,7 +112,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return result[0];
     }
 
-    protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, @NotNull JetType[] result, ExpressionTypingContext context) {
+    protected boolean furtherNameLookup(@NotNull JetSimpleNameExpression expression, @NotNull Name referencedName, @NotNull JetType[] result, ExpressionTypingContext context) {
         if (context.namespacesAllowed) {
             result[0] = lookupNamespaceType(expression, referencedName, context);
             return result[0] != null;
@@ -125,7 +126,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    protected NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull String referencedName, ExpressionTypingContext context) {
+    protected NamespaceType lookupNamespaceType(@NotNull JetSimpleNameExpression expression, @NotNull Name referencedName, ExpressionTypingContext context) {
         NamespaceDescriptor namespace = context.scope.getNamespace(referencedName);
         if (namespace == null) {
             return null;
@@ -569,7 +570,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (wholeExpressionValue == null && receiverValue != null && !(receiverValue instanceof ErrorValue) && receiverValue.getValue() instanceof Number
             && JetStandardLibrary.getInstance().getNumber() == declarationDescriptor) {
             Number value = (Number) receiverValue.getValue();
-            String referencedName = selectorExpression.getReferencedName();
+            Name referencedName = selectorExpression.getReferencedNameAsName();
             if (OperatorConventions.NUMBER_CONVERSIONS.contains(referencedName)) {
                 if (DOUBLE.equals(referencedName)) {
                     context.trace.record(BindingContext.COMPILE_TIME_VALUE, expression, new DoubleValue(value.doubleValue()));
@@ -630,7 +631,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             ExpressionTypingContext newContext = receiver.exists()
                                                  ? context.replaceScope(receiver.getType().getMemberScope())
                                                  : context;
-            JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedName(), newContext);
+            JetType jetType = lookupNamespaceOrClassObject(nameExpression, nameExpression.getReferencedNameAsName(), newContext);
             if (jetType == null) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(nameExpression));
             }
@@ -713,7 +714,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         // Conventions for unary operations
-        String name = OperatorConventions.UNARY_OPERATION_NAMES.get(operationType);
+        Name name = OperatorConventions.UNARY_OPERATION_NAMES.get(operationType);
         if (name == null) {
             context.trace.report(UNSUPPORTED.on(operationSign, "visitUnaryExpression"));
             return null;
@@ -745,13 +746,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType result;
         if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
             if (JetTypeChecker.INSTANCE.isSubtypeOf(returnType, JetStandardClasses.getUnitType())) {
-                result = ErrorUtils.createErrorType(JetStandardClasses.UNIT_ALIAS);
+                result = ErrorUtils.createErrorType(JetStandardClasses.UNIT_ALIAS.getName());
                 context.trace.report(INC_DEC_SHOULD_NOT_RETURN_UNIT.on(operationSign));
             }
             else {
                 JetType receiverType = receiver.getType();
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(returnType, receiverType)) {
-                    context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name, receiverType, returnType));
+                    context.trace.report(RESULT_TYPE_MISMATCH.on(operationSign, name.getName(), receiverType, returnType));
                 }
                 else {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
@@ -816,7 +817,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetType result = null;
         IElementType operationType = operationSign.getReferencedNameElementType();
         if (operationType == JetTokens.IDENTIFIER) {
-            String referencedName = operationSign.getReferencedName();
+            Name referencedName = operationSign.getReferencedNameAsName();
             if (referencedName != null) {
                 result = getTypeForBinaryCall(context.scope, referencedName, context, expression);
             }
@@ -831,7 +832,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             result = visitAssignmentOperation(expression, contextWithExpectedType);
         }
         else if (OperatorConventions.COMPARISON_OPERATIONS.contains(operationType)) {
-            JetType compareToReturnType = getTypeForBinaryCall(context.scope, "compareTo", context, expression);
+            JetType compareToReturnType = getTypeForBinaryCall(context.scope, Name.identifier("compareTo"), context, expression);
             if (compareToReturnType != null) {
                 TypeConstructor constructor = compareToReturnType.getConstructor();
                 JetStandardLibrary standardLibrary = JetStandardLibrary.getInstance();
@@ -847,11 +848,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         else {
             JetType booleanType = JetStandardLibrary.getInstance().getBooleanType();
             if (OperatorConventions.EQUALS_OPERATIONS.contains(operationType)) {
-                String name = "equals";
+                Name name = Name.identifier("equals");
                 if (right != null) {
                     ExpressionReceiver receiver = ExpressionTypingUtils.safeGetExpressionReceiver(facade, left, context.replaceScope(context.scope));
                     OverloadResolutionResults<FunctionDescriptor> resolutionResults = context.resolveExactSignature(
-                            receiver, "equals",
+                            receiver, name,
                             Collections.singletonList(JetStandardClasses.getNullableAnyType()));
                     if (resolutionResults.isSuccess()) {
                         FunctionDescriptor equals = resolutionResults.getResultingCall().getResultingDescriptor();
@@ -926,7 +927,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public boolean checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context) {
-        String name = "contains";
+        Name name = Name.identifier("contains");
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, right, context.replaceExpectedType(NO_EXPECTED_TYPE));
         OverloadResolutionResults<FunctionDescriptor> resolutionResult = context.resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCallWithExpressions(callElement, receiver, null, operationSign, Collections.singletonList(left)),
@@ -985,13 +986,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    public JetType getTypeForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
+    public JetType getTypeForBinaryCall(JetScope scope, Name name, ExpressionTypingContext context, JetBinaryExpression binaryExpression) {
         ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
         return OverloadResolutionResultsUtil.getResultType(getResolutionResultsForBinaryCall(scope, name, context, binaryExpression, receiver));
     }
 
     @NotNull
-        /*package*/ OverloadResolutionResults<FunctionDescriptor> getResolutionResultsForBinaryCall(JetScope scope, String name, ExpressionTypingContext context, JetBinaryExpression binaryExpression, ExpressionReceiver receiver) {
+        /*package*/ OverloadResolutionResults<FunctionDescriptor> getResolutionResultsForBinaryCall(JetScope scope, Name name, ExpressionTypingContext context, JetBinaryExpression binaryExpression, ExpressionReceiver receiver) {
 //        ExpressionReceiver receiver = safeGetExpressionReceiver(facade, binaryExpression.getLeft(), context.replaceScope(scope));
         return context.replaceScope(scope).resolveCallWithGivenNameToDescriptor(
                 CallMaker.makeCall(receiver, binaryExpression),
@@ -1100,7 +1101,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 ? CallMaker.makeArrayGetCall(receiver, arrayAccessExpression)
                 : CallMaker.makeArraySetCall(receiver, arrayAccessExpression, rightHandSide),
                 arrayAccessExpression,
-                isGet ? "get" : "set");
+                Name.identifier(isGet ? "get" : "set"));
         if (!functionResults.isSuccess()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
             return null;

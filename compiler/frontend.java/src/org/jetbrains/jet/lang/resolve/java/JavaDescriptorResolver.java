@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.kt.JetClassAnnotation;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -50,11 +51,11 @@ import java.util.*;
  */
 public class JavaDescriptorResolver {
     
-    public static final String JAVA_ROOT = "<java_root>";
+    public static final Name JAVA_ROOT = Name.special("<java_root>");
 
     public static final ModuleDescriptor FAKE_ROOT_MODULE = new ModuleDescriptor(JAVA_ROOT);
 
-    /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_generic_method>") {
+    /*package*/ static final DeclarationDescriptor JAVA_METHOD_TYPE_PARAMETER_PARENT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), Name.special("<java_generic_method>")) {
 
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
@@ -67,7 +68,7 @@ public class JavaDescriptorResolver {
         }
     };
 
-    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), "<java_class_object_emulation>") {
+    /*package*/ static final DeclarationDescriptor JAVA_CLASS_OBJECT = new DeclarationDescriptorImpl(null, Collections.<AnnotationDescriptor>emptyList(), Name.special("<java_class_object_emulation>")) {
         @NotNull
         @Override
         public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
@@ -158,7 +159,7 @@ public class JavaDescriptorResolver {
                     (new PsiClassWrapper(psiClass).getJetClass().isDefined() || psiClass.getName().equals(JvmAbi.PACKAGE_CLASS));
             classOrNamespaceDescriptor = descriptor;
 
-            if (fqName.lastSegmentIs(JvmAbi.PACKAGE_CLASS) && psiClass != null && kotlin) {
+            if (fqName.lastSegmentIs(Name.identifier(JvmAbi.PACKAGE_CLASS)) && psiClass != null && kotlin) {
                 throw new IllegalStateException("Kotlin namespace cannot have last segment " + JvmAbi.PACKAGE_CLASS + ": " + fqName);
             }
         }
@@ -189,7 +190,7 @@ public class JavaDescriptorResolver {
             }
         }
 
-        private Map<String, NamedMembers> namedMembersMap;
+        private Map<Name, NamedMembers> namedMembersMap;
         
         @NotNull
         public abstract List<TypeParameterDescriptor> getTypeParameters();
@@ -359,7 +360,7 @@ public class JavaDescriptorResolver {
 
         checkPsiClassIsNotJet(psiClass);
 
-        String name = psiClass.getName();
+        Name name = Name.identifier(psiClass.getName());
         ClassKind kind = psiClass.isInterface() ? (psiClass.isAnnotationType() ? ClassKind.ANNOTATION_CLASS : ClassKind.TRAIT) : ClassKind.CLASS;
         ClassOrNamespaceDescriptor containingDeclaration = resolveParentDescriptor(psiClass);
 
@@ -454,7 +455,7 @@ public class JavaDescriptorResolver {
                                 constructorDescriptor,
                                 i,
                                 Collections.<AnnotationDescriptor>emptyList(),
-                                method.getName(),
+                                Name.identifier(method.getName()),
                                 false,
                                 semanticServices.getTypeTransformer().transformToType(returnType, resolverForTypeParameters),
                                 annotationMethod.getDefaultValue() != null,
@@ -686,7 +687,7 @@ public class JavaDescriptorResolver {
                     Collections.<AnnotationDescriptor>emptyList(), // TODO: wrong
                     reified,
                     JetSignatureUtils.translateVariance(variance),
-                    name,
+                    Name.identifier(name),
                     formalTypeParameterIndex++);
 
             previousTypeParameters.add(typeParameter);
@@ -761,7 +762,7 @@ public class JavaDescriptorResolver {
                 Collections.<AnnotationDescriptor>emptyList(), // TODO
                 false,
                 Variance.INVARIANT,
-                psiTypeParameter.getName(),
+                Name.identifier(psiTypeParameter.getName()),
                 psiTypeParameter.getIndex()
         );
         return new TypeParameterDescriptorInitialization(typeParameterDescriptor, psiTypeParameter);
@@ -1012,7 +1013,7 @@ public class JavaDescriptorResolver {
 
     @Nullable
     private PsiClass getPsiClassForJavaPackageScope(@NotNull FqName packageFQN) {
-        return psiClassFinder.findPsiClass(packageFQN.child(JvmAbi.PACKAGE_CLASS), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
+        return psiClassFinder.findPsiClass(packageFQN.child(Name.identifier(JvmAbi.PACKAGE_CLASS)), PsiClassFinder.RuntimeClassesHandleMode.IGNORE);
     }
 
     private static class ValueParameterDescriptors {
@@ -1068,10 +1069,10 @@ public class JavaDescriptorResolver {
         PsiType psiType = parameter.getPsiParameter().getType();
 
         // TODO: must be very slow, make it lazy?
-        String name = parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i;
+        Name name = Name.identifier(parameter.getPsiParameter().getName() != null ? parameter.getPsiParameter().getName() : "p" + i);
 
         if (parameter.getJetValueParameter().name().length() > 0) {
-            name = parameter.getJetValueParameter().name();
+            name = Name.identifier(parameter.getJetValueParameter().name());
         }
         
         String typeFromAnnotation = parameter.getJetValueParameter().type();
@@ -1123,7 +1124,7 @@ public class JavaDescriptorResolver {
         }
     }
 
-    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull String fieldName, @NotNull ResolverScopeData scopeData) {
+    public Set<VariableDescriptor> resolveFieldGroupByName(@NotNull Name fieldName, @NotNull ResolverScopeData scopeData) {
 
         if (scopeData.psiClass == null) {
             return Collections.emptySet();
@@ -1148,10 +1149,10 @@ public class JavaDescriptorResolver {
         getResolverScopeData(scopeData);
 
         Set<VariableDescriptor> descriptors = Sets.newHashSet();
-        Map<String, NamedMembers> membersForProperties = scopeData.namedMembersMap;
-        for (Map.Entry<String, NamedMembers> entry : membersForProperties.entrySet()) {
+        Map<Name, NamedMembers> membersForProperties = scopeData.namedMembersMap;
+        for (Map.Entry<Name, NamedMembers> entry : membersForProperties.entrySet()) {
             NamedMembers namedMembers = entry.getValue();
-            String propertyName = entry.getKey();
+            Name propertyName = entry.getKey();
 
             resolveNamedGroupProperties(scopeData.classOrNamespaceDescriptor, scopeData, namedMembers, propertyName, "class or namespace " + scopeData.psiClass.getQualifiedName());
             descriptors.addAll(namedMembers.propertyDescriptors);
@@ -1196,7 +1197,7 @@ public class JavaDescriptorResolver {
     private void resolveNamedGroupProperties(
             @NotNull ClassOrNamespaceDescriptor owner,
             @NotNull ResolverScopeData scopeData,
-            @NotNull NamedMembers namedMembers, @NotNull String propertyName,
+            @NotNull NamedMembers namedMembers, @NotNull Name propertyName,
             @NotNull String context) {
         getResolverScopeData(scopeData);
 
@@ -1397,7 +1398,7 @@ public class JavaDescriptorResolver {
                 getterDescriptor.initialize(propertyType);
             }
             if (setterDescriptor != null) {
-                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), "p0"/*TODO*/, false, propertyDescriptor.getType(), false, null));
+                setterDescriptor.initialize(new ValueParameterDescriptorImpl(setterDescriptor, 0, Collections.<AnnotationDescriptor>emptyList(), Name.identifier("p0") /*TODO*/, false, propertyDescriptor.getType(), false, null));
             }
 
             trace.record(BindingContext.VARIABLE, anyMember.getMember().psiMember, propertyDescriptor);
@@ -1432,7 +1433,7 @@ public class JavaDescriptorResolver {
     }
 
     private void resolveNamedGroupFunctions(@NotNull ClassOrNamespaceDescriptor owner, PsiClass psiClass,
-            TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, String methodName, ResolverScopeData scopeData) {
+            TypeSubstitutor typeSubstitutorForGenericSuperclasses, NamedMembers namedMembers, Name methodName, ResolverScopeData scopeData) {
         if (namedMembers.functionDescriptors != null) {
             return;
         }
@@ -1471,7 +1472,7 @@ public class JavaDescriptorResolver {
         namedMembers.functionDescriptors = functions;
     }
     
-    private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, String methodName) {
+    private Set<SimpleFunctionDescriptor> getFunctionsFromSupertypes(ResolverScopeData scopeData, Name methodName) {
         Set<SimpleFunctionDescriptor> r = new HashSet<SimpleFunctionDescriptor>();
         for (JetType supertype : getSupertypes(scopeData)) {
             for (FunctionDescriptor function : supertype.getMemberScope().getFunctions(methodName)) {
@@ -1481,7 +1482,7 @@ public class JavaDescriptorResolver {
         return r;
     }
 
-    private Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, String propertyName) {
+    private Set<PropertyDescriptor> getPropertiesFromSupertypes(ResolverScopeData scopeData, Name propertyName) {
         Set<PropertyDescriptor> r = new HashSet<PropertyDescriptor>();
         for (JetType supertype : getSupertypes(scopeData)) {
             for (VariableDescriptor property : supertype.getMemberScope().getProperties(propertyName)) {
@@ -1498,11 +1499,11 @@ public class JavaDescriptorResolver {
     }
 
     @NotNull
-    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull String methodName, @NotNull ResolverScopeData scopeData) {
+    public Set<FunctionDescriptor> resolveFunctionGroup(@NotNull Name methodName, @NotNull ResolverScopeData scopeData) {
 
         getResolverScopeData(scopeData);
 
-        Map<String, NamedMembers> namedMembersMap = scopeData.namedMembersMap;
+        Map<Name, NamedMembers> namedMembersMap = scopeData.namedMembersMap;
 
         NamedMembers namedMembers = namedMembersMap.get(methodName);
         if (namedMembers != null && namedMembers.methods != null) {
@@ -1582,7 +1583,7 @@ public class JavaDescriptorResolver {
         SimpleFunctionDescriptorImpl functionDescriptorImpl = new SimpleFunctionDescriptorImpl(
                 scopeData.classOrNamespaceDescriptor,
                 resolveAnnotations(method.getPsiMethod()),
-                method.getName(),
+                Name.identifier(method.getName()),
                 CallableMemberDescriptor.Kind.DECLARATION
         );
 
@@ -1696,8 +1697,8 @@ public class JavaDescriptorResolver {
 
         List<FunctionDescriptor> functions = new ArrayList<FunctionDescriptor>();
 
-        for (Map.Entry<String, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
-            String methodName = entry.getKey();
+        for (Map.Entry<Name, NamedMembers> entry : scopeData.namedMembersMap.entrySet()) {
+            Name methodName = entry.getKey();
             NamedMembers namedMembers = entry.getValue();
             resolveNamedGroupFunctions(scopeData.classOrNamespaceDescriptor, scopeData.psiClass, substitutorForGenericSupertypes, namedMembers, methodName, scopeData);
             functions.addAll(namedMembers.functionDescriptors);

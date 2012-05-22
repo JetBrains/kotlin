@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetMainDetector;
 import org.jetbrains.jet.utils.Progress;
@@ -127,7 +128,7 @@ public class KotlinToJVMBytecodeCompiler {
         for (JetFile file : configuration.getEnvironment().getSourceFiles()) {
             if (JetMainDetector.hasMain(file.getDeclarations())) {
                 FqName fqName = JetPsiUtil.getFQName(file);
-                mainClass = fqName.child(JvmAbi.PACKAGE_CLASS);
+                mainClass = fqName.child(Name.identifier(JvmAbi.PACKAGE_CLASS));
                 break;
             }
         }

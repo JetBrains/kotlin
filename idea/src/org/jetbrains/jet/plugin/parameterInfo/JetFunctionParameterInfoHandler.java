@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -276,7 +277,7 @@ public class JetFunctionParameterInfoHandler implements
                                     JetSimpleNameExpression referenceExpression = argument.getArgumentName().getReferenceExpression();
                                     ValueParameterDescriptor param = valueParameters.get(j);
                                     if (referenceExpression != null && !usedIndexes[j] &&
-                                        param.getName().equals(referenceExpression.getReferencedName())) {
+                                        param.getName().equals(referenceExpression.getReferencedNameAsName())) {
                                         takeAnyArgument = false;
                                         usedIndexes[j] = true;
                                         builder.append(renderParameter(param, true, bindingContext));
@@ -355,7 +356,7 @@ public class JetFunctionParameterInfoHandler implements
                 placeDescriptor = scope.getContainingDeclaration();
             }
             Collection<DeclarationDescriptor> variants = TipsManager.getReferenceVariants(refExpression, bindingContext);
-            String refName = refExpression.getReferencedName();
+            Name refName = refExpression.getReferencedNameAsName();
             PsiReference[] references = refExpression.getReferences();
             if (references.length == 0) return null;
             ArrayList<DeclarationDescriptor> itemsToShow = new ArrayList<DeclarationDescriptor>();

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
@@ -33,7 +34,7 @@ import java.util.*;
  */
 public class ErrorUtils {
 
-    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor("<ERROR MODULE>");
+    private static final ModuleDescriptor ERROR_MODULE = new ModuleDescriptor(Name.special("<ERROR MODULE>"));
 
 
     public static class ErrorScope implements JetScope {
@@ -45,12 +46,12 @@ public class ErrorUtils {
         }
 
         @Override
-        public ClassifierDescriptor getClassifier(@NotNull String name) {
+        public ClassifierDescriptor getClassifier(@NotNull Name name) {
             return ERROR_CLASS;
         }
 
         @Override
-        public ClassDescriptor getObjectDescriptor(@NotNull String name) {
+        public ClassDescriptor getObjectDescriptor(@NotNull Name name) {
             return ERROR_CLASS;
         }
 
@@ -62,17 +63,17 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<VariableDescriptor> getProperties(@NotNull String name) {
+        public Set<VariableDescriptor> getProperties(@NotNull Name name) {
             return ERROR_PROPERTY_GROUP;
         }
 
         @Override
-        public VariableDescriptor getLocalVariable(@NotNull String name) {
+        public VariableDescriptor getLocalVariable(@NotNull Name name) {
             return ERROR_PROPERTY;
         }
 
         @Override
-        public NamespaceDescriptor getNamespace(@NotNull String name) {
+        public NamespaceDescriptor getNamespace(@NotNull Name name) {
             return null; // TODO : review
         }
 
@@ -88,7 +89,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Set<FunctionDescriptor> getFunctions(@NotNull String name) {
+        public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
             return Collections.<FunctionDescriptor>singleton(createErrorFunction(this));
         }
 
@@ -105,7 +106,7 @@ public class ErrorUtils {
         }
 
         @Override
-        public PropertyDescriptor getPropertyByFieldReference(@NotNull String fieldName) {
+        public PropertyDescriptor getPropertyByFieldReference(@NotNull Name fieldName) {
             return null; // TODO : review
         }
 
@@ -117,7 +118,7 @@ public class ErrorUtils {
 
     }
 
-    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), "<ERROR CLASS>") {
+    private static final ClassDescriptorImpl ERROR_CLASS = new ClassDescriptorImpl(ERROR_MODULE, Collections.<AnnotationDescriptor>emptyList(), Name.special("<ERROR CLASS>")) {
         @NotNull
         @Override
         public Set<ConstructorDescriptor> getConstructors() {
@@ -159,7 +160,7 @@ public class ErrorUtils {
             false,
             null,
             ReceiverDescriptor.NO_RECEIVER,
-            "<ERROR PROPERTY>",
+            Name.special("<ERROR PROPERTY>"),
             ERROR_PROPERTY_TYPE,
             CallableMemberDescriptor.Kind.DECLARATION);
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
@@ -198,7 +199,7 @@ public class ErrorUtils {
                     functionDescriptor,
                     i,
                     Collections.<AnnotationDescriptor>emptyList(),
-                    "<ERROR VALUE_PARAMETER>",
+                    Name.special("<ERROR VALUE_PARAMETER>"),
                     true,
                     ERROR_PARAMETER_TYPE,
                     false,

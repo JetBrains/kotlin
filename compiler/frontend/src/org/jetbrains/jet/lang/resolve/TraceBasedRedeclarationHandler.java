@@ -42,7 +42,7 @@ public class TraceBasedRedeclarationHandler implements RedeclarationHandler {
     private void report(DeclarationDescriptor descriptor) {
         PsiElement firstElement = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
         if (firstElement != null) {
-            trace.report(REDECLARATION.on(firstElement, descriptor.getName()));
+            trace.report(REDECLARATION.on(firstElement, descriptor.getName().getName()));
         }
         else {
             throw new IllegalStateException("No declaration found found for " + descriptor);

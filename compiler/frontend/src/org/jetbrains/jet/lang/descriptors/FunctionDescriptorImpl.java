@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
@@ -55,7 +56,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = this;
@@ -66,7 +67,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull FunctionDescriptor original,
             @NotNull List<AnnotationDescriptor> annotations,
-            @NotNull String name,
+            @NotNull Name name,
             Kind kind) {
         super(containingDeclaration, annotations, name);
         this.original = original;

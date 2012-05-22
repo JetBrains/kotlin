@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
@@ -99,7 +100,7 @@ public class ClosureCodegen extends ObjectOrClosureCodegen {
     }
 
     public JvmMethodSignature invokeSignature(FunctionDescriptor fd) {
-        return state.getInjector().getJetTypeMapper().mapSignature("invoke", fd);
+        return state.getInjector().getJetTypeMapper().mapSignature(Name.identifier("invoke"), fd);
     }
 
     public GeneratedAnonymousClassDescriptor gen(JetExpression fun) {

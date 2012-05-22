@@ -159,7 +159,7 @@ public class FunctionCodegen {
                     for(int i = 0; i != paramDescrs.size(); ++i) {
                         JetValueParameterAnnotationWriter av = JetValueParameterAnnotationWriter.visitParameterAnnotation(mv, i + start);
                         ValueParameterDescriptor parameterDescriptor = paramDescrs.get(i);
-                        av.writeName(parameterDescriptor.getName());
+                        av.writeName(parameterDescriptor.getName().getName());
                         av.writeHasDefaultValue(parameterDescriptor.declaresDefaultValue());
                         av.writeNullable(parameterDescriptor.getType().isNullable());
                         if (jvmSignature.getKotlinParameterTypes() != null && jvmSignature.getKotlinParameterTypes().get(i) != null) {
@@ -261,7 +261,7 @@ public class FunctionCodegen {
                 for (ValueParameterDescriptor parameter : paramDescrs) {
                     Type type = state.getInjector().getJetTypeMapper().mapType(parameter.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
-                    mv.visitLocalVariable(parameter.getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
+                    mv.visitLocalVariable(parameter.getName().getName(), type.getDescriptor(), null, methodBegin, methodEnd, k);
                     k += type.getSize();
                 }
 

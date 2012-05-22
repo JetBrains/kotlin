@@ -27,6 +27,7 @@ import com.intellij.psi.search.ProjectScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
@@ -54,8 +55,8 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod INC = new Increment(1);
     private static final IntrinsicMethod DEC = new Increment(-1);
 
-    private static final List<String> PRIMITIVE_TYPES = ImmutableList.of("Boolean", "Byte", "Char", "Short", "Int", "Float", "Long", "Double");
-    private static final List<String> PRIMITIVE_NUMBER_TYPES = ImmutableList.of("Byte", "Char", "Short", "Int", "Float", "Long", "Double");
+    private static final List<Name> PRIMITIVE_TYPES = ImmutableList.of(Name.identifier("Boolean"), Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
+    private static final List<Name> PRIMITIVE_NUMBER_TYPES = ImmutableList.of(Name.identifier("Byte"), Name.identifier("Char"), Name.identifier("Short"), Name.identifier("Int"), Name.identifier("Float"), Name.identifier("Long"), Name.identifier("Double"));
     public static final IntrinsicMethod ARRAY_SIZE = new ArraySize();
     public static final IntrinsicMethod ARRAY_INDICES = new ArrayIndices();
     public static final Equals EQUALS = new Equals();
@@ -91,69 +92,69 @@ public class IntrinsicMethods {
         namedMethods.put(KOTLIN_JAVA_CLASS_PROPERTY, new JavaClassProperty());
         namedMethods.put(KOTLIN_ARRAYS_ARRAY, new JavaClassArray());
 
-        List<String> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
-        for (String method : primitiveCastMethods) {
-            declareIntrinsicFunction("Number", method, 0, NUMBER_CAST, true);
-            for (String type : PRIMITIVE_NUMBER_TYPES) {
+        ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
+        for (Name method : primitiveCastMethods) {
+            declareIntrinsicFunction(Name.identifier("Number"), method, 0, NUMBER_CAST, true);
+            for (Name type : PRIMITIVE_NUMBER_TYPES) {
                 declareIntrinsicFunction(type, method, 0, NUMBER_CAST, true);
             }
         }
 
-        for (String type : PRIMITIVE_NUMBER_TYPES) {
-            declareIntrinsicFunction(type, "plus", 0, UNARY_PLUS, false);
-            declareIntrinsicFunction(type, "minus", 0, UNARY_MINUS, false);
-            declareIntrinsicFunction(type, "inv", 0, INV, false);
-            declareIntrinsicFunction(type, "rangeTo", 1, UP_TO, false);
-            declareIntrinsicFunction(type, "upto", 1, UP_TO, false);
-            declareIntrinsicFunction(type, "downto", 1, DOWN_TO, false);
-            declareIntrinsicFunction(type, "inc", 0, INC, false);
-            declareIntrinsicFunction(type, "dec", 0, DEC, false);
+        for (Name type : PRIMITIVE_NUMBER_TYPES) {
+            declareIntrinsicFunction(type, Name.identifier("plus"), 0, UNARY_PLUS, false);
+            declareIntrinsicFunction(type, Name.identifier("minus"), 0, UNARY_MINUS, false);
+            declareIntrinsicFunction(type, Name.identifier("inv"), 0, INV, false);
+            declareIntrinsicFunction(type, Name.identifier("rangeTo"), 1, UP_TO, false);
+            declareIntrinsicFunction(type, Name.identifier("upto"), 1, UP_TO, false);
+            declareIntrinsicFunction(type, Name.identifier("downto"), 1, DOWN_TO, false);
+            declareIntrinsicFunction(type, Name.identifier("inc"), 0, INC, false);
+            declareIntrinsicFunction(type, Name.identifier("dec"), 0, DEC, false);
         }
 
-        declareBinaryOp("plus", Opcodes.IADD);
-        declareBinaryOp("minus", Opcodes.ISUB);
-        declareBinaryOp("times", Opcodes.IMUL);
-        declareBinaryOp("div", Opcodes.IDIV);
-        declareBinaryOp("mod", Opcodes.IREM);
-        declareBinaryOp("shl", Opcodes.ISHL);
-        declareBinaryOp("shr", Opcodes.ISHR);
-        declareBinaryOp("ushr", Opcodes.IUSHR);
-        declareBinaryOp("and", Opcodes.IAND);
-        declareBinaryOp("or", Opcodes.IOR);
-        declareBinaryOp("xor", Opcodes.IXOR);
+        declareBinaryOp(Name.identifier("plus"), Opcodes.IADD);
+        declareBinaryOp(Name.identifier("minus"), Opcodes.ISUB);
+        declareBinaryOp(Name.identifier("times"), Opcodes.IMUL);
+        declareBinaryOp(Name.identifier("div"), Opcodes.IDIV);
+        declareBinaryOp(Name.identifier("mod"), Opcodes.IREM);
+        declareBinaryOp(Name.identifier("shl"), Opcodes.ISHL);
+        declareBinaryOp(Name.identifier("shr"), Opcodes.ISHR);
+        declareBinaryOp(Name.identifier("ushr"), Opcodes.IUSHR);
+        declareBinaryOp(Name.identifier("and"), Opcodes.IAND);
+        declareBinaryOp(Name.identifier("or"), Opcodes.IOR);
+        declareBinaryOp(Name.identifier("xor"), Opcodes.IXOR);
 
-        declareIntrinsicFunction("Boolean", "not", 0, new Not(), true);
+        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not(), true);
 
-        declareIntrinsicFunction("String", "plus", 1, new Concat(), true);
-        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar(), true);
-        declareIntrinsicFunction("String", "get", 1, new StringGetChar(), true);
+        declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat(), true);
+        declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar(), true);
+        declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar(), true);
 
-        declareOverload(myStdLib.getLibraryScope().getFunctions("toString"), 0, new ToString());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("equals"), 1, EQUALS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("identityEquals"), 1, IDENTITY_EQUALS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("plus"), 1, STRING_PLUS);
-        declareOverload(myStdLib.getLibraryScope().getFunctions("arrayOfNulls"), 1, new NewArray());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("sure"), 0, new Sure());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("synchronized"), 2, new StupidSync());
-        declareOverload(myStdLib.getLibraryScope().getFunctions("iterator"), 0, new IteratorIterator());
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("toString")), 0, new ToString());
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("equals")), 1, EQUALS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("identityEquals")), 1, IDENTITY_EQUALS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("plus")), 1, STRING_PLUS);
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("arrayOfNulls")), 1, new NewArray());
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("sure")), 0, new Sure());
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("synchronized")), 2, new StupidSync());
+        declareOverload(myStdLib.getLibraryScope().getFunctions(Name.identifier("iterator")), 0, new IteratorIterator());
 
-        declareIntrinsicFunction("ByteIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("ShortIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("IntIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("LongIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("CharIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("BooleanIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("FloatIterator", "next", 0, ITERATOR_NEXT, false);
-        declareIntrinsicFunction("DoubleIterator", "next", 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("ByteIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("ShortIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("IntIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("LongIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("CharIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("BooleanIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("FloatIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
+        declareIntrinsicFunction(Name.identifier("DoubleIterator"), Name.identifier("next"), 0, ITERATOR_NEXT, false);
 
-        for (String type : PRIMITIVE_TYPES) {
-            declareIntrinsicFunction(type, "compareTo", 1, new CompareTo(), false);
+        for (Name type : PRIMITIVE_TYPES) {
+            declareIntrinsicFunction(type, Name.identifier("compareTo"), 1, new CompareTo(), false);
         }
 //        declareIntrinsicFunction("Any", "equals", 1, new Equals());
 //
         declareIntrinsicStringMethods();
-        declareIntrinsicProperty("CharSequence", "length", new StringLength());
-        declareIntrinsicProperty("String", "length", new StringLength());
+        declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
+        declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
         declareArrayMethods();
     }
@@ -164,24 +165,24 @@ public class IntrinsicMethods {
             declareArrayMethodsForPrimitive(jvmPrimitiveType);
         }
 
-        declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
-        declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
-        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET, true);
-        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET, true);
+        declareIntrinsicProperty(Name.identifier("Array"), Name.identifier("size"), ARRAY_SIZE);
+        declareIntrinsicProperty(Name.identifier("Array"), Name.identifier("indices"), ARRAY_INDICES);
+        declareIntrinsicFunction(Name.identifier("Array"), Name.identifier("set"), 2, ARRAY_SET, true);
+        declareIntrinsicFunction(Name.identifier("Array"), Name.identifier("get"), 1, ARRAY_GET, true);
         declareIterator(myStdLib.getArray());
     }
 
     private void declareArrayMethodsForPrimitive(JvmPrimitiveType jvmPrimitiveType) {
         PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-        declareIntrinsicProperty(primitiveType.getArrayTypeName(), "size", ARRAY_SIZE);
-        declareIntrinsicProperty(primitiveType.getArrayTypeName(), "indices", ARRAY_INDICES);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "set", 2, ARRAY_SET, true);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), "get", 1, ARRAY_GET, true);
+        declareIntrinsicProperty(primitiveType.getArrayTypeName(), Name.identifier("size"), ARRAY_SIZE);
+        declareIntrinsicProperty(primitiveType.getArrayTypeName(), Name.identifier("indices"), ARRAY_INDICES);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), Name.identifier("set"), 2, ARRAY_SET, true);
+        declareIntrinsicFunction(primitiveType.getArrayTypeName(), Name.identifier("get"), 1, ARRAY_GET, true);
         declareIterator(myStdLib.getPrimitiveArrayClassDescriptor(primitiveType));
     }
 
     private void declareIterator(ClassDescriptor classDescriptor) {
-        declareOverload(classDescriptor.getDefaultType().getMemberScope().getFunctions("iterator"), 0, ARRAY_ITERATOR);
+        declareOverload(classDescriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier("iterator")), 0, ARRAY_ITERATOR);
     }
 
     private void declareIntrinsicStringMethods() {
@@ -200,7 +201,7 @@ public class IntrinsicMethods {
             if (stringMember instanceof SimpleFunctionDescriptor) {
                 final SimpleFunctionDescriptor stringMethod = (SimpleFunctionDescriptor) stringMember;
                 final PsiMethod[] methods = stringPsiClass != null?
-                                            stringPsiClass.findMethodsByName(stringMember.getName(), false) : new PsiMethod[]{};
+                                            stringPsiClass.findMethodsByName(stringMember.getName().getName(), false) : new PsiMethod[]{};
                 for (PsiMethod method : methods) {
                     if (method.getParameterList().getParametersCount() == stringMethod.getValueParameters().size()) {
                         myMethods.put(stringMethod, new PsiMethodCall(stringMethod));
@@ -210,14 +211,14 @@ public class IntrinsicMethods {
         }
     }
 
-    private void declareBinaryOp(String methodName, int opcode) {
+    private void declareBinaryOp(Name methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
-        for (String type : PRIMITIVE_TYPES) {
+        for (Name type : PRIMITIVE_TYPES) {
             declareIntrinsicFunction(type, methodName, 1, op, false);
         }
     }
 
-    private void declareIntrinsicProperty(String className, String methodName, IntrinsicMethod implementation) {
+    private void declareIntrinsicProperty(Name className, Name methodName, IntrinsicMethod implementation) {
         final JetScope numberScope = getClassMemberScope(className);
         Set<VariableDescriptor> properties = numberScope.getProperties(methodName);
         assert properties.size() == 1;
@@ -225,7 +226,7 @@ public class IntrinsicMethods {
         myMethods.put(property.getOriginal(), implementation);
     }
 
-    private void declareIntrinsicFunction(String className, String functionName, int arity, IntrinsicMethod implementation, boolean original) {
+    private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation, boolean original) {
         JetScope memberScope = getClassMemberScope(className);
         final Set<FunctionDescriptor> group = memberScope.getFunctions(functionName);
         for (FunctionDescriptor descriptor : group) {
@@ -243,7 +244,7 @@ public class IntrinsicMethods {
         }
     }
 
-    private JetScope getClassMemberScope(String className) {
+    private JetScope getClassMemberScope(Name className) {
         final ClassDescriptor descriptor = (ClassDescriptor) myStdLib.getLibraryScope().getClassifier(className);
         final List<TypeParameterDescriptor> typeParameterDescriptors = descriptor.getTypeConstructor().getParameters();
         List<TypeProjection> typeParameters = new ArrayList<TypeProjection>();
@@ -257,11 +258,10 @@ public class IntrinsicMethods {
         List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
         if (annotations != null) {
             for (AnnotationDescriptor annotation : annotations) {
-                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
                     String value = (String) annotation.getValueArguments().get(0).getValue();
                     IntrinsicMethod intrinsicMethod = namedMethods.get(value);
-                    if(intrinsicMethod != null)
-                        return intrinsicMethod;
+                    if (intrinsicMethod != null) { return intrinsicMethod; }
                 }
             }
         }
@@ -274,11 +274,10 @@ public class IntrinsicMethods {
             List<AnnotationDescriptor> annotations = descriptor.getAnnotations();
             if (annotations != null) {
                 for (AnnotationDescriptor annotation : annotations) {
-                    if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                    if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
                         String value = (String) annotation.getValueArguments().get(0).getValue();
                         intrinsicMethod = namedMethods.get(value);
-                        if(intrinsicMethod != null)
-                            break;
+                        if (intrinsicMethod != null) { break; }
                     }
                 }
             }

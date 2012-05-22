@@ -64,7 +64,7 @@ public class TypeVariableResolverFromTypeDescriptors implements TypeVariableReso
             @NotNull DeclarationDescriptor owner,
             @NotNull String context) {
         for (TypeParameterDescriptor typeParameter : typeParameters) {
-            if (typeParameter.getName().equals(name)) {
+            if (typeParameter.getName().getName().equals(name)) {
                 return typeParameter;
             }
         }

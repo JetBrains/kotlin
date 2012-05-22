@@ -45,5 +45,5 @@ private enum class TheEnum(val rgb : Int) {
 //internal final fun classObjectFunction() : jet.Int defined in rendererTest.TheTrait.<no name provided>
 //private final enum class TheEnum defined in rendererTest
 //value-parameter val rgb : jet.Int defined in rendererTest.TheEnum.<init>
-//internal final class VAL1 : rendererTest.TheEnum defined in rendererTest.TheEnum.class-object-for-TheEnum
-//internal final val VAL1 : rendererTest.TheEnum.class-object-for-TheEnum.VAL1 defined in rendererTest.TheEnum.class-object-for-TheEnum
+//internal final class VAL1 : rendererTest.TheEnum defined in rendererTest.TheEnum.<class-object-for-TheEnum>
+//internal final val VAL1 : rendererTest.TheEnum.<class-object-for-TheEnum>.VAL1 defined in rendererTest.TheEnum.<class-object-for-TheEnum>

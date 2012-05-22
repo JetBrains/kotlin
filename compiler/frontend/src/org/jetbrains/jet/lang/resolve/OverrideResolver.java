@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -113,16 +114,16 @@ public class OverrideResolver {
 
         List<CallableMemberDescriptor> functionsFromSupertypes = getDescriptorsFromSupertypes(classDescriptor);
 
-        MultiMap<String, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
+        MultiMap<Name, CallableMemberDescriptor> functionsFromSupertypesByName = groupDescriptorsByName(functionsFromSupertypes);
 
-        MultiMap<String, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
+        MultiMap<Name, CallableMemberDescriptor> functionsFromCurrentByName = groupDescriptorsByName(classDescriptor.getDeclaredCallableMembers());
 
-        Set<String> functionNames = new LinkedHashSet<String>();
+        Set<Name> functionNames = new LinkedHashSet<Name>();
         functionNames.addAll(functionsFromSupertypesByName.keySet());
         functionNames.addAll(functionsFromCurrentByName.keySet());
 
         Set<CallableMemberDescriptor> fakeOverrides = Sets.newHashSet();
-        for (String functionName : functionNames) {
+        for (Name functionName : functionNames) {
             generateOverridesInFunctionGroup(functionName, fakeOverrides,
                     functionsFromSupertypesByName.get(functionName),
                     functionsFromCurrentByName.get(functionName),
@@ -145,7 +146,7 @@ public class OverrideResolver {
                         @Override
                         public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
                             JetDeclaration jetProperty = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), fromCurrent);
-                            trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName()));
+                            trace.report(Errors.CONFLICTING_OVERLOADS.on(jetProperty, fromCurrent, fromCurrent.getContainingDeclaration().getName().getName()));
                         }
                     });
         }
@@ -168,7 +169,7 @@ public class OverrideResolver {
     }
     
     public static void generateOverridesInFunctionGroup(
-            @NotNull String name,
+            @NotNull Name name,
             @Nullable Set<CallableMemberDescriptor> fakeOverrides,
             @NotNull Collection<? extends CallableMemberDescriptor> functionsFromSupertypes,
             @NotNull Collection<? extends CallableMemberDescriptor> functionsFromCurrent,
@@ -221,8 +222,8 @@ public class OverrideResolver {
         }
     }
 
-    private static <T extends DeclarationDescriptor> MultiMap<String, T> groupDescriptorsByName(Collection<T> properties) {
-        MultiMap<String, T> r = new LinkedMultiMap<String, T>();
+    private static <T extends DeclarationDescriptor> MultiMap<Name, T> groupDescriptorsByName(Collection<T> properties) {
+        MultiMap<Name, T> r = new LinkedMultiMap<Name, T>();
         for (T property : properties) {
             r.putValue(property.getName(), property);
         }

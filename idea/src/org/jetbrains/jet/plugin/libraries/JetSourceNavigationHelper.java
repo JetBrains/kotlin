@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -152,6 +153,8 @@ public class JetSourceNavigationHelper {
             return null;
         }
 
+        Name entityNameAsName = Name.identifier(entityName);
+
         PsiElement declarationContainer = decompiledDeclaration.getParent();
         if (declarationContainer instanceof JetFile) {
             Tuple2<BindingContext, NamespaceDescriptor> bindingContextAndNamespaceDescriptor =
@@ -161,7 +164,7 @@ public class JetSourceNavigationHelper {
             NamespaceDescriptor namespaceDescriptor = bindingContextAndNamespaceDescriptor._2;
             if (receiverType == null) {
                 // non-extension property
-                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {
+                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     if (candidate.getReceiverParameter() == ReceiverDescriptor.NO_RECEIVER) {
                         if (matcher.areSame(decompiledDeclaration, candidate)) {
                             return (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
@@ -172,7 +175,7 @@ public class JetSourceNavigationHelper {
             else {
                 // extension property
                 String expectedTypeString = receiverType.getText();
-                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityName)) {
+                for (Descr candidate : matcher.getCandidatesFromScope(namespaceDescriptor.getMemberScope(), entityNameAsName)) {
                     if (candidate.getReceiverParameter() != ReceiverDescriptor.NO_RECEIVER) {
                         String thisReceiverType = DescriptorRenderer.TEXT.renderType(candidate.getReceiverParameter().getType());
                         if (expectedTypeString.equals(thisReceiverType)) {
@@ -206,7 +209,7 @@ public class JetSourceNavigationHelper {
                 }
 
                 ClassDescriptor expectedContainer = isClassObject ? classDescriptor.getClassObjectDescriptor() : classDescriptor;
-                for (Descr candidate : matcher.getCandidatesFromScope(memberScope, entityName)) {
+                for (Descr candidate : matcher.getCandidatesFromScope(memberScope, entityNameAsName)) {
                     if (candidate.getContainingDeclaration() == expectedContainer) {
                         JetDeclaration property = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(bindingContext, candidate);
                         if (property != null) {
@@ -229,7 +232,7 @@ public class JetSourceNavigationHelper {
             }
 
             @Override
-            public Set<VariableDescriptor> getCandidatesFromScope(JetScope scope, String name) {
+            public Set<VariableDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
                 return scope.getProperties(name);
             }
         });
@@ -271,7 +274,7 @@ public class JetSourceNavigationHelper {
             }
 
             @Override
-            public Set<FunctionDescriptor> getCandidatesFromScope(JetScope scope, String name) {
+            public Set<FunctionDescriptor> getCandidatesFromScope(JetScope scope, Name name) {
                 return scope.getFunctions(name);
             }
         });
@@ -280,6 +283,6 @@ public class JetSourceNavigationHelper {
     private interface Matcher<Decl extends JetDeclaration, Descr extends CallableDescriptor> {
         boolean areSame(Decl declaration, Descr descriptor);
 
-        Set<Descr> getCandidatesFromScope(JetScope scope, String name);
+        Set<Descr> getCandidatesFromScope(JetScope scope, Name name);
     }
 }

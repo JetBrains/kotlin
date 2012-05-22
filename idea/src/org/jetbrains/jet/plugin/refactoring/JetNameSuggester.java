@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -145,8 +146,8 @@ public class JetNameSuggester {
                     else {
                         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(argument);
                         if (classDescriptor != null) {
-                            String className = classDescriptor.getName();
-                            addName(result, "arrayOf" + StringUtil.capitalize(className) + "s", validator);
+                            Name className = classDescriptor.getName();
+                            addName(result, "arrayOf" + StringUtil.capitalize(className.getName()) + "s", validator);
                         }
                     }
                 }
@@ -165,8 +166,8 @@ public class JetNameSuggester {
     private static void addForClassType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(jetType);
         if (classDescriptor != null) {
-            String className = classDescriptor.getName();
-            addCamelNames(result, className, validator);
+            Name className = classDescriptor.getName();
+            addCamelNames(result, className.getName(), validator);
         }
     }
 

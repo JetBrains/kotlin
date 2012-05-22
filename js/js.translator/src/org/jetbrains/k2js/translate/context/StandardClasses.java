@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
@@ -145,7 +146,7 @@ public final class StandardClasses {
                               @NotNull String javascriptName) {
         JsScope classScope = scopeMap.get(fullQualifiedClassName);
         assert classScope != null;
-        FqNameUnsafe fullQualifiedMethodName = fullQualifiedClassName.child(shortMethodName);
+        FqNameUnsafe fullQualifiedMethodName = fullQualifiedClassName.child(Name.guess(shortMethodName));
         JsName declaredName = classScope.declareName(javascriptName);
         declaredName.setObfuscatable(false);
         standardObjects.put(fullQualifiedMethodName, declaredName);

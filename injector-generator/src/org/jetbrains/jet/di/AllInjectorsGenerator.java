@@ -135,7 +135,7 @@ public class AllInjectorsGenerator {
         generator.addField(JavaBridgeConfiguration.class);
         generator.addPublicField(PsiClassFinderForJvm.class);
         generator.addField(false, ModuleDescriptor.class, null,
-                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(\"<dummy>\")"));
+                new GivenExpression("new org.jetbrains.jet.lang.descriptors.ModuleDescriptor(org.jetbrains.jet.lang.resolve.name.Name.special(\"<dummy>\"))"));
         generator.addParameter(CompilerDependencies.class);
         generator.addField(false, CompilerSpecialMode.class, null, new GivenExpression("compilerDependencies.getCompilerSpecialMode()"));
 

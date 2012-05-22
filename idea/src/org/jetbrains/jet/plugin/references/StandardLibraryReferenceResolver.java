@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -138,7 +139,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
             String renderedOriginal = DescriptorRenderer.TEXT.render(originalDescriptor);
             for (DeclarationDescriptor member : memberScope.getAllDescriptors()) {
                 if (renderedOriginal.equals(DescriptorRenderer.TEXT.render(member).replace(TUPLE0_FQ_NAME.getFqName(),
-                                                                                           JetStandardClasses.UNIT_ALIAS))) {
+                                                                                           JetStandardClasses.UNIT_ALIAS.getName()))) {
                     return member;
                 }
             }
@@ -171,7 +172,7 @@ public class StandardLibraryReferenceResolver extends AbstractProjectComponent {
         private WritableScope memberScope;
 
         private FakeJetNamespaceDescriptor() {
-            super(new NamespaceDescriptorImpl(new ModuleDescriptor("<fake_module>"), Collections.<AnnotationDescriptor>emptyList(), "<root>"),
+            super(new NamespaceDescriptorImpl(new ModuleDescriptor(Name.special("<fake_module>")), Collections.<AnnotationDescriptor>emptyList(), Name.special("<root>")),
                   Collections.<AnnotationDescriptor>emptyList(),
                   JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getName());
         }

@@ -25,7 +25,9 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -85,6 +87,14 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
     public String getReferencedName() {
         String text = getReferencedNameElement().getNode().getText();
         return text != null ? JetPsiUtil.unquoteIdentifierOrFieldReference(text) : null;
+    }
+
+    public Name getReferencedNameAsName() {
+        String name = getReferencedName();
+        if (name != null && name.length() == 0) {
+            // TODO: fix parser or do something // stepan.koltsov@
+        }
+        return name != null ? Name.identifierNoValidate(name) : null;
     }
 
     @NotNull

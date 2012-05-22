@@ -17,4 +17,4 @@ get() {}
 //internal final val int2 : jet.Int defined in rendererTest
 //private final var private : jet.Int defined in rendererTest
 //public final val jet.Int.ext : jet.Int defined in rendererTest
-//public final fun jet.Int.get-ext() : jet.Int defined in rendererTest
+//public final fun jet.Int.<get-ext>() : jet.Int defined in rendererTest

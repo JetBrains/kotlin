@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 /**
@@ -48,33 +49,32 @@ public interface WritableScope extends JetScope {
 
     void addObjectDescriptor(@NotNull ClassDescriptor objectDescriptor);
 
-    void addClassifierAlias(@NotNull String name, @NotNull ClassifierDescriptor classifierDescriptor);
+    void addClassifierAlias(@NotNull Name name, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void addNamespaceAlias(@NotNull String name, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void addNamespaceAlias(@NotNull Name name, @NotNull NamespaceDescriptor namespaceDescriptor);
     
-    void addFunctionAlias(@NotNull String name, @NotNull FunctionDescriptor functionDescriptor);
+    void addFunctionAlias(@NotNull Name name, @NotNull FunctionDescriptor functionDescriptor);
     
-    void addVariableAlias(@NotNull String name, @NotNull VariableDescriptor variableDescriptor);
+    void addVariableAlias(@NotNull Name name, @NotNull VariableDescriptor variableDescriptor);
 
     void addNamespace(@NotNull NamespaceDescriptor namespaceDescriptor);
 
     @Nullable
-    NamespaceDescriptor getDeclaredNamespace(@NotNull String name);
+    NamespaceDescriptor getDeclaredNamespace(@NotNull Name name);
 
-    @NotNull
-    Multimap<String, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName();
+    @NotNull Multimap<Name, DeclarationDescriptor> getDeclaredDescriptorsAccessibleBySimpleName();
 
     void importScope(@NotNull JetScope imported);
 
     void setImplicitReceiver(@NotNull ReceiverDescriptor implicitReceiver);
 
-    void importClassifierAlias(@NotNull String importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
+    void importClassifierAlias(@NotNull Name importedClassifierName, @NotNull ClassifierDescriptor classifierDescriptor);
 
-    void importNamespaceAlias(@NotNull String aliasName, @NotNull NamespaceDescriptor namespaceDescriptor);
+    void importNamespaceAlias(@NotNull Name aliasName, @NotNull NamespaceDescriptor namespaceDescriptor);
     
-    void importFunctionAlias(@NotNull String aliasName, @NotNull FunctionDescriptor functionDescriptor);
+    void importFunctionAlias(@NotNull Name aliasName, @NotNull FunctionDescriptor functionDescriptor);
     
-    void importVariableAlias(@NotNull String aliasName, @NotNull VariableDescriptor variableDescriptor);
+    void importVariableAlias(@NotNull Name aliasName, @NotNull VariableDescriptor variableDescriptor);
 
     void clearImports();
 }

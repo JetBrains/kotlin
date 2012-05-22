@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemSolution;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemWithPriorities;
 import org.jetbrains.jet.lang.resolve.calls.inference.DebugConstraintResolutionListener;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
@@ -97,13 +98,13 @@ public class CallResolver {
         JetExpression calleeExpression = context.call.getCalleeExpression();
         assert calleeExpression instanceof JetSimpleNameExpression;
         JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
-        String referencedName = nameExpression.getReferencedName();
+        Name referencedName = nameExpression.getReferencedNameAsName();
         if (referencedName == null) {
             return OverloadResolutionResultsImpl.nameNotFound();
         }
         List<CallableDescriptorCollector<? extends VariableDescriptor>> callableDescriptorCollectors = Lists.newArrayList();
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
-            referencedName = referencedName.substring(1);
+            referencedName = Name.identifier(referencedName.getName().substring(1));
             callableDescriptorCollectors.add(CallableDescriptorCollectors.PROPERTIES);
         }
         else {
@@ -117,7 +118,7 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull BasicResolutionContext context,
             @NotNull final JetReferenceExpression functionReference,
-            @NotNull String name) {
+            @NotNull Name name) {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks = TaskPrioritizer.computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
         return doResolveCall(context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
     }
@@ -137,7 +138,7 @@ public class CallResolver {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
             functionReference = expression;
 
-            String name = expression.getReferencedName();
+            Name name = expression.getReferencedNameAsName();
             if (name == null) return checkArgumentTypesAndFail(context);
 
             prioritizedTasks = TaskPrioritizer.computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
@@ -222,7 +223,7 @@ public class CallResolver {
                     return checkArgumentTypesAndFail(context);
                 }
                 
-                FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), "[for expression " + calleeExpression.getText() + "]");
+                FunctionDescriptorImpl functionDescriptor = new ExpressionAsFunctionDescriptor(context.scope.getContainingDeclaration(), Name.special("<for expression " + calleeExpression.getText() + ">"));
                 FunctionDescriptorUtil.initializeFromFunctionType(functionDescriptor, calleeType, NO_RECEIVER, Modality.FINAL, Visibilities.LOCAL);
                 ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(functionDescriptor, JetPsiUtil.isSafeCall(context.call));
                 resolutionCandidate.setReceiverArgument(context.call.getExplicitReceiver());
@@ -888,7 +889,7 @@ public class CallResolver {
     }
 
     @NotNull
-    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull String name, @NotNull List<JetType> parameterTypes) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveExactSignature(@NotNull JetScope scope, @NotNull ReceiverDescriptor receiver, @NotNull Name name, @NotNull List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> candidates = findCandidatesByExactSignature(scope, receiver, name, parameterTypes);
 
         BindingTraceContext trace = new BindingTraceContext();
@@ -902,7 +903,7 @@ public class CallResolver {
     }
 
     private List<ResolutionCandidate<FunctionDescriptor>> findCandidatesByExactSignature(JetScope scope, ReceiverDescriptor receiver,
-                                                                                      String name, List<JetType> parameterTypes) {
+                                                                                      Name name, List<JetType> parameterTypes) {
         List<ResolutionCandidate<FunctionDescriptor>> result = Lists.newArrayList();
         if (receiver.exists()) {
             Collection<ResolutionCandidate<FunctionDescriptor>> extensionFunctionDescriptors = ResolutionCandidate.convertCollection(scope.getFunctions(name), false);

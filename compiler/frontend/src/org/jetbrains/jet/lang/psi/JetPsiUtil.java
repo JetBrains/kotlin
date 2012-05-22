@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -38,7 +39,7 @@ import java.util.Set;
  */
 public class JetPsiUtil {
 
-    public static final String NO_NAME_PROVIDED = "<no name provided>";
+    public static final Name NO_NAME_PROVIDED = Name.special("<no name provided>");
 
     private JetPsiUtil() {
     }
@@ -67,8 +68,8 @@ public class JetPsiUtil {
     }
 
     @NotNull
-    public static String safeName(String name) {
-        return name == null ? NO_NAME_PROVIDED : name;
+    public static Name safeName(@Nullable String name) {
+        return name == null ? NO_NAME_PROVIDED : Name.identifier(name);
     }
 
     @NotNull
@@ -162,7 +163,7 @@ public class JetPsiUtil {
             return getFQName(objectDeclaration);
         }
 
-        String functionName = namedDeclaration.getName();
+        Name functionName = namedDeclaration.getNameAsName();
         if (functionName == null) {
             return null;
         }
@@ -201,7 +202,7 @@ public class JetPsiUtil {
 
     @NotNull
     private static FqName makeFQName(@NotNull FqName prefix, @NotNull JetClassOrObject jetClass) {
-        return prefix.child(jetClass.getName());
+        return prefix.child(Name.identifier(jetClass.getName()));
     }
 
     public static boolean isIrrefutable(JetWhenEntry entry) {
@@ -297,7 +298,7 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static String getAliasName(@NotNull JetImportDirective importDirective) {
+    public static Name getAliasName(@NotNull JetImportDirective importDirective) {
         String aliasName = importDirective.getAliasName();
         JetExpression importedReference = importDirective.getImportedReference();
         if (importedReference == null) {
@@ -307,7 +308,7 @@ public class JetPsiUtil {
         if (aliasName == null) {
             aliasName = referenceExpression != null ? referenceExpression.getReferencedName() : null;
         }
-        return aliasName;
+        return aliasName != null ? Name.identifier(aliasName) : null;
     }
 
     @Nullable
@@ -327,7 +328,7 @@ public class JetPsiUtil {
             return false;
         }
 
-        return JetStandardClasses.UNIT_ALIAS.equals(typeReference.getText());
+        return JetStandardClasses.UNIT_ALIAS.getName().equals(typeReference.getText());
     }
 
     public static boolean isSafeCall(@NotNull Call call) {

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.OverloadUtil;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 /**
@@ -33,7 +34,7 @@ import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
  */
 public class JetOverloadTest extends JetLiteFixture {
 
-    private ModuleDescriptor root = new ModuleDescriptor("test_root");
+    private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
     private JetStandardLibrary library;
     private DescriptorResolver descriptorResolver;
 

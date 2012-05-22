@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.JetStandardLibrary;
 
 import java.util.Collection;
@@ -83,7 +84,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull CompilerDependencies compilerDependencies) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
-        final ModuleDescriptor owner = new ModuleDescriptor("<module>");
+        final ModuleDescriptor owner = new ModuleDescriptor(Name.special("<module>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 filesToAnalyzeCompletely, false, false);

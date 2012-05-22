@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -210,7 +211,7 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetObjectDeclaration object
     ) {
-        ModuleDescriptor moduleDescriptor = new ModuleDescriptor("<dummy for object>");
+        ModuleDescriptor moduleDescriptor = new ModuleDescriptor(Name.special("<dummy for object>"));
 
         TopDownAnalysisParameters topDownAnalysisParameters =
                 new TopDownAnalysisParameters(Predicates.equalTo(object.getContainingFile()), false, true);

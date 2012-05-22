@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
@@ -185,7 +186,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             BasicResolutionContext basicResolutionContext = BasicResolutionContext.create(variableCallTrace, context.scope, functionCall, context.expectedType, context.dataFlowInfo);
 
             // 'invoke' call resolve
-            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(basicResolutionContext, task.reference, "invoke");
+            OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithGivenName(basicResolutionContext, task.reference, Name.identifier("invoke"));
             Collection<ResolvedCallWithTrace<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
 
             return Collections2.transform(calls, new Function<ResolvedCallWithTrace<FunctionDescriptor>, ResolvedCallWithTrace<FunctionDescriptor>>() {

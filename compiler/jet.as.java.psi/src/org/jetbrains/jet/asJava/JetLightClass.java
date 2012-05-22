@@ -72,7 +72,7 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     @Override
     public String getName() {
-        return QualifiedNamesUtil.fqnToShortName(qualifiedName);
+        return QualifiedNamesUtil.fqnToShortName(qualifiedName).getName();
     }
 
     @Override

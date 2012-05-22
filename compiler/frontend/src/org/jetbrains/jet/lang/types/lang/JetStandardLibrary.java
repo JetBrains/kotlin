@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -166,15 +167,15 @@ public class JetStandardLibrary {
         if(libraryScope == null) {
             this.libraryScope = JetStandardClasses.STANDARD_CLASSES_NAMESPACE.getMemberScope();
 
-            this.numberClass = (ClassDescriptor) libraryScope.getClassifier("Number");
-            this.stringClass = (ClassDescriptor) libraryScope.getClassifier("String");
-            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier("CharSequence");
-            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier("Array");
-            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier("volatile");
-            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier("Throwable");            
+            this.numberClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Number"));
+            this.stringClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("String"));
+            this.charSequenceClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("CharSequence"));
+            this.arrayClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Array"));
+            this.volatileClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("volatile"));
+            this.throwableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Throwable"));
 
-            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier("Iterable");
-            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier("Comparable");
+            this.iterableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Iterable"));
+            this.comparableClass = (ClassDescriptor) libraryScope.getClassifier(Name.identifier("Comparable"));
 
             this.numberType = new JetTypeImpl(getNumber());
             this.stringType = new JetTypeImpl(getString());
@@ -205,7 +206,7 @@ public class JetStandardLibrary {
 
     private void makePrimitive(PrimitiveType primitiveType) {
         ClassDescriptor clazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName());
-        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getTypeName() + "Array");
+        ClassDescriptor arrayClazz = (ClassDescriptor) libraryScope.getClassifier(primitiveType.getArrayTypeName());
         JetTypeImpl type = new JetTypeImpl(clazz);
         JetTypeImpl arrayType = new JetTypeImpl(arrayClazz);
 
@@ -503,8 +504,7 @@ public class JetStandardLibrary {
         List<AnnotationDescriptor> annotations = descriptor.getOriginal().getAnnotations();
         if(annotations != null) {
             for(AnnotationDescriptor d: annotations) {
-                if(d.getType().equals(getVolatileType()))
-                    return true;
+                if (d.getType().equals(getVolatileType())) { return true; }
             }
         }
         return false;

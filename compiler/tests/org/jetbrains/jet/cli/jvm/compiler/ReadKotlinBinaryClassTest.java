@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.lang.resolve.java.DescriptorSearchRule;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         
         NamespaceDescriptor namespaceFromSource = state.getBindingContext().get(BindingContext.FILE_TO_NAMESPACE, psiFile);
 
-        Assert.assertEquals("test", namespaceFromSource.getName());
+        Assert.assertEquals("test", namespaceFromSource.getName().getName());
 
         Disposer.dispose(myTestRootDisposable);
 
@@ -91,7 +92,7 @@ public class ReadKotlinBinaryClassTest extends TestCaseWithTmpdir {
         InjectorForJavaSemanticServices injector = new InjectorForJavaSemanticServices(
                 jetCoreEnvironment.getCompilerDependencies(), jetCoreEnvironment.getProject());
         JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel("test"), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
+        NamespaceDescriptor namespaceFromClass = javaDescriptorResolver.resolveNamespace(FqName.topLevel(Name.identifier("test")), DescriptorSearchRule.ERROR_IF_FOUND_IN_KOTLIN);
         
         NamespaceComparator.compareNamespaces(namespaceFromSource, namespaceFromClass, false, txtFile);
     }

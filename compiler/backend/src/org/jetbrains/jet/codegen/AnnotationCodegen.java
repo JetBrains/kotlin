@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.objectweb.asm.*;
 
@@ -101,8 +102,8 @@ public abstract class AnnotationCodegen {
                 continue;
             }
 
-            String keyName = entry.getKey().getName();
-            genAnnotationValueArgument(annotationVisitor, valueArgument, keyName);
+            Name keyName = entry.getKey().getName();
+            genAnnotationValueArgument(annotationVisitor, valueArgument, keyName.getName());
         }
     }
 
@@ -139,7 +140,7 @@ public abstract class AnnotationCodegen {
             if(call != null) {
                 if(call.getResultingDescriptor() instanceof PropertyDescriptor) {
                     PropertyDescriptor descriptor = (PropertyDescriptor)call.getResultingDescriptor();
-                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType(), MapTypeMode.VALUE).getDescriptor(), descriptor.getName());
+                    annotationVisitor.visitEnum(keyName, typeMapper.mapType(descriptor.getReturnType(), MapTypeMode.VALUE).getDescriptor(), descriptor.getName().getName());
                     return;
                 }
             }
@@ -154,7 +155,7 @@ public abstract class AnnotationCodegen {
                     String value = null;
                     if (annotations != null) {
                         for (AnnotationDescriptor annotation : annotations) {
-                            if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName())) {
+                            if("Intrinsic".equals(annotation.getType().getConstructor().getDeclarationDescriptor().getName().getName())) {
                                 value = (String) annotation.getValueArguments().get(0).getValue();
                                 break;
                             }

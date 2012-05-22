@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -48,7 +49,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
     }
 
     public class JetDefaultModalityModifiersTestCase  {
-        private ModuleDescriptor root = new ModuleDescriptor("test_root");
+        private ModuleDescriptor root = new ModuleDescriptor(Name.special("<test_root>"));
         private DescriptorResolver descriptorResolver;
         private JetScope scope;
 
@@ -76,7 +77,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private MutableClassDescriptor createClassDescriptor(ClassKind kind, JetClass aClass) {
-            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, aClass.getName());
+            MutableClassDescriptor classDescriptor = new MutableClassDescriptor(root, scope, kind, Name.identifier(aClass.getName()));
             descriptorResolver.resolveMutableClassDescriptor(aClass, classDescriptor, JetTestUtils.DUMMY_TRACE);
             return classDescriptor;
         }

@@ -101,12 +101,12 @@ public class FqName {
     }
 
     @NotNull
-    public FqName child(@NotNull String name) {
+    public FqName child(@NotNull Name name) {
         return new FqName(fqName.child(name), this);
     }
 
     @NotNull
-    public String shortName() {
+    public Name shortName() {
         return fqName.shortName();
     }
 
@@ -116,7 +116,7 @@ public class FqName {
         path.add(ROOT);
         fqName.walk(new FqNameUnsafe.WalkCallback() {
             @Override
-            public void segment(@NotNull String shortName, @NotNull FqNameUnsafe fqName) {
+            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
                 // TODO: do not validate
                 path.add(new FqName(fqName));
             }
@@ -125,22 +125,22 @@ public class FqName {
     }
 
     @NotNull
-    public List<String> pathSegments() {
+    public List<Name> pathSegments() {
         return fqName.pathSegments();
     }
 
-    public boolean firstSegmentIs(@NotNull String segment) {
+    public boolean firstSegmentIs(@NotNull Name segment) {
         return fqName.firstSegmentIs(segment);
     }
 
-    public boolean lastSegmentIs(@NotNull String segment) {
+    public boolean lastSegmentIs(@NotNull Name segment) {
         return fqName.lastSegmentIs(segment);
     }
 
 
 
     @NotNull
-    public static FqName topLevel(@NotNull String shortName) {
+    public static FqName topLevel(@NotNull Name shortName) {
         return new FqName(FqNameUnsafe.topLevel(shortName));
     }
 

@@ -43,11 +43,11 @@ public class JetPluginUtil {
 
         LinkedList<String> fullName = Lists.newLinkedList();
         while (declarationDescriptor != null && !(declarationDescriptor instanceof ModuleDescriptor)) {
-            fullName.addFirst(declarationDescriptor.getName());
+            fullName.addFirst(declarationDescriptor.getName().getName());
             declarationDescriptor = declarationDescriptor.getContainingDeclaration();
         }
         assert fullName.size() > 0;
-        if (JavaDescriptorResolver.JAVA_ROOT.equals(fullName.getFirst())) {
+        if (JavaDescriptorResolver.JAVA_ROOT.getName().equals(fullName.getFirst())) {
             fullName.removeFirst();
         }
         return fullName;

@@ -135,13 +135,6 @@ public final class TipsManager {
                     return false;
                 }
 
-                if (descriptor instanceof NamespaceDescriptor) {
-                    NamespaceDescriptor namespaceDescriptor = (NamespaceDescriptor) descriptor;
-                    if (namespaceDescriptor.getName().isEmpty()) {
-                        return false;
-                    }
-                }
-
                 return true;
             }
         });

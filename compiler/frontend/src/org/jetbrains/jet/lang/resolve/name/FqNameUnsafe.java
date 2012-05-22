@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class FqNameUnsafe {
 
-    public static final String ROOT_NAME = "<root>";
+    public static final Name ROOT_NAME = Name.special("<root>");
 
     @NotNull
     private final String fqName;
@@ -37,7 +37,7 @@ public class FqNameUnsafe {
     // cache
     private transient FqName safe;
     private transient FqNameUnsafe parent;
-    private transient String shortName;
+    private transient Name shortName;
 
     FqNameUnsafe(@NotNull String fqName, @NotNull FqName safe) {
         this.fqName = fqName;
@@ -52,7 +52,7 @@ public class FqNameUnsafe {
         validateFqName();
     }
 
-    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, String shortName) {
+    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent, Name shortName) {
         this.fqName = fqName;
         this.parent = parent;
         this.shortName = shortName;
@@ -75,11 +75,11 @@ public class FqNameUnsafe {
     private void compute() {
         int lastDot = fqName.lastIndexOf('.');
         if (lastDot >= 0) {
-            shortName = fqName.substring(lastDot + 1);
+            shortName = Name.guess(fqName.substring(lastDot + 1));
             parent = new FqNameUnsafe(fqName.substring(0, lastDot));
         }
         else {
-            shortName = fqName;
+            shortName = Name.guess(fqName);
             parent = FqName.ROOT.toUnsafe();
         }
     }
@@ -120,19 +120,19 @@ public class FqNameUnsafe {
     }
 
     @NotNull
-    public FqNameUnsafe child(@NotNull String name) {
+    public FqNameUnsafe child(@NotNull Name name) {
         String childFqName;
         if (isRoot()) {
-            childFqName = name;
+            childFqName = name.getName();
         }
         else {
-            childFqName = fqName + "." + name;
+            childFqName = fqName + "." + name.getName();
         }
         return new FqNameUnsafe(childFqName, this, name);
     }
 
     @NotNull
-    public String shortName() {
+    public Name shortName() {
         if (shortName != null) {
             return shortName;
         }
@@ -147,7 +147,7 @@ public class FqNameUnsafe {
     }
 
     interface WalkCallback {
-        void segment(@NotNull String shortName, @NotNull FqNameUnsafe fqName);
+        void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName);
     }
 
     @NotNull
@@ -156,7 +156,7 @@ public class FqNameUnsafe {
         path.add(FqName.ROOT.toUnsafe());
         walk(new WalkCallback() {
             @Override
-            public void segment(@NotNull String shortName, @NotNull FqNameUnsafe fqName) {
+            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
                 path.add(fqName);
             }
         });
@@ -164,11 +164,11 @@ public class FqNameUnsafe {
     }
 
     @NotNull
-    public List<String> pathSegments() {
-        final List<String> path = Lists.newArrayList();
+    public List<Name> pathSegments() {
+        final List<Name> path = Lists.newArrayList();
         walk(new WalkCallback() {
             @Override
-            public void segment(@NotNull String shortName, @NotNull FqNameUnsafe fqName) {
+            public void segment(@NotNull Name shortName, @NotNull FqNameUnsafe fqName) {
                 path.add(shortName);
             }
         });
@@ -188,14 +188,14 @@ public class FqNameUnsafe {
                 this.parent = FqName.ROOT.toUnsafe();
             }
             if (this.shortName == null) {
-                this.shortName = fqName;
+                this.shortName = Name.guess(fqName);
             }
-            callback.segment(fqName, this);
+            callback.segment(shortName, this);
             return;
         }
 
-        String firstSegment = fqName.substring(0, pos);
-        FqNameUnsafe last = new FqNameUnsafe(firstSegment, FqName.ROOT.toUnsafe(), firstSegment);
+        Name firstSegment = Name.guess(fqName.substring(0, pos));
+        FqNameUnsafe last = new FqNameUnsafe(firstSegment.getName(), FqName.ROOT.toUnsafe(), firstSegment);
         callback.segment(firstSegment, last);
 
         while (true) {
@@ -204,7 +204,7 @@ public class FqNameUnsafe {
                 if (this.parent == null) {
                     this.parent = last;
                 }
-                String shortName = fqName.substring(pos + 1);
+                Name shortName = Name.guess(fqName.substring(pos + 1));
                 if (this.shortName == null) {
                     this.shortName = shortName;
                 }
@@ -212,7 +212,7 @@ public class FqNameUnsafe {
                 return;
             }
 
-            String shortName = fqName.substring(pos + 1, next);
+            Name shortName = Name.guess(fqName.substring(pos + 1, next));
             last = new FqNameUnsafe(fqName.substring(0, next), last, shortName);
             callback.segment(shortName, last);
 
@@ -220,15 +220,15 @@ public class FqNameUnsafe {
         }
     }
 
-    public boolean firstSegmentIs(@NotNull String segment) {
+    public boolean firstSegmentIs(@NotNull Name segment) {
         if (isRoot()) {
             return false;
         }
-        List<String> pathSegments = pathSegments();
+        List<Name> pathSegments = pathSegments();
         return pathSegments.get(0).equals(segment);
     }
 
-    public boolean lastSegmentIs(@NotNull String segment) {
+    public boolean lastSegmentIs(@NotNull Name segment) {
         if (isRoot()) {
             return false;
         }
@@ -238,17 +238,14 @@ public class FqNameUnsafe {
 
 
     @NotNull
-    public static FqNameUnsafe topLevel(@NotNull String shortName) {
-        if (shortName.indexOf('.') >= 0) {
-            throw new IllegalArgumentException();
-        }
-        return new FqNameUnsafe(shortName, FqName.ROOT.toUnsafe(), shortName);
+    public static FqNameUnsafe topLevel(@NotNull Name shortName) {
+        return new FqNameUnsafe(shortName.getName(), FqName.ROOT.toUnsafe(), shortName);
     }
 
 
     @Override
     public String toString() {
-        return isRoot() ? ROOT_NAME : fqName;
+        return isRoot() ? ROOT_NAME.getName() : fqName;
     }
 
     @Override

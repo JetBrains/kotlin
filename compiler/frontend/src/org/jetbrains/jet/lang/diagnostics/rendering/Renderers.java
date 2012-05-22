@@ -51,7 +51,7 @@ public class Renderers {
         @Override
         public String render(@NotNull Object element) {
             if (element instanceof Named) {
-                return ((Named) element).getName();
+                return ((Named) element).getName().getName();
             }
             return element.toString();
         }
