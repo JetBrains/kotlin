@@ -17,15 +17,18 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetLiteFixture;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowDataTraceFactory;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.parsing.JetParsingTest;
 
 import java.io.File;
@@ -41,10 +44,33 @@ import java.util.List;
 /**
  * @author yole
  */
-public abstract class CodegenTestCase extends JetLiteFixture {
+public abstract class CodegenTestCase extends UsefulTestCase {
 
     // for environment and classloader
+    protected JetCoreEnvironment myEnvironment;
     private List<File> extraClasspath = Lists.newArrayList();
+    protected JetFile myFile;
+
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable());
+    }
+
+    protected void createEnvironmentWithMockJdkAndIdeaAnnotations(@NotNull CompilerSpecialMode compilerSpecialMode) {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(getTestRootDisposable(), compilerSpecialMode);
+    }
+
+    protected void createEnvironmentWithFullJdk() {
+        if (myEnvironment != null) {
+            throw new IllegalStateException("must not set up myEnvironemnt twice");
+        }
+        myEnvironment = JetTestUtils.createEnvironmentWithFullJdk(getTestRootDisposable());
+    }
 
     protected void addToClasspath(@NotNull File file) {
         myEnvironment.addToClasspath(file);
@@ -70,18 +96,18 @@ public abstract class CodegenTestCase extends JetLiteFixture {
     @Override
     protected void tearDown() throws Exception {
         myFile = null;
+        myEnvironment = null;
         super.tearDown();
     }
 
     protected void loadText(final String text) {
-        myFile = (JetFile) createFile("a.jet", text);
+        myFile = (JetFile) JetTestUtils.createFile("a.jet", text, myEnvironment.getProject());
     }
 
-    @Override
     protected String loadFile(final String name) {
         try {
-            final String content = doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
-            myFile = (JetFile) createFile(name, content);
+            final String content = JetTestUtils.doLoadFile(JetParsingTest.getTestDataDir() + "/codegen/", name);
+            myFile = (JetFile) JetTestUtils.createFile(name, content, myEnvironment.getProject());
             return content;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -147,7 +173,7 @@ public abstract class CodegenTestCase extends JetLiteFixture {
                 myEnvironment.getCompilerDependencies());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-        GenerationState state = new GenerationState(getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
+        GenerationState state = new GenerationState(myEnvironment.getProject(), classBuilderFactory, analyzeExhaust, Collections.singletonList(myFile));
         state.compileCorrectFiles(CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

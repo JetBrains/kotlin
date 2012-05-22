@@ -145,7 +145,7 @@ public class JetDiagnosticsTest extends JetLiteFixture {
     public void runTest() throws Exception {
         javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
 
-        String expectedText = doLoadFile(file);
+        String expectedText = JetTestUtils.doLoadFile(file);
 
         List<TestFile> testFileFiles = JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
             @Override

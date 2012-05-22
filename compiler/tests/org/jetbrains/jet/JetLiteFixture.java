@@ -18,14 +18,9 @@ package org.jetbrains.jet;
 
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
@@ -35,10 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
-import org.jetbrains.jet.plugin.JetLanguage;
 import org.junit.Assert;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -100,17 +93,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
-        return doLoadFile(myFullDataPath, name);
-    }
-
-    protected static String doLoadFile(String myFullDataPath, String name) throws IOException {
-        String fullName = myFullDataPath + File.separatorChar + name;
-        return doLoadFile(new File(fullName));
-    }
-
-    protected static String doLoadFile(@NotNull File file) throws IOException {
-        String text = FileUtil.loadFile(file, CharsetToolkit.UTF8).trim();
-        return StringUtil.convertLineSeparators(text);
+        return JetTestUtils.doLoadFile(myFullDataPath, name);
     }
 
     protected JetFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
@@ -118,7 +101,7 @@ public abstract class JetLiteFixture extends UsefulTestCase {
             Assert.assertNotNull(testName);
             fileName = testName + ".jet";
         }
-        return (JetFile) createFile(fileName, text);
+        return (JetFile) JetTestUtils.createFile(fileName, text, myEnvironment.getProject());
     }
 
     protected JetFile loadPsiFile(String name) {
@@ -127,12 +110,6 @@ public abstract class JetLiteFixture extends UsefulTestCase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected PsiFile createFile(@NonNls String name, String text) {
-        LightVirtualFile virtualFile = new LightVirtualFile(name, JetLanguage.INSTANCE, text);
-        virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
-        return ((PsiFileFactoryImpl) PsiFileFactory.getInstance(myEnvironment.getProject())).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
     }
 
     protected static void ensureParsed(PsiFile file) {
