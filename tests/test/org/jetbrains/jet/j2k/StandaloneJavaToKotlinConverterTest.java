@@ -55,7 +55,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         if (!kotlinFile.exists()) {
             FileUtil.writeToFile(kotlinFile, "");
         }
-        final String expected = FileUtil.loadFile(kotlinFile);
+        final String expected = StringUtil.convertLineSeparators(FileUtil.loadFile(kotlinFile));
         final File javaFile = new File(javaPath);
         final String javaCode = FileUtil.loadFile(javaFile);
 
@@ -78,6 +78,8 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
         }
         else if (parentFileName.equals("comp")) actual = fileToFileWithCompatibilityImport(javaCode);
 
+        actual = StringUtil.convertLineSeparators(actual);
+
         assert !actual.isEmpty() : "Specify what is it: file, class, method, statement or expression: " + javaPath + " parent: " + parentFileName;
 
         final File tmp = new File(kotlinPath + ".tmp");
@@ -87,7 +89,7 @@ public class StandaloneJavaToKotlinConverterTest extends TestCase {
             tmp.delete();
         }
 
-        Assert.assertEquals(StringUtil.convertLineSeparators(expected), StringUtil.convertLineSeparators(actual));
+        Assert.assertEquals(expected, actual);
     }
 
     @NotNull
