@@ -146,11 +146,6 @@ public class NamespaceCodegen {
             return JvmClassName.byInternalName(JvmAbi.PACKAGE_CLASS);
         }
 
-        String name = fqName.getFqName().replace('.', '/');
-        if (name.startsWith(JavaDescriptorResolver.JAVA_ROOT)) {
-            name = name.substring(JavaDescriptorResolver.JAVA_ROOT.length() + 1, name.length());
-        }
-        name += "/" + JvmAbi.PACKAGE_CLASS;
-        return JvmClassName.byInternalName(name);
+        return JvmClassName.byInternalName(fqName.getFqName().replace('.', '/') + "/" + JvmAbi.PACKAGE_CLASS);
     }
 }
