@@ -30,6 +30,7 @@ import org.jetbrains.k2js.translate.context.generator.Rule;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 import org.jetbrains.k2js.translate.utils.PredefinedAnnotation;
 
 import java.util.Map;
@@ -201,9 +202,11 @@ public final class StaticContext {
                     }
                     boolean isGetter = descriptor instanceof PropertyGetterDescriptor;
                     String propertyName = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().getName();
-                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter);
+                    String accessorName = Namer.getNameForAccessor(propertyName, isGetter, isEcma5());
                     NamingScope enclosingScope = getEnclosingScope(descriptor);
-                    return enclosingScope.declareObfuscatableName(accessorName);
+                    return isEcma5()
+                           ? enclosingScope.declareUnobfuscatableName(accessorName)
+                           : enclosingScope.declareObfuscatableName(accessorName);
                 }
             };
 
@@ -233,7 +236,7 @@ public final class StaticContext {
                     if (isEcma5()) {
                         String name = descriptor.getName();
                         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                        if (!isDefaultAccessor(propertyDescriptor.getGetter()) || !isDefaultAccessor(propertyDescriptor.getSetter())) {
+                        if (!JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getGetter()) || !JsDescriptorUtils.isDefaultAccessor(propertyDescriptor.getSetter())) {
                             // _ is more preferable than $ should be discussed later
                             name = '_' + name;
                         }
@@ -243,10 +246,6 @@ public final class StaticContext {
                     else {
                         return enclosingScope.declareObfuscatableName(Namer.getKotlinBackingFieldName(descriptor.getName()));
                     }
-                }
-
-                private boolean isDefaultAccessor(PropertyAccessorDescriptor accessorDescriptor) {
-                    return accessorDescriptor == null || accessorDescriptor.isDefault();
                 }
             };
             //TODO: hack!

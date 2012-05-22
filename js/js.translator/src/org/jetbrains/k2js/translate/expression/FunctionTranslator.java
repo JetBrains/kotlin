@@ -130,6 +130,12 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
+    public JsPropertyInitializer translateAsEcma5Accessor() {
+        generateFunctionObject();
+        return TranslationUtils.createJsDescriptor(descriptor, context(), functionObject);
+    }
+
+    @NotNull
     public JsPropertyInitializer translateAsMethod() {
         JsName functionName = context().getNameForElement(functionDeclaration);
         generateFunctionObject();

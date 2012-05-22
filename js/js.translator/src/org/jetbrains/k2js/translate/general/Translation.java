@@ -78,7 +78,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsInvocation translateClassDeclaration(@NotNull JetClass classDeclaration,
+    public static JsExpression translateClassDeclaration(@NotNull JetClass classDeclaration,
             @NotNull Map<JsName, JsName> aliasingMap,
             @NotNull TranslationContext context) {
         return ClassTranslator.generateClassCreationExpression(classDeclaration, aliasingMap, context);
@@ -128,14 +128,14 @@ public final class Translation {
 
     //TODO: see if generate*Initializer methods fit somewhere else
     @NotNull
-    public static JsPropertyInitializer generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
+    public static JsFunction generateClassInitializerMethod(@NotNull JetClassOrObject classDeclaration,
             @NotNull TranslationContext context) {
         final ClassInitializerTranslator classInitializerTranslator = new ClassInitializerTranslator(classDeclaration, context);
         return classInitializerTranslator.generateInitializeMethod();
     }
 
     @NotNull
-    public static JsPropertyInitializer generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
+    public static JsFunction generateNamespaceInitializerMethod(@NotNull NamespaceDescriptor namespace,
             @NotNull TranslationContext context) {
         final NamespaceInitializerTranslator namespaceInitializerTranslator = new NamespaceInitializerTranslator(namespace, context);
         return namespaceInitializerTranslator.generateInitializeMethod();
@@ -167,19 +167,9 @@ public final class Translation {
         JsProgram program = staticContext.getProgram();
         JsBlock block = program.getGlobalBlock();
 
-        JsInvocation invocation = new JsInvocation();
-        invocation.setQualifier(JsAstUtils.thisQualifiedReference(program.getScope().declareName("hasOwnProperty")));
-        JsName ktDefs = program.getScope().declareName("$ktDefs");
-        invocation.getArguments().add(program.getStringLiteral(ktDefs.getIdent()));
-        JsNameRef ktDefsRef = JsAstUtils.thisQualifiedReference(ktDefs);
-        JsConditional conditional = new JsConditional(invocation, ktDefsRef, JsAstUtils.assignment(ktDefsRef, new JsObjectLiteral()));
-
-        JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getRootScope(), conditional);
-        rootFunction.getParameters().add(new JsParameter(ktDefs));
+        JsFunction rootFunction = JsAstUtils.createPackage(block.getStatements(), program.getScope());
         List<JsStatement> statements = rootFunction.getBody().getStatements();
-        if (ecmaVersion == EcmaVersion.v5) {
-            statements.add(program.getStringLiteral("use strict").makeStmt());
-        }
+        statements.add(program.getStringLiteral("use strict").makeStmt());
 
         TranslationContext context = TranslationContext.rootContext(staticContext);
         statements.addAll(translateFiles(files, context));

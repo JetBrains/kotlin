@@ -19,14 +19,18 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyGetterDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertySetterDescriptor;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.FunctionTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,12 +58,19 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     static public List<JsPropertyInitializer> translateAccessors(@NotNull PropertyDescriptor descriptor,
             @NotNull TranslationContext context) {
-        if (context.isEcma5()) {
+        if (context.isEcma5() && !JsDescriptorUtils.hasNonDefaultAccessors(descriptor)) {
             return Collections.emptyList();
         }
 
         PropertyTranslator propertyTranslator = new PropertyTranslator(descriptor, context);
-        return propertyTranslator.translate();
+        List<JsPropertyInitializer> propertyInitializers = propertyTranslator.translate();
+        if (context.isEcma5()) {
+            JsObjectLiteral objectLiteral = new JsObjectLiteral();
+            objectLiteral.getPropertyInitializers().addAll(propertyInitializers);
+            return Collections
+                    .singletonList(new JsPropertyInitializer(context.program().getStringLiteral(descriptor.getName()), objectLiteral));
+        }
+        return propertyInitializers;
     }
 
     private PropertyTranslator(@NotNull PropertyDescriptor property, @NotNull TranslationContext context) {
@@ -123,8 +134,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsPropertyInitializer generateDefaultGetter() {
         PropertyGetterDescriptor getterDescriptor = property.getGetter();
         assert getterDescriptor != null : "Getter descriptor should not be null";
-        return newNamedMethod(context().getNameForDescriptor(getterDescriptor),
-                              generateDefaultGetterFunction(getterDescriptor));
+        return generateDefaultAccessor(getterDescriptor, generateDefaultGetterFunction(getterDescriptor));
     }
 
     @NotNull
@@ -139,8 +149,7 @@ public final class PropertyTranslator extends AbstractTranslator {
     private JsPropertyInitializer generateDefaultSetter() {
         PropertySetterDescriptor setterDescriptor = property.getSetter();
         assert setterDescriptor != null : "Setter descriptor should not be null";
-        return newNamedMethod(context().getNameForDescriptor(setterDescriptor),
-                              generateDefaultSetterFunction(setterDescriptor));
+        return generateDefaultAccessor(setterDescriptor, generateDefaultSetterFunction(setterDescriptor));
     }
 
     @NotNull
@@ -154,6 +163,15 @@ public final class PropertyTranslator extends AbstractTranslator {
         return result;
     }
 
+    private JsPropertyInitializer generateDefaultAccessor(PropertyAccessorDescriptor accessorDescriptor, JsFunction function) {
+        if (context().isEcma5()) {
+            return TranslationUtils.createJsDescriptor(accessorDescriptor, context(), function);
+        }
+        else {
+            return newNamedMethod(context().getNameForDescriptor(accessorDescriptor), function);
+        }
+    }
+
     @NotNull
     private TranslationContext propertyAccessContext(@NotNull PropertySetterDescriptor propertySetterDescriptor) {
         return context().newDeclaration(propertySetterDescriptor);
@@ -161,6 +179,7 @@ public final class PropertyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsPropertyInitializer translateCustomAccessor(@NotNull JetPropertyAccessor expression) {
-        return Translation.functionTranslator(expression, context()).translateAsMethod();
+        FunctionTranslator translator = Translation.functionTranslator(expression, context());
+        return context().isEcma5() ? translator.translateAsEcma5Accessor() : translator.translateAsMethod();
     }
 }

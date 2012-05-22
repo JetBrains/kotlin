@@ -16,12 +16,17 @@
 
 package org.jetbrains.k2js.translate.initializer;
 
+import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsFunction;
 import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer;
+import com.google.dart.compiler.backend.js.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.utils.JsAstUtils;
+
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.assignmentToBackingField;
 
 /**
  * @author Pavel Talanov
@@ -39,4 +44,15 @@ public final class InitializerUtils {
         return initializer;
     }
 
+    @NotNull
+    public static JsStatement generateInitializerForProperty(@NotNull TranslationContext context,
+            @NotNull PropertyDescriptor descriptor,
+            @NotNull JsExpression value) {
+        if (context.isEcma5()) {
+            return JsAstUtils.definePropertyDataDescriptor(descriptor, value, context).makeStmt();
+        }
+        else {
+            return assignmentToBackingField(context, descriptor, value).makeStmt();
+        }
+    }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.k2js.test.rhino.RhinoResultChecker;
 import org.jetbrains.k2js.test.utils.TranslationUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -43,6 +44,8 @@ public abstract class BasicTest extends TestWithEnvironment {
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String KOTLIN_JS_LIB = pathToTestFilesRoot() + "kotlin_lib.js";
+    private static final String KOTLIN_JS_LIB_ECMA_3 = pathToTestFilesRoot() + "kotlin_lib_ecma3.js";
+    private static final String KOTLIN_JS_LIB_ECMA_5 = pathToTestFilesRoot() + "kotlin_lib_ecma5.js";
     private static final String EXPECTED = "expected/";
 
     @NotNull
@@ -86,8 +89,11 @@ public abstract class BasicTest extends TestWithEnvironment {
         assert success;
     }
 
-    protected List<String> additionalJSFiles() {
-        return Collections.singletonList(KOTLIN_JS_LIB);
+    protected List<String> additionalJSFiles(EcmaVersion ecmaVersion) {
+        List<String> list = new ArrayList<String>(2);
+        list.add(ecmaVersion == EcmaVersion.v5 ? KOTLIN_JS_LIB_ECMA_5 : KOTLIN_JS_LIB_ECMA_3);
+        list.add(KOTLIN_JS_LIB);
+        return list;
     }
 
     protected void generateJavaScriptFiles(@NotNull String kotlinFilename,
@@ -105,9 +111,9 @@ public abstract class BasicTest extends TestWithEnvironment {
         }
     }
 
-    protected void runRhinoTests(@NotNull List<String> outputFilePaths, @NotNull RhinoResultChecker checker) throws Exception {
-        for (String outputFilePath : outputFilePaths) {
-            runRhinoTest(withAdditionalFiles(outputFilePath), checker);
+    protected void runRhinoTests(@NotNull String filename, @NotNull Iterable<EcmaVersion> ecmaVersions, @NotNull RhinoResultChecker checker) throws Exception {
+        for (EcmaVersion ecmaVersion : ecmaVersions) {
+            runRhinoTest(withAdditionalFiles(getOutputFilePath(filename, ecmaVersion), ecmaVersion), checker);
         }
     }
 
@@ -150,8 +156,8 @@ public abstract class BasicTest extends TestWithEnvironment {
     }
 
     @NotNull
-    protected List<String> withAdditionalFiles(@NotNull String inputFile) {
-        List<String> allFiles = Lists.newArrayList(additionalJSFiles());
+    protected List<String> withAdditionalFiles(@NotNull String inputFile, EcmaVersion ecmaVersion) {
+        List<String> allFiles = Lists.newArrayList(additionalJSFiles(ecmaVersion));
         allFiles.add(inputFile);
         return allFiles;
     }

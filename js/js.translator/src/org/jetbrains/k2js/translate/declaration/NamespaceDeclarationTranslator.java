@@ -88,7 +88,7 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     private List<JsStatement> namespacesDeclarations() {
         List<JsStatement> result = Lists.newArrayList();
         List<NamespaceTranslator> namespaceTranslators = getTranslatorsForNonEmptyNamespaces();
-        result.addAll(declarationStatements(namespaceTranslators, context().program()));
+        result.addAll(declarationStatements(namespaceTranslators, context()));
         result.addAll(initializeStatements(namespaceTranslators));
         return result;
     }
@@ -103,10 +103,10 @@ public final class NamespaceDeclarationTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators, JsProgram program) {
+    private static List<JsStatement> declarationStatements(@NotNull List<NamespaceTranslator> namespaceTranslators, TranslationContext context) {
         List<JsStatement> result = Lists.newArrayList();
 
-        final JsNameRef defs = program.getScope().declareName("$ktDefs").makeRef();
+        JsNameRef defs = JsAstUtils.qualified(context.jsScope().declareName("defs"), context.namer().kotlinObject());
         for (NamespaceTranslator translator : namespaceTranslators) {
             JsVars vars = translator.getDeclarationAsVar();
 

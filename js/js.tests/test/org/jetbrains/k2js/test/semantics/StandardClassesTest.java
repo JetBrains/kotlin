@@ -18,8 +18,6 @@ package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
-
 /**
  * @author Pavel Talanov
  */
@@ -45,7 +43,7 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
 
 
     public void testArrayFunctionConstructor() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
 
@@ -62,6 +60,6 @@ public final class StandardClassesTest extends SingleFileTranslationTest {
 
 
     public void testArraysIterator() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 }

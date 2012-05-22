@@ -42,14 +42,13 @@ public final class NamespaceInitializerTranslator {
     }
 
     @NotNull
-    public JsPropertyInitializer generateInitializeMethod() {
+    public JsFunction generateInitializeMethod() {
         JsFunction result = JsAstUtils.createFunctionWithEmptyBody(namespaceContext.jsScope());
         TranslationContext namespaceInitializerContext
                 = namespaceContext.innerContextWithGivenScopeAndBlock(result.getScope(), result.getBody());
 
-        List<JsStatement> initializerStatements = (InitializerVisitor.create(namespaceContext)).traverseNamespace(namespace,
-                                                                                                                  namespaceInitializerContext);
+        List<JsStatement> initializerStatements = (new InitializerVisitor()).traverseNamespace(namespace, namespaceInitializerContext);
         result.getBody().getStatements().addAll(initializerStatements);
-        return InitializerUtils.generateInitializeMethod(result);
+        return result;
     }
 }

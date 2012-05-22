@@ -46,6 +46,8 @@ public final class RhinoUtils {
     public static void runRhinoTest(@NotNull List<String> fileNames,
                                     @NotNull RhinoResultChecker checker) throws Exception {
         Context context = Context.enter();
+        context.setLanguageVersion(Context.VERSION_1_8);
+
         Scriptable scope = context.initStandardObjects();
         for (String filename : fileNames) {
             runFileWithRhino(filename, context, scope);

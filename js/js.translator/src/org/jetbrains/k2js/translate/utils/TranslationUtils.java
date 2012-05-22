@@ -46,6 +46,24 @@ public final class TranslationUtils {
     }
 
     @NotNull
+    public static JsPropertyInitializer createJsDescriptor(@NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context,
+            @NotNull JsFunction function) {
+        final JsExpression labelExpr;
+        if (descriptor instanceof PropertyGetterDescriptor) {
+            // so, will have param
+            labelExpr = descriptor.getReceiverParameter().exists()
+                        ? context.program().getStringLiteral("value")
+                        : context.program().getStringLiteral("get");
+        }
+        else {
+            labelExpr = context.program().getStringLiteral("set");
+        }
+
+        return new JsPropertyInitializer(labelExpr, function);
+    }
+
+    @NotNull
     public static JsBinaryOperation notNullCheck(@NotNull TranslationContext context,
                                                  @NotNull JsExpression expressionToCheck) {
         JsNullLiteral nullLiteral = context.program().getNullLiteral();

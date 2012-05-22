@@ -16,9 +16,10 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-import static org.jetbrains.k2js.test.utils.JsTestUtils.failsOnEcmaV5;
+import java.util.EnumSet;
 
 /**
  * @author Pavel Talanov
@@ -30,14 +31,14 @@ public final class ExtensionPropertyTest extends SingleFileTranslationTest {
     }
 
     public void testSimplePropertyWithGetter() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 
     public void testPropertyWithGetterAndSetter() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest(EnumSet.of(EcmaVersion.v3));
     }
 
     public void testAbsExtension() throws Exception {
-        fooBoxTest(failsOnEcmaV5());
+        fooBoxTest();
     }
 }

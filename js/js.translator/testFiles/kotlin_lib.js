@@ -1,227 +1,7 @@
-/**
- * Copyright 2010 Tim Down.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*  Prototype JavaScript framework, version 1.6.1
- *  (c) 2005-2009 Sam Stephenson
- *
- *  Prototype is freely distributable under the terms of an MIT-style license.
- *  For details, see the Prototype web site: http://www.prototypejs.org/
- *
- *--------------------------------------------------------------------------*/
-var Kotlin;
 (function () {
     "use strict";
-    function $A(iterable) {
-        if (!iterable) return [];
-        if ('toArray' in Object(iterable)) return iterable.toArray();
-        var length = iterable.length || 0, results = new Array(length);
-        while (length--) results[length] = iterable[length];
-        return results;
-    }
 
-    (function () {
-
-
-        function extend(destination, source) {
-            for (var property in source)
-                destination[property] = source[property];
-            return destination;
-        }
-
-
-        function keys(object) {
-            var results = [];
-            for (var property in object) {
-                if (object.hasOwnProperty(property)) {
-                    results.push(property);
-                }
-            }
-            return results;
-        }
-
-        function values(object) {
-            var results = [];
-            for (var property in object)
-                results.push(object[property]);
-            return results;
-        }
-
-        extend(Object, {
-            extend:extend,
-            keys:Object.keys || keys,
-            values:values
-        });
-    })();
-
-
-    Object.extend(Function.prototype, (function () {
-        var slice = Array.prototype.slice;
-
-        function update(array, args) {
-            var arrayLength = array.length, length = args.length;
-            while (length--) array[arrayLength + length] = args[length];
-            return array;
-        }
-
-        function merge(array, args) {
-            array = slice.call(array, 0);
-            return update(array, args);
-        }
-
-        function argumentNames() {
-            var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
-                    .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
-                    .replace(/\s+/g, '').split(',');
-            return names.length == 1 && !names[0] ? [] : names;
-        }
-
-        function bind(context) {
-            if (arguments.length < 2 && Object.isUndefined(arguments[0])) return this;
-            var __method = this, args = slice.call(arguments, 1);
-            return function () {
-                var a = merge(args, arguments);
-                return __method.apply(context, a);
-            };
-        }
-
-        function bindAsEventListener(context) {
-            var __method = this, args = slice.call(arguments, 1);
-            return function (event) {
-                var a = update([event || window.event], args);
-                return __method.apply(context, a);
-            };
-        }
-
-        function wrap(wrapper) {
-            var __method = this;
-            return function () {
-                var a = update([__method.bind(this)], arguments);
-                return wrapper.apply(this, a);
-            };
-        }
-
-        return {
-            argumentNames:argumentNames,
-            bind:bind,
-            bindAsEventListener:bindAsEventListener,
-            wrap:wrap
-        };
-    })());
-
-    var isType = function (object, klass) {
-        var current = object.get_class();
-        while (current !== klass) {
-            if (current === null) {
-                return false;
-            }
-            current = current.superclass;
-        }
-        return true;
-    };
-
-    var emptyFunction = function () {
-    };
-
-    var Class = (function () {
-
-        function subclass() {
-        }
-
-        function create() {
-            var parent = null, properties = $A(arguments);
-            if (typeof (properties[0]) == "function") {
-                parent = properties.shift();
-            }
-
-            function klass() {
-                this.initializing = klass;
-                this.initialize.apply(this, arguments);
-            }
-
-            Object.extend(klass, Class.Methods);
-            klass.superclass = parent;
-            klass.subclasses = [];
-
-            if (parent) {
-                subclass.prototype = parent.prototype;
-                klass.prototype = new subclass();
-                parent.subclasses.push(klass);
-            }
-
-            klass.addMethods(
-                    {
-                        get_class:function () {
-                            return klass;
-                        }
-                    });
-
-            if (parent !== null) {
-                klass.addMethods(
-                        {
-                            super_init:function () {
-                                this.initializing = this.initializing.superclass;
-                                this.initializing.prototype.initialize.apply(this, arguments);
-                            }
-                        });
-            }
-
-            for (var i = 0, length = properties.length; i < length; i++)
-                klass.addMethods(properties[i]);
-
-            if (!klass.prototype.initialize) {
-                klass.prototype.initialize = emptyFunction;
-            }
-
-            klass.prototype.constructor = klass;
-            return klass;
-        }
-
-        function addMethods(source) {
-            var ancestor = this.superclass && this.superclass.prototype,
-                    properties = Object.keys(source);
-
-
-            for (var i = 0, length = properties.length; i < length; i++) {
-                var property = properties[i], value = source[property];
-                if (ancestor && (typeof (value) == "function") &&
-                    value.argumentNames()[0] == "$super") {
-                    var method = value;
-                    value = (function (m) {
-                        return function () {
-                            return ancestor[m].apply(this, arguments);
-                        };
-                    })(property).wrap(method);
-
-                }
-                this.prototype[property] = value;
-            }
-
-            return this;
-        }
-
-        return {
-            create:create,
-            Methods:{
-                addMethods:addMethods
-            }
-        };
-    })();
-
-    var Trait = (function () {
-
+    Kotlin.createTrait = (function () {
         function add(object, source) {
             var properties = Object.keys(source);
             for (var i = 0, length = properties.length; i < length; i++) {
@@ -232,48 +12,20 @@ var Kotlin;
             return this;
         }
 
-        function create() {
+        return function () {
             var result = {};
             for (var i = 0, length = arguments.length; i < length; i++) {
                 add(result, arguments[i]);
             }
             return result;
         }
-
-        return {
-            create:create
-        };
     })();
 
-
-    var Namespace = (function () {
-
-        function create() {
-            return Trait.create.apply(Trait, arguments);
-        }
-
-        return {
-            create:create
+    if (!Kotlin.createNamespace) {
+        Kotlin.createNamespace = function () {
+            return Kotlin.createTrait.apply(null, arguments);
         };
-    })();
-
-    var object = (function () {
-        function create() {
-            var singletonClass = Class.create.apply(Class, arguments);
-            return new singletonClass();
-        }
-
-        return {
-            create:create
-        };
-    })();
-
-    Kotlin = {};
-    Kotlin.Class = Class;
-    Kotlin.Namespace = Namespace;
-    Kotlin.Trait = Trait;
-    Kotlin.isType = isType;
-    Kotlin.object = object;
+    }
 
     Kotlin.equals = function (obj1, obj2) {
         if (typeof obj1 == "object") {
@@ -284,12 +36,12 @@ var Kotlin;
         return (obj1 === obj2);
     };
 
+    Kotlin.defs = {};
     Kotlin.Exceptions = {};
-    Kotlin.Exception = Kotlin.Class.create();
+    Kotlin.Exception = Kotlin.$createClass();
     Kotlin.Exceptions.IndexOutOfBounds = {};
 
-
-    Kotlin.ArrayList = Class.create({
+    Kotlin.ArrayList = Kotlin.$createClass({
         initialize:function () {
             this.array = [];
             this.$size = 0;
@@ -310,7 +62,7 @@ var Kotlin;
             return this.$size;
         },
         iterator:function () {
-            return new Kotlin.ArrayIterator(this);
+            return Kotlin.$new(Kotlin.ArrayIterator)(this);
         },
         isEmpty:function () {
             return (this.$size === 0);
@@ -320,7 +72,7 @@ var Kotlin;
         },
         addAll:function (collection) {
             var it = collection.iterator();
-            while (it.hasNext()) {
+            while (it.get_hasNext()) {
                 this.add(it.next());
             }
         },
@@ -411,20 +163,20 @@ var Kotlin;
         Kotlin.System.out().print(s);
     };
 
-    Kotlin.AbstractFunctionInvocationError = Class.create();
+    Kotlin.AbstractFunctionInvocationError = Kotlin.$createClass();
 
-    Kotlin.Iterator = Class.create({
+    Kotlin.Iterator = Kotlin.$createClass({
         initialize:function () {
         },
         next:function () {
-            throw new Kotlin.AbstractFunctionInvocationError();
+            throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
         },
-        hasNext:function () {
-            throw new Kotlin.AbstractFunctionInvocationError();
+        get_hasNext:function () {
+            throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
         }
     });
 
-    Kotlin.ArrayIterator = Class.create(Kotlin.Iterator, {
+    Kotlin.ArrayIterator = Kotlin.$createClass(Kotlin.Iterator, {
         initialize:function (array) {
             this.array = array;
             this.index = 0;
@@ -436,11 +188,11 @@ var Kotlin;
             return (this.array.size() > this.index);
         },
         get_hasNext:function () {
-            return this.hasNext();
+            return (this.array.size() > this.index);
         }
     });
 
-    Kotlin.RangeIterator = Kotlin.Class.create(Kotlin.Iterator, {
+    Kotlin.RangeIterator = Kotlin.$createClass(Kotlin.Iterator, {
         initialize:function (start, count, reversed) {
             this.$start = start;
             this.$count = count;
@@ -475,7 +227,7 @@ var Kotlin;
         }
     });
 
-    Kotlin.NumberRange = Kotlin.Class.create({initialize:function (start, size, reversed) {
+    Kotlin.NumberRange = Kotlin.$createClass({initialize:function (start, size, reversed) {
         this.$start = start;
         this.$size = size;
         this.$reversed = reversed;
@@ -495,22 +247,22 @@ var Kotlin;
             return number >= this.get_start() && number < this.get_start() + this.get_size();
         }
     }, iterator:function () {
-        return new Kotlin.RangeIterator(this.get_start(), this.get_size(), this.get_reversed());
+        return Kotlin.$new(Kotlin.RangeIterator)(this.get_start(), this.get_size(), this.get_reversed());
     }
     });
 
-    Kotlin.Comparator = Kotlin.Class.create(
+    Kotlin.Comparator = Kotlin.$createClass(
             {
                 initialize:function () {
                 },
                 compare:function (el1, el2) {
-                    throw new Kotlin.AbstractFunctionInvocationError();
+                    throw Kotlin.$new(Kotlin.AbstractFunctionInvocationError)();
                 }
             }
     );
 
     Kotlin.comparator = function (f) {
-        var result = new Kotlin.Comparator();
+        var result = Kotlin.$new(Kotlin.Comparator)();
         result.compare = function (el1, el2) {
             return f(el1, el2);
         };
@@ -524,7 +276,7 @@ var Kotlin;
             throw Kotlin.Exception();
         }
         var max = it.next();
-        while (it.hasNext()) {
+        while (it.get_hasNext()) {
             var el = it.next();
             if (comp.compare(max, el) < 0) {
                 max = el;
@@ -533,7 +285,7 @@ var Kotlin;
         return max;
     };
 
-    Kotlin.StringBuilder = Kotlin.Class.create(
+    Kotlin.StringBuilder = Kotlin.$createClass(
             {
                 initialize:function () {
                     this.string = "";
@@ -570,10 +322,10 @@ var Kotlin;
     };
 
     Kotlin.arrayIndices = function (arr) {
-        return new Kotlin.NumberRange(0, arr.length);
+        return Kotlin.$new(Kotlin.NumberRange)(0, arr.length);
     };
 
-    var intrinsicArrayIterator = Kotlin.Class.create(
+    var intrinsicArrayIterator = Kotlin.$createClass(
             Kotlin.Iterator,
             {
                 initialize:function (arr) {
@@ -588,13 +340,13 @@ var Kotlin;
                     return this.arr[this.i++];
                 },
                 get_hasNext:function () {
-                    return this.hasNext();
+                    return (this.i < this.len);
                 }
             }
     );
 
     Kotlin.arrayIterator = function (arr) {
-        return new intrinsicArrayIterator(arr);
+        return Kotlin.$new(intrinsicArrayIterator)(arr);
     };
 
     Kotlin.toString = function (obj) {
@@ -918,7 +670,7 @@ var Kotlin;
             this.values = function() {
                 var values = this._values();
                 var i = values.length
-                var result = new Kotlin.ArrayList();
+                var result = Kotlin.$new(Kotlin.ArrayList)();
                 while (--i) {
                     result.add(values[i]);
                 }
@@ -990,7 +742,7 @@ var Kotlin;
             };
 
             this.keySet = function () {
-                var res = new Kotlin.HashSet();
+                var res = Kotlin.$new(Kotlin.HashSet)();
                 var keys = this._keys();
                 var i = keys.length;
                 while (i--) {
@@ -1003,7 +755,7 @@ var Kotlin;
         Kotlin.HashTable = Hashtable;
     })();
 
-    Kotlin.HashMap = Kotlin.Class.create(
+    Kotlin.HashMap = Kotlin.$createClass(
             {
                 initialize:function () {
                     Kotlin.HashTable.call(this);
@@ -1032,7 +784,7 @@ var Kotlin;
             };
 
             this.iterator = function () {
-                var list = new Kotlin.ArrayList();
+                var list = Kotlin.$new(Kotlin.ArrayList)();
                 var values = this.values();
                 var i = values.length;
                 while (i--) {
@@ -1102,7 +854,7 @@ var Kotlin;
             };
         }
 
-        Kotlin.HashSet = Kotlin.Class.create(
+        Kotlin.HashSet = Kotlin.$createClass(
                 {
                     initialize:function () {
                         HashSet.call(this);
@@ -1110,5 +862,4 @@ var Kotlin;
                 }
         );
     }());
-
 })();

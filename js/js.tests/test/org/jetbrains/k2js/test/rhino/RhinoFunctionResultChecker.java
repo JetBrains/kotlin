@@ -57,7 +57,7 @@ public final class RhinoFunctionResultChecker implements RhinoResultChecker {
     private String functionCallString() {
         String result = functionName + "()";
         if (namespaceName != null) {
-            result = "$ktDefs." + namespaceName + "." + result;
+            result = "Kotlin.defs." + namespaceName + "." + result;
         }
         return result;
     }

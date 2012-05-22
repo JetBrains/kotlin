@@ -280,4 +280,12 @@ public final class JsDescriptorUtils {
         }
         return null;
     }
+
+    public static boolean isDefaultAccessor(@Nullable PropertyAccessorDescriptor accessorDescriptor) {
+        return accessorDescriptor == null || accessorDescriptor.isDefault();
+    }
+
+    public static boolean hasNonDefaultAccessors(@NotNull PropertyDescriptor propertyDescriptor) {
+        return !isDefaultAccessor(propertyDescriptor.getGetter()) || !isDefaultAccessor(propertyDescriptor.getSetter());
+    }
 }

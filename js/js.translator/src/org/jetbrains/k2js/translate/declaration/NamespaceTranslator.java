@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.general.Translation;
+import org.jetbrains.k2js.translate.initializer.InitializerUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
 import java.util.ArrayList;
@@ -70,7 +71,20 @@ public final class NamespaceTranslator extends AbstractTranslator {
     @NotNull
     private JsInvocation getNamespaceDeclaration() {
         JsInvocation namespaceDeclaration = namespaceCreateMethodInvocation();
-        namespaceDeclaration.getArguments().add(translateNamespaceMemberDeclarations());
+
+        JsFunction initializer = Translation.generateNamespaceInitializerMethod(descriptor, context());
+        List<JsPropertyInitializer> properties = new DeclarationBodyVisitor().traverseNamespace(descriptor, context());
+        if (context().isEcma5()) {
+            namespaceDeclaration.getArguments().add(initializer);
+            namespaceDeclaration.getArguments().add(newObjectLiteral(properties));
+        }
+        else {
+            List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
+            propertyList.add(InitializerUtils.generateInitializeMethod(initializer));
+            propertyList.addAll(properties);
+            namespaceDeclaration.getArguments().add(newObjectLiteral(propertyList));
+        }
+
         namespaceDeclaration.getArguments().add(getClassesAndNestedNamespaces());
         return namespaceDeclaration;
     }
@@ -107,13 +121,5 @@ public final class NamespaceTranslator extends AbstractTranslator {
             result.add(nestedNamespaceTranslator.getDeclarationAsInitializer());
         }
         return result;
-    }
-
-    @NotNull
-    private JsObjectLiteral translateNamespaceMemberDeclarations() {
-        List<JsPropertyInitializer> propertyList = new ArrayList<JsPropertyInitializer>();
-        propertyList.add(Translation.generateNamespaceInitializerMethod(descriptor, context()));
-        propertyList.addAll(new DeclarationBodyVisitor().traverseNamespace(descriptor, context()));
-        return newObjectLiteral(propertyList);
     }
 }
