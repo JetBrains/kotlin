@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.plugin.k2jsrun;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.*;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.plugin.JetIcons;
 
@@ -43,7 +40,7 @@ public final class K2JSRunConfigurationType extends ConfigurationTypeBase {
 
         @Override
         public RunConfiguration createTemplateConfiguration(Project project) {
-            return new K2JSRunConfiguration("Kotlin to JavaScript", project, this);
+            return new K2JSRunConfiguration("Kotlin to JavaScript", new RunConfigurationModule(project), this);
         }
     }
 }

@@ -71,7 +71,7 @@ public class DelegationResolver {
                         if (declarationDescriptor instanceof PropertyDescriptor) {
                             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) declarationDescriptor;
                             if (propertyDescriptor.getModality().isOverridable()) {
-                                PropertyDescriptor copy = propertyDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
+                                PropertyDescriptor copy = propertyDescriptor.copy(classDescriptor, true, false, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.getBuilder().addPropertyDescriptor(copy);
                                 trace.record(DELEGATED, copy);
                             }
@@ -79,7 +79,7 @@ public class DelegationResolver {
                         else if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
                             SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) declarationDescriptor;
                             if (functionDescriptor.getModality().isOverridable()) {
-                                SimpleFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, CallableMemberDescriptor.Kind.DELEGATION, true);
+                                SimpleFunctionDescriptor copy = functionDescriptor.copy(classDescriptor, true, false, CallableMemberDescriptor.Kind.DELEGATION, true);
                                 classDescriptor.getBuilder().addFunctionDescriptor(copy);
                                 trace.record(DELEGATED, copy);
                             }

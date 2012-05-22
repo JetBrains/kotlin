@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetObjectLiteralExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.utils.Progress;
 
 import java.util.List;
@@ -91,10 +92,6 @@ public class GenerationState {
         return classBuilderMode;
     }
 
-    public ClassCodegen forClass() {
-        return new ClassCodegen(this);
-    }
-
     public ClassBuilder forClassImplementation(ClassDescriptor aClass) {
         return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.IMPL).getInternalName() + ".class");
     }
@@ -103,8 +100,8 @@ public class GenerationState {
         return getFactory().newVisitor(getInjector().getJetTypeMapper().mapType(aClass.getDefaultType(), MapTypeMode.TRAIT_IMPL).getInternalName() + ".class");
     }
 
-    public Pair<String, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
-        String className = getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+    public Pair<JvmClassName, ClassBuilder> forAnonymousSubclass(JetExpression expression) {
+        JvmClassName className = getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
         return Pair.create(className, getFactory().forAnonymousSubclass(className));
     }
 
@@ -141,7 +138,7 @@ public class GenerationState {
 
     public GeneratedAnonymousClassDescriptor generateObjectLiteral(JetObjectLiteralExpression literal, ObjectOrClosureCodegen closure) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
-        Pair<String, ClassBuilder> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
+        Pair<JvmClassName, ClassBuilder> nameAndVisitor = forAnonymousSubclass(objectDeclaration);
 
         closure.cv = nameAndVisitor.getSecond();
         closure.name = nameAndVisitor.getFirst();

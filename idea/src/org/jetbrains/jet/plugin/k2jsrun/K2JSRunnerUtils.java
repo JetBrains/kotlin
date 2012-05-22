@@ -54,10 +54,7 @@ public final class K2JSRunnerUtils {
         }
         String pathToGeneratedJsFile = constructPathToGeneratedFile(project, outputDir.getPath());
         try {
-            File fileToCopy = new File(pathToGeneratedJsFile);
-            File dirToCopyTo = new File(configurationSettings.getGeneratedFilePath());
-            File fileToCopyTo = new File(dirToCopyTo, fileToCopy.getName());
-            FileUtil.copy(fileToCopy, fileToCopyTo);
+            copyFileToDir(new File(pathToGeneratedJsFile), new File(configurationSettings.getGeneratedFilePath()));
         }
         catch (IOException e) {
             throw new RuntimeException("Output JavaScript file was not generated or missing.", e);
@@ -71,7 +68,7 @@ public final class K2JSRunnerUtils {
     }
 
     @NotNull
-    private static Module getJsModule(@NotNull Project project) {
+    public static Module getJsModule(@NotNull Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
         if (modules.length != 1) {
             throw new UnsupportedOperationException("Kotlin to JavaScript translator temporarily does not support multiple modules.");
@@ -93,5 +90,10 @@ public final class K2JSRunnerUtils {
         RunProfile profile = state.getRunnerSettings().getRunProfile();
         assert profile instanceof K2JSRunConfiguration;
         return ((K2JSRunConfiguration) profile).settings();
+    }
+
+    //TODO: this method does not really belong here, but dunno where it should be
+    public static void copyFileToDir(@NotNull File file, @NotNull File dir) throws IOException {
+        FileUtil.copy(file, new File(dir, file.getName()));
     }
 }

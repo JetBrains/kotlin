@@ -2,17 +2,17 @@ package abstract
 
 class MyClass() {
     //properties
-    val <error>a</error>: Int
+    <error>val a: Int</error>
     val a1: Int = 1
     <error>abstract</error> val a2: Int
     <error>abstract</error> val a3: Int = 1
 
-    var <error>b</error>: Int                private set
+    <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
     <error>abstract</error> var b2: Int      private set
     <error>abstract</error> var b3: Int = 0; private set
 
-    var <error>c</error>: Int                set(v: Int) { $c = v }
+    <error>var c: Int</error>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
     <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
     <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
@@ -23,7 +23,7 @@ class MyClass() {
     <error>abstract</error> val e3: Int = 0; get() = a
 
     //methods
-    fun <error>f</error>()
+    <error>fun f()</error>
     fun g() {}
     <error>abstract</error> fun h()
     <error><error>abstract</error></error> fun j() {}
@@ -31,17 +31,17 @@ class MyClass() {
 
 abstract class MyAbstractClass() {
     //properties
-    val <error>a</error>: Int
+    <error>val a: Int</error>
     val a1: Int = 1
     abstract val a2: Int
     abstract val a3: Int = <error>1</error>
 
-    var <error>b</error>: Int                private set
+    <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
     abstract var b2: Int      private set
     abstract var b3: Int = <error>0</error>; private set
 
-    var <error>c</error>: Int                set(v: Int) { $c = v }
+    <error>var c: Int</error>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
     abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
     abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
@@ -52,7 +52,7 @@ abstract class MyAbstractClass() {
     abstract val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
-    fun <error>f</error>()
+    <error>fun f()</error>
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
@@ -70,8 +70,8 @@ trait MyTrait {
     <warning>abstract</warning> var b2: Int                     private set
     <warning>abstract</warning> var b3: Int = <error>0</error>; private set
 
-    var <error>c</error>: Int                                   set(v: Int) { $c = v }
-    var <error>c1</error>: Int = <error>0</error>;              set(v: Int) { $c1 = v }
+    <error>var c: Int</error>                                   set(v: Int) { $c = v }
+    <error>var c1: Int</error> = <error>0</error>;              set(v: Int) { $c1 = v }
     <warning>abstract</warning> var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
     <warning>abstract</warning> var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
 
@@ -89,17 +89,17 @@ trait MyTrait {
 
 enum class MyEnum() {
     //properties
-    val <error>a</error>: Int
+    <error>val a: Int</error>
     val a1: Int = 1
     abstract val a2: Int
     abstract val a3: Int = <error>1</error>
 
-    var <error>b</error>: Int                private set
+    <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
     abstract var b2: Int      private set
     abstract var b3: Int = <error>0</error>; private set
 
-    var <error>c</error>: Int                set(v: Int) { $c = v }
+    <error>var c: Int</error>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
     abstract var c2: Int                     <error>set(v: Int) { $c2 = v }</error>
     abstract var c3: Int = <error>0</error>; <error>set(v: Int) { $c3 = v }</error>
@@ -110,7 +110,7 @@ enum class MyEnum() {
     abstract val e3: Int = <error>0</error>; <error>get() = a</error>
 
     //methods
-    fun <error>f</error>()
+    <error>fun f()</error>
     fun g() {}
     abstract fun h()
     <error>abstract</error> fun j() {}
@@ -120,17 +120,17 @@ abstract enum class MyAbstractEnum() {}
 
 //package MyNamespace {
     //properties
-    val <error>a</error>: Int
+    <error>val a: Int</error>
     val a1: Int = 1
     <error>abstract</error> val a2: Int
     <error>abstract</error> val a3: Int = 1
 
-    var <error>b</error>: Int                private set
+    <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
     <error>abstract</error> var b2: Int      private set
     <error>abstract</error> var b3: Int = 0; private set
 
-    var <error>c</error>: Int                set(v: Int) { $c = v }
+    <error>var c: Int</error>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
     <error>abstract</error> var c2: Int      set(v: Int) { $c2 = v }
     <error>abstract</error> var c3: Int = 0; set(v: Int) { $c3 = v }
@@ -141,7 +141,7 @@ abstract enum class MyAbstractEnum() {}
     <error>abstract</error> val e3: Int = 0; get() = a
 
     //methods
-    fun <error>f</error>()
+    <error>fun f()</error>
     fun g() {}
     <error>abstract</error> fun h()
     <error>abstract</error> fun j() {}

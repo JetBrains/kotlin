@@ -67,7 +67,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
             JetElement owner = PsiTreeUtil.getParentOfType(function, JetFunction.class, JetClass.class);
 
             if (owner instanceof JetClass) {
-                JetLightClass delegate = wrapDelegate((JetClass) owner);
+                JetLightClass delegate = JetLightClass.wrapDelegate((JetClass) owner);
                 for (PsiMethod method : delegate.getMethods()) {
                     if (method.getNavigationElement() == function) {
                         Location<PsiMethod> methodLocation = PsiLocation.fromPsiElement(method);
@@ -97,7 +97,7 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
 
         if (jetClass != null) {
             myElement = jetClass;
-            PsiClass delegate = wrapDelegate(jetClass);
+            PsiClass delegate = JetLightClass.wrapDelegate(jetClass);
 
             if (JUnitUtil.isTestClass(delegate)) {
                 RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(context.getProject(), context);
@@ -134,10 +134,6 @@ public class JetJUnitConfigurationProducer extends RuntimeConfigurationProducer 
         }
 
         return tempSingleDeclaration;
-    }
-
-    private static JetLightClass wrapDelegate(JetClass jetClass) {
-        return new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
     }
 
     @Override

@@ -42,4 +42,6 @@ public interface Diagnostic {
 
     @NotNull
     PsiFile getPsiFile();
+
+    boolean isValid();
 }

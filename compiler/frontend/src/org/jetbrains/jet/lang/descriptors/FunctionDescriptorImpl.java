@@ -183,11 +183,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, true, true, getKind());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, true, true, getKind());
     }
 
     protected FunctionDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
-            DeclarationDescriptor newOwner, Modality newModality, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
+            DeclarationDescriptor newOwner, Modality newModality, Visibility newVisibility, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, preserveOriginal, kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
@@ -227,7 +227,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorImpl i
                 substitutedValueParameters,
                 substitutedReturnType,
                 newModality,
-                visibility
+                newVisibility
         );
         if (copyOverrides) {
             for (FunctionDescriptor overriddenFunction : overriddenFunctions) {

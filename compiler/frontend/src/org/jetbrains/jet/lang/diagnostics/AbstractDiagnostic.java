@@ -16,20 +16,24 @@
 
 package org.jetbrains.jet.lang.diagnostics;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author svtk
  */
 public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
     private final E psiElement;
-    private final AbstractDiagnosticFactory factory;
+    private final DiagnosticFactoryWithPsiElement<E> factory;
     private final Severity severity;
 
     public AbstractDiagnostic(@NotNull E psiElement,
-            @NotNull AbstractDiagnosticFactory factory,
+            @NotNull DiagnosticFactoryWithPsiElement<E> factory,
             @NotNull Severity severity) {
         this.psiElement = psiElement;
         this.factory = factory;
@@ -38,7 +42,7 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
 
     @NotNull
     @Override
-    public AbstractDiagnosticFactory getFactory() {
+    public DiagnosticFactoryWithPsiElement<E> getFactory() {
         return factory;
     }
 
@@ -58,5 +62,30 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
     @NotNull
     public E getPsiElement() {
         return psiElement;
+    }
+
+    @Override
+    @NotNull
+    public List<TextRange> getTextRanges() {
+        return getFactory().getTextRanges(this);
+    }
+
+    @Override
+    public boolean isValid() {
+        if (!getFactory().isValid(this)) return false;
+        if (hasSyntaxErrors(psiElement)) return false;
+        return true;
+    }
+
+    private static boolean hasSyntaxErrors(@NotNull PsiElement psiElement) {
+        if (psiElement instanceof PsiErrorElement) return true;
+
+        PsiElement lastChild = psiElement.getLastChild();
+        if (lastChild != null && hasSyntaxErrors(lastChild)) return true;
+
+        PsiElement[] children = psiElement.getChildren();
+        if (children.length > 0 && hasSyntaxErrors(children[children.length - 1])) return true;
+
+        return false;
     }
 }

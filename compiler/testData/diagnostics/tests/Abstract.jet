@@ -1,17 +1,17 @@
 // FILE: b.kt
 package MyNamespace
     //properties
-    val <!MUST_BE_INITIALIZED!>a<!>: Int
+    <!MUST_BE_INITIALIZED!>val a: Int<!>
     val a1: Int = 1
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val a2: Int
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val a3: Int = 1
 
-    var <!MUST_BE_INITIALIZED!>b<!>: Int                private set
+    <!MUST_BE_INITIALIZED!>var b: Int<!>                private set
     var b1: Int = 0;                         private set
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var b2: Int      private set
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var b3: Int = 0; private set
 
-    var <!MUST_BE_INITIALIZED!>c<!>: Int                set(v: Int) { $c = v }
+    <!MUST_BE_INITIALIZED!>var c: Int<!>                set(v: Int) { $c = v }
     var c1: Int = 0;                         set(v: Int) { $c1 = v }
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var c2: Int      set(v: Int) { $c2 = v }
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> var c3: Int = 0; set(v: Int) { $c3 = v }
@@ -22,7 +22,7 @@ package MyNamespace
     <!ABSTRACT_PROPERTY_NOT_IN_CLASS!>abstract<!> val e3: Int = 0; get() = a
 
     //methods
-    fun <!NON_MEMBER_FUNCTION_NO_BODY!>f<!>()
+    <!NON_MEMBER_FUNCTION_NO_BODY!>fun f()<!>
     fun g() {}
     <!NON_MEMBER_ABSTRACT_FUNCTION!>abstract<!> fun h()
     <!NON_MEMBER_ABSTRACT_FUNCTION!>abstract<!> fun j() {}
@@ -34,7 +34,7 @@ package MyNamespace
     var j: Int                       get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
     var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    <!ILLEGAL_MODIFIER!>abstract<!> set
 
-    var <!MUST_BE_INITIALIZED!>k<!>: Int        <!ILLEGAL_MODIFIER!>abstract<!> set
+    <!MUST_BE_INITIALIZED!>var k: Int<!>        <!ILLEGAL_MODIFIER!>abstract<!> set
     var k1: Int = 0;                 <!ILLEGAL_MODIFIER!>abstract<!> set
 
     var l: Int                       <!ILLEGAL_MODIFIER!>abstract<!> get  <!ILLEGAL_MODIFIER!>abstract<!> set

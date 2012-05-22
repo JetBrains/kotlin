@@ -752,10 +752,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         final GeneratedAnonymousClassDescriptor closure = closureCodegen.gen(expression);
 
         if(closureCodegen.isConst()) {
-            v.invokestatic(closure.getClassname(), "$getInstance", "()L" + closure.getClassname() + ";");
+            v.invokestatic(closure.getClassname().getInternalName(), "$getInstance", "()" + closure.getClassname().getDescriptor());
         }
         else {
-            v.anew(Type.getObjectType(closure.getClassname()));
+            v.anew(closure.getClassname().getAsmType());
             v.dup();
 
             final Method cons = closure.getConstructor();
@@ -776,16 +776,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
                 arg.put(cons.getArgumentTypes()[i+k], v);
             }
 
-            v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
+            v.invokespecial(closure.getClassname().getInternalName(), "<init>", cons.getDescriptor());
         }
-        return StackValue.onStack(Type.getObjectType(closure.getClassname()));
+        return StackValue.onStack(closure.getClassname().getAsmType());
     }
 
     @Override
     public StackValue visitObjectLiteralExpression(JetObjectLiteralExpression expression, StackValue receiver) {
         ObjectOrClosureCodegen closureCodegen = new ObjectOrClosureCodegen(this, context, state);
         GeneratedAnonymousClassDescriptor closure = state.generateObjectLiteral(expression, closureCodegen);
-        Type type = Type.getObjectType(closure.getClassname());
+        Type type = closure.getClassname().getAsmType();
         v.anew(type);
         v.dup();
         final List<Type> consArgTypes = new LinkedList<Type>(Arrays.asList(closure.getConstructor().getArgumentTypes()));
@@ -819,8 +819,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         }
         
         Method cons = new Method("<init>", Type.VOID_TYPE, consArgTypes.toArray(new Type[consArgTypes.size()]));
-        v.invokespecial(closure.getClassname(), "<init>", cons.getDescriptor());
-        return StackValue.onStack(Type.getObjectType(closure.getClassname()));
+        v.invokespecial(closure.getClassname().getInternalName(), "<init>", cons.getDescriptor());
+        return StackValue.onStack(closure.getClassname().getAsmType());
     }
 
     private Label continueLabel;

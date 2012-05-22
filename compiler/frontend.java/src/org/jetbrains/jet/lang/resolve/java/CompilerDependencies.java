@@ -58,6 +58,12 @@ public class CompilerDependencies {
             if (altHeadersClasspath.length == 0) {
                 throw new IllegalArgumentException("altHeaders must be included for mode " + compilerSpecialMode);
             }
+            for (int i = 0; i < altHeadersClasspath.length; i++) {
+                File file = altHeadersClasspath[i];
+                if (file == null) {
+                    throw new IllegalArgumentException("altHeaders file " + i + " must not be null for included for mode " + compilerSpecialMode);
+                }
+            }
         }
         if (compilerSpecialMode.includeKotlinRuntime()) {
             if (runtimeJar == null) {

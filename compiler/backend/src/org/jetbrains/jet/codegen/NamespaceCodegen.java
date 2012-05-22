@@ -61,7 +61,6 @@ public class NamespaceCodegen {
 
         final FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state);
         final PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, state);
-        final ClassCodegen classCodegen = state.forClass();
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty) {
@@ -79,7 +78,7 @@ public class NamespaceCodegen {
                 }
             }
             else if (declaration instanceof JetClassOrObject) {
-                classCodegen.generate(context, (JetClassOrObject) declaration);
+                state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);
             }
 //            else if (declaration instanceof JetFile) {
 //                JetFile childNamespace = (JetFile) declaration;

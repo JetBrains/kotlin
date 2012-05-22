@@ -105,8 +105,7 @@
     });
 
 
-    Kotlin.parseInt =
-    function (str) {
+    Kotlin.parseInt = function (str) {
         return parseInt(str, 10);
     }
     ;

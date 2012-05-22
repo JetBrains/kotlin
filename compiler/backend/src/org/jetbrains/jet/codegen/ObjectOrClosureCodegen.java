@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -37,7 +38,7 @@ public class ObjectOrClosureCodegen {
     protected final ExpressionCodegen exprContext;
     protected final CodegenContext context;
     protected ClassBuilder cv = null;
-    public String name = null;
+    public JvmClassName name = null;
     protected Map<DeclarationDescriptor, EnclosedValueDescriptor> closure = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
     public JetDelegatorToSuperCall superCall;
 
@@ -66,7 +67,9 @@ public class ObjectOrClosureCodegen {
 
             StackValue outerValue = StackValue.local(idx, type);
             final String fieldName = "$" + vd.getName();
-            StackValue innerValue = sharedVarType != null ? StackValue.fieldForSharedVar(localType, name, fieldName) : StackValue.field(type, name, fieldName, false);
+            StackValue innerValue = sharedVarType != null
+                    ? StackValue.fieldForSharedVar(localType, name.getInternalName(), fieldName)
+                    : StackValue.field(type, name.getInternalName(), fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 
@@ -83,12 +86,12 @@ public class ObjectOrClosureCodegen {
             if (idx < 0) return null;
 
             JetElement expression = (JetElement) BindingContextUtils.callableDescriptorToDeclaration(state.getBindingContext(), vd);
-            String cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
-            Type localType = Type.getObjectType(cn);
+            JvmClassName cn = state.getInjector().getJetTypeMapper().getClosureAnnotator().classNameForAnonymousClass(expression);
+            Type localType = cn.getAsmType();
 
             StackValue outerValue = StackValue.local(idx, localType);
             final String fieldName = "$" + vd.getName();
-            StackValue innerValue = StackValue.field(localType, name, fieldName, false);
+            StackValue innerValue = StackValue.field(localType, name.getInternalName(), fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, localType.getDescriptor(), null, null);
 
@@ -114,7 +117,7 @@ public class ObjectOrClosureCodegen {
             boolean isStatic = fcontext.getContextDescriptor().getContainingDeclaration() instanceof NamespaceDescriptor;
             StackValue outerValue = StackValue.local(isStatic ? 0 : 1, type);
             final String fieldName = "receiver$0";
-            StackValue innerValue = StackValue.field(type, name, fieldName, false);
+            StackValue innerValue = StackValue.field(type, name.getInternalName(), fieldName, false);
 
             cv.newField(null, Opcodes.ACC_PUBLIC, fieldName, type.getDescriptor(), null, null);
 

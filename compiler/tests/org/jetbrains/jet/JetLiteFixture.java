@@ -31,10 +31,12 @@ import com.intellij.testFramework.TestDataFile;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerSpecialMode;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,18 +105,25 @@ public abstract class JetLiteFixture extends UsefulTestCase {
 
     protected static String doLoadFile(String myFullDataPath, String name) throws IOException {
         String fullName = myFullDataPath + File.separatorChar + name;
-        String text = FileUtil.loadFile(new File(fullName), CharsetToolkit.UTF8).trim();
-        text = StringUtil.convertLineSeparators(text);
-        return text;
+        return doLoadFile(new File(fullName));
     }
 
-    protected JetFile createPsiFile(String name, String text) {
-        return (JetFile) createFile(name + ".jet", text);
+    protected static String doLoadFile(@NotNull File file) throws IOException {
+        String text = FileUtil.loadFile(file, CharsetToolkit.UTF8).trim();
+        return StringUtil.convertLineSeparators(text);
+    }
+
+    protected JetFile createPsiFile(@Nullable String testName, @Nullable String fileName, String text) {
+        if (fileName == null) {
+            Assert.assertNotNull(testName);
+            fileName = testName + ".jet";
+        }
+        return (JetFile) createFile(fileName, text);
     }
 
     protected JetFile loadPsiFile(String name) {
         try {
-            return createPsiFile(name, loadFile(name));
+            return createPsiFile(name, null, loadFile(name));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -141,11 +150,11 @@ public abstract class JetLiteFixture extends UsefulTestCase {
     }
 
     protected void createAndCheckPsiFile(String name, String text) {
-        myFile = createCheckAndReturnPsiFile(name, text);
+        myFile = createCheckAndReturnPsiFile(name, null, text);
     }
 
-    protected JetFile createCheckAndReturnPsiFile(String name, String text) {
-        JetFile myFile = createPsiFile(name, text);
+    protected JetFile createCheckAndReturnPsiFile(String testName, String fileName, String text) {
+        JetFile myFile = createPsiFile(testName, fileName, text);
         ensureParsed(myFile);
         assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));

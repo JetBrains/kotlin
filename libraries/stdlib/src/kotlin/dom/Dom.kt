@@ -202,23 +202,26 @@ fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
 class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Unit {
-        val next = node.getNextSibling()
-        if (next != null) {
-            setNext(next)
+        val nextValue = node.getNextSibling()
+        if (nextValue != null) {
+            setNext(nextValue)
+            node = nextValue
         } else {
             done()
         }
     }
 }
+
 /** Returns an [[Iterator]] over the next siblings of this node */
 fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
 
 class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
 
     override fun computeNext(): Unit {
-        val next = node.getPreviousSibling()
-        if (next != null) {
-            setNext(next)
+        val nextValue = node.getPreviousSibling()
+        if (nextValue != null) {
+            setNext(nextValue)
+            node = nextValue
         } else {
             done()
         }

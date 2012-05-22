@@ -26,16 +26,21 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.rename.RenameProcessor;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.WholeProjectAnalyzerFacade;
 
 import java.io.File;
+import java.util.Collections;
 
 /**
  * @author Nikolay Krasko
@@ -61,7 +66,42 @@ public class RenameInKotlinTest extends MultiFileTestCase {
         doTestWithRenameClass(new FqName("testing.rename.First"), "Third");
     }
 
+    public void testRenameKotlinMethod() throws Exception {
+        doTestWithRenameMethod(new FqName("testing.rename.C"), "first", "second");
+    }
+
+    private void doTestWithRenameMethod(final FqName qClassName, final String oldMethodName, String newMethodName) throws Exception {
+        doTestWithRename(new Function<PsiFile, PsiElement>() {
+            @Override
+            public PsiElement fun(PsiFile file) {
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file)
+                        .getBindingContext();
+                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
+
+                assertNotNull(classDescriptor);
+                final JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
+                final FunctionDescriptor methodDescriptor = scope.getFunctions(oldMethodName).iterator().next();
+                return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, methodDescriptor);
+            }
+        }, newMethodName);
+    }
+
     private void doTestWithRenameClass(@NonNls final FqName qClassName, @NonNls final String newName) throws Exception {
+        doTestWithRename(new Function<PsiFile, PsiElement>() {
+            @Override
+            public PsiElement fun(PsiFile file) {
+                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile) file)
+                        .getBindingContext();
+                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
+
+                assertNotNull(classDescriptor);
+
+                return BindingContextUtils.classDescriptorToDeclaration(bindingContext, classDescriptor);
+            }
+        }, newName);
+    }
+
+    private void doTestWithRename(@NonNls final Function<PsiFile, PsiElement> elementToRenameCallback, @NonNls final String newName) throws Exception {
         doTest(new PerformAction() {
             @Override
             public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
@@ -80,14 +120,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
                     return;
                 }
 
-                BindingContext bindingContext = WholeProjectAnalyzerFacade.analyzeProjectWithCacheOnAFile((JetFile)file)
-                        .getBindingContext();
-                ClassDescriptor classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, qClassName);
-
-                assertNotNull(classDescriptor);
-
-                PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(bindingContext, classDescriptor);
-
+                PsiElement psiElement = elementToRenameCallback.fun(file);
                 assertNotNull(psiElement);
 
                 new RenameProcessor(myProject, psiElement, newName, true, true).run();

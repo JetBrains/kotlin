@@ -72,7 +72,7 @@ public class ZippedLibrarySourcesConfig extends Config {
         Enumeration<? extends ZipEntry> zipEntries = file.entries();
         while (zipEntries.hasMoreElements()) {
             ZipEntry entry = zipEntries.nextElement();
-            if (!entry.isDirectory()) {
+            if (!entry.isDirectory() && entry.getName().endsWith(".kt")) {
                 InputStream stream = file.getInputStream(entry);
                 String text = FileUtil.loadTextAndClose(stream);
                 JetFile jetFile = JetFileUtils.createPsiFile(entry.getName(), text, getProject());

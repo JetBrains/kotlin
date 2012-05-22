@@ -51,10 +51,9 @@ public class ExpressionTypingContext {
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull JetType expectedReturnType,
             boolean namespacesAllowed) {
         return new ExpressionTypingContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists,
-                                           labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+                                           labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
 //    @NotNull
@@ -74,7 +73,6 @@ public class ExpressionTypingContext {
 
     public final DataFlowInfo dataFlowInfo;
     public final JetType expectedType;
-    public final JetType expectedReturnType;
 
     public final Map<JetPattern, DataFlowInfo> patternsToDataFlowInfo;
     public final Map<JetPattern, List<VariableDescriptor>> patternsToBoundVariableLists;
@@ -94,7 +92,6 @@ public class ExpressionTypingContext {
             @NotNull JetScope scope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull JetType expectedType,
-            @NotNull JetType expectedReturnType,
             boolean namespacesAllowed) {
         this.expressionTypingServices = expressionTypingServices;
         this.trace = trace;
@@ -104,43 +101,36 @@ public class ExpressionTypingContext {
         this.scope = scope;
         this.dataFlowInfo = dataFlowInfo;
         this.expectedType = expectedType;
-        this.expectedReturnType = expectedReturnType;
         this.namespacesAllowed = namespacesAllowed;
     }
 
     @NotNull
     public ExpressionTypingContext replaceNamespacesAllowed(boolean namespacesAllowed) {
         if (namespacesAllowed == this.namespacesAllowed) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public ExpressionTypingContext replaceDataFlowInfo(DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, newDataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, newDataFlowInfo, expectedType, namespacesAllowed);
     }
 
     public ExpressionTypingContext replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, newExpectedType, expectedReturnType, namespacesAllowed);
-    }
-
-    public ExpressionTypingContext replaceExpectedReturnType(@Nullable JetType newExpectedReturnType) {
-        if (newExpectedReturnType == null) return replaceExpectedReturnType(TypeUtils.NO_EXPECTED_TYPE);
-        if (expectedReturnType == newExpectedReturnType) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, expectedType, newExpectedReturnType, namespacesAllowed);
+        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, scope, dataFlowInfo, newExpectedType, namespacesAllowed);
     }
 
     public ExpressionTypingContext replaceBindingTrace(@NotNull BindingTrace newTrace) {
         if (newTrace == trace) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, newTrace, scope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, newTrace, scope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
     @NotNull
     public ExpressionTypingContext replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return this;
-        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, newScope, dataFlowInfo, expectedType, expectedReturnType, namespacesAllowed);
+        return newContext(expressionTypingServices, patternsToDataFlowInfo, patternsToBoundVariableLists, labelResolver, trace, newScope, dataFlowInfo, expectedType, namespacesAllowed);
     }
 
 ///////////// LAZY ACCESSORS

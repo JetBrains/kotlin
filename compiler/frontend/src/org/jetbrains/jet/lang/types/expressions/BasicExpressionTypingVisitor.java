@@ -531,10 +531,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression selectorExpression = expression.getSelectorExpression();
         JetExpression receiverExpression = expression.getReceiverExpression();
         ExpressionTypingContext contextWithNoExpectedType = context.replaceExpectedType(NO_EXPECTED_TYPE);
-        JetType receiverType = facade.getType(receiverExpression,
-                                              contextWithNoExpectedType
-                                                      .replaceExpectedReturnType(NO_EXPECTED_TYPE)
-                                                      .replaceNamespacesAllowed(true));
+        JetType receiverType = facade.getType(receiverExpression, contextWithNoExpectedType.replaceNamespacesAllowed(true));
         if (selectorExpression == null) return null;
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
@@ -686,8 +683,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             referencedName = referencedName == null ? " <?>" : referencedName;
             context.labelResolver.enterLabeledElement(referencedName.substring(1), baseExpression);
             // TODO : Some processing for the label?
-            ExpressionTypingContext newContext = context.replaceExpectedReturnType(context.expectedType);
-            JetType type = facade.getType(baseExpression, newContext, isStatement);
+            JetType type = facade.getType(baseExpression, context, isStatement);
             context.labelResolver.exitLabeledElement(baseExpression);
             return DataFlowUtils.checkType(type, expression, context);
         }

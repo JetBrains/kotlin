@@ -161,7 +161,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         }
     }
 
-    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>o<!>: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val o: String<!>
     {
         if (1 < 3) {
             $o = "a"
@@ -198,7 +198,7 @@ open class Open(a: Int, w: Int) {}
 
 class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int
-    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     {
         $x = 1
         val b = x
@@ -267,7 +267,7 @@ class ClassObject() {
 fun foo() {
     val <!UNUSED_VARIABLE!>a<!> = object {
         val x : Int
-        val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+        <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
         val z : Int
         {
             $x = 1
@@ -281,11 +281,11 @@ fun foo() {
 }
 
 class TestObjectExpression() {
-    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>a<!> : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a : Int<!>
     fun foo() {
         val <!UNUSED_VARIABLE!>a<!> = object {
             val x : Int
-            val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
             {
                 if (true)
                     x = 12
@@ -308,7 +308,7 @@ class TestObjectExpression() {
 
 object TestObjectDeclaration {
     val x : Int
-    val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>y<!> : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     {
         $x = 1
     }

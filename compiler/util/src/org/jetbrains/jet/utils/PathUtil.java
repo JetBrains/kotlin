@@ -31,6 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PathUtil {
+
+    public static String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
+    public static String JS_LIB_JS_NAME = "kotlinLib.js";
+
     private PathUtil() {}
 
     public static File getDefaultCompilerPath() {
@@ -66,20 +70,32 @@ public class PathUtil {
 
     @Nullable
     public static File getDefaultRuntimePath() {
+        return getFilePackedIntoLib("kotlin-runtime.jar");
+    }
+
+    @Nullable
+    public static File getDefaultJsLibJsPath() {
+        return getFilePackedIntoLib(JS_LIB_JS_NAME);
+    }
+
+    @Nullable
+    public static File getDefaultJsLibJarPath() {
+        return getFilePackedIntoLib(JS_LIB_JAR_NAME);
+    }
+
+    @Nullable
+    private static File getFilePackedIntoLib(@NotNull String filePathFromLib) {
         File compilerPath = getDefaultCompilerPath();
         if (compilerPath == null) return null;
 
-        File answer = new File(compilerPath, "lib/kotlin-runtime.jar");
+        File answer = new File(compilerPath, "lib/" + filePathFromLib);
 
         return answer.exists() ? answer : null;
     }
 
+    @Nullable
     public static File getAltHeadersPath() {
-        File compilerPath = getDefaultCompilerPath();
-        if (compilerPath == null) return null;
-
-        File answer = new File(compilerPath, "lib/alt/kotlin-jdk-headers.jar");
-        return answer.exists() ? answer : null;
+        return getFilePackedIntoLib("alt/kotlin-jdk-headers.jar");
     }
 
     @NotNull

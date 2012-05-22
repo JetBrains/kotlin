@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
+import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -55,8 +57,8 @@ public class ClassFileFactory {
         return answer;
     }
 
-    ClassBuilder forAnonymousSubclass(String className) {
-        return newVisitor(className + ".class");
+    ClassBuilder forAnonymousSubclass(@NotNull JvmClassName className) {
+        return newVisitor(className.getInternalName() + ".class");
     }
 
     NamespaceCodegen forNamespace(JetFile file) {

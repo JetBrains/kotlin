@@ -93,9 +93,9 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     @NotNull
     @Override
-    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, Kind kind, boolean copyOverrides) {
+    public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, boolean makeNonAbstract, boolean makeInvisible, Kind kind, boolean copyOverrides) {
         SimpleFunctionDescriptorImpl copy = (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, DescriptorUtils
-            .convertModality(modality, makeNonAbstract), false, copyOverrides, kind);
+            .convertModality(modality, makeNonAbstract), makeInvisible ? Visibilities.INVISIBLE_FAKE : visibility, false, copyOverrides, kind);
         copy.isInline = isInline;
         return copy;
     }
