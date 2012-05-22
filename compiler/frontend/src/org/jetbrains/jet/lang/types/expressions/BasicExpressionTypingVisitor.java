@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ClassReceiver;
@@ -486,7 +487,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         ReceiverDescriptor thisReceiver = null;
         String labelName = expression.getLabelName();
         if (labelName != null) {
-            thisReceiver = context.labelResolver.resolveThisLabel(expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, labelName);
+            thisReceiver = context.labelResolver.resolveThisLabel(
+                    expression.getInstanceReference(), expression.getTargetLabel(), context, thisReceiver, new LabelName(labelName));
         }
         else {
             if (onlyClassReceivers) {
@@ -682,7 +684,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
             String referencedName = operationSign.getReferencedName();
             referencedName = referencedName == null ? " <?>" : referencedName;
-            context.labelResolver.enterLabeledElement(referencedName.substring(1), baseExpression);
+            context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
             // TODO : Some processing for the label?
             JetType type = facade.getType(baseExpression, context, isStatement);
             context.labelResolver.exitLabeledElement(baseExpression);

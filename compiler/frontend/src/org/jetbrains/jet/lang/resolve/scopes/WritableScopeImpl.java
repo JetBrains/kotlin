@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.util.CommonSuppliers;
@@ -56,7 +57,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     private Map<String, NamespaceDescriptor> namespaceAliases;
 
     @Nullable
-    private Map<String, List<DeclarationDescriptor>> labelsToDescriptors;
+    private Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors;
     
     @Nullable
     private Map<String, ClassDescriptor> objectDescriptors;
@@ -137,9 +138,9 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     }
 
     @NotNull
-    private Map<String, List<DeclarationDescriptor>> getLabelsToDescriptors() {
+    private Map<LabelName, List<DeclarationDescriptor>> getLabelsToDescriptors() {
         if (labelsToDescriptors == null) {
-            labelsToDescriptors = new HashMap<String, List<DeclarationDescriptor>>();
+            labelsToDescriptors = new HashMap<LabelName, List<DeclarationDescriptor>>();
         }
         return labelsToDescriptors;
     }
@@ -154,11 +155,11 @@ public class WritableScopeImpl extends WritableScopeWithImports {
 
     @NotNull
     @Override
-    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull String labelName) {
+    public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
         checkMayRead();
 
         Collection<DeclarationDescriptor> superResult = super.getDeclarationsByLabel(labelName);
-        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
+        Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(labelName);
         if (declarationDescriptors == null) {
             return superResult;
@@ -173,9 +174,8 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     public void addLabeledDeclaration(@NotNull DeclarationDescriptor descriptor) {
         checkMayWrite();
 
-        Map<String, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
-        String name = descriptor.getName();
-        assert name != null;
+        Map<LabelName, List<DeclarationDescriptor>> labelsToDescriptors = getLabelsToDescriptors();
+        LabelName name = new LabelName(descriptor.getName());
         List<DeclarationDescriptor> declarationDescriptors = labelsToDescriptors.get(name);
         if (declarationDescriptors == null) {
             declarationDescriptors = new ArrayList<DeclarationDescriptor>();

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.scopes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 
 import java.util.Collection;
@@ -67,7 +68,7 @@ public interface JetScope {
     DeclarationDescriptor getContainingDeclaration();
 
     @NotNull
-    Collection<DeclarationDescriptor> getDeclarationsByLabel(String labelName);
+    Collection<DeclarationDescriptor> getDeclarationsByLabel(LabelName labelName);
 
     /**
      * @param fieldName includes the "$"
