@@ -6,7 +6,7 @@ import org.jetbrains.jet.j2k.ast.INode.Kind
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Constructor(identifier : Identifier,
-                              modifiers : Set<String?>,
+                              modifiers : Set<String>,
                               `type` : Type,
                               typeParameters : List<Element>,
                               params : Element,

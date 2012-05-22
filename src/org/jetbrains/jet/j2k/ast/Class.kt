@@ -15,7 +15,7 @@ import java.util.ArrayList
 
 public open class Class(converter : Converter,
                         val name : Identifier,
-                        modifiers : Set<String?>,
+                        modifiers : Set<String>,
                         val typeParameters : List<Element>,
                         val extendsTypes : List<Type>,
                         val baseClassParams : List<Expression>,
@@ -63,7 +63,7 @@ public open class Class(converter : Converter,
     }
 
     private fun constructorToInit(f: Function): Function {
-        val modifiers : Set<String?> = HashSet<String?>(f.getModifiers())
+        val modifiers : Set<String> = HashSet<String>(f.getModifiers())
         modifiers.add(Modifier.STATIC)
         val statements : List<Statement?> = f.block?.getStatements() ?: arrayList()
         statements.add(ReturnStatement(IdentifierImpl("__")))

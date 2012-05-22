@@ -7,7 +7,7 @@ import java.util.Set
 
 public open class Trait(converter : Converter,
                         name : Identifier,
-                        modifiers : Set<String?>,
+                        modifiers : Set<String>,
                         typeParameters : List<Element>,
                         extendsTypes : List<Type>,
                         baseClassParams : List<Expression>,

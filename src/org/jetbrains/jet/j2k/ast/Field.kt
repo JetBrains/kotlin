@@ -8,7 +8,7 @@ import java.util.Set
 import org.jetbrains.jet.j2k.Converter.getDefaultInitializer
 
 public open class Field(val identifier : Identifier,
-                        modifiers : Set<String?>,
+                        modifiers : Set<String>,
                         val `type` : Type,
                         val initializer : Element,
                         val writingAccesses : Int) : Member(modifiers) {

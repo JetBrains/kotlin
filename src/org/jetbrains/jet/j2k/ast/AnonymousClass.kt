@@ -8,7 +8,7 @@ import java.util.List
 public open class AnonymousClass(converter : Converter, members : List<Member>)
                                  : Class(converter,
                                          IdentifierImpl("anonClass"),
-                                         Collections.emptySet<String?>()!!,
+                                         Collections.emptySet<String>()!!,
                                          Collections.emptyList<Element>()!!,
                                          Collections.emptyList<Type>()!!,
                                          Collections.emptyList<Expression>()!!,

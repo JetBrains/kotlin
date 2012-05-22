@@ -7,7 +7,7 @@ import java.util.Set
 import org.jetbrains.jet.j2k.ast.types.Type
 
 public open class Function(val name : Identifier,
-                           modifiers : Set<String?>,
+                           modifiers : Set<String>,
                            val `type` : Type,
                            val typeParameters : List<Element>,
                            val params : Element,

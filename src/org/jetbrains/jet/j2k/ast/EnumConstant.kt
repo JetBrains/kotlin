@@ -4,7 +4,7 @@ import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.Set
 
 public open class EnumConstant(identifier : Identifier,
-                               modifiers : Set<String?>,
+                               modifiers : Set<String>,
                                `type` : Type,
                                params : Element) : Field(identifier, modifiers, `type`.convertedToNotNull(), params, 0) {
 
