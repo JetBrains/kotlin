@@ -66,6 +66,9 @@ public class K2JVMCompilerArguments extends CompilerArguments {
     @Argument(value = "module", description = "module to compile")
     public String module;
 
+    @Argument(value = "script", description = "evaluate script")
+    public boolean script;
+
     @Argument(value = "tags", description = "Demarcate each compilation message (error, warning, etc) with an open and close tag")
     public boolean tags;
 

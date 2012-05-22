@@ -8,6 +8,7 @@ OUT   -altHeaders [String] Path to the alternative library headers paths
 OUT   -mode [String] Special compiler modes: stubs or altHeaders
 OUT   -output [String] output directory
 OUT   -module [String] module to compile
+OUT   -script [flag]
 OUT   -tags [flag]
 OUT   -verbose [flag]
 OUT   -version [flag]

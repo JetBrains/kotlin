@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.LocalTimeCounter;
 import jet.Function0;
+import jet.modules.AllModules;
 import jet.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,8 @@ import org.jetbrains.jet.utils.Progress;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 /**
@@ -117,6 +120,7 @@ public class KotlinToJVMBytecodeCompiler {
             K2JVMCompileEnvironmentConfiguration configuration,
             String jar,
             String outputDir,
+            boolean script,
             boolean includeRuntime
     ) {
         FqName mainClass = null;
@@ -146,6 +150,20 @@ public class KotlinToJVMBytecodeCompiler {
             else if (outputDir != null) {
                 CompileEnvironmentUtil.writeToOutputDirectory(factory, outputDir);
             }
+            else if (script) {
+                try {
+
+                    GeneratedClassLoader classLoader = new GeneratedClassLoader(factory, new URLClassLoader(new URL[]{
+                                // TODO: add all classpath
+                                configuration.getEnvironment().getCompilerDependencies().getRuntimeJar().toURI().toURL()
+                            },
+                            AllModules.class.getClassLoader()));
+                    Class<?> scriptClass = classLoader.loadClass("Script");
+                    scriptClass.newInstance();
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to evaluate script: " + e, e);
+                }
+            }
             else {
                 throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
             }
@@ -158,24 +176,23 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileBunchOfSources(
             K2JVMCompileEnvironmentConfiguration configuration,
-
-            List<String> sourceFilesOrDirs, String jar, String outputDir, boolean includeRuntime) {
+            List<String> sourceFilesOrDirs, String jar, String outputDir, boolean script,  boolean includeRuntime) {
         for (String sourceFileOrDir : sourceFilesOrDirs) {
             configuration.getEnvironment().addSources(sourceFileOrDir);
         }
 
-        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
+        return compileBunchOfSources(configuration, jar, outputDir, script, includeRuntime);
     }
 
     public static boolean compileBunchOfSourceDirectories(
             K2JVMCompileEnvironmentConfiguration configuration,
 
-            List<String> sources, String jar, String outputDir, boolean includeRuntime) {
+            List<String> sources, String jar, String outputDir, boolean script, boolean includeRuntime) {
         for (String source : sources) {
             configuration.getEnvironment().addSources(source);
         }
 
-        return compileBunchOfSources(configuration, jar, outputDir, includeRuntime);
+        return compileBunchOfSources(configuration, jar, outputDir, script, includeRuntime);
     }
 
     @Nullable

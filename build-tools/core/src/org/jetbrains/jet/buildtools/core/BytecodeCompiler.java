@@ -97,7 +97,7 @@ public class BytecodeCompiler {
      */
     public void sourcesToDir ( @NotNull String src, @NotNull String output, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), null, output, true
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), null, output, false, true
                                                                                 /* Last arg is ignored anyway */);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
@@ -120,7 +120,7 @@ public class BytecodeCompiler {
      */
     public void sourcesToJar ( @NotNull String src, @NotNull String jar, boolean includeRuntime, @Nullable String stdlib, @Nullable String[] classpath ) {
         try {
-            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), jar, null, includeRuntime);
+            boolean success = KotlinToJVMBytecodeCompiler.compileBunchOfSources(env(stdlib, classpath), Collections.singletonList(src), jar, null, false, includeRuntime);
             if ( ! success ) {
                 throw new CompileEnvironmentException( errorMessage( src, false ));
             }

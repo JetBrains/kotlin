@@ -120,9 +120,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                 // TODO ideally we'd unify to just having a single field that supports multiple files/dirs
                 if (arguments.getSourceDirs() != null) {
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSourceDirectories(configuration,
-                                                                                           arguments.getSourceDirs(), arguments.jar,
-                                                                                           arguments.outputDir,
-                                                                                           arguments.includeRuntime);
+                            arguments.getSourceDirs(), arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
                 }
                 else {
                     List<String> sources = Lists.newArrayList();
@@ -131,8 +129,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments, K2JVMComp
                     }
                     sources.addAll(arguments.freeArgs);
                     noErrors = KotlinToJVMBytecodeCompiler.compileBunchOfSources(configuration,
-                                                                                 sources, arguments.jar, arguments.outputDir,
-                                                                                 arguments.includeRuntime);
+                            sources, arguments.jar, arguments.outputDir, arguments.script, arguments.includeRuntime);
                 }
             }
             return noErrors ? OK : COMPILATION_ERROR;
