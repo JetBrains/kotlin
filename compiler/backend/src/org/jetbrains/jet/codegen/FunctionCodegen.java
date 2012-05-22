@@ -245,6 +245,12 @@ public class FunctionCodegen {
                     mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
                 }
 
+                if (fun instanceof JetFunctionLiteralExpression) {
+                    Type type = state.getInjector().getJetTypeMapper().mapType(
+                            context.getThisDescriptor().getDefaultType(), MapTypeMode.VALUE);
+                    mv.visitLocalVariable("this", type.getDescriptor(), null, methodBegin, methodEnd, k++);
+                }
+
                 if(receiverParameter.exists()) {
                     Type type = state.getInjector().getJetTypeMapper().mapType(receiverParameter.getType(), MapTypeMode.VALUE);
                     // TODO: specify signature
