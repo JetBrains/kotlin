@@ -22,5 +22,6 @@ package org.jetbrains.jet.lang.resolve.java;
 public class JdkNames {
 
     public static final JvmClassName JL_OBJECT = new JvmClassName("java.lang.Object");
+    public static final JvmClassName JL_STRING = new JvmClassName("java.lang.String");
 
 }

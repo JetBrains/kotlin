@@ -80,6 +80,9 @@ public class NamespaceCodegen {
             else if (declaration instanceof JetClassOrObject) {
                 state.getInjector().getClassCodegen().generate(context, (JetClassOrObject) declaration);
             }
+            else if (declaration instanceof JetScript) {
+                state.getInjector().getScriptCodegen().generate(context, (JetScript) declaration);
+            }
 //            else if (declaration instanceof JetFile) {
 //                JetFile childNamespace = (JetFile) declaration;
 //                state.forNamespace(childNamespace).generate(childNamespace);

@@ -86,8 +86,13 @@ public class ClosureAnnotator {
 
     private void mapFilesToNamespaces(Collection<JetFile> files) {
         for (JetFile file : files) {
-            FqName fqName = JetPsiUtil.getFQName(file);
-            namespaceName2Files.putValue(fqName, file);
+            if (file.isScript()) {
+                namespaceName2Files.putValue(FqName.ROOT, file);
+            }
+            else {
+                FqName fqName = JetPsiUtil.getFQName(file);
+                namespaceName2Files.putValue(fqName, file);
+            }
         }
     }
 

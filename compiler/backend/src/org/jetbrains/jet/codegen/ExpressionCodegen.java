@@ -1340,7 +1340,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> {
         //    assert !superCall;
         //    callableMethod = ClosureCodegen.asCallableMethod((FunctionDescriptor) fd);
         //}
-        if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && fd.getContainingDeclaration() instanceof FunctionDescriptor)) {
+        if (fd instanceof ExpressionAsFunctionDescriptor || (fd instanceof SimpleFunctionDescriptor && (fd.getContainingDeclaration() instanceof FunctionDescriptor || fd.getContainingDeclaration() instanceof ScriptDescriptor))) {
             SimpleFunctionDescriptor invoke = CodegenUtil.createInvoke((FunctionDescriptor) fd);
             callableMethod = ClosureCodegen.asCallableMethod(invoke);
         }

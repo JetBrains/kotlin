@@ -38,6 +38,11 @@ public class ScriptDescriptor extends DeclarationDescriptorImpl {
         this.returnType = returnType;
     }
 
+    @NotNull
+    public JetType getReturnType() {
+        return returnType;
+    }
+
     @Override
     public DeclarationDescriptor substitute(TypeSubstitutor substitutor) {
         throw new IllegalStateException("nothing to substitute in script");

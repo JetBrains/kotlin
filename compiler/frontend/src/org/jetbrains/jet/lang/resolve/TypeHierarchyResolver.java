@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
@@ -207,8 +208,9 @@ public class TypeHierarchyResolver {
                 private void processScript(JetScript script) {
                     NamespaceDescriptorImpl ns = namespaceFactory.createNamespaceDescriptorPathIfNeeded(FqName.ROOT);
                     ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns);
-                    WriteThroughScope scriptScope = new WriteThroughScope(
-                            outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
+                    //WriteThroughScope scriptScope = new WriteThroughScope(
+                    //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
+                    WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING);
                     scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
                     context.getScriptScopes().put(script, scriptScope);
                     context.getScripts().put(script, scriptDescriptor);

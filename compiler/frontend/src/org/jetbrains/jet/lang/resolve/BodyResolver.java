@@ -630,7 +630,7 @@ public class BodyResolver {
                     Maps.<JetPattern, List<VariableDescriptor>>newHashMap(),
                     new LabelResolver(),
                     trace,
-                    this.context.getRootScope(),
+                    scope,
                     DataFlowInfo.EMPTY,
                     NO_EXPECTED_TYPE,
                     false);
