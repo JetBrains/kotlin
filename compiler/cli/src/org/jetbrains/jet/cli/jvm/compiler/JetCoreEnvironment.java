@@ -27,6 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.CompilerDependencies;
@@ -68,6 +69,7 @@ public class JetCoreEnvironment extends JavaCoreEnvironment {
         registerFileType(JetFileType.INSTANCE, "kt");
         registerFileType(JetFileType.INSTANCE, "kts");
         registerFileType(JetFileType.INSTANCE, "ktm");
+        registerFileType(JetFileType.INSTANCE, JetParser.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
         registerFileType(JetFileType.INSTANCE, "jet");
         registerParserDefinition(new JavaParserDefinition());
         registerParserDefinition(new JetParserDefinition());

@@ -104,6 +104,18 @@ public class JetParsing extends AbstractJetParsing {
         fileMarker.done(JET_FILE);
     }
 
+    void parseScript() {
+        PsiBuilder.Marker fileMarker = mark();
+        PsiBuilder.Marker scriptMarker = mark();
+        PsiBuilder.Marker blockMarker = mark();
+
+        myExpressionParsing.parseStatements();
+
+        blockMarker.done(BLOCK);
+        scriptMarker.done(SCRIPT);
+        fileMarker.done(JET_FILE);
+    }
+
     /*
      * toplevelObject[| import]*
      */

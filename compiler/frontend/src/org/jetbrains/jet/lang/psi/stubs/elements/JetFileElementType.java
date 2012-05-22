@@ -16,6 +16,14 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.LanguageParserDefinitions;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
+import com.intellij.lang.PsiParser;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBuilder;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -23,6 +31,8 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.parsing.JetParser;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFileStubImpl;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -65,6 +75,15 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
         StringRef packName = dataStream.readName();
         return new PsiJetFileStubImpl(null, packName);
     }
+
+    protected ASTNode doParseContents(@NotNull final ASTNode chameleon, @NotNull final PsiElement psi) {
+        final Project project = psi.getProject();
+        Language languageForParser = getLanguageForParser(psi);
+        final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
+        final JetParser parser = (JetParser) LanguageParserDefinitions.INSTANCE.forLanguage(languageForParser).createParser(project);
+        return parser.parse(this, builder, psi.getContainingFile()).getFirstChildNode();
+    }
+
 
     @Override
     public void indexStub(final PsiJetFileStub stub, final IndexSink sink) {

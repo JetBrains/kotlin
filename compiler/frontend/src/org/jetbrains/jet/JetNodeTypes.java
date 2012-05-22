@@ -161,6 +161,7 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_WITH_EXPRESSION", JetWhenConditionWithExpression.class);
 
     JetNodeType NAMESPACE_HEADER = new JetNodeType("NAMESPACE_HEADER", JetNamespaceHeader.class);
+    JetNodeType SCRIPT = new JetNodeType("SCRIPT", JetScript.class);
 
     JetNodeType IDE_TEMPLATE_EXPRESSION   = new JetNodeType("IDE_TEMPLATE_EXPRESSION", JetIdeTemplateExpression.class);
 }
