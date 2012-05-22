@@ -33,6 +33,7 @@ import java.util.List;
 public class PathUtil {
 
     public static String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
+    public static String JS_LIB_JS_NAME = "kotlinLib.js";
 
     private PathUtil() {}
 
@@ -72,9 +73,13 @@ public class PathUtil {
         return getFilePackedIntoLib("kotlin-runtime.jar");
     }
 
+    @Nullable
+    public static File getDefaultJsLibJsPath() {
+        return getFilePackedIntoLib(JS_LIB_JS_NAME);
+    }
 
     @Nullable
-    public static File getDefaultJsLibPath() {
+    public static File getDefaultJsLibJarPath() {
         return getFilePackedIntoLib(JS_LIB_JAR_NAME);
     }
 

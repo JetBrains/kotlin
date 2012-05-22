@@ -32,6 +32,8 @@ import org.jetbrains.jet.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyFileToDir;
 
@@ -49,19 +51,13 @@ public final class JsModuleSetUp {
             return;
         }
 
-        File jsLibPath = PathUtil.getDefaultJsLibPath();
-        if (jsLibPath == null) {
-            notifyFailure("JavaScript library not found. Make sure plugin is installed properly.");
-            return;
-        }
-
         File rootDir = getRootDir(project);
         if (!rootDir.isDirectory()) {
             notifyFailure("Internal error: Broken content root.");
             return;
         }
 
-        if (!copyJsLib(jsLibPath, rootDir)) return;
+        if (!copyJsLibFiles(rootDir)) return;
 
         File file = new File(rootDir, JsModuleDetector.INDICATION_FILE_NAME);
         if (file.exists()) {
@@ -74,8 +70,19 @@ public final class JsModuleSetUp {
         refreshRootDir(project);
     }
 
+    private static boolean copyJsLibFiles(@NotNull File rootDir) {
+        File jsLibJarPath = PathUtil.getDefaultJsLibJarPath();
+        File jsLibJsPath = PathUtil.getDefaultJsLibJsPath();
+        if ((jsLibJarPath == null) || (jsLibJsPath == null)) {
+            notifyFailure("JavaScript library not found. Make sure plugin is installed properly.");
+            return false;
+        }
+
+        return doCopyJsLibFiles(Arrays.asList(jsLibJarPath, jsLibJsPath), rootDir);
+    }
+
     private static void refreshRootDir(@NotNull Project project) {
-        getContentRoot(project).refresh(false, false);
+        getContentRoot(project).refresh(false, true);
     }
 
     private static void createIndicationFile(@NotNull File file) {
@@ -87,9 +94,12 @@ public final class JsModuleSetUp {
         }
     }
 
-    private static boolean copyJsLib(@NotNull File jsLibPath, @NotNull File rootDir) {
+    private static boolean doCopyJsLibFiles(@NotNull List<File> files, @NotNull File rootDir) {
         try {
-            copyFileToDir(jsLibPath, new File(rootDir, "lib"));
+            File lib = new File(rootDir, "lib");
+            for (File file : files) {
+                copyFileToDir(file, lib);
+            }
         }
         catch (IOException e) {
             notifyFailure("Failed to copy file: " + e.getMessage());
