@@ -77,34 +77,42 @@ public class ImportsResolver {
 
     private void processImports(boolean onlyClasses) {
         for (JetFile file : context.getNamespaceDescriptors().keySet()) {
-            JetScope rootScope = context.getRootScope();
             WritableScope namespaceScope = context.getNamespaceScopes().get(file);
-            Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
-            if (!onlyClasses) {
-                namespaceScope.clearImports();
-            }
-            Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
-            Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
-            configuration.addDefaultImports(defaultImportDirectives);
-            for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
-                TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
-                qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
-            }
+            processImportsInFile(onlyClasses, namespaceScope, file.getImportDirectives());
+        }
+        for (JetScript script : context.getScripts().keySet()) {
+            WritableScope scriptScope = context.getScriptScopes().get(script);
+            processImportsInFile(onlyClasses, scriptScope, script.getImportDirectives());
+        }
+    }
 
-            List<JetImportDirective> importDirectives = file.getImportDirectives();
+    private void processImportsInFile(boolean onlyClasses, WritableScope namespaceScope, List<JetImportDirective> importDirectives) {
+
+        JetScope rootScope = context.getRootScope();
+        Importer.DelayedImporter delayedImporter = new Importer.DelayedImporter(namespaceScope);
+        if (!onlyClasses) {
+            namespaceScope.clearImports();
+        }
+        Map<JetImportDirective, DeclarationDescriptor> resolvedDirectives = Maps.newHashMap();
+        Collection<JetImportDirective> defaultImportDirectives = Lists.newArrayList();
+        configuration.addDefaultImports(defaultImportDirectives);
+        for (JetImportDirective defaultImportDirective : defaultImportDirectives) {
+            TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(trace); //not to trace errors of default imports
+            qualifiedExpressionResolver.processImportReference(defaultImportDirective, rootScope, namespaceScope, delayedImporter, temporaryTrace, onlyClasses);
+        }
+
+        for (JetImportDirective importDirective : importDirectives) {
+            Collection<? extends DeclarationDescriptor> descriptors =
+                qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
+            if (descriptors.size() == 1) {
+                resolvedDirectives.put(importDirective, descriptors.iterator().next());
+            }
+        }
+        delayedImporter.processImports();
+
+        if (!onlyClasses) {
             for (JetImportDirective importDirective : importDirectives) {
-                Collection<? extends DeclarationDescriptor> descriptors =
-                    qualifiedExpressionResolver.processImportReference(importDirective, rootScope, namespaceScope, delayedImporter, trace, onlyClasses);
-                if (descriptors.size() == 1) {
-                    resolvedDirectives.put(importDirective, descriptors.iterator().next());
-                }
-            }
-            delayedImporter.processImports();
-
-            if (!onlyClasses) {
-                for (JetImportDirective importDirective : importDirectives) {
-                    reportUselessImport(importDirective, namespaceScope, resolvedDirectives);
-                }
+                reportUselessImport(importDirective, namespaceScope, resolvedDirectives);
             }
         }
     }

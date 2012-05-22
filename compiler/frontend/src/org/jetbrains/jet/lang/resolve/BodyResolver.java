@@ -33,7 +33,10 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverDescriptor;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.types.expressions.CoercionStrategy;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lang.types.lang.JetStandardClasses;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
@@ -108,6 +111,8 @@ public class BodyResolver {
 
         resolveSecondaryConstructorBodies();
         resolveFunctionBodies();
+
+        resolveScripts();
 
         if (!topDownAnalysisParameters.isDeclaredLocally()) {
             computeDeferredTypes();
@@ -611,6 +616,26 @@ public class BodyResolver {
                     }
                 }
             }
+        }
+    }
+
+    private void resolveScripts() {
+        for (Map.Entry<JetScript, ScriptDescriptor> e : context.getScripts().entrySet()) {
+            JetScript declaration = e.getKey();
+            ScriptDescriptor descriptor = e.getValue();
+            JetScope scope = context.getScriptScopes().get(declaration);
+            ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                    expressionTypingServices,
+                    Maps.<JetPattern, DataFlowInfo>newHashMap(),
+                    Maps.<JetPattern, List<VariableDescriptor>>newHashMap(),
+                    new LabelResolver(),
+                    trace,
+                    this.context.getRootScope(),
+                    DataFlowInfo.EMPTY,
+                    NO_EXPECTED_TYPE,
+                    false);
+            JetType returnType = expressionTypingServices.getBlockReturnedType(scope, declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context, trace);
+            descriptor.initialize(returnType);
         }
     }
 }

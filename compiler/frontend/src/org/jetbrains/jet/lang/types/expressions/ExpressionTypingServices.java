@@ -187,7 +187,7 @@ public class ExpressionTypingServices {
     }
 
     @Nullable
-    /*package*/ JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    public JetType getBlockReturnedType(@NotNull JetScope outerScope, @NotNull JetBlockExpression expression, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         List<JetElement> block = expression.getStatements();
         if (block.isEmpty()) {
             return DataFlowUtils.checkType(JetStandardClasses.getUnitType(), expression, context);

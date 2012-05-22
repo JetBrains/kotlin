@@ -17,7 +17,10 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Stepan Koltsov
@@ -31,6 +34,11 @@ public class JetScript extends JetDeclaration {
     @NotNull
     public JetBlockExpression getBlockExpression() {
         return findNotNullChildByClass(JetBlockExpression.class);
+    }
+
+    @NotNull
+    public List<JetImportDirective> getImportDirectives() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetImportDirective.class);
     }
 
     @Override
