@@ -31,9 +31,9 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.*;
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 import static org.jetbrains.jet.lang.diagnostics.Severity.WARNING;
 
@@ -51,7 +51,7 @@ public interface Errors {
     //Elements with "INVISIBLE_REFERENCE" error are marked as unresolved, unlike elements with "INVISIBLE_MEMBER" error
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_REFERENCE =
             DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory2.create(ERROR, PositioningStrategies.CALL_ELEMENT);
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> INVISIBLE_MEMBER = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
 
     RedeclarationDiagnosticFactory REDECLARATION = new RedeclarationDiagnosticFactory(ERROR);
     RedeclarationDiagnosticFactory NAME_SHADOWING = new RedeclarationDiagnosticFactory(WARNING);
@@ -62,16 +62,16 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, JetKeywordToken, JetKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(Severity.WARNING);
     SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_MODIFIER_IN_TRAIT = SimpleDiagnosticFactory
-            .create(WARNING, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+            .create(WARNING, ABSTRACT_MODIFIER);
     SimpleDiagnosticFactory<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = SimpleDiagnosticFactory
-            .create(WARNING, PositioningStrategies.positionModifier(JetTokens.OPEN_KEYWORD));
+            .create(WARNING, positionModifier(JetTokens.OPEN_KEYWORD));
     SimpleDiagnosticFactory<PsiElement>
             REDUNDANT_MODIFIER_IN_GETTER = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<PsiElement> TRAIT_CAN_NOT_BE_FINAL = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetReturnExpression> RETURN_NOT_ALLOWED = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PROJECTION_MODIFIER);
+            SimpleDiagnosticFactory.create(ERROR, PROJECTION_MODIFIER);
     SimpleDiagnosticFactory<JetSimpleNameExpression>LABEL_NAME_CLASH = SimpleDiagnosticFactory.create(WARNING);
     SimpleDiagnosticFactory<JetSimpleNameExpression> EXPRESSION_EXPECTED_NAMESPACE_FOUND = SimpleDiagnosticFactory.create(ERROR);
 
@@ -95,12 +95,10 @@ public interface Errors {
     SimpleDiagnosticFactory<LeafPsiElement> NON_VARARG_SPREAD = SimpleDiagnosticFactory.create(ERROR);
 
     SimpleDiagnosticFactory<JetExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<PsiElement> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR);
+    SimpleDiagnosticFactory<JetProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
 
-    SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory
-            .create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    SimpleDiagnosticFactory<JetProperty> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimpleDiagnosticFactory.create(ERROR,
-                                                                                                         PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+    SimpleDiagnosticFactory<JetModifierListOwner> ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
+    SimpleDiagnosticFactory<JetProperty> ABSTRACT_PROPERTY_NOT_IN_CLASS = SimpleDiagnosticFactory.create(ERROR, ABSTRACT_MODIFIER);
     SimpleDiagnosticFactory<JetExpression> ABSTRACT_PROPERTY_WITH_INITIALIZER = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetPropertyAccessor> ABSTRACT_PROPERTY_WITH_GETTER = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetPropertyAccessor>ABSTRACT_PROPERTY_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
@@ -108,35 +106,23 @@ public interface Errors {
     SimpleDiagnosticFactory<PsiElement> PACKAGE_MEMBER_CANNOT_BE_PROTECTED = SimpleDiagnosticFactory.create(ERROR);
 
     SimpleDiagnosticFactory<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetProperty> BACKING_FIELD_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR,
-                                                                                                 PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED = SimpleDiagnosticFactory.create(ERROR,
-                                                                                              PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimpleDiagnosticFactory.create(ERROR,
-                                                                                                             PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    SimpleDiagnosticFactory<JetProperty> BACKING_FIELD_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
+    SimpleDiagnosticFactory<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
     SimpleDiagnosticFactory<JetExpression>PROPERTY_INITIALIZER_IN_TRAIT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = SimpleDiagnosticFactory.create(ERROR);
-    DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS =
-            DiagnosticFactory2.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory2<JetFunction, String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS =
-            DiagnosticFactory2.create(ERROR,PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
-    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_ABSTRACT_MODIFIER);
+    DiagnosticFactory2<JetModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory2<JetFunction, String, ClassDescriptor> ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS = DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
+    DiagnosticFactory1<JetModifierListOwner, SimpleFunctionDescriptor> NON_MEMBER_ABSTRACT_FUNCTION = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
 
-    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.positionModifier(JetTokens.OPEN_KEYWORD));
+    DiagnosticFactory1<JetFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY = DiagnosticFactory1.create(ERROR, NAMED_ELEMENT);
+    SimpleDiagnosticFactory<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = SimpleDiagnosticFactory.create(ERROR, positionModifier(JetTokens.OPEN_KEYWORD));
 
-    SimpleDiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    SimpleDiagnosticFactory<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = SimpleDiagnosticFactory.create(ERROR, NAMED_ELEMENT);
 
-    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PROJECTION_MODIFIER);
+    SimpleDiagnosticFactory<JetTypeProjection> PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT = SimpleDiagnosticFactory.create(ERROR, PROJECTION_MODIFIER);
     SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED_DEFAULT = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<PsiElement> SECONDARY_CONSTRUCTOR_BUT_NO_PRIMARY = SimpleDiagnosticFactory.create(ERROR);
@@ -144,26 +130,21 @@ public interface Errors {
     SimpleDiagnosticFactory<JetDelegatorByExpressionSpecifier> BY_IN_SECONDARY_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetDelegatorToSuperClass> INITIALIZER_WITH_NO_ARGUMENTS = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetDelegationSpecifier> MANY_CALLS_TO_THIS = SimpleDiagnosticFactory.create(ERROR);
-    DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_OVERRIDE_MODIFIER);
-    DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor>
-            VIRTUAL_MEMBER_HIDDEN = DiagnosticFactory3.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory1<JetModifierListOwner, CallableMemberDescriptor> NOTHING_TO_OVERRIDE = DiagnosticFactory1.create(ERROR, OVERRIDE_MODIFIER);
+    DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN =
+            DiagnosticFactory3.create(ERROR, NAMED_ELEMENT);
     DiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor, DeclarationDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
-            DiagnosticFactory3.create(ERROR, PositioningStrategies.POSITION_OVERRIDE_MODIFIER);
-    SimpleDiagnosticFactory<JetModifierListOwner> CANNOT_INFER_VISIBILITY = SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.POSITION_OVERRIDE_MODIFIER);
+            DiagnosticFactory3.create(ERROR, OVERRIDE_MODIFIER);
+    SimpleDiagnosticFactory<JetDeclaration> CANNOT_INFER_VISIBILITY = SimpleDiagnosticFactory.create(ERROR, DECLARATION);
 
-    DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED =
-            DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    DiagnosticFactory1<JetClass, ClassDescriptor> ENUM_ENTRY_SHOULD_BE_INITIALIZED = DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
     DiagnosticFactory1<JetTypeReference, ClassDescriptor> ENUM_ENTRY_ILLEGAL_TYPE = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
-    UnusedElementDiagnosticFactory<JetProperty, VariableDescriptor> UNUSED_VARIABLE =
-            UnusedElementDiagnosticFactory.create(WARNING, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    UnusedElementDiagnosticFactory<JetParameter, VariableDescriptor> UNUSED_PARAMETER =
-            UnusedElementDiagnosticFactory.create(WARNING, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    UnusedElementDiagnosticFactory<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE =
-            UnusedElementDiagnosticFactory.create(WARNING, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    UnusedElementDiagnosticFactory<JetProperty, VariableDescriptor> UNUSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
+    UnusedElementDiagnosticFactory<JetParameter, VariableDescriptor> UNUSED_PARAMETER = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
+    UnusedElementDiagnosticFactory<JetNamedDeclaration, DeclarationDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE = UnusedElementDiagnosticFactory.create(WARNING, NAME_IDENTIFIER);
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VARIABLE_WITH_REDUNDANT_INITIALIZER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<JetElement, JetElement> UNUSED_CHANGED_VALUE = DiagnosticFactory1.create(WARNING);
@@ -194,10 +175,8 @@ public interface Errors {
     SimpleDiagnosticFactory<JetPropertyAccessor> LOCAL_VARIABLE_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
     SimpleDiagnosticFactory<JetPropertyAccessor> VAL_WITH_SETTER = SimpleDiagnosticFactory.create(ERROR);
 
-    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_GET_METHOD =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.POSITION_ARRAY_ACCESS);
-    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_SET_METHOD =
-            SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.POSITION_ARRAY_ACCESS);
+    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_GET_METHOD = SimpleDiagnosticFactory.create(ERROR, ARRAY_ACCESS);
+    SimpleDiagnosticFactory<JetArrayAccessExpression> NO_SET_METHOD = SimpleDiagnosticFactory.create(ERROR, ARRAY_ACCESS);
 
     SimpleDiagnosticFactory<JetSimpleNameExpression> INC_DEC_SHOULD_NOT_RETURN_UNIT = SimpleDiagnosticFactory.create(ERROR);
     DiagnosticFactory2<JetSimpleNameExpression, DeclarationDescriptor, JetSimpleNameExpression> ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT =
@@ -239,24 +218,7 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> CALLEE_NOT_A_FUNCTION = DiagnosticFactory1.create(ERROR);
 
     SimpleDiagnosticFactory<JetReturnExpression> RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetDeclarationWithBody> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY =
-            SimpleDiagnosticFactory.create(ERROR,
-                                           new PositioningStrategy<JetDeclarationWithBody>() {
-                                               @NotNull
-                                               @Override
-                                               public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
-                                                   JetExpression bodyExpression = element.getBodyExpression();
-                                                   if (!(bodyExpression instanceof JetBlockExpression)) {
-                                                       return markElement(element);
-                                                   }
-                                                   JetBlockExpression blockExpression = (JetBlockExpression)bodyExpression;
-                                                   TextRange lastBracketRange = blockExpression.getLastBracketRange();
-                                                   if (lastBracketRange == null) {
-                                                       return Collections.emptyList();
-                                                   }
-                                                   return markRange(lastBracketRange);
-                                               }
-                                           });
+    SimpleDiagnosticFactory<JetDeclarationWithBody> NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY = SimpleDiagnosticFactory.create(ERROR, DECLARATION_WITH_BODY);
     DiagnosticFactory1<JetExpression, JetType> RETURN_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetExpression, JetType> EXPECTED_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetBinaryExpression, JetType> ASSIGNMENT_TYPE_MISMATCH = DiagnosticFactory1.create(ERROR);
@@ -273,33 +235,10 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> TOO_MANY_ARGUMENTS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, String> ERROR_COMPILE_TIME_VALUE = DiagnosticFactory1.create(ERROR);
 
-    SimpleDiagnosticFactory<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = SimpleDiagnosticFactory.create(ERROR, new PositioningStrategy<JetWhenEntry>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull JetWhenEntry entry) {
-            PsiElement elseKeywordElement = entry.getElseKeywordElement();
-            assert elseKeywordElement != null;
-            return markElement(elseKeywordElement);
-        }
-    });
+    SimpleDiagnosticFactory<JetWhenEntry> ELSE_MISPLACED_IN_WHEN = SimpleDiagnosticFactory.create(ERROR, ELSE_ENTRY);
 
-    SimpleDiagnosticFactory<JetWhenExpression>
-            NO_ELSE_IN_WHEN = new SimpleDiagnosticFactory<JetWhenExpression>(ERROR, new PositioningStrategy<JetWhenExpression>() {
-        @NotNull
-        @Override
-        public List<TextRange> mark(@NotNull JetWhenExpression element) {
-            return markElement(element.getWhenKeywordElement());
-        }
-    });
-    SimpleDiagnosticFactory<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE =
-            new SimpleDiagnosticFactory<JetWhenConditionInRange>(ERROR,
-                                                                 new PositioningStrategy<JetWhenConditionInRange>() {
-                                                                     @NotNull
-                                                                     @Override
-                                                                     public List<TextRange> mark(@NotNull JetWhenConditionInRange condition) {
-                                                                         return markElement(condition.getOperationReference());
-                                                                     }
-                                                                 });
+    SimpleDiagnosticFactory<JetWhenExpression> NO_ELSE_IN_WHEN = new SimpleDiagnosticFactory<JetWhenExpression>(ERROR, WHEN_EXPRESSION);
+    SimpleDiagnosticFactory<JetWhenConditionInRange> TYPE_MISMATCH_IN_RANGE = new SimpleDiagnosticFactory<JetWhenConditionInRange>(ERROR, WHEN_CONDITION_IN_RANGE);
     SimpleDiagnosticFactory<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = SimpleDiagnosticFactory.create(ERROR);
 
     SimpleDiagnosticFactory<JetTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = SimpleDiagnosticFactory.create(ERROR);
@@ -318,15 +257,7 @@ public interface Errors {
     DiagnosticFactory1<JetReturnExpression, String> NOT_A_RETURN_LABEL = DiagnosticFactory1.create(ERROR);
 
     SimpleDiagnosticFactory<JetClassInitializer> ANONYMOUS_INITIALIZER_WITHOUT_CONSTRUCTOR = SimpleDiagnosticFactory.create(ERROR);
-    SimpleDiagnosticFactory<JetNullableType> NULLABLE_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR,
-                                                                                                 new PositioningStrategy<JetNullableType>() {
-                                                                                                     @NotNull
-                                                                                                     @Override
-                                                                                                     public List<TextRange> mark(@NotNull JetNullableType element) {
-                                                                                                         return markNode(
-                                                                                                                 element.getQuestionMarkNode());
-                                                                                                     }
-                                                                                                 });
+    SimpleDiagnosticFactory<JetNullableType> NULLABLE_SUPERTYPE = SimpleDiagnosticFactory.create(ERROR, NULLABLE_TYPE);
     DiagnosticFactory1<PsiElement, JetType> UNSAFE_CALL = DiagnosticFactory1.create(ERROR);
     SimpleDiagnosticFactory<JetSimpleNameExpression> AMBIGUOUS_LABEL = SimpleDiagnosticFactory.create(ERROR);
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED = DiagnosticFactory1.create(ERROR);
@@ -354,15 +285,14 @@ public interface Errors {
 
     DiagnosticFactory2<JetBinaryExpression, JetBinaryExpression, Boolean> SENSELESS_COMPARISON = DiagnosticFactory2.create(WARNING);
 
-    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER =
-            DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE =
-            DiagnosticFactory3.create(ERROR, PositioningStrategies.POSITION_VISIBILITY_MODIFIER);
+            DiagnosticFactory3.create(ERROR, VISIBILITY_MODIFIER);
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_CHANGE_ACCESS_PRIVILEGE =
-            DiagnosticFactory3.create(ERROR, PositioningStrategies.POSITION_VISIBILITY_MODIFIER);
+            DiagnosticFactory3.create(ERROR, VISIBILITY_MODIFIER);
 
     DiagnosticFactory2<JetNamedDeclaration, CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE =
-            DiagnosticFactory2.create(ERROR, PositioningStrategies.POSITION_DECLARATION);
+            DiagnosticFactory2.create(ERROR, DECLARATION_RETURN_TYPE);
 
     DiagnosticFactory2<JetProperty, PropertyDescriptor, PropertyDescriptor> VAR_OVERRIDDEN_BY_VAL =
             DiagnosticFactory2.create(ERROR, new PositioningStrategy<JetProperty>() {
@@ -379,46 +309,16 @@ public interface Errors {
     DiagnosticFactory2<PsiElement, JetClassOrObject, CallableMemberDescriptor> MANY_IMPL_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR);
 
-    SimpleDiagnosticFactory<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = SimpleDiagnosticFactory.create(ERROR, PositioningStrategies.PARAMETER_DEFAULT_VALUE);
-    DiagnosticFactory1<JetParameter, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES = DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory1<JetClassOrObject, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE = DiagnosticFactory1.create(ERROR, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory2<JetParameter, ClassDescriptor, ValueParameterDescriptor> PARAMETER_NAME_CHANGED_ON_OVERRIDE = DiagnosticFactory2.create(WARNING, PositioningStrategies.POSITION_NAME_IDENTIFIER);
-    DiagnosticFactory2<JetClassOrObject, Collection<? extends CallableMemberDescriptor>, Integer> DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES = DiagnosticFactory2.create(WARNING, PositioningStrategies.POSITION_NAME_IDENTIFIER);
+    SimpleDiagnosticFactory<JetParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = SimpleDiagnosticFactory.create(ERROR, PARAMETER_DEFAULT_VALUE);
+    DiagnosticFactory1<JetParameter, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetClassOrObject, ValueParameterDescriptor> MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE =
+            DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
+    DiagnosticFactory2<JetParameter, ClassDescriptor, ValueParameterDescriptor> PARAMETER_NAME_CHANGED_ON_OVERRIDE =
+            DiagnosticFactory2.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory2<JetClassOrObject, Collection<? extends CallableMemberDescriptor>, Integer> DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES =
+            DiagnosticFactory2.create(WARNING, NAME_IDENTIFIER);
 
-    DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS =
-            DiagnosticFactory2.create(ERROR, new PositioningStrategy<JetDeclaration>() {
-                @NotNull
-                @Override
-                public List<TextRange> mark(@NotNull JetDeclaration jetDeclaration) {
-                    if (jetDeclaration instanceof JetNamedFunction) {
-                        JetNamedFunction functionElement = (JetNamedFunction)jetDeclaration;
-                        return markRange(new TextRange(
-                                functionElement.getStartOfSignatureElement().getTextRange().getStartOffset(),
-                                functionElement.getEndOfSignatureElement().getTextRange().getEndOffset()
-                        ));
-                    }
-                    else if (jetDeclaration instanceof JetClass) {
-                        // primary constructor
-                        JetClass klass = (JetClass)jetDeclaration;
-                        PsiElement nameAsDeclaration = klass.getNameIdentifier();
-                        if (nameAsDeclaration == null) {
-                            return markElement(klass);
-                        }
-                        PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
-                        if (primaryConstructorParameterList == null) {
-                            return markRange(nameAsDeclaration.getTextRange());
-                        }
-                        return markRange(new TextRange(
-                                nameAsDeclaration.getTextRange().getStartOffset(),
-                                primaryConstructorParameterList.getTextRange().getEndOffset()
-                        ));
-                    }
-                    else {
-                        // safe way
-                        return markElement(jetDeclaration);
-                    }
-                }
-            });
+    DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS = DiagnosticFactory2.create(ERROR, DECLARATION);
 
 
     DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);

@@ -34,7 +34,7 @@ class Foo() : <error>WithPC0</error>(), <error>this</error>() {
 }
 
 class WithCPI_Dup(x : Int) {
-  var <error>x</error> : Int
+  <error>var x : Int</error>
 }
 
 class WithCPI(x : Int) {

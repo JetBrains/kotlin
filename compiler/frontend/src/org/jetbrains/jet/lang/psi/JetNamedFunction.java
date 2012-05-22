@@ -69,28 +69,6 @@ public class JetNamedFunction extends JetFunction implements StubBasedPsiElement
         return findChildByType(JetTokens.EQ);
     }
 
-    @NotNull
-    public JetElement getStartOfSignatureElement() {
-        return this;
-    }
-
-    @NotNull
-    public JetElement getEndOfSignatureElement() {
-        JetElement r = getReturnTypeRef();
-        if (r != null) {
-            return r;
-        }
-        
-        r = getValueParameterList();
-        if (r != null) {
-            return r;
-        }
-
-        // otherwise it is an error
-
-        return this;
-    }
-
     /**
      * Returns full qualified name for function "package_fqn.function_name"
      * Not null for top level functions.

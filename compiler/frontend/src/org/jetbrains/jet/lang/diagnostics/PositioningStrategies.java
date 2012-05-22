@@ -21,14 +21,12 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +36,7 @@ public class PositioningStrategies {
 
     public static final PositioningStrategy<PsiElement> DEFAULT = new PositioningStrategy<PsiElement>();
 
-    public static final PositioningStrategy<JetDeclaration> POSITION_DECLARATION = new PositioningStrategy<JetDeclaration>() {
+    public static final PositioningStrategy<JetDeclaration> DECLARATION_RETURN_TYPE = new PositioningStrategy<JetDeclaration>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetDeclaration declaration) {
@@ -70,7 +68,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<PsiNameIdentifierOwner> POSITION_NAME_IDENTIFIER = new PositioningStrategy<PsiNameIdentifierOwner>() {
+    public static final PositioningStrategy<PsiNameIdentifierOwner> NAME_IDENTIFIER = new PositioningStrategy<PsiNameIdentifierOwner>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
@@ -82,28 +80,109 @@ public class PositioningStrategies {
         }
     };
 
-    public static final PositioningStrategy<JetModifierListOwner> POSITION_ABSTRACT_MODIFIER = positionModifier(JetTokens.ABSTRACT_KEYWORD);
+    public static final PositioningStrategy<PsiNameIdentifierOwner> NAMED_ELEMENT = new PositioningStrategy<PsiNameIdentifierOwner>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiNameIdentifierOwner element) {
+            if (element instanceof JetNamedFunction) {
+                JetNamedFunction function = (JetNamedFunction)element;
+                PsiElement endOfSignatureElement;
+                JetParameterList valueParameterList = function.getValueParameterList();
+                JetElement returnTypeRef = function.getReturnTypeRef();
+                PsiElement nameIdentifier = function.getNameIdentifier();
+                if (returnTypeRef != null) {
+                    endOfSignatureElement = returnTypeRef;
+                }
+                else if (valueParameterList != null) {
+                    endOfSignatureElement = valueParameterList;
+                }
+                else if (nameIdentifier != null) {
+                    endOfSignatureElement = nameIdentifier;
+                }
+                else {
+                    endOfSignatureElement = function;
+                }
+                return markRange(new TextRange(
+                        function.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
+            }
+            else if (element instanceof JetProperty) {
+                JetProperty property = (JetProperty) element;
+                PsiElement endOfSignatureElement;
+                JetTypeReference propertyTypeRef = property.getPropertyTypeRef();
+                PsiElement nameIdentifier = property.getNameIdentifier();
+                if (propertyTypeRef != null) {
+                    endOfSignatureElement = propertyTypeRef;
+                }
+                else if (nameIdentifier != null) {
+                    endOfSignatureElement = nameIdentifier;
+                }
+                else {
+                    endOfSignatureElement = property;
+                }
+                return markRange(new TextRange(
+                        property.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
+            }
+            else if (element instanceof JetClass) {
+                // primary constructor
+                JetClass klass = (JetClass)element;
+                PsiElement nameAsDeclaration = klass.getNameIdentifier();
+                if (nameAsDeclaration == null) {
+                    return markElement(klass);
+                }
+                PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+                if (primaryConstructorParameterList == null) {
+                    return markRange(nameAsDeclaration.getTextRange());
+                }
+                return markRange(new TextRange(
+                        nameAsDeclaration.getTextRange().getStartOffset(), primaryConstructorParameterList.getTextRange().getEndOffset()));
+            }
+            return super.mark(element);
+        }
+        @Override
+        public boolean isValid(@NotNull PsiNameIdentifierOwner element) {
+            return element.getNameIdentifier() != null;
+        }
+    };
 
-    public static final PositioningStrategy<JetModifierListOwner> POSITION_OVERRIDE_MODIFIER = positionModifier(JetTokens.OVERRIDE_KEYWORD);
+    public static final PositioningStrategy<JetDeclaration> DECLARATION = new PositioningStrategy<JetDeclaration>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetDeclaration element) {
+            if (element instanceof PsiNameIdentifierOwner) {
+                return NAMED_ELEMENT.mark((PsiNameIdentifierOwner) element);
+            }
+            return super.mark(element);
+        }
+
+        @Override
+        public boolean isValid(@NotNull JetDeclaration element) {
+            if (element instanceof PsiNameIdentifierOwner) {
+                return NAMED_ELEMENT.isValid((PsiNameIdentifierOwner) element);
+            }
+            return super.isValid(element);
+        }
+    };
+
+    public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = positionModifier(JetTokens.ABSTRACT_KEYWORD);
+
+    public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = positionModifier(JetTokens.OVERRIDE_KEYWORD);
 
     public static PositioningStrategy<JetModifierListOwner> positionModifier(final JetKeywordToken token) {
         return new PositioningStrategy<JetModifierListOwner>() {
             @NotNull
             @Override
             public List<TextRange> mark(@NotNull JetModifierListOwner modifierListOwner) {
-                if (modifierListOwner.hasModifier(token)) {
-                    JetModifierList modifierList = modifierListOwner.getModifierList();
-                    assert modifierList != null;
-                    ASTNode node = modifierList.getModifierNode(token);
-                    assert node != null;
-                    return markNode(node);
-                }
-                return markElement(modifierListOwner);
+                assert modifierListOwner.hasModifier(token);
+                JetModifierList modifierList = modifierListOwner.getModifierList();
+                assert modifierList != null;
+                ASTNode node = modifierList.getModifierNode(token);
+                assert node != null;
+                return markNode(node);
             }
         };
     }
 
-    public static PositioningStrategy<JetArrayAccessExpression> POSITION_ARRAY_ACCESS = new PositioningStrategy<JetArrayAccessExpression>() {
+    public static PositioningStrategy<JetArrayAccessExpression> ARRAY_ACCESS = new PositioningStrategy<JetArrayAccessExpression>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetArrayAccessExpression element) {
@@ -111,7 +190,7 @@ public class PositioningStrategies {
         }
     };
 
-    public static PositioningStrategy<JetModifierListOwner> POSITION_VISIBILITY_MODIFIER = new PositioningStrategy<JetModifierListOwner>() {
+    public static PositioningStrategy<JetModifierListOwner> VISIBILITY_MODIFIER = new PositioningStrategy<JetModifierListOwner>() {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetModifierListOwner element) {
@@ -159,6 +238,64 @@ public class PositioningStrategies {
                 }
             }
             return markElement(callElement);
+        }
+    };
+
+    public static PositioningStrategy<JetDeclarationWithBody> DECLARATION_WITH_BODY = new PositioningStrategy<JetDeclarationWithBody>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetDeclarationWithBody element) {
+            JetExpression bodyExpression = element.getBodyExpression();
+            if ((bodyExpression instanceof JetBlockExpression)) {
+                TextRange lastBracketRange = ((JetBlockExpression) bodyExpression).getLastBracketRange();
+                if (lastBracketRange != null) {
+                    return markRange(lastBracketRange);
+                }
+            }
+            return markElement(element);
+        }
+
+        @Override
+        public boolean isValid(@NotNull JetDeclarationWithBody element) {
+            JetExpression bodyExpression = element.getBodyExpression();
+            if (!(bodyExpression instanceof JetBlockExpression)) return false;
+            if (((JetBlockExpression) bodyExpression).getLastBracketRange() == null) return false;
+            return true;
+        }
+    };
+
+    public static PositioningStrategy<JetWhenEntry> ELSE_ENTRY = new PositioningStrategy<JetWhenEntry>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetWhenEntry entry) {
+            PsiElement elseKeywordElement = entry.getElseKeywordElement();
+            assert elseKeywordElement != null;
+            return markElement(elseKeywordElement);
+        }
+    };
+
+    public static PositioningStrategy<JetWhenExpression> WHEN_EXPRESSION = new PositioningStrategy<JetWhenExpression>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetWhenExpression element) {
+            return markElement(element.getWhenKeywordElement());
+        }
+    };
+
+    public static PositioningStrategy<JetWhenConditionInRange> WHEN_CONDITION_IN_RANGE =
+            new PositioningStrategy<JetWhenConditionInRange>() {
+                @NotNull
+                @Override
+                public List<TextRange> mark(@NotNull JetWhenConditionInRange condition) {
+                    return markElement(condition.getOperationReference());
+                }
+            };
+
+    public static PositioningStrategy<JetNullableType> NULLABLE_TYPE = new PositioningStrategy<JetNullableType>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetNullableType element) {
+            return markNode(element.getQuestionMarkNode());
         }
     };
 }

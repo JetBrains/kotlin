@@ -37,10 +37,4 @@ public class SimpleDiagnostic<E extends PsiElement> extends AbstractDiagnostic<E
     public SimpleDiagnosticFactory<E> getFactory() {
         return (SimpleDiagnosticFactory<E>)super.getFactory();
     }
-
-    @Override
-    @NotNull
-    public List<TextRange> getTextRanges() {
-        return getFactory().getTextRanges(this);
-    }
 }

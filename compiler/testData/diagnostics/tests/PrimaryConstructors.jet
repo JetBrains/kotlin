@@ -1,5 +1,5 @@
 class X {
-  val <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>x<!> : Int
+  <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x : Int<!>
 }
 
 open class Y() {

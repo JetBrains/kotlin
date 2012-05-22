@@ -3,5 +3,5 @@ open class Aaa() {
 }
 
 open class Bbb() : Aaa() {
-    <!CONFLICTING_OVERLOADS!>val <T> bar = "aa"<!>
+    <!CONFLICTING_OVERLOADS!>val <T> bar<!> = "aa"
 }

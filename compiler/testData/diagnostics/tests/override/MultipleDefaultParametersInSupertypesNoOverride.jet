@@ -7,9 +7,9 @@ trait Y {
 }
 
 class Z : X, Y {
-    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
+    <!VIRTUAL_MEMBER_HIDDEN!>fun foo(a : Int)<!> {}
 }
 
 object ZO : X, Y {
-    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
+    <!VIRTUAL_MEMBER_HIDDEN!>fun foo(a : Int)<!> {}
 }

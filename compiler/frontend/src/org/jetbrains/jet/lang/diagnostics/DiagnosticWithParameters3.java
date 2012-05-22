@@ -49,12 +49,6 @@ public class DiagnosticWithParameters3<E extends PsiElement, A, B, C> extends Ab
         return (DiagnosticFactory3<E, A, B, C>)super.getFactory();
     }
 
-    @Override
-    @NotNull
-    public List<TextRange> getTextRanges() {
-        return getFactory().getTextRanges(this);
-    }
-
     @NotNull
     public A getA() {
         return a;

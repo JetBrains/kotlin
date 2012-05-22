@@ -646,10 +646,6 @@ public class DescriptorResolver {
         if (propertyTypeRef == null) {
             final JetExpression initializer = property.getInitializer();
             if (initializer == null) {
-                PsiElement nameIdentifier = property.getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(nameIdentifier));
-                }
                 return ErrorUtils.createErrorType("No type, no body");
             }
             else {

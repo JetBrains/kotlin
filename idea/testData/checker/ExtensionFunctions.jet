@@ -33,7 +33,7 @@ fun test() {
 val Int.abs : Int
   get() = if (this > 0) this else -this;
 
-val <T> T.<error>foo</error> : T
+<error>val <T> T.foo : T</error>
 
 fun Int.foo() = this
 

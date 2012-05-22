@@ -75,6 +75,7 @@ public final class AnalyzerWithCompilerReport {
     }
 
     private void reportDiagnostic(@NotNull Diagnostic diagnostic) {
+        if (!diagnostic.isValid()) return;
         DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
         VirtualFile virtualFile = diagnostic.getPsiFile().getVirtualFile();
         String path = virtualFile == null ? null : virtualFile.getPath();

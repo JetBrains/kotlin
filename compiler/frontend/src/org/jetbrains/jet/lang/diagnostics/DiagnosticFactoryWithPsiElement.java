@@ -36,4 +36,8 @@ public abstract class DiagnosticFactoryWithPsiElement<E extends PsiElement> exte
     protected List<TextRange> getTextRanges(ParametrizedDiagnostic<E> diagnostic) {
         return positioningStrategy.mark(diagnostic.getPsiElement());
     }
+
+    protected boolean isValid(ParametrizedDiagnostic<E> diagnostic) {
+        return positioningStrategy.isValid(diagnostic.getPsiElement());
+    }
 }

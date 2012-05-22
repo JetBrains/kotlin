@@ -142,6 +142,7 @@ public class JetPsiChecker implements Annotator {
     private static void registerDiagnosticAnnotations(@NotNull Diagnostic diagnostic,
                                                       @NotNull Set<PsiElement> redeclarations,
                                                       @NotNull final AnnotationHolder holder) {
+        if (!diagnostic.isValid()) return;
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (diagnostic.getSeverity() == Severity.ERROR) {
             if (diagnostic.getFactory() == Errors.UNRESOLVED_IDE_TEMPLATE) {
@@ -271,7 +272,7 @@ public class JetPsiChecker implements Annotator {
                                                 @NotNull AnnotationHolder holder) {
         if (!redeclarations.add(redeclarationDiagnostic.getPsiElement())) return null;
         List<TextRange> textRanges = redeclarationDiagnostic.getTextRanges();
-        if (textRanges.isEmpty()) return null;
+        if (!redeclarationDiagnostic.isValid()) return null;
         Annotation annotation = holder.createErrorAnnotation(textRanges.get(0), "");
         annotation.setTooltip(getMessage(redeclarationDiagnostic));
         return annotation;

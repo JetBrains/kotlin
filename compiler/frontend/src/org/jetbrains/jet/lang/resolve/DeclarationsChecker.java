@@ -221,13 +221,19 @@ public class DeclarationsChecker {
             trace.report(BACKING_FIELD_IN_TRAIT.on(property));
         }
         if (initializer == null) {
+            boolean error = false;
             if (backingFieldRequired && !inTrait && !trace.getBindingContext().get(BindingContext.IS_INITIALIZED, propertyDescriptor)) {
                 if (classDescriptor == null || hasAccessorImplementation) {
+                    error = true;
                     trace.report(MUST_BE_INITIALIZED.on(property));
                 }
                 else {
+                    error = true;
                     trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
                 }
+            }
+            if (!error && property.getPropertyTypeRef() == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;
         }
