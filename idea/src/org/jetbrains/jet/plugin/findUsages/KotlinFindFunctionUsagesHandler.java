@@ -17,13 +17,10 @@
 package org.jetbrains.jet.plugin.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
-import com.intellij.psi.PsiCompiledElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.JetLightClass;
-import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetFunction;
 
@@ -40,12 +37,9 @@ public class KotlinFindFunctionUsagesHandler extends FindUsagesHandler {
     public PsiElement[] getSecondaryElements() {
         JetFunction function = (JetFunction) getPsiElement();
         if (function.getParent() instanceof JetClassBody) {
-            JetClass containingClass = PsiTreeUtil.getParentOfType(function, JetClass.class);
-            JetLightClass wrapper = JetLightClass.wrapDelegate(containingClass);
-            for (PsiMethod method : wrapper.getMethods()) {
-                if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
-                    return new PsiElement[] { method };
-                }
+            final PsiMethod method = JetLightClass.wrapMethod(function);
+            if (method != null) {
+                return new PsiElement[] { method };
             }
         }
         return PsiElement.EMPTY_ARRAY;

@@ -35,10 +35,7 @@ import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl;
 import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.stubs.PsiClassHolderFileStub;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.*;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -49,6 +46,7 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -242,5 +240,16 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
 
     public static JetLightClass wrapDelegate(JetClass jetClass) {
         return new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
+    }
+
+    public static PsiMethod wrapMethod(JetFunction function) {
+        JetClass containingClass = PsiTreeUtil.getParentOfType(function, JetClass.class);
+        JetLightClass wrapper = wrapDelegate(containingClass);
+        for (PsiMethod method : wrapper.getMethods()) {
+            if (method instanceof PsiCompiledElement && ((PsiCompiledElement) method).getMirror() == function) {
+                return method;
+            }
+        }
+        return null;
     }
 }
