@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.actions;
+package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -40,13 +38,9 @@ import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyFileToDir;
 /**
  * @author Pavel Talanov
  */
-public final class SetUpJsModuleAction extends AnAction {
-    @Override
-    public void actionPerformed(AnActionEvent event) {
-        if (event == null) {
-            return;
-        }
-        doSetUpModule(event.getProject());
+public final class JsModuleSetUp {
+
+    private JsModuleSetUp() {
     }
 
     public static void doSetUpModule(@Nullable Project project) {

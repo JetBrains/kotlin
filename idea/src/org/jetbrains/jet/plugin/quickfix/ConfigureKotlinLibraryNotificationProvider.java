@@ -50,7 +50,6 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.actions.SetUpJsModuleAction;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
@@ -174,7 +173,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     }
 
     private void setUpJSModule(@NotNull Module module) {
-        SetUpJsModuleAction.doSetUpModule(module.getProject());
+        JsModuleSetUp.doSetUpModule(module.getProject());
         updateNotifications();
     }
 
