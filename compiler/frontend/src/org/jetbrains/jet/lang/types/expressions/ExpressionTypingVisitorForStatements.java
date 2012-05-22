@@ -46,6 +46,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE_REASSIGNMEN
 /**
  * @author abreslav
  */
+@SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
     private final WritableScope scope;
     private final BasicExpressionTypingVisitor basic;

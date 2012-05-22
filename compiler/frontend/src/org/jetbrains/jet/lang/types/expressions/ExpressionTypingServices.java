@@ -254,7 +254,9 @@ public class ExpressionTypingServices {
         return typeMap;
     }
 
-    /*package*/ JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
+    /*package*/
+    @SuppressWarnings("SuspiciousMethodCalls")
+    JetType getBlockReturnedTypeWithWritableScope(@NotNull WritableScope scope, @NotNull List<? extends JetElement> block, @NotNull CoercionStrategy coercionStrategyForLastExpression, ExpressionTypingContext context, BindingTrace trace) {
         if (block.isEmpty()) {
             return JetStandardClasses.getUnitType();
         }

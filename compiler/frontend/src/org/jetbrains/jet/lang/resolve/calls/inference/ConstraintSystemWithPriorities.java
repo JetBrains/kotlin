@@ -143,7 +143,7 @@ public class ConstraintSystemWithPriorities implements ConstraintSystem {
                 return expandEqualityConstraint(aValue, bValue);
             }
 
-            @Override
+            @SuppressWarnings("SuspiciousMethodCalls") @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
                 return a.equals(b)
                        || unknownTypes.containsKey(a.getDeclarationDescriptor())

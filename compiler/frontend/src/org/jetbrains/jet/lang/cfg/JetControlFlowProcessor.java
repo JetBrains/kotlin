@@ -225,7 +225,7 @@ public class JetControlFlowProcessor {
             }
         }
 
-        @Override
+        @SuppressWarnings("SuspiciousMethodCalls") @Override
         public void visitBinaryExpression(JetBinaryExpression expression) {
             IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
             JetExpression right = expression.getRight();

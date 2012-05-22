@@ -150,6 +150,7 @@ public class TypeHierarchyResolver {
      * @param owner
      * @return
      */
+    @SuppressWarnings("SuspiciousMethodCalls")
     @NotNull
     private JetScope getStaticScope(PsiElement declarationElement, @NotNull NamespaceLikeBuilder owner) {
         DeclarationDescriptor ownerDescriptor = owner.getOwnerForChildren();
