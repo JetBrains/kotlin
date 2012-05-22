@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils;
 import org.jetbrains.jet.plugin.project.JsModuleDetector;
 import org.jetbrains.jet.utils.PathUtil;
@@ -42,7 +43,13 @@ import static org.jetbrains.jet.plugin.k2jsrun.K2JSRunnerUtils.copyFileToDir;
 public final class SetUpJsModuleAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent event) {
-        Project project = event.getProject();
+        if (event == null) {
+            return;
+        }
+        doSetUpModule(event.getProject());
+    }
+
+    public static void doSetUpModule(@Nullable Project project) {
         if (project == null) {
             notifyFailure("Internal error: Project not found.");
             return;
@@ -74,12 +81,12 @@ public final class SetUpJsModuleAction extends AnAction {
     }
 
     private static void refreshRootDir(@NotNull Project project) {
-        getContentRoot(project).refresh(true, false);
+        getContentRoot(project).refresh(false, false);
     }
 
     private static void createIndicationFile(@NotNull File file) {
         try {
-            FileUtil.writeToFile(file, PathUtil.JS_LIB_JAR_NAME);
+            FileUtil.writeToFile(file, "lib/" + PathUtil.JS_LIB_JAR_NAME);
         }
         catch (IOException e) {
             notifyFailure("Failed to write file " + file.getName());
@@ -88,7 +95,7 @@ public final class SetUpJsModuleAction extends AnAction {
 
     private static boolean copyJsLib(@NotNull File jsLibPath, @NotNull File rootDir) {
         try {
-            copyFileToDir(jsLibPath, rootDir);
+            copyFileToDir(jsLibPath, new File(rootDir, "lib"));
         }
         catch (IOException e) {
             notifyFailure("Failed to copy file: " + e.getMessage());

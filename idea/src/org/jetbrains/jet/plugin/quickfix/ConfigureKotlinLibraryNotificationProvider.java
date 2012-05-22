@@ -50,14 +50,14 @@ import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.project.JsModuleDetector;
+import org.jetbrains.jet.plugin.actions.SetUpJsModuleAction;
 import org.jetbrains.jet.utils.PathUtil;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-import static org.jetbrains.jet.plugin.project.JsModuleDetector.*;
+import static org.jetbrains.jet.plugin.project.JsModuleDetector.isJsProject;
 
 public class ConfigureKotlinLibraryNotificationProvider implements EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("configure.kotlin.library");
@@ -155,34 +155,53 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
     private EditorNotificationPanel createNotificationPanel(final Module module) {
         final EditorNotificationPanel answer = new EditorNotificationPanel();
 
-        answer.setText("Kotlin runtime library is not configured for module '" + module.getName() + "'");
-        answer.createActionLabel("Setup Kotlin Runtime", new Runnable() {
+        answer.setText("Kotlin is not configured for module '" + module.getName() + "'");
+        answer.createActionLabel("Set Up module '" + module.getName() + "' as JVM Kotlin module", new Runnable() {
             @Override
             public void run() {
+                setUpKotlinRuntime(module);
+            }
+        });
 
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        Library library = findOrCreateRuntimeLibrary(module);
-                        if (library != null) {
-                            ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-                            if (model.findLibraryOrderEntry(library) == null) {
-                                model.addLibraryEntry(library);
-                                model.commit();
-                            }
-                            SwingUtilities.invokeLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    EditorNotifications.getInstance(myProject).updateAllNotifications();
-                                }
-                            });
-                        }
-                    }
-                });
+        answer.createActionLabel("Set Up module '" + module.getName() + "' as JavaScript Kotlin module", new Runnable() {
+            @Override
+            public void run() {
+                setUpJSModule(module);
             }
         });
 
         return answer;
+    }
+
+    private void setUpJSModule(@NotNull Module module) {
+        SetUpJsModuleAction.doSetUpModule(module.getProject());
+        updateNotifications();
+    }
+
+    private void setUpKotlinRuntime(@NotNull final Module module) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                Library library = findOrCreateRuntimeLibrary(module);
+                if (library != null) {
+                    ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+                    if (model.findLibraryOrderEntry(library) == null) {
+                        model.addLibraryEntry(library);
+                        model.commit();
+                    }
+                    updateNotifications();
+                }
+            }
+        });
+    }
+
+    private void updateNotifications() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                EditorNotifications.getInstance(myProject).updateAllNotifications();
+            }
+        });
     }
 
     private static boolean isMavenModule(@NotNull Module module) {
@@ -200,7 +219,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         protected ChoosePathDialog(Project project) {
             super(project);
             myProject = project;
-            
+
             setTitle("Local Kotlin Runtime Path");
             init();
         }
@@ -220,7 +239,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
 
             return myPathField;
         }
-        
+
         public String getPath() {
             return myPathField.getText();
         }
