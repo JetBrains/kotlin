@@ -22,7 +22,7 @@ import com.google.dart.compiler.backend.js.ast.JsScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
 import java.util.Map;
 

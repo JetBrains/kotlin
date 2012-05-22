@@ -17,8 +17,8 @@
 package org.jetbrains.jet;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.jet.lang.resolve.FqName;
-import org.jetbrains.jet.lang.resolve.FqNameUnsafe;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.junit.Assert;
 import org.junit.Test;
 
