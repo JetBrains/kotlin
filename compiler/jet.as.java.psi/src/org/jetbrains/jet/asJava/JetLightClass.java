@@ -47,6 +47,7 @@ import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.GenerationState;
+import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.FqName;
@@ -237,5 +238,9 @@ public class JetLightClass extends AbstractLightClass implements JetJavaMirrorMa
         catch (Throwable e) {
             return JetLightClass.class.getSimpleName() + ":" + e.toString();
         }
+    }
+
+    public static JetLightClass wrapDelegate(JetClass jetClass) {
+        return new JetLightClass(jetClass.getManager(), (JetFile) jetClass.getContainingFile(), JetPsiUtil.getFQName(jetClass));
     }
 }
