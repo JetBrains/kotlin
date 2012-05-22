@@ -239,8 +239,7 @@ public class ExpressionVisitor extends StatementVisitor {
                             getConverter().expressionToExpression(expression.getMethodExpression()),
                             getConverter().expressionsToExpressionList(expression.getArgumentList().getExpressions()),
                             getConverter().createConversions(expression),
-                            getConverter().typeToType(expression.getType()).getNullable(),
-                            getConverter().typesToTypeList(expression.getTypeArguments())
+                            getConverter().typesToTypeList(expression.getTypeArguments()), getConverter().typeToType(expression.getType()).getNullable()
                     );
         }
     }

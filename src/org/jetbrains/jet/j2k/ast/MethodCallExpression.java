@@ -33,10 +33,10 @@ public class MethodCallExpression extends Expression {
     private final List<Type> myTypeParameters;
 
     public MethodCallExpression(Expression methodCall, List<Expression> arguments, List<Type> typeParameters) {
-        this(methodCall, arguments, AstUtil.createListWithEmptyString(arguments), false, typeParameters);
+        this(methodCall, arguments, AstUtil.createListWithEmptyString(arguments), typeParameters, false);
     }
 
-    public MethodCallExpression(Expression methodCall, List<Expression> arguments, List<String> conversions, boolean nullable, List<Type> typeParameters) {
+    public MethodCallExpression(Expression methodCall, List<Expression> arguments, List<String> conversions, List<Type> typeParameters, boolean nullable) {
         myMethodCall = methodCall;
         myArguments = arguments;
         myConversions = conversions;
