@@ -137,6 +137,12 @@
         </if>
     </target>
 
+    <target name="jslib">
+      <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar">
+        <fileset dir = "${basedir}/js/js.libraries/src"/>
+      </jar>
+    </target>
+
     <target name="compiler">
         <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${basedir}/dependencies/jarjar.jar"/>
         <taskdef resource="proguard/ant/task.properties" classpath="${basedir}/dependencies/proguard.jar"/>
@@ -420,7 +426,7 @@
     </target>
 
     <target name="dist"
-            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkHeaders,runtime,lang"/>
+            depends="init,prepareDist,injectorsGenerator,generateInjectors,compiler,compilerSources,antTools,jdkHeaders,runtime,lang, jslib"/>
 
     <target name="zip" depends="dist">
         <zip destfile="${output}/${output.name}.zip">
