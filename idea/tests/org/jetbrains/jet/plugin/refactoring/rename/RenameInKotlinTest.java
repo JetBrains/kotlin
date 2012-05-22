@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeProjection;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -80,7 +81,7 @@ public class RenameInKotlinTest extends MultiFileTestCase {
 
                 assertNotNull(classDescriptor);
                 final JetScope scope = classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList());
-                final FunctionDescriptor methodDescriptor = scope.getFunctions(oldMethodName).iterator().next();
+                final FunctionDescriptor methodDescriptor = scope.getFunctions(Name.identifier(oldMethodName)).iterator().next();
                 return BindingContextUtils.callableDescriptorToDeclaration(bindingContext, methodDescriptor);
             }
         }, newMethodName);
