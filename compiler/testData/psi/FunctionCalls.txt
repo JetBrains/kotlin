@@ -24,14 +24,14 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('g')
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+                  PsiElement(IDENTIFIER)('bar')
           PsiElement(GT)('>')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
@@ -42,14 +42,14 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('h')
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('foo')
+                  PsiElement(IDENTIFIER)('baz')
           PsiElement(GT)('>')
       PsiWhiteSpace('\n  ')
       PARENTHESIZED
@@ -60,7 +60,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('i')
         PsiWhiteSpace(' ')
         FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
@@ -71,7 +71,7 @@ JetFile: FunctionCalls.jet
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n  ')
       REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('f')
+        PsiElement(IDENTIFIER)('j')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
       FUNCTION_LITERAL_EXPRESSION
@@ -84,7 +84,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('k')
         PsiWhiteSpace(' ')
         FUNCTION_LITERAL_EXPRESSION
           FUNCTION_LITERAL
@@ -98,7 +98,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('l')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
@@ -118,7 +118,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('m')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
@@ -139,7 +139,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('n')
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
@@ -167,7 +167,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('o')
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
@@ -196,13 +196,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('p')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('qux')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_PROJECTION
@@ -222,13 +222,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('q')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('quux')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_PROJECTION
@@ -254,13 +254,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('r')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('corge')
               OPERATION_REFERENCE
                 PsiElement(LT)('<')
               REFERENCE_EXPRESSION
@@ -287,13 +287,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('s')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('grault')
               OPERATION_REFERENCE
                 PsiElement(LT)('<')
               REFERENCE_EXPRESSION
@@ -330,13 +330,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('t')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('garply')
               OPERATION_REFERENCE
                 PsiElement(LT)('<')
               REFERENCE_EXPRESSION
@@ -370,13 +370,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('u')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('waldo')
               OPERATION_REFERENCE
                 PsiElement(LT)('<')
               REFERENCE_EXPRESSION
@@ -410,13 +410,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('v')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('fred')
               TYPE_ARGUMENT_LIST
                 PsiElement(LT)('<')
                 TYPE_PROJECTION
@@ -446,13 +446,13 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('f')
+          PsiElement(IDENTIFIER)('w')
         VALUE_ARGUMENT_LIST
           PsiElement(LPAR)('(')
           VALUE_ARGUMENT
             BINARY_EXPRESSION
               REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
+                PsiElement(IDENTIFIER)('plugh')
               OPERATION_REFERENCE
                 PsiElement(LT)('<')
               REFERENCE_EXPRESSION
@@ -480,7 +480,7 @@ JetFile: FunctionCalls.jet
       PsiWhiteSpace('\n  ')
       CALL_EXPRESSION
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
+          PsiElement(IDENTIFIER)('xyzzy')
         TYPE_ARGUMENT_LIST
           PsiElement(LT)('<')
           TYPE_PROJECTION
