@@ -1,8 +1,8 @@
 namespace test
 
-abstract trait test.Foo : java.lang.Object {
-}
 abstract trait test.Bar : java.lang.Object {
+}
+abstract trait test.Foo : java.lang.Object {
 }
 open class test.MethodTypePTwoUpperBounds : java.lang.Object {
     final /*constructor*/ fun <init>(): test.MethodTypePTwoUpperBounds

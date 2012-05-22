@@ -71,6 +71,12 @@ class NamespaceComparator {
         }
     }
 
+    private static <T extends Comparable<T>> List<T> sorted(Collection<T> items) {
+        List<T> r = new ArrayList<T>(items);
+        Collections.sort(r);
+        return r;
+    }
+
     private String doCompareNamespaces(@NotNull NamespaceDescriptor nsa, @NotNull NamespaceDescriptor nsb) {
         StringBuilder sb = new StringBuilder();
         Assert.assertEquals(nsa.getName(), nsb.getName());
@@ -98,7 +104,7 @@ class NamespaceComparator {
             }
         }
 
-        for (String name : classifierNames) {
+        for (String name : sorted(classifierNames)) {
             ClassifierDescriptor ca = nsa.getMemberScope().getClassifier(name);
             ClassifierDescriptor cb = nsb.getMemberScope().getClassifier(name);
             Assert.assertTrue(ca != null);
@@ -106,7 +112,7 @@ class NamespaceComparator {
             compareClassifiers(ca, cb, sb);
         }
 
-        for (String name : propertyNames) {
+        for (String name : sorted(propertyNames)) {
             Set<VariableDescriptor> pa = nsa.getMemberScope().getProperties(name);
             Set<VariableDescriptor> pb = nsb.getMemberScope().getProperties(name);
             compareDeclarationSets(pa, pb, sb);
@@ -115,7 +121,7 @@ class NamespaceComparator {
             Assert.assertTrue(nsb.getMemberScope().getFunctions(PropertyCodegen.setterName(name)).isEmpty());
         }
 
-        for (String name : functionNames) {
+        for (String name : sorted(functionNames)) {
             Set<FunctionDescriptor> fa = nsa.getMemberScope().getFunctions(name);
             Set<FunctionDescriptor> fb = nsb.getMemberScope().getFunctions(name);
             compareDeclarationSets(fa, fb, sb);
