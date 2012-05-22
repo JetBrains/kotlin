@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.checkers;
+package org.jetbrains.jet.codegen;
 
 import com.google.common.base.Supplier;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.jetbrains.jet.test.TestForeverRunner;
 
 /**
  * @author Stepan Koltsov
  */
-public class JetDiagnosticsTestForever {
+public class StdlibTestForever {
+
     public static void main(String[] args) {
         TestForeverRunner.runTestForever(args, new Supplier<Test>() {
             @Override
             public Test get() {
-                return JetDiagnosticsTest.suite();
+                return new TestSuite(StdlibTest.class);
             }
         });
     }
+
 }
