@@ -17,12 +17,14 @@
 package org.jetbrains.jet.findUsages;
 
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiStatement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -52,5 +54,15 @@ public class JetFindUsagesTest extends LightCodeInsightFixtureTestCase {
         UsageInfo first = usages.iterator().next();
         final PsiField field = PsiTreeUtil.getParentOfType(first.getElement(), PsiField.class);
         assertEquals("private Server myServer;", field.getText());
+    }
+
+    public void testFindMethodUsages() {
+        myFixture.configureByFiles("findMethodUsages/Server.kt", "findMethodUsages/Client.java");
+        JetFunction function = PsiTreeUtil.getParentOfType(myFixture.getElementAtCaret(), JetFunction.class, false);
+        final Collection<UsageInfo> usages = myFixture.findUsages(function);
+        assertEquals(1, usages.size());
+        UsageInfo first = usages.iterator().next();
+        final PsiStatement stmt = PsiTreeUtil.getParentOfType(first.getElement(), PsiStatement.class);
+        assertEquals("server.processRequest();", stmt.getText());
     }
 }
