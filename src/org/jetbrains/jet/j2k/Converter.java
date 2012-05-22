@@ -35,7 +35,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.j2k.ConverterUtil.countWritingAccesses;
 import static org.jetbrains.jet.j2k.ConverterUtil.createMainFunction;
-import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
+import static com.intellij.psi.CommonClassNames.*;
 import static org.jetbrains.jet.lang.types.expressions.OperatorConventions.*;
 
 /**

@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.j2k.Converter.isConstructorPrimary;
-import static org.jetbrains.jet.j2k.visitors.TypeVisitor.*;
+import static com.intellij.psi.CommonClassNames.*;
 
 /**
  * @author ignatov

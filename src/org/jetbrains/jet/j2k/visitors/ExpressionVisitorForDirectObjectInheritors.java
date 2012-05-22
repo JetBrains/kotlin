@@ -23,7 +23,7 @@ import org.jetbrains.jet.j2k.ast.DummyMethodCallExpression;
 import org.jetbrains.jet.j2k.ast.DummyStringExpression;
 import org.jetbrains.jet.j2k.ast.IdentifierImpl;
 
-import static org.jetbrains.jet.j2k.visitors.TypeVisitor.JAVA_LANG_OBJECT;
+import static com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT;
 
 /**
  * @author ignatov
