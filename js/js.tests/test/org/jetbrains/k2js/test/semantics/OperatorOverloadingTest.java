@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 /**
  * @author Pavel Talanov
@@ -101,6 +102,6 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
     }
 
     public void testOverloadPlusAssignArrayList() throws Exception {
-        checkFooBoxIsOk("overloadPlusAssignArrayList.kt");
+        checkFooBoxIsOk(JsTestUtils.failsOnEcmaV5(), "overloadPlusAssignArrayList.kt");
     }
 }

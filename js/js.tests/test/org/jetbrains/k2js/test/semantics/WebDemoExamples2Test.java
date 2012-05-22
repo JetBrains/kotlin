@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.test.semantics;
 
 import org.jetbrains.k2js.test.SingleFileTranslationTest;
+import org.jetbrains.k2js.test.utils.JsTestUtils;
 
 /**
  * @author Pavel Talanov
@@ -33,7 +34,7 @@ public final class WebDemoExamples2Test extends SingleFileTranslationTest {
     }
 
     public void testLife() throws Exception {
-        performTestWithMain("life", "", "2");
+        performTestWithMain(JsTestUtils.failsOnEcmaV5(), "life", "", "2");
     }
 
     public void testBuilder() throws Exception {
