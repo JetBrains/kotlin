@@ -101,7 +101,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         return null;
     }
 
-    private Library findOrCreateRuntimeLibrary(final Module module) {
+    private Library findOrCreateRuntimeLibrary() {
         LibraryTable table = ProjectLibraryTable.getInstance(myProject);
         Library kotlinRuntime = table.getLibraryByName("KotlinRuntime");
         if (kotlinRuntime != null) {
@@ -181,7 +181,7 @@ public class ConfigureKotlinLibraryNotificationProvider implements EditorNotific
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                Library library = findOrCreateRuntimeLibrary(module);
+                Library library = findOrCreateRuntimeLibrary();
                 if (library != null) {
                     ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
                     if (model.findLibraryOrderEntry(library) == null) {
