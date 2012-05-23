@@ -1,3 +1,3 @@
-fun foo(x : Any) : Unit {
+fun foo(x: Any): Unit {
     <caret>
 }

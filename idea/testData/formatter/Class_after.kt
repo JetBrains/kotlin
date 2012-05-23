@@ -1,3 +1,3 @@
 class Some() {
-    val a : Int
+    val a: Int
 }

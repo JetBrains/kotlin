@@ -4,7 +4,7 @@ trait A<T> {
 
 class C : A<C> {
 
-    override fun foo(value : C) {
+    override fun foo(value: C) {
         super<A>.foo(value)
     }
 }

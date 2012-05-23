@@ -1,6 +1,6 @@
 class Some {
     fun some() {
-        var int : Int=0
+        var int: Int=0
 
         int=12
         int+=12

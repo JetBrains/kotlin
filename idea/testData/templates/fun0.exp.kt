@@ -1,3 +1,3 @@
-fun foo() : Unit {
+fun foo(): Unit {
     <caret>
 }

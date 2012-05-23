@@ -1,3 +1,3 @@
-fun Int.foo(arg : Int) : Unit {
+fun Int.foo(arg: Int): Unit {
     <caret>
 }
