@@ -302,6 +302,29 @@ class CollectionTest {
         }
     }
 
+    test fun drop() {
+        val coll = arrayList("foo", "bar", "abc")
+        assertEquals(arrayList("bar", "abc"), coll.drop(1))
+        assertEquals(arrayList("abc"), coll.drop(2))
+    }
+
+    test fun dropWhile() {
+        val coll = arrayList("foo", "bar", "abc")
+        assertEquals(arrayList("bar", "abc"), coll.dropWhile{ it.startsWith("f") })
+    }
+
+    test fun take() {
+        val coll = arrayList("foo", "bar", "abc")
+        assertEquals(arrayList("foo"), coll.take(1))
+        assertEquals(arrayList("foo", "bar"), coll.take(2))
+    }
+
+    test fun takeWhile() {
+        val coll = arrayList("foo", "bar", "abc")
+        assertEquals(arrayList("foo"), coll.takeWhile{ it.startsWith("f") })
+        assertEquals(arrayList("foo", "bar", "abc"), coll.takeWhile{ it.size == 3 })
+    }
+
     test fun toArray() {
         val data = arrayList("foo", "bar")
         val arr = data.toArray()
