@@ -321,7 +321,7 @@ public interface Errors {
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS = DiagnosticFactory2.create(ERROR, DECLARATION);
 
     DiagnosticFactory2<JetReferenceExpression, JetExpression, JetType> FUNCTION_EXPECTED = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<JetReferenceExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetExpression, JetExpression, Boolean> FUNCTION_CALL_EXPECTED = DiagnosticFactory2.create(ERROR, CALL_EXPRESSION);
 
     DiagnosticFactory3<JetExpression, String, JetType, JetType> RESULT_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<JetReferenceExpression, String, String, String> UNSAFE_INFIX_CALL = DiagnosticFactory3.create(ERROR);

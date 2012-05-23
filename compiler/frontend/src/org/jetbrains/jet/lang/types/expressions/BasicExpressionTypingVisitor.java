@@ -77,6 +77,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return type; // TODO : Extensions to this
     }
 
+    @Nullable
     private JetType lookupNamespaceOrClassObject(JetSimpleNameExpression expression, Name referencedName, ExpressionTypingContext context) {
         ClassifierDescriptor classifier = context.scope.getClassifier(referencedName);
         if (classifier != null) {
@@ -90,9 +91,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.report(NO_CLASS_OBJECT.on(expression, classifier));
                 }
                 context.trace.record(REFERENCE_TARGET, expression, classifier);
-                if (result == null) {
-                    return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
-                }
+                //if (result == null) {
+                //    return ErrorUtils.createErrorType("No class object in " + expression.getReferencedName());
+                //}
                 return DataFlowUtils.checkType(result, expression, context);
             }
         }
@@ -684,7 +685,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (result[0]) {
             traceForFunction.commit();
             boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
-            context.trace.report(Errors.FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
+            context.trace.report(FUNCTION_CALL_EXPECTED.on(nameExpression, nameExpression, hasValueParameters));
             return functionDescriptor != null ? functionDescriptor.getReturnType() : null;
         }
 
@@ -704,17 +705,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                       context.replaceBindingTrace(traceForFunction), result);
         if (result[0]) {
             traceForFunction.commit();
+            if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
+                // there are only type arguments
+                boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
+                context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));
+            }
             return functionDescriptor != null ? functionDescriptor.getReturnType() : null;
         }
 
         JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression) {
+        if (calleeExpression instanceof JetSimpleNameExpression && callExpression.getTypeArgumentList() == null) {
             TemporaryBindingTrace traceForVariable = TemporaryBindingTrace.create(context.trace);
             JetType type = getVariableType((JetSimpleNameExpression) calleeExpression, receiver, callOperationNode,
-                                   context.replaceBindingTrace(traceForVariable), result);
+                                           context.replaceBindingTrace(traceForVariable), result);
             if (result[0]) {
                 traceForVariable.commit();
-                context.trace.report(Errors.FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, callExpression, type != null ? type : ErrorUtils.createErrorType("")));
+                context.trace.report(FUNCTION_EXPECTED.on((JetReferenceExpression) calleeExpression, calleeExpression,
+                                                          type != null ? type : ErrorUtils.createErrorType("")));
                 return null;
             }
         }
@@ -722,7 +729,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return null;
     }
 
-    private static void checkSuper(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results, @NotNull BindingTrace trace, @NotNull JetExpression expression) {
+    private static void checkSuper(@NotNull ReceiverDescriptor receiverDescriptor, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
+            @NotNull BindingTrace trace, @NotNull JetExpression expression) {
         if (!results.isSingleResult()) return;
         if (!(receiverDescriptor instanceof ExpressionReceiver)) return;
         JetExpression receiver = ((ExpressionReceiver) receiverDescriptor).getExpression();

@@ -22,17 +22,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.plugin.JetBundle;
-
-import java.util.List;
 
 /**
  * @author svtk
  */
-public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetReferenceExpression> {
+public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetExpression> {
 
-    public ChangeToFunctionInvocationFix(@NotNull JetReferenceExpression element) {
+    public ChangeToFunctionInvocationFix(@NotNull JetExpression element) {
         super(element);
     }
 
@@ -50,16 +49,16 @@ public class ChangeToFunctionInvocationFix extends JetIntentionAction<JetReferen
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-        JetReferenceExpression reference = (JetReferenceExpression) element.copy();
+        JetExpression reference = (JetExpression) element.copy();
         element.replace(JetPsiFactory.createExpression(project, reference.getText() + "()"));
     }
 
     public static JetIntentionActionFactory createFactory() {
         return new JetIntentionActionFactory() {
             @Override
-            public JetIntentionAction<JetReferenceExpression> createAction(Diagnostic diagnostic) {
-                if (diagnostic.getPsiElement() instanceof JetReferenceExpression) {
-                    return new ChangeToFunctionInvocationFix((JetReferenceExpression) diagnostic.getPsiElement());
+            public JetIntentionAction<JetExpression> createAction(Diagnostic diagnostic) {
+                if (diagnostic.getPsiElement() instanceof JetExpression) {
+                    return new ChangeToFunctionInvocationFix((JetExpression) diagnostic.getPsiElement());
                 }
                 return null;
             }

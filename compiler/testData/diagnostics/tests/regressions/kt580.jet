@@ -8,7 +8,7 @@ fun iarray(vararg a : String) = a // BUG
 
 fun main() {
     val vals = iarray("789", "678", "567")
-    val diffs = ArrayList<Int>
+    val diffs = ArrayList<Int>()
     for (i in vals.indices) {
         for (j in i..vals.lastIndex())  // Type inference failed
              diffs.add(vals[i].length - vals[j].length)

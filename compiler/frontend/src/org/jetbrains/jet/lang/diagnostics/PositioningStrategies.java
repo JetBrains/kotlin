@@ -298,4 +298,28 @@ public class PositioningStrategies {
             return markNode(element.getQuestionMarkNode());
         }
     };
+
+    public static PositioningStrategy<JetExpression> CALL_EXPRESSION = new PositioningStrategy<JetExpression>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull JetExpression element) {
+            if (element instanceof JetCallExpression) {
+                JetCallExpression callExpression = (JetCallExpression) element;
+                PsiElement endElement;
+                JetTypeArgumentList typeArgumentList = callExpression.getTypeArgumentList();
+                JetExpression calleeExpression = callExpression.getCalleeExpression();
+                if (typeArgumentList != null) {
+                    endElement = typeArgumentList;
+                }
+                else if (calleeExpression != null) {
+                    endElement = calleeExpression;
+                }
+                else {
+                    endElement = element;
+                }
+                return markRange(new TextRange(element.getTextRange().getStartOffset(), endElement.getTextRange().getEndOffset()));
+            }
+            return super.mark(element);
+        }
+    };
 }
