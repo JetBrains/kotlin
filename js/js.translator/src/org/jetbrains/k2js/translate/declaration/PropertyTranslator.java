@@ -67,8 +67,8 @@ public final class PropertyTranslator extends AbstractTranslator {
         if (context.isEcma5()) {
             JsObjectLiteral objectLiteral = new JsObjectLiteral();
             objectLiteral.getPropertyInitializers().addAll(propertyInitializers);
-            return Collections
-                    .singletonList(new JsPropertyInitializer(context.program().getStringLiteral(descriptor.getName()), objectLiteral));
+            return Collections.singletonList(
+                    new JsPropertyInitializer(context.program().getStringLiteral(descriptor.getName().getName()), objectLiteral));
         }
         return propertyInitializers;
     }
